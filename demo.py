@@ -40,13 +40,18 @@ def test_run():
         'SecurityExchange': 'QDL1'
     }
 
+    # instrument = {
+    #     'Symbol': 'SE0000818569_SEK',
+    #     'SecurityID': 'SE0000818569',
+    #     'SecurityIDSource': '4',
+    #     'SecurityExchange': 'XSTO'
+    # }
     instrument = {
-        'Symbol': 'SE0000818569_SEK',
-        'SecurityID': 'SE0000818569',
-        'SecurityIDSource': '4',
-        'SecurityExchange': 'XSTO'
+          'Symbol': 'FR0010263202_EUR',
+          'SecurityID': 'FR0010263202',
+          'SecurityIDSource': '4',
+          'SecurityExchange': 'XPAR'
     }
-
     # Specific data for test case test
     test_cases = {
         'QAP-2462': {

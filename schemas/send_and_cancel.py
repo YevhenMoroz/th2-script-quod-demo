@@ -4,6 +4,11 @@ from grpc_modules import verifier_pb2
 from grpc_modules import infra_pb2
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from grpc_modules import quod_simulator_pb2
+from grpc_modules import quod_simulator_pb2_grpc, infra_pb2
+
+simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(grpc.insecure_channel('localhost:8081'))
+print(simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'))))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,7 +32,7 @@ def execute(case_name, report_id, case_params):
         'Price': case_params['Price'],
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
-        'Currency': 'SEK',
+        'Currency': 'EUR',
         'TargetStrategy': '1004'
     }
     specific_order_params = {   # There are reusable and specific for submition parameters
@@ -35,7 +40,7 @@ def execute(case_name, report_id, case_params):
         'ClOrdID': bca.client_orderid(9),
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': case_params['Instrument'],
-        'ExDestination': 'TRQX',
+        'ExDestination': 'XPAR',
         'ComplianceID': 'FX5',
         'Text': '-204',
         'IClOrdIdCO': 'OD_5fgfDXg-00',
