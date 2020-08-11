@@ -1,5 +1,5 @@
 syntax = 'proto3';
-package th2;
+package th2.simulator.template;
 
 import "simulator.proto";
 import "infra.proto";
