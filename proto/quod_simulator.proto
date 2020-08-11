@@ -1,0 +1,23 @@
+syntax = 'proto3';
+package th2;
+
+import "simulator.proto";
+import "infra.proto";
+
+option java_multiple_files = true;
+option java_package = "com.exactpro.th2.simulator.template.grpc";
+
+message TemplateFixCreate {
+    map<string, th2.Value> fields = 1;
+    th2.ConnectionID connection_id = 2;
+}
+
+message TemplateQuodNOSRule {
+    th2.ConnectionID connection_id = 1;
+}
+
+service TemplateSimulatorService {
+    rpc createRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
+    rpc createKotlinRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
+    rpc createQuodNOSRule(TemplateQuodNOSRule) returns (th2.RuleID) {}
+}
