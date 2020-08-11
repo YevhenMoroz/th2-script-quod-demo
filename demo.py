@@ -8,6 +8,7 @@ from schemas import *
 from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc
 import grpc
 from ConfigParser import ParseConfig
+from schemas import simple_trade2
 
 logging.basicConfig(stream=sys.stdout)
 logger = logging.getLogger('demo')
@@ -28,7 +29,7 @@ def test_run():
     report_id = bca.create_event_id()
     bca.create_event(
         event_store,
-        'quod_demo_1 ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'),
+        'quod_demo_1___ ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'),
         report_id
     )
     logger.info("Root event was created (report id = {})".format(report_id))
@@ -118,12 +119,29 @@ def test_run():
             'TargetCompID': 'QUOD3',
             'Instrument': instrument
         },
+        'QUOD-TRADE2': {
+            'case_id': bca.create_event_id(),
+            'act_box': act,
+            'event_store_box': event_store,
+            'verifier_box': verifier,
+            'TraderConnectivity': 'gtwquod3',
+            'SenderCompID': 'QUODFX_UAT',
+            'Account': 'KEPLER',
+            'HandlInst': '1',
+            'OrderQty_ord1': '200',
+            'OrderQty_ord2': '100',
+            'OrdType': '2',
+            'Price': '20',
+            'TimeInForce': '0',
+            'TargetCompID': 'QUOD3',
+            'Instrument': instrument
+        },
     }
 
-    send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
-    # # # time.sleep(10)
+    # send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
+    # time.sleep(10)
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
-    # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
+    simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
 
     grpc.insecure_channel(components['ACT_1']).close()
     grpc.insecure_channel(components['EVENTSTORAGE']).close()
