@@ -6,8 +6,8 @@ import grpc
 #start rule
 channel = grpc.insecure_channel('localhost:8081')
 simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
-QuodRuleID = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
-print(QuodRuleID)
+NOS = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
 # stop rule
 # core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 # core.removeRule(QuodRuleID)
