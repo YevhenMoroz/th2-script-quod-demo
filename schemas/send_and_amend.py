@@ -25,7 +25,7 @@ def execute(case_name, report_id, case_params):
         'TimeInForce': case_params['TimeInForce'],
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
-        'Currency': 'SEK',
+        'Currency': 'EUR',
         'TargetStrategy': '1004'
     }
     specific_order_params = {   # There are reusable and specific for submition parameters
@@ -34,7 +34,7 @@ def execute(case_name, report_id, case_params):
         'TransactTime': (datetime.utcnow().isoformat()),
         'Instrument': case_params['Instrument'],
         # 'ExDestination': 'QDL1',
-        'ExDestination': 'TRQX',
+        'ExDestination': 'XPAR',
         'ComplianceID': 'FX5',
         'Text': '-204',
         'IClOrdIdCO': 'OD_5fgfDXg-00',
@@ -135,7 +135,7 @@ def execute(case_name, report_id, case_params):
     logger.debug("Amend order with ClOrdID = {}".format(specific_order_params['ClOrdID']))
     replace_order = act.placeOrderReplaceFIX(
         bca.convert_to_request(
-            'Send OrderCancelRequest',
+            'Send OrderCancelReplaceRequest',
             case_params['TraderConnectivity'],
             case_params['case_id'],
             bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params)

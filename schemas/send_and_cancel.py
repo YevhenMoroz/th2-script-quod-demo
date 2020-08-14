@@ -6,6 +6,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules import quod_simulator_pb2
 from grpc_modules import quod_simulator_pb2_grpc, infra_pb2
+import grpc
 
 # simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(grpc.insecure_channel('localhost:8081'))
 # print(simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'))))
