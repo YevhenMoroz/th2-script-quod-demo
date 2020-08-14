@@ -35,6 +35,11 @@ class TemplateSimulatorServiceStub(object):
         request_serializer=quod__simulator__pb2.TemplateQuodOCRRule.SerializeToString,
         response_deserializer=simulator__pb2.RuleID.FromString,
         )
+    self.createQuodOCRRRule = channel.unary_unary(
+        '/th2.simulator.template.TemplateSimulatorService/createQuodOCRRRule',
+        request_serializer=quod__simulator__pb2.TemplateQuodOCRRRule.SerializeToString,
+        response_deserializer=simulator__pb2.RuleID.FromString,
+        )
 
 
 class TemplateSimulatorServiceServicer(object):
@@ -69,6 +74,13 @@ class TemplateSimulatorServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def createQuodOCRRRule(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_TemplateSimulatorServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -90,6 +102,11 @@ def add_TemplateSimulatorServiceServicer_to_server(servicer, server):
       'createQuodOCRRule': grpc.unary_unary_rpc_method_handler(
           servicer.createQuodOCRRule,
           request_deserializer=quod__simulator__pb2.TemplateQuodOCRRule.FromString,
+          response_serializer=simulator__pb2.RuleID.SerializeToString,
+      ),
+      'createQuodOCRRRule': grpc.unary_unary_rpc_method_handler(
+          servicer.createQuodOCRRRule,
+          request_deserializer=quod__simulator__pb2.TemplateQuodOCRRRule.FromString,
           response_serializer=simulator__pb2.RuleID.SerializeToString,
       ),
   }
