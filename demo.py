@@ -28,7 +28,7 @@ def test_run():
     report_id = bca.create_event_id()
     bca.create_event(
         event_store,
-        'quod_demo_1 ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'),
+        '__quod_demo_1 ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'),
         report_id
     )
     logger.info("Root event was created (report id = {})".format(report_id))
@@ -118,12 +118,30 @@ def test_run():
             'TargetCompID': 'QUOD3',
             'Instrument': instrument
         },
+        'QUOD-AMEND-TRADE': {
+            'case_id': bca.create_event_id(),
+            'act_box': act,
+            'event_store_box': event_store,
+            'verifier_box': verifier,
+            'TraderConnectivity': 'gtwquod3',
+            'SenderCompID': 'QUODFX_UAT',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'OrderQty': '500',
+            'OrdType': '2',
+            'Price1': '20',
+            'Price2': '23',
+            'TimeInForce': '0',
+            'TargetCompID': 'QUOD3',
+            'Instrument': instrument
+        },
     }
 
-    send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
+    # send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
     # # # time.sleep(10)
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
+    amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
 
     grpc.insecure_channel(components['ACT_1']).close()
     grpc.insecure_channel(components['EVENTSTORAGE']).close()
