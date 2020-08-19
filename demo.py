@@ -47,6 +47,13 @@ def test_run():
         'SecurityExchange': 'XSTO'
     }
 
+    instrument2 = {
+        'Symbol': 'FR0010263202_EUR',
+        'SecurityID': 'FR0010263202',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
+
     # Specific data for test case test
     test_cases = {
         'QAP-2462': {
@@ -64,7 +71,7 @@ def test_run():
             'OrdType': '2',
             'Price': '20',
             'TimeInForce': '0',
-            'Instrument': instrument
+            'Instrument': instrument2
         },
         'QAP-2422': {
             'case_id': bca.create_event_id(),
@@ -81,7 +88,7 @@ def test_run():
             'OrdType': '2',
             'Price': '20',
             'TimeInForce': '0',
-            'Instrument': instrument
+            'Instrument': instrument2
         },
         'QAP-AMEND': {
             'case_id': bca.create_event_id(),
@@ -137,11 +144,11 @@ def test_run():
         },
     }
 
-    # send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
+    send_and_cancel.execute('QAP-2422', report_id, test_cases['QAP-2422'])
     # # # time.sleep(10)
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
-    amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
+    # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
 
     grpc.insecure_channel(components['ACT_1']).close()
     grpc.insecure_channel(components['EVENTSTORAGE']).close()
