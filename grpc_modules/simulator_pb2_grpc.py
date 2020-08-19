@@ -2,7 +2,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from grpc_modules import simulator_pb2 as simulator__pb2
+import simulator_pb2 as simulator__pb2
 
 
 class ServiceSimulatorStub(object):
