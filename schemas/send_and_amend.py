@@ -175,7 +175,7 @@ def execute(case_name, report_id, case_params):
     cancel_order_params = {
         'OrigClOrdID': specific_order_params['ClOrdID'],
         # 'OrderID': '',
-        'ClOrdID': str(int(specific_order_params['ClOrdID']) + 1),
+        'ClOrdID': (specific_order_params['ClOrdID']),
         'Instrument': specific_order_params['Instrument'],
         'ExDestination': 'QDL1',
         'Side': case_params['Side'],
