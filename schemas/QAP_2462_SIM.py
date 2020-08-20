@@ -5,15 +5,15 @@ from grpc_modules import verifier_pb2
 from grpc_modules import infra_pb2
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import quod_simulator_pb2
+from grpc_modules import quod_simulator_pb2, simulator_pb2_grpc
 from grpc_modules import quod_simulator_pb2_grpc, infra_pb2
 from grpc_modules import simulator_pb2
 import grpc
 
-# channel = grpc.insecure_channel('localhost:8081')
-# simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
-# NOS = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
-# OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+channel = grpc.insecure_channel('localhost:8081')
+simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
+NOS = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -366,3 +366,8 @@ def execute(case_name, report_id, case_params):
     bca.create_event(event_store, case_name, case_params['case_id'], report_id)  # Create sub-report for case
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
+
+    # stop rule
+    core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
+    core.removeRule(NOS)
+    core.removeRule(OCR)
