@@ -107,6 +107,7 @@ def execute(case_name, report_id, case_params):
         'LeavesQty': case_params['OrderQty'],
         'Instrument': case_params['Instrument'],
         'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
+        'ExecRestatementReason': '4',
         'NoStrategyParameters': [
             {'StrategyParameterName': 'LowLiquidity', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}]
     }
@@ -139,6 +140,7 @@ def execute(case_name, report_id, case_params):
         'OrderCapacity': 'A',
         'Currency': 'EUR',
         'ClOrdID': '*',
+        'ChildOrderID' : '*',
         'TransactTime': '*',
         'Instrument': instrument_3_2,
         'ExDestination': case_params['ExDestination'],
@@ -155,41 +157,36 @@ def execute(case_name, report_id, case_params):
         case_params['case_id']
     )
     er_sim_params = {
-        # **reusable_order_params,
-        # 'ClOrdID': '*',
+        'ClOrdID': '*',
         'OrderID': '*',
         'ExecID': '*',
         'TransactTime': '*',
         'CumQty': '0',
-        'LastPx': '0',
-        'LastQty': '0',
-        'QtyType': '0',
+        'OrderQty': specific_order_params['DisplayInstruction']['DisplayQty'],
+        'OrdType': case_params['OrdType'],
+        'Side': case_params['Side'],
+        # 'LastPx': '0',
+        # 'LastQty': '0',
+        # 'QtyType': '0',
         'AvgPx': '0',
         'OrdStatus': '0',
         'ExecType': '0',
         'LeavesQty': '0',
         'Text': 'sim work3',
-        # 'Instrument': case_params['Instrument'],
         # 'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
         # 'NoStrategyParameters': [
         #     {'StrategyParameterName': 'LowLiquidity', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}]
     }
-    er2 = bca.filter_to_grpc("ExecutionReport", er_sim_params, ['Text', 'LastPx'])
 
-    bca.verify_response(verifier, "Receive Execution Report New", er2,
-                        case_params['TraderConnectivity2'],
-                        case_params['case_id'])
     logger.debug("Verify received Execution Report (OrdStatus = New)")
-    # bca.verify_response(
-    #     verifier,
-    #     'Receive ExecutionReport New Sim',
-    #     bca.create_filter('ExecutionReport', er_sim_params),
-    #     enter_order,
-    #     case_params['TraderConnectivity2'],
-    #     # case_params['TargetCompID2'],
-    #     # 'quod_qa_ret_child',
-    #     case_params['case_id']
-    # )
+    bca.verify_response(
+        verifier,
+        'Receive ExecutionReport New Sim',
+        bca.create_filter('ExecutionReport', er_sim_params),
+        enter_order,
+        case_params['TraderConnectivity2'],
+        case_params['case_id']
+    )
 
     cancel_order_params = {
         'OrigClOrdID': specific_order_params['ClOrdID'],
@@ -217,7 +214,9 @@ def execute(case_name, report_id, case_params):
         'TransactTime': '*',
         'OrderQty': specific_order_params['DisplayInstruction']['DisplayQty'],
         'IClOrdIdCO': 'OD_5fgfDXg-00',
-        'IClOrdIdAO': 'OD_5fgfDXg-00'
+        'IClOrdIdAO': 'OD_5fgfDXg-00',
+        'Account': case_params['Account'],
+        'ChildOrderID': '*',
     }
 
     bca.verify_response(
@@ -231,8 +230,7 @@ def execute(case_name, report_id, case_params):
 
     er_cancel_params = {
         **reusable_order_params,
-        # 'ClOrdID': cancel_order_params['ClOrdID'],
-        'ClOrdID': '*',
+        'ClOrdID': specific_order_params['ClOrdID'],
         'OrderID': er_pending_params['OrderID'],
         'CumQty': '0',
         'LastPx': '0',
@@ -243,9 +241,15 @@ def execute(case_name, report_id, case_params):
         'ExecType': '4',
         'LeavesQty': '0',
         'Instrument': case_params['Instrument'],
-
         'NoStrategyParameters': er_new_params['NoStrategyParameters'],
-        'ExecRestatementReason': '4'
+        'ExecRestatementReason': '4',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'CxlQty': case_params['OrderQty'],
+        'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
+        'LastMkt': case_params['ExDestination'],
+        'Text': 'sim work3',
+
     }
     logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
     bca.verify_response(
@@ -256,11 +260,28 @@ def execute(case_name, report_id, case_params):
         case_params['TraderConnectivity'],
         case_params['case_id']
     )
-    er_sim_cancel_params = copy.deepcopy(er_cancel_params)
+    er_sim_cancel_params = {
+        'ClOrdID': '*',
+        'OrderID': '*',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'CumQty': '0',
+        'OrderQty': specific_order_params['DisplayInstruction']['DisplayQty'],
+        # 'OrdType': case_params['OrdType'],
+        'Side': case_params['Side'],
+        # 'LastPx': '0',
+        # 'LastQty': '0',
+        # 'QtyType': '0',
+        'AvgPx': '0',
+        'OrdStatus': '4',
+        'ExecType': '4',
+        'LeavesQty': '0',
+        'Text': 'sim work3',
+    }
 
     bca.verify_response(
         verifier,
-        'Receive ExecutionReport Cansel Sim',
+        'Receive ExecutionReport Cancel Sim',
         bca.create_filter('ExecutionReport', er_sim_cancel_params),
         cancel_order,
         case_params['TraderConnectivity2'],
@@ -293,18 +314,21 @@ def execute(case_name, report_id, case_params):
                     }
 
                 )),
-            'IClOrdIdCO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdCO']),
-            'IClOrdIdAO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdAO'])
+            # 'IClOrdIdCO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdCO']),
+            # 'IClOrdIdAO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdAO'])
 
         })
 
     message_filters = [
         bca.create_filter('ExecutionReport', er_pending_params),
         bca.create_filter('ExecutionReport', er_new_params),
-        # bca.create_filter('ExecutionReport', er_cancel_params)
+        bca.create_filter('ExecutionReport', er_cancel_params)
     ]
     message_filters2 = [
-        bca.create_filter('NewOrderSingle', newordersingle_params)
+        bca.create_filter('NewOrderSingle', newordersingle_params),
+        bca.create_filter('ExecutionReport', er_sim_params),
+        bca.create_filter('OrderCancelRequest', cancel_order_params2),
+        bca.create_filter('ExecutionReport', er_sim_cancel_params),
     ]
 
     checkpoint = enter_order.checkpoint_id
