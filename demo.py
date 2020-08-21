@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc
 import grpc
 from ConfigParser import ParseConfig
-from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, QAP_2425_SIM, simple_trade
+from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, QAP_2425_SIM, simple_trade, QAP_1552_FX
 
 
 logging.basicConfig(stream=sys.stdout)
@@ -222,15 +222,28 @@ def test_run():
             'TimeInForce': '0',
             'TargetCompID': 'QUOD3',
             'Instrument': instrument_2
-         }
+         },
+
+        'QAP_1552': {
+            'case_id': bca.create_event_id(),
+            'act_box': act,
+            'event_store_box': event_store,
+            'verifier_box': verifier,
+            'TraderConnectivity': 'gtwquod5-fx',
+            'Account': 'MMCLIENT1',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD5',
+
+        }
     }
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
-    QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
+    # QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
     # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
+    QAP_1552_FX.execute('QAP_1552', report_id, test_cases['QAP_1552'])
 
     grpc.insecure_channel(components['ACT_1']).close()
     grpc.insecure_channel(components['EVENTSTORAGE']).close()
