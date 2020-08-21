@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc
 import grpc
 from ConfigParser import ParseConfig
-from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, send_and_cancel, simple_trade
+from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, QAP_2425_SIM, simple_trade
 
 
 logging.basicConfig(stream=sys.stdout)
@@ -57,21 +57,27 @@ def test_run():
     }
     # Specific data for test case test
     test_cases = {
-        'QAP-2462': {
+        'QAP_2425_SIM': {
             'case_id': bca.create_event_id(),
             'act_box': act,
             'event_store_box': event_store,
             'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
-            'Account': 'KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
+            'TraderConnectivity2': 'kch-qa-ret-child',
+            'TraderConnectivity3': 'kch-qa-ret-child_out',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
-            'OrderQty': '500',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '600',
             'OrdType': '2',
             'Price': '20',
             'TimeInForce': '0',
+            'ExDestination': 'XPAR',
+            'DeliverToCompID': 'PARIS',
             'Instrument': instrument_3
         },
         'QAP-2425': {
@@ -220,8 +226,8 @@ def test_run():
     }
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
-    # send_and_cancel.execute('QAP-2462', report_id, test_cases['QAP-2462'])
-    QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
+    QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
+    # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
