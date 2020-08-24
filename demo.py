@@ -103,7 +103,6 @@ def test_run():
             'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'TraderConnectivity2': 'kch-qa-ret-child',
-            'TraderConnectivity3': 'kch-qa-ret-child',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
             'SenderCompID2': 'KCH_QA_RET_CHILD',
