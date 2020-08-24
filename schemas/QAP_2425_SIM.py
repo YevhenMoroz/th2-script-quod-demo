@@ -10,10 +10,10 @@ from grpc_modules import quod_simulator_pb2_grpc, infra_pb2
 from grpc_modules import simulator_pb2
 import grpc
 
-# channel = grpc.insecure_channel('localhost:8081')
-# simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
-# NOS = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
-# OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+channel = grpc.insecure_channel('localhost:8081')
+simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
+NOS = simulator.createQuodNOSRule(request=quod_simulator_pb2.TemplateQuodNOSRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -157,21 +157,19 @@ def execute(case_name, report_id, case_params):
         case_params['case_id']
     )
     er_sim_params = {
-        # 'ClOrdID': '*',
-        # 'OrderID': '*',
-        # 'ExecID': '*',
-        # 'TransactTime': '*',
-        # 'CumQty': '0',
-        # 'OrderQty': specific_order_params['DisplayInstruction']['DisplayQty'],
-        # 'OrdType': case_params['OrdType'],
-        # 'Side': case_params['Side'],
+        'ClOrdID': '*',
+        'OrderID': '*',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'CumQty': '0',
+        'OrderQty': specific_order_params['DisplayInstruction']['DisplayQty'],
+        'OrdType': case_params['OrdType'],
+        'Side': case_params['Side'],
         # 'LastPx': '0',
-        # 'LastQty': '0',
-        # 'QtyType': '0',
-        # 'AvgPx': '0',
-        # 'OrdStatus': '0',
-        # 'ExecType': '0',
-        # 'LeavesQty': '0',
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'ExecType': '0',
+        'LeavesQty': '0',
         'Text': '*',
         # 'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
         # 'NoStrategyParameters': [
@@ -179,14 +177,15 @@ def execute(case_name, report_id, case_params):
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
-    # bca.verify_response(
-    #     verifier,
-    #     'Receive ExecutionReport New Sim',
-    #     bca.create_filter('ExecutionReport', er_sim_params),
-    #     enter_order,
-    #     case_params['TraderConnectivity3'],
-    #     case_params['case_id']
-    # )
+    bca.verify_response(
+        verifier,
+        'Receive ExecutionReport New Sim',
+        bca.create_filter('ExecutionReport', er_sim_params),
+        enter_order,
+        case_params['TraderConnectivity2'],
+        case_params['case_id'],
+        infra_pb2.Direction.values()[1]
+    )
 
     cancel_order_params = {
         'OrigClOrdID': specific_order_params['ClOrdID'],
@@ -280,14 +279,15 @@ def execute(case_name, report_id, case_params):
         'Text': 'sim work',
     }
 
-    # bca.verify_response(
-    #     verifier,
-    #     'Receive ExecutionReport Cancel Sim',
-    #     bca.create_filter('ExecutionReport', er_sim_cancel_params),
-    #     cancel_order,
-    #     case_params['TraderConnectivity2'],
-    #     case_params['case_id']
-    # )
+    bca.verify_response(
+        verifier,
+        'Receive ExecutionReport Cancel Sim',
+        bca.create_filter('ExecutionReport', er_sim_cancel_params),
+        cancel_order,
+        case_params['TraderConnectivity2'],
+        case_params['case_id'],
+        infra_pb2.Direction.values()[1]
+    )
 
     pre_filter = verifier_pb2.PreFilter(
         fields={
@@ -320,6 +320,20 @@ def execute(case_name, report_id, case_params):
 
         })
 
+    pre_filter3 = verifier_pb2.PreFilter(
+        fields={
+            'header': infra_pb2.ValueFilter(
+                message_filter=infra_pb2.MessageFilter(
+                    fields={'MsgType': infra_pb2.ValueFilter(
+                        simple_filter='0', operation=infra_pb2.FilterOperation.NOT_EQUAL),
+                        'SenderCompID': infra_pb2.ValueFilter(simple_filter=case_params['TargetCompID2']),
+                        'TargetCompID': infra_pb2.ValueFilter(simple_filter=case_params['SenderCompID2']),
+                    }
+
+                ))
+
+    })
+
     message_filters = [
         bca.create_filter('ExecutionReport', er_pending_params),
         bca.create_filter('ExecutionReport', er_new_params),
@@ -330,6 +344,11 @@ def execute(case_name, report_id, case_params):
         # bca.create_filter('ExecutionReport', er_sim_params),
         bca.create_filter('OrderCancelRequest', cancel_order_params2),
         # bca.create_filter('ExecutionReport', er_sim_cancel_params),
+    ]
+
+    message_filters3 = [
+        bca.create_filter('ExecutionReport', er_sim_params),
+        bca.create_filter('ExecutionReport', er_sim_cancel_params),
     ]
 
     checkpoint = enter_order.checkpoint_id
@@ -357,8 +376,24 @@ def execute(case_name, report_id, case_params):
         description='',
         check_order=True
     )
+
     logger.debug("Verify a sequence of Execution Report messages")
     verifier.submitCheckSequenceRule(check_sequence_rule2)
+
+    check_sequence_rule3 = verifier_pb2.CheckSequenceRuleRequest(
+        pre_filter=pre_filter3,
+        message_filters=message_filters3,
+        checkpoint=checkpoint,
+        timeout=1000,
+        connectivity_id=infra_pb2.ConnectionID(session_alias=case_params['TraderConnectivity2']),
+        parent_event_id=case_params['case_id'],
+        description='Received from Sim',
+        check_order=True,
+        direction=infra_pb2.Direction.values()[1]
+    )
+
+    logger.debug("Verify a sequence of Execution Report messages")
+    verifier.submitCheckSequenceRule(check_sequence_rule3)
 
     if timeouts:
         time.sleep(5)
@@ -368,6 +403,6 @@ def execute(case_name, report_id, case_params):
         case_name, str(round(datetime.now().timestamp() - seconds))))
 
     # stop rule
-    # core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
-    # core.removeRule(NOS)
-    # core.removeRule(OCR)
+    core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
+    core.removeRule(NOS)
+    core.removeRule(OCR)

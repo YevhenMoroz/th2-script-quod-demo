@@ -64,7 +64,6 @@ def test_run():
             'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'TraderConnectivity2': 'kch-qa-ret-child',
-            'TraderConnectivity3': 'kch-qa-ret-child_out',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
             'SenderCompID2': 'KCH_QA_RET_CHILD',
@@ -238,8 +237,8 @@ def test_run():
     }
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
-    # QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
-    QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
+    QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
+    # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
