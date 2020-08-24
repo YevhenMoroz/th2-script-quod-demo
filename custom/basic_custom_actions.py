@@ -13,7 +13,7 @@ from grpc_modules import infra_pb2
 from grpc_modules import verifier_pb2
 
 # Debug output
-PrintMessages = False
+PrintMessages = True
 
 
 class ActComponentCall:
@@ -74,8 +74,8 @@ def message_to_grpc(message_type, content):
 
 
 def filter_to_grpc(message_type, content, keys=None):
-    if keys is None:
-        keys = ['ClOrdID']
+    # if keys is None:
+    #     keys = ['ClOrdID']
     content = copy.deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
@@ -84,8 +84,8 @@ def filter_to_grpc(message_type, content, keys=None):
             elif content[tag] == '#':
                 content[tag] = infra_pb2.ValueFilter(operation=infra_pb2.FilterOperation.EMPTY)
             else:
-                content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]), key=(True if tag in keys else False))
-
+                # content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]), key=(True if tag in keys else False))
+                content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]))
         # if isinstance(content[tag], (str, int, float)):
         #     content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]))
         elif isinstance(content[tag], dict):
@@ -117,7 +117,7 @@ def convert_to_request(description, connectivity, event_id, message, key_fields=
     )
 
 
-def verify_response(verifier, description, filter, act_response, connectivity, event_id):
+def verify_response(verifier, description, filter, act_response, connectivity, event_id, direction=infra_pb2.Direction.values()[0]):
     connectivity = infra_pb2.ConnectionID(session_alias=connectivity)
     rule_request = verifier_pb2.CheckRuleRequest(
         connectivity_id=connectivity,
@@ -125,7 +125,8 @@ def verify_response(verifier, description, filter, act_response, connectivity, e
         checkpoint=act_response.checkpoint_id,
         timeout=3000,
         parent_event_id=event_id,
-        description=description
+        description=description,
+        direction=direction
     )
     if PrintMessages:
         print(rule_request)

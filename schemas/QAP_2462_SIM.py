@@ -157,7 +157,7 @@ def execute(case_name, report_id, case_params):
         case_params['case_id']
     )
     er_sim_params = {
-        # 'ClOrdID': '*',
+        'ClOrdID': '*',
         # 'OrderID': '*',
         # 'ExecID': '*',
         # 'TransactTime': '*',
@@ -179,14 +179,17 @@ def execute(case_name, report_id, case_params):
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
-    # bca.verify_response(
-    #     verifier,
-    #     'Receive ExecutionReport New Sim',
-    #     bca.create_filter('ExecutionReport', er_sim_params),
-    #     enter_order,
-    #     case_params['TraderConnectivity3'],
-    #     case_params['case_id']
-    # )
+    test = bca.filter_to_grpc("ExecutionReport", er_sim_params, ['text', 'OrdStatus'])
+    bca.verify_response(
+        verifier,
+        'Receive ExecutionReport New Sim', test,
+        # bca.create_filter('ExecutionReport', er_sim_params),
+        enter_order,
+        case_params['TraderConnectivity3'],
+        case_params['case_id'],
+        infra_pb2.Direction.values()[1]
+
+    )
 
     cancel_order_params = {
         'OrigClOrdID': specific_order_params['ClOrdID'],
