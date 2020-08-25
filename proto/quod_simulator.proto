@@ -16,8 +16,22 @@ message TemplateQuodNOSRule {
     th2.ConnectionID connection_id = 1;
 }
 
+message TemplateQuodDemoRule {
+    th2.ConnectionID connection_id = 1;
+    int32 demo_field1 = 2;
+    string demo_field2 = 3;
+}
+
+message TemplateQuodOCRRule {
+    th2.ConnectionID connection_id = 1;
+}
+
+
 service TemplateSimulatorService {
     rpc createRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
     rpc createKotlinRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
     rpc createQuodNOSRule(TemplateQuodNOSRule) returns (th2.RuleID) {}
+    rpc createTemplateQuodDemoRule(TemplateQuodDemoRule) returns (th2.RuleID) {}
+    rpc createQuodOCRRule(TemplateQuodOCRRule) returns (th2.RuleID) {}
+
 }
