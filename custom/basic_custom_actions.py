@@ -13,7 +13,7 @@ from grpc_modules import infra_pb2
 from grpc_modules import verifier_pb2
 
 # Debug output
-PrintMessages = True
+PrintMessages = False
 
 
 class ActComponentCall:
