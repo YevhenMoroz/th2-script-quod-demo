@@ -4,7 +4,8 @@ import logging
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc
+from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc, infra_pb2, quod_simulator_pb2, \
+    quod_simulator_pb2_grpc, simulator_pb2_grpc
 import grpc
 from ConfigParser import ParseConfig
 from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, QAP_2425_SIM, simple_trade, QAP_1552_FX
@@ -234,6 +235,20 @@ def test_run():
 
         }
     }
+
+    # start rule
+    channel = grpc.insecure_channel('10.0.22.22:30594')
+    simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
+    DemoRule = simulator.createTemplateQuodDemoRule(
+        request=quod_simulator_pb2.TemplateQuodDemoRule(
+            connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'),
+            demo_field1=123,
+            demo_field2='KCH_QA_RET_CHILD'))
+
+    OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(
+        connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+    print(f"Start rules with id's: {DemoRule}, {OCR}")
+
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
     QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
@@ -242,6 +257,13 @@ def test_run():
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # QAP_1552_FX.execute('QAP_1552', report_id, test_cases['QAP_1552'])
+
+    #stop rule
+    core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
+    core.removeRule(DemoRule)
+    core.removeRule(OCR)
+    channel.close()
+
 
     grpc.insecure_channel(components['ACT_1']).close()
     grpc.insecure_channel(components['EVENTSTORAGE']).close()
