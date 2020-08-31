@@ -4,6 +4,9 @@ from datetime import datetime
 import copy
 from custom import basic_custom_actions as bca
 from grpc_modules import infra_pb2, verifier_pb2
+from grpc_modules.act_fix_pb2_grpc import ActStub
+from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
+from grpc_modules.verifier_pb2_grpc import VerifierStub
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -11,11 +14,12 @@ timeouts = True
 
 
 def execute(case_name, report_id, case_params):
+    act = ActStub(case_params['act'])
+    event_store = EventStoreServiceStub(case_params['event-store'])
+    verifier = VerifierStub(case_params['verifier'])
+
     seconds, nanos = bca.timestamps()  # Store case start time
 
-    act = case_params['act_box']
-    event_store = case_params['event_store_box']
-    verifier = case_params['verifier_box']
     pre_filter = verifier_pb2.PreFilter(
         fields={
             'header': infra_pb2.ValueFilter(

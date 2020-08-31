@@ -1,14 +1,13 @@
 import copy
 import logging
 import time
-from grpc_modules import verifier_pb2
-from grpc_modules import infra_pb2
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import quod_simulator_pb2, simulator_pb2_grpc
-from grpc_modules import quod_simulator_pb2_grpc, infra_pb2
-from grpc_modules import simulator_pb2
-import grpc
+from grpc_modules import infra_pb2
+from grpc_modules import verifier_pb2
+from grpc_modules.act_fix_pb2_grpc import ActStub
+from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
+from grpc_modules.verifier_pb2_grpc import VerifierStub
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,9 +15,9 @@ timeouts = True
 
 
 def execute(case_name, report_id, case_params):
-    act = case_params['act_box']
-    event_store = case_params['event_store_box']
-    verifier = case_params['verifier_box']
+    act = ActStub(case_params['act'])
+    event_store = EventStoreServiceStub(case_params['event-store'])
+    verifier = VerifierStub(case_params['verifier'])
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
@@ -284,50 +283,33 @@ def execute(case_name, report_id, case_params):
         infra_pb2.Direction.values()[1]
     )
 
-    pre_filter = verifier_pb2.PreFilter(
-        fields={
+    pre_filter_params = {
+        'header': {
+            'MsgType': 8,
+            'SenderCompID': case_params['SenderCompID'],
+            'TargetCompID': case_params['TargetCompID']
+        }
+    }
+    pre_filter = bca.prefilter_to_grpc(pre_filter_params)
 
-            'header': infra_pb2.ValueFilter(
-                message_filter=infra_pb2.MessageFilter(
-                    fields={'MsgType': infra_pb2.ValueFilter(
-                        simple_filter='8', operation=infra_pb2.FilterOperation.EQUAL),
-                        'SenderCompID': infra_pb2.ValueFilter(simple_filter=case_params['SenderCompID']),
-                        'TargetCompID': infra_pb2.ValueFilter(simple_filter=case_params['TargetCompID'])
+    pre_filter2_params = {
+        'header': {
+            'MsgType': ('0', 'NOT_EQUAL'),
+            'SenderCompID': case_params['SenderCompID2'],
+            'TargetCompID': case_params['TargetCompID2'],
+            'DeliverToCompID': case_params['DeliverToCompID']
+        }
+    }
+    pre_filter2 = bca.prefilter_to_grpc(pre_filter2_params)
 
-                    })),
-
-        })
-    pre_filter2 = verifier_pb2.PreFilter(
-        fields={
-
-            'header': infra_pb2.ValueFilter(
-                message_filter=infra_pb2.MessageFilter(
-                    fields={'MsgType': infra_pb2.ValueFilter(
-                        simple_filter='0', operation=infra_pb2.FilterOperation.NOT_EQUAL),
-                        'SenderCompID': infra_pb2.ValueFilter(simple_filter=case_params['SenderCompID2']),
-                        'TargetCompID': infra_pb2.ValueFilter(simple_filter=case_params['TargetCompID2']),
-                        'DeliverToCompID': infra_pb2.ValueFilter(simple_filter=case_params['DeliverToCompID']),
-                    }
-
-                )),
-            # 'IClOrdIdCO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdCO']),
-            # 'IClOrdIdAO': infra_pb2.ValueFilter(simple_filter=specific_order_params['IClOrdIdAO'])
-
-        })
-
-    pre_filter3 = verifier_pb2.PreFilter(
-        fields={
-            'header': infra_pb2.ValueFilter(
-                message_filter=infra_pb2.MessageFilter(
-                    fields={'MsgType': infra_pb2.ValueFilter(
-                        simple_filter='0', operation=infra_pb2.FilterOperation.NOT_EQUAL),
-                        'SenderCompID': infra_pb2.ValueFilter(simple_filter=case_params['TargetCompID2']),
-                        'TargetCompID': infra_pb2.ValueFilter(simple_filter=case_params['SenderCompID2']),
-                    }
-
-                ))
-
-    })
+    pre_filter3_params = {
+        'header': {
+            'MsgType': ('0', "NOT_EQUAL"),
+            'SenderCompID': case_params['TargetCompID2'],
+            'TargetCompID': case_params['SenderCompID2']
+        }
+    }
+    pre_filter3 = bca.prefilter_to_grpc(pre_filter3_params)
 
     message_filters = [
         bca.create_filter('ExecutionReport', er_pending_params),

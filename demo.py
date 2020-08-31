@@ -4,11 +4,14 @@ import logging
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import act_fix_pb2_grpc, event_store_pb2_grpc, verifier_pb2_grpc, infra_pb2, quod_simulator_pb2, \
-    quod_simulator_pb2_grpc, simulator_pb2_grpc
+from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
+from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
+from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
+from grpc_modules.quod_simulator_pb2 import TemplateQuodDemoRule, TemplateQuodNOSRule, TemplateQuodOCRRule
+from grpc_modules.infra_pb2 import ConnectionID
 import grpc
 from ConfigParser import ParseConfig
-from schemas import simple_trade2, QAP_2462_SIM, amend_and_trade, part_trade, send_and_amend, QAP_2425_SIM, simple_trade, QAP_1552_FX
+from schemas import *
 
 
 logging.basicConfig(stream=sys.stdout)
@@ -20,9 +23,13 @@ timeouts = False
 components = ParseConfig()
 
 logger.debug("Connecting to TH2 components...")
-act = act_fix_pb2_grpc.ActStub(grpc.insecure_channel(components['ACT_1']))
-event_store = event_store_pb2_grpc.EventStoreServiceStub(grpc.insecure_channel(components['EVENTSTORAGE']))
-verifier = verifier_pb2_grpc.VerifierStub(grpc.insecure_channel(components['VERIFIER']))
+channels = dict()
+channels['act'] = grpc.insecure_channel(components['ACT'])
+channels['event-store'] = grpc.insecure_channel(components['EVENTSTORAGE'])
+channels['verifier'] = grpc.insecure_channel(components['VERIFIER'])
+channels['simulator'] = grpc.insecure_channel(components['SIMULATOR'])
+
+event_store = EventStoreServiceStub(channels['event-store'])
 
 
 def test_run():
@@ -59,10 +66,8 @@ def test_run():
     # Specific data for test case test
     test_cases = {
         'QAP_2425_SIM': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'TraderConnectivity2': 'kch-qa-ret-child',
             'SenderCompID': 'QUODFX_UAT',
@@ -81,10 +86,8 @@ def test_run():
             'Instrument': instrument_3
         },
         'QAP-2425': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'Account': 'KEPLER',
             'HandlInst': '2',
@@ -98,10 +101,8 @@ def test_run():
             'Instrument': instrument_3
         },
         'QAP_2462_SIM': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'TraderConnectivity2': 'kch-qa-ret-child',
             'SenderCompID': 'QUODFX_UAT',
@@ -120,10 +121,8 @@ def test_run():
             'Instrument': instrument_3
         },
         'QAP-2422': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
@@ -137,10 +136,8 @@ def test_run():
             'Instrument': instrument_2
         },
         'QAP-AMEND': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
@@ -156,10 +153,8 @@ def test_run():
             'Instrument': instrument_3
         },
         'QUOD-TRADE': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'Account': 'KEPLER',
@@ -172,10 +167,8 @@ def test_run():
             'Instrument': instrument_2
         },
         'QUOD-TRADE2': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'Account': 'KEPLER',
@@ -189,10 +182,8 @@ def test_run():
             'Instrument': instrument_2
         },
         'QUOD-AMEND-TRADE': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'Account': 'KEPLER',
@@ -206,10 +197,8 @@ def test_run():
             'Instrument': instrument_2
         },
         'QUOD_PART_TRADE': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod3',
             'SenderCompID': 'QUODFX_UAT',
             'Account': 'KEPLER',
@@ -222,52 +211,46 @@ def test_run():
             'TargetCompID': 'QUOD3',
             'Instrument': instrument_2
          },
-
         'QAP_1552': {
+            **channels,
             'case_id': bca.create_event_id(),
-            'act_box': act,
-            'event_store_box': event_store,
-            'verifier_box': verifier,
             'TraderConnectivity': 'gtwquod5-fx',
             'Account': 'MMCLIENT1',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
-
         }
     }
 
     # start rule
-    channel = grpc.insecure_channel('10.0.22.22:30594')
-    simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
+    simulator = TemplateSimulatorServiceStub(channels['simulator'])
     DemoRule = simulator.createTemplateQuodDemoRule(
-        request=quod_simulator_pb2.TemplateQuodDemoRule(
-            connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'),
+        request=TemplateQuodDemoRule(
+            connection_id=ConnectionID(session_alias='kch-qa-ret-child'),
             demo_field1=123,
-            demo_field2='KCH_QA_RET_CHILD'))
-
-    OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(
-        connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
+            demo_field2='KCH_QA_RET_CHILD'
+        )
+    )
+    OCR = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias='kch-qa-ret-child')))
     print(f"Start rules with id's: {DemoRule}, {OCR}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
     QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
-    # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
+    QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # QAP_1552_FX.execute('QAP_1552', report_id, test_cases['QAP_1552'])
 
-    #stop rule
-    core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
+    # stop rule
+    core = ServiceSimulatorStub(channels['simulator'])
     core.removeRule(DemoRule)
     core.removeRule(OCR)
-    channel.close()
 
+    for channel_name in channels.keys():
+        channels[channel_name].close()
 
-    grpc.insecure_channel(components['ACT_1']).close()
-    grpc.insecure_channel(components['EVENTSTORAGE']).close()
-    grpc.insecure_channel(components['VERIFIER']).close()
 
 if __name__ == '__main__':
     logging.basicConfig()
