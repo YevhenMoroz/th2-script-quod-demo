@@ -2,31 +2,16 @@ import copy
 import time
 import uuid
 from datetime import datetime
-
 import grpc
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from grpc_modules import act_fix_pb2
-from grpc_modules import act_fix_pb2_grpc
 from grpc_modules import event_store_pb2
 from grpc_modules import infra_pb2
 from grpc_modules import verifier_pb2
 
 # Debug output
 PrintMessages = False
-
-
-class ActComponentCall:
-    def __init__(self, address):
-        self.address = address
-
-    def __enter__(self):
-        self.channel = grpc.insecure_channel(self.address)
-        self.act = act_fix_pb2_grpc.ActStub(self.channel)
-        return self.act
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        grpc.insecure_channel(self.address).close()
 
 
 def timestamps():
@@ -49,8 +34,7 @@ def message_to_grpc(message_type, content):
             content[tag] = infra_pb2.Value(message_value=(message_to_grpc(tag, content[tag])))
         elif isinstance(content[tag], list):
             for group in content[tag]:
-                # content[tag][content[tag].index(group)] = infra_pb2.Value(message_value=(message_to_grpc(tag, group)))
-                content[tag][content[tag].index(group)] = infra_pb2.Value(message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
+                content[tag][content[tag].index(group)] = infra_pb2.Value(message_value=(message_to_grpc(tag, group)))
             content[tag] = infra_pb2.Value(
                 message_value=infra_pb2.Message(
                     metadata=infra_pb2.MessageMetadata(
@@ -74,8 +58,6 @@ def message_to_grpc(message_type, content):
 
 
 def filter_to_grpc(message_type, content, keys=None):
-    # if keys is None:
-    #     keys = ['ClOrdID']
     content = copy.deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
@@ -84,12 +66,16 @@ def filter_to_grpc(message_type, content, keys=None):
             elif content[tag] == '#':
                 content[tag] = infra_pb2.ValueFilter(operation=infra_pb2.FilterOperation.EMPTY)
             else:
-                # content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]), key=(True if tag in keys else False))
-                content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]))
-        # if isinstance(content[tag], (str, int, float)):
-        #     content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]))
+                content[tag] = infra_pb2.ValueFilter(
+                    simple_filter=str(content[tag]), key=(True if tag in keys else False)
+                )
         elif isinstance(content[tag], dict):
             content[tag] = infra_pb2.ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
+        elif isinstance(content[tag], tuple):
+            value, operation = content[tag].__iter__()
+            content[tag] = infra_pb2.ValueFilter(
+                simple_filter=str(value), operation=infra_pb2.FilterOperation.Value(operation)
+            )
         elif isinstance(content[tag], list):
             for group in content[tag]:
                 content[tag][content[tag].index(group)] = infra_pb2.ValueFilter(
@@ -100,10 +86,7 @@ def filter_to_grpc(message_type, content, keys=None):
                     values=content[tag]
                 )
             )
-    return infra_pb2.MessageFilter(
-        messageType=message_type,
-        fields=content
-    )
+    return infra_pb2.MessageFilter(messageType=message_type, fields=content)
 
 
 def convert_to_request(description, connectivity, event_id, message, key_fields=None):
@@ -149,14 +132,16 @@ def verify_sequence(verifier, description, prefilter, msg_filters, checkpoint, c
     return verifier.submitCheckSequenceRule(sequence_rule)
 
 
-def create_check_rule(description, filter, checkpoint, connectivity, event_id, timeout=3000):
+def create_check_rule(description, filter, checkpoint, connectivity, event_id,
+                      direction=infra_pb2.Direction.Value("FIRST"), timeout=3000):
     return verifier_pb2.CheckRuleRequest(
         connectivity_id=infra_pb2.ConnectionID(session_alias=connectivity),
         filter=filter,
         checkpoint=checkpoint,
         timeout=timeout,
         parent_event_id=event_id,
-        description=description
+        description=description,
+        direction=direction
     )
 
 
@@ -223,6 +208,11 @@ def create_filter(msg_name, fields):
                 fields[field] = infra_pb2.ValueFilter(simple_filter=fields[field], key=True)
             else:
                 fields[field] = infra_pb2.ValueFilter(simple_filter=fields[field])
+        elif isinstance(fields[field], tuple):
+            value, operation = fields[field].__iter__()
+            fields[field] = infra_pb2.ValueFilter(
+                simple_filter=str(value), operation=infra_pb2.FilterOperation.Value(operation)
+            )
         elif isinstance(fields[field], dict):
             fields[field] = create_sub_filter(fields[field])
         elif isinstance(fields[field], list):
@@ -238,3 +228,19 @@ def create_filter(msg_name, fields):
             )
     return infra_pb2.MessageFilter(messageType=msg_name, fields=fields)
 
+
+def prefilter_to_grpc(content: dict, _nesting_level=0):
+    content = copy.deepcopy(content)
+    for tag in content:
+        if isinstance(content[tag], (str, int, float)):
+            content[tag] = infra_pb2.ValueFilter(simple_filter=str(content[tag]))
+        elif isinstance(content[tag], dict):
+            content[tag] = infra_pb2.ValueFilter(message_filter=prefilter_to_grpc(content[tag], _nesting_level+1))
+        elif isinstance(content[tag], tuple):
+            value, operation = content[tag].__iter__()
+            content[tag] = infra_pb2.ValueFilter(
+                simple_filter=str(value), operation=infra_pb2.FilterOperation.Value(operation)
+            )
+        elif isinstance(content[tag], infra_pb2.ValueFilter):
+            pass
+    return verifier_pb2.PreFilter(fields=content) if _nesting_level == 0 else infra_pb2.MessageFilter(fields=content)
