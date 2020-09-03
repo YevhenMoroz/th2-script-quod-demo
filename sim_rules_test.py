@@ -1,10 +1,14 @@
+import google
+import google.protobuf.empty_pb2
+
 from grpc_modules import quod_simulator_pb2
 from grpc_modules import quod_simulator_pb2_grpc, infra_pb2, simulator_pb2_grpc
 from grpc_modules import simulator_pb2
 import grpc
 
 # start rule
-channel = grpc.insecure_channel('10.0.22.22:30594')
+# channel = grpc.insecure_channel('10.0.22.22:30594')
+channel = grpc.insecure_channel('localhost:8081')
 simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 DemoRule = simulator.createTemplateQuodDemoRule(
     request=quod_simulator_pb2.TemplateQuodDemoRule(
@@ -18,3 +22,8 @@ core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 core.removeRule(DemoRule)
 core.removeRule(OCR)
 channel.close()
+
+# get rules
+print(core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()))
+# remove rule
+core.removeRule(simulator_pb2.RuleID(id=8))
