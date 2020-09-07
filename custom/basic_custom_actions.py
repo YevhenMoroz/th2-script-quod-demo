@@ -34,7 +34,9 @@ def message_to_grpc(message_type, content):
             content[tag] = infra_pb2.Value(message_value=(message_to_grpc(tag, content[tag])))
         elif isinstance(content[tag], list):
             for group in content[tag]:
-                content[tag][content[tag].index(group)] = infra_pb2.Value(message_value=(message_to_grpc(tag, group)))
+                # content[tag][content[tag].index(group)] = infra_pb2.Value(message_value=(message_to_grpc(tag, group)))
+                content[tag][content[tag].index(group)] = infra_pb2.Value(
+                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
             content[tag] = infra_pb2.Value(
                 message_value=infra_pb2.Message(
                     metadata=infra_pb2.MessageMetadata(
