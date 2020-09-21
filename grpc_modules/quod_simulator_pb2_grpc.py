@@ -30,14 +30,19 @@ class TemplateSimulatorServiceStub(object):
                 request_serializer=quod__simulator__pb2.TemplateQuodNOSRule.SerializeToString,
                 response_deserializer=simulator__pb2.RuleID.FromString,
                 )
+        self.createQuodOCRRule = channel.unary_unary(
+                '/th2.simulator.template.TemplateSimulatorService/createQuodOCRRule',
+                request_serializer=quod__simulator__pb2.TemplateQuodOCRRule.SerializeToString,
+                response_deserializer=simulator__pb2.RuleID.FromString,
+                )
         self.createTemplateQuodDemoRule = channel.unary_unary(
                 '/th2.simulator.template.TemplateSimulatorService/createTemplateQuodDemoRule',
                 request_serializer=quod__simulator__pb2.TemplateQuodDemoRule.SerializeToString,
                 response_deserializer=simulator__pb2.RuleID.FromString,
                 )
-        self.createQuodOCRRule = channel.unary_unary(
-                '/th2.simulator.template.TemplateSimulatorService/createQuodOCRRule',
-                request_serializer=quod__simulator__pb2.TemplateQuodOCRRule.SerializeToString,
+        self.createQuodMDRRule = channel.unary_unary(
+                '/th2.simulator.template.TemplateSimulatorService/createQuodMDRRule',
+                request_serializer=quod__simulator__pb2.TemplateQuodMDRRule.SerializeToString,
                 response_deserializer=simulator__pb2.RuleID.FromString,
                 )
 
@@ -63,13 +68,19 @@ class TemplateSimulatorServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def createQuodOCRRule(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def createTemplateQuodDemoRule(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def createQuodOCRRule(self, request, context):
+    def createQuodMDRRule(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -93,14 +104,19 @@ def add_TemplateSimulatorServiceServicer_to_server(servicer, server):
                     request_deserializer=quod__simulator__pb2.TemplateQuodNOSRule.FromString,
                     response_serializer=simulator__pb2.RuleID.SerializeToString,
             ),
+            'createQuodOCRRule': grpc.unary_unary_rpc_method_handler(
+                    servicer.createQuodOCRRule,
+                    request_deserializer=quod__simulator__pb2.TemplateQuodOCRRule.FromString,
+                    response_serializer=simulator__pb2.RuleID.SerializeToString,
+            ),
             'createTemplateQuodDemoRule': grpc.unary_unary_rpc_method_handler(
                     servicer.createTemplateQuodDemoRule,
                     request_deserializer=quod__simulator__pb2.TemplateQuodDemoRule.FromString,
                     response_serializer=simulator__pb2.RuleID.SerializeToString,
             ),
-            'createQuodOCRRule': grpc.unary_unary_rpc_method_handler(
-                    servicer.createQuodOCRRule,
-                    request_deserializer=quod__simulator__pb2.TemplateQuodOCRRule.FromString,
+            'createQuodMDRRule': grpc.unary_unary_rpc_method_handler(
+                    servicer.createQuodMDRRule,
+                    request_deserializer=quod__simulator__pb2.TemplateQuodMDRRule.FromString,
                     response_serializer=simulator__pb2.RuleID.SerializeToString,
             ),
     }
@@ -165,6 +181,23 @@ class TemplateSimulatorService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def createQuodOCRRule(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/th2.simulator.template.TemplateSimulatorService/createQuodOCRRule',
+            quod__simulator__pb2.TemplateQuodOCRRule.SerializeToString,
+            simulator__pb2.RuleID.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def createTemplateQuodDemoRule(request,
             target,
             options=(),
@@ -182,7 +215,7 @@ class TemplateSimulatorService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def createQuodOCRRule(request,
+    def createQuodMDRRule(request,
             target,
             options=(),
             channel_credentials=None,
@@ -192,8 +225,8 @@ class TemplateSimulatorService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/th2.simulator.template.TemplateSimulatorService/createQuodOCRRule',
-            quod__simulator__pb2.TemplateQuodOCRRule.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/th2.simulator.template.TemplateSimulatorService/createQuodMDRRule',
+            quod__simulator__pb2.TemplateQuodMDRRule.SerializeToString,
             simulator__pb2.RuleID.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
