@@ -59,7 +59,9 @@ def message_to_grpc(message_type, content):
         )
 
 
-def filter_to_grpc(message_type, content, keys=None):
+def filter_to_grpc(message_type: str, content: dict, keys=None) -> infra_pb2.MessageFilter:
+    if keys is None:
+        keys = []
     content = copy.deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
@@ -91,14 +93,16 @@ def filter_to_grpc(message_type, content, keys=None):
     return infra_pb2.MessageFilter(messageType=message_type, fields=content)
 
 
-def convert_to_request(description, connectivity, event_id, message, key_fields=None):
+def convert_to_request(description, connectivity, event_id, message, exp_msg_types, key_fields=None):
     connectivity = infra_pb2.ConnectionID(session_alias=connectivity)
     return act_fix_pb2.PlaceMessageRequest(
         message=message,
         connection_id=connectivity,
         parent_event_id=event_id,
         description=description,
-        key_fields=key_fields
+        expected_message_types=exp_msg_types,
+        expected_key_fields=key_fields,
+        timeout=3000
     )
 
 
