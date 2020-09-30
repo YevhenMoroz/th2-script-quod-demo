@@ -20,6 +20,10 @@ def execute(case_name, report_id, case_params):
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
+    # Create sub-report for case
+    event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
+    event_store.StoreEvent(event_request_1)
+
     pre_filter = verifier_pb2.PreFilter(
         fields={
             'header': infra_pb2.ValueFilter(
@@ -93,8 +97,6 @@ def execute(case_name, report_id, case_params):
     checkrule_1 = bca.create_check_rule("Receive Execution Report ord1 Pending", er1, checkpoint_1,
                                         case_params['TraderConnectivity'], case_params['case_id'])
     verifier.submitCheckRule(checkrule_1)
-    # bca.verify_response(verifier, "Receive Execution Report Pending", er1, order_1, case_params['TraderConnectivity'],
-    #                     case_params['case_id'])
 
     execution_report_O1_new_params = copy.deepcopy(execution_report_O1_pending_params)
     execution_report_O1_new_params['OrdStatus'] = execution_report_O1_new_params['ExecType'] = '0'
@@ -102,8 +104,12 @@ def execute(case_name, report_id, case_params):
         execution_report_O1_pending_params['OrderID'], "New", "New")
     )
     er2 = bca.filter_to_grpc("ExecutionReport", execution_report_O1_new_params, ['ClOrdID', 'OrdStatus'])
-    bca.verify_response(verifier, "Receive Execution Report ord1 New", er2, order_1, case_params['TraderConnectivity'],
-                        case_params['case_id'])
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            "Receive Execution Report ord1 New", er2, order_1.checkpoint_id, case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
 
     # Send order to SELL side
     O2_params = {
@@ -141,8 +147,12 @@ def execute(case_name, report_id, case_params):
         execution_report_O2_pending_params['OrderID'], "Pending", "Pending")
     )
     er3 = bca.filter_to_grpc("ExecutionReport", execution_report_O2_pending_params, ['ClOrdID', 'OrdStatus'])
-    bca.verify_response(verifier, "Receive Execution Report ord2 Pending", er3, order_2, case_params['TraderConnectivity'],
-                        case_params['case_id'])
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            "Receive Execution Report ord2 Pending", er3, order_2.checkpoint_id, case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
 
     execution_report_O2_new_params = copy.deepcopy(execution_report_O1_new_params)
     execution_report_O2_new_params['ClOrdID'] = O2_params['ClOrdID']
@@ -155,8 +165,12 @@ def execute(case_name, report_id, case_params):
         execution_report_O2_pending_params['OrderID'], "New", "New")
     )
     er4 = bca.filter_to_grpc("ExecutionReport", execution_report_O2_new_params, ['ClOrdID', 'OrdStatus'])
-    bca.verify_response(verifier, "Receive Execution Report ord2 New", er4, order_2, case_params['TraderConnectivity'],
-                        case_params['case_id'])
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            "Receive Execution Report ord2 New", er4, order_2.checkpoint_id, case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
 
     execution_report_O1_partfilled_params = copy.deepcopy(execution_report_O1_new_params)
     execution_report_O1_partfilled_params['CumQty'] = O2_params['OrderQty']
@@ -171,8 +185,12 @@ def execute(case_name, report_id, case_params):
         execution_report_O1_partfilled_params['OrderID'], "Trade", "Filled")
     )
     er5 = bca.filter_to_grpc("ExecutionReport", execution_report_O1_partfilled_params, ['ClOrdID', 'OrdStatus'])
-    bca.verify_response(verifier, "Receive Execution Report ord1 Part Filled", er5, order_2,
-                        case_params['TraderConnectivity'], case_params['case_id'])
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            "Receive Execution Report ord1 Part Filled", er5, order_2.checkpoint_id,
+            case_params['TraderConnectivity'], case_params['case_id']
+        )
+    )
 
     execution_report_O2_fullfilled_params = copy.deepcopy(execution_report_O1_partfilled_params)
     execution_report_O2_fullfilled_params['ClOrdID'] = O2_params['ClOrdID']
@@ -186,8 +204,12 @@ def execute(case_name, report_id, case_params):
         execution_report_O2_fullfilled_params['OrderID'], "Trade", "Filled")
     )
     er6 = bca.filter_to_grpc("ExecutionReport", execution_report_O2_fullfilled_params, ['ClOrdID', 'OrdStatus'])
-    bca.verify_response(verifier, "Receive Execution Report ord2 Filled", er6, order_2, case_params['TraderConnectivity'],
-                        case_params['case_id'])
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            "Receive Execution Report ord2 Filled", er6, order_2.checkpoint_id, case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
 
     O1_cancel_params = {
         'OrigClOrdID': O1_params['ClOrdID'],
@@ -233,29 +255,26 @@ def execute(case_name, report_id, case_params):
     logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
 
     er7 = bca.filter_to_grpc("ExecutionReport", execution_report_O1_cancel_params, ['ClOrdID', 'OrdStatus'])
-
-    bca.verify_response(
-        verifier,
-        'Receive Execution Report ord1 Cancelled',
-        er7,
-        cancel_order,
-        case_params['TraderConnectivity'],
-        case_params['case_id']
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Receive Execution Report ord1 Cancelled',
+            er7,
+            cancel_order.checkpoint_id,
+            case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
     )
 
     message_filters = [er1, er2, er3, er4, er5, er6, er7]
     logger.debug("Verify a sequence of Execution Report messages")
-    bca.verify_sequence(verifier, "Receive Execution Reports", pre_filter, message_filters, checkpoint_1,
-                        case_params['TraderConnectivity'], case_params['case_id'], True)
+    verifier.submitCheckSequenceRule(
+        bca.create_check_sequence_rule(
+            "Receive Execution Reports", pre_filter, message_filters, checkpoint_1,
+            case_params['TraderConnectivity'], case_params['case_id']
+        )
+    )
     
     if timeouts:
         time.sleep(5)
-        
-    # Create sub-report for case
-    event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
-    event_store.StoreEvent(event_request_1)
-    # bca.create_event(event_store, case_name, case_params['case_id'], report_id)
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
-    # print("Case " + case_name + " is executed in " + str(
-    #     round(datetime.now().timestamp() - seconds)) + " sec.")

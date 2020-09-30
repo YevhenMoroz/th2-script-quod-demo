@@ -1,7 +1,5 @@
-from __future__ import print_function
-import sys
+from sys import stdout
 import logging
-import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
@@ -14,7 +12,7 @@ from ConfigParser import ParseConfig
 from schemas import *
 
 
-logging.basicConfig(stream=sys.stdout)
+logging.basicConfig(stream=stdout)
 logger = logging.getLogger('demo')
 logger.setLevel(logging.INFO)
 timeouts = False
@@ -25,6 +23,7 @@ components = ParseConfig()
 logger.debug("Connecting to TH2 components...")
 channels = dict()
 channels['act'] = grpc.insecure_channel(components['ACT'])
+# channels['act_1'] = grpc.insecure_channel(components['ACT_1'])
 channels['event-store'] = grpc.insecure_channel(components['EVENTSTORAGE'])
 channels['verifier'] = grpc.insecure_channel(components['VERIFIER'])
 channels['simulator'] = grpc.insecure_channel(components['SIMULATOR'])
@@ -236,11 +235,11 @@ def test_run():
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
-    QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
+    # QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
     # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
-    # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
+    simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # QAP_1552_FX.execute('QAP_1552', report_id, test_cases['QAP_1552'])
 
     # stop rule
