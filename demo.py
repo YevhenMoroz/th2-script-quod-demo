@@ -210,7 +210,7 @@ def test_run():
             'TargetCompID': 'QUOD3',
             'Instrument': instrument_2
          },
-        'QAP_1552': {
+        'RFQ_example': {
             **channels,
             'case_id': bca.create_event_id(),
             'TraderConnectivity': 'gtwquod5-fx',
@@ -239,8 +239,8 @@ def test_run():
     # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
-    simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
-    # QAP_1552_FX.execute('QAP_1552', report_id, test_cases['QAP_1552'])
+    # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
+    RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])

@@ -25,20 +25,29 @@ def execute(case_name, report_id, case_params):
 
     }
     instrument_fx = {
-        'Symbol': 'EUR/USD'
+        'Symbol': 'EUR/TWD',
+        'InstrSymbol': 'EUR/TWD',
+        'SecurityType': 'FXFWD',
         # 'SecurityID': 'SE0000818569',
         # 'SecurityIDSource': '4',
-        # 'SecurityExchange': 'XSTO'
+        # 'SecurityExchange': 'HSBC'
     }
 
 
     specific_order_params = {   # There are reusable and specific for submition parameters
         **reusable_order_params,
         'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{'Side': '1', 'Currency': 'EUR', 'QuoteType': '1',
-                                            'OrderQty': '6000000', 'SettlDate': '20200817', 'OrdType': 'D',
-                                            'ExpireTime': '20200813-10:04:48.498',
+        'NoRelatedSymbols': [{
+                                            'Side': '1',
+                                            'Currency': 'EUR',
+                                            'QuoteType': '1',
+                                            'OrderQty': '10000000',
+                                            'SettlDate': '20201009',
+                                            'OrdType': 'D',
+                                            'ExpireTime': '20201010-16:04:48.498',
                                             'TransactTime': (datetime.utcnow().isoformat()),
+                                            'Account': 'MMCLIENT1',
+                                            'SettlType': 'W1',
                                             'Instrument': instrument_fx}]
     }
     logger.debug("Send new order with ClOrdID = {}".format(specific_order_params['QuoteReqID']))
