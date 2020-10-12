@@ -20,16 +20,16 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 # OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child')))
 
 MDR_paris = simulator.createQuodMDRRule(request=quod_simulator_pb2.TemplateQuodMDRRule(
-    connection_id=infra_pb2.ConnectionID(session_alias="fix-feed-eq-paris"),
+    connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris"),
     sender="QUOD_UTP",
     md_entry_size={10000: 10000},
     md_entry_px={110: 100}))
 
-MDR_trqx = simulator.createQuodMDRRule(request=quod_simulator_pb2.TemplateQuodMDRRule(
-    connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx"),
-    sender="QUOD_UTP",
-    md_entry_size={10000: 10000},
-    md_entry_px={110: 100}))
+# MDR_trqx = simulator.createQuodMDRRule(request=quod_simulator_pb2.TemplateQuodMDRRule(
+#     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx"),
+#     sender="QUOD_UTP",
+#     md_entry_size={10000: 10000},
+#     md_entry_px={110: 100}))
 
 # stop rule
 core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
