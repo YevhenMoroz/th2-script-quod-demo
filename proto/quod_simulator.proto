@@ -29,6 +29,8 @@ message TemplateQuodDemoRule {
 message TemplateQuodMDRRule {
     th2.ConnectionID connection_id = 1;
     string sender = 2;
+    map<int32, int32>  md_entry_size = 3;
+    map<int32, int32> md_entry_px = 4;
 }
 
 service TemplateSimulatorService {

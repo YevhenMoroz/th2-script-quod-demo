@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n(com.exactpro.th2.simulator.template.grpcP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14quod_simulator.proto\x12\x16th2.simulator.template\x1a\x0fsimulator.proto\x1a\x0binfra.proto\"\xbf\x01\n\x11TemplateFixCreate\x12\x45\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x35.th2.simulator.template.TemplateFixCreate.FieldsEntry\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x1a\x39\n\x0b\x46ieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x19\n\x05value\x18\x02 \x01(\x0b\x32\n.th2.Value:\x02\x38\x01\"?\n\x13TemplateQuodNOSRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"?\n\x13TemplateQuodOCRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"j\n\x14TemplateQuodDemoRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x13\n\x0b\x64\x65mo_field1\x18\x02 \x01(\x05\x12\x13\n\x0b\x64\x65mo_field2\x18\x03 \x01(\t\"O\n\x13TemplateQuodMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06sender\x18\x02 \x01(\t2\x86\x04\n\x18TemplateSimulatorService\x12J\n\x0e\x63reateRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12P\n\x14\x63reateKotlinRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodNOSRule\x12+.th2.simulator.template.TemplateQuodNOSRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodOCRRule\x12+.th2.simulator.template.TemplateQuodOCRRule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x1a\x63reateTemplateQuodDemoRule\x12,.th2.simulator.template.TemplateQuodDemoRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodMDRRule\x12+.th2.simulator.template.TemplateQuodMDRRule\x1a\x0b.th2.RuleID\"\x00\x42,\n(com.exactpro.th2.simulator.template.grpcP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x14quod_simulator.proto\x12\x16th2.simulator.template\x1a\x0fsimulator.proto\x1a\x0binfra.proto\"\xbf\x01\n\x11TemplateFixCreate\x12\x45\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x35.th2.simulator.template.TemplateFixCreate.FieldsEntry\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x1a\x39\n\x0b\x46ieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x19\n\x05value\x18\x02 \x01(\x0b\x32\n.th2.Value:\x02\x38\x01\"?\n\x13TemplateQuodNOSRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"?\n\x13TemplateQuodOCRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"j\n\x14TemplateQuodDemoRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x13\n\x0b\x64\x65mo_field1\x18\x02 \x01(\x05\x12\x13\n\x0b\x64\x65mo_field2\x18\x03 \x01(\t\"\xdb\x02\n\x13TemplateQuodMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12S\n\rmd_entry_size\x18\x03 \x03(\x0b\x32<.th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry\x12O\n\x0bmd_entry_px\x18\x04 \x03(\x0b\x32:.th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry\x1a\x32\n\x10MdEntrySizeEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eMdEntryPxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\x86\x04\n\x18TemplateSimulatorService\x12J\n\x0e\x63reateRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12P\n\x14\x63reateKotlinRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodNOSRule\x12+.th2.simulator.template.TemplateQuodNOSRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodOCRRule\x12+.th2.simulator.template.TemplateQuodOCRRule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x1a\x63reateTemplateQuodDemoRule\x12,.th2.simulator.template.TemplateQuodDemoRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodMDRRule\x12+.th2.simulator.template.TemplateQuodMDRRule\x1a\x0b.th2.RuleID\"\x00\x42,\n(com.exactpro.th2.simulator.template.grpcP\x01\x62\x06proto3'
   ,
   dependencies=[simulator__pb2.DESCRIPTOR,infra__pb2.DESCRIPTOR,])
 
@@ -215,6 +215,82 @@ _TEMPLATEQUODDEMORULE = _descriptor.Descriptor(
 )
 
 
+_TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY = _descriptor.Descriptor(
+  name='MdEntrySizeEntry',
+  full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry.key', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=758,
+  serialized_end=808,
+)
+
+_TEMPLATEQUODMDRRULE_MDENTRYPXENTRY = _descriptor.Descriptor(
+  name='MdEntryPxEntry',
+  full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry.key', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=810,
+  serialized_end=858,
+)
+
 _TEMPLATEQUODMDRRULE = _descriptor.Descriptor(
   name='TemplateQuodMDRRule',
   full_name='th2.simulator.template.TemplateQuodMDRRule',
@@ -237,10 +313,24 @@ _TEMPLATEQUODMDRRULE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='md_entry_size', full_name='th2.simulator.template.TemplateQuodMDRRule.md_entry_size', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='md_entry_px', full_name='th2.simulator.template.TemplateQuodMDRRule.md_entry_px', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY, _TEMPLATEQUODMDRRULE_MDENTRYPXENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -249,8 +339,8 @@ _TEMPLATEQUODMDRRULE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=510,
-  serialized_end=589,
+  serialized_start=511,
+  serialized_end=858,
 )
 
 _TEMPLATEFIXCREATE_FIELDSENTRY.fields_by_name['value'].message_type = infra__pb2._VALUE
@@ -260,7 +350,11 @@ _TEMPLATEFIXCREATE.fields_by_name['connection_id'].message_type = infra__pb2._CO
 _TEMPLATEQUODNOSRULE.fields_by_name['connection_id'].message_type = infra__pb2._CONNECTIONID
 _TEMPLATEQUODOCRRULE.fields_by_name['connection_id'].message_type = infra__pb2._CONNECTIONID
 _TEMPLATEQUODDEMORULE.fields_by_name['connection_id'].message_type = infra__pb2._CONNECTIONID
+_TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY.containing_type = _TEMPLATEQUODMDRRULE
+_TEMPLATEQUODMDRRULE_MDENTRYPXENTRY.containing_type = _TEMPLATEQUODMDRRULE
 _TEMPLATEQUODMDRRULE.fields_by_name['connection_id'].message_type = infra__pb2._CONNECTIONID
+_TEMPLATEQUODMDRRULE.fields_by_name['md_entry_size'].message_type = _TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY
+_TEMPLATEQUODMDRRULE.fields_by_name['md_entry_px'].message_type = _TEMPLATEQUODMDRRULE_MDENTRYPXENTRY
 DESCRIPTOR.message_types_by_name['TemplateFixCreate'] = _TEMPLATEFIXCREATE
 DESCRIPTOR.message_types_by_name['TemplateQuodNOSRule'] = _TEMPLATEQUODNOSRULE
 DESCRIPTOR.message_types_by_name['TemplateQuodOCRRule'] = _TEMPLATEQUODOCRRULE
@@ -305,15 +399,33 @@ TemplateQuodDemoRule = _reflection.GeneratedProtocolMessageType('TemplateQuodDem
 _sym_db.RegisterMessage(TemplateQuodDemoRule)
 
 TemplateQuodMDRRule = _reflection.GeneratedProtocolMessageType('TemplateQuodMDRRule', (_message.Message,), {
+
+  'MdEntrySizeEntry' : _reflection.GeneratedProtocolMessageType('MdEntrySizeEntry', (_message.Message,), {
+    'DESCRIPTOR' : _TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY,
+    '__module__' : 'quod_simulator_pb2'
+    # @@protoc_insertion_point(class_scope:th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry)
+    })
+  ,
+
+  'MdEntryPxEntry' : _reflection.GeneratedProtocolMessageType('MdEntryPxEntry', (_message.Message,), {
+    'DESCRIPTOR' : _TEMPLATEQUODMDRRULE_MDENTRYPXENTRY,
+    '__module__' : 'quod_simulator_pb2'
+    # @@protoc_insertion_point(class_scope:th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry)
+    })
+  ,
   'DESCRIPTOR' : _TEMPLATEQUODMDRRULE,
   '__module__' : 'quod_simulator_pb2'
   # @@protoc_insertion_point(class_scope:th2.simulator.template.TemplateQuodMDRRule)
   })
 _sym_db.RegisterMessage(TemplateQuodMDRRule)
+_sym_db.RegisterMessage(TemplateQuodMDRRule.MdEntrySizeEntry)
+_sym_db.RegisterMessage(TemplateQuodMDRRule.MdEntryPxEntry)
 
 
 DESCRIPTOR._options = None
 _TEMPLATEFIXCREATE_FIELDSENTRY._options = None
+_TEMPLATEQUODMDRRULE_MDENTRYSIZEENTRY._options = None
+_TEMPLATEQUODMDRRULE_MDENTRYPXENTRY._options = None
 
 _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   name='TemplateSimulatorService',
@@ -322,8 +434,8 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=592,
-  serialized_end=1110,
+  serialized_start=861,
+  serialized_end=1379,
   methods=[
   _descriptor.MethodDescriptor(
     name='createRule_FIX',
