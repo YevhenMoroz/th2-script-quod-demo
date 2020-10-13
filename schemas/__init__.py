@@ -6,5 +6,6 @@ __all__ = (
     'amend_and_trade',
     'QAP_2462_SIM',
     'simple_trade2',
-    'RFQ_example'
+    'RFQ_example',
+    'QAP_2409'
 )

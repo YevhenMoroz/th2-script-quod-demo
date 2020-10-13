@@ -5,7 +5,10 @@ from custom import basic_custom_actions as bca
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.quod_simulator_pb2 import TemplateQuodDemoRule, TemplateQuodNOSRule, TemplateQuodOCRRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodDemoRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
 from grpc_modules.infra_pb2 import ConnectionID
 import grpc
 from ConfigParser import ParseConfig
@@ -23,7 +26,7 @@ components = ParseConfig()
 logger.debug("Connecting to TH2 components...")
 channels = dict()
 channels['act'] = grpc.insecure_channel(components['ACT'])
-# channels['act_1'] = grpc.insecure_channel(components['ACT_1'])
+channels['act_1'] = grpc.insecure_channel(components['ACT_1'])
 channels['event-store'] = grpc.insecure_channel(components['EVENTSTORAGE'])
 channels['verifier'] = grpc.insecure_channel(components['VERIFIER'])
 channels['simulator'] = grpc.insecure_channel(components['SIMULATOR'])
@@ -59,6 +62,19 @@ def test_run():
     instrument_3 = {
         'Symbol': 'FR0010263202_EUR',
         'SecurityID': 'FR0010263202',
+        'SecurityIDSource': 4,
+        'SecurityExchange': 'XPAR'
+    }
+
+    instrument_4 = {
+        'Symbol': 'FR0000125007',
+        'SecurityID': 'FR0000125007',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
+    instrument_5 = {
+        'Symbol': 'FR0010542647',
+        'SecurityID': 'FR0010542647',
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
     }
@@ -217,21 +233,40 @@ def test_run():
             'Account': 'MMCLIENT1',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
+        },
+        'QAP_2409': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'TraderConnectivity2': 'kch-qa-ret-child',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD3',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '2500',
+            'OrdType': '2',
+            'Price': '40',
+            'TimeInForce': '0',
+            'Instrument': instrument_5
         }
     }
 
     # start rule
     simulator = TemplateSimulatorServiceStub(channels['simulator'])
-    DemoRule = simulator.createTemplateQuodDemoRule(
-        request=TemplateQuodDemoRule(
-            connection_id=ConnectionID(session_alias='kch-qa-ret-child'),
-            demo_field1=123,
-            demo_field2='KCH_QA_RET_CHILD'
-        )
-    )
+    NOS = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias='kch-qa-ret-child')
+    ))
     OCR = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='kch-qa-ret-child')))
-    print(f"Start rules with id's: {DemoRule}, {OCR}")
+    # MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
+    #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
+    #     sender="QUOD_UTP",
+    #     md_entry_size={10000: 10000},
+    #     md_entry_px={40: 30}))
+    print(f"Start rules with id's: {NOS}, {OCR}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
@@ -240,12 +275,14 @@ def test_run():
     # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
-    RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
+    # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
+    QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
-    core.removeRule(DemoRule)
+    core.removeRule(NOS)
     core.removeRule(OCR)
+    # core.removeRule(MDR_paris)
 
     for channel_name in channels.keys():
         channels[channel_name].close()

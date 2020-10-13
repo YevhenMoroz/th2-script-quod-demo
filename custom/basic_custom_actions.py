@@ -124,10 +124,25 @@ def convert_to_request(description: str, connectivity: str, event_id: EventID, m
         connection_id=connectivity,
         parent_event_id=event_id,
         description=description,
-        # expected_message_types=exp_msg_types,
-        # expected_key_fields=key_fields,
         key_fields=key_fields
-        # timeout=timeout
+    )
+
+
+def convert_to_request_upd(description: str, connectivity: str, event_id: EventID, message: dict,
+                           exp_msg_types=None, exp_key_fields=None, timeout=3000) -> act_fix_pb2.PlaceMessageRequest:
+    if exp_msg_types is None:
+        exp_msg_types = []
+    if exp_key_fields is None:
+        key_fields = []
+    connectivity = ConnectionID(session_alias=connectivity)
+    return act_fix_pb2.PlaceMessageRequest(
+        message=message,
+        connection_id=connectivity,
+        parent_event_id=event_id,
+        description=description,
+        expected_message_types=exp_msg_types,
+        expected_key_fields=exp_key_fields,
+        timeout=timeout
     )
 
 
@@ -145,7 +160,7 @@ def create_check_rule(description: str, message_filter: MessageFilter, checkpoin
 
 
 def create_check_sequence_rule(description: str, prefilter: PreFilter, msg_filters: list, checkpoint, connectivity: str,
-                               event_id: EventID, check_order=True, timeout=3000):
+                               event_id: EventID, check_order=True, timeout=3000, direction=Direction.Value("FIRST")):
     return CheckSequenceRuleRequest(
         connectivity_id=ConnectionID(session_alias=connectivity),
         pre_filter=prefilter,
@@ -154,7 +169,8 @@ def create_check_sequence_rule(description: str, prefilter: PreFilter, msg_filte
         timeout=timeout,
         parent_event_id=event_id,
         description=description,
-        check_order=check_order
+        check_order=check_order,
+        direction=direction
     )
 
 
