@@ -1,5 +1,6 @@
 import logging
 from copy import deepcopy
+from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules.act_fix_pb2_grpc import ActStub
@@ -33,7 +34,7 @@ def execute(case_name, report_id, case_params):
     bbo_params = {
         'Account': case_params['Account'],
         'HandlInst': 2,
-        # 'OrderQty': 1000,
+        'OrderQty': 1000,
         'TimeInForce': case_params['TimeInForce'],
         'OrdType': case_params['OrdType'],
         'Instrument': case_params['Instrument'],
@@ -47,8 +48,8 @@ def execute(case_name, report_id, case_params):
         **bbo_params,
         'ClOrdID': bca.client_orderid(9),
         'Side': '2',
-        'Price': 36,
-        'OrderQty': 1000,
+        'Price': 40,
+        # 'OrderQty': 1000,
         'ExDestination': 'TRQX',
         'TransactTime': datetime.utcnow().isoformat()
     }
@@ -98,8 +99,8 @@ def execute(case_name, report_id, case_params):
         **bbo_params,
         'ClOrdID': bca.client_orderid(9),
         'Side': '1',
-        'Price': 34,
-        'OrderQty': 1000,
+        'Price': 30,
+        # 'OrderQty': 1000,
         'ExDestination': 'TRQX',
         'TransactTime': datetime.utcnow().isoformat()
     }
@@ -150,8 +151,8 @@ def execute(case_name, report_id, case_params):
         **bbo_params,
         'ClOrdID': bca.client_orderid(9),
         'Side': '2',
-        'Price': 37,
-        'OrderQty': 2000,
+        'Price': 40,
+        # 'OrderQty': 2000,
         'ExDestination': 'XPAR',
         'TransactTime': datetime.utcnow().isoformat()
     }
@@ -201,8 +202,8 @@ def execute(case_name, report_id, case_params):
         **bbo_params,
         'ClOrdID': bca.client_orderid(9),
         'Side': '1',
-        'Price': 33,
-        'OrderQty': 1000,
+        'Price': 30,
+        # 'OrderQty': 1000,
         'ExDestination': 'XPAR',
         'TransactTime': datetime.utcnow().isoformat()
     }
@@ -309,13 +310,13 @@ def execute(case_name, report_id, case_params):
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )
     )
-    newordersingle_params = {
+    newordersingle_1_params = {
         'Account': case_params['Account'],
         'HandlInst': '1',
         'Side': case_params['Side'],
-        'OrderQty': 1500,
+        'OrderQty': new_order_bbo1_params['OrderQty'],
         'TimeInForce': '3',
-        'Price': 37,
+        'Price': new_order_bbo1_params['Price'],
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
         'Currency': 'EUR',
@@ -331,9 +332,39 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             'Transmitted NewOrderSingle',
-            bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
+            bca.filter_to_grpc('NewOrderSingle', newordersingle_1_params),
             checkpoint_1,
             case_params['TraderConnectivity2'],
+            case_params['case_id']
+        )
+    )
+
+    newordersingle_2_params = {
+        'Account': case_params['Account2'],
+        'HandlInst': '1',
+        'Side': case_params['Side'],
+        'OrderQty': int(sor_order_params['OrderQty']) - int(new_order_bbo1_params['OrderQty']),
+        'TimeInForce': '3',
+        'Price': new_order_bbo3_params['Price'],
+        'OrdType': case_params['OrdType'],
+        'OrderCapacity': 'A',
+        'Currency': 'EUR',
+        'ClOrdID': '*',
+        'ChildOrderID': '*',
+        'TransactTime': '*',
+        'ExDestination': 'TRQX',
+        'Instrument': {
+            'SecurityID': case_params['Instrument']['SecurityID'],
+            'SecurityIDSource': case_params['Instrument']['SecurityIDSource']
+        }
+    }
+
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Transmitted NewOrderSingle',
+            bca.filter_to_grpc('NewOrderSingle', newordersingle_2_params),
+            checkpoint_1,
+            case_params['TraderConnectivity3'],
             case_params['case_id']
         )
     )
@@ -341,13 +372,13 @@ def execute(case_name, report_id, case_params):
     pre_filter_sim_params = {
         'header': {
             'MsgType': ('0', "NOT_EQUAL")
-            # 'SenderCompID': case_params['TargetCompID2'],
-            # 'TargetCompID': case_params['SenderCompID2']
+            # 'SenderCompID': case_params['SenderCompID2'],
+            # 'TargetCompID': case_params['TargetCompID2']
         }
     }
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
-        bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
+        bca.filter_to_grpc('NewOrderSingle', newordersingle_1_params),
     ]
     verifier.submitCheckSequenceRule(
         bca.create_check_sequence_rule(
@@ -357,11 +388,29 @@ def execute(case_name, report_id, case_params):
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity2'],
             event_id=case_params['case_id'],
-            timeout=5000
+            timeout=2000
 
         )
     )
 
+    message_filters_sim_2 = [
+        bca.filter_to_grpc('NewOrderSingle', newordersingle_2_params),
+    ]
+
+    verifier.submitCheckSequenceRule(
+        bca.create_check_sequence_rule(
+            description="Check buy side messages",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_sim_2,
+            checkpoint=checkpoint_1,
+            connectivity=case_params['TraderConnectivity3'],
+            event_id=case_params['case_id'],
+            timeout=2000
+
+        )
+    )
+
+    sleep(3)
     # Cancel all rest orders
 
     cancel_order_1_params = {
@@ -437,5 +486,43 @@ def execute(case_name, report_id, case_params):
             case_params['case_id']
         )
     )
+
+    cancel_order_3_params = {
+        'OrigClOrdID': new_order_bbo3_params['ClOrdID'],
+        'ClOrdID': bca.client_orderid(9),
+        'Instrument': new_order_bbo3_params['Instrument'],
+        'Side': new_order_bbo3_params['Side'],
+        'TransactTime': datetime.utcnow().isoformat(),
+        'OrderQty': new_order_bbo3_params['OrderQty'],
+        'Text': 'Cancel order'
+    }
+    cancel_order_3 = act.placeOrderCancelFIX(
+        bca.convert_to_request(
+            'Send CancelOrderRequest',
+            case_params['TraderConnectivity'],
+            case_params['case_id'],
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_3_params),
+        ))
+
+    checkpoint_cancel_3 = cancel_order_3.checkpoint_id
+    execution_report_cancelled_3_params = {
+        'ClOrdID': cancel_order_3_params['ClOrdID'],
+        'OrderID': '*',
+        'ExecID': '*',
+        'OrdStatus': '4',
+        'ExecType': '4',
+        'LeavesQty': '0',
+        'Instrument': case_params['Instrument']
+    }
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Receive ExecutionReport with OrdStatus = Cancelled',
+            bca.filter_to_grpc('ExecutionReport', execution_report_cancelled_3_params, ["ClOrdID", "OrdStatus"]),
+            checkpoint_cancel_3,
+            case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
+
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))

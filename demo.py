@@ -238,17 +238,19 @@ def test_run():
             **channels,
             'case_id': bca.create_event_id(),
             'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'kch-qa-ret-child',
+            'TraderConnectivity2': 'fix-bs-eq-paris',
+            'TraderConnectivity3': 'fix-bs-eq-trqx',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD3',
             'SenderCompID2': 'KCH_QA_RET_CHILD',
             'TargetCompID2': 'QUOD_QA_RET_CHILD',
             'Account': 'KEPLER',
+            'Account2': 'TRQX_KEPLER',
             'HandlInst': '2',
             'Side': '1',
-            'OrderQty': '2500',
+            'OrderQty': '1100',
             'OrdType': '2',
-            'Price': '40',
+            'Price': '45',
             'TimeInForce': '0',
             'Instrument': instrument_5
         }
@@ -256,17 +258,27 @@ def test_run():
 
     # start rule
     simulator = TemplateSimulatorServiceStub(channels['simulator'])
-    NOS = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='kch-qa-ret-child')
+    NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
     ))
-    OCR = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-        connection_id=ConnectionID(session_alias='kch-qa-ret-child')))
-    # MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
-    #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
-    #     sender="QUOD_UTP",
-    #     md_entry_size={10000: 10000},
-    #     md_entry_px={40: 30}))
-    print(f"Start rules with id's: {NOS}, {OCR}")
+    OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
+    NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
+    ))
+    OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+    MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
+        connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
+        sender="QUOD_UTP",
+        md_entry_size={1000: 1000},
+        md_entry_px={40: 30}))
+    MDR_turquise = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
+        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx"),
+        sender="QUOD_UTP",
+        md_entry_size={1000: 1000},
+        md_entry_px={40: 30}))
+    print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
@@ -280,9 +292,12 @@ def test_run():
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
-    core.removeRule(NOS)
-    core.removeRule(OCR)
-    # core.removeRule(MDR_paris)
+    core.removeRule(NOS_1)
+    core.removeRule(OCR_1)
+    core.removeRule(NOS_2)
+    core.removeRule(OCR_2)
+    core.removeRule(MDR_paris)
+    core.removeRule(MDR_turquise)
 
     for channel_name in channels.keys():
         channels[channel_name].close()
