@@ -23,6 +23,10 @@ from grpc_modules.verifier_pb2 import PreFilter
 from grpc_modules.verifier_pb2 import CheckRuleRequest
 from grpc_modules.verifier_pb2 import CheckSequenceRuleRequest
 
+from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
+
 
 # Debug output
 PrintMessages = False
@@ -216,3 +220,24 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
         elif isinstance(content[tag], ValueFilter):
             pass
     return PreFilter(fields=content) if _nesting_level == 0 else MessageFilter(fields=content)
+
+
+def create_sim_rule_nos(*args, **kwargs) -> TemplateQuodNOSRule:
+    return TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias'])
+    )
+
+
+def create_sim_rule_ocr(*args, **kwargs) -> TemplateQuodOCRRule:
+    return TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias'])
+    )
+
+
+def create_sim_rule_mdr(*args, **kwargs) -> TemplateQuodMDRRule:
+    return TemplateQuodMDRRule(
+        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias']),
+        sender=args[1] if len(args) > 1 else kwargs['sender'],
+        md_entry_size=args[2] if len(args) > 2 else kwargs['md_entry_size'],
+        md_entry_px=args[3] if len(args) > 3 else kwargs['md_entry_px']
+    )
