@@ -24,7 +24,14 @@ message TemplateQuodSingleExecRule {
     th2.ConnectionID connection_id = 1;
     repeated TemplateNoPartyIDs no_party_ids = 2;
     int32 cum_qty = 3;
+    string mask_as_connectivity = 4;
+//    template Map<SellSize, BuySize>
+    map<int32, int32>  md_entry_size = 5;
+//    template Map<SellPx, BuyPx>
+    map<int32, int32> md_entry_px = 6;
+    string symbol = 7;
 }
+
 message TemplateNoPartyIDs {
     string party_id = 2;
     string party_id_source = 3;
