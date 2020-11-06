@@ -5,10 +5,11 @@ from custom import basic_custom_actions as bca
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.quod_simulator_pb2 import TemplateQuodDemoRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
+from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule
+from grpc_modules.quod_simulator_pb2 import TemplateNoPartyIDs
 from grpc_modules.infra_pb2 import ConnectionID
 import grpc
 from ConfigParser import ParseConfig
@@ -258,14 +259,14 @@ def test_run():
 
     # start rule
     simulator = TemplateSimulatorServiceStub(channels['simulator'])
-    NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
-    ))
+    # NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
+    # ))
     OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-    NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
-    ))
+    # NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
+    # ))
     OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
     MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
@@ -278,7 +279,40 @@ def test_run():
         sender="QUOD_UTP",
         md_entry_size={1000: 1000},
         md_entry_px={40: 30}))
-    print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
+
+    SingleExecParis = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
+        connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
+        no_party_ids=[
+            TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
+            TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
+            TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
+        ],
+        cum_qty=1000,
+        mask_as_connectivity="fix-fh-eq-paris",
+        md_entry_size={0: 1000},
+        md_entry_px={0: 30},
+        symbol="1062"
+    ))
+
+    SingleExecTrqx = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
+        connection_id=ConnectionID(session_alias="fix-bs-eq-trqx"),
+        no_party_ids=[
+            TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
+            TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
+            TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
+        ],
+        cum_qty=100,
+        mask_as_connectivity="fix-fh-eq-trqx",
+        md_entry_size={900: 1000},
+        md_entry_px={40: 30},
+        symbol="3503"
+    ))
+    # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
+
+    # print(f"Start rules with id's: \n {OCR_1}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
+
+    print(
+        f"Start rules with id's: \n {OCR_1}, {OCR_2}, {MDR_paris}, {MDR_turquise}, {SingleExecParis}, {SingleExecTrqx}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
@@ -292,12 +326,14 @@ def test_run():
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
-    core.removeRule(NOS_1)
+    # core.removeRule(NOS_1)
     core.removeRule(OCR_1)
-    core.removeRule(NOS_2)
+    # core.removeRule(NOS_2)
     core.removeRule(OCR_2)
     core.removeRule(MDR_paris)
     core.removeRule(MDR_turquise)
+    core.removeRule(SingleExecParis)
+    core.removeRule(SingleExecTrqx)
 
     for channel_name in channels.keys():
         channels[channel_name].close()
