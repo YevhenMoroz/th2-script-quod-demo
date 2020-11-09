@@ -127,7 +127,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None) -> MessageFilter
             content[tag] = ValueFilter(
                 message_filter=MessageFilter(
                     fields={
-                        tag: ValueFilter(
+                        'NoPartyIDs': ValueFilter(
                             list_filter=ListValueFilter(
                                 values=content[tag]
                             )

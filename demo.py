@@ -5,7 +5,6 @@ from custom import basic_custom_actions as bca
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.quod_simulator_pb2 import TemplateQuodDemoRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
@@ -253,6 +252,22 @@ def test_run():
             'Price': '45',
             'TimeInForce': '0',
             'Instrument': instrument_5
+        },
+        'QAP_2684': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'SenderCompID': 'KCH_UAT_RET_PAR',
+            'TargetCompID': 'QUOD_UAT_RET_PAR',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '600',
+            'OrdType': '2',
+            'Price': '20',
+            'TimeInForce': '0',
+            'TargetStrategy': 1011,
+            'Instrument': instrument_3
         }
     }
 
@@ -261,23 +276,29 @@ def test_run():
     NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
     ))
+
     OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
+
     NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
     ))
+
     OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+
     MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
         connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
         sender="QUOD_UTP",
         md_entry_size={1000: 1000},
         md_entry_px={40: 30}))
+
     MDR_turquise = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
         connection_id=ConnectionID(session_alias="fix-fh-eq-trqx"),
         sender="QUOD_UTP",
         md_entry_size={1000: 1000},
         md_entry_px={40: 30}))
+
     print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
@@ -288,7 +309,8 @@ def test_run():
     # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
-    QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
+    # QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
+    QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
