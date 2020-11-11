@@ -7,8 +7,8 @@ from grpc_modules import simulator_pb2
 import grpc
 
 # start rule
-channel = grpc.insecure_channel('10.0.22.22:31977')
-# channel = grpc.insecure_channel('localhost:8081')
+# channel = grpc.insecure_channel('10.0.22.22:31977')
+channel = grpc.insecure_channel('localhost:8081')
 simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 
 # DemoRule = simulator.createTemplateQuodDemoRule(
@@ -19,6 +19,15 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 
 # OCR = simulator.createQuodOCRRule(request=quod_simulator_pb2.TemplateQuodOCRRule(connection_id=infra_pb2.ConnectionID(session_alias='fix-bs-eq-paris')))
 
+RFQ = simulator.createQuodRFQRule(request=quod_simulator_pb2.TemplateQuodRFQRule(connection_id=infra_pb2.ConnectionID(session_alias='fix-fh-fx-rfq')))
+
+TRFQ = simulator.createQuodRFQTRADERule(request=quod_simulator_pb2.TemplateQuodRFQTRADERule(connection_id=infra_pb2.ConnectionID(session_alias='')))
+
+MDESP = simulator.createQuodMDRRule(request=quod_simulator_pb2.TemplateQuodMDRRule(
+    connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-fx-esp"),
+    sender="QUOD_UTP",
+    md_entry_size={1000: 1000},
+    md_entry_px={40: 30}))
 #
 # SingleExecParis = simulator.createQuodSingleExecRule(request=quod_simulator_pb2.TemplateQuodSingleExecRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-bs-eq-paris"),
@@ -70,12 +79,10 @@ core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 # # get rules
 running_rules = core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()).info
 print(running_rules)
-# # # remove rule
+# # remove rule
 # for r in running_rules:
 #     core.removeRule(simulator_pb2.RuleID(id=r.id.id))
-# core.removeRule(SingleExecParis)
-# core.removeRule(SingleExecTrqx)
-# core.removeRule(MDR_trqx)
-# core.removeRule(MDR_paris)
-# core.removeRule(simulator_pb2.RuleID(id=8))
+
+for i in range(69,81):
+    core.removeRule(simulator_pb2.RuleID(id=i))
 
