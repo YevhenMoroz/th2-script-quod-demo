@@ -50,27 +50,7 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
             content[tag] = Value(simple_value=str(content[tag]))
 
         elif isinstance(content[tag], dict):
-            # temporary fix for repeating group NoPartyIDs until dictionary fixed
-            if tag == 'TradingParty':
-                content[tag] = content[tag]['NoPartyIDs']
-                for group in content[tag]:
-                    content[tag][content[tag].index(group)] = Value(
-                        message_value=(message_to_grpc(tag + '_NoPartyIDs', group)))
-                content[tag] = Value(
-                    message_value=Message(
-                        metadata=MessageMetadata(message_type=tag),
-                        fields={
-                            'NoPartyIDs': Value(
-                                list_value=ListValue(
-                                    values=content[tag]
-                                )
-                            )
-                        }
-                    )
-                )
-                # end of fix
-            else:
-                content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
+            content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
 
         elif isinstance(content[tag], list):
             for group in content[tag]:
