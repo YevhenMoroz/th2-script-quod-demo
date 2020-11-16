@@ -20,7 +20,6 @@ def execute(case_name, report_id, case_params):
     act = ActStub(case_params['act'])
     event_store = EventStoreServiceStub(case_params['event-store'])
     verifier = VerifierStub(case_params['verifier'])
-    simulator = TemplateSimulatorServiceStub(case_params['simulator'])
     rules_killer = ServiceSimulatorStub(case_params['simulator'])
 
     sim_rules = []
@@ -64,15 +63,15 @@ def execute(case_name, report_id, case_params):
         'Currency': 'EUR',
         'ComplianceID': 'FX5',
         'ClientAlgoPolicyID': 'QA_SORPING',
+        # 'ExDestination': 'QDL1',
         'TargetStrategy': case_params['TargetStrategy'],
-        'TradingParty': {
-            'NoPartyIDs': [{
-                'PartyID': 'TestCLIENTACCOUNT',
-                'PartyIDSource': 'D',
-                'PartyRole': '3'
-            }]}
+        'NoParty': [{
+            'PartyID': 'TestCLIENTACCOUNT',
+            'PartyIDSource': 'D',
+            'PartyRole': '24'
+        }]
     }
-    print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
+    # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
     new_sor_order = act.placeOrderFIX(
         bca.convert_to_request(
             'Send NewSingleOrder',
@@ -94,15 +93,15 @@ def execute(case_name, report_id, case_params):
         'OrdStatus': 'A',
         'ExecType': 'A',
         # 'TradingParty': sor_order_params['TradingParty'],
-        'TradingParty': [{
+        'NoParty': [{
                 'PartyID': 'TestCLIENTACCOUNT',
                 'PartyIDSource': 'D',
-                'PartyRole': '3'
+                'PartyRole': '24'
             }],
         'LeavesQty': sor_order_params['OrderQty'],
         'Instrument': case_params['Instrument']
     }
-    print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
+    # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report Pending",
@@ -130,12 +129,13 @@ def execute(case_name, report_id, case_params):
         # 'OrderID': '',
         'ClOrdID': (sor_order_params['ClOrdID']),
         'Instrument': sor_order_params['Instrument'],
-        'ExDestination': 'QDL1',
+        # 'ExDestination': 'QDL1',
         'Side': case_params['Side'],
         'TransactTime': (datetime.utcnow().isoformat()),
         'OrderQty': case_params['OrderQty'],
         'Text': 'Cancel order'
     }
+
     cancel_order = act.placeOrderFIX(
         bca.convert_to_request(
             'Send CancelOrderRequest',
