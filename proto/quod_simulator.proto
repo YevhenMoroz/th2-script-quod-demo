@@ -20,6 +20,10 @@ message TemplateQuodOCRRule {
     th2.ConnectionID connection_id = 1;
 }
 
+message TemplateQuodOCRRRule {
+    th2.ConnectionID connection_id = 1;
+}
+
 message TemplateQuodSingleExecRule {
     th2.ConnectionID connection_id = 1;
     repeated TemplateNoPartyIDs no_party_ids = 2;
@@ -53,14 +57,19 @@ message TemplateQuodRFQTRADERule {
     th2.ConnectionID connection_id = 1;
 }
 
+message TemplatePendingNewRule {
+    th2.ConnectionID connection_id = 1;
+}
+
 service TemplateSimulatorService {
     rpc createRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
     rpc createKotlinRule_FIX(TemplateFixCreate) returns (th2.RuleID) {}
     rpc createQuodNOSRule(TemplateQuodNOSRule) returns (th2.RuleID) {}
     rpc createQuodOCRRule(TemplateQuodOCRRule) returns (th2.RuleID) {}
+    rpc createQuodOCRRRule(TemplateQuodOCRRule) returns (th2.RuleID) {}
     rpc createQuodSingleExecRule(TemplateQuodSingleExecRule) returns (th2.RuleID) {}
     rpc createQuodMDRRule(TemplateQuodMDRRule) returns (th2.RuleID) {}
     rpc createQuodRFQRule(TemplateQuodRFQRule) returns (th2.RuleID) {}
     rpc createQuodRFQTRADERule(TemplateQuodRFQTRADERule) returns (th2.RuleID) {}
-
+    rpc createQuodPendingNewRule(TemplatePendingNewRule) returns (th2.RuleID) {}
 }
