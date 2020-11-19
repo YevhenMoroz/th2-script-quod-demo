@@ -16,7 +16,7 @@ TRFQ = simulator.createQuodRFQTRADERule(request=quod_simulator_pb2.TemplateQuodR
 MDESP = simulator.createQuodMDRRule(request=quod_simulator_pb2.TemplateQuodMDRRule(
     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-fx-esp"),
     sender="QUOD_UTP",
-    md_entry_size={1000: 1000},
+    md_entry_size={3000000: 3000000},
     md_entry_px={40: 30}))
 
 
