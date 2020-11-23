@@ -79,9 +79,9 @@ core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 # # get rules
 running_rules = core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()).info
 print(running_rules)
-# # # remove rule
-# for r in running_rules:
-#     core.removeRule(simulator_pb2.RuleID(id=r.id.id))
+# # remove rule
+for r in running_rules:
+    core.removeRule(simulator_pb2.RuleID(id=r.id.id))
 
 # for i in range(69,81):
 #     core.removeRule(simulator_pb2.RuleID(id=i))

@@ -1,7 +1,11 @@
 from sys import stdout
 import logging
 from datetime import datetime
+
+import google.protobuf.empty_pb2
+
 from custom import basic_custom_actions as bca
+from grpc_modules import simulator_pb2
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
@@ -13,7 +17,6 @@ from grpc_modules.infra_pb2 import ConnectionID
 import grpc
 from ConfigParser import ParseConfig
 from schemas import *
-
 
 logging.basicConfig(stream=stdout)
 logger = logging.getLogger('demo')
@@ -80,8 +83,8 @@ def test_run():
     }
 
     instrument_6 = {
-        'Symbol': 'FR0000031122_EUR',
-        'SecurityID': 'FR0000031122',
+        'Symbol': 'FR0000125460_EUR',
+        'SecurityID': 'FR0000125460',
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
     }
@@ -233,7 +236,7 @@ def test_run():
             'TimeInForce': '0',
             'TargetCompID': 'QUOD3',
             'Instrument': instrument_2
-         },
+        },
         'RFQ_example': {
             **channels,
             'case_id': bca.create_event_id(),
@@ -266,12 +269,17 @@ def test_run():
             **channels,
             'case_id': bca.create_event_id(),
             'TraderConnectivity': 'gtwquod3',
-            'SenderCompID': 'KCH_UAT_RET_PAR',
-            'TargetCompID': 'QUOD_UAT_RET_PAR',
+            'TraderConnectivity2': 'fix-bs-eq-paris',
+            'TraderConnectivity3': 'fix-bs-eq-trqx',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD3',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
             'Account': 'KEPLER',
+            'Account2': 'TRQX_KEPLER',
             'HandlInst': '2',
             'Side': '1',
-            'OrderQty': '600',
+            'OrderQty': '1000',
             'OrdType': '2',
             'Price': '20',
             'TimeInForce': '0',
@@ -288,26 +296,26 @@ def test_run():
 
     OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-
-    NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
-    ))
-
-    OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+    #
+    # NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
+    # ))
+    #
+    # OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
 
     MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
         connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
         sender="QUOD_UTP",
         md_entry_size={1000: 1000},
-        md_entry_px={40: 30}))
-    MDR_turquise = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx"),
-        sender="QUOD_UTP",
-        md_entry_size={1000: 1000},
-        md_entry_px={40: 30}))
+        md_entry_px={25: 15}))  # SELL: BUY
+    # MDR_turquise = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
+    #     connection_id=ConnectionID(session_alias="fix-fh-eq-trqx"),
+    #     sender="QUOD_UTP",
+    #     md_entry_size={1000: 1000},
+    #     md_entry_px={25: 15}))  # SELL: BUY
 
-    print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
+    print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {MDR_paris}")
 
     # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
     # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
@@ -324,10 +332,14 @@ def test_run():
     core = ServiceSimulatorStub(channels['simulator'])
     core.removeRule(NOS_1)
     core.removeRule(OCR_1)
-    core.removeRule(NOS_2)
-    core.removeRule(OCR_2)
+    # core.removeRule(NOS_2)
+    # core.removeRule(OCR_2)
     core.removeRule(MDR_paris)
-    core.removeRule(MDR_turquise)
+    # core.removeRule(MDR_turquise)
+
+    running_rules = core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()).info
+
+    print(running_rules)
 
     for channel_name in channels.keys():
         channels[channel_name].close()

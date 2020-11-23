@@ -3,6 +3,7 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from grpc_modules import infra_pb2
 from grpc_modules.act_fix_pb2_grpc import ActStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.verifier_pb2_grpc import VerifierStub
@@ -31,8 +32,10 @@ def execute(case_name, report_id, case_params):
     event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
     event_store.StoreEvent(event_request_1)
 
-    instrument_1 = case_params['Instrument']
-    # instrument_1['Symbol'] = instrument_1['Symbol'] + '_EUR'
+    instrument_2 = {
+            'Symbol': case_params['Instrument']['Symbol'],
+            'SecurityExchange': case_params['Instrument']['SecurityExchange']
+        }
 
     reusable_order_params = {   # This parameters can be used for ExecutionReport message
         'Account': case_params['Account'],
@@ -63,7 +66,6 @@ def execute(case_name, report_id, case_params):
         'Currency': 'EUR',
         'ComplianceID': 'FX5',
         'ClientAlgoPolicyID': 'QA_SORPING',
-        # 'ExDestination': 'QDL1',
         'TargetStrategy': case_params['TargetStrategy'],
         'NoParty': [{
             'PartyID': 'TestCLIENTACCOUNT',
@@ -124,6 +126,67 @@ def execute(case_name, report_id, case_params):
         )
     )
 
+    instrument_1_2 = case_params['Instrument']
+    instrument_1_2['SecurityType'] = 'CS'
+    instrument_1_2['Symbol'] = 'AN'
+
+    newordersingle_params = {
+        'Account': case_params['Account'],
+        'HandlInst': '1',
+        'Side': case_params['Side'],
+        'OrderQty': sor_order_params['OrderQty'],
+        'TimeInForce': case_params['TimeInForce'],
+        'Price': case_params['Price'],
+        'OrdType': case_params['OrdType'],
+        'OrderCapacity': 'A',
+        'Currency': 'EUR',
+        'ClOrdID': '*',
+        'ChildOrderID': '*',
+        'TransactTime': '*',
+        'Instrument': instrument_1_2,
+        'NoParty': sor_order_params['NoParty']
+        # 'IClOrdIdCO': 'OD_5fgfDXg-00',
+        # 'IClOrdIdAO': 'OD_5fgfDXg-00',
+    }
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Transmitted NewOrderSingle',
+            bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
+            checkpoint_1,
+            case_params['TraderConnectivity2'],
+            case_params['case_id']
+        )
+    )
+
+    er_sim_params = {
+            'ClOrdID': '*',
+            'OrderID': '*',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '0',
+            'OrderQty': sor_order_params['OrderQty'],
+            'OrdType': case_params['OrdType'],
+            'Side': case_params['Side'],
+            # 'LastPx': '0',
+            'AvgPx': '0',
+            'OrdStatus': '0',
+            'ExecType': '0',
+            'LeavesQty': '0',
+            'Text': '*'
+    }
+
+    logger.debug("Verify received Execution Report (OrdStatus = New)")
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Receive ExecutionReport New Sim',
+            bca.filter_to_grpc('ExecutionReport', er_sim_params, ["ClOrdID", "OrdStatus"]),
+            checkpoint_1,
+            case_params['TraderConnectivity2'],
+            case_params['case_id'],
+            infra_pb2.Direction.Value("SECOND")
+        )
+    )
+
     cancel_order_params = {
         'OrigClOrdID': sor_order_params['ClOrdID'],
         # 'OrderID': '',
@@ -157,8 +220,7 @@ def execute(case_name, report_id, case_params):
         'OrdStatus': '4',
         'ExecType': '4',
         'LeavesQty': '0',
-        'Instrument': case_params['Instrument'],
-        'ExecRestatementReason': '4'
+        'Instrument': instrument_2,
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -169,6 +231,42 @@ def execute(case_name, report_id, case_params):
             case_params['case_id']
         )
     )
+
+    sim_cancel_order_params = {
+        'Account': case_params['Account'],
+        'Instrument': sor_order_params['Instrument'],
+        'ExDestination': 'XPAR',
+        'Side': case_params['Side'],
+        'TransactTime': '*',
+        'OrderQty': case_params['OrderQty']
+    }
+
+    pre_filter_sim_params = {
+        'header': {
+            'MsgType': ('0', "NOT_EQUAL"),
+            'SenderCompID': case_params['SenderCompID2'],
+            'TargetCompID': case_params['TargetCompID2']
+        },
+        'TestReqID': ('TEST', "NOT_EQUAL")
+    }
+    pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
+    message_filters_sim = [
+        bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
+        bca.filter_to_grpc('OrderCancelRequest', sim_cancel_order_params),
+    ]
+    verifier.submitCheckSequenceRule(
+        bca.create_check_sequence_rule(
+            description="Check buy side messages ",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_sim,
+            checkpoint=checkpoint_1,
+            connectivity=case_params['TraderConnectivity2'],
+            event_id=case_params['case_id'],
+            timeout=2000
+
+        )
+    )
+
     if timeouts:
         time.sleep(5)
 
