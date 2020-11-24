@@ -15,7 +15,6 @@ import grpc
 from ConfigParser import ParseConfig
 from schemas import *
 
-
 logging.basicConfig(stream=stdout)
 logger = logging.getLogger('demo')
 logger.setLevel(logging.INFO)
@@ -74,7 +73,7 @@ def test_run():
         'SecurityExchange': 'XPAR'
     }
     instrument_5 = {
-        'Symbol': 'FR0010542647',
+        'Symbol': 'FR0010542647_EUR',
         'SecurityID': 'FR0010542647',
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
@@ -283,6 +282,24 @@ def test_run():
             'TimeInForce': '0',
             'TargetStrategy': 1011,
             'Instrument': instrument_6
+        },
+        'QAP_2702': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'Sender': '',
+            'SenderCompID': 'QUOD3',
+            'TargetCompID': 'QUODFX_UAT',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '2',
+            'OrdType': '2',
+            'Price': '1',
+            'NewPrice': '2',
+            'TimeInForce': '0',
+            'Instrument': instrument_5,
+            'TargetStrategy': 1011
         }
     }
 
@@ -319,7 +336,8 @@ def test_run():
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
     # QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
-    QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
+    # QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
+    QAP_2702.execute('QAP_2702', report_id, test_cases['QAP_2702'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])

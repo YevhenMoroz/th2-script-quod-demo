@@ -8,5 +8,6 @@ __all__ = (
     'simple_trade2',
     'RFQ_example',
     'QAP_2409',
-    'QAP_2684'
+    'QAP_2684',
+    'QAP_2702'
 )
