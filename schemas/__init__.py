@@ -9,5 +9,6 @@ __all__ = (
     'RFQ_example',
     'QAP_2409',
     'QAP_2684',
-    'QAP_2702'
+    'QAP_2702',
+    'QAP_2561'
 )

@@ -300,6 +300,24 @@ def test_run():
             'TimeInForce': '0',
             'Instrument': instrument_5,
             'TargetStrategy': 1011
+        },
+        'QAP_2561': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'Sender': '',
+            'SenderCompID': 'QUOD3',
+            'TargetCompID': 'QUODFX_UAT',
+            'Account': 'KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '400',
+            'OrdType': '2',
+            'Price': '20',
+            'NewPrice': '25',
+            'TimeInForce': '0',
+            'Instrument': instrument_5,
+            'TargetStrategy': 1004
         }
     }
 
@@ -338,6 +356,7 @@ def test_run():
     # QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
     # QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
     QAP_2702.execute('QAP_2702', report_id, test_cases['QAP_2702'])
+    # QAP_2561.execute('QAP_2561', report_id, test_cases['QAP_2561'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
