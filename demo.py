@@ -46,8 +46,8 @@ def test_run():
     # Reference data for test cases
 
     instrument = {
-        'Symbol': 'FR0010263202_EUR',
-        'SecurityID': 'FR0010263202',
+        'Symbol': 'FR0000121329',
+        'SecurityID': 'FR0000121329',
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
 
@@ -348,7 +348,7 @@ def test_run():
             **channels,
             'case_id': bca.create_event_id(),
             'TraderConnectivity': 'gtwquod3',
-            'Sender': '',
+            # 'Sender': '',
             'SenderCompID': 'QUOD3',
             'TargetCompID': 'QUODFX_UAT',
             'Account': 'KEPLER',
@@ -359,7 +359,7 @@ def test_run():
             'Price': '20',
             'NewPrice': '25',
             'TimeInForce': '0',
-            'Instrument': instrument_5,
+            'Instrument': instrument_6,
             'TargetStrategy': 1004
         }
     }

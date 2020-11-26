@@ -117,9 +117,13 @@ def execute(case_name, report_id, case_params):
         )
     )
 
-    instrument_1_2 = case_params['Instrument']
-    instrument_1_2['SecurityType'] = 'CS'
-    instrument_1_2['Symbol'] = 'PAR'
+    instrument_bs = {
+        'SecurityType': 'CS',
+        'Symbol': 'PAR',
+        'SecurityID': case_params['Instrument']['SecurityID'],
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
 
     newordersingle_params = {
         'Account': case_params['Account'],
@@ -134,7 +138,7 @@ def execute(case_name, report_id, case_params):
         'ClOrdID': '*',
         'ChildOrderID': '*',
         'TransactTime': '*',
-        'Instrument': instrument_1_2,
+        'Instrument': instrument_bs,
         'ExDestination': 'XPAR',
         **check_params
 
@@ -225,20 +229,31 @@ def execute(case_name, report_id, case_params):
 
     sim_cancel_order_params = {
         'Account': case_params['Account'],
-        'Instrument': new_order_params['Instrument'],
-        'ExDestination': 'XPAR',
+        'Instrument': instrument_bs,
+        'ClOrdID': '*',
+        'OrderID': '*',
         'Side': case_params['Side'],
         'TransactTime': '*',
-        'OrderQty': case_params['OrderQty']
+        'OrderQty': new_order_params['DisplayInstruction']['DisplayQty'],
+        'IClOrdIdAO': 'OD_5fgfDXg-00',
+        'ChildOrderID': '*',
     }
-
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Transmitted OrderCancelRequest',
+            bca.filter_to_grpc('OrderCancelRequest', sim_cancel_order_params),
+            cancel_order.checkpoint_id,
+            case_params['TraderConnectivity2'],
+            case_params['case_id']
+        )
+    )
     pre_filter_sim_params = {
         'header': {
             'MsgType': ('0', "NOT_EQUAL"),
             'SenderCompID': case_params['SenderCompID2'],
             'TargetCompID': case_params['TargetCompID2']
         },
-        'TestReqID': ('TEST', "NOT_EQUAL")
+        # 'TestReqID': ('TEST', "NOT_EQUAL")
     }
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
