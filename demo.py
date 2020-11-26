@@ -87,6 +87,13 @@ def test_run():
         'SecurityExchange': 'XPAR'
     }
 
+    instrument_7 = {
+        'Symbol': 'FR0000133308',
+        'SecurityID': '1149039',
+        'SecurityIDSource': '8',
+        'SecurityExchange': 'XPAR'
+    }
+
     # Specific data for test case test
     test_cases = {
         'QAP_2425_SIM': {
@@ -283,6 +290,49 @@ def test_run():
             'TimeInForce': '0',
             'TargetStrategy': 1011,
             'Instrument': instrument_6
+        },
+        'QAP_2540': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'TraderConnectivity2': 'fix-bs-eq-paris',
+            'TraderConnectivity3': 'fix-bs-eq-trqx',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD3',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
+            'Account': 'KEPLER',
+            'Account2': 'TRQX_KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '400',
+            'OrdType': '2',
+            'Price': '20',
+            'TimeInForce': '0',
+            'TargetStrategy': 1004,
+            'Instrument': instrument_3
+        },
+
+        'QAP_2620': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'gtwquod3',
+            'TraderConnectivity2': 'fix-bs-eq-paris',
+            'TraderConnectivity3': 'fix-bs-eq-trqx',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD3',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
+            'Account': 'KEPLER',
+            'Account2': 'TRQX_KEPLER',
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '400',
+            'OrdType': '2',
+            'Price': '20',
+            'TimeInForce': '0',
+            'TargetStrategy': 1004,
+            'Instrument': instrument_3
         }
     }
 
@@ -319,7 +369,9 @@ def test_run():
     # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
     # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
     # QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
-    QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
+    # QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
+    # QAP_2540.execute('QAP_2540', report_id, test_cases['QAP_2540'])
+    QAP_2620.execute('QAP_2620', report_id, test_cases['QAP_2620'])
 
     # stop rule
     core = ServiceSimulatorStub(channels['simulator'])
