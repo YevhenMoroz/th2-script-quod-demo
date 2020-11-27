@@ -4,7 +4,7 @@ import grpc
 import grpc_modules.act_fix_pb2 as act__fix__pb2
 
 
-class ActStub(object):
+class ActFixStub(object):
   """This action executes next steps:
   1) Registers checkpoint in Verifier microservice
   2) Sends passed message as is to Connectivity microservice
@@ -19,54 +19,49 @@ class ActStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.sendMessage = channel.unary_unary(
-        '/th2.Act/sendMessage',
-        request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
-        response_deserializer=act__fix__pb2.SendMessageResponse.FromString,
-        )
     self.placeOrderFIX = channel.unary_unary(
-        '/th2.Act/placeOrderFIX',
+        '/th2.ActFix/placeOrderFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeOrderReplaceFIX = channel.unary_unary(
-        '/th2.Act/placeOrderReplaceFIX',
+        '/th2.ActFix/placeOrderReplaceFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeOrderCancelFIX = channel.unary_unary(
-        '/th2.Act/placeOrderCancelFIX',
+        '/th2.ActFix/placeOrderCancelFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeOrderMultilegFIX = channel.unary_unary(
-        '/th2.Act/placeOrderMultilegFIX',
+        '/th2.ActFix/placeOrderMultilegFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeOrderMultilegReplaceFIX = channel.unary_unary(
-        '/th2.Act/placeOrderMultilegReplaceFIX',
+        '/th2.ActFix/placeOrderMultilegReplaceFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeQuoteFIX = channel.unary_unary(
-        '/th2.Act/placeQuoteFIX',
+        '/th2.ActFix/placeQuoteFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
     self.placeMarketDataRequestFIX = channel.unary_unary(
-        '/th2.Act/placeMarketDataRequestFIX',
+        '/th2.ActFix/placeMarketDataRequestFIX',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
         response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
         )
-    self.placeOrderMassCancelRequestFIX = channel.unary_unary(
-        '/th2.Act/placeOrderMassCancelRequestFIX',
+    self.sendMessage = channel.unary_unary(
+        '/th2.ActFix/sendMessage',
         request_serializer=act__fix__pb2.PlaceMessageRequest.SerializeToString,
-        response_deserializer=act__fix__pb2.PlaceMessageResponse.FromString,
+        response_deserializer=act__fix__pb2.SendMessageResponse.FromString,
         )
 
 
-class ActServicer(object):
+class ActFixServicer(object):
   """This action executes next steps:
   1) Registers checkpoint in Verifier microservice
   2) Sends passed message as is to Connectivity microservice
@@ -74,13 +69,6 @@ class ActServicer(object):
   from Connectivity microservice
   4) Returns the message repose and the Checkpoint 
   """
-
-  def sendMessage(self, request, context):
-    """Send fix message without response awaiting 
-    """
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
 
   def placeOrderFIX(self, request, context):
     # missing associated documentation comment in .proto file
@@ -131,21 +119,16 @@ class ActServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def placeOrderMassCancelRequestFIX(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+  def sendMessage(self, request, context):
+    """Send fix message without response awaiting 
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
 
-def add_ActServicer_to_server(servicer, server):
+def add_ActFixServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'sendMessage': grpc.unary_unary_rpc_method_handler(
-          servicer.sendMessage,
-          request_deserializer=act__fix__pb2.PlaceMessageRequest.FromString,
-          response_serializer=act__fix__pb2.SendMessageResponse.SerializeToString,
-      ),
       'placeOrderFIX': grpc.unary_unary_rpc_method_handler(
           servicer.placeOrderFIX,
           request_deserializer=act__fix__pb2.PlaceMessageRequest.FromString,
@@ -181,12 +164,12 @@ def add_ActServicer_to_server(servicer, server):
           request_deserializer=act__fix__pb2.PlaceMessageRequest.FromString,
           response_serializer=act__fix__pb2.PlaceMessageResponse.SerializeToString,
       ),
-      'placeOrderMassCancelRequestFIX': grpc.unary_unary_rpc_method_handler(
-          servicer.placeOrderMassCancelRequestFIX,
+      'sendMessage': grpc.unary_unary_rpc_method_handler(
+          servicer.sendMessage,
           request_deserializer=act__fix__pb2.PlaceMessageRequest.FromString,
-          response_serializer=act__fix__pb2.PlaceMessageResponse.SerializeToString,
+          response_serializer=act__fix__pb2.SendMessageResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'th2.Act', rpc_method_handlers)
+      'th2.ActFix', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

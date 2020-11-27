@@ -119,9 +119,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None) -> MessageFilter
 
 
 def convert_to_request(description: str, connectivity: str, event_id: EventID, message: dict,
-                       exp_msg_types=None, key_fields=None, timeout=3000) -> act_fix_pb2.PlaceMessageRequest:
-    if exp_msg_types is None:
-        exp_msg_types = []
+                       key_fields=None) -> act_fix_pb2.PlaceMessageRequest:
     if key_fields is None:
         key_fields = []
     connectivity = ConnectionID(session_alias=connectivity)
@@ -131,24 +129,6 @@ def convert_to_request(description: str, connectivity: str, event_id: EventID, m
         parent_event_id=event_id,
         description=description,
         key_fields=key_fields
-    )
-
-
-def convert_to_request_upd(description: str, connectivity: str, event_id: EventID, message: dict,
-                           exp_msg_types=None, exp_key_fields=None, timeout=3000) -> act_fix_pb2.PlaceMessageRequest:
-    if exp_msg_types is None:
-        exp_msg_types = []
-    if exp_key_fields is None:
-        key_fields = []
-    connectivity = ConnectionID(session_alias=connectivity)
-    return act_fix_pb2.PlaceMessageRequest(
-        message=message,
-        connection_id=connectivity,
-        parent_event_id=event_id,
-        description=description,
-        expected_message_types=exp_msg_types,
-        expected_key_fields=exp_key_fields,
-        timeout=timeout
     )
 
 

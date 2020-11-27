@@ -2,7 +2,7 @@ import logging
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules.act_fix_pb2_grpc import ActStub
+from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.verifier_pb2_grpc import VerifierStub
 
@@ -13,7 +13,7 @@ timeouts = True
 
 
 def execute(case_name, report_id, case_params):
-    act = ActStub(case_params['act'])
+    act = ActFixStub(case_params['act'])
     event_store = EventStoreServiceStub(case_params['event-store'])
     verifier = VerifierStub(case_params['verifier'])
 

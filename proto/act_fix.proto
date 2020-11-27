@@ -7,17 +7,14 @@ import "event-store.proto";
 option java_multiple_files = true;
 option java_package = "com.exactpro.th2.act.grpc";
 
-service Act {
+service ActFix {
     /* This action executes next steps:
-        1) Registers checkpoint in Verifier microservice
-        2) Sends passed message as is to Connectivity microservice
-        3) Waits Execution Report or Business Message Reject with the same ClOrdID as in passed message
-            from Connectivity microservice
-        4) Returns the message repose and the Checkpoint */
+    1) Registers checkpoint in Verifier microservice
+    2) Sends passed message as is to Connectivity microservice
+    3) Waits Execution Report or Business Message Reject with the same ClOrdID as in passed message
+        from Connectivity microservice
+    4) Returns the message repose and the Checkpoint */
 
-    /*Send fix message without response awaiting */
-    rpc sendMessage (PlaceMessageRequest) returns (SendMessageResponse) {
-    }
     rpc placeOrderFIX (PlaceMessageRequest) returns (PlaceMessageResponse) {
     }
     rpc placeOrderReplaceFIX (PlaceMessageRequest) returns (PlaceMessageResponse) {
@@ -32,7 +29,8 @@ service Act {
     }
     rpc placeMarketDataRequestFIX (PlaceMessageRequest) returns (PlaceMessageResponse) {
     }
-    rpc placeOrderMassCancelRequestFIX (PlaceMessageRequest) returns (PlaceMessageResponse) {
+    /*Send fix message without response awaiting */
+    rpc sendMessage (PlaceMessageRequest) returns (SendMessageResponse) {
     }
 }
 
@@ -46,10 +44,11 @@ message PlaceMessageRequest {
     ConnectionID connection_id = 2;
     EventID parent_event_id = 4;
     string description = 5;
+    map<string, string> key_fields = 6;
 }
 
 message PlaceMessageResponse {
-    Message response_message = 1;
+    repeated Message response_messages_list = 1;
     RequestStatus status = 2;
     Checkpoint checkpoint_id = 3;
 }

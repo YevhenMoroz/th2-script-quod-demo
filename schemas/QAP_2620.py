@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules import infra_pb2
-from grpc_modules.act_fix_pb2_grpc import ActStub
+from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.verifier_pb2_grpc import VerifierStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
@@ -18,7 +18,7 @@ timeouts = True
 
 
 def execute(case_name, report_id, case_params):
-    act = ActStub(case_params['act'])
+    act = ActFixStub(case_params['act'])
     event_store = EventStoreServiceStub(case_params['event-store'])
     verifier = VerifierStub(case_params['verifier'])
     rules_killer = ServiceSimulatorStub(case_params['simulator'])
@@ -79,10 +79,11 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('NewOrderSingle', new_order_params)
         ))
     checkpoint_1 = new_ib_order.checkpoint_id
+    logger.info(new_ib_order)
     execution_report1_params = {
         **reusable_order_params,
         'ClOrdID': new_order_params['ClOrdID'],
-        'OrderID': new_ib_order.response_message.fields['OrderID'].simple_value,
+        'OrderID': new_ib_order.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -205,7 +206,7 @@ def execute(case_name, report_id, case_params):
     execution_report3_params = {
         **reusable_order_params,
         'ClOrdID': cancel_order_params['ClOrdID'],
-        'OrderID': execution_report1_params['OrderID'],
+        #'OrderID': execution_report1_params['OrderID'],
         'ExecID': '*',
         'CumQty': '0',
         'LastPx': '0',
