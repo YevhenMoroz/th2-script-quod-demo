@@ -216,7 +216,7 @@ def execute(case_name, report_id, case_params):
     )
 
     execution_report4_params = deepcopy(execution_report3_params)
-    execution_report4_params['Account'] = 'KEPLER_TRQX'
+    execution_report4_params['Account'] = 'TRQX_KEPLER'
     execution_report4_params['OrderQty'] = execution_report4_params['LastQty'] = \
         execution_report4_params['CumQty'] = 100
 

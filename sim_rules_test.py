@@ -7,8 +7,8 @@ from grpc_modules import simulator_pb2
 import grpc
 
 # start rule
-channel = grpc.insecure_channel('10.0.22.22:31977')
-# channel = grpc.insecure_channel('localhost:8081')
+# channel = grpc.insecure_channel('10.0.22.22:31977')
+channel = grpc.insecure_channel('localhost:8081')
 simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 
 # DemoRule = simulator.createTemplateQuodDemoRule(
@@ -28,7 +28,7 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 #     sender="QUOD_UTP",
 #     md_entry_size={1000: 1000},
 #     md_entry_px={40: 30}))
-#
+
 # SingleExecParis = simulator.createQuodSingleExecRule(request=quod_simulator_pb2.TemplateQuodSingleExecRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-bs-eq-paris"),
 #     no_party_ids=[
@@ -70,6 +70,12 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 #     md_entry_size={1000: 1000},
 #     md_entry_px={40: 30}))
 
+# DefRule = simulator.createQuodDefMDRRule(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
+#     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+# ))
+
+
+
 # stop rule
 core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 # core.removeRule(DemoRule)
@@ -78,11 +84,17 @@ core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 
 # # get rules
 running_rules = core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()).info
-print(running_rules)
-# # remove rule
+print(running_rules, "Rules running:", len(running_rules))
+# remove rule
 for r in running_rules:
     core.removeRule(simulator_pb2.RuleID(id=r.id.id))
 
-# for i in range(69,81):
+
+
+MDRefID = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+    Symbol="1062",
+    connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+)).MDRefID
+# for i in range(479,483):
 #     core.removeRule(simulator_pb2.RuleID(id=i))
 

@@ -409,8 +409,8 @@ def test_run():
     core.removeRule(OCR_1)
     core.removeRule(NOS_2)
     core.removeRule(OCR_2)
-    core.removeRule(MDR_paris)
-    core.removeRule(MDR_turquise)
+    # core.removeRule(MDR_paris)
+    # core.removeRule(MDR_turquise)
 
     for channel_name in channels.keys():
         channels[channel_name].close()
