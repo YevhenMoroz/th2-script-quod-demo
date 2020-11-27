@@ -1,4 +1,3 @@
-import google
 import google.protobuf.empty_pb2
 
 from grpc_modules import quod_simulator_pb2
@@ -82,7 +81,7 @@ core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
 # # core.removeRule(OCR)
 # channel.close()
 
-# # get rules
+# get rules
 running_rules = core.getRulesInfo(request=google.protobuf.empty_pb2.Empty()).info
 print(running_rules, "Rules running:", len(running_rules))
 # remove rule

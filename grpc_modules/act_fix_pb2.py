@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='th2',
   syntax='proto3',
   serialized_options=_b('\n\031com.exactpro.th2.act.grpcP\001'),
-  serialized_pb=_b('\n\ract_fix.proto\x12\x03th2\x1a\x0binfra.proto\x1a\x11\x65vent-store.proto\"a\n\x13SendMessageResponse\x12\"\n\x06status\x18\x01 \x01(\x0b\x32\x12.th2.RequestStatus\x12&\n\rcheckpoint_id\x18\x02 \x01(\x0b\x32\x0f.th2.Checkpoint\"\x89\x02\n\x13PlaceMessageRequest\x12\x1d\n\x07message\x18\x01 \x01(\x0b\x32\x0c.th2.Message\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x12%\n\x0fparent_event_id\x18\x04 \x01(\x0b\x32\x0c.th2.EventID\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12;\n\nkey_fields\x18\x06 \x03(\x0b\x32\'.th2.PlaceMessageRequest.KeyFieldsEntry\x1a\x30\n\x0eKeyFieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x8a\x01\n\x14PlaceMessageResponse\x12&\n\x10response_message\x18\x01 \x01(\x0b\x32\x0c.th2.Message\x12\"\n\x06status\x18\x02 \x01(\x0b\x32\x12.th2.RequestStatus\x12&\n\rcheckpoint_id\x18\x03 \x01(\x0b\x32\x0f.th2.Checkpoint2\xcb\x05\n\x03\x41\x63t\x12\x43\n\x0bsendMessage\x12\x18.th2.PlaceMessageRequest\x1a\x18.th2.SendMessageResponse\"\x00\x12\x46\n\rplaceOrderFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12M\n\x14placeOrderReplaceFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12L\n\x13placeOrderCancelFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12N\n\x15placeOrderMultilegFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12U\n\x1cplaceOrderMultilegReplaceFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12\x46\n\rplaceQuoteFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12R\n\x19placeMarketDataRequestFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12W\n\x1eplaceOrderMassCancelRequestFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x42\x1d\n\x19\x63om.exactpro.th2.act.grpcP\x01\x62\x06proto3')
+  serialized_pb=_b('\n\ract_fix.proto\x12\x03th2\x1a\x0binfra.proto\x1a\x11\x65vent-store.proto\"a\n\x13SendMessageResponse\x12\"\n\x06status\x18\x01 \x01(\x0b\x32\x12.th2.RequestStatus\x12&\n\rcheckpoint_id\x18\x02 \x01(\x0b\x32\x0f.th2.Checkpoint\"\x89\x02\n\x13PlaceMessageRequest\x12\x1d\n\x07message\x18\x01 \x01(\x0b\x32\x0c.th2.Message\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x12%\n\x0fparent_event_id\x18\x04 \x01(\x0b\x32\x0c.th2.EventID\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12;\n\nkey_fields\x18\x06 \x03(\x0b\x32\'.th2.PlaceMessageRequest.KeyFieldsEntry\x1a\x30\n\x0eKeyFieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x90\x01\n\x14PlaceMessageResponse\x12,\n\x16response_messages_list\x18\x01 \x03(\x0b\x32\x0c.th2.Message\x12\"\n\x06status\x18\x02 \x01(\x0b\x32\x12.th2.RequestStatus\x12&\n\rcheckpoint_id\x18\x03 \x01(\x0b\x32\x0f.th2.Checkpoint2\xf5\x04\n\x06\x41\x63tFix\x12\x46\n\rplaceOrderFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12M\n\x14placeOrderReplaceFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12L\n\x13placeOrderCancelFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12N\n\x15placeOrderMultilegFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12U\n\x1cplaceOrderMultilegReplaceFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12\x46\n\rplaceQuoteFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12R\n\x19placeMarketDataRequestFIX\x12\x18.th2.PlaceMessageRequest\x1a\x19.th2.PlaceMessageResponse\"\x00\x12\x43\n\x0bsendMessage\x12\x18.th2.PlaceMessageRequest\x1a\x18.th2.SendMessageResponse\"\x00\x42\x1d\n\x19\x63om.exactpro.th2.act.grpcP\x01\x62\x06proto3')
   ,
   dependencies=[infra__pb2.DESCRIPTOR,event__store__pb2.DESCRIPTOR,])
 
@@ -170,9 +170,9 @@ _PLACEMESSAGERESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='response_message', full_name='th2.PlaceMessageResponse.response_message', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='response_messages_list', full_name='th2.PlaceMessageResponse.response_messages_list', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -203,7 +203,7 @@ _PLACEMESSAGERESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=422,
-  serialized_end=560,
+  serialized_end=566,
 )
 
 _SENDMESSAGERESPONSE.fields_by_name['status'].message_type = infra__pb2._REQUESTSTATUS
@@ -213,7 +213,7 @@ _PLACEMESSAGEREQUEST.fields_by_name['message'].message_type = infra__pb2._MESSAG
 _PLACEMESSAGEREQUEST.fields_by_name['connection_id'].message_type = infra__pb2._CONNECTIONID
 _PLACEMESSAGEREQUEST.fields_by_name['parent_event_id'].message_type = infra__pb2._EVENTID
 _PLACEMESSAGEREQUEST.fields_by_name['key_fields'].message_type = _PLACEMESSAGEREQUEST_KEYFIELDSENTRY
-_PLACEMESSAGERESPONSE.fields_by_name['response_message'].message_type = infra__pb2._MESSAGE
+_PLACEMESSAGERESPONSE.fields_by_name['response_messages_list'].message_type = infra__pb2._MESSAGE
 _PLACEMESSAGERESPONSE.fields_by_name['status'].message_type = infra__pb2._REQUESTSTATUS
 _PLACEMESSAGERESPONSE.fields_by_name['checkpoint_id'].message_type = infra__pb2._CHECKPOINT
 DESCRIPTOR.message_types_by_name['SendMessageResponse'] = _SENDMESSAGERESPONSE
@@ -254,28 +254,19 @@ _sym_db.RegisterMessage(PlaceMessageResponse)
 DESCRIPTOR._options = None
 _PLACEMESSAGEREQUEST_KEYFIELDSENTRY._options = None
 
-_ACT = _descriptor.ServiceDescriptor(
-  name='Act',
-  full_name='th2.Act',
+_ACTFIX = _descriptor.ServiceDescriptor(
+  name='ActFix',
+  full_name='th2.ActFix',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=563,
-  serialized_end=1278,
+  serialized_start=569,
+  serialized_end=1198,
   methods=[
   _descriptor.MethodDescriptor(
-    name='sendMessage',
-    full_name='th2.Act.sendMessage',
-    index=0,
-    containing_service=None,
-    input_type=_PLACEMESSAGEREQUEST,
-    output_type=_SENDMESSAGERESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
     name='placeOrderFIX',
-    full_name='th2.Act.placeOrderFIX',
-    index=1,
+    full_name='th2.ActFix.placeOrderFIX',
+    index=0,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -283,8 +274,8 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeOrderReplaceFIX',
-    full_name='th2.Act.placeOrderReplaceFIX',
-    index=2,
+    full_name='th2.ActFix.placeOrderReplaceFIX',
+    index=1,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -292,8 +283,8 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeOrderCancelFIX',
-    full_name='th2.Act.placeOrderCancelFIX',
-    index=3,
+    full_name='th2.ActFix.placeOrderCancelFIX',
+    index=2,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -301,8 +292,8 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeOrderMultilegFIX',
-    full_name='th2.Act.placeOrderMultilegFIX',
-    index=4,
+    full_name='th2.ActFix.placeOrderMultilegFIX',
+    index=3,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -310,8 +301,8 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeOrderMultilegReplaceFIX',
-    full_name='th2.Act.placeOrderMultilegReplaceFIX',
-    index=5,
+    full_name='th2.ActFix.placeOrderMultilegReplaceFIX',
+    index=4,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -319,8 +310,8 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeQuoteFIX',
-    full_name='th2.Act.placeQuoteFIX',
-    index=6,
+    full_name='th2.ActFix.placeQuoteFIX',
+    index=5,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
@@ -328,25 +319,25 @@ _ACT = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='placeMarketDataRequestFIX',
-    full_name='th2.Act.placeMarketDataRequestFIX',
-    index=7,
+    full_name='th2.ActFix.placeMarketDataRequestFIX',
+    index=6,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
     output_type=_PLACEMESSAGERESPONSE,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='placeOrderMassCancelRequestFIX',
-    full_name='th2.Act.placeOrderMassCancelRequestFIX',
-    index=8,
+    name='sendMessage',
+    full_name='th2.ActFix.sendMessage',
+    index=7,
     containing_service=None,
     input_type=_PLACEMESSAGEREQUEST,
-    output_type=_PLACEMESSAGERESPONSE,
+    output_type=_SENDMESSAGERESPONSE,
     serialized_options=None,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_ACT)
+_sym_db.RegisterServiceDescriptor(_ACTFIX)
 
-DESCRIPTOR.services_by_name['Act'] = _ACT
+DESCRIPTOR.services_by_name['ActFix'] = _ACTFIX
 
 # @@protoc_insertion_point(module_scope)
