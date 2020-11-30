@@ -32,12 +32,7 @@ def execute(case_name, report_id, case_params):
     event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
     event_store.StoreEvent(event_request_1)
 
-    instrument_2 = {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        }
-
-    reusable_order_params = {   # This parameters can be used for ExecutionReport message
+    reusable_order_params = {  # This parameters can be used for ExecutionReport message
         'Account': case_params['Account'],
         'HandlInst': case_params['HandlInst'],
         'Side': case_params['Side'],
@@ -46,8 +41,7 @@ def execute(case_name, report_id, case_params):
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
         'Currency': 'EUR',
-        'Price': case_params['Price'],
-        'TargetStrategy': case_params['TargetStrategy']
+        'Price': case_params['Price']
     }
 
     check_params = {
@@ -64,7 +58,8 @@ def execute(case_name, report_id, case_params):
         'OrderCapacity': 'A',
         'ExDestination': 'XPAR',
         'ComplianceID': 'FX5',
-        'StrategyName': 'InternalQuodQa_Iceberg',
+        'StrategyName': 'ICEBERG',
+        'TargetStrategy': case_params['TargetStrategy'],
         'DisplayInstruction': {
             'DisplayQty': '50'
         },
@@ -73,14 +68,14 @@ def execute(case_name, report_id, case_params):
     # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
     new_ib_order = act.placeOrderFIX(
         bca.convert_to_request(
-            'Send NewSingleOrder Iceberg',
+            'Send NewOrderSingle',
             case_params['TraderConnectivity'],
             case_params['case_id'],
             bca.message_to_grpc('NewOrderSingle', new_order_params)
         ))
     checkpoint_1 = new_ib_order.checkpoint_id
     logger.info(new_ib_order)
-    execution_report1_params = {
+    pending_er_params = {
         **reusable_order_params,
         'ClOrdID': new_order_params['ClOrdID'],
         'OrderID': new_ib_order.response_messages_list[0].fields['OrderID'].simple_value,
@@ -93,27 +88,29 @@ def execute(case_name, report_id, case_params):
         'OrdStatus': 'A',
         'ExecType': 'A',
         'LeavesQty': new_order_params['OrderQty'],
+        'MaxFloor': new_order_params['DisplayInstruction']['DisplayQty'],
         'Instrument': case_params['Instrument']
     }
     # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Receive Execution Report Pending",
-            bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']),
+            "ER Pending NewOrderSingle Received",
+            bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )
     )
 
-    execution_report2_params = deepcopy(execution_report1_params)
-    execution_report2_params['OrdStatus'] = execution_report2_params['ExecType'] = '0'
-    execution_report2_params['Instrument'] = {
+    new_er_params = deepcopy(pending_er_params)
+    new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
     }
+    new_er_params['ExecRestatementReason'] = '4'
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Receive Execution Report New",
-            bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID', 'OrdStatus']),
+            "ER New NewOrderSingle Received",
+            bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )
     )
@@ -146,7 +143,7 @@ def execute(case_name, report_id, case_params):
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Transmitted NewOrderSingle',
+            'NewOrderSingle transmitted >> PARIS',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
@@ -154,28 +151,28 @@ def execute(case_name, report_id, case_params):
         )
     )
 
-    er_sim_params = {
-            'ClOrdID': '*',
-            'OrderID': '*',
-            'ExecID': '*',
-            'TransactTime': '*',
-            'CumQty': '0',
-            'OrderQty': newordersingle_params['OrderQty'],
-            'OrdType': case_params['OrdType'],
-            'Side': case_params['Side'],
-            # 'LastPx': '0',
-            'AvgPx': '0',
-            'OrdStatus': '0',
-            'ExecType': '0',
-            'LeavesQty': '0',
-            'Text': '*'
+    er_bs_params = {
+        'ClOrdID': '*',
+        'OrderID': '*',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'CumQty': '0',
+        'OrderQty': newordersingle_params['OrderQty'],
+        'OrdType': case_params['OrdType'],
+        'Side': case_params['Side'],
+        # 'LastPx': '0',
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'ExecType': '0',
+        'LeavesQty': '0',
+        'Text': '*'
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Receive ExecutionReport New Sim',
-            bca.filter_to_grpc('ExecutionReport', er_sim_params, ["ClOrdID", "OrdStatus"]),
+            'ER NewOrderSingle transmitted << PARIS',
+            bca.filter_to_grpc('ExecutionReport', er_bs_params, ["ClOrdID", "OrdStatus"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_params['case_id'],
@@ -203,10 +200,10 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
         ))
 
-    execution_report3_params = {
+    cancellation_er_params = {
         **reusable_order_params,
         'ClOrdID': cancel_order_params['ClOrdID'],
-        #'OrderID': execution_report1_params['OrderID'],
+        # 'OrderID': execution_report1_params['OrderID'],
         'ExecID': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -220,15 +217,15 @@ def execute(case_name, report_id, case_params):
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Receive CancellationReport',
-            bca.filter_to_grpc('ExecutionReport', execution_report3_params, ["ClOrdID", "OrdStatus"]),
+            'Cancellation ER Received',
+            bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_params['case_id']
         )
     )
 
-    sim_cancel_order_params = {
+    bs_cancel_order_params = {
         'Account': case_params['Account'],
         'Instrument': instrument_bs,
         'ClOrdID': '*',
@@ -241,8 +238,8 @@ def execute(case_name, report_id, case_params):
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Transmitted OrderCancelRequest',
-            bca.filter_to_grpc('OrderCancelRequest', sim_cancel_order_params),
+            'Check OrderCancelRequest >> PARIS',
+            bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_params['case_id']
@@ -259,11 +256,11 @@ def execute(case_name, report_id, case_params):
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
         bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
-        bca.filter_to_grpc('OrderCancelRequest', sim_cancel_order_params),
+        bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
     ]
     verifier.submitCheckSequenceRule(
         bca.create_check_sequence_rule(
-            description="Check buy side messages ",
+            description="Check buy side messages from Paris",
             prefilter=pre_filter_sim,
             msg_filters=message_filters_sim,
             checkpoint=checkpoint_1,
