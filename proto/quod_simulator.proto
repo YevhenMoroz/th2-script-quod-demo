@@ -82,6 +82,7 @@ service TemplateSimulatorService {
     rpc createQuodSingleExecRule(TemplateQuodSingleExecRule) returns (th2.RuleID) {}
     rpc createQuodMDRRule(TemplateQuodMDRRule) returns (th2.RuleID) {}
     rpc createQuodDefMDRRule(TemplateQuodDefMDRRule) returns (th2.RuleID) {}
+    rpc createQuodDefMDRRule1(TemplateQuodDefMDRRule) returns (th2.RuleID) {}
     rpc createQuodRFQRule(TemplateQuodRFQRule) returns (th2.RuleID) {}
     rpc createQuodRFQTRADERule(TemplateQuodRFQTRADERule) returns (th2.RuleID) {}
     rpc createQuodPendingNewRule(TemplatePendingNewRule) returns (th2.RuleID) {}

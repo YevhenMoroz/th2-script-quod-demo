@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n(com.exactpro.th2.simulator.template.grpcP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14quod_simulator.proto\x12\x16th2.simulator.template\x1a\x0fsimulator.proto\x1a\x0binfra.proto\"\xbf\x01\n\x11TemplateFixCreate\x12\x45\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x35.th2.simulator.template.TemplateFixCreate.FieldsEntry\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x1a\x39\n\x0b\x46ieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x19\n\x05value\x18\x02 \x01(\x0b\x32\n.th2.Value:\x02\x38\x01\"?\n\x13TemplateQuodNOSRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"?\n\x13TemplateQuodOCRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"@\n\x14TemplateQuodOCRRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"\xe1\x03\n\x1aTemplateQuodSingleExecRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12@\n\x0cno_party_ids\x18\x02 \x03(\x0b\x32*.th2.simulator.template.TemplateNoPartyIDs\x12\x0f\n\x07\x63um_qty\x18\x03 \x01(\x05\x12\x1c\n\x14mask_as_connectivity\x18\x04 \x01(\t\x12Z\n\rmd_entry_size\x18\x05 \x03(\x0b\x32\x43.th2.simulator.template.TemplateQuodSingleExecRule.MdEntrySizeEntry\x12V\n\x0bmd_entry_px\x18\x06 \x03(\x0b\x32\x41.th2.simulator.template.TemplateQuodSingleExecRule.MdEntryPxEntry\x12\x0e\n\x06symbol\x18\x07 \x01(\t\x1a\x32\n\x10MdEntrySizeEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eMdEntryPxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"S\n\x12TemplateNoPartyIDs\x12\x10\n\x08party_id\x18\x02 \x01(\t\x12\x17\n\x0fparty_id_source\x18\x03 \x01(\t\x12\x12\n\nparty_role\x18\x04 \x01(\t\"B\n\x16TemplateQuodDefMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"J\n\x0eRequestMDRefID\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06symbol\x18\x03 \x01(\t\"\"\n\x0fResponseMDRefID\x12\x0f\n\x07MDRefID\x18\x01 \x01(\t\"\xdb\x02\n\x13TemplateQuodMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12S\n\rmd_entry_size\x18\x03 \x03(\x0b\x32<.th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry\x12O\n\x0bmd_entry_px\x18\x04 \x03(\x0b\x32:.th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry\x1a\x32\n\x10MdEntrySizeEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eMdEntryPxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"?\n\x13TemplateQuodRFQRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"D\n\x18TemplateQuodRFQTRADERule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"B\n\x16TemplatePendingNewRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID2\xa9\x08\n\x18TemplateSimulatorService\x12J\n\x0e\x63reateRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12P\n\x14\x63reateKotlinRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodNOSRule\x12+.th2.simulator.template.TemplateQuodNOSRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodOCRRule\x12+.th2.simulator.template.TemplateQuodOCRRule\x1a\x0b.th2.RuleID\"\x00\x12Q\n\x12\x63reateQuodOCRRRule\x12,.th2.simulator.template.TemplateQuodOCRRRule\x1a\x0b.th2.RuleID\"\x00\x12]\n\x18\x63reateQuodSingleExecRule\x12\x32.th2.simulator.template.TemplateQuodSingleExecRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodMDRRule\x12+.th2.simulator.template.TemplateQuodMDRRule\x1a\x0b.th2.RuleID\"\x00\x12U\n\x14\x63reateQuodDefMDRRule\x12..th2.simulator.template.TemplateQuodDefMDRRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodRFQRule\x12+.th2.simulator.template.TemplateQuodRFQRule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x16\x63reateQuodRFQTRADERule\x12\x30.th2.simulator.template.TemplateQuodRFQTRADERule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x18\x63reateQuodPendingNewRule\x12..th2.simulator.template.TemplatePendingNewRule\x1a\x0b.th2.RuleID\"\x00\x12l\n\x17getMDRefIDForConnection\x12&.th2.simulator.template.RequestMDRefID\x1a\'.th2.simulator.template.ResponseMDRefID\"\x00\x42,\n(com.exactpro.th2.simulator.template.grpcP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x14quod_simulator.proto\x12\x16th2.simulator.template\x1a\x0fsimulator.proto\x1a\x0binfra.proto\"\xbf\x01\n\x11TemplateFixCreate\x12\x45\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x35.th2.simulator.template.TemplateFixCreate.FieldsEntry\x12(\n\rconnection_id\x18\x02 \x01(\x0b\x32\x11.th2.ConnectionID\x1a\x39\n\x0b\x46ieldsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x19\n\x05value\x18\x02 \x01(\x0b\x32\n.th2.Value:\x02\x38\x01\"?\n\x13TemplateQuodNOSRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"?\n\x13TemplateQuodOCRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"@\n\x14TemplateQuodOCRRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"\xe1\x03\n\x1aTemplateQuodSingleExecRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12@\n\x0cno_party_ids\x18\x02 \x03(\x0b\x32*.th2.simulator.template.TemplateNoPartyIDs\x12\x0f\n\x07\x63um_qty\x18\x03 \x01(\x05\x12\x1c\n\x14mask_as_connectivity\x18\x04 \x01(\t\x12Z\n\rmd_entry_size\x18\x05 \x03(\x0b\x32\x43.th2.simulator.template.TemplateQuodSingleExecRule.MdEntrySizeEntry\x12V\n\x0bmd_entry_px\x18\x06 \x03(\x0b\x32\x41.th2.simulator.template.TemplateQuodSingleExecRule.MdEntryPxEntry\x12\x0e\n\x06symbol\x18\x07 \x01(\t\x1a\x32\n\x10MdEntrySizeEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eMdEntryPxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"S\n\x12TemplateNoPartyIDs\x12\x10\n\x08party_id\x18\x02 \x01(\t\x12\x17\n\x0fparty_id_source\x18\x03 \x01(\t\x12\x12\n\nparty_role\x18\x04 \x01(\t\"B\n\x16TemplateQuodDefMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"J\n\x0eRequestMDRefID\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06symbol\x18\x03 \x01(\t\"\"\n\x0fResponseMDRefID\x12\x0f\n\x07MDRefID\x18\x01 \x01(\t\"\xdb\x02\n\x13TemplateQuodMDRRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12S\n\rmd_entry_size\x18\x03 \x03(\x0b\x32<.th2.simulator.template.TemplateQuodMDRRule.MdEntrySizeEntry\x12O\n\x0bmd_entry_px\x18\x04 \x03(\x0b\x32:.th2.simulator.template.TemplateQuodMDRRule.MdEntryPxEntry\x1a\x32\n\x10MdEntrySizeEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eMdEntryPxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"?\n\x13TemplateQuodRFQRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"D\n\x18TemplateQuodRFQTRADERule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID\"B\n\x16TemplatePendingNewRule\x12(\n\rconnection_id\x18\x01 \x01(\x0b\x32\x11.th2.ConnectionID2\x81\t\n\x18TemplateSimulatorService\x12J\n\x0e\x63reateRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12P\n\x14\x63reateKotlinRule_FIX\x12).th2.simulator.template.TemplateFixCreate\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodNOSRule\x12+.th2.simulator.template.TemplateQuodNOSRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodOCRRule\x12+.th2.simulator.template.TemplateQuodOCRRule\x1a\x0b.th2.RuleID\"\x00\x12Q\n\x12\x63reateQuodOCRRRule\x12,.th2.simulator.template.TemplateQuodOCRRRule\x1a\x0b.th2.RuleID\"\x00\x12]\n\x18\x63reateQuodSingleExecRule\x12\x32.th2.simulator.template.TemplateQuodSingleExecRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodMDRRule\x12+.th2.simulator.template.TemplateQuodMDRRule\x1a\x0b.th2.RuleID\"\x00\x12U\n\x14\x63reateQuodDefMDRRule\x12..th2.simulator.template.TemplateQuodDefMDRRule\x1a\x0b.th2.RuleID\"\x00\x12V\n\x15\x63reateQuodDefMDRRule1\x12..th2.simulator.template.TemplateQuodDefMDRRule\x1a\x0b.th2.RuleID\"\x00\x12O\n\x11\x63reateQuodRFQRule\x12+.th2.simulator.template.TemplateQuodRFQRule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x16\x63reateQuodRFQTRADERule\x12\x30.th2.simulator.template.TemplateQuodRFQTRADERule\x1a\x0b.th2.RuleID\"\x00\x12Y\n\x18\x63reateQuodPendingNewRule\x12..th2.simulator.template.TemplatePendingNewRule\x1a\x0b.th2.RuleID\"\x00\x12l\n\x17getMDRefIDForConnection\x12&.th2.simulator.template.RequestMDRefID\x1a\'.th2.simulator.template.ResponseMDRefID\"\x00\x42,\n(com.exactpro.th2.simulator.template.grpcP\x01\x62\x06proto3'
   ,
   dependencies=[simulator__pb2.DESCRIPTOR,infra__pb2.DESCRIPTOR,])
 
@@ -909,7 +909,7 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=1771,
-  serialized_end=2836,
+  serialized_end=2924,
   methods=[
   _descriptor.MethodDescriptor(
     name='createRule_FIX',
@@ -992,9 +992,19 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='createQuodDefMDRRule1',
+    full_name='th2.simulator.template.TemplateSimulatorService.createQuodDefMDRRule1',
+    index=8,
+    containing_service=None,
+    input_type=_TEMPLATEQUODDEFMDRRULE,
+    output_type=simulator__pb2._RULEID,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='createQuodRFQRule',
     full_name='th2.simulator.template.TemplateSimulatorService.createQuodRFQRule',
-    index=8,
+    index=9,
     containing_service=None,
     input_type=_TEMPLATEQUODRFQRULE,
     output_type=simulator__pb2._RULEID,
@@ -1004,7 +1014,7 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='createQuodRFQTRADERule',
     full_name='th2.simulator.template.TemplateSimulatorService.createQuodRFQTRADERule',
-    index=9,
+    index=10,
     containing_service=None,
     input_type=_TEMPLATEQUODRFQTRADERULE,
     output_type=simulator__pb2._RULEID,
@@ -1014,7 +1024,7 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='createQuodPendingNewRule',
     full_name='th2.simulator.template.TemplateSimulatorService.createQuodPendingNewRule',
-    index=10,
+    index=11,
     containing_service=None,
     input_type=_TEMPLATEPENDINGNEWRULE,
     output_type=simulator__pb2._RULEID,
@@ -1024,7 +1034,7 @@ _TEMPLATESIMULATORSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='getMDRefIDForConnection',
     full_name='th2.simulator.template.TemplateSimulatorService.getMDRefIDForConnection',
-    index=11,
+    index=12,
     containing_service=None,
     input_type=_REQUESTMDREFID,
     output_type=_RESPONSEMDREFID,

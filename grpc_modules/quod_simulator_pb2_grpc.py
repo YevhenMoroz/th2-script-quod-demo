@@ -55,6 +55,11 @@ class TemplateSimulatorServiceStub(object):
                 request_serializer=quod__simulator__pb2.TemplateQuodDefMDRRule.SerializeToString,
                 response_deserializer=simulator__pb2.RuleID.FromString,
                 )
+        self.createQuodDefMDRRule1 = channel.unary_unary(
+                '/th2.simulator.template.TemplateSimulatorService/createQuodDefMDRRule1',
+                request_serializer=quod__simulator__pb2.TemplateQuodDefMDRRule.SerializeToString,
+                response_deserializer=simulator__pb2.RuleID.FromString,
+                )
         self.createQuodRFQRule = channel.unary_unary(
                 '/th2.simulator.template.TemplateSimulatorService/createQuodRFQRule',
                 request_serializer=quod__simulator__pb2.TemplateQuodRFQRule.SerializeToString,
@@ -128,6 +133,12 @@ class TemplateSimulatorServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def createQuodDefMDRRule1(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def createQuodRFQRule(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -192,6 +203,11 @@ def add_TemplateSimulatorServiceServicer_to_server(servicer, server):
             ),
             'createQuodDefMDRRule': grpc.unary_unary_rpc_method_handler(
                     servicer.createQuodDefMDRRule,
+                    request_deserializer=quod__simulator__pb2.TemplateQuodDefMDRRule.FromString,
+                    response_serializer=simulator__pb2.RuleID.SerializeToString,
+            ),
+            'createQuodDefMDRRule1': grpc.unary_unary_rpc_method_handler(
+                    servicer.createQuodDefMDRRule1,
                     request_deserializer=quod__simulator__pb2.TemplateQuodDefMDRRule.FromString,
                     response_serializer=simulator__pb2.RuleID.SerializeToString,
             ),
@@ -356,6 +372,23 @@ class TemplateSimulatorService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/th2.simulator.template.TemplateSimulatorService/createQuodDefMDRRule',
+            quod__simulator__pb2.TemplateQuodDefMDRRule.SerializeToString,
+            simulator__pb2.RuleID.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def createQuodDefMDRRule1(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/th2.simulator.template.TemplateSimulatorService/createQuodDefMDRRule1',
             quod__simulator__pb2.TemplateQuodDefMDRRule.SerializeToString,
             simulator__pb2.RuleID.FromString,
             options, channel_credentials,

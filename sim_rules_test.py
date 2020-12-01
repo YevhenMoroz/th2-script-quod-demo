@@ -6,8 +6,8 @@ from grpc_modules import simulator_pb2
 import grpc
 
 # start rule
-# channel = grpc.insecure_channel('10.0.22.22:31977')
-channel = grpc.insecure_channel('localhost:8081')
+channel = grpc.insecure_channel('10.0.22.22:31977')
+# channel = grpc.insecure_channel('localhost:8081')
 simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 
 # DemoRule = simulator.createTemplateQuodDemoRule(
@@ -69,11 +69,15 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 #     md_entry_size={1000: 1000},
 #     md_entry_px={40: 30}))
 
+
+## Use Def Rules for debug only
 # DefRule = simulator.createQuodDefMDRRule(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
 # ))
-
-
+#
+# DefRule1 = simulator.createQuodDefMDRRule1(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
+#     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+# ))
 
 # stop rule
 core = simulator_pb2_grpc.ServiceSimulatorStub(channel)
@@ -91,9 +95,10 @@ for r in running_rules:
 
 
 MDRefID = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
-    Symbol="1062",
+    symbol="1062",
     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
 )).MDRefID
+
 # for i in range(479,483):
 #     core.removeRule(simulator_pb2.RuleID(id=i))
 
