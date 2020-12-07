@@ -21,16 +21,17 @@ def execute(case_name, report_id, case_params):
     act = ActFixStub(case_params['act'])
     event_store = EventStoreServiceStub(case_params['event-store'])
     verifier = VerifierStub(case_params['verifier'])
-    rules_killer = ServiceSimulatorStub(case_params['simulator'])
+    # rules_killer = ServiceSimulatorStub(case_params['simulator'])
 
-    sim_rules = []
-    logger.info("Rules with the next IDs are running: " + " ".join(str(rule.id) for rule in sim_rules))
+    # sim_rules = []
+    # logger.info("Rules with the next IDs are running: " + " ".join(str(rule.id) for rule in sim_rules))
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
     # Create sub-report for case
-    event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
-    event_store.StoreEvent(event_request_1)
+    bca.create_event(EventStoreServiceStub(case_params['event-store']), case_name, case_params['case_id'], report_id)
+    # event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
+    # event_store.StoreEvent(event_request_1)
 
     reusable_order_params = {  # This parameters can be used for ExecutionReport message
         'Account': case_params['Account'],
@@ -63,9 +64,10 @@ def execute(case_name, report_id, case_params):
         'DisplayInstruction': {
             'DisplayQty': '50'
         },
-        **check_params
+        'IClOrdIdAO': 'OD_5fgfDXg-00'
     }
     # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
+
     new_ib_order = act.placeOrderFIX(
         bca.convert_to_request(
             'Send NewOrderSingle',
@@ -275,8 +277,8 @@ def execute(case_name, report_id, case_params):
         time.sleep(5)
 
     # stop all rules
-    for rule in sim_rules:
-        rules_killer.removeRule(rule)
+    # for rule in sim_rules:
+    #     rules_killer.removeRule(rule)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
