@@ -6,8 +6,12 @@ from custom import basic_custom_actions as bca
 from grpc_modules import infra_pb2
 from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
+from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.verifier_pb2_grpc import VerifierStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
+from grpc_modules.infra_pb2 import Direction, ConnectionID
+from grpc_modules.quod_simulator_pb2 import RequestMDRefID
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,6 +22,7 @@ def execute(case_name, report_id, case_params):
     act = ActFixStub(case_params['act'])
     event_store = EventStoreServiceStub(case_params['event-store'])
     verifier = VerifierStub(case_params['verifier'])
+    simulator = TemplateSimulatorServiceStub(case_params['simulator'])
     rules_killer = ServiceSimulatorStub(case_params['simulator'])
 
     sim_rules = []
@@ -78,11 +83,82 @@ def execute(case_name, report_id, case_params):
             case_params['case_id'],
             bca.message_to_grpc('NewOrderSingle', sor_order_params)
         ))
+
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="596",
+        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+    )).MDRefID
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="3390",
+        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+    )).MDRefID
+
+    mdfr_params_1 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_1,
+        'Instrument': {
+            'Symbol': "3390"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '10',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    mdfr_params_2 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_2,
+        'Instrument': {
+            'Symbol': "3503"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '10',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-paris",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+        )
+    )
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-trqx",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+        )
+    )
+
     checkpoint_1 = new_sor_order.checkpoint_id
-    execution_report1_params = {
+    pending_er_params = {
         **reusable_order_params,
         'ClOrdID': sor_order_params['ClOrdID'],
-        'OrderID': new_sor_order.response_message.fields['OrderID'].simple_value,
+        'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -103,22 +179,22 @@ def execute(case_name, report_id, case_params):
     # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Receive Execution Report Pending",
-            bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']),
+            "ER Pending NewOrderSingle Received",
+            bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )
     )
 
-    execution_report2_params = deepcopy(execution_report1_params)
-    execution_report2_params['OrdStatus'] = execution_report2_params['ExecType'] = '0'
-    execution_report2_params['Instrument'] = {
+    new_er_params = deepcopy(pending_er_params)
+    new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Receive Execution Report New",
-            bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID', 'OrdStatus']),
+            "ER New NewOrderSingle Received",
+            bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )
     )
@@ -147,7 +223,7 @@ def execute(case_name, report_id, case_params):
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Transmitted NewOrderSingle',
+            'NewOrderSingle transmitted >> PARIS',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
@@ -175,7 +251,7 @@ def execute(case_name, report_id, case_params):
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Receive ExecutionReport New Sim',
+            'ER NewOrderSingle transmitted << PARIS',
             bca.filter_to_grpc('ExecutionReport', er_sim_params, ["ClOrdID", "OrdStatus"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
@@ -204,10 +280,10 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
         ))
 
-    execution_report3_params = {
+    cancellation_er_params = {
         **reusable_order_params,
         'ClOrdID': cancel_order_params['ClOrdID'],
-        'OrderID': execution_report1_params['OrderID'],
+        'OrderID': pending_er_params['OrderID'],
         'ExecID': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -221,8 +297,8 @@ def execute(case_name, report_id, case_params):
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
-            'Receive CancellationReport',
-            bca.filter_to_grpc('ExecutionReport', execution_report3_params, ["ClOrdID", "OrdStatus"]),
+            'Cancellation ER Received',
+            bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_params['case_id']
@@ -253,7 +329,7 @@ def execute(case_name, report_id, case_params):
     ]
     verifier.submitCheckSequenceRule(
         bca.create_check_sequence_rule(
-            description="Check buy side messages ",
+            description="Check buy side messages from Paris",
             prefilter=pre_filter_sim,
             msg_filters=message_filters_sim,
             checkpoint=checkpoint_1,
