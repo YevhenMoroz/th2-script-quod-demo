@@ -97,7 +97,7 @@ def execute(case_name, report_id, case_params):
         'MDReportID': "1",
         'MDReqID': MDRefID_1,
         'Instrument': {
-            'Symbol': "3390"
+            'Symbol': "596"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
@@ -119,7 +119,7 @@ def execute(case_name, report_id, case_params):
         'MDReportID': "1",
         'MDReqID': MDRefID_2,
         'Instrument': {
-            'Symbol': "3503"
+            'Symbol': "3390"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
