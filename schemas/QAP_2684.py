@@ -73,7 +73,8 @@ def execute(case_name, report_id, case_params):
             'PartyID': 'TestCLIENTACCOUNT',
             'PartyIDSource': 'D',
             'PartyRole': '24'
-        }]
+        }],
+        'Text': 'QAP-2684'
     }
     # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
     new_sor_order = act.placeOrderFIX(
