@@ -280,7 +280,7 @@ def execute(case_name, report_id, case_params):
         'ExecID': '*',
         'TransactTime': '*',
         'CumQty': '0',
-        'OrderQty': replace_nos_bs_params['OrderQty'],
+        'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
         'OrdType': case_params['OrdType'],
         'Side': case_params['Side'],
         # 'LastPx': '0',
