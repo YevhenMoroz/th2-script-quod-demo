@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2020-2020, Exactpro (Exactpro Systems Limited)
+ * www.exactpro.com
+ * Build Software to Test Software
+ *
+ * All rights reserved.
+ * This is unpublished, licensed software, confidential and proprietary 
+ * information which is the property of Exactpro Systems Limited or its licensors.
+ */
+
+syntax = "proto3";
+package th2;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "com.exactpro.th2.act.grpc.fe";
+
+service OrderTicketService {
+  rpc placeOrder(NewOrderDetails) returns (th2.ActResponse) {}
+}
+
+message NewOrderDetails {
+  BaseRequest base = 1;
+  string instrLookupSymbol = 2;
+  OrderDetails orderDetails = 3;
+}
+
+message OrderDetails {
+
+  enum OrderSide {
+    SUBMIT = 0;
+    BUY = 1;
+    SELL = 2;
+  }
+
+  string instrument = 1;
+  
+  string orderType = 2;
+  string limit = 3;
+  string qty = 4;
+  string client = 5;
+  string timeInForce = 6;
+  OrderSide orderSide = 7;
+  string stopPrice = 8;
+
+  CareOrderDetails careOrderParams = 20;
+  AlgoOrderDetails algoOrderParams = 30;
+  
+}
+
+message CareOrderDetails {
+  string desk = 1;
+  bool partialDesk = 2;
+}
+
+message TWAPStrategyParams {
+  
+  message TimeOffset {
+    string from = 1;
+    string offset = 2;
+  }
+
+  TimeOffset startDate = 1;
+  TimeOffset endDate = 2;
+  string waves = 3;
+  string aggressivity = 4;
+  string maxParticipation = 5;
+}
+
+message MultilistingStrategy {
+  bool allowMissingPrim = 1;
+  bool availableVenues = 2;
+  string postMode = 3;
+  string spreyingWeights = 4;
+}
+
+message AlgoOrderDetails {
+  string strategyType = 1;
+  oneof strategyParams {
+    TWAPStrategyParams twapStrategy = 11;
+    MultilistingStrategy multilistingStrategy = 12;
+  }
+}
