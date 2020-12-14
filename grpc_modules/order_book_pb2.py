@@ -24,29 +24,11 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='th2',
   syntax='proto3',
   serialized_options=_b('\n\034com.exactpro.th2.act.grpc.feP\001'),
-  serialized_pb=_b('\n\x10order_book.proto\x12\x03th2\x1a\x0c\x63ommon.proto\x1a\rwin_act.proto\x1a\x12order_ticket.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xc1\x01\n\x12ModifyOrderDetails\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12\x33\n\x06\x66ilter\x18\x02 \x03(\x0b\x32#.th2.ModifyOrderDetails.FilterEntry\x12\'\n\x0corderDetails\x18\x03 \x01(\x0b\x32\x11.th2.OrderDetails\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xdd\x01\n\x12\x43\x61ncelOrderDetails\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12\x33\n\x06\x66ilter\x18\x02 \x03(\x0b\x32#.th2.CancelOrderDetails.FilterEntry\x12\x32\n\x0e\x63\x61ncelChildren\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.BoolValue\x12\x0f\n\x07\x63omment\x18\x04 \x01(\t\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"f\n\x13GetSubOrdersRequest\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12/\n\x10subOrdersDetails\x18\x02 \x01(\x0b\x32\x15.th2.SubOrdersDetails\"\x8b\x02\n\x10SubOrdersDetails\x12\x14\n\x0c\x65xtractionId\x18\x01 \x01(\t\x12\x31\n\x06\x66ilter\x18\x02 \x03(\x0b\x32!.th2.SubOrdersDetails.FilterEntry\x12:\n\rsubOrdersType\x18\x03 \x01(\x0e\x32#.th2.SubOrdersDetails.SubOrdersType\x12 \n\tsubOrders\x18\x04 \x03(\x0b\x32\r.th2.SubOrder\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"!\n\rSubOrdersType\x12\x10\n\x0c\x43HILD_ORDERS\x10\x00\"o\n\x08SubOrder\x12/\n\x10subOrdersDetails\x18\x01 \x01(\x0b\x32\x15.th2.SubOrdersDetails\x12\x32\n\x0corderDetails\x18\x02 \x03(\x0b\x32\x1c.th2.ExtractionFieldsDetails2\xc4\x02\n\x10OrderBookService\x12\x39\n\namendOrder\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x39\n\nsplitOrder\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x39\n\nsplitLimit\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12:\n\x0b\x63\x61ncelOrder\x12\x17.th2.CancelOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x43\n\x13getSubOrdersDetails\x12\x18.th2.GetSubOrdersRequest\x1a\x10.th2.ActResponse\"\x00\x42 \n\x1c\x63om.exactpro.th2.act.grpc.feP\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x10order_book.proto\x12\x03th2\x1a\x0c\x63ommon.proto\x1a\rwin_act.proto\x1a\x12order_ticket.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xc1\x01\n\x12ModifyOrderDetails\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12\x33\n\x06\x66ilter\x18\x02 \x03(\x0b\x32#.th2.ModifyOrderDetails.FilterEntry\x12\'\n\x0corderDetails\x18\x03 \x01(\x0b\x32\x11.th2.OrderDetails\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xdd\x01\n\x12\x43\x61ncelOrderDetails\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12\x33\n\x06\x66ilter\x18\x02 \x03(\x0b\x32#.th2.CancelOrderDetails.FilterEntry\x12\x32\n\x0e\x63\x61ncelChildren\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.BoolValue\x12\x0f\n\x07\x63omment\x18\x04 \x01(\t\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"}\n\x17GetOrdersDetailsRequest\x12\x1e\n\x04\x62\x61se\x18\x01 \x01(\x0b\x32\x10.th2.BaseRequest\x12\x14\n\x0c\x65xtractionId\x18\x02 \x01(\t\x12,\n\x0corderDetails\x18\x03 \x01(\x0b\x32\x16.th2.OrdersDetailsInfo\"\xca\x01\n\x11OrdersDetailsInfo\x12\x32\n\x06\x66ilter\x18\x01 \x03(\x0b\x32\".th2.OrdersDetailsInfo.FilterEntry\x12\x14\n\x0c\x65xtractCount\x18\x02 \x01(\x08\x12\x0f\n\x07\x63ountId\x18\x03 \x01(\t\x12+\n\x0e\x65xtractionInfo\x18\x04 \x03(\x0b\x32\x13.th2.ExtractionInfo\x1a-\n\x0b\x46ilterEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x7f\n\x0e\x45xtractionInfo\x12\x0e\n\x06number\x18\x02 \x01(\x05\x12\x32\n\x0corderDetails\x18\x03 \x03(\x0b\x32\x1c.th2.ExtractionFieldsDetails\x12)\n\tsubOrders\x18\x04 \x01(\x0b\x32\x16.th2.OrdersDetailsInfo2\xc5\x02\n\x10OrderBookService\x12\x39\n\namendOrder\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x39\n\nsplitOrder\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x39\n\nsplitLimit\x12\x17.th2.ModifyOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12:\n\x0b\x63\x61ncelOrder\x12\x17.th2.CancelOrderDetails\x1a\x10.th2.ActResponse\"\x00\x12\x44\n\x10getOrdersDetails\x12\x1c.th2.GetOrdersDetailsRequest\x1a\x10.th2.ActResponse\"\x00\x42 \n\x1c\x63om.exactpro.th2.act.grpc.feP\x01\x62\x06proto3')
   ,
   dependencies=[common__pb2.DESCRIPTOR,win__act__pb2.DESCRIPTOR,order__ticket__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,])
 
 
-
-_SUBORDERSDETAILS_SUBORDERSTYPE = _descriptor.EnumDescriptor(
-  name='SubOrdersType',
-  full_name='th2.SubOrdersDetails.SubOrdersType',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='CHILD_ORDERS', index=0, number=0,
-      serialized_options=None,
-      type=None),
-  ],
-  containing_type=None,
-  serialized_options=None,
-  serialized_start=898,
-  serialized_end=931,
-)
-_sym_db.RegisterEnumDescriptor(_SUBORDERSDETAILS_SUBORDERSTYPE)
 
 
 _MODIFYORDERDETAILS_FILTERENTRY = _descriptor.Descriptor(
@@ -220,23 +202,30 @@ _CANCELORDERDETAILS = _descriptor.Descriptor(
 )
 
 
-_GETSUBORDERSREQUEST = _descriptor.Descriptor(
-  name='GetSubOrdersRequest',
-  full_name='th2.GetSubOrdersRequest',
+_GETORDERSDETAILSREQUEST = _descriptor.Descriptor(
+  name='GetOrdersDetailsRequest',
+  full_name='th2.GetOrdersDetailsRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='base', full_name='th2.GetSubOrdersRequest.base', index=0,
+      name='base', full_name='th2.GetOrdersDetailsRequest.base', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='subOrdersDetails', full_name='th2.GetSubOrdersRequest.subOrdersDetails', index=1,
-      number=2, type=11, cpp_type=10, label=1,
+      name='extractionId', full_name='th2.GetOrdersDetailsRequest.extractionId', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='orderDetails', full_name='th2.GetOrdersDetailsRequest.orderDetails', index=2,
+      number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -254,26 +243,26 @@ _GETSUBORDERSREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=559,
-  serialized_end=661,
+  serialized_end=684,
 )
 
 
-_SUBORDERSDETAILS_FILTERENTRY = _descriptor.Descriptor(
+_ORDERSDETAILSINFO_FILTERENTRY = _descriptor.Descriptor(
   name='FilterEntry',
-  full_name='th2.SubOrdersDetails.FilterEntry',
+  full_name='th2.OrdersDetailsInfo.FilterEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='th2.SubOrdersDetails.FilterEntry.key', index=0,
+      name='key', full_name='th2.OrdersDetailsInfo.FilterEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='th2.SubOrdersDetails.FilterEntry.value', index=1,
+      name='value', full_name='th2.OrdersDetailsInfo.FilterEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -295,36 +284,36 @@ _SUBORDERSDETAILS_FILTERENTRY = _descriptor.Descriptor(
   serialized_end=333,
 )
 
-_SUBORDERSDETAILS = _descriptor.Descriptor(
-  name='SubOrdersDetails',
-  full_name='th2.SubOrdersDetails',
+_ORDERSDETAILSINFO = _descriptor.Descriptor(
+  name='OrdersDetailsInfo',
+  full_name='th2.OrdersDetailsInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='extractionId', full_name='th2.SubOrdersDetails.extractionId', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='filter', full_name='th2.SubOrdersDetails.filter', index=1,
-      number=2, type=11, cpp_type=10, label=3,
+      name='filter', full_name='th2.OrdersDetailsInfo.filter', index=0,
+      number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='subOrdersType', full_name='th2.SubOrdersDetails.subOrdersType', index=2,
-      number=3, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
+      name='extractCount', full_name='th2.OrdersDetailsInfo.extractCount', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='subOrders', full_name='th2.SubOrdersDetails.subOrders', index=3,
+      name='countId', full_name='th2.OrdersDetailsInfo.countId', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='extractionInfo', full_name='th2.OrdersDetailsInfo.extractionInfo', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -333,9 +322,8 @@ _SUBORDERSDETAILS = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_SUBORDERSDETAILS_FILTERENTRY, ],
+  nested_types=[_ORDERSDETAILSINFO_FILTERENTRY, ],
   enum_types=[
-    _SUBORDERSDETAILS_SUBORDERSTYPE,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -343,29 +331,36 @@ _SUBORDERSDETAILS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=664,
-  serialized_end=931,
+  serialized_start=687,
+  serialized_end=889,
 )
 
 
-_SUBORDER = _descriptor.Descriptor(
-  name='SubOrder',
-  full_name='th2.SubOrder',
+_EXTRACTIONINFO = _descriptor.Descriptor(
+  name='ExtractionInfo',
+  full_name='th2.ExtractionInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='subOrdersDetails', full_name='th2.SubOrder.subOrdersDetails', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='number', full_name='th2.ExtractionInfo.number', index=0,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='orderDetails', full_name='th2.SubOrder.orderDetails', index=1,
-      number=2, type=11, cpp_type=10, label=3,
+      name='orderDetails', full_name='th2.ExtractionInfo.orderDetails', index=1,
+      number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='subOrders', full_name='th2.ExtractionInfo.subOrders', index=2,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -381,8 +376,8 @@ _SUBORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=933,
-  serialized_end=1044,
+  serialized_start=891,
+  serialized_end=1018,
 )
 
 _MODIFYORDERDETAILS_FILTERENTRY.containing_type = _MODIFYORDERDETAILS
@@ -393,20 +388,18 @@ _CANCELORDERDETAILS_FILTERENTRY.containing_type = _CANCELORDERDETAILS
 _CANCELORDERDETAILS.fields_by_name['base'].message_type = common__pb2._BASEREQUEST
 _CANCELORDERDETAILS.fields_by_name['filter'].message_type = _CANCELORDERDETAILS_FILTERENTRY
 _CANCELORDERDETAILS.fields_by_name['cancelChildren'].message_type = google_dot_protobuf_dot_wrappers__pb2._BOOLVALUE
-_GETSUBORDERSREQUEST.fields_by_name['base'].message_type = common__pb2._BASEREQUEST
-_GETSUBORDERSREQUEST.fields_by_name['subOrdersDetails'].message_type = _SUBORDERSDETAILS
-_SUBORDERSDETAILS_FILTERENTRY.containing_type = _SUBORDERSDETAILS
-_SUBORDERSDETAILS.fields_by_name['filter'].message_type = _SUBORDERSDETAILS_FILTERENTRY
-_SUBORDERSDETAILS.fields_by_name['subOrdersType'].enum_type = _SUBORDERSDETAILS_SUBORDERSTYPE
-_SUBORDERSDETAILS.fields_by_name['subOrders'].message_type = _SUBORDER
-_SUBORDERSDETAILS_SUBORDERSTYPE.containing_type = _SUBORDERSDETAILS
-_SUBORDER.fields_by_name['subOrdersDetails'].message_type = _SUBORDERSDETAILS
-_SUBORDER.fields_by_name['orderDetails'].message_type = win__act__pb2._EXTRACTIONFIELDSDETAILS
+_GETORDERSDETAILSREQUEST.fields_by_name['base'].message_type = common__pb2._BASEREQUEST
+_GETORDERSDETAILSREQUEST.fields_by_name['orderDetails'].message_type = _ORDERSDETAILSINFO
+_ORDERSDETAILSINFO_FILTERENTRY.containing_type = _ORDERSDETAILSINFO
+_ORDERSDETAILSINFO.fields_by_name['filter'].message_type = _ORDERSDETAILSINFO_FILTERENTRY
+_ORDERSDETAILSINFO.fields_by_name['extractionInfo'].message_type = _EXTRACTIONINFO
+_EXTRACTIONINFO.fields_by_name['orderDetails'].message_type = win__act__pb2._EXTRACTIONFIELDSDETAILS
+_EXTRACTIONINFO.fields_by_name['subOrders'].message_type = _ORDERSDETAILSINFO
 DESCRIPTOR.message_types_by_name['ModifyOrderDetails'] = _MODIFYORDERDETAILS
 DESCRIPTOR.message_types_by_name['CancelOrderDetails'] = _CANCELORDERDETAILS
-DESCRIPTOR.message_types_by_name['GetSubOrdersRequest'] = _GETSUBORDERSREQUEST
-DESCRIPTOR.message_types_by_name['SubOrdersDetails'] = _SUBORDERSDETAILS
-DESCRIPTOR.message_types_by_name['SubOrder'] = _SUBORDER
+DESCRIPTOR.message_types_by_name['GetOrdersDetailsRequest'] = _GETORDERSDETAILSREQUEST
+DESCRIPTOR.message_types_by_name['OrdersDetailsInfo'] = _ORDERSDETAILSINFO
+DESCRIPTOR.message_types_by_name['ExtractionInfo'] = _EXTRACTIONINFO
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ModifyOrderDetails = _reflection.GeneratedProtocolMessageType('ModifyOrderDetails', (_message.Message,), dict(
@@ -439,40 +432,40 @@ CancelOrderDetails = _reflection.GeneratedProtocolMessageType('CancelOrderDetail
 _sym_db.RegisterMessage(CancelOrderDetails)
 _sym_db.RegisterMessage(CancelOrderDetails.FilterEntry)
 
-GetSubOrdersRequest = _reflection.GeneratedProtocolMessageType('GetSubOrdersRequest', (_message.Message,), dict(
-  DESCRIPTOR = _GETSUBORDERSREQUEST,
+GetOrdersDetailsRequest = _reflection.GeneratedProtocolMessageType('GetOrdersDetailsRequest', (_message.Message,), dict(
+  DESCRIPTOR = _GETORDERSDETAILSREQUEST,
   __module__ = 'order_book_pb2'
-  # @@protoc_insertion_point(class_scope:th2.GetSubOrdersRequest)
+  # @@protoc_insertion_point(class_scope:th2.GetOrdersDetailsRequest)
   ))
-_sym_db.RegisterMessage(GetSubOrdersRequest)
+_sym_db.RegisterMessage(GetOrdersDetailsRequest)
 
-SubOrdersDetails = _reflection.GeneratedProtocolMessageType('SubOrdersDetails', (_message.Message,), dict(
+OrdersDetailsInfo = _reflection.GeneratedProtocolMessageType('OrdersDetailsInfo', (_message.Message,), dict(
 
   FilterEntry = _reflection.GeneratedProtocolMessageType('FilterEntry', (_message.Message,), dict(
-    DESCRIPTOR = _SUBORDERSDETAILS_FILTERENTRY,
+    DESCRIPTOR = _ORDERSDETAILSINFO_FILTERENTRY,
     __module__ = 'order_book_pb2'
-    # @@protoc_insertion_point(class_scope:th2.SubOrdersDetails.FilterEntry)
+    # @@protoc_insertion_point(class_scope:th2.OrdersDetailsInfo.FilterEntry)
     ))
   ,
-  DESCRIPTOR = _SUBORDERSDETAILS,
+  DESCRIPTOR = _ORDERSDETAILSINFO,
   __module__ = 'order_book_pb2'
-  # @@protoc_insertion_point(class_scope:th2.SubOrdersDetails)
+  # @@protoc_insertion_point(class_scope:th2.OrdersDetailsInfo)
   ))
-_sym_db.RegisterMessage(SubOrdersDetails)
-_sym_db.RegisterMessage(SubOrdersDetails.FilterEntry)
+_sym_db.RegisterMessage(OrdersDetailsInfo)
+_sym_db.RegisterMessage(OrdersDetailsInfo.FilterEntry)
 
-SubOrder = _reflection.GeneratedProtocolMessageType('SubOrder', (_message.Message,), dict(
-  DESCRIPTOR = _SUBORDER,
+ExtractionInfo = _reflection.GeneratedProtocolMessageType('ExtractionInfo', (_message.Message,), dict(
+  DESCRIPTOR = _EXTRACTIONINFO,
   __module__ = 'order_book_pb2'
-  # @@protoc_insertion_point(class_scope:th2.SubOrder)
+  # @@protoc_insertion_point(class_scope:th2.ExtractionInfo)
   ))
-_sym_db.RegisterMessage(SubOrder)
+_sym_db.RegisterMessage(ExtractionInfo)
 
 
 DESCRIPTOR._options = None
 _MODIFYORDERDETAILS_FILTERENTRY._options = None
 _CANCELORDERDETAILS_FILTERENTRY._options = None
-_SUBORDERSDETAILS_FILTERENTRY._options = None
+_ORDERSDETAILSINFO_FILTERENTRY._options = None
 
 _ORDERBOOKSERVICE = _descriptor.ServiceDescriptor(
   name='OrderBookService',
@@ -480,8 +473,8 @@ _ORDERBOOKSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=1047,
-  serialized_end=1371,
+  serialized_start=1021,
+  serialized_end=1346,
   methods=[
   _descriptor.MethodDescriptor(
     name='amendOrder',
@@ -520,11 +513,11 @@ _ORDERBOOKSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='getSubOrdersDetails',
-    full_name='th2.OrderBookService.getSubOrdersDetails',
+    name='getOrdersDetails',
+    full_name='th2.OrderBookService.getOrdersDetails',
     index=4,
     containing_service=None,
-    input_type=_GETSUBORDERSREQUEST,
+    input_type=_GETORDERSDETAILSREQUEST,
     output_type=common__pb2._ACTRESPONSE,
     serialized_options=None,
   ),

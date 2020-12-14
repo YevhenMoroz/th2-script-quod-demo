@@ -25,7 +25,7 @@ service OrderBookService {
   rpc splitOrder(ModifyOrderDetails) returns (th2.ActResponse) {}
   rpc splitLimit(ModifyOrderDetails) returns (th2.ActResponse) {}
   rpc cancelOrder(CancelOrderDetails) returns (th2.ActResponse) {}
-  rpc getSubOrdersDetails(GetSubOrdersRequest) returns (th2.ActResponse) {}
+  rpc getOrdersDetails(GetOrdersDetailsRequest) returns (th2.ActResponse) {}
 }
 
 message ModifyOrderDetails {
@@ -41,23 +41,21 @@ message CancelOrderDetails {
   string comment = 4;
 }
 
-message GetSubOrdersRequest {
+message GetOrdersDetailsRequest {
   BaseRequest base = 1;
-  SubOrdersDetails subOrdersDetails = 2;
+  string extractionId = 2;
+  OrdersDetailsInfo orderDetails = 3;
 }
 
-message SubOrdersDetails {
-  enum SubOrdersType {
-    CHILD_ORDERS = 0;
-  }
-
-  string extractionId = 1;
-  map<string, string> filter = 2;
-  SubOrdersType subOrdersType = 3;
-  repeated SubOrder subOrders = 4;
+message OrdersDetailsInfo {
+  map<string, string> filter = 1;
+  bool extractCount = 2;
+  string countId = 3;
+  repeated ExtractionInfo extractionInfo = 4;
 }
 
-message SubOrder {
-  SubOrdersDetails subOrdersDetails = 1;
-  repeated ExtractionFieldsDetails orderDetails = 2;
+message ExtractionInfo {
+  int32 number = 2;
+  repeated ExtractionFieldsDetails orderDetails = 3;
+  OrdersDetailsInfo subOrders = 4;
 }

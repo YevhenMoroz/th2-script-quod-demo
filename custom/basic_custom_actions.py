@@ -22,6 +22,7 @@ from grpc_modules.infra_pb2 import Direction
 from grpc_modules.verifier_pb2 import PreFilter
 from grpc_modules.verifier_pb2 import CheckRuleRequest
 from grpc_modules.verifier_pb2 import CheckSequenceRuleRequest
+from grpc_modules.verifier_pb2 import CheckpointRequest
 
 from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
@@ -49,38 +50,6 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
 
-        elif 'NoMDEntryTypes' == tag:
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        'NoMDEntryTypesIDs': Value(
-                            list_value=ListValue(
-                                values=content[tag]
-                            )
-                        )
-                    }
-                )
-            )
-        elif 'NoMDEntries' == tag:
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        'NoMDEntriesIDs': Value(
-                            list_value=ListValue(
-                                values=content[tag]
-                            )
-                        )
-                    }
-                )
-            )
         elif isinstance(content[tag], dict):
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
 
@@ -255,3 +224,7 @@ def create_sim_rule_mdr(*args, **kwargs) -> TemplateQuodMDRRule:
         md_entry_size=args[2] if len(args) > 2 else kwargs['md_entry_size'],
         md_entry_px=args[3] if len(args) > 3 else kwargs['md_entry_px']
     )
+
+
+def create_checkpoint_request(event_id: EventID) -> CheckpointRequest:
+    return CheckpointRequest(description="TestCheckpoint", parent_event_id=event_id)

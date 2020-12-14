@@ -35,9 +35,9 @@ class OrderBookServiceStub(object):
         request_serializer=order__book__pb2.CancelOrderDetails.SerializeToString,
         response_deserializer=common__pb2.ActResponse.FromString,
         )
-    self.getSubOrdersDetails = channel.unary_unary(
-        '/th2.OrderBookService/getSubOrdersDetails',
-        request_serializer=order__book__pb2.GetSubOrdersRequest.SerializeToString,
+    self.getOrdersDetails = channel.unary_unary(
+        '/th2.OrderBookService/getOrdersDetails',
+        request_serializer=order__book__pb2.GetOrdersDetailsRequest.SerializeToString,
         response_deserializer=common__pb2.ActResponse.FromString,
         )
 
@@ -74,7 +74,7 @@ class OrderBookServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def getSubOrdersDetails(self, request, context):
+  def getOrdersDetails(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -104,9 +104,9 @@ def add_OrderBookServiceServicer_to_server(servicer, server):
           request_deserializer=order__book__pb2.CancelOrderDetails.FromString,
           response_serializer=common__pb2.ActResponse.SerializeToString,
       ),
-      'getSubOrdersDetails': grpc.unary_unary_rpc_method_handler(
-          servicer.getSubOrdersDetails,
-          request_deserializer=order__book__pb2.GetSubOrdersRequest.FromString,
+      'getOrdersDetails': grpc.unary_unary_rpc_method_handler(
+          servicer.getOrdersDetails,
+          request_deserializer=order__book__pb2.GetOrdersDetailsRequest.FromString,
           response_serializer=common__pb2.ActResponse.SerializeToString,
       ),
   }
