@@ -3,7 +3,7 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import verifier_pb2, infra_pb2
+from grpc_modules import verifier_pb2, infra_pb2, quod_simulator_pb2
 from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
@@ -62,14 +62,14 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('NewOrderSingle', new_order_single_params)
         ))
 
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="596",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
-    )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+     )).MDRefID
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="3390",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
-    )).MDRefID
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+     )).MDRefID
 
     mdfr_params_1 = {
         'MDReportID': "1",

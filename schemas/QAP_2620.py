@@ -64,7 +64,7 @@ def execute(case_name, report_id, case_params):
         'DisplayInstruction': {
             'DisplayQty': '50'
         },
-        'IClOrdIdAO': 'OD_5fgfDXg-00'
+        **check_params
     }
     # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
 
@@ -125,7 +125,7 @@ def execute(case_name, report_id, case_params):
         'SecurityExchange': 'XPAR'
     }
 
-    newordersingle_params = {
+    nos_bs_params = {
         'Account': case_params['Account'],
         'HandlInst': '1',
         'Side': case_params['Side'],
@@ -146,7 +146,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             'NewOrderSingle transmitted >> PARIS',
-            bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
+            bca.filter_to_grpc('NewOrderSingle', nos_bs_params, ["ClOrdID"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_params['case_id']
@@ -159,7 +159,7 @@ def execute(case_name, report_id, case_params):
         'ExecID': '*',
         'TransactTime': '*',
         'CumQty': '0',
-        'OrderQty': newordersingle_params['OrderQty'],
+        'OrderQty': nos_bs_params['OrderQty'],
         'OrdType': case_params['OrdType'],
         'Side': case_params['Side'],
         # 'LastPx': '0',
@@ -257,7 +257,7 @@ def execute(case_name, report_id, case_params):
     }
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
-        bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
+        bca.filter_to_grpc('NewOrderSingle', nos_bs_params),
         bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
     ]
     verifier.submitCheckSequenceRule(
