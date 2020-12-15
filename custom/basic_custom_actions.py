@@ -48,39 +48,6 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
-
-        elif 'NoMDEntryTypes' == tag:
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        'NoMDEntryTypesIDs': Value(
-                            list_value=ListValue(
-                                values=content[tag]
-                            )
-                        )
-                    }
-                )
-            )
-        elif 'NoMDEntries' == tag:
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        'NoMDEntriesIDs': Value(
-                            list_value=ListValue(
-                                values=content[tag]
-                            )
-                        )
-                    }
-                )
-            )
         elif isinstance(content[tag], dict):
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
 
