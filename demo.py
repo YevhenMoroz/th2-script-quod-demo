@@ -13,8 +13,16 @@ from grpc_modules.infra_pb2 import ConnectionID
 from configuration import *
 from schemas import *
 from channels import Channels
-from test_cases import QAP_2740
+from test_cases import QAP_2409
+from test_cases import QAP_2425_SIM
+from test_cases import QAP_2462_SIM
+from test_cases import QAP_2540
+from test_cases import QAP_2561
+from test_cases import QAP_2620
+from test_cases import QAP_2684
+from test_cases import QAP_2702
 from win_gui_modules.utils import prepare_fe, close_fe
+
 
 logging.basicConfig(stream=stdout)
 logger = logging.getLogger('demo')
@@ -30,17 +38,12 @@ channels['event-store'] = Channels.event_store_channel
 channels['verifier'] = Channels.verifier_channel
 channels['simulator'] = Channels.simulator_channel
 
-event_store = EventStoreServiceStub(channels['event-store'])
+# event_store = EventStoreServiceStub(channels['event-store'])
 
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event_id()
-    bca.create_event(
-        event_store,
-        'QUOD demo ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'),
-        report_id
-    )
+    report_id = bca.create_event('QUOD demo ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info("Root event was created (report id = {})".format(report_id))
     # Reference data for test cases
 
@@ -87,26 +90,6 @@ def test_run():
 
     # Specific data for test case test
     test_cases = {
-        'QAP_2425_SIM': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'kch-qa-ret-child',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'HandlInst': '2',
-            'Side': '2',
-            'OrderQty': '600',
-            'OrdType': '2',
-            'Price': '20',
-            'TimeInForce': '0',
-            'ExDestination': 'XPAR',
-            'DeliverToCompID': 'PARIS',
-            'Instrument': instrument_3
-        },
         'QAP-2425': {
             **channels,
             'case_id': bca.create_event_id(),
@@ -120,26 +103,6 @@ def test_run():
             'OrdType': '2',
             'Price': '20',
             'TimeInForce': '0',
-            'Instrument': instrument_3
-        },
-        'QAP_2462_SIM': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'kch-qa-ret-child',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'HandlInst': '2',
-            'Side': '2',
-            'OrderQty': '500',
-            'OrdType': '2',
-            'Price': '20',
-            'TimeInForce': '0',
-            'ExDestination': 'XPAR',
-            'DeliverToCompID': 'PARIS',
             'Instrument': instrument_3
         },
         'QAP-2422': {
@@ -240,126 +203,6 @@ def test_run():
             'Account': 'MMCLIENT1',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
-        },
-        'QAP_2409': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'fix-bs-eq-paris',
-            'TraderConnectivity3': 'fix-bs-eq-trqx',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'Account2': 'TRQX_KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '1100',
-            'OrdType': '2',
-            'Price': '45',
-            'TimeInForce': '0',
-            'Instrument': instrument_5
-        },
-        'QAP_2684': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'fix-bs-eq-paris',
-            'TraderConnectivity3': 'fix-bs-eq-trqx',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'Account2': 'TRQX_KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'TimeInForce': '0',
-            'TargetStrategy': 1011,
-            'Instrument': instrument_6
-        },
-        'QAP_2540': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'fix-bs-eq-paris',
-            'TraderConnectivity3': 'fix-bs-eq-trqx',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'Account2': 'TRQX_KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '400',
-            'OrdType': '2',
-            'Price': '20',
-            'TimeInForce': '0',
-            'TargetStrategy': 1004,
-            'Instrument': instrument_3
-        },
-
-        'QAP_2620': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'TraderConnectivity2': 'fix-bs-eq-paris',
-            'TraderConnectivity3': 'fix-bs-eq-trqx',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD3',
-            'SenderCompID2': 'KCH_QA_RET_CHILD',
-            'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
-            'Account2': 'TRQX_KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '400',
-            'OrdType': '2',
-            'Price': '20',
-            'TimeInForce': '0',
-            'TargetStrategy': 1004,
-            'Instrument': instrument_3
-        },
-        'QAP_2702': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            'Sender': '',
-            'SenderCompID': 'QUOD3',
-            'TargetCompID': 'QUODFX_UAT',
-            'Account': 'KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '2',
-            'OrdType': '2',
-            'Price': '1',
-            'NewPrice': '2',
-            'TimeInForce': '0',
-            'Instrument': instrument_5,
-            'TargetStrategy': 1011
-        },
-        'QAP_2561': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod3',
-            # 'Sender': '',
-            'SenderCompID': 'QUOD3',
-            'TargetCompID': 'QUODFX_UAT',
-            'Account': 'KEPLER',
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '400',
-            'OrdType': '2',
-            'Price': '20',
-            'NewPrice': '25',
-            'TimeInForce': '0',
-            'Instrument': instrument_6,
-            'TargetStrategy': 1004
         }
     }
 
@@ -387,27 +230,30 @@ def test_run():
     #     md_entry_px={40: 30}))
     # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
     print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}")
-    application_service = HandWinActStub(Channels.ui_act_channel)
-    session_id = application_service.register(RhTargetServer(target=target_server_win)).sessionID
+
     try:
         # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
         # part_trade.execute('QUOD_PART_TRADE', report_id, test_cases['QUOD_PART_TRADE'])
-        # QAP_2425_SIM.execute('QAP_2425_SIM', report_id, test_cases['QAP_2425_SIM'])
-        # QAP_2462_SIM.execute('QAP_2462_SIM', report_id, test_cases['QAP_2462_SIM'])
         # send_and_amend.execute('QAP-AMEND', report_id, test_cases['QAP-AMEND'])
         # simple_trade2.execute('QUOD-TRADE2', report_id, test_cases['QUOD-TRADE2'])
         # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
         # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
-        # QAP_2409.execute('QAP_2409', report_id, test_cases['QAP_2409'])
-        # QAP_2684.execute('QAP_2684', report_id, test_cases['QAP_2684'])
-        # QAP_2561.execute('QAP_2561', report_id, test_cases['QAP_2561'])
-        # QAP_2702.execute('QAP_2702', report_id, test_cases['QAP_2702'])
-        # QAP_2540.execute('QAP_2540', report_id, test_cases['QAP_2540'])
-        # QAP_2620.execute('QAP_2620', report_id, test_cases['QAP_2620'])
-        prepare_fe(report_id, session_id)
+
+        # QAP_2409.execute(report_id)
+        # QAP_2425_SIM.execute(report_id)
+        # QAP_2462_SIM.execute(report_id)
+        # QAP_2540.execute(report_id)
+        # QAP_2561.execute(report_id)
+        # QAP_2620.execute(report_id)
+        # QAP_2684.execute(report_id)
+        QAP_2702.execute(report_id)
+
+        # application_service = HandWinActStub(Channels.ui_act_channel)
+        # session_id = application_service.register(RhTargetServer(target=target_server_win)).sessionID
+        # prepare_fe(report_id, session_id)
         # QAP_1641.execute(report_id, session_id)
-        QAP_2740.execute(report_id, session_id)
-        close_fe(report_id, session_id)
+        # QAP_2740.execute(report_id, session_id)
+        # close_fe(report_id, session_id)
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 

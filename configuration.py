@@ -4,11 +4,11 @@ event_store_address = "10.0.22.22:31649"
 verifier_address = "10.0.22.22:31445"
 simulator_address = "10.0.22.22:31977"
 web_act_address = '10.0.22.22:30818'
-win_act_address = 'localhost:8080'
-# win_act_address = '10.0.22.22:32744'
+# win_act_address = 'localhost:8080'
+win_act_address = '10.0.22.22:32744'
 
-target_server_win = 'win'
-# target_server_win = 'win103'
+# target_server_win = 'win'
+target_server_win = 'win103'
 target_server_web = 'web'
 
 web_admin_url = "http://10.0.22.40:3180/quodadmin/qakharkiv3/"
