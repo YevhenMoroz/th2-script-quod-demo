@@ -10,6 +10,7 @@ from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
 from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
 from grpc_modules.infra_pb2 import Direction, ConnectionID
 from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from grpc_modules.quod_simulator_pb2 import RequestMDRefID
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -90,10 +91,81 @@ def execute(case_name, report_id, case_params):
             case_params['case_id'],
             bca.message_to_grpc('NewOrderSingle', sor_order_params)
         ))
+
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="1062",
+        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+    )).MDRefID
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="3503",
+        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+    )).MDRefID
+
+    mdfr_params_1 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_1,
+        'Instrument': {
+            'Symbol': "1062"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    mdfr_params_2 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_2,
+        'Instrument': {
+            'Symbol': "3503"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-paris",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+        )
+    )
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-trqx",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+        )
+    )
+
     checkpoint_1 = new_sor_order.checkpoint_id
     execution_report1_params = {
         'ClOrdID': sor_order_params['ClOrdID'],
-        'OrderID': new_sor_order.response_message.fields['OrderID'].simple_value,
+        'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',

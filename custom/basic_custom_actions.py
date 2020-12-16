@@ -48,7 +48,6 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
-
         elif isinstance(content[tag], dict):
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
 
@@ -69,9 +68,9 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
                 )
             )
     return Message(
-            metadata=MessageMetadata(message_type=message_type),
-            fields=content
-        )
+        metadata=MessageMetadata(message_type=message_type),
+        fields=content
+    )
 
 
 def filter_to_grpc(message_type: str, content: dict, keys=None) -> MessageFilter:
