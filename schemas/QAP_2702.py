@@ -134,13 +134,13 @@ def execute(case_name, report_id, case_params):
 
     checkpoint = new_order_single.checkpoint_id
 
-    execution_report_params_1 = {
+    pending_er_params = {
         **reusable_params,
         'OrderQty': new_order_single_params['OrderQty'],
         'Price': new_order_single_params['Price'],
         'ClOrdID': new_order_single_params['ClOrdID'],
-        # 'OrderID': new_order_single.response_message.fields['OrderID'].simple_value,
-        'OrderID': '*',
+        'OrderID': new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+        'ExecID': new_order_single.response_messages_list[0].fields['ExecID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -159,24 +159,25 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "ER Pending NewOrderSingle Received",
-            bca.filter_to_grpc("ExecutionReport", execution_report_params_1, ['ClOrdID', 'OrdStatus']),
+            bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint,
             case_params['TraderConnectivity'],
             case_params['case_id']
         )
     )
 
-    execution_report_params_2 = deepcopy(execution_report_params_1)
-    execution_report_params_2['OrdStatus'] = execution_report_params_2['ExecType'] = '0'
-    execution_report_params_2['Instrument'] = {
+    new_er_params = deepcopy(pending_er_params)
+    new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['ExecID'] = '*'
+    new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
     }
-    execution_report_params_2['ExecRestatementReason'] = '4'
+    new_er_params['ExecRestatementReason'] = '4'
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Verify received Execution Report (OrdStatus = New)",
-            bca.filter_to_grpc("ExecutionReport", execution_report_params_2, ['ClOrdID', 'OrdStatus']),
+            "ER New NewOrderSingle Received",
+            bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint,
             case_params['TraderConnectivity'],
             case_params['case_id']
@@ -277,7 +278,8 @@ def execute(case_name, report_id, case_params):
     replacement_er_params = {
         **reusable_params,
         'ClOrdID': replace_order_params['ClOrdID'],
-        'OrderID': execution_report_params_1['OrderID'],
+        'OrigClOrdID': new_order_single_params['ClOrdID'],
+        'OrderID': pending_er_params['OrderID'],
         'ExecID': '*',
         'CumQty': '*',
         'LastPx': '*',
@@ -294,7 +296,8 @@ def execute(case_name, report_id, case_params):
         'ExecRestatementReason': '4',
         'Price': case_params['NewPrice'],
         'OrderQty': case_params['OrderQty'],
-        'NoParty': '*'
+        'NoParty': '*',
+        'TargetStrategy': case_params['TargetStrategy']
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New, ExecType = Replaced)")
@@ -408,7 +411,7 @@ def execute(case_name, report_id, case_params):
             'SecurityExchange': case_params['Instrument']['SecurityExchange']
         },
         'ClOrdID': cancel_order_params['ClOrdID'],
-        'OrderID': execution_report_params_1['OrderID'],
+        'OrderID': pending_er_params['OrderID'],
         'OrderQty': replace_order_params['OrderQty'],
         'Price': replace_order_params['Price'],
         'TransactTime': '*',
@@ -440,6 +443,9 @@ def execute(case_name, report_id, case_params):
         'Account': case_params['Account'],
         'Instrument': instrument_bs,
         'ClOrdID': '*',
+        'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
+        'IClOrdIdAO': new_order_single_params['IClOrdIdAO'],
+        'IClOrdIdTO': new_order_single_params['IClOrdIdTO'],
         'OrderID': '*',
         'Side': case_params['Side'],
         'TransactTime': '*',

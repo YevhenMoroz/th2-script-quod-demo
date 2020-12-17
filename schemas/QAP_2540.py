@@ -103,7 +103,7 @@ def execute(case_name, report_id, case_params):
     # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Receive Execution Report Pending",
+            "ER Pending Received",
             bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
         )

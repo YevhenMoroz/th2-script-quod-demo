@@ -3,7 +3,7 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2
+from grpc_modules import infra_pb2, quod_simulator_pb2
 from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
@@ -85,13 +85,13 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('NewOrderSingle', sor_order_params)
         ))
 
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="596",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
     )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="3390",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
     )).MDRefID
 
     mdfr_params_1 = {
@@ -159,7 +159,10 @@ def execute(case_name, report_id, case_params):
     pending_er_params = {
         **reusable_order_params,
         'ClOrdID': sor_order_params['ClOrdID'],
+        'ExecID': new_sor_order.response_messages_list[0].fields['ExecID'].simple_value,
         'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
+        'OrderQty': case_params['OrderQty'],
+        'Price': case_params['Price'],
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
