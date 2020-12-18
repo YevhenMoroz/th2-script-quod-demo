@@ -1,0 +1,84 @@
+syntax = "proto3";
+package th2;
+
+import "infra.proto";
+import "rhbatch.proto";
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.exactpro.th2.act.grpc";
+
+service Act {
+    rpc register(RhTargetServer) returns (RhSessionID) {
+    }
+    rpc unregister(RhSessionID) returns (google.protobuf.Empty) {
+    }
+    // rpc for interaction with web GUI
+    rpc login (LoginRequest) returns (RhBatchResponse) {
+    }
+
+    rpc logout (BasicWebGuiRequest) returns (RhBatchResponse) {
+    }
+
+    rpc checkUserName (CheckUserNameRequest) returns (RhBatchResponse) {
+    }
+
+    rpc checkFeedbackButton (BasicWebGuiRequest) returns (RhBatchResponse) {
+    }
+
+    rpc checkHelpButton (BasicWebGuiRequest) returns (RhBatchResponse) {
+    }
+
+    rpc checkLogoutButton (BasicWebGuiRequest) returns (RhBatchResponse) {
+    }
+
+    rpc openUsersTab (BasicWebGuiRequest) returns (RhBatchResponse) {
+    }
+
+    rpc verifyUser (UserSettings) returns (RhBatchResponse) {
+    }
+}
+
+// rpc for interaction with web GUI
+message LoginRequest {
+    RhSessionID sessionID = 1;
+    string url = 2;
+    string login = 3;
+    string password = 4;
+    EventID parentEventId = 5;
+}
+
+message CheckUserNameRequest {
+    RhSessionID sessionID = 1;
+    string userName = 2;
+    EventID parentEventId = 3;
+}
+
+message BasicWebGuiRequest {
+    RhSessionID sessionID = 1;
+    EventID parentEventId = 2;
+}
+
+message UserSettings {
+    RhSessionID sessionID = 1;
+    string userId = 2;
+    RoleSettings roleSettings = 3;
+    repeated AccountGroupsSettings accountGroupsSettings = 4;
+    repeated VenueTraderSettings venueTraderSettings = 5;
+    EventID parentEventId = 6;
+}
+
+message RoleSettings {
+    string roleId = 1;
+    string desk = 2;
+}
+
+message AccountGroupsSettings {
+    string client = 1;
+    string type = 2;
+}
+
+message VenueTraderSettings {
+    string venue = 1;
+    string venueTraderName = 2;
+}

@@ -4,34 +4,49 @@ import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules import infra_pb2
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
-from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
-from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
 from grpc_modules.infra_pb2 import Direction, ConnectionID
 from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+timeouts = False
 
 
-def execute(case_name, report_id, case_params):
-    act = ActFixStub(case_params['act'])
-    event_store = EventStoreServiceStub(case_params['event-store'])
-    verifier = VerifierStub(case_params['verifier'])
-    # rules_killer = ServiceSimulatorStub(case_params['simulator'])
-
-    # sim_rules = []
-    # logger.info("Rules with the next IDs are running: " + " ".join(str(rule.id) for rule in sim_rules))
+def execute(report_id):
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
     # Create sub-report for case
-    bca.create_event(EventStoreServiceStub(case_params['event-store']), case_name, case_params['case_id'], report_id)
-    # event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
-    # event_store.StoreEvent(event_request_1)
+    case_name = "QAP_2620"
+    case_id = bca.create_event(case_name, report_id)
+
+    case_params = {
+        'TraderConnectivity': 'gtwquod3',
+        'TraderConnectivity2': 'fix-bs-eq-paris',
+        'TraderConnectivity3': 'fix-bs-eq-trqx',
+        'SenderCompID': 'QUODFX_UAT',
+        'TargetCompID': 'QUOD3',
+        'SenderCompID2': 'KCH_QA_RET_CHILD',
+        'TargetCompID2': 'QUOD_QA_RET_CHILD',
+        'Account': 'KEPLER',
+        'Account2': 'TRQX_KEPLER',
+        'HandlInst': '2',
+        'Side': '1',
+        'OrderQty': '400',
+        'OrdType': '2',
+        'Price': '20',
+        'TimeInForce': '0',
+        'TargetStrategy': 1004,
+        'Instrument': {
+            'Symbol': 'FR0010263202_EUR',
+            'SecurityID': 'FR0010263202',
+            'SecurityIDSource': 4,
+            'SecurityExchange': 'XPAR'
+        }
+    }
 
     reusable_order_params = {  # This parameters can be used for ExecutionReport message
         'Account': case_params['Account'],
@@ -72,7 +87,7 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send NewOrderSingle',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('NewOrderSingle', new_order_params)
         ))
     checkpoint_1 = new_ib_order.checkpoint_id
@@ -101,7 +116,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "ER Pending NewOrderSingle Received",
             bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
+            checkpoint_1, case_params['TraderConnectivity'], case_id
         )
     )
 
@@ -120,7 +135,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "ER New NewOrderSingle Received",
             bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
+            checkpoint_1, case_params['TraderConnectivity'], case_id
         )
     )
 
@@ -156,7 +171,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('NewOrderSingle', nos_bs_params, ["ClOrdID"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -184,7 +199,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('ExecutionReport', er_bs_params, ["ClOrdID", "OrdStatus"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
-            case_params['case_id'],
+            case_id,
             infra_pb2.Direction.Value("SECOND")
         )
     )
@@ -205,7 +220,7 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
         ))
 
@@ -237,7 +252,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -260,7 +275,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
     pre_filter_sim_params = {
@@ -283,7 +298,7 @@ def execute(case_name, report_id, case_params):
             msg_filters=message_filters_sim,
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity2'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000
 
         )
