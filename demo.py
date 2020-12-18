@@ -21,6 +21,7 @@ from test_cases import QAP_2561
 from test_cases import QAP_2620
 from test_cases import QAP_2684
 from test_cases import QAP_2702
+from test_cases import QAP_2740
 from win_gui_modules.utils import prepare_fe, close_fe
 
 
@@ -37,8 +38,6 @@ channels['act'] = Channels.fix_act_channel
 channels['event-store'] = Channels.event_store_channel
 channels['verifier'] = Channels.verifier_channel
 channels['simulator'] = Channels.simulator_channel
-
-# event_store = EventStoreServiceStub(channels['event-store'])
 
 
 def test_run():
@@ -243,10 +242,10 @@ def test_run():
         # QAP_2425_SIM.execute(report_id)
         # QAP_2462_SIM.execute(report_id)
         # QAP_2540.execute(report_id)
-        # QAP_2561.execute(report_id)
+        QAP_2561.execute(report_id)
         # QAP_2620.execute(report_id)
         # QAP_2684.execute(report_id)
-        QAP_2702.execute(report_id)
+        # QAP_2702.execute(report_id)
 
         # application_service = HandWinActStub(Channels.ui_act_channel)
         # session_id = application_service.register(RhTargetServer(target=target_server_win)).sessionID
