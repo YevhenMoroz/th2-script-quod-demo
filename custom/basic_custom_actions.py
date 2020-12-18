@@ -4,7 +4,7 @@ from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from grpc_modules import act_fix_pb2
-from grpc_modules import event_store_pb2
+# from grpc_modules import event_store_pb2
 
 from grpc_modules.infra_pb2 import Value
 from grpc_modules.infra_pb2 import ListValue
@@ -22,10 +22,14 @@ from grpc_modules.infra_pb2 import Direction
 from grpc_modules.verifier_pb2 import PreFilter
 from grpc_modules.verifier_pb2 import CheckRuleRequest
 from grpc_modules.verifier_pb2 import CheckSequenceRuleRequest
+from grpc_modules.verifier_pb2 import CheckpointRequest
 
 from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
+
+from grpc_modules.event_store_pb2 import StoreEventRequest
+from stubs import Stubs
 
 
 # Debug output
@@ -48,6 +52,7 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
+
         elif isinstance(content[tag], dict):
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
 
@@ -159,19 +164,23 @@ def create_check_sequence_rule(description: str, prefilter: PreFilter, msg_filte
     )
 
 
-def create_event_id():
+def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_store, event_name, event_id, parent_id=None):
+def create_event(event_name: str, parent_id: EventID = None) -> EventID:
+    event_store = Stubs.event_store
     seconds, nanos = timestamps()
-    event = Event(
-        id=event_id,
-        name=event_name,
-        start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-        # end_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-        parent_id=parent_id)
-    return event_store.StoreEvent(event_store_pb2.StoreEventRequest(event=event))
+    event_id = create_event_id()
+    event_store.StoreEvent(StoreEventRequest(
+        event=Event(
+            id=event_id,
+            name=event_name,
+            start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
+            parent_id=parent_id
+        )
+    ))
+    return event_id
 
 
 def create_store_event_request(event_name, event_id, parent_id=None):
@@ -183,7 +192,7 @@ def create_store_event_request(event_name, event_id, parent_id=None):
         # end_timestamp=Timestamp(seconds=seconds, nanos=nanos),
         parent_id=parent_id
     )
-    return event_store_pb2.StoreEventRequest(event=event)
+    return StoreEventRequest(event=event)
 
 
 def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
@@ -222,3 +231,7 @@ def create_sim_rule_mdr(*args, **kwargs) -> TemplateQuodMDRRule:
         md_entry_size=args[2] if len(args) > 2 else kwargs['md_entry_size'],
         md_entry_px=args[3] if len(args) > 3 else kwargs['md_entry_px']
     )
+
+
+def create_checkpoint_request(event_id: EventID) -> CheckpointRequest:
+    return CheckpointRequest(description="TestCheckpoint", parent_event_id=event_id)

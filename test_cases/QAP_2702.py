@@ -4,19 +4,41 @@ from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from grpc_modules import verifier_pb2, infra_pb2
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+timeouts = False
 
 
-def execute(case_name, report_id, case_params):
-    act = ActFixStub(case_params['act'])
-    verifier = VerifierStub(case_params['verifier'])
+def execute(report_id):
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
+
     seconds, nanos = bca.timestamps()  # Store case start time
+    case_name = "QAP-2702"
+    case_params = {
+        'TraderConnectivity': 'gtwquod3',
+        'Sender': '',
+        'SenderCompID': 'QUOD3',
+        'TargetCompID': 'QUODFX_UAT',
+        'Account': 'KEPLER',
+        'HandlInst': '2',
+        'Side': '1',
+        'OrderQty': '2',
+        'OrdType': '2',
+        'Price': '1',
+        'NewPrice': '2',
+        'TimeInForce': '0',
+        'Instrument': {
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        },
+        'TargetStrategy': 1011
+    }
+
     reusable_params = {
         'Account': case_params['Account'],
         'HandlInst': case_params['HandlInst'],
@@ -24,47 +46,118 @@ def execute(case_name, report_id, case_params):
         'TimeInForce': case_params['TimeInForce'],
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'TargetStrategy': case_params['TargetStrategy']
     }
 
-    bca.create_event(EventStoreServiceStub(case_params['event-store']), case_name, case_params['case_id'], report_id)
+    case_id = bca.create_event(case_name, report_id)
 
-    new_iceberg_order_params = {
+    new_order_single_params = {
         **reusable_params,
         'Instrument': case_params['Instrument'],
         'ClOrdID': bca.client_orderid(9),
         'TransactTime': datetime.utcnow().isoformat(),
         'OrderQty': case_params['OrderQty'],
         'Price': case_params['Price'],
-        'ExDestination': 'XPAR',
         'ComplianceID': 'FX5',
         'IClOrdIdCO': 'OD_5fgfDXg-00',
         'IClOrdIdAO': 'OD_5fgfDXg-00',
         'F_ShortCode': '17536',
-        'StrategyName': 'ICEBERG',
-        'DisplayInstruction': {
-            'DisplayQty': '50'
-        },
-        'TargetStrategy': case_params['TargetStrategy']
+        'StrategyName': 'SORPING',
+        'IClOrdIdTO': '19864',
+        'AlgoCst01': 'KEPLER06',
+        'AlgoCst02': 'KEPLER07',
+        'AlgoCst03': 'KEPLER10'
     }
 
-    logger.debug(f"Send new order with ClOrdID = {new_iceberg_order_params['ClOrdID']}")
-    new_iceberg_order = act.placeOrderFIX(
+    logger.debug(f"Send new order with ClOrdID = {new_order_single_params['ClOrdID']}")
+    new_order_single = act.placeOrderFIX(
         bca.convert_to_request(
-            "Send NewIcebergOrder",
+            "Send NewSingleOrder",
             case_params['TraderConnectivity'],
-            case_params['case_id'],
-            bca.message_to_grpc('NewOrderSingle', new_iceberg_order_params)
+            case_id,
+            bca.message_to_grpc('NewOrderSingle', new_order_single_params)
         ))
 
-    checkpoint = new_iceberg_order.checkpoint_id
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+        symbol="596",
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+     )).MDRefID
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+        symbol="3390",
+        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+     )).MDRefID
+
+    mdfr_params_1 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_1,
+        'Instrument': {
+            'Symbol': "596"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    mdfr_params_2 = {
+        'MDReportID': "1",
+        'MDReqID': MDRefID_2,
+        'Instrument': {
+            'Symbol': "3390"
+        },
+        # 'LastUpdateTime': "",
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-paris",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+        )
+    )
+    act.sendMessage(
+        request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh',
+            "fix-fh-eq-trqx",
+            case_params['case_id'],
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+        )
+    )
+
+    checkpoint = new_order_single.checkpoint_id
 
     pending_er_params = {
         **reusable_params,
-        'OrderQty': new_iceberg_order_params['OrderQty'],
-        'Price': new_iceberg_order_params['Price'],
-        'ClOrdID': new_iceberg_order_params['ClOrdID'],
-        'OrderID': new_iceberg_order.response_messages_list[0].fields['OrderID'].simple_value,
+        'OrderQty': new_order_single_params['OrderQty'],
+        'Price': new_order_single_params['Price'],
+        'ClOrdID': new_order_single_params['ClOrdID'],
+        'OrderID': new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+        'ExecID': new_order_single.response_messages_list[0].fields['ExecID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -73,9 +166,10 @@ def execute(case_name, report_id, case_params):
         'AvgPx': '0',
         'OrdStatus': 'A',
         'ExecType': 'A',
-        'LeavesQty': new_iceberg_order_params['OrderQty'],
+        'LeavesQty': new_order_single_params['OrderQty'],
         'Instrument': case_params['Instrument'],
-        'NoParty': '*'
+        'NoParty': '*',
+        'TargetStrategy': case_params['TargetStrategy']
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = Pending)")
@@ -85,12 +179,13 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['ExecID'] = '*'
     new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
@@ -98,32 +193,38 @@ def execute(case_name, report_id, case_params):
     new_er_params['ExecRestatementReason'] = '4'
     verifier.submitCheckRule(
         bca.create_check_rule(
-            "Verify received Execution Report (OrdStatus = New)",
+            "ER New NewOrderSingle Received",
             bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
             checkpoint,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
     instrument_bs = {
         'SecurityType': 'CS',
-        'Symbol': 'PAR',
+        'Symbol': 'AN',
         'SecurityID': case_params['Instrument']['SecurityID'],
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
     }
 
     nos_bs_params = {
-        **reusable_params,
+        'Account': case_params['Account'],
         'HandlInst': '1',
-        'OrderQty': new_iceberg_order_params['DisplayInstruction']['DisplayQty'],
+        'Side': case_params['Side'],
+        'TimeInForce': case_params['TimeInForce'],
+        'OrdType': case_params['OrdType'],
+        'OrderCapacity': 'A',
+        'Currency': 'EUR',
+        'OrderQty': case_params['OrderQty'],
         'Price': case_params['Price'],
         'ClOrdID': '*',
         'ChildOrderID': '*',
         'TransactTime': '*',
-        'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
-        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
+        'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
+        'IClOrdIdAO': new_order_single_params['IClOrdIdAO'],
+        'IClOrdIdTO': new_order_single_params['IClOrdIdTO'],
         'Instrument': instrument_bs,
         'ExDestination': 'XPAR'
 
@@ -169,19 +270,17 @@ def execute(case_name, report_id, case_params):
     )
 
     replace_order_params = {
-        **reusable_params,
-        'OrigClOrdID': new_iceberg_order_params['ClOrdID'],
+        'OrigClOrdID': new_order_single_params['ClOrdID'],
         'ClOrdID': bca.client_orderid(9),
+        'Account': case_params['Account'],
+        'HandlInst': case_params['HandlInst'],
         'Instrument': case_params['Instrument'],
+        'Side': case_params['Side'],
         'TransactTime': (datetime.utcnow().isoformat()),
+        'OrdType': case_params['OrdType'],
         'OrderQty': case_params['OrderQty'],
         'Price': case_params['NewPrice'],
-        'CFICode': 'EMXXXB',
-        'ExDestination': 'QDL1',
-        'IClOrdIdAO': '1543927957',
-        'DisplayInstruction': {
-            'DisplayQty': '45'
-        }
+        'OrderCapacity': 'A'
     }
 
     logger.debug(f"Send replace order with ClOrdID = {replace_order_params['ClOrdID']}")
@@ -189,16 +288,15 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send OrderCancelReplaceRequest',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params)
         ))
     checkpoint2 = replace_order.checkpoint_id
-
     replacement_er_params = {
         **reusable_params,
         'ClOrdID': replace_order_params['ClOrdID'],
-        'OrigClOrdID': replace_order_params['OrigClOrdID'],
-        'OrderID': new_er_params['OrderID'],
+        'OrigClOrdID': new_order_single_params['ClOrdID'],
+        'OrderID': pending_er_params['OrderID'],
         'ExecID': '*',
         'CumQty': '*',
         'LastPx': '*',
@@ -215,7 +313,8 @@ def execute(case_name, report_id, case_params):
         'ExecRestatementReason': '4',
         'Price': case_params['NewPrice'],
         'OrderQty': case_params['OrderQty'],
-        'NoParty': '*'
+        'NoParty': '*',
+        'TargetStrategy': case_params['TargetStrategy']
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New, ExecType = Replaced)")
@@ -225,7 +324,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('ExecutionReport', replacement_er_params, ["ClOrdID", "OrdStatus"]),
             replace_order.checkpoint_id,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
     bs_cancel_replace_order_params = {
@@ -235,10 +334,10 @@ def execute(case_name, report_id, case_params):
         'OrderID': '*',
         'Side': case_params['Side'],
         'TransactTime': '*',
-        'OrderQty': new_iceberg_order_params['DisplayInstruction']['DisplayQty'],
+        'OrderQty': replace_order_params['OrderQty'],
         'ChildOrderID': '*',
-        'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
-        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO']
+        'IClOrdIdCO': nos_bs_params['IClOrdIdCO'],
+        'IClOrdIdAO': nos_bs_params['IClOrdIdAO']
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -253,12 +352,12 @@ def execute(case_name, report_id, case_params):
     replace_nos_bs_params = {
         **reusable_params,
         'HandlInst': '1',
-        'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
+        'OrderQty': replace_order_params['OrderQty'],
         'Price': replace_order_params['Price'],
         'ClOrdID': '*',
         'ChildOrderID': '*',
         'TransactTime': '*',
-        'IClOrdIdAO': replace_order_params['IClOrdIdAO'],
+        'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
         'Instrument': instrument_bs,
         'ExDestination': 'XPAR'
 
@@ -280,7 +379,7 @@ def execute(case_name, report_id, case_params):
         'ExecID': '*',
         'TransactTime': '*',
         'CumQty': '0',
-        'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
+        'OrderQty': replace_nos_bs_params['OrderQty'],
         'OrdType': case_params['OrdType'],
         'Side': case_params['Side'],
         # 'LastPx': '0',
@@ -302,10 +401,11 @@ def execute(case_name, report_id, case_params):
             infra_pb2.Direction.Value("SECOND")
         )
     )
+
     cancel_order_params = {
-        'OrigClOrdID': new_iceberg_order_params['ClOrdID'],
-        'ClOrdID': new_iceberg_order_params['ClOrdID'],
-        'Instrument': new_iceberg_order_params['Instrument'],
+        'OrigClOrdID': new_order_single_params['ClOrdID'],
+        'ClOrdID': new_order_single_params['ClOrdID'],
+        'Instrument': new_order_single_params['Instrument'],
         'ExDestination': 'QDL1',
         'Side': case_params['Side'],
         'TransactTime': (datetime.utcnow().isoformat()),
@@ -317,7 +417,7 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
         ))
 
@@ -328,7 +428,7 @@ def execute(case_name, report_id, case_params):
             'SecurityExchange': case_params['Instrument']['SecurityExchange']
         },
         'ClOrdID': cancel_order_params['ClOrdID'],
-        'OrderID': new_er_params['OrderID'],
+        'OrderID': pending_er_params['OrderID'],
         'OrderQty': replace_order_params['OrderQty'],
         'Price': replace_order_params['Price'],
         'TransactTime': '*',
@@ -342,19 +442,33 @@ def execute(case_name, report_id, case_params):
         'ExecType': '4',
         'LeavesQty': '0',
         'ExecRestatementReason': '4',
-        'NoParty': '*'
+        'NoParty': '*',
+        'TargetStrategy': case_params['TargetStrategy']
     }
+
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Cancellation ER Received',
+            bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
+            cancel_order.checkpoint_id,
+            case_params['TraderConnectivity'],
+            case_params['case_id']
+        )
+    )
+
     bs_cancel_order_params = {
         'Account': case_params['Account'],
         'Instrument': instrument_bs,
         'ClOrdID': '*',
+        'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
+        'IClOrdIdAO': new_order_single_params['IClOrdIdAO'],
+        'IClOrdIdTO': new_order_single_params['IClOrdIdTO'],
         'OrderID': '*',
         'Side': case_params['Side'],
         'TransactTime': '*',
-        'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
-        'IClOrdIdAO': replace_order_params['IClOrdIdAO'],
+        'OrderQty': replace_order_params['OrderQty'],
         'ChildOrderID': '*',
-        'ExDestination': new_iceberg_order_params['ExDestination']
+        # 'ExDestination': new_order_single_params['ExDestination']
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -372,7 +486,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 

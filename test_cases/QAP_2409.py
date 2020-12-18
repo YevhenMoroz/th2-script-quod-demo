@@ -3,67 +3,51 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
-from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
-from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
 from grpc_modules.infra_pb2 import Direction, ConnectionID
 from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from grpc_modules.quod_simulator_pb2 import RequestMDRefID
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(case_name, report_id, case_params):
-    act = ActFixStub(case_params['act'])
-    event_store = EventStoreServiceStub(case_params['event-store'])
-    verifier = VerifierStub(case_params['verifier'])
-    simulator = TemplateSimulatorServiceStub(case_params['simulator'])
-    rules_killer = ServiceSimulatorStub(case_params['simulator'])
-
-    sim_rules = [
-        # simulator.createQuodMDRRule(bca.create_sim_rule_mdr('fix-fh-eq-paris', "QUOD_UTP", {1000: 1000}, {40: 30})),
-        # simulator.createQuodMDRRule(bca.create_sim_rule_mdr(
-        #     session_alias="fix-fh-eq-trqx", sender="QUOD_UTP", md_entry_size={1000: 1000}, md_entry_px={40: 30}
-        # )),
-        # simulator.createQuodOCRRule(bca.create_sim_rule_ocr('fix-bs-eq-paris')),
-        # simulator.createQuodOCRRule(bca.create_sim_rule_ocr(session_alias='fix-bs-eq-trqx')),
-        # simulator.createQuodSingleExecRule(
-        #     request=TemplateQuodSingleExecRule(
-        #         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
-        #         no_party_ids=[
-        #             TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
-        #             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
-        #             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
-        #         ],
-        #         cum_qty=1000
-        #     )
-        # ),
-        # simulator.createQuodSingleExecRule(
-        #     request=TemplateQuodSingleExecRule(
-        #         connection_id=ConnectionID(session_alias="fix-bs-eq-trqx"),
-        #         no_party_ids=[
-        #             TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
-        #             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
-        #             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
-        #         ],
-        #         cum_qty=100
-        #     )
-        # )
-    ]
-    logger.info("Rules with the next IDs are running: " + " ".join(str(rule.id) for rule in sim_rules))
+def execute(report_id):
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
+    simulator = Stubs.simulator
 
     seconds, nanos = bca.timestamps()  # Store case start time
+    case_name = "QAP-2409"
+    case_params = {
+        'TraderConnectivity': 'gtwquod3',
+        'TraderConnectivity2': 'fix-bs-eq-paris',
+        'TraderConnectivity3': 'fix-bs-eq-trqx',
+        'SenderCompID': 'QUODFX_UAT',
+        'TargetCompID': 'QUOD3',
+        'SenderCompID2': 'KCH_QA_RET_CHILD',
+        'TargetCompID2': 'QUOD_QA_RET_CHILD',
+        'Account': 'KEPLER',
+        'Account2': 'TRQX_KEPLER',
+        'HandlInst': '2',
+        'Side': '1',
+        'OrderQty': '1100',
+        'OrdType': '2',
+        'Price': '45',
+        'TimeInForce': '0',
+        'Instrument': {
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+    }
 
     # Create sub-report for case
-    event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
-    event_store.StoreEvent(event_request_1)
+    case_id = bca.create_event(case_name, report_id)
 
     instrument_1 = case_params['Instrument']
-    instrument_1['Symbol'] = instrument_1['Symbol'] + '_EUR'
 
     # Send sorping order
 
@@ -88,7 +72,7 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send NewSingleOrder',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('NewOrderSingle', sor_order_params)
         ))
 
@@ -149,7 +133,7 @@ def execute(case_name, report_id, case_params):
         request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-paris",
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
         )
     )
@@ -157,7 +141,7 @@ def execute(case_name, report_id, case_params):
         request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-trqx",
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
         )
     )
@@ -181,7 +165,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "Receive Execution Report Pending",
             bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
+            checkpoint_1, case_params['TraderConnectivity'], case_id
         )
     )
 
@@ -195,7 +179,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "Receive Execution Report New",
             bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_params['case_id']
+            checkpoint_1, case_params['TraderConnectivity'], case_id
         )
     )
     newordersingle_1_params = {
@@ -223,7 +207,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('NewOrderSingle', newordersingle_1_params),
             checkpoint_1,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -253,7 +237,7 @@ def execute(case_name, report_id, case_params):
             bca.filter_to_grpc('NewOrderSingle', newordersingle_2_params),
             checkpoint_1,
             case_params['TraderConnectivity3'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -282,7 +266,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "Receive Execution Report Filled for PARIS",
             bca.filter_to_grpc("ExecutionReport", execution_report3_params),
-            checkpoint_1, case_params['TraderConnectivity2'], case_params['case_id'],
+            checkpoint_1, case_params['TraderConnectivity2'], case_id,
             direction=Direction.Value("SECOND")
         )
     )
@@ -296,7 +280,7 @@ def execute(case_name, report_id, case_params):
         bca.create_check_rule(
             "Receive Execution Report Filled for TRQX",
             bca.filter_to_grpc("ExecutionReport", execution_report4_params),
-            checkpoint_1, case_params['TraderConnectivity3'], case_params['case_id'],
+            checkpoint_1, case_params['TraderConnectivity3'], case_id,
             direction=Direction.Value("SECOND")
         )
     )
@@ -319,7 +303,7 @@ def execute(case_name, report_id, case_params):
             msg_filters=message_filters_sim,
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity2'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000
 
         )
@@ -336,7 +320,7 @@ def execute(case_name, report_id, case_params):
             msg_filters=message_filters_sim_2,
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity3'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000
 
         )
@@ -351,7 +335,7 @@ def execute(case_name, report_id, case_params):
             msg_filters=message_filters_conn_1_to,
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity2'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000,
             direction=Direction.Value("SECOND")
 
@@ -367,7 +351,7 @@ def execute(case_name, report_id, case_params):
             msg_filters=message_filters_conn_2_to,
             checkpoint=checkpoint_1,
             connectivity=case_params['TraderConnectivity3'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000,
             direction=Direction.Value("SECOND")
 
@@ -375,8 +359,8 @@ def execute(case_name, report_id, case_params):
     )
 
     # stop all rules
-    for rule in sim_rules:
-        rules_killer.removeRule(rule)
+    # for rule in sim_rules:
+    #     rules_killer.removeRule(rule)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
