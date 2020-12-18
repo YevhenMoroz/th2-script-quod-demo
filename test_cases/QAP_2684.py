@@ -3,7 +3,7 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2
+from grpc_modules import infra_pb2, quod_simulator_pb2
 from grpc_modules.act_fix_pb2_grpc import ActFixStub
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
@@ -95,7 +95,7 @@ def execute(report_id):
             'PartyIDSource': 'D',
             'PartyRole': '24'
         }],
-        'Text': 'QAP-2684'
+        'Text': case_name
     }
     # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
     new_sor_order = act.placeOrderFIX(
@@ -212,6 +212,9 @@ def execute(report_id):
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['ExecID'] = '*'
+    new_er_params['ExecRestatementReason'] = '4'
+    new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
     new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
@@ -242,7 +245,9 @@ def execute(report_id):
         'ChildOrderID': '*',
         'TransactTime': '*',
         'Instrument': instrument_1_2,
-        'NoParty': sor_order_params['NoParty']
+        'NoParty': sor_order_params['NoParty'],
+        'AlgoCst03': sor_order_params['NoParty'][0]['PartyID'],
+        'ExDestination': 'XPAR',
         # 'IClOrdIdCO': 'OD_5fgfDXg-00',
         # 'IClOrdIdAO': 'OD_5fgfDXg-00',
     }
@@ -306,19 +311,14 @@ def execute(report_id):
         ))
 
     cancellation_er_params = {
-        **reusable_order_params,
+        **new_er_params,
         'ClOrdID': cancel_order_params['ClOrdID'],
-        'OrderID': pending_er_params['OrderID'],
+        'OrigClOrdID': pending_er_params['ClOrdID'],
         'ExecID': '*',
-        'CumQty': '0',
-        'LastPx': '0',
-        'LastQty': '0',
-        'QtyType': '0',
-        'AvgPx': '0',
+        'NoParty': '*',
         'OrdStatus': '4',
         'ExecType': '4',
-        'LeavesQty': '0',
-        'Instrument': instrument_2,
+        'LeavesQty': '0'
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -345,7 +345,7 @@ def execute(report_id):
             'SenderCompID': case_params['SenderCompID2'],
             'TargetCompID': case_params['TargetCompID2']
         },
-        'TestReqID': ('TEST', "NOT_EQUAL")
+        # 'TestReqID': ('TEST', "NOT_EQUAL")
     }
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
