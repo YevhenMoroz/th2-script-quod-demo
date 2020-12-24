@@ -10,7 +10,7 @@ from custom.basic_custom_actions import create_event_id
 from custom.basic_custom_actions import create_store_event_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-from win_gui_modules.utils import call, get_base_request, prepare_fe
+from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionInfo
 from channels import Channels
 from win_gui_modules.wrappers import *
@@ -21,6 +21,7 @@ timeouts = False
 
 
 def execute(report_id, session_id):
+    global sor_order_params, pending_er_params, new_er_params
     event_store = EventStoreServiceStub(Channels.event_store_channel)
     act = Stubs.fix_act
     verifier = Stubs.verifier
@@ -29,8 +30,8 @@ def execute(report_id, session_id):
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2740 [SORPING] Send SORPING algo order to check PriceCost criteria in Aggressive phase"
-    # case_id = bca.create_event(case_name, report_id)
-    case_id = create_event_id()
+    case_id = bca.create_event(case_name, report_id)
+    # case_id = create_event_id()
     event_store.StoreEvent(request=create_store_event_request(case_name, case_id, report_id))
     set_base(session_id, case_id)
 
@@ -101,133 +102,140 @@ def execute(report_id, session_id):
         md_entry_px={30: 25},
         symbol=symbol_2
     ))
+    try:
+        # Send MarketDataSnapshotFullRefresh message
 
-    # Send MarketDataSnapshotFullRefresh message
-
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol_1,
-        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
-    )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol_2,
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
-    )).MDRefID
-    mdfr_params_1 = {
-        'MDReportID': "1",
-        'MDReqID': MDRefID_1,
-        'Instrument': {
-            'Symbol': symbol_1
-        },
-        'NoMDEntries': [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '50',
-                'MDEntryPositionNo': '1'
+        MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol_1,
+            connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+        )).MDRefID
+        MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol_2,
+            connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+        )).MDRefID
+        mdfr_params_1 = {
+            'MDReportID': "1",
+            'MDReqID': MDRefID_1,
+            'Instrument': {
+                'Symbol': symbol_1
             },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '50',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-    }
-    mdfr_params_2 = deepcopy(mdfr_params_1)
-    mdfr_params_2['MDReqID'] = MDRefID_2
-    mdfr_params_2['Instrument'] = {
-        'Symbol': symbol_2
-    }
-    act.sendMessage(request=bca.convert_to_request(
-        'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
-        bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
-    ))
-    act.sendMessage(request=bca.convert_to_request(
-        'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-trqx", case_id,
-        bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
-    ))
-
-    # Send sorping order
-
-    sor_order_params = {
-        'Account': case_params['Account'],
-        'HandlInst': case_params['HandlInst'],
-        'Side': case_params['Side'],
-        'OrderQty': case_params['OrderQty'],
-        'TimeInForce': case_params['TimeInForce'],
-        'Price': case_params['Price'],
-        'OrdType': case_params['OrdType'],
-        'ClOrdID': bca.client_orderid(9),
-        'TransactTime': datetime.utcnow().isoformat(),
-        'Instrument': case_params['Instrument'],
-        'OrderCapacity': 'A',
-        # 'OrdSubStatus': 'SORPING',
-        'Currency': 'EUR',
-        'ComplianceID': 'FX5',
-        'ClientAlgoPolicyID': 'QA_SORPING',
-        'TargetStrategy': case_params['TargetStrategy'],
-        'Text': 'QAP-2740'
-    }
-    # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
-    new_sor_order = act.placeOrderFIX(
-        bca.convert_to_request(
-            'Send NewSingleOrder',
-            case_params['TraderConnectivity'],
-            case_id,
-            bca.message_to_grpc('NewOrderSingle', sor_order_params)
+            'NoMDEntries': [
+                {
+                    'MDEntryType': '0',
+                    'MDEntryPx': '30',
+                    'MDEntrySize': '50',
+                    'MDEntryPositionNo': '1'
+                },
+                {
+                    'MDEntryType': '1',
+                    'MDEntryPx': '40',
+                    'MDEntrySize': '50',
+                    'MDEntryPositionNo': '1'
+                }
+            ]
+        }
+        mdfr_params_2 = deepcopy(mdfr_params_1)
+        mdfr_params_2['MDReqID'] = MDRefID_2
+        mdfr_params_2['Instrument'] = {
+            'Symbol': symbol_2
+        }
+        act.sendMessage(request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
         ))
-    checkpoint_1 = new_sor_order.checkpoint_id
-    pending_er_params = {
-        **reusable_order_params,
-        'ClOrdID': sor_order_params['ClOrdID'],
-        'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
-        'TransactTime': '*',
-        'CumQty': '0',
-        'LastPx': '0',
-        'LastQty': '0',
-        'QtyType': '0',
-        'AvgPx': '0',
-        'OrdStatus': 'A',
-        'ExecType': 'A',
-        # 'TradingParty': sor_order_params['TradingParty'],
-        'NoParty': [{
-            'PartyID': 'gtwquod3',
-            'PartyIDSource': 'D',
-            'PartyRole': '36'
-        }],
-        'LeavesQty': sor_order_params['OrderQty'],
-        'Instrument': case_params['Instrument']
-    }
-    verifier.submitCheckRule(
-        bca.create_check_rule(
-            "ER Pending NewOrderSingle Received",
-            bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_id
-        )
-    )
+        act.sendMessage(request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-trqx", case_id,
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+        ))
 
-    new_er_params = deepcopy(pending_er_params)
-    new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
-    new_er_params['Instrument'] = {
-        'Symbol': case_params['Instrument']['Symbol'],
-        'SecurityExchange': case_params['Instrument']['SecurityExchange']
-    }
-    verifier.submitCheckRule(
-        bca.create_check_rule(
-            "ER New NewOrderSingle Received",
-            bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, case_params['TraderConnectivity'], case_id
+        # Send sorping order
+
+        sor_order_params = {
+            'Account': case_params['Account'],
+            'HandlInst': case_params['HandlInst'],
+            'Side': case_params['Side'],
+            'OrderQty': case_params['OrderQty'],
+            'TimeInForce': case_params['TimeInForce'],
+            'Price': case_params['Price'],
+            'OrdType': case_params['OrdType'],
+            'ClOrdID': bca.client_orderid(9),
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': case_params['Instrument'],
+            'OrderCapacity': 'A',
+            # 'OrdSubStatus': 'SORPING',
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'ClientAlgoPolicyID': 'QA_SORPING',
+            'TargetStrategy': case_params['TargetStrategy'],
+            'Text': 'QAP-2740'
+        }
+        # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
+        new_sor_order = act.placeOrderFIX(
+            bca.convert_to_request(
+                'Send NewSingleOrder',
+                case_params['TraderConnectivity'],
+                case_id,
+                bca.message_to_grpc('NewOrderSingle', sor_order_params)
+            ))
+        checkpoint_1 = new_sor_order.checkpoint_id
+        pending_er_params = {
+            **reusable_order_params,
+            'ClOrdID': sor_order_params['ClOrdID'],
+            'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'LastQty': '0',
+            'QtyType': '0',
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'ExecType': 'A',
+            # 'TradingParty': sor_order_params['TradingParty'],
+            'NoParty': [{
+                'PartyID': 'gtwquod3',
+                'PartyIDSource': 'D',
+                'PartyRole': '36'
+            }],
+            'LeavesQty': sor_order_params['OrderQty'],
+            'Instrument': case_params['Instrument']
+        }
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                "ER Pending NewOrderSingle Received",
+                bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
+                checkpoint_1, case_params['TraderConnectivity'], case_id
+            )
         )
-    )
-    sim.removeRule(trade_rule_1)
-    sim.removeRule(trade_rule_2)
+
+        new_er_params = deepcopy(pending_er_params)
+        new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+        new_er_params['Instrument'] = {
+            'Symbol': case_params['Instrument']['Symbol'],
+            'SecurityExchange': case_params['Instrument']['SecurityExchange']
+        }
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                "ER New NewOrderSingle Received",
+                bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
+                checkpoint_1, case_params['TraderConnectivity'], case_id
+            )
+        )
+        sim.removeRule(trade_rule_1)
+        sim.removeRule(trade_rule_2)
+    except Exception as e:
+        logging.error("Error execution", exc_info=True)
+
+    if BaseParams.session_id is None:
+        BaseParams.session_id = set_session_id()
+    session_id = BaseParams.session_id
+    prepare_fe(case_id, session_id)
 
     call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.ExecPcy", "ExecPcy"]))
     call(common_act.verifyEntities, verification(
         order_info_extraction, "checking order", [
             verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
         ])
-    )
+         )
 
     # prepare_fe(report_id, session_id)
     # step 2
@@ -255,6 +263,63 @@ def execute(report_id, session_id):
          verification("order.subOrder", "checking order",
                       [verify_ent("Order ExecPcy", "subOrder2.ExecPcy", "Synth (Quod DarkPool)")]))
 
+    close_fe(case_id, session_id)
+
+    cancel_order_params = {
+        'OrigClOrdID': sor_order_params['ClOrdID'],
+        'ClOrdID': (sor_order_params['ClOrdID']),
+        'Instrument': sor_order_params['Instrument'],
+        'ExDestination': 'QDL1',
+        'Side': case_params['Side'],
+        'TransactTime': (datetime.utcnow().isoformat()),
+        'OrderQty': case_params['OrderQty'],
+        'Text': 'Cancel order'
+    }
+
+    cancel_order = act.placeOrderFIX(
+        bca.convert_to_request(
+            'Send CancelOrderRequest',
+            case_params['TraderConnectivity'],
+            case_id,
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+        ))
+
+    cancellation_er_params = {
+        **reusable_order_params,
+        'Instrument': {
+            'Symbol': case_params['Instrument']['Symbol'],
+            'SecurityExchange': case_params['Instrument']['SecurityExchange']
+        },
+        'ClOrdID': cancel_order_params['ClOrdID'],
+        'OrderID': pending_er_params['OrderID'],
+        'OrderQty': case_params['OrderQty'],
+        'Price': case_params['Price'],
+        'TransactTime': '*',
+        'ExecID': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'LastQty': '0',
+        'QtyType': '0',
+        'AvgPx': '0',
+        'OrdStatus': '4',
+        'ExecType': '4',
+        'LeavesQty': '0',
+        'ExecRestatementReason': '4',
+        'NoParty': '*',
+        'NoStrategyParameters': new_er_params['NoStrategyParameters'],
+        'TargetStrategy': case_params['TargetStrategy'],
+        'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID']
+    }
+
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Cancellation ER Received',
+            bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
+            cancel_order.checkpoint_id,
+            case_params['TraderConnectivity'],
+            case_id
+        )
+    )
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
