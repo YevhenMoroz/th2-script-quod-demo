@@ -6,7 +6,13 @@ from grpc_modules.win_act_pb2_grpc import HandWinActStub
 from grpc_modules.win_act_pb2 import ApplicationDetails, LoginDetails
 import logging
 from configuration import *
+from grpc_modules.rhbatch_pb2 import RhTargetServer
 from custom.basic_custom_actions import create_event_id, create_store_event_request
+
+
+def set_session_id():
+    application_service = HandWinActStub(Channels.ui_act_channel)
+    return application_service.register(RhTargetServer(target=target_server_win)).sessionID
 
 
 def call(method, args):
