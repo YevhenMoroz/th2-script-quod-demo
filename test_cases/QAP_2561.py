@@ -131,7 +131,7 @@ def execute(report_id):
 
     instrument_bs = {
         'SecurityType': 'CS',
-        'Symbol': 'PAR',
+        'Symbol': 'AN',
         'SecurityID': case_params['Instrument']['SecurityID'],
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'

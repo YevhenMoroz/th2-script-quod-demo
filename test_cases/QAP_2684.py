@@ -55,11 +55,6 @@ def execute(report_id):
         }
     }
 
-    instrument_2 = {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        }
-
     reusable_order_params = {   # This parameters can be used for ExecutionReport message
         'Account': case_params['Account'],
         'HandlInst': case_params['HandlInst'],

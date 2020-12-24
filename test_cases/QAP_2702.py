@@ -3,7 +3,7 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import verifier_pb2, infra_pb2
+from grpc_modules import verifier_pb2, infra_pb2, quod_simulator_pb2
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -14,14 +14,18 @@ timeouts = False
 def execute(report_id):
     act = Stubs.fix_act
     verifier = Stubs.verifier
+    simulator = Stubs.simulator
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2702"
     case_params = {
         'TraderConnectivity': 'gtwquod3',
+        'TraderConnectivity2': 'fix-bs-eq-paris',
         'Sender': '',
         'SenderCompID': 'QUOD3',
         'TargetCompID': 'QUODFX_UAT',
+        'SenderCompID2': 'KCH_QA_RET_CHILD',
+        'TargetCompID2': 'QUOD_QA_RET_CHILD',
         'Account': 'KEPLER',
         'HandlInst': '2',
         'Side': '1',
@@ -47,7 +51,6 @@ def execute(report_id):
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
         'Currency': 'EUR',
-        'TargetStrategy': case_params['TargetStrategy']
     }
 
     case_id = bca.create_event(case_name, report_id)
@@ -67,7 +70,8 @@ def execute(report_id):
         'IClOrdIdTO': '19864',
         'AlgoCst01': 'KEPLER06',
         'AlgoCst02': 'KEPLER07',
-        'AlgoCst03': 'KEPLER10'
+        'AlgoCst03': 'KEPLER10',
+        'TargetStrategy': case_params['TargetStrategy']
     }
 
     logger.debug(f"Send new order with ClOrdID = {new_order_single_params['ClOrdID']}")
@@ -136,7 +140,7 @@ def execute(report_id):
         request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-paris",
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
         )
     )
@@ -144,7 +148,7 @@ def execute(report_id):
         request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-trqx",
-            case_params['case_id'],
+            case_id,
             bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
         )
     )
@@ -185,6 +189,8 @@ def execute(report_id):
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
+    new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+    new_er_params['NoStrategyParameters'] = '*'
     new_er_params['ExecID'] = '*'
     new_er_params['Instrument'] = {
         'Symbol': case_params['Instrument']['Symbol'],
@@ -203,7 +209,7 @@ def execute(report_id):
 
     instrument_bs = {
         'SecurityType': 'CS',
-        'Symbol': 'AN',
+        'Symbol': 'RSC',
         'SecurityID': case_params['Instrument']['SecurityID'],
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'
@@ -236,7 +242,7 @@ def execute(report_id):
             bca.filter_to_grpc('NewOrderSingle', nos_bs_params, ["ClOrdID"]),
             checkpoint,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -264,7 +270,7 @@ def execute(report_id):
             bca.filter_to_grpc('ExecutionReport', er_bs_params, ["ClOrdID", "OrdStatus"]),
             checkpoint,
             case_params['TraderConnectivity2'],
-            case_params['case_id'],
+            case_id,
             infra_pb2.Direction.Value("SECOND")
         )
     )
@@ -298,12 +304,12 @@ def execute(report_id):
         'OrigClOrdID': new_order_single_params['ClOrdID'],
         'OrderID': pending_er_params['OrderID'],
         'ExecID': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'LastQty': '*',
-        'QtyType': '*',
-        'AvgPx': '*',
-        'OrdStatus': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'LastQty': '0',
+        'QtyType': '0',
+        'AvgPx': '0',
+        'OrdStatus': '0',
         'ExecType': '5',
         'LeavesQty': case_params['OrderQty'],
         'Instrument': {
@@ -314,6 +320,9 @@ def execute(report_id):
         'Price': case_params['NewPrice'],
         'OrderQty': case_params['OrderQty'],
         'NoParty': '*',
+        'TransactTime': '*',
+        'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID'],
+        'NoStrategyParameters': new_er_params['NoStrategyParameters'],
         'TargetStrategy': case_params['TargetStrategy']
     }
 
@@ -335,9 +344,12 @@ def execute(report_id):
         'Side': case_params['Side'],
         'TransactTime': '*',
         'OrderQty': replace_order_params['OrderQty'],
-        'ChildOrderID': '*',
         'IClOrdIdCO': nos_bs_params['IClOrdIdCO'],
-        'IClOrdIdAO': nos_bs_params['IClOrdIdAO']
+        'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
+        'IClOrdIdTO': nos_bs_params['IClOrdIdTO'],
+        'OrigClOrdID': '*',
+        'ChildOrderID': '*',
+        'ExDestination': nos_bs_params['ExDestination']
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -345,7 +357,36 @@ def execute(report_id):
             bca.filter_to_grpc('OrderCancelRequest', bs_cancel_replace_order_params),
             checkpoint2,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
+        )
+    )
+
+    cancel_replace_er_bs_params = {
+        'ClOrdID': '*',
+        'OrderID': '*',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'CumQty': '0',
+        'OrderQty': nos_bs_params['OrderQty'],
+        'OrdType': case_params['OrdType'],
+        'Side': case_params['Side'],
+        # 'LastPx': '0',
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'ExecType': '0',
+        'LeavesQty': '0',
+        'Text': '*'
+    }
+
+    logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Replacement Cancellation ER transmitted << PARIS',
+            bca.filter_to_grpc('ExecutionReport', cancel_replace_er_bs_params, ["ClOrdID", "OrdStatus"]),
+            checkpoint2,
+            case_params['TraderConnectivity2'],
+            case_id,
+            infra_pb2.Direction.Value("SECOND")
         )
     )
 
@@ -369,7 +410,7 @@ def execute(report_id):
             bca.filter_to_grpc('NewOrderSingle', replace_nos_bs_params, ["ClOrdID"]),
             checkpoint2,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -397,14 +438,14 @@ def execute(report_id):
             bca.filter_to_grpc('ExecutionReport', replace_er_bs_params, ["ClOrdID", "OrdStatus"]),
             checkpoint2,
             case_params['TraderConnectivity2'],
-            case_params['case_id'],
+            case_id,
             infra_pb2.Direction.Value("SECOND")
         )
     )
 
     cancel_order_params = {
         'OrigClOrdID': new_order_single_params['ClOrdID'],
-        'ClOrdID': new_order_single_params['ClOrdID'],
+        'ClOrdID': (new_order_single_params['ClOrdID']),
         'Instrument': new_order_single_params['Instrument'],
         'ExDestination': 'QDL1',
         'Side': case_params['Side'],
@@ -443,7 +484,9 @@ def execute(report_id):
         'LeavesQty': '0',
         'ExecRestatementReason': '4',
         'NoParty': '*',
-        'TargetStrategy': case_params['TargetStrategy']
+        'NoStrategyParameters': new_er_params['NoStrategyParameters'],
+        'TargetStrategy': case_params['TargetStrategy'],
+        'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID']
     }
 
     verifier.submitCheckRule(
@@ -452,7 +495,7 @@ def execute(report_id):
             bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -476,7 +519,7 @@ def execute(report_id):
             bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity2'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -512,7 +555,7 @@ def execute(report_id):
             msg_filters=message_filters_sim,
             checkpoint=checkpoint,
             connectivity=case_params['TraderConnectivity2'],
-            event_id=case_params['case_id'],
+            event_id=case_id,
             timeout=2000
         )
     )
