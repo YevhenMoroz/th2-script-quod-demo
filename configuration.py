@@ -1,11 +1,10 @@
-fix_act_address = "10.0.22.22:30774"
+fix_act_address = "10.0.22.22:30113"
 fix_act_1_address = "10.0.22.22:32706"
-event_store_address = "10.0.22.22:31649"
-verifier_address = "10.0.22.22:31445"
-simulator_address = "10.0.22.22:31977"
+event_store_address = "10.0.22.22:30449"
+verifier_address = "10.0.22.22:31483"
+simulator_address = "10.0.22.22:32075"
 web_act_address = '10.0.22.22:30818'
-# win_act_address = 'localhost:8080'
-win_act_address = '10.0.22.22:32744'
+win_act_address = '10.0.22.22:32163'
 
 # target_server_win = 'win'
 target_server_win = 'win103'
