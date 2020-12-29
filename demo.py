@@ -11,8 +11,9 @@ from grpc_modules.win_act_pb2_grpc import HandWinActStub
 from grpc_modules.rhbatch_pb2 import RhTargetServer
 from grpc_modules.infra_pb2 import ConnectionID
 from configuration import *
-from schemas import *
 from channels import Channels
+from stubs import Stubs
+# from test_cases import QAP_1987
 from test_cases import QAP_2409
 from test_cases import QAP_2425_SIM
 from test_cases import QAP_2462_SIM
@@ -22,11 +23,14 @@ from test_cases import QAP_2620
 from test_cases import QAP_2684
 from test_cases import QAP_2702
 from test_cases import QAP_2740
+from test_cases import QAP_2769
+from test_cases import QAP_2769_schema
 from win_gui_modules.utils import prepare_fe, close_fe
 
 
-logging.basicConfig(stream=stdout)
-logger = logging.getLogger('demo')
+# logging.basicConfig(stream=stdout)
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = False
 
@@ -34,10 +38,10 @@ timeouts = False
 
 logger.debug("Connecting to TH2 components...")
 channels = dict()
-channels['act'] = Channels.fix_act_channel
-channels['event-store'] = Channels.event_store_channel
-channels['verifier'] = Channels.verifier_channel
-channels['simulator'] = Channels.simulator_channel
+# channels['act'] = Channels.fix_act_channel
+# channels['event-store'] = Channels.event_store_channel
+# channels['verifier'] = Channels.verifier_channel
+# channels['simulator'] = Channels.simulator_channel
 
 
 def test_run():
@@ -206,17 +210,17 @@ def test_run():
     }
 
     # start rule
-    simulator = TemplateSimulatorServiceStub(channels['simulator'])
-    NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
-    ))
-    OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-    NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
-    ))
-    OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+    # simulator = TemplateSimulatorServiceStub(channels['simulator'])
+    # NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
+    # ))
+    # OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
+    # NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
+    # ))
+    # OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
     # MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
     #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
     #     sender="QUOD_UTP",
@@ -228,7 +232,7 @@ def test_run():
     #     md_entry_size={1000: 1000},
     #     md_entry_px={40: 30}))
     # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
-    print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}")
+    # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}")
 
     try:
         # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
@@ -242,31 +246,36 @@ def test_run():
         # QAP_2425_SIM.execute(report_id)
         # QAP_2462_SIM.execute(report_id)
         # QAP_2540.execute(report_id)
-        QAP_2561.execute(report_id)
+        # QAP_2561.execute(report_id)
         # QAP_2620.execute(report_id)
         # QAP_2684.execute(report_id)
         # QAP_2702.execute(report_id)
+        # QAP_2769.execute(report_id)
+        QAP_2769_schema.execute(report_id)
 
         # application_service = HandWinActStub(Channels.ui_act_channel)
         # session_id = application_service.register(RhTargetServer(target=target_server_win)).sessionID
         # prepare_fe(report_id, session_id)
         # QAP_1641.execute(report_id, session_id)
         # QAP_2740.execute(report_id, session_id)
+        # QAP_1987.execute(report_id, session_id)
         # close_fe(report_id, session_id)
     except Exception as e:
+        # raise Exception()
         logging.error("Error execution", exc_info=True)
 
     # stop rule
-    core = ServiceSimulatorStub(channels['simulator'])
-    core.removeRule(NOS_1)
-    core.removeRule(OCR_1)
-    core.removeRule(NOS_2)
-    core.removeRule(OCR_2)
+    # core = ServiceSimulatorStub(channels['simulator'])
+    # core.removeRule(NOS_1)
+    # core.removeRule(OCR_1)
+    # core.removeRule(NOS_2)
+    # core.removeRule(OCR_2)
     # core.removeRule(MDR_paris)
     # core.removeRule(MDR_turquise)
 
     for channel_name in channels.keys():
         channels[channel_name].close()
+    Stubs.factory.close()
 
 
 if __name__ == '__main__':

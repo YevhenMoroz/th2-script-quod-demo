@@ -1,0 +1,14 @@
+{
+  "queues": {
+    "event-store-pin": {
+      "attributes": [
+        "event",
+        "publish"
+      ],
+      "exchange": "th2-exchange",
+      "filters": [],
+      "name": "routing-key_schema-quod_script-entry-point[estore-pin]",
+      "queue": "not_necessary"
+    }
+  }
+}

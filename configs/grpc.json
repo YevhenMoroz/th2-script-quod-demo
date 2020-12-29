@@ -1,0 +1,30 @@
+{
+  "services": {
+    "Act": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act": {
+          "host": "10.0.22.22",
+          "port": 32130
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["act"]
+      }
+    },
+    "Check1": {
+      "service-class": "Check1Service",
+      "endpoints": {
+        "check1": {
+          "host": "10.0.22.22",
+          "port": 32132
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["check1"]
+      }
+    }
+  }
+}

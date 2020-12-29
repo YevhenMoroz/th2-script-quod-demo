@@ -4,19 +4,6 @@ from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from grpc_modules import act_fix_pb2
-# from grpc_modules import event_store_pb2
-
-from grpc_modules.infra_pb2 import Value
-from grpc_modules.infra_pb2 import ListValue
-from grpc_modules.infra_pb2 import Message
-from grpc_modules.infra_pb2 import MessageMetadata
-from grpc_modules.infra_pb2 import ValueFilter
-from grpc_modules.infra_pb2 import ListValueFilter
-from grpc_modules.infra_pb2 import MessageFilter
-from grpc_modules.infra_pb2 import FilterOperation
-from grpc_modules.infra_pb2 import EventID
-from grpc_modules.infra_pb2 import Event
-from grpc_modules.infra_pb2 import ConnectionID
 from grpc_modules.infra_pb2 import Direction
 
 from grpc_modules.verifier_pb2 import PreFilter
@@ -30,6 +17,9 @@ from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
 
 from grpc_modules.event_store_pb2 import StoreEventRequest
 from stubs import Stubs
+
+from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
+    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch
 
 
 # Debug output
@@ -47,19 +37,19 @@ def client_orderid(length: int) -> str:
     return str(uuid1().time)[-length:]
 
 
-def message_to_grpc(message_type: str, content: dict) -> Message:
+def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Message:
     content = deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
 
         elif isinstance(content[tag], dict):
-            content[tag] = Value(message_value=(message_to_grpc(tag, content[tag])))
+            content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
 
         elif isinstance(content[tag], list):
             for group in content[tag]:
                 content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group)))
+                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
             content[tag] = Value(
                 message_value=Message(
                     metadata=MessageMetadata(message_type=tag),
@@ -73,7 +63,10 @@ def message_to_grpc(message_type: str, content: dict) -> Message:
                 )
             )
     return Message(
-        metadata=MessageMetadata(message_type=message_type),
+        metadata=MessageMetadata(
+            message_type=message_type,
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias))
+        ),
         fields=content
     )
 
@@ -172,14 +165,28 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     event_store = Stubs.event_store
     seconds, nanos = timestamps()
     event_id = create_event_id()
-    event_store.StoreEvent(StoreEventRequest(
-        event=Event(
-            id=event_id,
-            name=event_name,
-            start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-            parent_id=parent_id
-        )
-    ))
+
+    # event_store.StoreEvent(StoreEventRequest(
+    #     event=Event(
+    #         id=event_id,
+    #         name=event_name,
+    #         start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
+    #         parent_id=parent_id
+    #     )
+    # ))
+    event = Event(
+        id=event_id,
+        name=event_name,
+        status='SUCCESS',
+        body=b"",
+        start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
+        # end_timestamp=current_timestamp,
+        parent_id=parent_id)
+    event_batch = EventBatch()
+    if parent_id:
+        event_batch.parent_event_id.CopyFrom(parent_id)
+    event_batch.events.append(event)
+    event_store.send(event_batch)
     return event_id
 
 

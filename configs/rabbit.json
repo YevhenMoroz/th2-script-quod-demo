@@ -1,0 +1,8 @@
+{
+  "host": "10.0.22.22",
+  "vHost": "schema-quod",
+  "port": "32600",
+  "username": "quod",
+  "password": "Rhjkbr1",
+  "exchangeName": "th2_exchange"
+}
