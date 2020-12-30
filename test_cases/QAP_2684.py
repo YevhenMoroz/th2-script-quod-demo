@@ -48,8 +48,8 @@ def execute(report_id):
         'TimeInForce': '0',
         'TargetStrategy': 1011,
         'Instrument': {
-            'Symbol': 'FR0000125460_EUR',
-            'SecurityID': 'FR0000125460',
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -224,7 +224,7 @@ def execute(report_id):
 
     instrument_1_2 = case_params['Instrument']
     instrument_1_2['SecurityType'] = 'CS'
-    instrument_1_2['Symbol'] = 'AN'
+    instrument_1_2['Symbol'] = 'RSC'
 
     newordersingle_params = {
         'Account': case_params['Account'],

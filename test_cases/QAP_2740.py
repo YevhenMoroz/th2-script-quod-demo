@@ -29,7 +29,7 @@ def execute(report_id, session_id):
     sim = Stubs.sim
 
     seconds, nanos = bca.timestamps()  # Store case start time
-    case_name = "QAP-2740 [SORPING] Send SORPING algo order to check PriceCost criteria in Aggressive phase"
+    case_name = "QAP-2740"
     case_id = bca.create_event(case_name, report_id)
     # case_id = create_event_id()
     event_store.StoreEvent(request=create_store_event_request(case_name, case_id, report_id))
@@ -52,7 +52,7 @@ def execute(report_id, session_id):
         'Account': 'KEPLER',
         'HandlInst': '2',
         'Side': '2',
-        'OrderQty': 100,
+        'OrderQty': 1200,
         'OrdType': '2',
         'Price': 25,
         'TimeInForce': '0',
@@ -85,7 +85,7 @@ def execute(report_id, session_id):
         ],
         cum_qty=int(case_params['OrderQty'] / 2),
         mask_as_connectivity="fix-fh-eq-paris",
-        md_entry_size={50: 0},
+        md_entry_size={600: 0},
         md_entry_px={30: 25},
         symbol=symbol_1
     ))
@@ -98,7 +98,7 @@ def execute(report_id, session_id):
         ],
         cum_qty=int(case_params['OrderQty'] / 2),
         mask_as_connectivity="fix-fh-eq-trqx",
-        md_entry_size={50: 0},
+        md_entry_size={600: 0},
         md_entry_px={30: 25},
         symbol=symbol_2
     ))
@@ -222,6 +222,7 @@ def execute(report_id, session_id):
         )
         sim.removeRule(trade_rule_1)
         sim.removeRule(trade_rule_2)
+
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
@@ -229,6 +230,15 @@ def execute(report_id, session_id):
         BaseParams.session_id = set_session_id()
     session_id = BaseParams.session_id
     prepare_fe(case_id, session_id)
+
+    sub_lv1_info = ExtractionInfo()
+    main_order_info = ExtractionInfo.create(sub_order_details=OrdersDetails.create(info=sub_lv1_info))
+
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(get_base_request(session_id, case_id))
+    main_order_details.set_extraction_id(case_id)
+    main_order_details.set_filter(["Order ID", pending_er_params['OrderID']])
+    main_order_details.add_single_extraction_info(main_order_info)
 
     call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.ExecPcy", "ExecPcy"]))
     call(common_act.verifyEntities, verification(
