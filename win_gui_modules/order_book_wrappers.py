@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from .order_ticket import OrderTicketDetails
 from grpc_modules import order_book_pb2
 
@@ -47,11 +49,30 @@ class CancelOrderDetails:
         return self.cancel_order_details
 
 
+@dataclass
+class ExtractionDetail:
+    name: str
+    column_name: str
+
+
 class OrdersDetails:
     def __init__(self):
         self.base_params = None
         self.extraction_id = None
         self.orders_details = order_book_pb2.OrdersDetailsInfo()
+
+    @staticmethod
+    def create(info_list: list = None, info=None):
+        order_details = OrdersDetails()
+
+        if info_list is not None:
+            for i in info_list:
+                order_details.add_single_extraction_info(i)
+
+        if info is not None:
+            order_details.add_single_extraction_info(info)
+
+        return order_details
 
     @staticmethod
     def from_info(sub_orders: list):
@@ -76,8 +97,15 @@ class OrdersDetails:
     def set_one_extraction_info(self, sub_order):
         self.orders_details.extractionInfo.append(sub_order.build())
 
+    def add_single_extraction_info(self, sub_order):
+        self.orders_details.extractionInfo.append(sub_order.build())
+
     def set_default_params(self, base_request):
         self.base_params = base_request
+
+    def extract_length(self, count_id: str):
+        self.orders_details.extractCount = True
+        self.orders_details.countId = count_id
 
     def request(self):
         request = order_book_pb2.GetOrdersDetailsRequest()
@@ -93,6 +121,21 @@ class OrdersDetails:
 class ExtractionInfo:
     def __init__(self):
         self.extraction_info = order_book_pb2.ExtractionInfo()
+
+    @staticmethod
+    def create(detail: ExtractionDetail = None, data: list = None, sub_order_details: OrdersDetails = None):
+        info = ExtractionInfo()
+        if detail is not None:
+            info.add_order_details(detail)
+
+        if data is not None:
+            for i in data:
+                info.add_order_details(i)
+
+        if sub_order_details is not None:
+            info.set_sub_orders_details(sub_order_details)
+
+        return info
 
     @staticmethod
     def from_data(data: list):
@@ -120,6 +163,11 @@ class ExtractionInfo:
             var.name = data[i]
             var.colName = data[i + 1]
             i += 2
+
+    def add_order_details(self, data: ExtractionDetail):
+        var = self.extraction_info.orderDetails.add()
+        var.name = data.name
+        var.colName = data.column_name
 
     def build(self):
         return self.extraction_info
