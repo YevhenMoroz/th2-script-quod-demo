@@ -1,7 +1,7 @@
 {
   "services": {
     "Act": {
-      "service-class": "ActService",
+      "service-class": "ActFixService",
       "endpoints": {
         "act": {
           "host": "10.0.22.22",
@@ -24,6 +24,32 @@
       "strategy": {
         "name": "robin",
         "endpoints": ["check1"]
+      }
+    },
+    "Simulator": {
+      "service-class": "TemplateSimulatorServiceService",
+      "endpoints": {
+        "simulator": {
+          "host": "10.0.22.22",
+          "port": 32133
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator"]
+      }
+    },
+    "Simulator2": {
+      "service-class": "SimService",
+      "endpoints": {
+        "simulator": {
+          "host": "10.0.22.22",
+          "port": 32133
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator"]
       }
     }
   }

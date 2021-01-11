@@ -1,7 +1,7 @@
 import logging
 import time
-from grpc_modules import verifier_pb2
-from grpc_modules import infra_pb2
+from th2_grpc_check1.check1_pb2 import CheckSequenceRuleRequest
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -77,14 +77,15 @@ def execute(report_id):
             'Send NewOrderSingle',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', specific_order_params)
+            bca.message_to_grpc('NewOrderSingle', specific_order_params, case_params['TraderConnectivity'])
         ))
 
     # Prepare system output
     er_pending_params = {
         **reusable_order_params,
         'ClOrdID': specific_order_params['ClOrdID'],
-        'OrderID': enter_order.response_messages_list[0].fields['OrderID'].simple_value,
+        # 'OrderID': enter_order.response_messages_list[0].fields['OrderID'].simple_value,
+        'OrderID': '*',
         'ExecID': '*',
         'TransactTime': '*',
         'CumQty': '0',
@@ -100,13 +101,13 @@ def execute(report_id):
     }
     logger.debug("Verify received Execution Report (OrdStatus = Pending)")
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport Pending',
             bca.filter_to_grpc('ExecutionReport', er_pending_params, ["ClOrdID", "OrdStatus"]),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
-        )
+        ), timeout=3000
     )
 
     er_new_params = {
@@ -131,13 +132,13 @@ def execute(report_id):
     }
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport New',
             bca.filter_to_grpc('ExecutionReport', er_new_params, ["ClOrdID", "OrdStatus"]),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
-        )
+        ), timeout=3000
     )
 
     instrument_3_2 = {
@@ -167,13 +168,13 @@ def execute(report_id):
         'IClOrdIdAO': 'OD_5fgfDXg-00',
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Transmitted NewOrderSingle',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id
-        )
+        ), timeout=3000
     )
     er_sim_params = {
         'ClOrdID': '*',
@@ -193,14 +194,14 @@ def execute(report_id):
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport New Sim',
             bca.filter_to_grpc("ExecutionReport", er_sim_params, ['text', 'OrdStatus']),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
-        )
+            Direction.Value("SECOND")
+        ), timeout=3000
     )
     cancel_order_params = {
         'OrigClOrdID': specific_order_params['ClOrdID'],
@@ -219,7 +220,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     cancel_order_params2 = {
@@ -234,13 +235,13 @@ def execute(report_id):
         'ChildOrderID': '*',
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Transmitted OrderCancelRequest',
             bca.filter_to_grpc('OrderCancelRequest', cancel_order_params2, ["ClOrdID"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id
-        )
+        ), timeout=3000
     )
 
     er_cancel_params = {
@@ -268,13 +269,13 @@ def execute(report_id):
     }
     logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport Cancel',
             bca.filter_to_grpc('ExecutionReport', er_cancel_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
-        )
+        ), timeout=3000
     )
     er_sim_cancel_params = {
         'ClOrdID': '*',
@@ -295,14 +296,14 @@ def execute(report_id):
         'Text': '*',
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport Cancel Sim',
             bca.filter_to_grpc('ExecutionReport', er_sim_cancel_params, ["ClOrdID"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
-        )
+            Direction.Value("SECOND")
+        ), timeout=3000
     )
 
     pre_filter_params = {
@@ -348,12 +349,12 @@ def execute(report_id):
     ]
     checkpoint = enter_order.checkpoint_id
 
-    check_sequence_rule = verifier_pb2.CheckSequenceRuleRequest(
+    check_sequence_rule = CheckSequenceRuleRequest(
         pre_filter=pre_filter,
         message_filters=message_filters,
         checkpoint=checkpoint,
         timeout=1000,
-        connectivity_id=infra_pb2.ConnectionID(session_alias=case_params['TraderConnectivity']),
+        connectivity_id=ConnectionID(session_alias=case_params['TraderConnectivity']),
         parent_event_id=case_id,
         description='',
         check_order=True
@@ -361,12 +362,12 @@ def execute(report_id):
     logger.debug("Verify a sequence of Execution Report messages")
     verifier.submitCheckSequenceRule(check_sequence_rule)
 
-    check_sequence_rule2 = verifier_pb2.CheckSequenceRuleRequest(
+    check_sequence_rule2 = CheckSequenceRuleRequest(
         pre_filter=pre_filter2,
         message_filters=message_filters2,
         checkpoint=checkpoint,
         timeout=1000,
-        connectivity_id=infra_pb2.ConnectionID(session_alias=case_params['TraderConnectivity2']),
+        connectivity_id=ConnectionID(session_alias=case_params['TraderConnectivity2']),
         parent_event_id=case_id,
         description='',
         check_order=True
@@ -374,16 +375,16 @@ def execute(report_id):
     logger.debug("Verify a sequence of Execution Report messages")
     verifier.submitCheckSequenceRule(check_sequence_rule2)
 
-    check_sequence_rule3 = verifier_pb2.CheckSequenceRuleRequest(
+    check_sequence_rule3 = CheckSequenceRuleRequest(
         pre_filter=pre_filter3,
         message_filters=message_filters3,
         checkpoint=checkpoint,
         timeout=1000,
-        connectivity_id=infra_pb2.ConnectionID(session_alias=case_params['TraderConnectivity2']),
+        connectivity_id=ConnectionID(session_alias=case_params['TraderConnectivity2']),
         parent_event_id=case_id,
         description='from Sim',
         check_order=True,
-        direction=infra_pb2.Direction.values()[1],
+        direction=Direction.values()[1],
     )
     logger.debug("Verify a sequence of Execution Report messages")
     verifier.submitCheckSequenceRule(check_sequence_rule3)
@@ -392,4 +393,3 @@ def execute(report_id):
         time.sleep(5)
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
-

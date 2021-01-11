@@ -3,7 +3,8 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import verifier_pb2, infra_pb2, quod_simulator_pb2
+from grpc_modules import quod_simulator_pb2
+from th2_grpc_common.common_pb2 import Direction, ConnectionID
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -80,16 +81,16 @@ def execute(report_id):
             "Send NewSingleOrder",
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', new_order_single_params)
+            bca.message_to_grpc('NewOrderSingle', new_order_single_params, case_params['TraderConnectivity'])
         ))
 
     MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="596",
-        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
      )).MDRefID
     MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
         symbol="3390",
-        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
      )).MDRefID
 
     mdfr_params_1 = {
@@ -141,7 +142,7 @@ def execute(report_id):
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-paris",
             case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-trqx")
         )
     )
     act.sendMessage(
@@ -149,7 +150,7 @@ def execute(report_id):
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-trqx",
             case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
         )
     )
 
@@ -271,7 +272,7 @@ def execute(report_id):
             checkpoint,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -295,7 +296,7 @@ def execute(report_id):
             'Send OrderCancelReplaceRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params)
+            bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params, case_params['TraderConnectivity'])
         ))
     checkpoint2 = replace_order.checkpoint_id
     replacement_er_params = {
@@ -386,7 +387,7 @@ def execute(report_id):
             checkpoint2,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -439,7 +440,7 @@ def execute(report_id):
             checkpoint2,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -459,7 +460,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     cancellation_er_params = {

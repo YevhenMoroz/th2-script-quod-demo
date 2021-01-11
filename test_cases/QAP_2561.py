@@ -3,7 +3,7 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import verifier_pb2, infra_pb2
+from th2_grpc_common.common_pb2 import Direction
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ def execute(report_id):
             "Send NewIcebergOrder",
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', new_iceberg_order_params)
+            bca.message_to_grpc('NewOrderSingle', new_iceberg_order_params, case_params['TraderConnectivity'])
         ))
 
     checkpoint = new_iceberg_order.checkpoint_id
@@ -87,7 +87,8 @@ def execute(report_id):
         'OrderQty': new_iceberg_order_params['OrderQty'],
         'Price': new_iceberg_order_params['Price'],
         'ClOrdID': new_iceberg_order_params['ClOrdID'],
-        'OrderID': new_iceberg_order.response_messages_list[0].fields['OrderID'].simple_value,
+        # 'OrderID': new_iceberg_order.response_messages_list[0].fields['OrderID'].simple_value,
+        'OrderID': '*',
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -187,7 +188,7 @@ def execute(report_id):
             checkpoint,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -213,7 +214,7 @@ def execute(report_id):
             'Send OrderCancelReplaceRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params)
+            bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params, case_params['TraderConnectivity'])
         ))
     checkpoint2 = replace_order.checkpoint_id
 
@@ -322,7 +323,7 @@ def execute(report_id):
             checkpoint2,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
     cancel_order_params = {
@@ -341,7 +342,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     cancellation_er_params = {

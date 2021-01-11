@@ -3,8 +3,7 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2
-from grpc_modules.infra_pb2 import Direction, ConnectionID
+from th2_grpc_common.common_pb2 import Direction
 from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from stubs import Stubs
 
@@ -88,7 +87,7 @@ def execute(report_id):
             'Send NewOrderSingle',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', new_order_params)
+            bca.message_to_grpc('NewOrderSingle', new_order_params, case_params['TraderConnectivity'])
         ))
     checkpoint_1 = new_ib_order.checkpoint_id
     # logger.info(new_ib_order)
@@ -200,7 +199,7 @@ def execute(report_id):
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -221,7 +220,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     cancellation_er_params = {

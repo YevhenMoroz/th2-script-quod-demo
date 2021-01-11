@@ -3,23 +3,22 @@ from uuid import uuid1
 from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from grpc_modules import act_fix_pb2
-from grpc_modules.infra_pb2 import Direction
-
-from grpc_modules.verifier_pb2 import PreFilter
-from grpc_modules.verifier_pb2 import CheckRuleRequest
-from grpc_modules.verifier_pb2 import CheckSequenceRuleRequest
-from grpc_modules.verifier_pb2 import CheckpointRequest
+from th2_grpc_check1.check1_pb2 import PreFilter
+from th2_grpc_check1.check1_pb2 import CheckRuleRequest
+from th2_grpc_check1.check1_pb2 import CheckSequenceRuleRequest
+from th2_grpc_check1.check1_pb2 import CheckpointRequest
 
 from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
 from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
 
 from grpc_modules.event_store_pb2 import StoreEventRequest
+
+from th2_grpc_act_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
 
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
-    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch
+    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction
 
 
 # Debug output
@@ -116,11 +115,11 @@ def filter_to_grpc(message_type: str, content: dict, keys=None) -> MessageFilter
 
 
 def convert_to_request(description: str, connectivity: str, event_id: EventID, message: dict,
-                       key_fields=None) -> act_fix_pb2.PlaceMessageRequest:
+                       key_fields=None) -> PlaceMessageRequest:
     if key_fields is None:
         key_fields = []
     connectivity = ConnectionID(session_alias=connectivity)
-    return act_fix_pb2.PlaceMessageRequest(
+    return PlaceMessageRequest(
         message=message,
         connection_id=connectivity,
         parent_event_id=event_id,
@@ -183,8 +182,6 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
         # end_timestamp=current_timestamp,
         parent_id=parent_id)
     event_batch = EventBatch()
-    if parent_id:
-        event_batch.parent_event_id.CopyFrom(parent_id)
     event_batch.events.append(event)
     event_store.send(event_batch)
     return event_id

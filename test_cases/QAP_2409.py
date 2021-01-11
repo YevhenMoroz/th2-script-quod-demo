@@ -73,78 +73,78 @@ def execute(report_id):
             'Send NewSingleOrder',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', sor_order_params)
+            bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
         ))
 
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="1062",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
-    )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="3503",
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
-    )).MDRefID
-
-    mdfr_params_1 = {
-        'MDReportID': "1",
-        'MDReqID': MDRefID_1,
-        'Instrument': {
-            'Symbol': "1062"
-        },
-        # 'LastUpdateTime': "",
-        'NoMDEntries': [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-    }
-    mdfr_params_2 = {
-        'MDReportID': "1",
-        'MDReqID': MDRefID_2,
-        'Instrument': {
-            'Symbol': "3503"
-        },
-        # 'LastUpdateTime': "",
-        'NoMDEntries': [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-    }
-    act.sendMessage(
-        request=bca.convert_to_request(
-            'Send MarketDataSnapshotFullRefresh',
-            "fix-fh-eq-paris",
-            case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
-        )
-    )
-    act.sendMessage(
-        request=bca.convert_to_request(
-            'Send MarketDataSnapshotFullRefresh',
-            "fix-fh-eq-trqx",
-            case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
-        )
-    )
+    # MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    #     symbol="1062",
+    #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+    # )).MDRefID
+    # MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    #     symbol="3503",
+    #     connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+    # )).MDRefID
+    #
+    # mdfr_params_1 = {
+    #     'MDReportID': "1",
+    #     'MDReqID': MDRefID_1,
+    #     'Instrument': {
+    #         'Symbol': "1062"
+    #     },
+    #     # 'LastUpdateTime': "",
+    #     'NoMDEntries': [
+    #         {
+    #             'MDEntryType': '0',
+    #             'MDEntryPx': '30',
+    #             'MDEntrySize': '1000',
+    #             'MDEntryPositionNo': '1'
+    #         },
+    #         {
+    #             'MDEntryType': '1',
+    #             'MDEntryPx': '40',
+    #             'MDEntrySize': '1000',
+    #             'MDEntryPositionNo': '1'
+    #         }
+    #     ]
+    # }
+    # mdfr_params_2 = {
+    #     'MDReportID': "1",
+    #     'MDReqID': MDRefID_2,
+    #     'Instrument': {
+    #         'Symbol': "3503"
+    #     },
+    #     # 'LastUpdateTime': "",
+    #     'NoMDEntries': [
+    #         {
+    #             'MDEntryType': '0',
+    #             'MDEntryPx': '30',
+    #             'MDEntrySize': '1000',
+    #             'MDEntryPositionNo': '1'
+    #         },
+    #         {
+    #             'MDEntryType': '1',
+    #             'MDEntryPx': '40',
+    #             'MDEntrySize': '1000',
+    #             'MDEntryPositionNo': '1'
+    #         }
+    #     ]
+    # }
+    # act.sendMessage(
+    #     request=bca.convert_to_request(
+    #         'Send MarketDataSnapshotFullRefresh',
+    #         "fix-fh-eq-paris",
+    #         case_id,
+    #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-trqx")
+    #     )
+    # )
+    # act.sendMessage(
+    #     request=bca.convert_to_request(
+    #         'Send MarketDataSnapshotFullRefresh',
+    #         "fix-fh-eq-trqx",
+    #         case_id,
+    #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
+    #     )
+    # )
 
     checkpoint_1 = new_sor_order.checkpoint_id
     execution_report1_params = {
@@ -202,13 +202,14 @@ def execute(report_id):
         }
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Transmitted NewOrderSingle',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_1_params),
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_id
-        )
+        ),
+        timeout=2000
     )
 
     newordersingle_2_params = {
@@ -232,13 +233,14 @@ def execute(report_id):
     }
 
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Transmitted NewOrderSingle',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_2_params),
             checkpoint_1,
             case_params['TraderConnectivity3'],
             case_id
-        )
+        ),
+        timeout=2000
     )
 
     execution_report3_params = {
@@ -263,12 +265,13 @@ def execute(report_id):
         'Instrument': case_params['Instrument']
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             "Receive Execution Report Filled for PARIS",
             bca.filter_to_grpc("ExecutionReport", execution_report3_params),
             checkpoint_1, case_params['TraderConnectivity2'], case_id,
             direction=Direction.Value("SECOND")
-        )
+        ),
+        timeout=2000
     )
 
     execution_report4_params = deepcopy(execution_report3_params)
@@ -277,12 +280,13 @@ def execute(report_id):
         execution_report4_params['CumQty'] = 100
 
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             "Receive Execution Report Filled for TRQX",
             bca.filter_to_grpc("ExecutionReport", execution_report4_params),
             checkpoint_1, case_params['TraderConnectivity3'], case_id,
             direction=Direction.Value("SECOND")
-        )
+        ),
+        timeout=2000
     )
 
     pre_filter_sim_params = {
@@ -362,5 +366,4 @@ def execute(report_id):
     # for rule in sim_rules:
     #     rules_killer.removeRule(rule)
 
-    logger.info("Case {} was executed in {} sec.".format(
-        case_name, str(round(datetime.now().timestamp() - seconds))))
+    logger.info(f"Case {case_name} was executed in {round(datetime.now().timestamp() - seconds)} sec.")
