@@ -3,8 +3,9 @@ from copy import deepcopy
 from time import sleep
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import quod_simulator_pb2
+# from grpc_modules import quod_simulator_pb2
 from th2_grpc_common.common_pb2 import Direction, ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -84,11 +85,11 @@ def execute(report_id):
             bca.message_to_grpc('NewOrderSingle', new_order_single_params, case_params['TraderConnectivity'])
         ))
 
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="596",
         connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
      )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="3390",
         connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
      )).MDRefID

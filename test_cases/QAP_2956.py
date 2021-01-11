@@ -3,14 +3,6 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
-from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
-from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.infra_pb2 import Direction, ConnectionID
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)

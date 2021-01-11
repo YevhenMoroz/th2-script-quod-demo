@@ -141,11 +141,11 @@ def execute(report_id, session_id):
         }
         act.sendMessage(request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
         ))
         act.sendMessage(request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-trqx", case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
         ))
 
         # Send sorping order

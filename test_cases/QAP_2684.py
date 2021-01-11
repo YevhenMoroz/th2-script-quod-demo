@@ -3,14 +3,8 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2, quod_simulator_pb2
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
-from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.infra_pb2 import Direction, ConnectionID
-from grpc_modules.quod_simulator_pb2 import RequestMDRefID
+from th2_grpc_common.common_pb2 import Direction, ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from stubs import Stubs
 
 
@@ -98,16 +92,16 @@ def execute(report_id):
             'Send NewSingleOrder',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', sor_order_params)
+            bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
         ))
 
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="596",
-        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+        connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
     )).MDRefID
-    MDRefID_2 = simulator.getMDRefIDForConnection(request=quod_simulator_pb2.RequestMDRefID(
+    MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="3390",
-        connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
     )).MDRefID
 
     mdfr_params_1 = {
@@ -159,7 +153,7 @@ def execute(report_id):
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-paris",
             case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
         )
     )
     act.sendMessage(
@@ -167,7 +161,7 @@ def execute(report_id):
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-trqx",
             case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2)
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
         )
     )
 
@@ -281,7 +275,7 @@ def execute(report_id):
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
+            Direction.Value("SECOND")
         )
     )
 
@@ -302,7 +296,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     cancellation_er_params = {
