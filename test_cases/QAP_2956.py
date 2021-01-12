@@ -45,5 +45,5 @@ def execute(case_name, report_id, case_params):
             'MarketDataRequest (subscribe)',
             case_params['Connectivity'],
             case_id,
-            bca.message_to_grpc('MarketDataRequest', subscribe_params)
+            bca.message_to_grpc('MarketDataRequest', subscribe_params, case_params['Connectivity'])
         ))
