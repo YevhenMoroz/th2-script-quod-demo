@@ -1,31 +1,29 @@
-from sys import stdout
+# from sys import stdout
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.quod_simulator_pb2_grpc import TemplateSimulatorServiceStub
-from grpc_modules.simulator_pb2_grpc import ServiceSimulatorStub
-from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
-from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
-from grpc_modules.win_act_pb2_grpc import HandWinActStub
-from grpc_modules.rhbatch_pb2 import RhTargetServer
-from grpc_modules.infra_pb2 import ConnectionID
 from configuration import *
 from channels import Channels
 from stubs import Stubs
-# from test_cases import QAP_1987
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRule
+from th2_grpc_common.common_pb2 import ConnectionID
+# # from test_cases import QAP_1987
 from test_cases import QAP_2409
 from test_cases import QAP_2425_SIM
 from test_cases import QAP_2462_SIM
-from test_cases import QAP_2540
-from test_cases import QAP_2561
-from test_cases import QAP_2620
-from test_cases import QAP_2684
-from test_cases import QAP_2702
-from test_cases import QAP_2740
-from test_cases import QAP_2769
-from test_cases import QAP_2769_schema
+# from test_cases import QAP_2540
+# from test_cases import QAP_2561
+# from test_cases import QAP_2620
+from test_cases import QAP_2620_refactored
+# from test_cases import QAP_2684
+# from test_cases import QAP_2702
+# from test_cases import QAP_2740
+# from test_cases import QAP_2769
+from th2_grpc_sim.sim_pb2 import RuleID
+# from test_cases import QAP_2769_schema
 from win_gui_modules.utils import prepare_fe, close_fe
+from google.protobuf.empty_pb2 import Empty
+from test_cases import test
 
 
 # logging.basicConfig(stream=stdout)
@@ -34,20 +32,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = False
 
-# TH2 Components addresses retrieval
-
-logger.debug("Connecting to TH2 components...")
 channels = dict()
-# channels['act'] = Channels.fix_act_channel
-# channels['event-store'] = Channels.event_store_channel
-# channels['verifier'] = Channels.verifier_channel
-# channels['simulator'] = Channels.simulator_channel
 
 
 def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('QUOD demo ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
-    logger.info("Root event was created (report id = {})".format(report_id))
+    logger.info(f"Root event was created (id = {report_id})")
     # Reference data for test cases
 
     instrument = {
@@ -210,17 +201,16 @@ def test_run():
     }
 
     # start rule
-    # simulator = TemplateSimulatorServiceStub(channels['simulator'])
-    # NOS_1 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-    #     connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
-    # ))
-    # OCR_1 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-    #     connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-    # NOS_2 = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
-    # ))
-    # OCR_2 = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
-    #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+    NOS_1 = Stubs.simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')
+    ))
+    OCR_1 = Stubs.simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
+    NOS_2 = Stubs.simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
+    ))
+    OCR_2 = Stubs.simulator.createQuodOCRRule(request=TemplateQuodOCRRule(
+        connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
     # MDR_paris = simulator.createQuodMDRRule(request=TemplateQuodMDRRule(
     #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris"),
     #     sender="QUOD_UTP",
@@ -232,7 +222,7 @@ def test_run():
     #     md_entry_size={1000: 1000},
     #     md_entry_px={40: 30}))
     # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}, {MDR_paris}, {MDR_turquise}")
-    # print(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}")
+    logger.info(f"Start rules with id's: \n {NOS_1}, {OCR_1}, {NOS_2}, {OCR_2}")
 
     try:
         # amend_and_trade.execute('QUOD-AMEND-TRADE', report_id, test_cases['QUOD-AMEND-TRADE'])
@@ -242,16 +232,17 @@ def test_run():
         # simple_trade.execute('QUOD-TRADE', report_id, test_cases['QUOD-TRADE'])
         # RFQ_example.execute('RFQ_example', report_id, test_cases['RFQ_example'])
 
+        # test.execute(report_id)
         # QAP_2409.execute(report_id)
-        # QAP_2425_SIM.execute(report_id)
+        QAP_2425_SIM.execute(report_id)
         # QAP_2462_SIM.execute(report_id)
         # QAP_2540.execute(report_id)
         # QAP_2561.execute(report_id)
         # QAP_2620.execute(report_id)
+        # QAP_2620_refactored.execute(report_id)
         # QAP_2684.execute(report_id)
         # QAP_2702.execute(report_id)
         # QAP_2769.execute(report_id)
-        QAP_2769_schema.execute(report_id)
 
         # application_service = HandWinActStub(Channels.ui_act_channel)
         # session_id = application_service.register(RhTargetServer(target=target_server_win)).sessionID
@@ -265,19 +256,15 @@ def test_run():
         logging.error("Error execution", exc_info=True)
 
     # stop rule
-    # core = ServiceSimulatorStub(channels['simulator'])
-    # core.removeRule(NOS_1)
-    # core.removeRule(OCR_1)
-    # core.removeRule(NOS_2)
-    # core.removeRule(OCR_2)
+    Stubs.core.removeRule(NOS_1)
+    Stubs.core.removeRule(OCR_1)
+    Stubs.core.removeRule(NOS_2)
+    Stubs.core.removeRule(OCR_2)
     # core.removeRule(MDR_paris)
     # core.removeRule(MDR_turquise)
-
-    for channel_name in channels.keys():
-        channels[channel_name].close()
-    Stubs.factory.close()
 
 
 if __name__ == '__main__':
     logging.basicConfig()
     test_run()
+    Stubs.factory.close()
