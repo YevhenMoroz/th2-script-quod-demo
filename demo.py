@@ -1,4 +1,4 @@
-# from sys import stdout
+from sys import stdout
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
@@ -13,8 +13,8 @@ from test_cases import QAP_2425_SIM
 from test_cases import QAP_2462_SIM
 # from test_cases import QAP_2540
 # from test_cases import QAP_2561
-# from test_cases import QAP_2620
-from test_cases import QAP_2620_refactored
+from test_cases import QAP_2620
+# from test_cases import QAP_2620_refactored
 # from test_cases import QAP_2684
 # from test_cases import QAP_2702
 # from test_cases import QAP_2740
@@ -23,7 +23,7 @@ from th2_grpc_sim.sim_pb2 import RuleID
 # from test_cases import QAP_2769_schema
 from win_gui_modules.utils import prepare_fe, close_fe
 from google.protobuf.empty_pb2 import Empty
-from test_cases import test
+# from test_cases import test
 
 
 # logging.basicConfig(stream=stdout)
@@ -238,7 +238,7 @@ def test_run():
         # QAP_2462_SIM.execute(report_id)
         # QAP_2540.execute(report_id)
         # QAP_2561.execute(report_id)
-        # QAP_2620.execute(report_id)
+        QAP_2620.execute(report_id)
         # QAP_2620_refactored.execute(report_id)
         # QAP_2684.execute(report_id)
         # QAP_2702.execute(report_id)
