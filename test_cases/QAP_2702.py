@@ -86,11 +86,11 @@ def execute(report_id):
         ))
 
     MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="596",
+        symbol="1062",
         connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
      )).MDRefID
     MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="3390",
+        symbol="3503",
         connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
      )).MDRefID
 
@@ -98,7 +98,7 @@ def execute(report_id):
         'MDReportID': "1",
         'MDReqID': MDRefID_1,
         'Instrument': {
-            'Symbol': "596"
+            'Symbol': "1062"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
@@ -120,7 +120,7 @@ def execute(report_id):
         'MDReportID': "1",
         'MDReqID': MDRefID_2,
         'Instrument': {
-            'Symbol': "3390"
+            'Symbol': "3503"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
