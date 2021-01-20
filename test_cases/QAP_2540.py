@@ -4,9 +4,7 @@ import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction
-# from grpc_modules import infra_pb2
-# from grpc_modules.infra_pb2 import Direction, ConnectionID
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+# from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)

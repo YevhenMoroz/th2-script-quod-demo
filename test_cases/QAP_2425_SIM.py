@@ -9,7 +9,7 @@ from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+timeouts = False
 
 
 def execute(report_id):
@@ -22,7 +22,7 @@ def execute(report_id):
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
-        'TraderConnectivity2': 'kch-qa-ret-child',
+        'TraderConnectivity2': 'fix-bs-eq-paris',
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD3',
         'SenderCompID2': 'KCH_QA_RET_CHILD',
@@ -171,12 +171,11 @@ def execute(report_id):
     verifier.submitCheckRule(
         request=bca.create_check_rule(
             'Transmitted NewOrderSingle',
-            bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
+            bca.filter_to_grpc('NewOrderSingle', newordersingle_params),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id
-        ),
-        timeout=3000
+        ), timeout=3000
     )
     er_sim_params = {
         'ClOrdID': '*',
@@ -193,22 +192,21 @@ def execute(report_id):
         'ExecType': '0',
         'LeavesQty': '0',
         'Text': '*',
-        'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
-        'NoStrategyParameters': [
-            {'StrategyParameterName': 'LowLiquidity', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}]
+        # 'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
+        # 'NoStrategyParameters': [
+        #     {'StrategyParameterName': 'LowLiquidity', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}]
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
         request=bca.create_check_rule(
             'Receive ExecutionReport New Sim',
-            bca.filter_to_grpc('ExecutionReport', er_sim_params, ["ClOrdID", "OrdStatus"]),
+            bca.filter_to_grpc('ExecutionReport', er_sim_params),
             enter_order.checkpoint_id,
             case_params['TraderConnectivity2'],
             case_id,
             Direction.Value("SECOND")
-        ),
-        timeout=3000
+        ), timeout=3000
     )
 
     cancel_order_params = {
@@ -270,10 +268,10 @@ def execute(report_id):
         'ExecRestatementReason': '4',
         'ExecID': '*',
         'TransactTime': '*',
-        'CxlQty': case_params['OrderQty'],
+        # 'CxlQty': case_params['OrderQty'],
         'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
-        'LastMkt': case_params['ExDestination'],
-        'Text': 'sim work',
+        # 'LastMkt': case_params['ExDestination'],
+        # 'Text': 'sim work',
 
     }
     logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
@@ -409,6 +407,5 @@ def execute(report_id):
 
     if timeouts:
         time.sleep(5)
-    
-    logger.info("Case {} was executed in {} sec.".format(
-        case_name, str(round(datetime.now().timestamp() - seconds))))
+
+    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

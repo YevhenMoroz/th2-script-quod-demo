@@ -2,18 +2,9 @@ import logging
 from copy import deepcopy
 from datetime import datetime
 from custom import basic_custom_actions as bca
-# from grpc_modules.quod_simulator_pb2 import RequestMDRefID
 from stubs import Stubs
 from th2_grpc_act_quod.act_fix_pb2 import PlaceMessageRequest
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
-# from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
-# from win_gui_modules.utils import set_session_id, get_base_request
-# from win_gui_modules.utils import prepare_fe, close_fe, call
-# from grpc_modules.win_act_pb2_grpc import HandWinActStub
-# from grpc_modules.order_book_pb2_grpc import OrderBookServiceStub
-# from channels import Channels
-# from win_gui_modules.wrappers import *
-# from win_gui_modules.order_book_wrappers import ExtractionInfo, OrdersDetails, ExtractionDetail
 from th2_grpc_common.common_pb2 import ConnectionID
 
 
@@ -100,48 +91,48 @@ def execute(report_id):
     try:
         # Send MarketDataSnapshotFullRefresh messages
 
-        # MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        #     symbol=symbol_1,
-        #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
-        # )).MDRefID
-        # MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        #     symbol=symbol_2,
-        #     connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
-        # )).MDRefID
-        # mdfr_params_1 = {
-        #     'MDReportID': "1",
-        #     'MDReqID': MDRefID_1,
-        #     'Instrument': {
-        #         'Symbol': symbol_1
-        #     },
-        #     'NoMDEntries': [
-        #         {
-        #             'MDEntryType': '0',
-        #             'MDEntryPx': '25',
-        #             'MDEntrySize': '500',
-        #             'MDEntryPositionNo': '1'
-        #         },
-        #         {
-        #             'MDEntryType': '1',
-        #             'MDEntryPx': '30',
-        #             'MDEntrySize': '500',
-        #             'MDEntryPositionNo': '1'
-        #         }
-        #     ]
-        # }
-        # mdfr_params_2 = deepcopy(mdfr_params_1)
-        # mdfr_params_2['MDReqID'] = MDRefID_2
-        # mdfr_params_2['Instrument'] = {
-        #         'Symbol': symbol_2
-        # }
-        # act.sendMessage(request=bca.convert_to_request(
-        #     'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
-        #     bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
-        # ))
-        # act.sendMessage(request=bca.convert_to_request(
-        #     'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-trqx", case_id,
-        #     bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
-        # ))
+        MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol_1,
+            connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+        )).MDRefID
+        MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol_2,
+            connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+        )).MDRefID
+        mdfr_params_1 = {
+            'MDReportID': "1",
+            'MDReqID': MDRefID_1,
+            'Instrument': {
+                'Symbol': symbol_1
+            },
+            'NoMDEntries': [
+                {
+                    'MDEntryType': '0',
+                    'MDEntryPx': '25',
+                    'MDEntrySize': '500',
+                    'MDEntryPositionNo': '1'
+                },
+                {
+                    'MDEntryType': '1',
+                    'MDEntryPx': '30',
+                    'MDEntrySize': '500',
+                    'MDEntryPositionNo': '1'
+                }
+            ]
+        }
+        mdfr_params_2 = deepcopy(mdfr_params_1)
+        mdfr_params_2['MDReqID'] = MDRefID_2
+        mdfr_params_2['Instrument'] = {
+                'Symbol': symbol_2
+        }
+        act.sendMessage(request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
+        ))
+        act.sendMessage(request=bca.convert_to_request(
+            'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-trqx", case_id,
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
+        ))
 
         # Send sorping order
         sor_order_params = {
@@ -163,14 +154,6 @@ def execute(report_id):
             'TargetStrategy': case_params['TargetStrategy'],
             'Text': 'QAP-2769'
         }
-        # new_sor_order = act.placeOrderFIX(
-        #     PlaceMessageRequest(
-        #         description="Send new sorping order",
-        #         connection_id=ConnectionID(session_alias="gtwquod3"),
-        #         parent_event_id=case_id,
-        #         message=bca.message_to_grpc('NewOrderSingle', sor_order_params, "gtwquod3")
-        #     )
-        # )
         new_sor_order = act.placeOrderFIX(
             request=bca.convert_to_request(
                 "Send new sorping order", "gtwquod3", case_id,
@@ -274,5 +257,4 @@ def execute(report_id):
 
     # close_fe(case_id, session_id)
 
-    logger.info("Case {} was executed in {} sec.".format(
-        case_name, str(round(datetime.now().timestamp() - seconds))))
+    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

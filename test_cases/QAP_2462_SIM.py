@@ -22,7 +22,7 @@ def execute(report_id):
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
-        'TraderConnectivity2': 'kch-qa-ret-child',
+        'TraderConnectivity2': 'fix-bs-eq-paris',
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD3',
         'SenderCompID2': 'KCH_QA_RET_CHILD',
@@ -261,10 +261,10 @@ def execute(report_id):
         'ExecRestatementReason': '4',
         'ExecID': '*',
         'TransactTime': '*',
-        'CxlQty': case_params['OrderQty'],
+        # 'CxlQty': case_params['OrderQty'],
         'MaxFloor': specific_order_params['DisplayInstruction']['DisplayQty'],
-        'LastMkt': case_params['ExDestination'],
-        'Text': '*',
+        # 'LastMkt': case_params['ExDestination'],
+        # 'Text': '*',
 
     }
     logger.debug("Verify received Execution Report (OrdStatus = Cancelled)")
