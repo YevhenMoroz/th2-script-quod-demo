@@ -1,11 +1,11 @@
-from grpc_modules import order_ticket_pb2
-from .order_ticket import OrderTicketDetails
+from th2_grpc_act_gui_quod.order_ticket_pb2 import NewOrderDetails as _NewOrderDetails
+from win_gui_modules.order_ticket import OrderTicketDetails
 
 
 class NewOrderDetails:
 
     def __init__(self):
-        self.new_order_details = order_ticket_pb2.NewOrderDetails()
+        self.new_order_details = _NewOrderDetails()
 
     def set_order_details(self, order_details: OrderTicketDetails):
         self.new_order_details.orderDetails.CopyFrom(order_details.build())
