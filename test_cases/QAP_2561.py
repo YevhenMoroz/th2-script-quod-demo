@@ -33,8 +33,8 @@ def execute(report_id):
         'NewPrice': '25',
         'TimeInForce': '0',
         'Instrument': {
-            'Symbol': 'FR0000125460_EUR',
-            'SecurityID': 'FR0000125460',
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         },
@@ -132,7 +132,7 @@ def execute(report_id):
 
     instrument_bs = {
         'SecurityType': 'CS',
-        'Symbol': 'AN',
+        'Symbol': 'RSC',
         'SecurityID': case_params['Instrument']['SecurityID'],
         'SecurityIDSource': '4',
         'SecurityExchange': 'XPAR'

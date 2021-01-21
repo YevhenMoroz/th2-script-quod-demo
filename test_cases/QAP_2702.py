@@ -143,7 +143,7 @@ def execute(report_id):
             'Send MarketDataSnapshotFullRefresh',
             "fix-fh-eq-paris",
             case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-trqx")
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
         )
     )
     act.sendMessage(
