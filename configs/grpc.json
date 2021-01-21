@@ -51,6 +51,51 @@
         "name": "robin",
         "endpoints": ["simulator"]
       }
+    },
+    "Win_Act": {
+      "service-class": "ActUIWinService",
+      "endpoints": {
+        "act": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act"
+        ]
+      }
+    },
+    "Win_Act_Order_Ticket": {
+      "service-class": "OrderTicketServiceService",
+      "endpoints": {
+        "act": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act"
+        ]
+      }
+    },
+	"Win_Act_Order_Book": {
+      "service-class": "OrderBookServiceService",
+      "endpoints": {
+        "act": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act"
+        ]
+      }
     }
   }
 }

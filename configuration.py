@@ -7,7 +7,7 @@ web_act_address = '10.0.22.22:30818'
 win_act_address = '10.0.22.22:32163'
 
 # target_server_win = 'win'
-target_server_win = 'win103'
+target_server_win = 'exactpro_ws103'
 target_server_web = 'web'
 
 web_admin_url = "http://10.0.22.40:3180/quodadmin/qakharkiv3/"

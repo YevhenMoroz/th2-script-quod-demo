@@ -3,9 +3,11 @@ from copy import deepcopy
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from th2_grpc_act_quod.act_fix_pb2 import PlaceMessageRequest
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2
+from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 
 
 logger = logging.getLogger(__name__)
@@ -20,8 +22,12 @@ def execute(report_id):
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2769"
+
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
+
+    session_id = set_session_id()
+    base_request = set_base(session_id, case_id)
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
@@ -40,7 +46,6 @@ def execute(report_id):
         'TimeInForce': '0',
         'TargetStrategy': 1011,
         'Instrument': {
-            # 'Symbol': 'FR0000125460_EUR',
             'Symbol': 'FR0010542647_EUR',
             # 'SecurityID': 'FR0000125460',
             'SecurityID': 'FR0010542647',
@@ -62,6 +67,9 @@ def execute(report_id):
     # symbol_2 = "3390"
     symbol_1 = "1062"
     symbol_2 = "3503"
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -205,56 +213,33 @@ def execute(report_id):
             ),
             timeout=3000
         )
+
+        extraction_id = "getOrderInfo"
+
+        ord1_exec_pcy = ExtractionDetail("order.exec_pcy", "ExecPcy")
+        extraction_action_1 = ExtractionAction.create_extraction_action(extraction_detail=ord1_exec_pcy)
+        main_order_info = OrderInfo.create(action=extraction_action_1)
+
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", sor_order_params['ClOrdID']])
+        main_order_details.add_single_order_info(main_order_info)
+
+        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+
+        Stubs.win_act.verifyEntities(
+            verification(
+                extraction_id, "Checking child orders", [
+                 verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
+                ]
+            ))
+
     except Exception as e:
         logging.error("Error execution", exc_info=True)
     sim.removeRule(trade_rule_1)
     sim.removeRule(trade_rule_2)
 
-    # if BaseParams.session_id is None:
-    #     BaseParams.session_id = set_session_id()
-    # session_id = BaseParams.session_id
-    # BaseParams.event_id = case_id
-    # prepare_fe(case_id, session_id)
-
-    # Do some actions in the frontend
-    # common_act = HandWinActStub(Channels.ui_act_channel)
-    # act2 = OrderBookServiceStub(Channels.ui_act_channel)
-
-    # order_info_extraction = "getOrderInfo"
-    #
-    # data = call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.id", "Order ID"]))
-    # order_id = data['order.id']
-    # logger.info(order_id)
-
-    # check child orders
-
-    # extraction_id = "get order id"
-
-    # sub_lv2_1_qty = ExtractionDetail("subOrder_1_lv2.qty", "Qty")
-    #
-    # sub_lv2_details = OrdersDetails()
-    # sub_lv2_details.add_single_extraction_info(ExtractionInfo.create(detail=sub_lv2_1_qty))
-    # length_name = "subOrders_lv2.length"
-    # sub_lv2_details.extract_length(length_name)
-    #
-    # sub_lv1_info = ExtractionInfo()
-    # sub_lv1_qty = ExtractionDetail("subOrder_lv1.qty", "Qty")
-    # sub_lv1_info.add_order_details(sub_lv1_qty)
-    # sub_lv1_info.set_sub_orders_details(sub_lv2_details)
-    #
-    # main_order_info = ExtractionInfo.create(sub_order_details=OrdersDetails.create(info=sub_lv1_info))
-    # main_order_info = ExtractionInfo()
-    # main_order_info.add_order_details(ExtractionDetail("order.id", "Order ID"))
-    #
-    # main_order_details = OrdersDetails()
-    # main_order_details.set_default_params(get_base_request(session_id, case_id))
-    # main_order_details.set_extraction_id(extraction_id)
-    # main_order_details.set_filter(["Lookup", "FR0010542647_EUR"])
-    # main_order_details.add_single_extraction_info(main_order_info)
-    #
-    # result = call(act2.getOrdersDetails, main_order_details.request())
-    # logger.info(result)
-
-    # close_fe(case_id, session_id)
+    close_fe_2(case_id, session_id)
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

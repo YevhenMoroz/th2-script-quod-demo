@@ -1,4 +1,6 @@
-from grpc_modules import win_act_pb2
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import GetOrderFieldsRequest, CheckChildOrderRequest, \
+    GetOrderAnalysisAlgoParametersRequest, GetOrderAnalysisEventsRequest, \
+    VerificationDetails, NewCareOrderDetails, DirectOrderDetails
 
 
 class BaseParams:
@@ -12,7 +14,7 @@ def set_base(session_id, event_id):
 
 
 def fields_request(extraction_id, data):
-    request = win_act_pb2.GetOrderFieldsRequest(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = GetOrderFieldsRequest(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.id = extraction_id
 
     length = len(data)
@@ -27,7 +29,7 @@ def fields_request(extraction_id, data):
 
 
 def child_fields_request(extraction_id, data, direct):
-    request = win_act_pb2.CheckChildOrderRequest(directOrderDetails=direct)
+    request = CheckChildOrderRequest(directOrderDetails=direct)
     request.id = extraction_id
 
     length = len(data)
@@ -41,8 +43,8 @@ def child_fields_request(extraction_id, data, direct):
     return request
 
 
-def order_analysis_algo_parameters_request(extraction_id, data):
-    request = win_act_pb2.GetOrderAnalysisAlgoParametersRequest(sessionID=BaseParams.session_id,
+def order_analysis_algo_parameters_request(extraction_id, data, filter):
+    request = GetOrderAnalysisAlgoParametersRequest(sessionID=BaseParams.session_id,
                                                                 parentEventId=BaseParams.event_id)
     request.id = extraction_id
 
@@ -54,6 +56,23 @@ def order_analysis_algo_parameters_request(extraction_id, data):
         var.paramName = data[i + 1]
         i += 2
 
+    length = len(filter)
+    i = 0
+    while i < length:
+        request.filter[filter[i]] = filter[i + 1]
+        i += 2
+
+    return request
+
+
+def create_order_analysis_events_request(extraction_id: str, filters: dict):
+    request = GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
+                                                        parentEventId=BaseParams.event_id)
+    request.id = extraction_id
+
+    for key, value in filters.items():
+        request.filter[key] = value
+
     return request
 
 
@@ -62,8 +81,8 @@ def verify_ent(report_name:str, saved_path:str, actual_value:str):
 
 
 def verification(extraction_id, verification_name, data):
-    request = win_act_pb2.VerificationDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.extractionId = extraction_id
+    request = VerificationDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.actualExtractionId = extraction_id
     request.verificationName = verification_name
     for arr in data:
         var = request.fields.add()
@@ -75,7 +94,7 @@ def verification(extraction_id, verification_name, data):
 
 
 def accept_order_request(instr: str, qty: str, limit: str):
-    request = win_act_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.instrLookupSymbol = instr
     request.limitPrice = limit
     request.quantity = qty
@@ -84,7 +103,7 @@ def accept_order_request(instr: str, qty: str, limit: str):
 
 
 def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
-    request = win_act_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.orderDetails.instrLookupSymbol = instr
     request.orderDetails.limitPrice = limit
     request.orderDetails.quantity = qty
