@@ -20,26 +20,26 @@ logger.setLevel(logging.INFO)
 timeouts = False
 
 
-def execute(report_id, session_id):
+def execute(report_id):
     global sor_order_params, pending_er_params, new_er_params
-    event_store = EventStoreServiceStub(Channels.event_store_channel)
+    # event_store = EventStoreServiceStub(Channels.event_store_channel)
     act = Stubs.fix_act
     verifier = Stubs.verifier
     simulator = Stubs.simulator
-    sim = Stubs.sim
+    sim = Stubs.core
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2740 [SORPING] Send SORPING algo order to check PriceCost criteria in Aggressive phase"
     case_id = bca.create_event(case_name, report_id)
     # case_id = create_event_id()
-    event_store.StoreEvent(request=create_store_event_request(case_name, case_id, report_id))
-    set_base(session_id, case_id)
-
-    common_act = HandWinActStub(Channels.ui_act_channel)
+    # event_store.StoreEvent(request=create_store_event_request(case_name, case_id, report_id))
+    # set_base(session_id, case_id)
     #
-    act2 = OrderBookServiceStub(Channels.ui_act_channel)
-    #
-    order_info_extraction = "getOrderInfo"
+    # common_act = HandWinActStub(Channels.ui_act_channel)
+    # #
+    # act2 = OrderBookServiceStub(Channels.ui_act_channel)
+    # #
+    # order_info_extraction = "getOrderInfo"
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
@@ -58,8 +58,8 @@ def execute(report_id, session_id):
         'TimeInForce': '0',
         'TargetStrategy': 1011,
         'Instrument': {
-            'Symbol': 'FR0000125460_EUR',
-            'SecurityID': 'FR0000125460',
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -74,8 +74,8 @@ def execute(report_id, session_id):
         'Currency': 'EUR',
         'TargetStrategy': case_params['TargetStrategy']
     }
-    symbol_1 = "596"
-    symbol_2 = "3390"
+    symbol_1 = "1062"
+    symbol_2 = "3503"
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -86,7 +86,7 @@ def execute(report_id, session_id):
         cum_qty=int(case_params['OrderQty'] / 2),
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={50: 0},
-        md_entry_px={30: 25},
+        md_entry_px={40: 30},
         symbol=symbol_1
     ))
     trade_rule_2 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
@@ -99,7 +99,7 @@ def execute(report_id, session_id):
         cum_qty=int(case_params['OrderQty'] / 2),
         mask_as_connectivity="fix-fh-eq-trqx",
         md_entry_size={50: 0},
-        md_entry_px={30: 25},
+        md_entry_px={40: 30},
         symbol=symbol_2
     ))
     try:
@@ -175,7 +175,7 @@ def execute(report_id, session_id):
                 'Send NewSingleOrder',
                 case_params['TraderConnectivity'],
                 case_id,
-                bca.message_to_grpc('NewOrderSingle', sor_order_params)
+                bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
             ))
         checkpoint_1 = new_sor_order.checkpoint_id
         pending_er_params = {
@@ -224,46 +224,46 @@ def execute(report_id, session_id):
         sim.removeRule(trade_rule_2)
     except Exception as e:
         logging.error("Error execution", exc_info=True)
-
-    if BaseParams.session_id is None:
-        BaseParams.session_id = set_session_id()
-    session_id = BaseParams.session_id
-    prepare_fe(case_id, session_id)
-
-    call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.ExecPcy", "ExecPcy"]))
-    call(common_act.verifyEntities, verification(
-        order_info_extraction, "checking order", [
-            verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
-        ])
-         )
-
-    # prepare_fe(report_id, session_id)
-    # step 2
-
-    call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.status", "Sts"]))
-    call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
-                                                 [verify_ent("Order Status", "order.status", "Filled")]))
-
-    sub_order1 = ExtractionInfo.from_data(["subOrder1.ExecPcy", "ExecPcy"])
-    sub_order2 = ExtractionInfo.from_data(["subOrder2.ExecPcy", "ExecPcy"])
-    main_order = ExtractionInfo.from_sub_order_details(OrdersDetails.from_info([sub_order1, sub_order2]))
-
-    sub_order_details = OrdersDetails()
-    sub_order_details.set_default_params(get_base_request(session_id, case_id))
-    sub_order_details.set_extraction_id("order.subOrder")
-    sub_order_details.set_one_extraction_info(main_order)
-
-    call(act2.getOrdersDetails, sub_order_details.request())
-
-    call(common_act.verifyEntities,
-         verification("order.subOrder", "checking order",
-                      [verify_ent("Order ExecPcy", "subOrder1.ExecPcy", "Synth (Quod MultiListing)")]))
-
-    call(common_act.verifyEntities,
-         verification("order.subOrder", "checking order",
-                      [verify_ent("Order ExecPcy", "subOrder2.ExecPcy", "Synth (Quod DarkPool)")]))
-
-    close_fe(case_id, session_id)
+    #
+    # if BaseParams.session_id is None:
+    #     BaseParams.session_id = set_session_id()
+    # session_id = BaseParams.session_id
+    # prepare_fe(case_id, session_id)
+    #
+    # call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.ExecPcy", "ExecPcy"]))
+    # call(common_act.verifyEntities, verification(
+    #     order_info_extraction, "checking order", [
+    #         verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
+    #     ])
+    #      )
+    #
+    # # prepare_fe(report_id, session_id)
+    # # step 2
+    #
+    # call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.status", "Sts"]))
+    # call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
+    #                                              [verify_ent("Order Status", "order.status", "Filled")]))
+    #
+    # sub_order1 = ExtractionInfo.from_data(["subOrder1.ExecPcy", "ExecPcy"])
+    # sub_order2 = ExtractionInfo.from_data(["subOrder2.ExecPcy", "ExecPcy"])
+    # main_order = ExtractionInfo.from_sub_order_details(OrdersDetails.from_info([sub_order1, sub_order2]))
+    #
+    # sub_order_details = OrdersDetails()
+    # sub_order_details.set_default_params(get_base_request(session_id, case_id))
+    # sub_order_details.set_extraction_id("order.subOrder")
+    # sub_order_details.set_one_extraction_info(main_order)
+    #
+    # call(act2.getOrdersDetails, sub_order_details.request())
+    #
+    # call(common_act.verifyEntities,
+    #      verification("order.subOrder", "checking order",
+    #                   [verify_ent("Order ExecPcy", "subOrder1.ExecPcy", "Synth (Quod MultiListing)")]))
+    #
+    # call(common_act.verifyEntities,
+    #      verification("order.subOrder", "checking order",
+    #                   [verify_ent("Order ExecPcy", "subOrder2.ExecPcy", "Synth (Quod DarkPool)")]))
+    #
+    # close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
