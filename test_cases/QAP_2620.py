@@ -2,10 +2,21 @@ import logging
 from copy import deepcopy
 import time
 from datetime import datetime
+
+from th2_grpc_act_gui_quod import order_book_service
+from th2_grpc_act_gui_quod.order_book_pb2_grpc import OrderBookServiceStub
+
+from channels import Channels
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction
+
+from grpc_modules.order_book_pb2 import ExtractionInfo
 from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from grpc_modules.win_act_pb2_grpc import HandWinActStub
 from stubs import Stubs
+from win_gui_modules.order_book_wrappers import OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
+from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2
+from win_gui_modules.wrappers import verification, verify_ent, set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,7 +32,20 @@ def execute(report_id):
     # Create sub-report for case
     case_name = "QAP_2620"
     case_id = bca.create_event(case_name, report_id)
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
 
+    common_act = HandWinActStub(Channels.ui_act_channel)
+    act2 = OrderBookServiceStub(Channels.ui_act_channel)
+    # call = self.call
+    #
+    # set_base(self._session_id, self._event_id)
+
+    # common_act = self._services.main_win_service
+    # order_book_act = order_book_service
+
+    order_info_extraction = "getOrderInfo"
     case_params = {
         'TraderConnectivity': 'gtwquod3',
         'TraderConnectivity2': 'fix-bs-eq-paris',
@@ -58,6 +82,9 @@ def execute(report_id):
         'Currency': 'EUR',
         'Price': case_params['Price']
     }
+
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
 
     check_params = {
         'IClOrdIdAO': 'OD_5fgfDXg-00'
@@ -203,6 +230,60 @@ def execute(report_id):
         )
     )
 
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id(order_info_extraction)
+    # main_order_details.set_filter()
+
+    main_order_qty = ExtractionDetail("order_qty", "Qty")
+    main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
+    main_order_display_qty = ExtractionDetail("order_DisplayQty", "DisplayQty")
+    main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_qty,
+                                                                                                 main_order_exec_pcy,
+                                                                                                 main_order_display_qty])
+    main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+    call(act2.getOrdersDetails, main_order_details.request())
+    call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
+                                                 [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
+                                                             "Synth (Quod LitDark)"),
+                                                  verify_ent("Order Qty", main_order_qty.name, "400"),
+                                                  verify_ent("Order Qty", main_order_display_qty.name, "50")]))
+
+    # check child orders
+
+    lvl2_length = "subOrders_lv2.length"
+    algo_split_man_extr_id = "order.algo_split_man"
+    sub_order_lvl2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
+    sub_order_lvl2_misc3 = ExtractionDetail("subOrder_1_lv2.Misc3", "Misc3")
+
+    lvl2_details = OrdersDetails()
+    lvl2_details.add_single_order_info(OrderInfo.create(
+        action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_lvl2_exec_pcy,
+                                                                             sub_order_lvl2_misc3])
+    ))
+    lvl2_details.extract_length(lvl2_length)
+
+    lvl1_info = OrderInfo.create(sub_order_details=lvl2_details)
+    lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+    main_order_info = OrderInfo.create(sub_order_details=lvl1_details)
+
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id(algo_split_man_extr_id)
+    main_order_details.set_filter(["Lookup", "BP", "ExecPcy", "Synth (Quod Split Manager)"])
+    main_order_details.add_single_order_info(main_order_info)
+
+    call(act2.getOrdersDetails, main_order_details.request())
+    call(common_act.verifyEntities, verification(algo_split_man_extr_id, "checking order",
+                                                 [verify_ent("Sub 1 Lvl 2 Misc3", sub_order_lvl2_misc3.name,
+                                                             "tag 5005"),
+                                                  verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_lvl2_exec_pcy.name,
+                                                             "DMA"),
+                                                  verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
+                                                  ]))
+
     cancel_order_params = {
         'OrigClOrdID': new_order_params['ClOrdID'],
         # 'OrderID': '',
@@ -309,6 +390,7 @@ def execute(report_id):
     # stop all rules
     # for rule in sim_rules:
     #     rules_killer.removeRule(rule)
+    close_fe_2(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
