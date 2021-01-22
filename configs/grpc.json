@@ -3,14 +3,14 @@
     "Act": {
       "service-class": "ActFixService",
       "endpoints": {
-        "act": {
+        "act_fix": {
           "host": "10.0.22.22",
           "port": 32130
         }
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["act"]
+        "endpoints": ["act_fix"]
       }
     },
     "Check1": {
@@ -55,7 +55,7 @@
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
-        "act": {
+        "act_win": {
           "host": "10.0.22.22",
           "port": 31280
         }
@@ -63,14 +63,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act"
+          "act_win"
         ]
       }
     },
     "Win_Act_Order_Ticket": {
       "service-class": "OrderTicketServiceService",
       "endpoints": {
-        "act": {
+        "act_order_ticket": {
           "host": "10.0.22.22",
           "port": 31280
         }
@@ -78,14 +78,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act"
+          "act_order_ticket"
         ]
       }
     },
 	"Win_Act_Order_Book": {
       "service-class": "OrderBookServiceService",
       "endpoints": {
-        "act": {
+        "act_order_book": {
           "host": "10.0.22.22",
           "port": 31280
         }
@@ -93,7 +93,7 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act"
+          "act_order_book"
         ]
       }
     }

@@ -164,15 +164,6 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     event_store = Stubs.event_store
     seconds, nanos = timestamps()
     event_id = create_event_id()
-
-    # event_store.StoreEvent(StoreEventRequest(
-    #     event=Event(
-    #         id=event_id,
-    #         name=event_name,
-    #         start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-    #         parent_id=parent_id
-    #     )
-    # ))
     event = Event(
         id=event_id,
         name=event_name,

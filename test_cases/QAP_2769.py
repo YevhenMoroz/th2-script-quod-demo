@@ -5,7 +5,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 
@@ -27,7 +27,8 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
 
     session_id = set_session_id()
-    base_request = set_base(session_id, case_id)
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
@@ -214,24 +215,37 @@ def execute(report_id):
             timeout=3000
         )
 
+        # ClOrdID = "954106352"
+        # OrderID = "AO1210121124815280001"
         extraction_id = "getOrderInfo"
 
-        ord1_exec_pcy = ExtractionDetail("order.exec_pcy", "ExecPcy")
-        extraction_action_1 = ExtractionAction.create_extraction_action(extraction_detail=ord1_exec_pcy)
-        main_order_info = OrderInfo.create(action=extraction_action_1)
+        child_order_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(
+                extraction_detail=ExtractionDetail("subOrder.ExecPcy", "ExecPcy")
+            ))
+
+        main_order_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(
+                extraction_detail=ExtractionDetail("order.ExecPcy", "ExecPcy")),
+            sub_order_details=OrdersDetails.create(info=child_order_info)
+        )
 
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(extraction_id)
         main_order_details.set_filter(["ClOrdID", sor_order_params['ClOrdID']])
+        # main_order_details.set_filter(["ClOrdID", ClOrdID])
+
         main_order_details.add_single_order_info(main_order_info)
 
-        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+        data = Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+        logger.info(f"data = {data}")
 
         Stubs.win_act.verifyEntities(
             verification(
-                extraction_id, "Checking child orders", [
-                 verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
+                extraction_id, "Checking order", [
+                    verify_ent("Main order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)"),
+                    verify_ent("Child order ExecPcy", "subOrder.ExecPcy", "Synth (Quod MultiListing)")
                 ]
             ))
 
