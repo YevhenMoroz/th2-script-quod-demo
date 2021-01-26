@@ -2,8 +2,8 @@ import logging
 from copy import deepcopy
 from datetime import datetime
 from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.infra_pb2 import ConnectionID
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from grpc_modules.win_act_pb2_grpc import HandWinActStub
 from grpc_modules.order_book_pb2_grpc import OrderBookServiceStub
 from custom.basic_custom_actions import create_event_id
@@ -58,8 +58,8 @@ def execute(report_id):
         'TimeInForce': '0',
         'TargetStrategy': 1011,
         'Instrument': {
-            'Symbol': 'FR0010542647_EUR',
-            'SecurityID': 'FR0010542647',
+            'Symbol': 'FR0000125460_EUR',
+            'SecurityID': 'FR0000125460',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -74,8 +74,8 @@ def execute(report_id):
         'Currency': 'EUR',
         'TargetStrategy': case_params['TargetStrategy']
     }
-    symbol_1 = "{XPAR:1062}"
-    symbol_2 = "{XPAR:3503}"
+    symbol_paris = "1062"
+    symbol_trqx = "3503"
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -87,7 +87,7 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={50: 0},
         md_entry_px={40: 30},
-        symbol=symbol_1
+        symbol={"XPAR": symbol_paris}
     ))
     trade_rule_2 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-trqx"),
@@ -100,24 +100,24 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-trqx",
         md_entry_size={50: 0},
         md_entry_px={40: 30},
-        symbol=symbol_2
+        symbol={"TRQX": symbol_trqx}
     ))
     try:
         # Send MarketDataSnapshotFullRefresh message
 
         MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol_1,
+            symbol=symbol_paris,
             connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
         )).MDRefID
         MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol_2,
+            symbol=symbol_trqx,
             connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
         )).MDRefID
         mdfr_params_1 = {
             'MDReportID': "1",
             'MDReqID': MDRefID_1,
             'Instrument': {
-                'Symbol': symbol_1
+                'Symbol': symbol_paris
             },
             'NoMDEntries': [
                 {
@@ -137,7 +137,7 @@ def execute(report_id):
         mdfr_params_2 = deepcopy(mdfr_params_1)
         mdfr_params_2['MDReqID'] = MDRefID_2
         mdfr_params_2['Instrument'] = {
-            'Symbol': symbol_2
+            'Symbol': symbol_trqx
         }
         act.sendMessage(request=bca.convert_to_request(
             'Send MarketDataSnapshotFullRefresh', "fix-fh-eq-paris", case_id,
