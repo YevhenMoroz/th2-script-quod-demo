@@ -1,6 +1,4 @@
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import GetOrderFieldsRequest, CheckChildOrderRequest, \
-    GetOrderAnalysisAlgoParametersRequest, GetOrderAnalysisEventsRequest, \
-    VerificationDetails, NewCareOrderDetails, DirectOrderDetails
+from th2_grpc_act_gui_quod import act_ui_win_pb2
 
 
 class BaseParams:
@@ -14,7 +12,7 @@ def set_base(session_id, event_id):
 
 
 def fields_request(extraction_id, data):
-    request = GetOrderFieldsRequest(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = act_ui_win_pb2.GetOrderFieldsRequest(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.id = extraction_id
 
     length = len(data)
@@ -29,7 +27,7 @@ def fields_request(extraction_id, data):
 
 
 def child_fields_request(extraction_id, data, direct):
-    request = CheckChildOrderRequest(directOrderDetails=direct)
+    request = act_ui_win_pb2.CheckChildOrderRequest(directOrderDetails=direct)
     request.id = extraction_id
 
     length = len(data)
@@ -43,30 +41,20 @@ def child_fields_request(extraction_id, data, direct):
     return request
 
 
-def order_analysis_algo_parameters_request(extraction_id, data, filter):
-    request = GetOrderAnalysisAlgoParametersRequest(sessionID=BaseParams.session_id,
+def order_analysis_algo_parameters_request(extraction_id: str, param_names: list, filters: dict):
+    request = act_ui_win_pb2.GetOrderAnalysisAlgoParametersRequest(sessionID=BaseParams.session_id,
                                                                 parentEventId=BaseParams.event_id)
     request.id = extraction_id
+    request.paramNames.extend(param_names)
 
-    length = len(data)
-    i = 0
-    while i < length:
-        var = request.details.add()
-        var.name = data[i]
-        var.paramName = data[i + 1]
-        i += 2
-
-    length = len(filter)
-    i = 0
-    while i < length:
-        request.filter[filter[i]] = filter[i + 1]
-        i += 2
+    for key, value in filters.items():
+        request.filter[key] = value
 
     return request
 
 
 def create_order_analysis_events_request(extraction_id: str, filters: dict):
-    request = GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
+    request = act_ui_win_pb2.GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
                                                         parentEventId=BaseParams.event_id)
     request.id = extraction_id
 
@@ -80,9 +68,9 @@ def verify_ent(report_name:str, saved_path:str, actual_value:str):
     return [report_name, saved_path, actual_value]
 
 
-def verification(extraction_id, verification_name, data):
-    request = VerificationDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.actualExtractionId = extraction_id
+def verification(actual_extraction_id, verification_name, data):
+    request = act_ui_win_pb2.VerificationDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.actualExtractionId = actual_extraction_id
     request.verificationName = verification_name
     for arr in data:
         var = request.fields.add()
@@ -93,8 +81,37 @@ def verification(extraction_id, verification_name, data):
     return request
 
 
+def create_verification_request(verification_name: str, actual_extraction_id: str,
+                                expected_extraction_id="") -> act_ui_win_pb2.VerificationDetails:
+    request = act_ui_win_pb2.VerificationDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.verificationName = verification_name
+    request.actualExtractionId = actual_extraction_id
+    request.expectedExtractionId = expected_extraction_id
+    return request
+
+
+def check_value(request: act_ui_win_pb2.VerificationDetails,
+                printed_name: str, actual_path: str, expected_value: str,
+                method=act_ui_win_pb2.VerificationDetails.VerificationMethod.EQUALS):
+    var = request.fields.add()
+    var.printedName = printed_name
+    var.actualPath = actual_path
+    var.expectedValue = expected_value
+    var.verificationMethod = method
+
+
+def compare_values(request: act_ui_win_pb2.VerificationDetails,
+                   printed_name: str, actual_path: str, expected_path: str,
+                   method=act_ui_win_pb2.VerificationDetails.VerificationMethod.EQUALS):
+    var = request.fields.add()
+    var.printedName = printed_name
+    var.actualPath = actual_path
+    var.expectedPath = expected_path
+    var.verificationMethod = method
+
+
 def accept_order_request(instr: str, qty: str, limit: str):
-    request = NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = act_ui_win_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.instrLookupSymbol = instr
     request.limitPrice = limit
     request.quantity = qty
@@ -103,7 +120,7 @@ def accept_order_request(instr: str, qty: str, limit: str):
 
 
 def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
-    request = DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.orderDetails.instrLookupSymbol = instr
     request.orderDetails.limitPrice = limit
     request.orderDetails.quantity = qty
