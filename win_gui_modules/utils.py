@@ -16,9 +16,9 @@ def set_session_id():
 
 
 def call(method, args):
-    logging.debug("Executing RPC %s", method._method)
+    logging.debug("Executing RPC %s", method)
     result = method(args)
-    logging.debug("RPC %s:\n%s", method._method, result)
+    logging.debug("RPC %s:\n%s", method, result)
     # parse result ...
     return result.data
 
@@ -88,4 +88,4 @@ def close_fe_2(main_event, session):
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
-
+    Stubs.frontend_is_open = False

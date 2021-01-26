@@ -1,11 +1,9 @@
-from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
-from th2_grpc_act_gui_quod.order_ticket_pb2 import MultilistingStrategy
-from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams
+from th2_grpc_act_gui_quod import order_ticket_pb2
 
 
 class TWAPStrategy:
 
-    def __init__(self, strategy: TWAPStrategyParams()):
+    def __init__(self, strategy: order_ticket_pb2.TWAPStrategyParams()):
         self.strategy = strategy
 
     def set_start_date(self, from_date: str, offset: str = ""):
@@ -28,7 +26,7 @@ class TWAPStrategy:
 
 class MultilistingStrategy:
 
-    def __init__(self, strategy: MultilistingStrategy()):
+    def __init__(self, strategy: order_ticket_pb2.MultilistingStrategy()):
         self.strategy = strategy
 
     def set_allow_missing_trim(self, allow_missing_trim: bool):
@@ -46,7 +44,7 @@ class MultilistingStrategy:
 
 class QuodParticipationStrategy:
 
-    def __init__(self, strategy: QuodParticipationStrategyParams()):
+    def __init__(self, strategy: order_ticket_pb2.QuodParticipationStrategyParams()):
         self.strategy = strategy
 
     def set_start_date(self, from_date: str, offset: str = ""):
