@@ -11,7 +11,7 @@ from custom.basic_custom_actions import create_store_event_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionInfo
+# from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionInfo
 from channels import Channels
 from win_gui_modules.wrappers import *
 
@@ -74,8 +74,8 @@ def execute(report_id):
         'Currency': 'EUR',
         'TargetStrategy': case_params['TargetStrategy']
     }
-    symbol_1 = "1062"
-    symbol_2 = "3503"
+    symbol_1 = "{XPAR:1062}"
+    symbol_2 = "{XPAR:3503}"
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -236,8 +236,8 @@ def execute(report_id):
     #         verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)")
     #     ])
     #      )
-    #
-    # # prepare_fe(report_id, session_id)
+
+    # prepare_fe(report_id, session_id)
     # # step 2
     #
     # call(common_act.getOrderFields, fields_request(order_info_extraction, ["order.status", "Sts"]))
