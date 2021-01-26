@@ -202,7 +202,7 @@ def execute(report_id):
         'Price': case_params['NewPrice'],
         'CFICode': 'EMXXXB',
         'ExDestination': 'QDL1',
-        'IClOrdIdAO': '1543927957',
+        # 'IClOrdIdAO': '1543927957',
         'DisplayInstruction': {
             'DisplayQty': '45'
         }
@@ -282,7 +282,8 @@ def execute(report_id):
         'ClOrdID': '*',
         'ChildOrderID': '*',
         'TransactTime': '*',
-        'IClOrdIdAO': replace_order_params['IClOrdIdAO'],
+        'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
+        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
         'Instrument': instrument_bs,
         'ExDestination': 'XPAR'
 
@@ -376,7 +377,8 @@ def execute(report_id):
         'Side': case_params['Side'],
         'TransactTime': '*',
         'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
-        'IClOrdIdAO': replace_order_params['IClOrdIdAO'],
+        'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
+        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
         'ChildOrderID': '*',
         'ExDestination': new_iceberg_order_params['ExDestination']
     }
