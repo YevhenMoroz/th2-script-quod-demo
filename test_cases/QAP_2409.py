@@ -60,7 +60,7 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={0: 1000},
         md_entry_px={40: 30},
-        symbol=symbol_paris
+        symbol={"XPAR": symbol_paris}
     ))
     trade_rule_2 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-trqx"),
@@ -73,7 +73,7 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-trqx",
         md_entry_size={900: 1000},
         md_entry_px={40: 30},
-        symbol=symbol_trqx
+        symbol={"TRQX": symbol_trqx}
     ))
     try:
         MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
@@ -258,7 +258,6 @@ def execute(report_id):
             'Currency': 'EUR',
             'ClOrdID': '*',
             'OrderID': '*',
-            'ChildOrderID': '*',
             'TransactTime': '*',
             'CumQty': 1000,
             'LastPx': 40,
@@ -267,7 +266,12 @@ def execute(report_id):
             'OrdStatus': '2',
             'ExecType': 'F',
             'LeavesQty': 0,
-            'Instrument': case_params['Instrument']
+            'Instrument': {
+                'Symbol': 'RSC',
+                'SecurityID': case_params['Instrument']['SecurityID'],
+                'SecurityIDSource': case_params['Instrument']['SecurityIDSource'],
+                'SecurityExchange': case_params['Instrument']['SecurityExchange']
+            }
         }
         verifier.submitCheckRule(
             bca.create_check_rule(
@@ -282,6 +286,7 @@ def execute(report_id):
         execution_report4_params['Account'] = 'TRQX_KEPLER'
         execution_report4_params['OrderQty'] = execution_report4_params['LastQty'] = \
             execution_report4_params['CumQty'] = 100
+        execution_report4_params['Instrument']['Symbol'] = "RISC_PA"
 
         verifier.submitCheckRule(
             request=bca.create_check_rule(
