@@ -4,9 +4,10 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request
 from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.wrappers import create_order_analysis_events_request, create_verification_request, compare_values
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 
 
@@ -64,8 +65,6 @@ def execute(report_id):
         'Currency': 'EUR',
         'TargetStrategy': case_params['TargetStrategy']
     }
-    # symbol_1 = "596"
-    # symbol_2 = "3390"
     symbol_1 = "1062"
     symbol_2 = "3503"
     if not Stubs.frontend_is_open:
@@ -82,7 +81,7 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={500: 0},
         md_entry_px={30: 25},
-        symbol=symbol_1
+        symbol={"XPAR": symbol_1}
     ))
     trade_rule_2 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-trqx"),
@@ -95,7 +94,7 @@ def execute(report_id):
         mask_as_connectivity="fix-fh-eq-trqx",
         md_entry_size={500: 0},
         md_entry_px={30: 25},
-        symbol=symbol_2
+        symbol={"TRQX": symbol_2}
     ))
     try:
         # Send MarketDataSnapshotFullRefresh messages
@@ -193,7 +192,7 @@ def execute(report_id):
         }
         verifier.submitCheckRule(
             request=bca.create_check_rule(
-                "ER Pending NewOrderSingle Received",
+                "Execution Report with OrdStatus = Pending",
                 bca.filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             ),
@@ -208,46 +207,149 @@ def execute(report_id):
         }
         verifier.submitCheckRule(
             request=bca.create_check_rule(
-                "ER New NewOrderSingle Received",
+                "Execution Report with OrdStatus = New",
                 bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             ),
             timeout=3000
         )
-
-        # ClOrdID = "954106352"
-        # OrderID = "AO1210121124815280001"
-        extraction_id = "getOrderInfo"
-
-        child_order_info = OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_detail=ExtractionDetail("subOrder.ExecPcy", "ExecPcy")
-            ))
-
-        main_order_info = OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_detail=ExtractionDetail("order.ExecPcy", "ExecPcy")),
-            sub_order_details=OrdersDetails.create(info=child_order_info)
+        new_order_single_to_paris = {
+            'HandlInst': '1',
+            'Side': case_params['Side'],
+            'OrderQty': 500,
+            'TimeInForce': '3',
+            'Price': 25,
+            'OrdType': case_params['OrdType'],
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'ClOrdID': '*',
+            'ChildOrderID': '*',
+            'TransactTime': '*',
+            'ExDestination': 'XPAR',
+            'Instrument': {
+                'SecurityID': case_params['Instrument']['SecurityID'],
+                'SecurityIDSource': case_params['Instrument']['SecurityIDSource']
+            }
+        }
+        verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                "NewOrderSingle >> PARIS",
+                bca.filter_to_grpc("NewOrderSingle", new_order_single_to_paris),
+                checkpoint_1, case_params['TraderConnectivity2'], case_id
+            ),
+            timeout=3000
         )
+
+        er_filled_from_paris_params = {
+            'ClOrdID': '*',
+            'OrderID': '*',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': new_order_single_to_paris['OrderQty'],
+            'OrderQty': new_order_single_to_paris['OrderQty'],
+            'OrdType': case_params['OrdType'],
+            'Side': new_order_single_to_paris['Side'],
+            'LastPx': new_order_single_to_paris['Price'],
+            'AvgPx': new_order_single_to_paris['Price'],
+            'OrdStatus': '2',
+            'ExecType': 'F',
+            'LeavesQty': '0',
+            'Text': '*'
+        }
+        verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                "Execution Report with OrdStatus = Filled << PARIS",
+                bca.filter_to_grpc("ExecutionReport", er_filled_from_paris_params),
+                checkpoint_1, case_params['TraderConnectivity2'], case_id,
+                direction=Direction.Value("SECOND")
+            ),
+            timeout=3000
+        )
+        new_order_single_to_trqx = deepcopy(new_order_single_to_paris)
+        new_order_single_to_trqx['ExDestination'] = 'TRQX'
+        verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                "NewOrderSingle >> TRQX",
+                bca.filter_to_grpc("NewOrderSingle", new_order_single_to_trqx),
+                checkpoint_1, case_params['TraderConnectivity3'], case_id
+            ),
+            timeout=3000
+        )
+        er_filled_from_trqx_params = deepcopy(er_filled_from_paris_params)
+        verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                "Execution Report with OrdStatus = Filled << TRQX",
+                bca.filter_to_grpc("ExecutionReport", er_filled_from_trqx_params),
+                checkpoint_1, case_params['TraderConnectivity3'], case_id,
+                direction=Direction.Value("SECOND")
+            ),
+            timeout=3000
+        )
+
+        order_info_extraction = "getOrderInfo"
 
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_extraction_id(order_info_extraction)
         main_order_details.set_filter(["ClOrdID", sor_order_params['ClOrdID']])
-        # main_order_details.set_filter(["ClOrdID", ClOrdID])
 
+        main_order_qty = ExtractionDetail("order_qty", "Qty")
+        main_order_exec_pcy = ExtractionDetail("order_exec_pcy", "ExecPcy")
+        main_order_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(
+                extraction_details=[main_order_qty, main_order_exec_pcy]
+            ))
         main_order_details.add_single_order_info(main_order_info)
 
-        data = Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
-        logger.info(f"data = {data}")
+        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+        Stubs.win_act.verifyEntities(verification(
+            order_info_extraction, "checking order", [
+                verify_ent("Order ExecPcy", main_order_exec_pcy.name, "Synth (Quod LitDark)"),
+                verify_ent("Order Qty", main_order_qty.name, "1,000")
+            ]))
 
+        # check child orders
+
+        lvl2_length = "subOrders_lv2.length"
+        lit_dark_extr_id = "order.algo_lit_dark"
+        # sub_order_lvl2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
+        # sub_order_lvl2_misc9 = ExtractionDetail("subOrder_1_lv2.Misc9", "Misc9")
+        sub_order_lvl1_exec_pcy = ExtractionDetail("subOrder_lv1.ExecPcy", "ExecPcy")
+
+        # lvl2_details = OrdersDetails.create(
+        #     info=OrderInfo.create(
+        #         action=ExtractionAction.create_extraction_action(
+        #             extraction_details=[sub_order_lvl2_exec_pcy, sub_order_lvl2_misc9]
+        #         )))
+        # lvl2_details.extract_length(lvl2_length)
+        lvl1_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order_lvl1_exec_pcy)
+            # sub_order_details=lvl2_details
+        )
+        lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+        main_order_info = OrderInfo.create(sub_order_details=lvl1_details)
+
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(lit_dark_extr_id)
+        main_order_details.set_filter(["ClOrdID", sor_order_params['ClOrdID']])
+        main_order_details.add_single_order_info(main_order_info)
+
+        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
         Stubs.win_act.verifyEntities(
-            verification(
-                extraction_id, "Checking order", [
-                    verify_ent("Main order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)"),
-                    verify_ent("Child order ExecPcy", "subOrder.ExecPcy", "Synth (Quod MultiListing)")
-                ]
-            ))
+            verification(lit_dark_extr_id, "checking order", [
+                verify_ent("Sub Lvl 1 ExecPcy", sub_order_lvl1_exec_pcy.name, "Synth (Quod MultiListing)")
+                # verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_lvl2_exec_pcy.name, "DMA"),
+                # verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
+            ]))
+
+        extraction_id = "getOrderAnalysisEvents"
+        Stubs.win_act.getOrderAnalysisEvents(
+            create_order_analysis_events_request(extraction_id, {"ClOrdID": sor_order_params['ClOrdID']}))
+        vr = create_verification_request("checking order events", extraction_id, "order.algo_lit_dark")
+        compare_values(vr, "Event IDs", "event1.id", "subOrder_1_lv2.Misc9")
+        Stubs.win_act.verifyEntities(vr)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
