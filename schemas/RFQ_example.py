@@ -1,5 +1,4 @@
 import logging
-import pandas as pd
 from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from stubs import Stubs
