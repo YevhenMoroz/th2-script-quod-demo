@@ -36,8 +36,11 @@ def execute(report_id):
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 
-    common_act = HandWinActStub(Channels.ui_act_channel)
-    act2 = OrderBookServiceStub(Channels.ui_act_channel)
+    # common_act = HandWinActStub(Channels.ui_act_channel)
+    common_act = Stubs.win_act
+    act2 = Stubs.win_act_order_book
+
+    # act2 = OrderBookServiceStub(Channels.ui_act_channel)
     # call = self.call
     #
     # set_base(self._session_id, self._event_id)
@@ -83,11 +86,8 @@ def execute(report_id):
         'Price': case_params['Price']
     }
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-
     check_params = {
-        'IClOrdIdAO': 'OD_5fgfDXg-00'
+        'IClOrdIdAO': 'test tag 5005'
     }
 
     # Send new Iceberg order
@@ -132,7 +132,7 @@ def execute(report_id):
         'OrdStatus': 'A',
         'ExecType': 'A',
         'LeavesQty': new_order_params['OrderQty'],
-        'TargetStrategy': new_order_params['TargetStrategy'],
+        # 'TargetStrategy': new_order_params['TargetStrategy'],
         'MaxFloor': new_order_params['DisplayInstruction']['DisplayQty'],
         'Instrument': case_params['Instrument'],
         'NoParty': '*',
@@ -148,9 +148,10 @@ def execute(report_id):
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
-    new_er_params['SecondaryAlgoPolicyID'] = 'ICEBERG'
+    # new_er_params['SecondaryAlgoPolicyID'] = 'ICEBERG'
     new_er_params['NoStrategyParameters'] = [
-        {'StrategyParameterName': 'LowLiquidity', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}]
+        {'StrategyParameterName': 'ReleasedNbr', 'StrategyParameterType': '1', 'StrategyParameterValue': '1'},
+        {'StrategyParameterName': 'ReleasedQty', 'StrategyParameterType': '6', 'StrategyParameterValue': '400'}]
     new_er_params['ExecID'] = '*'
     # new_er_params['Instrument'] = {
     #     'Symbol': case_params['Instrument']['Symbol'],
@@ -230,6 +231,9 @@ def execute(report_id):
         )
     )
 
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(order_info_extraction)
@@ -237,16 +241,17 @@ def execute(report_id):
 
     main_order_qty = ExtractionDetail("order_qty", "Qty")
     main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
-    main_order_display_qty = ExtractionDetail("order_DisplayQty", "DisplayQty")
+    main_order_display_qty = ExtractionDetail("order_DisplayQty", "DisplQty")
     main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_qty,
                                                                                                  main_order_exec_pcy,
                                                                                                  main_order_display_qty])
     main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
+    # data = Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
     call(act2.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                  [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
-                                                             "Synth (Quod LitDark)"),
+                                                             "Synth (Quod Split Manager)"),
                                                   verify_ent("Order Qty", main_order_qty.name, "400"),
                                                   verify_ent("Order Qty", main_order_display_qty.name, "50")]))
 
@@ -272,7 +277,7 @@ def execute(report_id):
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(algo_split_man_extr_id)
-    main_order_details.set_filter(["Lookup", "BP", "ExecPcy", "Synth (Quod Split Manager)"])
+    main_order_details.set_filter(["Lookup", "PAR.[PARIS]", "ExecPcy", "Synth (Quod Split Manager)"])
     main_order_details.add_single_order_info(main_order_info)
 
     call(act2.getOrdersDetails, main_order_details.request())
@@ -320,8 +325,8 @@ def execute(report_id):
         'LeavesQty': '0',
         'MaxFloor': new_er_params['MaxFloor'],
         'ExecRestatementReason': new_er_params['ExecRestatementReason'],
-        'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID'],
-        'TargetStrategy': new_er_params['TargetStrategy'],
+        # 'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID'],
+        # 'TargetStrategy': new_er_params['TargetStrategy'],
         'OrigClOrdID': new_order_params['ClOrdID'],
         'Instrument': new_er_params['Instrument'],
         'NoStrategyParameters': new_er_params['NoStrategyParameters']
@@ -344,10 +349,10 @@ def execute(report_id):
         'Side': case_params['Side'],
         'TransactTime': '*',
         'OrderQty': new_order_params['DisplayInstruction']['DisplayQty'],
-        'IClOrdIdAO': 'OD_5fgfDXg-00',
         'OrigClOrdID': '*',
         'ChildOrderID': '*',
-        'ExDestination': new_order_params['ExDestination']
+        'ExDestination': new_order_params['ExDestination'],
+        **check_params
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
