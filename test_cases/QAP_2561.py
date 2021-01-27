@@ -87,7 +87,6 @@ def execute(report_id):
         'OrderQty': new_iceberg_order_params['OrderQty'],
         'Price': new_iceberg_order_params['Price'],
         'ClOrdID': new_iceberg_order_params['ClOrdID'],
-        # 'OrderID': new_iceberg_order.response_messages_list[0].fields['OrderID'].simple_value,
         'OrderID': '*',
         'TransactTime': '*',
         'CumQty': '0',
@@ -99,7 +98,13 @@ def execute(report_id):
         'ExecType': 'A',
         'LeavesQty': new_iceberg_order_params['OrderQty'],
         'Instrument': case_params['Instrument'],
-        'NoParty': '*'
+        'NoParty': '*',
+        'NoStrategyParameters': [{'StrategyParameterName': 'ReleasedNbr',
+                                  'StrategyParameterType': '1', 'StrategyParameterValue': '1'},
+                                 {'StrategyParameterName': 'ReleasedQty',
+                                  'StrategyParameterType': '6', 'StrategyParameterValue': '400'}],
+        'MaxFloor': '50',
+        'ExecID': '*'
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = Pending)")
@@ -115,10 +120,7 @@ def execute(report_id):
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
-    new_er_params['Instrument'] = {
-        'Symbol': case_params['Instrument']['Symbol'],
-        'SecurityExchange': case_params['Instrument']['SecurityExchange']
-    }
+    new_er_params['Instrument'] = case_params['Instrument']
     new_er_params['ExecRestatementReason'] = '4'
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -149,8 +151,7 @@ def execute(report_id):
         'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
         'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
         'Instrument': instrument_bs,
-        'ExDestination': 'XPAR'
-
+        'ExDestination': new_iceberg_order_params['ExDestination']
     }
 
     verifier.submitCheckRule(
@@ -172,7 +173,6 @@ def execute(report_id):
         'OrderQty': nos_bs_params['OrderQty'],
         'OrdType': case_params['OrdType'],
         'Side': case_params['Side'],
-        # 'LastPx': '0',
         'AvgPx': '0',
         'OrdStatus': '0',
         'ExecType': '0',
@@ -202,7 +202,6 @@ def execute(report_id):
         'Price': case_params['NewPrice'],
         'CFICode': 'EMXXXB',
         'ExDestination': 'QDL1',
-        # 'IClOrdIdAO': '1543927957',
         'DisplayInstruction': {
             'DisplayQty': '45'
         }
@@ -232,14 +231,17 @@ def execute(report_id):
         'OrdStatus': '*',
         'ExecType': '5',
         'LeavesQty': case_params['OrderQty'],
-        'Instrument': {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        },
+        'Instrument': case_params['Instrument'],
         'ExecRestatementReason': '4',
         'Price': case_params['NewPrice'],
         'OrderQty': case_params['OrderQty'],
-        'NoParty': '*'
+        'NoParty': '*',
+        'NoStrategyParameters': [{'StrategyParameterName': 'ReleasedNbr',
+                                  'StrategyParameterType': '1', 'StrategyParameterValue': '1'},
+                                 {'StrategyParameterName': 'ReleasedQty',
+                                  'StrategyParameterType': '6', 'StrategyParameterValue': '400'}],
+        'MaxFloor': '45',
+        'TransactTime': '*'
     }
 
     logger.debug("Verify received Execution Report (OrdStatus = New, ExecType = Replaced)")
@@ -262,7 +264,9 @@ def execute(report_id):
         'OrderQty': new_iceberg_order_params['DisplayInstruction']['DisplayQty'],
         'ChildOrderID': '*',
         'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
-        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO']
+        'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
+        'ExDestination': new_iceberg_order_params['ExDestination'],
+        'OrigClOrdID': '*'
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -285,7 +289,7 @@ def execute(report_id):
         'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
         'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
         'Instrument': instrument_bs,
-        'ExDestination': 'XPAR'
+        'ExDestination': new_iceberg_order_params['ExDestination']
 
     }
 
@@ -308,7 +312,6 @@ def execute(report_id):
         'OrderQty': replace_order_params['DisplayInstruction']['DisplayQty'],
         'OrdType': case_params['OrdType'],
         'Side': case_params['Side'],
-        # 'LastPx': '0',
         'AvgPx': '0',
         'OrdStatus': '0',
         'ExecType': '0',
@@ -348,10 +351,7 @@ def execute(report_id):
 
     cancellation_er_params = {
         **reusable_params,
-        'Instrument': {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        },
+        'Instrument': case_params['Instrument'],
         'ClOrdID': cancel_order_params['ClOrdID'],
         'OrderID': new_er_params['OrderID'],
         'OrderQty': replace_order_params['OrderQty'],
@@ -367,7 +367,14 @@ def execute(report_id):
         'ExecType': '4',
         'LeavesQty': '0',
         'ExecRestatementReason': '4',
-        'NoParty': '*'
+        'NoParty': '*',
+        'NoStrategyParameters': [{'StrategyParameterName': 'ReleasedNbr',
+                                  'StrategyParameterType': '1', 'StrategyParameterValue': '1'},
+                                 {'StrategyParameterName': 'ReleasedQty',
+                                  'StrategyParameterType': '6', 'StrategyParameterValue': '400'}],
+        'MaxFloor': '45',
+        'Text': '*',
+        'OrigClOrdID': '*'
     }
     bs_cancel_order_params = {
         'Account': case_params['Account'],
@@ -380,7 +387,8 @@ def execute(report_id):
         'IClOrdIdCO': new_iceberg_order_params['IClOrdIdCO'],
         'IClOrdIdAO': new_iceberg_order_params['IClOrdIdAO'],
         'ChildOrderID': '*',
-        'ExDestination': new_iceberg_order_params['ExDestination']
+        'ExDestination': new_iceberg_order_params['ExDestination'],
+        'OrigClOrdID': '*'
     }
     verifier.submitCheckRule(
         bca.create_check_rule(
@@ -407,8 +415,7 @@ def execute(report_id):
             'MsgType': ('0', "NOT_EQUAL"),
             'SenderCompID': case_params['SenderCompID2'],
             'TargetCompID': case_params['TargetCompID2']
-        },
-        # 'TestReqID': ('TEST', "NOT_EQUAL")
+        }
     }
     pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
     message_filters_sim = [
