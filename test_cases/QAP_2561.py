@@ -5,6 +5,15 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction
 from stubs import Stubs
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule
+from th2_grpc_common.common_pb2 import ConnectionID
+
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe_2, close_fe_2
+from win_gui_modules.wrappers import set_base, create_verification_request, check_value
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, \
+    ExtractionDetail, ExtractionAction
+
+from google.protobuf.empty_pb2 import Empty
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -14,6 +23,13 @@ timeouts = True
 def execute(report_id):
     act = Stubs.fix_act
     verifier = Stubs.verifier
+
+    # Rules
+    simulator = Stubs.simulator
+    conn = ConnectionID(session_alias='fix-bs-eq-paris')
+    NOS = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(connection_id=conn))
+    OCRR = simulator.createQuodOCRRRule(request=TemplateQuodOCRRRule(connection_id=conn))
+    OCR = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(connection_id=conn))
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2561"
@@ -191,6 +207,100 @@ def execute(report_id):
             Direction.Value("SECOND")
         )
     )
+
+    # GUI section
+    # Step 1
+
+    # case_id = bca.create_event(case_name, report_id)
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+
+    act_order_book = Stubs.win_act_order_book
+    common_win_act = Stubs.win_act
+
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+
+    try:
+        order_info_extraction = "getOrderInfo"
+        order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
+        order_qty = ExtractionDetail("order.Qty", "Qty")
+        order_disp_qty = ExtractionDetail("order.DisplQty", "DisplQty")
+
+        order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[order_exec_pcy, order_qty, order_disp_qty])
+        main_order_info = OrderInfo.create(action=order_extraction_action)
+
+        main_co_details = OrdersDetails()
+        main_co_details.set_default_params(base_request)
+        main_co_details.set_extraction_id(order_info_extraction)
+        main_co_details.add_single_order_info(main_order_info)
+        main_co_details.set_filter(["ClOrdID", new_iceberg_order_params['ClOrdID']])
+
+        call(act_order_book.getOrdersDetails, main_co_details.request())
+
+        vr = create_verification_request("checking order", order_info_extraction)
+        check_value(vr, "Order ExecPcy", order_exec_pcy.name, "Synth (Quod Split Manager)")
+        check_value(vr, "Order Qty", order_qty.name, "400")
+        check_value(vr, "Order DisplayQty", order_disp_qty.name, "50")
+        call(common_win_act.verifyEntities, vr)
+
+        # Step 2
+        # Check child orders
+
+        extraction_id = "order.algo_split_man"
+
+        # sub_order_1_lv2_qty = ExtractionDetail("subOrder_1_lv2.Qty", "Qty")
+        # sub_order_1_lv2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
+        # sub_order_1_lv2_ext_action = ExtractionAction.create_extraction_action(
+        #     extraction_details=[sub_order_1_lv2_qty, sub_order_1_lv2_exec_pcy])
+        # sub_order_1_lv2_info = OrderInfo.create(action=sub_order_1_lv2_ext_action)
+        #
+        # sub_order_2_lv2_qty = ExtractionDetail("subOrder_2_lv2.Qty", "Qty")
+        # sub_order_2_lv2_exec_pcy = ExtractionDetail("subOrder_2_lv2.ExecPcy", "ExecPcy")
+        # sub_order_2_lv2_ext_action = ExtractionAction.create_extraction_action(
+        #     extraction_details=[sub_order_2_lv2_qty, sub_order_2_lv2_exec_pcy])
+        # sub_order_2_lv2_info = OrderInfo.create(action=sub_order_2_lv2_ext_action)
+        #
+        # lvl2_count = "subOrders_lv2.length"
+        sub_order_1_lv1_qty = ExtractionDetail("subOrder_lv1.Qty", "Qty")
+        sub_order_1_lv1_displ_qty = ExtractionDetail("subOrder_lv1.DisplQty", "DisplQty")
+        sub_order_1_lv1_exec_pcy = ExtractionDetail("subOrder_lv1.ExecPcy", "ExecPcy")
+        sub_order_1_lv1_ext_action = ExtractionAction.create_extraction_action(
+            extraction_details=[sub_order_1_lv1_qty, sub_order_1_lv1_displ_qty, sub_order_1_lv1_exec_pcy])
+        # sub_lv2_details = OrdersDetails.create(order_info_list=[sub_order_1_lv2_info, sub_order_2_lv2_info])
+        # sub_lv2_details.extract_length(lvl2_count)
+
+        # sub_1_lv1_info = OrderInfo.create(action=sub_order_1_lv1_ext_action, sub_order_details=sub_lv2_details)
+        sub_1_lv1_info = OrderInfo.create(action=sub_order_1_lv1_ext_action) # remove it later!
+
+        sub_1_lv1_details = OrdersDetails.create(info=sub_1_lv1_info)
+        main_order_info = OrderInfo.create(sub_order_details=sub_1_lv1_details)
+
+        main_co_details = OrdersDetails()
+        main_co_details.set_default_params(base_request)
+        main_co_details.set_extraction_id(extraction_id)
+        main_co_details.add_single_order_info(main_order_info)
+        main_co_details.set_filter(["ClOrdID", new_iceberg_order_params['ClOrdID']])
+
+        call(act_order_book.getOrdersDetails, main_co_details.request())
+
+        vr = create_verification_request("checking order", extraction_id)
+        check_value(vr, "Sub Lvl 1 Qty", sub_order_1_lv1_qty.name, "400")
+        check_value(vr, "Sub Lvl 1 Display Qty", sub_order_1_lv1_displ_qty.name, "50")
+        check_value(vr, "Sub Lvl 1 ExecPcy", sub_order_1_lv1_exec_pcy.name, "Synthetic")
+        # check_value(vr, "Sub 1 Lvl 2 Qty", sub_order_1_lv2_qty.name, "45")
+        # check_value(vr, "Sub 1 Lvl 2 ExecPcy", sub_order_1_lv2_exec_pcy.name, "DMA")
+        # check_value(vr, "Sub 2 Lvl 2 Qty", sub_order_2_lv2_qty.name, "50")
+        # check_value(vr, "Sub 2 Lvl 2 ExecPcy", sub_order_2_lv2_exec_pcy.name, "DMA")
+        # check_value(vr, "Sub order Lvl 2 count", lvl2_count, "3")
+        call(common_win_act.verifyEntities, vr)
+
+    except Exception as e:
+        logging.error("Error execution", exc_info=True)
+    close_fe_2(case_id, session_id)
+    # GUI section end
 
     replace_order_params = {
         **reusable_params,
@@ -438,5 +548,8 @@ def execute(report_id):
 
     if timeouts:
         sleep(5)
+
+    for rule in [NOS, OCRR, OCR]:
+        Stubs.core.removeRule(rule)
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
