@@ -50,7 +50,7 @@ class RuleManager:
 
     # Remove rules by ID
     # Example: 101
-    def remove_rules_by_id(self, rule_id: int):
+    def remove_rule_by_id(self, rule_id: int):
         if rule_id not in self.default_rules_id:
             Stubs.core.removeRule(RuleID(id=rule_id))
 
@@ -69,6 +69,9 @@ class RuleManager:
                 Stubs.core.removeRule(RuleID(id=i))
 
     # Remove user-created rule
+    # Example:
+    # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
+    # RuleManager.remove_rule(new_rule)
     @staticmethod
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
