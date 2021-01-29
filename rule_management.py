@@ -48,7 +48,7 @@ class RuleManager:
                 if rule_id not in self.default_rules_id and rule.class_name.count(remove_rule_name) == 1:
                     Stubs.core.removeRule(RuleID(id=rule_id))
 
-    # Remove rules by ID
+    # Remove rule by ID
     # Example: 101
     def remove_rule_by_id(self, rule_id: int):
         if rule_id not in self.default_rules_id:
