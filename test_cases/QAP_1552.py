@@ -37,7 +37,7 @@ def execute(case_name, report_id, case_params):
                                 'QuoteType': '1',
                                 'OrderQty': '1000000',
                                 'OrdType': 'D',
-                                'ExpireTime': '20210128-00:00:00.000',
+                                'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
                                 'TransactTime': (datetime.utcnow().isoformat())}]
     }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
