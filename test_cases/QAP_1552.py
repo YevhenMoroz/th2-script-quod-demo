@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from stubs import Stubs
+from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +31,44 @@ def execute(case_name, report_id, case_params):
         'SettlType': '0'
     }
 
+    mdu_params = {
+        # "MDReqID": simulator.getMDRefIDForConnection(
+        #     request=RequestMDRefID(
+        #         symbol="EUR/USD", connection_id=ConnectionID(
+        #             session_alias="fix-fh-fx-esp"))).MDRefID,
+        "MDReqID": "EUR/USD:SPO:REG:HSBC_2",
+        "MDReportID": "3",
+        # "MDTime": "TBU",
+        # "MDArrivalTime": "TBU",
+        # "OrigMDTime": "TBU",
+        # "OrigMDArrivalTime": "TBU",
+        # "ReplyReceivedTime": "TBU",
+        "Instrument": reusable_params['Instrument'],
+        # "LastUpdateTime": "TBU",
+        "NoMDEntries": [
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 100,
+                "MDEntrySize": 1000,
+                "MDEntryPositionNo": 1
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 110,
+                "MDEntrySize": 1000,
+                "MDEntryPositionNo": 1
+            },
+
+        ]
+    }
+
+    send_mdu = act.sendMessage(
+        bca.convert_to_request(
+            'Send MDU',
+            'fix-fh-fx-esp',
+            case_id,
+            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params, 'fix-fh-fx-esp')
+        ))
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
         'NoRelatedSymbols': [{
