@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from stubs import Stubs
+from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 
 logger = logging.getLogger(__name__)
@@ -14,6 +16,9 @@ def execute(case_name, report_id, case_params):
     event_store = Stubs.event_store
     verifier = Stubs.verifier
     simulator = Stubs.simulator
+    quote_request_qty = 500000
+    instrument = 'EUR/USD'
+    tenor = 'FXSPOT'
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_id = bca.create_event(case_name, report_id)
@@ -22,20 +27,58 @@ def execute(case_name, report_id, case_params):
         'Account': case_params['Account'],
         'Side': 1,
         'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
+            'Symbol': instrument,
+            'SecurityType': tenor
         },
         'SettlDate': tsd.spo(),
         'SettlType': '0'
     }
-
+    #
+    # mdu_params = {
+    #     # "MDReqID": simulator.getMDRefIDForConnection(
+    #     #     request=RequestMDRefID(
+    #     #         symbol="EUR/USD", connection_id=ConnectionID(
+    #     #             session_alias="fix-fh-fx-esp"))).MDRefID,
+    #     "MDReqID": "EUR/USD:SPO:REG:HSBC_2",
+    #     "MDReportID": "3",
+    #     # "MDTime": "TBU",
+    #     # "MDArrivalTime": "TBU",
+    #     # "OrigMDTime": "TBU",
+    #     # "OrigMDArrivalTime": "TBU",
+    #     # "ReplyReceivedTime": "TBU",
+    #     "Instrument": reusable_params['Instrument'],
+    #     # "LastUpdateTime": "TBU",
+    #     "NoMDEntries": [
+    #         {
+    #             "MDEntryType": "1",
+    #             "MDEntryPx": 100,
+    #             "MDEntrySize": 1000,
+    #             "MDEntryPositionNo": 1
+    #         },
+    #         {
+    #             "MDEntryType": "0",
+    #             "MDEntryPx": 110,
+    #             "MDEntrySize": 1000,
+    #             "MDEntryPositionNo": 1
+    #         },
+    #
+    #     ]
+    # }
+    #
+    # send_mdu = act.sendMessage(
+    #     bca.convert_to_request(
+    #         'Send MDU',
+    #         'fix-fh-fx-esp',
+    #         case_id,
+    #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params, 'fix-fh-fx-esp')
+    #     ))
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
         'NoRelatedSymbols': [{
                                 **reusable_params,
                                 'Currency': 'EUR',
                                 'QuoteType': '1',
-                                'OrderQty': '1000000',
+                                'OrderQty': quote_request_qty,
                                 'OrdType': 'D',
                                 'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
                                 'TransactTime': (datetime.utcnow().isoformat())}]
@@ -55,7 +98,7 @@ def execute(case_name, report_id, case_params):
         'QuoteReqID': rfq_params['QuoteReqID'],
         'Product': 4,
         'OfferPx': '35.001',
-        'OfferSize': 1000000,
+        'OfferSize': 500000,
         'QuoteID': '*',
         'OfferSpotRate': '35.001',
         'ValidUntilTime': '*',

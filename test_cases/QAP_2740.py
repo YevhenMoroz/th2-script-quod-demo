@@ -74,8 +74,8 @@ def execute(report_id):
         'Currency': 'EUR',
         'TargetStrategy': case_params['TargetStrategy']
     }
-    symbol_paris = "1062"
-    symbol_trqx = "3503"
+    symbol_paris = "596"
+    symbol_trqx = "3390"
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -83,7 +83,8 @@ def execute(report_id):
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        cum_qty=int(case_params['OrderQty'] / 2),
+        # cum_qty=int(case_params['OrderQty'] / 2),
+        cum_qty=case_params['OrderQty'],
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={50: 0},
         md_entry_px={40: 30},
@@ -123,13 +124,13 @@ def execute(report_id):
                 {
                     'MDEntryType': '0',
                     'MDEntryPx': '30',
-                    'MDEntrySize': '50',
+                    'MDEntrySize': '100',
                     'MDEntryPositionNo': '1'
                 },
                 {
                     'MDEntryType': '1',
                     'MDEntryPx': '40',
-                    'MDEntrySize': '50',
+                    'MDEntrySize': '100',
                     'MDEntryPositionNo': '1'
                 }
             ]
@@ -220,10 +221,11 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
-        sim.removeRule(trade_rule_1)
-        sim.removeRule(trade_rule_2)
+
     except Exception as e:
         logging.error("Error execution", exc_info=True)
+        sim.removeRule(trade_rule_1)
+        sim.removeRule(trade_rule_2)
     #
     # if BaseParams.session_id is None:
     #     BaseParams.session_id = set_session_id()
