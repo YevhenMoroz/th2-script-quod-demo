@@ -5,9 +5,7 @@ from stubs import Stubs
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call
 from win_gui_modules.wrappers import set_base
-
 from win_gui_modules.rfq_wrappers import RFQTileDetails, RFQTileOrderDetails, RFQTileOrderSide, RFQTilePanelDetails
-
 
 import rule_management as rm
 
