@@ -13,6 +13,19 @@
         "endpoints": ["act_fix"]
       }
     },
+    "Act-1": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act_1": {
+          "host": "10.0.22.22",
+          "port": 32134
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["act_1"]
+      }
+    },
     "Check1": {
       "service-class": "Check1Service",
       "endpoints": {
@@ -94,6 +107,21 @@
         "name": "robin",
         "endpoints": [
           "act_order_book"
+        ]
+      }
+    },
+    "Win_Act_RFQ": {
+      "service-class": "RFQOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
         ]
       }
     }
