@@ -1,6 +1,6 @@
 from copy import deepcopy
 from uuid import uuid1
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from th2_grpc_check1.check1_pb2 import PreFilter
@@ -20,9 +20,27 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction
 
-
 # Debug output
 PrintMessages = False
+
+
+def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
+    if not is_weekend_holiday:
+        return from_date
+    else:
+        current_date = from_date
+        while current_date.weekday() >= 5:
+            current_date += timedelta(days=1)
+        return current_date
+
+
+def get_t_plus_date(shift: int, from_date: date = date.today(), is_weekend_holiday: bool = True) -> date:
+    current_date = __find_closest_workday(from_date, is_weekend_holiday)
+    for i in range(shift):
+        current_date += timedelta(days=1)
+        current_date = __find_closest_workday(current_date, is_weekend_holiday)
+
+    return current_date
 
 
 def timestamps():
@@ -196,7 +214,7 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = ValueFilter(simple_filter=str(content[tag]))
         elif isinstance(content[tag], dict):
-            content[tag] = ValueFilter(message_filter=prefilter_to_grpc(content[tag], _nesting_level+1))
+            content[tag] = ValueFilter(message_filter=prefilter_to_grpc(content[tag], _nesting_level + 1))
         elif isinstance(content[tag], tuple):
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
