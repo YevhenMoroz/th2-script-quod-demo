@@ -51,21 +51,48 @@ def execute(report_id):
         prepare_fe_2(case_id, session_id)
 
     try:
-        # Step 1
+        # Steps 1-2
         details = RFQTileDetails(base=base_request)
         details.set_from_currency("EUR")
         details.set_to_currency("USD")
+        # details.set_settlement_date(bca.get_t_plus_date(2))
         details.set_near_tenor("Spot")
-        details.set_settlement_date(bca.get_t_plus_date(2))
-
-        # Step 2
         call(rfq_service.createRFQ, details.request())
 
         # Step 3
-        details = RFQTileDetails(base=base_request)
+        details = RFQTileOrderDetails(base=base_request)
         details.set_venue("HSB")
         details.set_action(RFQTileOrderSide.BUY)
         call(rfq_service.sendRFQOrder, details.request())
+
+        details = RFQTilePanelDetails(base=base_request)
+        call(rfq_service.cancelRFQ, details.request())
+
+        # Steps 4
+        details = RFQTileDetails(base=base_request)
+        call(rfq_service.createRFQ, details.request())
+
+        # Step 5
+        details = RFQTileOrderDetails(base=base_request)
+        details.set_venue("HSB")
+        details.set_action(RFQTileOrderSide.BUY)
+        call(rfq_service.sendRFQOrder, details.request())
+
+        details = RFQTilePanelDetails(base=base_request)
+        call(rfq_service.cancelRFQ, details.request())
+
+        # Steps 7
+        details = RFQTileDetails(base=base_request)
+        call(rfq_service.createRFQ, details.request())
+
+        # Step 7
+        details = RFQTileOrderDetails(base=base_request)
+        details.set_venue("HSB")
+        details.set_action(RFQTileOrderSide.BUY)
+        call(rfq_service.sendRFQOrder, details.request())
+
+        details = RFQTilePanelDetails(base=base_request)
+        call(rfq_service.cancelRFQ, details.request())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
