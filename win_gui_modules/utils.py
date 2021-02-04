@@ -26,21 +26,23 @@ def get_base_request(session_id: RhSessionID, event_id):
     return EmptyRequest(sessionID=session_id, parentEventId=event_id)
 
 
-def prepare_fe(main_event, session):
+def prepare_fe(main_event, session, working_dir: str = Stubs.custom_config['qf_trading_fe_folder'],
+               username: str = Stubs.custom_config['qf_trading_fe_user'],
+               password: str = Stubs.custom_config['qf_trading_fe_password']):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
     app_details = ApplicationDetails(
         sessionID=session,
         parentEventId=init_event,
-        workDir=Stubs.custom_config['qf_trading_fe_folder'],
+        workDir=working_dir,
         applicationFile=Stubs.custom_config['qf_trading_fe_exec'])
     logging.debug("RPC open_application:\n%s", stub.openApplication(app_details))
 
     login_details = LoginDetails(
         sessionID=session,
         parentEventId=init_event,
-        username=Stubs.custom_config['qf_trading_fe_user'],
-        password=Stubs.custom_config['qf_trading_fe_password'],
+        username=username,
+        password=password,
         mainWindowName="Quod Financial - Quod site",
         loginWindowName=Stubs.custom_config['qf_trading_fe_login_win_name'])
     logging.debug("RPC login:\n%s", stub.login(login_details))
@@ -51,10 +53,12 @@ def close_fe(main_event, session):
     stub = Stubs.win_act
     disposing_event = create_event("Disposing", main_event)
     try:
-        stub.closeApplication(EmptyRequest(sessionID=session, parentEventId=disposing_event))
+        stub.closeApplication(CloseApplicationRequest(
+            base=EmptyRequest(sessionID=session, parentEventId=disposing_event)))
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
+    Stubs.frontend_is_open = False
 
 
 def prepare_fe_2(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
