@@ -5,6 +5,8 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction, ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+
+from rule_management import RuleManager
 from stubs import Stubs
 
 
@@ -17,12 +19,18 @@ def execute(report_id):
     act = Stubs.fix_act
     verifier = Stubs.verifier
     simulator = Stubs.simulator
+    rule_man = RuleManager()
 
     seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2684"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
+    NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
+    NOS2 = rule_man.add_NOS('fix-bs-eq-trqx')
+    OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
+    OCR2 = rule_man.add_OCR('fix-bs-eq-trqx')
+    logger.info(f"Start rules with id's: \n {NOS1}, {NOS2}, {OCR1}, {OCR2}")
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
@@ -42,8 +50,8 @@ def execute(report_id):
         'TimeInForce': '0',
         'TargetStrategy': 1011,
         'Instrument': {
-            'Symbol': 'FR0000125460_EUR',
-            'SecurityID': 'FR0000125460',
+            'Symbol': 'FR0010542647_EUR',
+            'SecurityID': 'FR0010542647',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -96,11 +104,11 @@ def execute(report_id):
         ))
 
     MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="596",
+        symbol="1062",
         connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
     )).MDRefID
     MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="3390",
+        symbol="3503",
         connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
     )).MDRefID
 
@@ -108,7 +116,7 @@ def execute(report_id):
         'MDReportID': "1",
         'MDReqID': MDRefID_1,
         'Instrument': {
-            'Symbol': "596"
+            'Symbol': "1062"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
@@ -130,7 +138,7 @@ def execute(report_id):
         'MDReportID': "1",
         'MDReqID': MDRefID_2,
         'Instrument': {
-            'Symbol': "3390"
+            'Symbol': "3503"
         },
         # 'LastUpdateTime': "",
         'NoMDEntries': [
@@ -218,7 +226,7 @@ def execute(report_id):
 
     instrument_1_2 = case_params['Instrument']
     instrument_1_2['SecurityType'] = 'CS'
-    instrument_1_2['Symbol'] = 'AN'
+    instrument_1_2['Symbol'] = 'RSC'
 
     newordersingle_params = {
         'Account': case_params['Account'],
@@ -360,6 +368,10 @@ def execute(report_id):
     # stop all rules
     # for rule in sim_rules:
     #     rules_killer.removeRule(rule)
-
+    rule_man.remove_rule(NOS1)
+    rule_man.remove_rule(NOS2)
+    rule_man.remove_rule(OCR1)
+    rule_man.remove_rule(OCR2)
+    rule_man.print_active_rules()
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))

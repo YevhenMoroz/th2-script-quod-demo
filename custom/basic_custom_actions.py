@@ -1,6 +1,6 @@
 from copy import deepcopy
 from uuid import uuid1
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from th2_grpc_check1.check1_pb2 import PreFilter
@@ -8,11 +8,8 @@ from th2_grpc_check1.check1_pb2 import CheckRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckSequenceRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckpointRequest
 
-from grpc_modules.quod_simulator_pb2 import TemplateQuodNOSRule
-from grpc_modules.quod_simulator_pb2 import TemplateQuodOCRRule
-from grpc_modules.quod_simulator_pb2 import TemplateQuodMDRRule
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRule, TemplateQuodMDRRule
 
-from grpc_modules.event_store_pb2 import StoreEventRequest
 
 from th2_grpc_act_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
@@ -20,9 +17,27 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction
 
-
 # Debug output
 PrintMessages = False
+
+
+def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
+    if not is_weekend_holiday:
+        return from_date
+    else:
+        current_date = from_date
+        while current_date.weekday() >= 5:
+            current_date += timedelta(days=1)
+        return current_date
+
+
+def get_t_plus_date(shift: int, from_date: date = date.today(), is_weekend_holiday: bool = True) -> date:
+    current_date = __find_closest_workday(from_date, is_weekend_holiday)
+    for i in range(shift):
+        current_date += timedelta(days=1)
+        current_date = __find_closest_workday(current_date, is_weekend_holiday)
+
+    return current_date
 
 
 def timestamps():
@@ -178,25 +193,13 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     return event_id
 
 
-def create_store_event_request(event_name, event_id, parent_id=None):
-    seconds, nanos = timestamps()
-    event = Event(
-        id=event_id,
-        name=event_name,
-        start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-        # end_timestamp=Timestamp(seconds=seconds, nanos=nanos),
-        parent_id=parent_id
-    )
-    return StoreEventRequest(event=event)
-
-
 def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
     content = deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = ValueFilter(simple_filter=str(content[tag]))
         elif isinstance(content[tag], dict):
-            content[tag] = ValueFilter(message_filter=prefilter_to_grpc(content[tag], _nesting_level+1))
+            content[tag] = ValueFilter(message_filter=prefilter_to_grpc(content[tag], _nesting_level + 1))
         elif isinstance(content[tag], tuple):
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
@@ -205,27 +208,6 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
         elif isinstance(content[tag], ValueFilter):
             pass
     return PreFilter(fields=content) if _nesting_level == 0 else MessageFilter(fields=content)
-
-
-def create_sim_rule_nos(*args, **kwargs) -> TemplateQuodNOSRule:
-    return TemplateQuodNOSRule(
-        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias'])
-    )
-
-
-def create_sim_rule_ocr(*args, **kwargs) -> TemplateQuodOCRRule:
-    return TemplateQuodOCRRule(
-        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias'])
-    )
-
-
-def create_sim_rule_mdr(*args, **kwargs) -> TemplateQuodMDRRule:
-    return TemplateQuodMDRRule(
-        connection_id=ConnectionID(session_alias=args[0] if len(args) > 0 else kwargs['session_alias']),
-        sender=args[1] if len(args) > 1 else kwargs['sender'],
-        md_entry_size=args[2] if len(args) > 2 else kwargs['md_entry_size'],
-        md_entry_px=args[3] if len(args) > 3 else kwargs['md_entry_px']
-    )
 
 
 def create_checkpoint_request(event_id: EventID) -> CheckpointRequest:
