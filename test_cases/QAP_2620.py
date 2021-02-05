@@ -232,58 +232,69 @@ def execute(report_id):
     )
 
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
+        prepare_fe_2(case_id, session_id, "qf_trading_fe_folder_305")
 
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(order_info_extraction)
-    # main_order_details.set_filter()
+    # main_order_details.set_filter(["Misc3", "test tag 5005"])
 
-    main_order_qty = ExtractionDetail("order_qty", "Qty")
+    main_order_qty = ExtractionDetail("order.Qty", "Qty")
+    main_order_misc3 = ExtractionDetail("order.Misc3", "Misc 3")
+    main_order_price = ExtractionDetail("order.Price", "LmtPrice")
     main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
-    main_order_display_qty = ExtractionDetail("order_DisplayQty", "DisplQty")
+    main_order_display_qty = ExtractionDetail("order.DisplayQty", "DisplQty")
+    main_order_order_id = ExtractionDetail("order.Id", "Order ID")
     main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_qty,
+                                                                                                 main_order_price,
+                                                                                                 main_order_misc3,
                                                                                                  main_order_exec_pcy,
-                                                                                                 main_order_display_qty])
-    main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+                                                                                                 main_order_display_qty,
+                                                                                                 main_order_order_id])
 
-    # data = Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
-    call(act2.getOrdersDetails, main_order_details.request())
+    sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+
+    lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
+    lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+    main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
+
+    request = call(act2.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                  [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                              "Synth (Quod Split Manager)"),
+                                                  verify_ent("Order Price", main_order_price.name, "20"),
                                                   verify_ent("Order Qty", main_order_qty.name, "400"),
-                                                  verify_ent("Order Qty", main_order_display_qty.name, "50")]))
+                                                  verify_ent("Order Misc 3", main_order_misc3.name, "test tag 5005"),
+                                                  verify_ent("Order Display Qty", main_order_display_qty.name, "50")]))
 
     # check child orders
+
+    sub_order_id = request[sub_order_id_dt.name]
+    if not sub_order_id:
+        raise Exception("Sub order id is not returned")
+    print("Sub order id " + sub_order_id)
 
     lvl2_length = "subOrders_lv2.length"
     algo_split_man_extr_id = "order.algo_split_man"
     sub_order_lvl2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
-    sub_order_lvl2_misc3 = ExtractionDetail("subOrder_1_lv2.Misc3", "Misc3")
+    sub_order_lvl2_misc3 = ExtractionDetail("subOrder_1_lv2.Misc3", "Misc 3")
 
     lvl2_details = OrdersDetails()
+    lvl2_details.set_default_params(base_request)
+    lvl2_details.set_extraction_id(algo_split_man_extr_id)
+    lvl2_details.set_filter(["ParentOrdID", sub_order_id])
     lvl2_details.add_single_order_info(OrderInfo.create(
         action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_lvl2_exec_pcy,
                                                                              sub_order_lvl2_misc3])
     ))
     lvl2_details.extract_length(lvl2_length)
 
-    lvl1_info = OrderInfo.create(sub_order_details=lvl2_details)
-    lvl1_details = OrdersDetails.create(info=lvl1_info)
+    call(act2.getChildOrdersDetails, lvl2_details.request())
 
-    main_order_info = OrderInfo.create(sub_order_details=lvl1_details)
-
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(algo_split_man_extr_id)
-    main_order_details.set_filter(["Lookup", "PAR.[PARIS]", "ExecPcy", "Synth (Quod Split Manager)"])
-    main_order_details.add_single_order_info(main_order_info)
-
-    call(act2.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(algo_split_man_extr_id, "checking order",
-                                                 [verify_ent("Sub 1 Lvl 2 Misc3", sub_order_lvl2_misc3.name,
-                                                             "tag 5005"),
+                                                 [verify_ent("Sub 1 Lvl 2 Misc 3", sub_order_lvl2_misc3.name,
+                                                             "test tag 5005"),
                                                   verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_lvl2_exec_pcy.name,
                                                              "DMA"),
                                                   verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
