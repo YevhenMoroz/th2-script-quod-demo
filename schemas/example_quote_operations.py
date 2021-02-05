@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# IMPORTANT: workspace must have only one layout!
+# IMPORTANT: workspace must have only one tab!
 
 def execute(report_id):
 
