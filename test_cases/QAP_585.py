@@ -16,6 +16,7 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent, order_a
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, \
     ExtractionDetail, ExtractionAction, ModifyOrderDetails, CancelOrderDetails
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 
 from win_gui_modules.rfq_wrappers import RFQTileDetails, RFQTileOrderDetails, RFQTileOrderSide, RFQTilePanelDetails
 
@@ -51,6 +52,8 @@ def execute(report_id):
         prepare_fe_2(case_id, session_id)
 
     try:
+        venue = "HSB"
+
         # Steps 1-2
         details = RFQTileDetails(base=base_request)
         details.set_from_currency("EUR")
@@ -59,9 +62,18 @@ def execute(report_id):
         details.set_near_tenor("Spot")
         call(rfq_service.createRFQ, details.request())
 
+        # Check QRB
+        quote_request_book = QuoteDetailsRequest(base=base_request)
+        quote_request_book.set_extraction_id("TestExtractionId0")
+        quote_request_book.set_filter(["Id", "1234567890"])
+        quote_request_book_ext_field = ExtractionDetail("quoteRequestBook.id", "Id")
+        quote_request_book.add_extraction_detail(quote_request_book_ext_field)
+        # quote_request_book.add_extraction_details([quote_request_book_ext_field])
+        call(rfq_service.getQuoteRequestBookDetails, quote_request_book.request())
+
         # Step 3
         details = RFQTileOrderDetails(base=base_request)
-        details.set_venue("HSB")
+        details.set_venue(venue)
         details.set_action(RFQTileOrderSide.BUY)
         call(rfq_service.sendRFQOrder, details.request())
 
@@ -74,7 +86,7 @@ def execute(report_id):
 
         # Step 5
         details = RFQTileOrderDetails(base=base_request)
-        details.set_venue("HSB")
+        details.set_venue(venue)
         details.set_action(RFQTileOrderSide.BUY)
         call(rfq_service.sendRFQOrder, details.request())
 
@@ -87,7 +99,7 @@ def execute(report_id):
 
         # Step 7
         details = RFQTileOrderDetails(base=base_request)
-        details.set_venue("HSB")
+        details.set_venue(venue)
         details.set_action(RFQTileOrderSide.BUY)
         call(rfq_service.sendRFQOrder, details.request())
 
