@@ -17,7 +17,6 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, \
     ExtractionDetail, ExtractionAction, ModifyOrderDetails, CancelOrderDetails
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-
 from win_gui_modules.rfq_wrappers import RFQTileDetails, RFQTileOrderDetails, RFQTileOrderSide, RFQTilePanelDetails
 
 
@@ -32,11 +31,12 @@ def execute(report_id):
     verifier = Stubs.verifier
     simulator = Stubs.simulator
     core = Stubs.core
+    common_act = Stubs.win_act
 
     # Rules
-    # rule_manager = rm.RuleManager()
-    # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
 
     # Store case start time
     seconds, nanos = bca.timestamps()
@@ -63,13 +63,21 @@ def execute(report_id):
         call(rfq_service.createRFQ, details.request())
 
         # Check QRB
-        quote_request_book = QuoteDetailsRequest(base=base_request)
-        quote_request_book.set_extraction_id("TestExtractionId0")
-        quote_request_book.set_filter(["Id", "1234567890"])
-        quote_request_book_ext_field = ExtractionDetail("quoteRequestBook.id", "Id")
-        quote_request_book.add_extraction_detail(quote_request_book_ext_field)
-        # quote_request_book.add_extraction_details([quote_request_book_ext_field])
-        call(rfq_service.getQuoteRequestBookDetails, quote_request_book.request())
+        # extraction_id = 'QRB_0'
+        # qrb = QuoteDetailsRequest(base=base_request)
+        # qrb.set_extraction_id(extraction_id)
+        # qrb.set_filter(["Venue", "HSBCR"])
+        #
+        # qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
+        # qrb_quote_status = ExtractionDetail("quoteRequestBook.quotestatus", "QuoteStatus")
+        # qrb.add_extraction_detail(qrb_status)
+        # qrb.add_extraction_detail(qrb_quote_status)
+        #
+        # call(rfq_service.getQuoteRequestBookDetails, qrb.request())
+        #
+        # call(common_act.verifyEntities, verification(extraction_id, "checking QRB",
+        #                                              [verify_ent("QRB Status", qrb_status.name, "Test"),
+        #                                               verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Test")]))
 
         # Step 3
         details = RFQTileOrderDetails(base=base_request)
@@ -109,8 +117,8 @@ def execute(report_id):
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    # for rule in [RFQ, TRFQ]:
-    #     rule_manager.remove_rule(rule)
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)
 
     close_fe_2(case_id, session_id)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
