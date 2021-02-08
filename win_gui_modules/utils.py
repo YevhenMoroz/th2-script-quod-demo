@@ -2,7 +2,7 @@ from stubs import Stubs
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ApplicationDetails, LoginDetails, CloseApplicationRequest
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_hand.rhbatch_pb2 import RhSessionID, RhTargetServer
-from .application_wrappers import OpenApplicationRequest, LoginDetailsRequest
+from .application_wrappers import OpenApplicationRequest, LoginDetailsRequest, FEDetailsRequest
 import logging
 from custom.basic_custom_actions import create_event
 
@@ -80,6 +80,16 @@ def prepare_fe_2(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
     login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
     login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
     stub.login(login_details_req.build())
+
+def get_opened_fe(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
+    stub = Stubs.win_act
+    init_event = create_event("Initialization", parent_id=main_event)
+
+    search_fe_req = FEDetailsRequest()
+    search_fe_req.set_session_id(session)
+    search_fe_req.set_parent_event_id(init_event)
+    search_fe_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
+    stub.findOpenedFE(search_fe_req.build())
 
 
 def close_fe_2(main_event, session):

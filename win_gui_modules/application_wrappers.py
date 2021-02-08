@@ -46,6 +46,22 @@ class LoginDetailsRequest:
     def build(self):
         return self.login_details
 
+class FEDetailsRequest:
+    def __init__(self):
+        self.fe_details = act_ui_win_pb2.FEDetails()
+
+    def set_session_id(self, session_id):
+        self.fe_details.sessionID.CopyFrom(session_id)
+
+    def set_parent_event_id(self, parent_event_id):
+        self.fe_details.parentEventId.CopyFrom(parent_event_id)
+
+    def set_main_window_name(self, main_window_name: str):
+        self.fe_details.mainWindowName = main_window_name
+
+    def build(self):
+        return self.fe_details
+
 
 class CloseApplicationRequest:
     def __init__(self):
