@@ -4,6 +4,8 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 
+import time
+
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule
@@ -34,9 +36,9 @@ def execute(report_id):
     common_act = Stubs.win_act
 
     # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
+    # rule_manager = rm.RuleManager()
+    # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
 
     # Store case start time
     seconds, nanos = bca.timestamps()
@@ -52,73 +54,92 @@ def execute(report_id):
         prepare_fe_2(case_id, session_id)
 
     try:
+        quote_owner = "dshepelev"
         venue = "HSB"
 
         # Steps 1-2
         details = RFQTileDetails(base=base_request)
         details.set_from_currency("EUR")
         details.set_to_currency("USD")
-        # details.set_settlement_date(bca.get_t_plus_date(2))
         details.set_near_tenor("Spot")
         call(rfq_service.createRFQ, details.request())
 
         # Check QRB
-        # extraction_id = 'QRB_0'
-        # qrb = QuoteDetailsRequest(base=base_request)
-        # qrb.set_extraction_id(extraction_id)
+        extraction_id = 'QRB_0'
+        qrb = QuoteDetailsRequest(base=base_request)
+        qrb.set_extraction_id(extraction_id)
+
         # qrb.set_filter(["Venue", "HSBCR"])
+        qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
+        qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
+        qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
+        qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
+
+        call(rfq_service.getQuoteRequestBookDetails, qrb.request())
+
+        call(common_act.verifyEntities, verification(extraction_id, "checking QRB",
+                                                     [verify_ent("QRB Venue", qrb_venue.name, "HSBCR"),
+                                                      verify_ent("QRB Status", qrb_status.name, "New"),
+                                                      verify_ent("QRB QuoteStatus", qrb_quote_status.name,
+                                                                 "Accepted")]))
+
+        # Check QB
+        extraction_id = 'QB_0'
+        qb = QuoteDetailsRequest(base=base_request)
+        qb.set_extraction_id(extraction_id)
+        qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
+        qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
+        qb.add_extraction_details([qb_owner, qb_quote_status])
+
+        call(rfq_service.getQuoteBookDetails, qb.request())
+
+        call(common_act.verifyEntities, verification(extraction_id, "checking QB",
+                                                     [verify_ent("QB Owner", qb_owner.name, quote_owner),
+                                                      verify_ent("QB QuoteStatus", qb_quote_status.name,
+                                                                 "Accepted")]))
+
+        time.sleep(10)
+
+        # # Step 3
+        # details = RFQTileOrderDetails(base=base_request)
+        # details.set_venue(venue)
+        # details.set_action(RFQTileOrderSide.BUY)
+        # call(rfq_service.sendRFQOrder, details.request())
         #
-        # qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-        # qrb_quote_status = ExtractionDetail("quoteRequestBook.quotestatus", "QuoteStatus")
-        # qrb.add_extraction_detail(qrb_status)
-        # qrb.add_extraction_detail(qrb_quote_status)
+        # details = RFQTilePanelDetails(base=base_request)
+        # call(rfq_service.cancelRFQ, details.request())
         #
-        # call(rfq_service.getQuoteRequestBookDetails, qrb.request())
+        # # Steps 4
+        # details = RFQTileDetails(base=base_request)
+        # call(rfq_service.createRFQ, details.request())
         #
-        # call(common_act.verifyEntities, verification(extraction_id, "checking QRB",
-        #                                              [verify_ent("QRB Status", qrb_status.name, "Test"),
-        #                                               verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Test")]))
-
-        # Step 3
-        details = RFQTileOrderDetails(base=base_request)
-        details.set_venue(venue)
-        details.set_action(RFQTileOrderSide.BUY)
-        call(rfq_service.sendRFQOrder, details.request())
-
-        details = RFQTilePanelDetails(base=base_request)
-        call(rfq_service.cancelRFQ, details.request())
-
-        # Steps 4
-        details = RFQTileDetails(base=base_request)
-        call(rfq_service.createRFQ, details.request())
-
-        # Step 5
-        details = RFQTileOrderDetails(base=base_request)
-        details.set_venue(venue)
-        details.set_action(RFQTileOrderSide.BUY)
-        call(rfq_service.sendRFQOrder, details.request())
-
-        details = RFQTilePanelDetails(base=base_request)
-        call(rfq_service.cancelRFQ, details.request())
-
-        # Steps 7
-        details = RFQTileDetails(base=base_request)
-        call(rfq_service.createRFQ, details.request())
-
-        # Step 7
-        details = RFQTileOrderDetails(base=base_request)
-        details.set_venue(venue)
-        details.set_action(RFQTileOrderSide.BUY)
-        call(rfq_service.sendRFQOrder, details.request())
-
-        details = RFQTilePanelDetails(base=base_request)
-        call(rfq_service.cancelRFQ, details.request())
+        # # Step 5
+        # details = RFQTileOrderDetails(base=base_request)
+        # details.set_venue(venue)
+        # details.set_action(RFQTileOrderSide.BUY)
+        # call(rfq_service.sendRFQOrder, details.request())
+        #
+        # details = RFQTilePanelDetails(base=base_request)
+        # call(rfq_service.cancelRFQ, details.request())
+        #
+        # # Steps 7
+        # details = RFQTileDetails(base=base_request)
+        # call(rfq_service.createRFQ, details.request())
+        #
+        # # Step 7
+        # details = RFQTileOrderDetails(base=base_request)
+        # details.set_venue(venue)
+        # details.set_action(RFQTileOrderSide.BUY)
+        # call(rfq_service.sendRFQOrder, details.request())
+        #
+        # details = RFQTilePanelDetails(base=base_request)
+        # call(rfq_service.cancelRFQ, details.request())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    # for rule in [RFQ, TRFQ]:
+    #     rule_manager.remove_rule(rule)
 
     close_fe_2(case_id, session_id)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
