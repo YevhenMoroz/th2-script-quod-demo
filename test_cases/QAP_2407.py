@@ -34,11 +34,11 @@ def execute(report_id):
     ocr_rule = rule_manager.add_OCR(buy_side_connectivity)
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
-    # username = Stubs.custom_config['qf_trading_fe_folder_305']
-    # password = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
 
     if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, )
+        prepare_fe(case_id, session_id, work_dir, username, password)
 
     try:
         symbol_1 = "596"
@@ -200,94 +200,136 @@ def execute(report_id):
 
         order_info_extraction = "getOrderInfo"
 
+        ClOrdID = algo_order_params['ClOrdID']
+        # ClOrdID = "133880250"
+
+        child_order_1_order_id = ExtractionDetail("child_order_1.OrderID", "Order ID")
+        child_order_1_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=child_order_1_order_id)
+        )
+
+        child_order_2_order_id = ExtractionDetail("child_order_2.OrderID", "Order ID")
+        child_order_2_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=child_order_2_order_id)
+        )
+
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
-        main_order_details.set_filter(["ClOrdID", algo_order_params['ClOrdID']])
+        main_order_details.set_filter(["ClOrdID", ClOrdID])
 
         main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
         main_order_price = ExtractionDetail("order.LmtPrice", "LmtPrice")
         main_order_qty = ExtractionDetail("order.Qty", "Qty")
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_exec_pcy, main_order_price, main_order_qty])
-        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
-        call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[
+                ExtractionDetail("order.ExecPcy", "ExecPcy"),
+                ExtractionDetail("order.LmtPrice", "LmtPrice"),
+                ExtractionDetail("order.Qty", "Qty"),
+                ExtractionDetail("order.OrderID", "Order ID")
+            ])
+        main_order_details.add_single_order_info(
+            OrderInfo.create(
+                action=main_order_extraction_action,
+                sub_order_details=OrdersDetails.create(order_info_list=[child_order_1_info, child_order_2_info])
+            ))
+
+        data = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
+        child_1_order_id = data[child_order_1_order_id.name]
+        logger.info(child_1_order_id)
+        child_2_order_id = data[child_order_2_order_id.name]
+        logger.info(child_2_order_id)
+
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order", [
-            verify_ent("Order ExecPcy", "order.ExecPcy", "Synth (Quod LitDark)"),
-            verify_ent("Order LmtPrice", "order.LmtPrice", "36"),
-            verify_ent("Order Qty", "order.Qty", "1,500")
+            verify_ent("Order ExecPcy", main_order_exec_pcy.name, "Synth (Quod LitDark)"),
+            verify_ent("Order LmtPrice", main_order_price.name, "36"),
+            verify_ent("Order Qty", main_order_qty.name, "1,500")
         ]))
 
-        # step 2
+        # check 1st child order
 
         extraction_id = "order.LitDark"
 
-        # sub_lv1_1_lv2_1_tif = ExtractionDetail("subOrder_1_lv2.TIF", "TIF")
-        # sub_lv1_1_lv2_1_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
-        #
-        # sub_lv2_details = OrdersDetails()
-        # sub_lv2_details.add_single_order_info(OrderInfo.create(
-        #     ExtractionAction.create_extraction_action(
-        #         extraction_details=[sub_lv1_1_lv2_1_tif, sub_lv1_1_lv2_1_exec_pcy])))
-        # length_name = "subOrders_lv2.length"
-        # sub_lv2_details.extract_length(length_name)
+        child_order_1_1_exec_pcy = ExtractionDetail("child_order_1_1.ExecPcy", "ExecPcy")
+        child_order_1_1_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=child_order_1_1_exec_pcy)
+        )
+        child_order_1_1_details = OrdersDetails.create(info=child_order_1_1_info)
+        length_name = "child_order_1_1.length"
+        child_order_1_1_details.extract_length(length_name)
 
-        # sub 1 orders lv2 for sub order 2 lv1
+        child_order_1_details = OrdersDetails()
+        child_order_1_details.set_default_params(base_request)
+        child_order_1_details.set_extraction_id(extraction_id)
+        child_order_1_details.set_filter(["Order ID", child_1_order_id])
 
-        # sub_lv1_2_lv2_1_tif = ExtractionDetail("subOrder_1_lv2.TIF", "TIF")
-        # sub_lv1_2_lv2_1_venue = ExtractionDetail("subOrder_1_lv2.Venue", "Venue")
-        #
-        # sub_lv2_details = OrdersDetails()
-        # sub_lv2_details.add_single_order_info(OrderInfo.create(
-        #     ExtractionAction.create_extraction_action(
-        #         extraction_details=[sub_lv1_2_lv2_1_tif, sub_lv1_2_lv2_1_venue])))
-        # length_name = "subOrders_lv2.length"
-        # sub_lv2_details.extract_length(length_name)
+        child_order_1_exec_pcy = ExtractionDetail("child_order_1.ExecPcy", "ExecPcy")
+        child_order_1_price = ExtractionDetail("child_order_1.LmtPrice", "LmtPrice")
+        child_order_1_tif = ExtractionDetail("child_order_1.TIF", "TIF")
+        child_order_1_qty = ExtractionDetail("child_order_1.Qty", "Qty")
 
-        # sub 2 orders lv2 for sub order 2 lv1
+        child_order_1_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[
+                child_order_1_exec_pcy,
+                child_order_1_tif,
+                child_order_1_price,
+                child_order_1_qty
 
-        # sub_lv1_2_lv2_2_tif = ExtractionDetail("subOrder_1_lv2.TIF", "TIF")
-        # sub_lv1_2_lv2_2_venue = ExtractionDetail("subOrder_1_lv2.Venue", "Venue")
-        #
-        # sub_lv2_details = OrdersDetails()
-        # sub_lv2_details.add_single_order_info(OrderInfo.create(
-        #     ExtractionAction.create_extraction_action(
-        #         extraction_details=[sub_lv1_2_lv2_2_tif, sub_lv1_2_lv2_2_venue])))
-        # length_name = "subOrders_lv2.length"
-        # sub_lv2_details.extract_length(length_name)
+            ])
+        child_order_1_details.add_single_order_info(
+            OrderInfo.create(
+                action=child_order_1_extraction_action,
+                sub_order_details=child_order_1_1_details
+            ))
 
-        sub_lv1_1_exec_pcy = ExtractionDetail("subOrder_lv1.exec_pcy", "ExecPcy")
-        extraction_action_sub_lv1_1 = ExtractionAction.create_extraction_action(extraction_detail=sub_lv1_1_exec_pcy)
-        sub_lv1_1_info = OrderInfo.create(action=extraction_action_sub_lv1_1)
-        # sub_lv1_1_info.set_sub_orders_details(sub_lv2_details)
-
-        sub_lv1_2_exec_pcy = ExtractionDetail("subOrder_lv1_2.exec_pcy", "ExecPcy")
-        extraction_action_sub_lv1_2 = ExtractionAction.create_extraction_action(extraction_detail=sub_lv1_2_exec_pcy)
-        sub_lv1_2_info = OrderInfo.create(action=extraction_action_sub_lv1_2)
-        # sub_lv1_2_info.set_sub_orders_details(sub_lv2_details)
-
-        main_order_info = OrderInfo.create(
-            sub_order_details=OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info]))
-
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", algo_order_params['ClOrdID']])
-        main_order_details.add_single_order_info(main_order_info)
-
-        call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-
+        call(Stubs.win_act_order_book.getChildOrdersDetails, child_order_1_details.request())
         call(common_act.verifyEntities, verification(extraction_id, "Checking child orders", [
-            verify_ent("Sub Order 1 Lvl 1 ExecPcy", sub_lv1_1_exec_pcy.name, "Synth (Quod MultiListing)"),
-            # verify_ent("Sub Order 1 Lvl 1 Sub 1 Lvl 2 TIF", sub_lv1_1_lv2_1_tif.name, "Day"),
-            # verify_ent("Sub Order 1 Lvl 1 Sub 1 Lvl 2 ExecPcy", sub_lv1_1_lv2_1_exec_pcy.name, "DMA"),
-            verify_ent("Sub Order 2 Lvl 1 ExecPcy", sub_lv1_2_exec_pcy.name, "Synth (Quod DarkPool)"),
-            # verify_ent("Sub Order 2 Lvl 1 Sub Order 1 Lvl 2 TIF", sub_lv1_1_lv2_1_tif.name, "ImmediateOrCancel"),
-            # verify_ent("Sub Order 2 Lvl 1 Sub Order 1 Lvl 2 Venue", sub_lv1_2_lv2_1_venue.name, "Venue1"),
-            # verify_ent("Sub Order 2 Lvl 1 Sub Order 2 Lvl 2 TIF", sub_lv1_2_lv2_2_tif.name, "ImmediateOrCancel"),
-            # verify_ent("Sub Order 2 Lvl 1 Sub Order 2 Lvl 2 Venue", sub_lv1_2_lv2_2_venue.name, "Venue2")
-            # verify_ent("Sub order 1 Lvl 2 count", length_name, "2")
+            verify_ent("Sub Order 1 Lvl 1 ExecPcy", child_order_1_exec_pcy.name, "Synth (Quod MultiListing)"),
+            verify_ent("Sub Order 1 Lvl 1 TIF", child_order_1_tif.name, "Day"),
+            verify_ent("Sub Order 1 Lvl 1 LmtPrice", child_order_1_price.name, "36"),
+            verify_ent("Sub Order 1 Lvl 1 Qty", child_order_1_qty.name, "1,500"),
+            verify_ent("Sub Order 1 Lvl 2 ExecPcy", child_order_1_1_exec_pcy.name, "DMA"),
+            verify_ent("Sub order 1 Lvl 2 count", length_name, "1")
+        ]))
+
+        # check 2nd child order
+
+        extraction_id = "order.DarkPool"
+
+        child_order_2_1_tif = ExtractionDetail("child_order_2_1.TIF", "TIF")
+        child_order_2_1_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=child_order_2_1_tif)
+        )
+
+        child_order_2_2_tif = ExtractionDetail("child_order_2_2.TIF", "TIF")
+        child_order_2_2_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=child_order_2_2_tif)
+        )
+        child_order_2_sub_details = OrdersDetails.create(order_info_list=[child_order_2_1_info, child_order_2_2_info])
+        length_name = "child_order_2_sub.length"
+        child_order_2_sub_details.extract_length(length_name)
+
+        child_order_2_details = OrdersDetails()
+        child_order_2_details.set_default_params(base_request)
+        child_order_2_details.set_extraction_id(extraction_id)
+        child_order_2_details.set_filter(["Order ID", child_2_order_id])
+
+        child_order_2_exec_pcy = ExtractionDetail("child_order_2.ExecPcy", "ExecPcy")
+        child_order_2_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_detail=child_order_2_exec_pcy)
+        child_order_2_details.add_single_order_info(
+            OrderInfo.create(
+                action=child_order_2_extraction_action,
+                sub_order_details=child_order_2_sub_details
+            ))
+
+        call(Stubs.win_act_order_book.getChildOrdersDetails, child_order_2_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "Checking child orders", [
+            verify_ent("Sub Order 2 Lvl 1 ExecPcy", child_order_2_exec_pcy.name, "Synth (Quod DarkPool)"),
+            verify_ent("Sub Order 2 Lvl 2 child 1 TIF", child_order_2_1_tif.name, "ImmediateOrCancel"),
+            verify_ent("Sub Order 2 Lvl 2 child 2 TIF", child_order_2_2_tif.name, "ImmediateOrCancel"),
+            verify_ent("Sub order 2 Lvl 2 count", length_name, "2")
         ]))
 
         # Postcondition
