@@ -3,10 +3,10 @@ import time
 from datetime import datetime
 import copy
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2, verifier_pb2
-from grpc_modules.act_fix_pb2_grpc import ActFixStub
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
-from grpc_modules.verifier_pb2_grpc import VerifierStub
+from th2_grpc_common.common_pb2 import ValueFilter, MessageFilter, FilterOperation
+from th2_grpc_check1.check1_pb2 import PreFilter
+from stubs import Stubs
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -14,15 +14,13 @@ timeouts = True
 
 
 def execute(case_name, report_id, case_params):
-    act = ActFixStub(case_params['act'])
-    event_store = EventStoreServiceStub(case_params['event-store'])
-    verifier = VerifierStub(case_params['verifier'])
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
     # Create sub-report for case
-    event_request_1 = bca.create_store_event_request(case_name, case_params['case_id'], report_id)
-    event_store.StoreEvent(event_request_1)
+    case_id = bca.create_event(case_name, report_id)
 
     # Send order to BUY side
     order_1_params = {
@@ -44,8 +42,8 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send NewSingleOrder',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
-            bca.message_to_grpc('NewOrderSingle', order_1_params)
+            case_id,
+            bca.message_to_grpc('NewOrderSingle', order_1_params, case_params['TraderConnectivity'])
         ))
     checkpoint_1 = order_1.checkpoint_id
     execution_report1_params = {
@@ -67,7 +65,7 @@ def execute(case_name, report_id, case_params):
     )
     er1 = bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus'])
     checkrule_1 = bca.create_check_rule("Receive Execution Report Pending", er1, checkpoint_1,
-                                        case_params['TraderConnectivity'], case_params['case_id'])
+                                        case_params['TraderConnectivity'], case_id)
     verifier.submitCheckRule(checkrule_1)
 
     execution_report2_params = copy.deepcopy(execution_report1_params)
@@ -79,7 +77,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report New", er2, order_1.checkpoint_id, case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -104,8 +102,8 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send NewSingleOrder 2',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
-            bca.message_to_grpc('NewOrderSingle', order_2_params)
+            case_id,
+            bca.message_to_grpc('NewOrderSingle', order_2_params, case_params['TraderConnectivity'])
         ))
 
     # Prepare system output
@@ -120,7 +118,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report", er3, order_2.checkpoint_id, case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -135,7 +133,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report", er4, order_2.checkpoint_id, case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -154,7 +152,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report ord1 Filled", er5, order_2.checkpoint_id,
-            case_params['TraderConnectivity'], case_params['case_id']
+            case_params['TraderConnectivity'], case_id
         )
     )
 
@@ -170,7 +168,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report Filled", er6, order_2.checkpoint_id, case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
@@ -190,8 +188,8 @@ def execute(case_name, report_id, case_params):
         bca.convert_to_request(
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
-            case_params['case_id'],
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            case_id,
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     execution_report7_params = {
@@ -216,33 +214,32 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckRule(
         bca.create_check_rule(
             "Receive Execution Report Cancelled", er7, cancel_order.checkpoint_id, case_params['TraderConnectivity'],
-            case_params['case_id']
+            case_id
         )
     )
 
-    pre_filter = verifier_pb2.PreFilter(
+    pre_filter = PreFilter(
         fields={
-            'Instrument': infra_pb2.ValueFilter(
-                message_filter=infra_pb2.MessageFilter(
+            'Instrument': ValueFilter(
+                message_filter=MessageFilter(
                     fields={
-                        'Symbol': infra_pb2.ValueFilter(
+                        'Symbol': ValueFilter(
                             simple_filter=execution_report1_params['Instrument']['Symbol']),
-                        'SecurityID': infra_pb2.ValueFilter(
+                        'SecurityID': ValueFilter(
                             simple_filter=execution_report1_params['Instrument']['SecurityID']),
-                        'SecurityIDSource': infra_pb2.ValueFilter(
+                        'SecurityIDSource': ValueFilter(
                             simple_filter=execution_report1_params['Instrument']['SecurityIDSource']),
-                        'SecurityExchange': infra_pb2.ValueFilter(
+                        'SecurityExchange': ValueFilter(
                             simple_filter=execution_report1_params['Instrument']['SecurityExchange']),
                     }
                 )
             ),
-            'header': infra_pb2.ValueFilter(
-                message_filter=infra_pb2.MessageFilter(
+            'header': ValueFilter(
+                message_filter=MessageFilter(
                     fields={
-                        'MsgType': infra_pb2.ValueFilter(simple_filter='0',
-                                                         operation=infra_pb2.FilterOperation.NOT_EQUAL),
-                        'SenderCompID': infra_pb2.ValueFilter(simple_filter=case_params['SenderCompID']),
-                        'TargetCompID': infra_pb2.ValueFilter(simple_filter=case_params['TargetCompID'])
+                        'MsgType': ValueFilter(simple_filter='0', operation=FilterOperation.NOT_EQUAL),
+                        'SenderCompID': ValueFilter(simple_filter=case_params['SenderCompID']),
+                        'TargetCompID': ValueFilter(simple_filter=case_params['TargetCompID'])
                     }
                 )
             )
@@ -254,7 +251,7 @@ def execute(case_name, report_id, case_params):
     verifier.submitCheckSequenceRule(
         bca.create_check_sequence_rule(
             "Receive Execution Reports", pre_filter, message_filters, checkpoint_1,
-            case_params['TraderConnectivity'], case_params['case_id']
+            case_params['TraderConnectivity'], case_id
         )
     )
 

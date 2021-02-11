@@ -83,9 +83,9 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NOS(session: str):
-        return Stubs.simulator.createQuodNOSRule(request=
-                                                 TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session)))
+    def add_NOS(session: str, account: str = 'KEPLER'):
+        return Stubs.simulator.createQuodNOSRule(
+            request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
     @staticmethod
     def add_OCR(session: str):

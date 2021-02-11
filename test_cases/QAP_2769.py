@@ -5,11 +5,10 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request
+from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
 from win_gui_modules.wrappers import set_base, verification, verify_ent
-from win_gui_modules.wrappers import create_order_analysis_events_request, create_verification_request, compare_values
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction, \
+    OrderAnalysisAction
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -49,7 +48,6 @@ def execute(report_id):
         'TargetStrategy': 1011,
         'Instrument': {
             'Symbol': 'FR0010542647_EUR',
-            # 'SecurityID': 'FR0000125460',
             'SecurityID': 'FR0010542647',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
@@ -67,8 +65,13 @@ def execute(report_id):
     }
     symbol_1 = "1062"
     symbol_2 = "3503"
+
+    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
+
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
+        prepare_fe(case_id, session_id, work_dir, username, password)
 
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
@@ -295,13 +298,17 @@ def execute(report_id):
 
         main_order_qty = ExtractionDetail("order_qty", "Qty")
         main_order_exec_pcy = ExtractionDetail("order_exec_pcy", "ExecPcy")
-        main_order_info = OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[main_order_qty, main_order_exec_pcy]
-            ))
-        main_order_details.add_single_order_info(main_order_info)
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+                extraction_details=[main_order_qty, main_order_exec_pcy])
 
-        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+        sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+        lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
+        lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+        main_order_details.add_single_order_info(
+            OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
+
+        request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
         Stubs.win_act.verifyEntities(verification(
             order_info_extraction, "checking order", [
                 verify_ent("Order ExecPcy", main_order_exec_pcy.name, "Synth (Quod LitDark)"),
@@ -310,52 +317,73 @@ def execute(report_id):
 
         # check child orders
 
-        lvl2_length = "subOrders_lv2.length"
-        lit_dark_extr_id = "order.algo_lit_dark"
-        # sub_order_lvl2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
-        # sub_order_lvl2_misc9 = ExtractionDetail("subOrder_1_lv2.Misc9", "Misc9")
-        sub_order_lvl1_exec_pcy = ExtractionDetail("subOrder_lv1.ExecPcy", "ExecPcy")
+        sub_order_id = request[sub_order_id_dt.name]
+        # sub_order_id = "AO1210210080306382001"
+        if not sub_order_id:
+            raise Exception("Sub order id is not returned")
+        logger.debug("Sub order id " + sub_order_id)
 
-        # lvl2_details = OrdersDetails.create(
-        #     info=OrderInfo.create(
-        #         action=ExtractionAction.create_extraction_action(
-        #             extraction_details=[sub_order_lvl2_exec_pcy, sub_order_lvl2_misc9]
-        #         )))
-        # lvl2_details.extract_length(lvl2_length)
-        lvl1_info = OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order_lvl1_exec_pcy)
-            # sub_order_details=lvl2_details
-        )
-        lvl1_details = OrdersDetails.create(info=lvl1_info)
+        extraction_id = "child_orders"
 
-        main_order_info = OrderInfo.create(sub_order_details=lvl1_details)
+        child_order_lvl1_details = OrdersDetails()
+        child_order_lvl1_details.set_default_params(base_request)
+        child_order_lvl1_details.set_extraction_id(extraction_id)
+        child_order_lvl1_details.set_filter(["Order ID", sub_order_id])
+        child_order_lvl1_exec_pcy = ExtractionDetail("child_order_lvl1.ExecPcy", "ExecPcy")
+        child_order_lvl1_ext_action1 = ExtractionAction.create_extraction_action(
+            extraction_detail=child_order_lvl1_exec_pcy)
+        child_order_lvl1_ext_action2 = OrderAnalysisAction.create_extract_event_rows(event_number=1)
 
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(lit_dark_extr_id)
-        main_order_details.set_filter(["ClOrdID", sor_order_params['ClOrdID']])
-        main_order_details.add_single_order_info(main_order_info)
+        child_order_lvl2_1_exec_pcy = ExtractionDetail("child_order_lvl2_1.ExecPcy", "ExecPcy")
+        # Will be implemented
+        # after future fix of extraction empty fields
+        # child_order_lvl2_1_misc9 = ExtractionDetail("child_order_lvl2_1.Misc9", "Misc 9")
+        # child_order_lvl2_1_info = OrderInfo.create(
+        #     action=ExtractionAction.create_extraction_action(
+        #         extraction_details=[child_order_lvl2_1_exec_pcy, child_order_lvl2_1_misc9]
+        #     ))
+        child_order_lvl2_1_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(
+                extraction_detail=child_order_lvl2_1_exec_pcy
+            ))
+        child_order_lvl2_2_exec_pcy = ExtractionDetail("child_order_lvl2_2.ExecPcy", "ExecPcy")
+        # Will be implemented
+        # after future fix of extraction empty fields
+        # child_order_lvl2_2_misc9 = ExtractionDetail("child_order_lvl2_2.Misc9", "Misc 9")
+        # child_order_lvl2_2_info = OrderInfo.create(
+        #     action=ExtractionAction.create_extraction_action(
+        #         extraction_details=[child_order_lvl2_2_exec_pcy, child_order_lvl2_2_misc9]
+        #     ))
+        child_order_lvl2_2_info = OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(
+                extraction_detail=child_order_lvl2_2_exec_pcy
+            ))
+        child_orders_lvl2_details = OrdersDetails.create(
+            order_info_list=[child_order_lvl2_1_info, child_order_lvl2_2_info])
+        length_name = "child_orders_lvl2.length"
+        child_orders_lvl2_details.extract_length(length_name)
 
-        Stubs.win_act_order_book.getOrdersDetails(main_order_details.request())
+        child_order_lvl1_details.add_single_order_info(
+            OrderInfo.create(
+                actions=[child_order_lvl1_ext_action1, child_order_lvl1_ext_action2],
+                sub_order_details=child_orders_lvl2_details
+            ))
+        data = call(Stubs.win_act_order_book.getChildOrdersDetails, child_order_lvl1_details.request())
+        event1_id = data['event1.id']
+        logger.debug(f"Event ID = {event1_id}")
         Stubs.win_act.verifyEntities(
-            verification(lit_dark_extr_id, "checking order", [
-                verify_ent("Sub Lvl 1 ExecPcy", sub_order_lvl1_exec_pcy.name, "Synth (Quod MultiListing)")
-                # verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_lvl2_exec_pcy.name, "DMA"),
-                # verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
+            verification(extraction_id, "Checking child orders", [
+                verify_ent("Child order Lvl 1 ExecPcy", child_order_lvl1_exec_pcy.name, "Synth (Quod MultiListing)"),
+                verify_ent("Child order 1 Lvl 2 ExecPcy", child_order_lvl2_1_exec_pcy.name, "DMA"),
+                # verify_ent("Child order 1 Lvl 2 Misc9", child_order_lvl2_1_misc9.name, event1_id),
+                verify_ent("Child order 2 Lvl 2 ExecPcy", child_order_lvl2_2_exec_pcy.name, "DMA"),
+                # verify_ent("Child order 2 Lvl 2 Misc9", child_order_lvl2_2_misc9.name, event1_id),
+                verify_ent("Child orders Lvl 2 count", length_name, "2")
             ]))
-
-        extraction_id = "getOrderAnalysisEvents"
-        Stubs.win_act.getOrderAnalysisEvents(
-            create_order_analysis_events_request(extraction_id, {"ClOrdID": sor_order_params['ClOrdID']}))
-        vr = create_verification_request("checking order events", extraction_id, "order.algo_lit_dark")
-        compare_values(vr, "Event IDs", "event1.id", "subOrder_1_lv2.Misc9")
-        Stubs.win_act.verifyEntities(vr)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
     sim.removeRule(trade_rule_1)
     sim.removeRule(trade_rule_2)
-
-    close_fe_2(case_id, session_id)
-
+    close_fe(case_id, session_id)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
