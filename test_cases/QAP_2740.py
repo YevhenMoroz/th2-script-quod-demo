@@ -1,18 +1,13 @@
 import logging
 from copy import deepcopy
 from datetime import datetime
-from grpc_modules.event_store_pb2_grpc import EventStoreServiceStub
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
-from grpc_modules.win_act_pb2_grpc import HandWinActStub
-from grpc_modules.order_book_pb2_grpc import OrderBookServiceStub
 from custom.basic_custom_actions import create_event_id
-from custom.basic_custom_actions import create_store_event_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe
 # from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionInfo
-from channels import Channels
 from win_gui_modules.wrappers import *
 
 logger = logging.getLogger(__name__)

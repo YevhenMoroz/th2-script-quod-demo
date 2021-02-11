@@ -6,13 +6,8 @@ from datetime import datetime
 from th2_grpc_act_gui_quod import order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2_grpc import OrderBookServiceStub
 
-from channels import Channels
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction
-
-from grpc_modules.order_book_pb2 import ExtractionInfo
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
-from grpc_modules.win_act_pb2_grpc import HandWinActStub
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2
