@@ -108,21 +108,21 @@ class OrdersDetails:
         return self.orders_details
 
 
-class Criterion:
+class CalcDataContentsRowSelector:
     def __init__(self):
-        self.criterion = order_book_pb2.VerifyGeneratedOrderEvent.Criterion()
+        self.row_selector = order_book_pb2.CalcDataContentsRowSelector()
 
     def set_column_name(self, column_name: str):
-        self.criterion.columnName = column_name
+        self.row_selector.columnName = column_name
 
     def minimize(self):
-        self.criterion.compareType = order_book_pb2.VerifyGeneratedOrderEvent.CompareType.MINIMIZE
+        self.row_selector.compareType = order_book_pb2.CalcDataContentsRowSelector.CompareType.MINIMIZE
 
     def maximize(self):
-        self.criterion.compareType = order_book_pb2.VerifyGeneratedOrderEvent.CompareType.MAXIMIZE
+        self.row_selector.compareType = order_book_pb2.CalcDataContentsRowSelector.CompareType.MAXIMIZE
 
     def build(self):
-        return self.criterion
+        return self.row_selector
 
 
 class VerifyGeneratedOrderEvent:
@@ -132,11 +132,48 @@ class VerifyGeneratedOrderEvent:
     def set_venue(self, venue: str):
         self.verify_action.venue = venue
 
-    def set_criterion(self, criterion: Criterion):
-        self.verify_action.criterion.CopyFrom(criterion.build())
+    def set_row_selector(self, row_selector: CalcDataContentsRowSelector):
+        self.verify_action.rowSelector.CopyFrom(row_selector.build())
+
+    def set_event_number(self, event_number: int):
+        self.verify_action.eventRowNumber.value = event_number
 
     def build(self):
         return self.verify_action
+
+
+class ExtractCalcDataContents:
+    def __init__(self):
+        self.extract_action = order_book_pb2.ExtractCalcDataContents()
+
+    def set_row_selector(self, row_selector: CalcDataContentsRowSelector):
+        self.extract_action.rowSelector.CopyFrom(row_selector.build())
+
+    def set_event_number(self, event_number: int):
+        self.extract_action.eventRowNumber.value = event_number
+
+    def add_detail(self, detail: ExtractionDetail):
+        var = self.extract_action.details.add()
+        var.name = detail.name
+        var.colName = detail.column_name
+
+    def add_details(self, details: list):
+        for detail in details:
+            self.add_detail(detail)
+
+    def build(self):
+        return self.extract_action
+
+
+class ExtractEventRows:
+    def __init__(self):
+        self.extract_action = order_book_pb2.ExtractEventRows()
+
+    def set_event_number(self, event_number: int):
+        self.extract_action.eventRowNumber.value = event_number
+
+    def build(self):
+        return self.extract_action
 
 
 class OrderAnalysisAction:
@@ -144,21 +181,55 @@ class OrderAnalysisAction:
         self.order_analysis_action = order_book_pb2.OrderAnalysisAction()
 
     @staticmethod
-    def create_verify_generate_order_event(venue: str = None, criterion: Criterion = None):
+    def create_verify_generate_order_event(event_number: int = None, venue: str = None,
+                                           row_selector: CalcDataContentsRowSelector = None):
         verify_action = VerifyGeneratedOrderEvent()
+        if event_number is not None:
+            verify_action.set_event_number(event_number)
         if venue is not None:
             verify_action.set_venue(venue)
-        if criterion is not None:
-            verify_action.set_criterion(criterion)
+        if row_selector is not None:
+            verify_action.set_row_selector(row_selector)
 
         result = OrderAnalysisAction()
         result.add_action(verify_action)
 
         return result
 
+    @staticmethod
+    def create_extract_calc_data_contents(event_number: int, row_selector: CalcDataContentsRowSelector,
+                                          detail: ExtractionDetail = None, details: list = None):
+        extract_action = ExtractCalcDataContents()
+        extract_action.set_event_number(event_number)
+        extract_action.set_row_selector(row_selector)
+        if detail is not None:
+            extract_action.add_detail(detail)
+        if details is not None:
+            extract_action.add_details(details)
+
+        result = OrderAnalysisAction()
+        result.add_action(extract_action)
+
+        return result
+
+    @staticmethod
+    def create_extract_event_rows(event_number: int = None):
+        extract_action = ExtractEventRows()
+        if event_number is not None:
+            extract_action.set_event_number(event_number)
+
+        result = OrderAnalysisAction()
+        result.add_action(extract_action)
+
+        return result
+
     def add_action(self, action):
         if isinstance(action, VerifyGeneratedOrderEvent):
             self.order_analysis_action.verifyGeneratedOrderEvent.CopyFrom(action.build())
+        elif isinstance(action, ExtractCalcDataContents):
+            self.order_analysis_action.extractCalcDataContents.CopyFrom(action.build())
+        elif isinstance(action, ExtractEventRows):
+            self.order_analysis_action.extractEventRows.CopyFrom(action.build())
 
     def build(self):
         return self.order_analysis_action
@@ -224,7 +295,7 @@ class OrderInfo:
         order_action = order_book_pb2.OrderAction()
         if isinstance(action, OrderAnalysisAction):
             order_analysis = order_book_pb2.OrderAnalysis()
-            order_analysis.orderAnalysis.append(action.build())
+            order_analysis.orderAnalysisAction.append(action.build())
             order_action.orderAnalysis.CopyFrom(order_analysis)
         elif isinstance(action, ExtractionAction):
             order_action.extractionAction.CopyFrom(action.build())

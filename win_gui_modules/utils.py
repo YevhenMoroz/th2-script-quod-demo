@@ -26,9 +26,7 @@ def get_base_request(session_id: RhSessionID, event_id):
     return EmptyRequest(sessionID=session_id, parentEventId=event_id)
 
 
-def prepare_fe(main_event, session, working_dir: str = Stubs.custom_config['qf_trading_fe_folder'],
-               username: str = Stubs.custom_config['qf_trading_fe_user'],
-               password: str = Stubs.custom_config['qf_trading_fe_password']):
+def prepare_fe(main_event, session, working_dir: str, username: str, password: str):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
     app_details = ApplicationDetails(
@@ -80,6 +78,7 @@ def prepare_fe_2(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
     login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
     login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
     stub.login(login_details_req.build())
+
 
 def get_opened_fe(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
     stub = Stubs.win_act
