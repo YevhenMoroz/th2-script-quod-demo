@@ -174,8 +174,7 @@ def execute(report_id):
         pending_er_params = {
             **reusable_order_params,
             'ClOrdID': sor_order_params['ClOrdID'],
-            'OrderID': '*',
-            # 'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'CumQty': '0',
             'LastPx': '0',
@@ -184,7 +183,6 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'ExecType': 'A',
-            # 'TradingParty': sor_order_params['TradingParty'],
             'NoParty': [{
                 'PartyID': 'gtwquod3',
                 'PartyIDSource': 'D',
@@ -316,9 +314,7 @@ def execute(report_id):
             ]))
 
         # check child orders
-
         sub_order_id = request[sub_order_id_dt.name]
-        # sub_order_id = "AO1210210080306382001"
         if not sub_order_id:
             raise Exception("Sub order id is not returned")
         logger.debug("Sub order id " + sub_order_id)
@@ -335,28 +331,16 @@ def execute(report_id):
         child_order_lvl1_ext_action2 = OrderAnalysisAction.create_extract_event_rows(event_number=1)
 
         child_order_lvl2_1_exec_pcy = ExtractionDetail("child_order_lvl2_1.ExecPcy", "ExecPcy")
-        # Will be implemented
-        # after future fix of extraction empty fields
-        # child_order_lvl2_1_misc9 = ExtractionDetail("child_order_lvl2_1.Misc9", "Misc 9")
-        # child_order_lvl2_1_info = OrderInfo.create(
-        #     action=ExtractionAction.create_extraction_action(
-        #         extraction_details=[child_order_lvl2_1_exec_pcy, child_order_lvl2_1_misc9]
-        #     ))
+        child_order_lvl2_1_misc9 = ExtractionDetail("child_order_lvl2_1.Misc9", "Misc 9")
         child_order_lvl2_1_info = OrderInfo.create(
             action=ExtractionAction.create_extraction_action(
-                extraction_detail=child_order_lvl2_1_exec_pcy
+                extraction_details=[child_order_lvl2_1_exec_pcy, child_order_lvl2_1_misc9]
             ))
         child_order_lvl2_2_exec_pcy = ExtractionDetail("child_order_lvl2_2.ExecPcy", "ExecPcy")
-        # Will be implemented
-        # after future fix of extraction empty fields
-        # child_order_lvl2_2_misc9 = ExtractionDetail("child_order_lvl2_2.Misc9", "Misc 9")
-        # child_order_lvl2_2_info = OrderInfo.create(
-        #     action=ExtractionAction.create_extraction_action(
-        #         extraction_details=[child_order_lvl2_2_exec_pcy, child_order_lvl2_2_misc9]
-        #     ))
+        child_order_lvl2_2_misc9 = ExtractionDetail("child_order_lvl2_2.Misc9", "Misc 9")
         child_order_lvl2_2_info = OrderInfo.create(
             action=ExtractionAction.create_extraction_action(
-                extraction_detail=child_order_lvl2_2_exec_pcy
+                extraction_details=[child_order_lvl2_2_exec_pcy, child_order_lvl2_2_misc9]
             ))
         child_orders_lvl2_details = OrdersDetails.create(
             order_info_list=[child_order_lvl2_1_info, child_order_lvl2_2_info])
@@ -375,9 +359,9 @@ def execute(report_id):
             verification(extraction_id, "Checking child orders", [
                 verify_ent("Child order Lvl 1 ExecPcy", child_order_lvl1_exec_pcy.name, "Synth (Quod MultiListing)"),
                 verify_ent("Child order 1 Lvl 2 ExecPcy", child_order_lvl2_1_exec_pcy.name, "DMA"),
-                # verify_ent("Child order 1 Lvl 2 Misc9", child_order_lvl2_1_misc9.name, event1_id),
+                verify_ent("Child order 1 Lvl 2 Misc9", child_order_lvl2_1_misc9.name, event1_id),
                 verify_ent("Child order 2 Lvl 2 ExecPcy", child_order_lvl2_2_exec_pcy.name, "DMA"),
-                # verify_ent("Child order 2 Lvl 2 Misc9", child_order_lvl2_2_misc9.name, event1_id),
+                verify_ent("Child order 2 Lvl 2 Misc9", child_order_lvl2_2_misc9.name, event1_id),
                 verify_ent("Child orders Lvl 2 count", length_name, "2")
             ]))
 
