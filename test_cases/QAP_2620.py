@@ -8,9 +8,11 @@ from th2_grpc_act_gui_quod.order_book_pb2_grpc import OrderBookServiceStub
 
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Direction
+
+from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2
+from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2, prepare_fe
 from win_gui_modules.wrappers import verification, verify_ent, set_base
 
 logger = logging.getLogger(__name__)
@@ -21,6 +23,13 @@ timeouts = False
 def execute(report_id):
     act = Stubs.fix_act
     verifier = Stubs.verifier
+
+    rule_man = RuleManager()
+    NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
+    NOS2 = rule_man.add_NOS('fix-bs-eq-trqx')
+    OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
+    OCR2 = rule_man.add_OCR('fix-bs-eq-trqx')
+    logger.info(f"Start rules with id's: \n {NOS1}, {NOS2}, {OCR1}, {OCR2}")
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
@@ -226,8 +235,12 @@ def execute(report_id):
         )
     )
 
+    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
+
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id, "qf_trading_fe_folder_305")
+        prepare_fe(case_id, session_id, work_dir, username, password)
 
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
@@ -401,6 +414,12 @@ def execute(report_id):
     # stop all rules
     # for rule in sim_rules:
     #     rules_killer.removeRule(rule)
+
+    rule_man.remove_rule(NOS1)
+    rule_man.remove_rule(NOS2)
+    rule_man.remove_rule(OCR1)
+    rule_man.remove_rule(OCR2)
+    rule_man.print_active_rules()
     close_fe_2(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
