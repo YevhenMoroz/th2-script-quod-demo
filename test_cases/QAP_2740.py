@@ -34,11 +34,11 @@ def execute(report_id):
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     rule_man = RuleManager()
-    NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
-    NOS2 = rule_man.add_NOS('fix-bs-eq-trqx')
+    # NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
+    # NOS2 = rule_man.add_NOS('fix-bs-eq-trqx')
     OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
     OCR2 = rule_man.add_OCR('fix-bs-eq-trqx')
-    logger.info(f"Start rules with id's: \n {NOS1}, {NOS2}, {OCR1}, {OCR2}")
+    logger.info(f"Start rules with id's: \n  {OCR1}, {OCR2}")
 
     set_base(session_id, case_id)
 
@@ -224,8 +224,14 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
+
+        work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+        username = Stubs.custom_config['qf_trading_fe_user_305']
+        password = Stubs.custom_config['qf_trading_fe_password_305']
         if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
+            prepare_fe(case_id, session_id, work_dir, username, password)
+
+            # prepare_fe_2(case_id, session_id)
         try:
             order_info_extraction = "getOrderInfo"
 
@@ -251,26 +257,26 @@ def execute(report_id):
 
             main_order_details.add_single_order_info(
                 OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
-            main_order_info = OrderInfo.create(action=main_order_extraction_action)
+            # main_order_info = OrderInfo.create(action=main_order_extraction_action)
             # main_order_details.add_single_order_info(main_order_info)
 
             request = call(act2.getOrdersDetails, main_order_details.request())
             call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
-                                                         [verify_ent("Order ExecPcy", "order.ExecPcy",
+                                                         [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                                      "Synth (Quod LitDark)"),
-                                                          verify_ent("Order LmtPrice", "order.LmtPrice", "25"),
-                                                          verify_ent("Order Status", "order.status", "Filled")]))
+                                                          verify_ent("Order LmtPrice", main_order_lmt_price.name, "25"),
+                                                          verify_ent("Order Status", main_order_sts.name, "Filled")]))
 
-            order_id = pending_er_params['OrderID']
+            # order_id = pending_er_params['OrderID']
+
             # check child orders
+            order_id = request[main_order_id.name]
             sub_order_id = request[sub_order_id_dt.name]
             # subOrder_lvl_1 = request[sub_order_id_dt.name]
             if not sub_order_id:
                 raise Exception("Sub order id is not returned")
             print("Sub order id " + sub_order_id)
             #
-            # subOrder_lvl_1 = "AO1210209121334382003"
-
             extraction_id = "order.LitDark"
             lvl2_length = "subOrders_lv2.length"
             sub_lvl2_1_ext_action = "order.sublvl2_1"
@@ -351,8 +357,8 @@ def execute(report_id):
     sim.removeRule(trade_rule_1)
     sim.removeRule(trade_rule_2)
 
-    rule_man.remove_rule(NOS1)
-    rule_man.remove_rule(NOS2)
+    # rule_man.remove_rule(NOS1)
+    # rule_man.remove_rule(NOS2)
     rule_man.remove_rule(OCR1)
     rule_man.remove_rule(OCR2)
     rule_man.print_active_rules()
