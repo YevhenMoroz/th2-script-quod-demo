@@ -312,6 +312,8 @@ def execute(report_id):
                                                                      "100"),
                                                           verify_ent("Sub 1 Lvl 2 Price", sub_lv2_1_lmt_price.name,
                                                                      "30"),
+                                                          verify_ent("OA Sub Order 1 Lvl 1 Venue", venue.name,
+                                                                     "PARIS"),
                                                           verify_ent("Compare venues", sub_lv2_1_venue.name, venue),
                                                           verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
                                                           ]))
