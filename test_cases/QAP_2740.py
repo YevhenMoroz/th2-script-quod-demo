@@ -265,6 +265,9 @@ def execute(report_id):
                 OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_det_both))
 
             request = call(act2.getOrdersDetails, main_order_details.request())
+
+            venue = request[sub_lvl1_1_venue_OA.name]
+            logger.info(venue)
             call(common_act.verifyEntities, verification(order_info_extraction, "Checking main order",
                                                          [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                                      "Synth (Quod LitDark)"),
@@ -276,14 +279,7 @@ def execute(report_id):
                                                                      "Synth (Quod MultiListing)"),
                                                           verify_ent("Sub Order 2 Lvl 1 ExecPcy",
                                                                      sub_lvl1_2_exec_pcy.name,
-                                                                     "Synth (Quod DarkPool)"),
-                                                          verify_ent("Sub Order 1 Lvl 1 Venue", sub_lvl1_1_venue.name,
-                                                                     "PARIS"),
-                                                          verify_ent("OA Sub Order 1 Lvl 1 Venue",
-                                                                     sub_lvl1_1_venue_OA.name,
-                                                                     "PARIS"),
-                                                          verify_ent("Compare venues", sub_lvl1_1_venue.name,
-                                                                     request[sub_lvl1_1_venue_OA.name])
+                                                                     "Synth (Quod DarkPool)")
                                                           ]))
 
             # check child orders
@@ -317,6 +313,7 @@ def execute(report_id):
                                                                      "100"),
                                                           verify_ent("Sub 1 Lvl 2 Price", sub_lv2_1_lmt_price.name,
                                                                      "30"),
+                                                          verify_ent("Compare venues", sub_lv2_1_venue.name, venue),
                                                           verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
                                                           ]))
 
