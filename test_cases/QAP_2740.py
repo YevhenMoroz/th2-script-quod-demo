@@ -2,16 +2,14 @@ import logging
 from copy import deepcopy
 from datetime import datetime
 
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
+from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-# from win_gui_modules.order_book_wrappers import OrdersDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, \
     OrderInfo, OrderAnalysisAction, CalcDataContentsRowSelector
-from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe, prepare_fe_2, close_fe_2
-# from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionInfo
+from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe_2
 from win_gui_modules.wrappers import *
 
 logger = logging.getLogger(__name__)
@@ -20,7 +18,6 @@ timeouts = False
 
 
 def execute(report_id):
-    # event_store = EventStoreServiceStub(Channels.event_store_channel)
     act = Stubs.fix_act
     common_act = Stubs.win_act
     act2 = Stubs.win_act_order_book
@@ -34,15 +31,12 @@ def execute(report_id):
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     rule_man = RuleManager()
-    # NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
-    # NOS2 = rule_man.add_NOS('fix-bs-eq-trqx')
     OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
     OCR2 = rule_man.add_OCR('fix-bs-eq-trqx')
     logger.info(f"Start rules with id's: \n  {OCR1}, {OCR2}")
 
     set_base(session_id, case_id)
 
-    order_info_extraction = "getOrderInfo"
 
     case_params = {
         'TraderConnectivity': 'gtwquod3',
@@ -86,7 +80,6 @@ def execute(report_id):
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        # cum_qty=int(case_params['OrderQty'] / 2),
         cum_qty=case_params['OrderQty'],
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={50: 0},
@@ -166,14 +159,12 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': case_params['Instrument'],
             'OrderCapacity': 'A',
-            # 'OrdSubStatus': 'SORPING',
             'Currency': 'EUR',
             'ComplianceID': 'FX5',
             'ClientAlgoPolicyID': 'QA_SORPING',
             'TargetStrategy': case_params['TargetStrategy'],
             'Text': 'QAP-2740'
         }
-        # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
         new_sor_order = act.placeOrderFIX(
             bca.convert_to_request(
                 'Send NewSingleOrder',
@@ -194,7 +185,6 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'ExecType': 'A',
-            # 'TradingParty': sor_order_params['TradingParty'],
             'NoParty': [{
                 'PartyID': 'gtwquod3',
                 'PartyIDSource': 'D',
@@ -231,7 +221,6 @@ def execute(report_id):
         if not Stubs.frontend_is_open:
             prepare_fe(case_id, session_id, work_dir, username, password)
 
-            # prepare_fe_2(case_id, session_id)
         try:
             order_info_extraction = "getOrderInfo"
 
@@ -242,7 +231,7 @@ def execute(report_id):
 
             main_order_exec_pcy = ExtractionDetail("order_exec_pcy", "ExecPcy")
             main_order_lmt_price = ExtractionDetail("order_lmt_price", "LmtPrice")
-            main_order_sts = ExtractionDetail("order_sts", "Sts")
+            main_order_sts = ExtractionDetail("order_sts", "ExecSts")
             main_order_id = ExtractionDetail("order_id", "Order ID")
 
             main_order_extraction_action = ExtractionAction.create_extraction_action(
@@ -252,32 +241,57 @@ def execute(report_id):
                                     main_order_id])
 
             sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-            lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
-            lvl1_details = OrdersDetails.create(info=lvl1_info)
+            sub_lvl1_1_exec_pcy = ExtractionDetail("subOrder_lv1.ExecPcy", "ExecPcy")
+            sub_lvl1_1_venue = ExtractionDetail("subOrder_lv1.Venue", "Venue")
+            sub_lvl1_1_venue_OA = ExtractionDetail("subOrder_lv1_OA.Venues", "Venues")
+            sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
+                extraction_details=[sub_order_id_dt, sub_lvl1_1_exec_pcy, sub_lvl1_1_venue])
+            row_selector = CalcDataContentsRowSelector()
+            row_selector.set_column_name("PriceCost")
+            row_selector.minimize()
+            sub_lvl1_1_ext_action2 = OrderAnalysisAction.create_extract_calc_data_contents(event_number=1,
+                                                                                           row_selector=row_selector,
+                                                                                           detail=sub_lvl1_1_venue_OA)
+
+            sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1, sub_lvl1_1_ext_action2])
+            sub_lvl1_2_exec_pcy = ExtractionDetail("subOrder_lv1_2.ExecPcy", "ExecPcy")
+            sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(
+                extraction_detail=sub_lvl1_2_exec_pcy)
+            sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
+
+            sub_order_det_both = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
 
             main_order_details.add_single_order_info(
-                OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
-            # main_order_info = OrderInfo.create(action=main_order_extraction_action)
-            # main_order_details.add_single_order_info(main_order_info)
+                OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_det_both))
 
             request = call(act2.getOrdersDetails, main_order_details.request())
-            call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
+            call(common_act.verifyEntities, verification(order_info_extraction, "Checking main order",
                                                          [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                                      "Synth (Quod LitDark)"),
                                                           verify_ent("Order LmtPrice", main_order_lmt_price.name, "25"),
                                                           verify_ent("Order Status", main_order_sts.name, "Filled")]))
-
-            # order_id = pending_er_params['OrderID']
+            call(common_act.verifyEntities, verification(order_info_extraction, "Checking Lvl_2 orders",
+                                                         [verify_ent("Sub Order 1 Lvl 1 ExecPcy",
+                                                                     sub_lvl1_1_exec_pcy.name,
+                                                                     "Synth (Quod MultiListing)"),
+                                                          verify_ent("Sub Order 2 Lvl 1 ExecPcy",
+                                                                     sub_lvl1_2_exec_pcy.name,
+                                                                     "Synth (Quod DarkPool)"),
+                                                          verify_ent("Sub Order 1 Lvl 1 Venue", sub_lvl1_1_venue.name,
+                                                                     "PARIS"),
+                                                          verify_ent("OA Sub Order 1 Lvl 1 Venue",
+                                                                     sub_lvl1_1_venue_OA.name,
+                                                                     "PARIS"),
+                                                          verify_ent("Compare venues", sub_lvl1_1_venue.name,
+                                                                     request[sub_lvl1_1_venue_OA.name])
+                                                          ]))
 
             # check child orders
-            order_id = request[main_order_id.name]
             sub_order_id = request[sub_order_id_dt.name]
-            # subOrder_lvl_1 = request[sub_order_id_dt.name]
             if not sub_order_id:
                 raise Exception("Sub order id is not returned")
             print("Sub order id " + sub_order_id)
             #
-            extraction_id = "order.LitDark"
             lvl2_length = "subOrders_lv2.length"
             sub_lvl2_1_ext_action = "order.sublvl2_1"
             sub_lv2_1_venue = ExtractionDetail("subOrder_1_lv2.Venue", "Venue")
@@ -296,7 +310,7 @@ def execute(report_id):
 
             call(act2.getChildOrdersDetails, lvl2_details.request())
 
-            call(common_act.verifyEntities, verification(sub_lvl2_1_ext_action, "checking order",
+            call(common_act.verifyEntities, verification(sub_lvl2_1_ext_action, "Checking Lvl_3 order",
                                                          [verify_ent("Sub 1 Lvl 2 Venue", sub_lv2_1_venue.name,
                                                                      "PARIS"),
                                                           verify_ent("Sub 1 Lvl 2 Qty", sub_lv2_1_qty.name,
@@ -306,46 +320,6 @@ def execute(report_id):
                                                           verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
                                                           ]))
 
-            sub_lvl1_1_exec_pcy = ExtractionDetail("subOrder_lv1.ExecPcy", "ExecPcy")
-            sub_lvl1_1_venue = ExtractionDetail("subOrder_lv1.Venue", "Venue")
-            sub_lvl1_1_venue_OA = ExtractionDetail("subOrder_lv1_OA.Venues", "Venues")
-            sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-                extraction_details=[sub_lvl1_1_exec_pcy, sub_lvl1_1_venue])
-            row_selector = CalcDataContentsRowSelector()
-            row_selector.set_column_name("PriceCost")
-            row_selector.minimize()
-            sub_lvl1_1_ext_action2 = OrderAnalysisAction.create_extract_calc_data_contents(event_number=1,
-                                                                                           row_selector=row_selector,
-                                                                                           detail=sub_lvl1_1_venue_OA)
-
-            sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1, sub_lvl1_1_ext_action2])
-
-            sub_lvl1_2_exec_pcy = ExtractionDetail("subOrder_lv1_2.ExecPcy", "ExecPcy")
-            sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(
-                extraction_detail=sub_lvl1_2_exec_pcy)
-            sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
-
-            sub_order_det_both = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
-
-            main_order_info = OrderInfo.create(sub_order_details=sub_order_det_both)
-            main_order_details = OrdersDetails.create(info=main_order_info)
-            main_order_details.set_default_params(base_request)
-            main_order_details.set_extraction_id(extraction_id)
-            main_order_details.set_filter(["Order ID", order_id])
-
-            request = call(act2.getOrdersDetails, main_order_details.request())
-            call(common_act.verifyEntities, verification(extraction_id, "Checking child orders",
-                                                         [verify_ent("Sub Order 1 Lvl 1 ExecPcy", sub_lvl1_1_exec_pcy.name,
-                                                                     "Synth (Quod MultiListing)"),
-                                                          verify_ent("Sub Order 2 Lvl 1 ExecPcy", sub_lvl1_2_exec_pcy.name,
-                                                                     "Synth (Quod DarkPool)"),
-                                                          verify_ent("Sub Order 1 Lvl 1 Venue", sub_lvl1_1_venue.name,
-                                                                     "PARIS"),
-                                                          verify_ent("OA Sub Order 1 Lvl 1 Venue", sub_lvl1_1_venue_OA.name,
-                                                                     "PARIS"),
-                                                          verify_ent("Compare venues", sub_lvl1_1_venue.name,
-                                                                     request[sub_lvl1_1_venue_OA.name])
-                                                          ]))
         except Exception:
             logger.error("Error execution", exc_info=True)
 
@@ -356,13 +330,9 @@ def execute(report_id):
 
     sim.removeRule(trade_rule_1)
     sim.removeRule(trade_rule_2)
-
-    # rule_man.remove_rule(NOS1)
-    # rule_man.remove_rule(NOS2)
     rule_man.remove_rule(OCR1)
     rule_man.remove_rule(OCR2)
     rule_man.print_active_rules()
-    # close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
