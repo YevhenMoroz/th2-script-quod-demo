@@ -37,7 +37,6 @@ def execute(report_id):
 
     set_base(session_id, case_id)
 
-
     case_params = {
         'TraderConnectivity': 'gtwquod3',
         'TraderConnectivity2': 'fix-bs-eq-paris',
