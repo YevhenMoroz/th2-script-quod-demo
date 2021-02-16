@@ -1,17 +1,19 @@
 {
-  "target_server_win": "exactpro_ws28",
+  "target_server_win": "exactpro_ws103",
   "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder_305": "C:\\QUOD305\\Quod_Financial_Trader_Front-end_64bits_20201202_5.1.119.132_rev164051_305",
-  "qf_trading_fe_folder_303": "C:\\QUOD303\\Quod_Financial_Trader_Front-end_64bits_20201125_5.1.119.132_rev163289_303",
+  "qf_trading_fe_folder_305": "C:\\Quod_FEs\\305\\Quod_Financial_Trader_Front-end_64bits_20201202_5.1.119.132_rev164051",
+  "qf_trading_fe_folder_303": "C:\\Quod_FEs\\303\\Quod_Financial_Trader_Front-end_64bits_20201125_5.1.119.132_rev163289",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user": "ppushkov_auto",
-  "qf_trading_fe_password": "ppushkov_auto",
+  "qf_trading_fe_user_305": "HD3",
+  "qf_trading_fe_password_305": "HD3",
+  "qf_trading_fe_user_303": "HD4",
+  "qf_trading_fe_password_303": "HD4",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) ",
-  "qf_trading_fe_main_win_name": "Quod Financial - Quod site"
+  "qf_trading_fe_main_win_name": "Quod Financial - Quod site",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "
 }
