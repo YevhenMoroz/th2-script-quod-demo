@@ -1,9 +1,8 @@
-from custom import basic_custom_actions as bca
-from grpc_modules.infra_pb2 import Direction, ConnectionID
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
-from grpc_modules.quod_simulator_pb2 import RequestMDRefID
-from stubs import Stubs
 
+from custom import basic_custom_actions as bca
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
+from stubs import Stubs
 
 timeouts = True
 
