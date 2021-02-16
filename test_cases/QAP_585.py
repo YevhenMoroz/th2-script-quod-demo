@@ -1,34 +1,37 @@
 import logging
-from custom import basic_custom_actions as bca
-from stubs import Stubs
-
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call
-from win_gui_modules.wrappers import set_base, verification, verify_ent
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.rfq_wrappers import RFQTileDetails, RFQTileOrderDetails, RFQTileOrderSide, RFQTilePanelDetails
 
 import rule_management as rm
+from custom import basic_custom_actions as bca
+from stubs import Stubs
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, \
+    RFQTilePanelDetails, PlaceRFQRequest
+from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def send_rfq(base_request, service):
-    details = RFQTileDetails(base=base_request)
-    call(service.createRFQ, details.request())
+def create_or_get_rfq(base_request, service):
+    call(service.createRFQ, base_request.build())
 
 
-def send_order(base_request, service, venue):
-    details = RFQTileOrderDetails(base=base_request)
-    details.set_venue(venue)
-    details.set_action(RFQTileOrderSide.BUY)
-    call(service.sendRFQOrder, details.request())
+def send_order(base_request, service):
+    call(service.sendRFQOrder, base_request.build())
+
+
+def place_order(base_request, service, venue):
+    rfq_request = PlaceRFQRequest(details=base_request)
+    rfq_request.set_venue(venue)
+    rfq_request.set_action(RFQTileOrderSide.BUY)
+    call(service.placeRFQOrder, rfq_request.build())
 
 
 def cancel_rfq(base_request, service):
-    details = RFQTilePanelDetails(base=base_request)
-    call(service.cancelRFQ, details.request())
+    call(service.cancelRFQ, base_request.build())
 
 
 def check_qrb(ex_id, base_request, service, act):
@@ -100,41 +103,43 @@ def execute(report_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-    rfq_service = Stubs.win_act_rfq_service
+    ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
+    base_rfq_details = BaseTileDetails(base=case_base_request)
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
 
     try:
         # Steps 1-2
-        send_rfq(case_base_request, rfq_service)
-        check_qrb("QRB_0", case_base_request, rfq_service, common_act)
-        qb_quote_id = check_qb("QB_0", case_base_request, rfq_service, common_act, quote_owner)
+        create_or_get_rfq(base_rfq_details, ar_service)
+        send_order(base_rfq_details, ar_service)
+        check_qrb("QRB_0", case_base_request, ar_service, common_act)
+        qb_quote_id = check_qb("QB_0", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 3
-        send_order(case_base_request, rfq_service, case_venue)
-        cancel_rfq(case_base_request, rfq_service)
+        place_order(base_rfq_details, ar_service, case_venue)
+        cancel_rfq(case_base_request, ar_service)
         check_ob("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # Step 4
-        send_rfq(case_base_request, rfq_service)
-        check_qrb("QRB_1", case_base_request, rfq_service, common_act)
-        qb_quote_id = check_qb("QB_1", case_base_request, rfq_service, common_act, quote_owner)
+        send_order(base_rfq_details, ar_service)
+        check_qrb("QRB_1", case_base_request, ar_service, common_act)
+        qb_quote_id = check_qb("QB_1", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 5
-        send_order(case_base_request, rfq_service, case_venue)
-        cancel_rfq(case_base_request, rfq_service)
+        place_order(base_rfq_details, ar_service, case_venue)
+        cancel_rfq(base_rfq_details, ar_service)
         check_ob("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # Step 7
-        send_rfq(case_base_request, rfq_service)
-        check_qrb("QRB_2", case_base_request, rfq_service, common_act)
-        qb_quote_id = check_qb("QB_2", case_base_request, rfq_service, common_act, quote_owner)
+        send_order(base_rfq_details, ar_service)
+        check_qrb("QRB_2", case_base_request, ar_service, common_act)
+        qb_quote_id = check_qb("QB_2", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 8
-        send_order(case_base_request, rfq_service, case_venue)
-        cancel_rfq(case_base_request, rfq_service)
+        place_order(base_rfq_details, ar_service, case_venue)
+        cancel_rfq(case_base_request, ar_service)
         check_ob("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         close_fe_2(case_id, session_id)
