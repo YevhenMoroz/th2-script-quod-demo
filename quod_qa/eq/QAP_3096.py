@@ -18,6 +18,7 @@ def execute(report_id):
     act = Stubs.fix_act
     verifier = Stubs.verifier
     simulator = Stubs.simulator
+
     NOS = Stubs.simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
         connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
     ))
