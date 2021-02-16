@@ -6,20 +6,16 @@ from th2_grpc_common.common_pb2 import ConnectionID
 class FixManager:
 
 
-    def __init__(self, TraderConnectivity, case_name, case_id):
+    def __init__(self, TraderConnectivity, case_id):
         self.TraderConnectivity = TraderConnectivity
-        self.case_name = case_name
         self.case_id = case_id
         self.act = Stubs.fix_act
-        self.verifier = Stubs.verifier
         self.simulator = Stubs.simulator
 
 
     def get_case_id(self):
         return self.case_id
 
-    def get_case_name(self):
-        return self.case_name
 
     def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle'):
 

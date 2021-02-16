@@ -8,6 +8,7 @@ from th2_grpc_common.common_pb2 import ConnectionID, Direction
 
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -17,10 +18,10 @@ timeouts = True
 
 def execute(report_id):
 
-    fix_manager_fh_trqx = FixManager('fix-fh-eq-trqx', 'test', bca.create_event("test", report_id))
-    fix_manager_qtwquod5 = FixManager('gtwquod5', 'test', bca.create_event("test", report_id))
-
-
+    case_id = bca.create_event("Test", report_id)
+    fix_manager_fh_trqx = FixManager('fix-fh-eq-trqx', case_id)
+    fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
+    fix_verifier = FixVerifier('gtwquod5', case_id)
 
     # NOS = Stubs.simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
     #     connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')
@@ -123,13 +124,27 @@ def execute(report_id):
             "PegPriceType": "5"
         }
         fix_message_peg = FixMessage(sor_order_params)
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_peg)
+        response = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_peg)
         # step 2
         # send MD with BBID 10 BASK 11
         fix_message_md_update = FixMessage(mdfr_params)
         fix_manager_fh_trqx.Send_MarketDataFullSnapshotRefresh_FixMessage(fix_message_md_update, symbol)
 
-
+        execution_report1_params = {
+            'ClOrdID': sor_order_params['ClOrdID'],
+            'OrderID': response.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'LastQty': '0',
+            'QtyType': '0',
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'ExecType': 'A',
+            'LeavesQty': sor_order_params['OrderQty'],
+            'Instrument': sor_order_params['Instrument']
+        }
+        fix_verifier.CheckExecutionReport(execution_report1_params, response.checkpoint_id)
 
 
     except Exception:

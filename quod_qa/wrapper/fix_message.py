@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 class FixMessage:
 
     def __init__(self, parameters=''):
-        self.parameters.update(parameters)
+        self.parameters = parameters
 
     def get_ClOrdID(self):
         return self.parameters['parameters']
@@ -21,6 +21,6 @@ class FixMessage:
     def get_ClOrdID(self):
         return self.parameters['ClOrdID']
 
-    def addClordID(self):
+    def add_random_ClOrdID(self):
         self.parameters.update({'ClOrdID': bca.client_orderid(9)})
 
