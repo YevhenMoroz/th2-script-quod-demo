@@ -46,8 +46,8 @@ def execute(report_id):
 
         commissions_details = order_ticket.add_commissions_details()
         commissions_details.toggle_manual()
-        commissions_details.add_commission(basis="Absolution", rate="5")
-        commissions_details.add_commission(basis="Absolution", rate="7")
+        commissions_details.add_commission(basis="Absolute", rate="5")
+        commissions_details.add_commission(basis="Absolute", rate="7")
 
         new_order_details = NewOrderDetails()
         new_order_details.set_lookup_instr(lookup)
