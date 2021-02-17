@@ -1,9 +1,9 @@
-from utils.base_test import BaseTest
-from utils.client_pricing_wrappers import RatesTileDetails, ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
-    ExtractRatesTileValuesRequest, ExtractRatesTileTableValuesRequest
-from utils.order_book_wrappers import ExtractionDetail
-from utils.services import Services
-from utils.wrappers import set_base
+from win_gui_modules.base_test import BaseTest
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
+    ExtractRatesTileTableValuesRequest, ExtractRatesTileValues
+from win_gui_modules.order_book_wrappers import ExtractionDetail
+from win_gui_modules.services import Services
+from win_gui_modules.wrappers import set_base
 
 
 class ClientPricingRatesTileExample(BaseTest):
@@ -19,7 +19,7 @@ class ClientPricingRatesTileExample(BaseTest):
         cp_service = self._services.cp_operations_service
 
         # create rates tile order
-        base_details = RatesTileDetails(base=self.get_base_request())
+        base_details = BaseTileDetails(base=self.get_base_request())
         call(cp_service.createRatesTile, base_details.build())
 
         # modify rates tile order
@@ -43,15 +43,15 @@ class ClientPricingRatesTileExample(BaseTest):
         call(cp_service.modifyRatesTile, modify_request.build())
 
         # extract rates tile values
-        extract_request = ExtractRatesTileValuesRequest(details=base_details)
-        extract_request.extract_spread()
-        extract_request.extract_pips()
-        extract_request.extract_value_date()
-        extract_request.extract_ask_large_value()
-        extract_request.extract_bid_large_value()
-        extract_request.extract_ask_quantity()
-        extract_request.extract_bid_quantity()
-        extract_request.set_extraction_id("ExtractionId0")
+        extract_request = ExtractRatesTileValues(details=base_details)
+        extract_request.extract_spread("ratesTile.spread")
+        extract_request.extract_pips("ratesTile.pips")
+        extract_request.extract_value_date("ratesTile.valueDate")
+        extract_request.extract_bid_quantity("ratesTile.bidQuantity")
+        extract_request.extract_ask_quantity("ratesTile.askQuantity")
+        extract_request.extract_ask_large_value("ratesTile.askLargeValue")
+        extract_request.extract_bid_large_value("ratesTile.bidLargeValue")
+        extract_request.set_extraction_id("extrId0")
         call(cp_service.extractRateTileValues, extract_request.build())
 
         # extract rates tile table values
