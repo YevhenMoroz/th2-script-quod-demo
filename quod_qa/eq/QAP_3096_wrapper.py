@@ -9,7 +9,6 @@ from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -108,7 +107,7 @@ def execute(report_id):
             'TimeInForce': "0",
             'Price': "10.6",
             'OrdType': "2",
-            'ClOrdID': bca.client_orderid(9),
+            # 'ClOrdID': bca.client_orderid(9),
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': {
                 'Symbol': 'IT0000076189_EUR',
@@ -144,7 +143,21 @@ def execute(report_id):
             'LeavesQty': sor_order_params['OrderQty'],
             'Instrument': sor_order_params['Instrument']
         }
-        fix_verifier.CheckExecutionReport(execution_report1_params, response.checkpoint_id)
+        # fix_verifier.CheckExecutionReport(execution_report1_params, response.checkpoint_id)
+        reject_params = {
+            'ClOrdID': sor_order_params['ClOrdID'],
+            'TransactTime': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'LastQty': '0',
+            'QtyType': '0',
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'ExecType': 'A',
+            'LeavesQty': sor_order_params['OrderQty'],
+            'Instrument': sor_order_params['Instrument']
+        }
+        fix_verifier.CheckReject(reject_params, response.checkpoint_id)
 
 
     except Exception:
