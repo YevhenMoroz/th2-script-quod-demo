@@ -26,7 +26,7 @@ def execute(report_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    rfq_service = Stubs.win_act_rfq_service
+    ar_service = Stubs.win_act_aggregated_rates_service
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
@@ -38,7 +38,7 @@ def execute(report_id):
         quote_request_book_ext_field = ExtractionDetail("quoteRequestBook.id", "Id")
         quote_request_book.add_extraction_detail(quote_request_book_ext_field)
         # quote_request_book.add_extraction_details([quote_request_book_ext_field])
-        call(rfq_service.getQuoteRequestBookDetails, quote_request_book.request())
+        call(ar_service.getQuoteRequestBookDetails, quote_request_book.request())
 
         # check quote book
         quote_book = QuoteDetailsRequest(base=base_request)
@@ -47,7 +47,7 @@ def execute(report_id):
         quote_book_ext_field = ExtractionDetail("quoteBook.id", "Id")
         quote_book.add_extraction_detail(quote_book_ext_field)
         # quote_request_book.add_extraction_details([quote_book_ext_field])
-        call(rfq_service.getQuoteBookDetails, quote_book.request())
+        call(ar_service.getQuoteBookDetails, quote_book.request())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

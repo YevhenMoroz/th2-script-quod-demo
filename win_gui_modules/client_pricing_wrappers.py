@@ -1,39 +1,20 @@
-from th2_grpc_act_gui_quod import cp_operations_pb2
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from enum import Enum
 
+from th2_grpc_act_gui_quod import cp_operations_pb2
+
+from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
-class RatesTileDetails:
-    def __init__(self, base: EmptyRequest = None, window_index: int = None):
-        if base is not None and window_index is not None:
-            self.base_details = cp_operations_pb2.RatesTileDetails(base=base, windowIndex=window_index)
-        elif base is not None:
-            self.base_details = cp_operations_pb2.RatesTileDetails(base=base)
-        elif window_index is not None:
-            self.base_details = cp_operations_pb2.RatesTileDetails(windowIndex=window_index)
-        else:
-            self.base_details = cp_operations_pb2.RatesTileDetails()
-
-    def set_window_index(self, index: int):
-        self.base_details.windowIndex = index
-
-    def set_default_params(self, base_request):
-        self.base_details.base.CopyFrom(base_request)
-
-    def build(self):
-        return self.base_details
-
-
 class ModifyRatesTileRequest:
-    def __init__(self, details: RatesTileDetails = None):
+    def __init__(self, details: BaseTileDetails = None):
         if details is not None:
-            self.modify_request = cp_operations_pb2.ModifyRatesTileRequest(details=details.build())
+            self.modify_request = cp_operations_pb2.ModifyRatesTileRequest(data=details.build())
         else:
             self.modify_request = cp_operations_pb2.ModifyRatesTileRequest()
 
-    def set_details(self, details: RatesTileDetails):
-        self.modify_request.details.CopyFrom(details.build())
+    def set_details(self, details: BaseTileDetails):
+        self.modify_request.data.CopyFrom(details.build())
 
     def set_instrument(self, instrument: str):
         self.modify_request.instrument = instrument
@@ -88,14 +69,14 @@ class ModifyRatesTileRequest:
 
 
 class PlaceRatesTileOrderRequest:
-    def __init__(self, details: RatesTileDetails = None):
+    def __init__(self, details: BaseTileDetails = None):
         if details is not None:
-            self.place_order_request = cp_operations_pb2.PlaceRatesTileOrderRequest(details=details.build())
+            self.place_order_request = cp_operations_pb2.PlaceRatesTileOrderRequest(data=details.build())
         else:
             self.place_order_request = cp_operations_pb2.PlaceRatesTileOrderRequest()
 
-    def set_details(self, details: RatesTileDetails):
-        self.place_order_request.details.CopyFrom(details.build())
+    def set_details(self, details: BaseTileDetails):
+        self.place_order_request.data.CopyFrom(details.build())
 
     def buy(self):
         self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.BUY
@@ -131,53 +112,69 @@ class PlaceRatesTileOrderRequest:
         return self.place_order_request
 
 
-class ExtractRatesTileValuesRequest:
-    def __init__(self, details: RatesTileDetails = None):
+class RatesTileValues(Enum):
+    VALUE_DATE = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.VALUE_DATE
+    BID_LARGE_VALUE = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BID_LARGE_VALUE
+    ASK_QUANTITY = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_QUANTITY
+    BID_QUANTITY = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BID_QUANTITY
+    SPREAD = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.SPREAD
+    ASK_LARGE_VALUE = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_LARGE_VALUE
+    PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.PIPS
+
+
+class ExtractRatesTileValues:
+    def __init__(self, details: BaseTileDetails = None):
         if details is not None:
-            self.request = cp_operations_pb2.ExtractRatesTileValuesRequest(details=details.build())
+            self.request = cp_operations_pb2.ExtractRatesTileValuesRequest(data=details.build())
         else:
             self.request = cp_operations_pb2.ExtractRatesTileValuesRequest()
 
-    def set_details(self, details: RatesTileDetails):
-        self.request.details.CopyFrom(details.build())
+    def set_details(self, details: BaseTileDetails):
+        self.request.data.CopyFrom(details.build())
 
     def set_extraction_id(self, extraction_id: str):
         self.request.extractionId = extraction_id
 
-    def extract_value_date(self):
-        self.request.valueDate = True
+    def extract_value_date(self, name: str):
+        self.extract_value(RatesTileValues.VALUE_DATE, name)
 
-    def extract_bid_large_value(self):
-        self.request.bidLargeValue = True
+    def extract_bid_large_value(self, name: str):
+        self.extract_value(RatesTileValues.BID_LARGE_VALUE, name)
 
-    def extract_bid_quantity(self):
-        self.request.topOfBookCumBidQuantity = True
+    def extract_ask_quantity(self, name: str):
+        self.extract_value(RatesTileValues.ASK_QUANTITY, name)
 
-    def extract_ask_quantity(self):
-        self.request.topOfBookCumAskQuantity = True
+    def extract_bid_quantity(self, name: str):
+        self.extract_value(RatesTileValues.BID_QUANTITY, name)
 
-    def extract_spread(self):
-        self.request.topOfBookSpread = True
+    def extract_spread(self, name: str):
+        self.extract_value(RatesTileValues.SPREAD, name)
 
-    def extract_ask_large_value(self):
-        self.request.askLargeValue = True
+    def extract_ask_large_value(self, name: str):
+        self.extract_value(RatesTileValues.ASK_LARGE_VALUE, name)
 
-    def extract_pips(self):
-        self.request.pips = True
+    def extract_pips(self, name: str):
+        self.extract_value(RatesTileValues.PIPS, name)
+
+    def extract_value(self, field: RatesTileValues, name: str):
+        extracted_value = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.request.extractedValues.append(extracted_value)
 
     def build(self):
         return self.request
 
 
 class ExtractRatesTileTableValuesRequest:
-    def __init__(self, details: RatesTileDetails = None):
+    def __init__(self, details: BaseTileDetails = None):
         if details is not None:
-            self.request = cp_operations_pb2.ExtractRatesTileTableValuesRequest(details=details.build())
+            self.request = cp_operations_pb2.ExtractRatesTileTableValuesRequest(data=details.build())
         else:
             self.request = cp_operations_pb2.ExtractRatesTileTableValuesRequest()
 
-    def set_details(self, details: RatesTileDetails):
-        self.request.details.CopyFrom(details.build())
+    def set_details(self, details: BaseTileDetails):
+        self.request.data.CopyFrom(details.build())
 
     def set_extraction_id(self, extraction_id: str):
         self.request.extractionId = extraction_id
