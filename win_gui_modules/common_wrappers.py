@@ -1,3 +1,4 @@
+from th2_grpc_act_gui_quod import order_ticket_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
 
 
@@ -20,3 +21,22 @@ class BaseTileDetails:
 
     def build(self):
         return self.base_details
+
+
+class CommissionsDetails:
+    def __init__(self, commission_details: order_ticket_pb2.CommissionsDetails()):
+        self.request = commission_details
+
+    def toggle_manual(self):
+        self.request.toggleManual = True
+
+    def add_commission(self, basis: str = None, rate: str = None, amount: str = None, currency: str = None):
+        var = self.request.commissionsTableParams.add()
+        if basis is not None:
+            var.basis = basis
+        if rate is not None:
+            var.rate = rate
+        if amount is not None:
+            var.amount = amount
+        if currency is not None:
+            var.currency = currency
