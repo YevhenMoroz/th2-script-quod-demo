@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from pathlib import Path
+
+from custom import basic_custom_actions as bca
+from quod_qa.fx.default_params_fx import defauot_quote_params
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -8,22 +11,18 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(case_name, report_id, case_params):
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
-
-    seconds, nanos = bca.timestamps()  # Store case start time
+def execute(report_id, case_params):
+    case_name = Path(__file__).name
     case_id = bca.create_event(case_name, report_id)
 
-    reusable_params = {
-        'Account': case_params['Account'],
-        'Side': 1,
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
-            },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0',
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
+    seconds, nanos = bca.timestamps()  # Store case start time
+
+    reusable_params = defauot_quote_params
+    reusable_params['Account'] = case_params['Account']
+    reusable_params.pop('OrderQty')
+    useful_params = {
         'RfqQty': '500000',
         'OrderQty': '1000000'
         }
@@ -34,7 +33,7 @@ def execute(case_name, report_id, case_params):
             **reusable_params,
             'Currency': reusable_params['Instrument']['Symbol'][0:3],
             'QuoteType': '1',
-            'OrderQty': reusable_params['RfqQty'],
+            'OrderQty': useful_params['RfqQty'],
             'OrdType': 'D',
             'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
             'TransactTime': (datetime.utcnow().isoformat())}]
@@ -54,7 +53,7 @@ def execute(case_name, report_id, case_params):
         'QuoteReqID': rfq_params['QuoteReqID'],
         'Product': 4,
         'OfferPx': '35.001',
-        'OfferSize': reusable_params['RfqQty'],
+        'OfferSize': useful_params['RfqQty'],
         'QuoteID': '*',
         'OfferSpotRate': '35.001',
         'ValidUntilTime': '*',
@@ -77,7 +76,7 @@ def execute(case_name, report_id, case_params):
         'ClOrdID': bca.client_orderid(9),
         'OrdType': 'D',
         'TransactTime': (datetime.utcnow().isoformat()),
-        'OrderQty': reusable_params['OrderQty'],
+        'OrderQty': useful_params['OrderQty'],
         'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
         'Product': 4,
         'TimeInForce': 4
@@ -99,12 +98,13 @@ def execute(case_name, report_id, case_params):
         'TimeInForce': order_params['TimeInForce'],
         'OrdRejReason': '99',
         'Instrument': {
-            'Symbol': 'EUR/USD',
+            'Symbol': reusable_params['Instrument']['Symbol'],
             'SecurityIDSource': 8,
-            'SecurityID': 'EUR/USD',
+            'SecurityID': reusable_params['Instrument']['Symbol'],
             'SecurityExchange': 'XQFX'
             },
-        'Text': "11605 'OrdQty' (1000000) doesn't match the quote's 'OfferSize' (500000)",
+        'Text': "11605 'OrdQty' ({}) doesn't match the quote's 'OfferSize' ({})".
+            format(useful_params['OrderQty'], useful_params['RfqQty']),
 
         }
 
