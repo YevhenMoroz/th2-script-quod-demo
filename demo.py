@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases import QAP_585
+from test_cases import QAP_1552
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -14,12 +14,10 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('QUOD demo ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('kbrit tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
-
     test_cases = {
-
         'RFQ_example': {
             **channels,
             'case_id': bca.create_event_id(),
@@ -27,11 +25,11 @@ def test_run():
             'Account': 'MMCLIENT1',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
+            }
         }
-    }
 
-     try:
-         QAP_585.execute('RFQ_example', report_id, test_cases['RFQ_example'])
+    try:
+        QAP_1552.execute(report_id, test_cases['RFQ_example'])
     except Exception:
         logging.error("Error execution", exc_info=True)
 

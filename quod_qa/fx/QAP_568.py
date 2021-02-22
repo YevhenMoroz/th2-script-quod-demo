@@ -3,7 +3,8 @@ import logging
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, \
+    RFQTilePanelDetails, PlaceRFQRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -92,7 +93,7 @@ def execute(report_id):
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
 
-    case_name = "QAP-585"
+    case_name = "QAP-568"
     quote_owner = "kbrit"
     case_instr_type = "Spot"
     case_venue = "HSB"
@@ -145,7 +146,7 @@ def execute(report_id):
 
         close_fe_2(case_id, session_id)
 
-    except Exception as e:
+    except Exception :
         logging.error("Error execution", exc_info=True)
 
     for rule in [RFQ, TRFQ]:
