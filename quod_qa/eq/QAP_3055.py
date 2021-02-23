@@ -46,6 +46,11 @@ def execute(report_id):
 
     }
     fix_message_iceberg = FixMessage(iceberg_params)
+    fix_message_iceberg.add_random_ClOrdID()
     fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_iceberg)
 
     iceberg_modify_parms = deepcopy(iceberg_params)
+    # iceberg_modify_parms['OrigClOrdID'] = iceberg_modify_parms('ClOrdID')
+    fix_modify = FixMessage(iceberg_modify_parms)
+
+    fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify)

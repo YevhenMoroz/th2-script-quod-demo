@@ -6,11 +6,11 @@ class FixMessage:
     def __init__(self, parameters=''):
         self.parameters = parameters
 
-    def get_ClOrdID(self):
-        return self.parameters['parameters']
-
     def get_parameters(self):
         return self.parameters
+
+    def get_parameter(self, parametr_name):
+        return self.parameters[parametr_name]
 
     def add_tag(self, parameter):
         self.parameters.update(parameter)
