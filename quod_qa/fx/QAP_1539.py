@@ -1,6 +1,5 @@
 import logging
-import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -11,18 +10,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
+# FIXME: add check QuoteRequest terminated on FE
+# FIXME: raplace method placeQuoteFIX() by sendQuoteCancel()
 def execute(report_id, case_params):
     case_name = Path(__file__).name
     case_id = bca.create_event(case_name, report_id)
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    ttl = 30
+
     seconds, nanos = bca.timestamps()  # Store case start time
 
     reusable_params = defauot_quote_params
     reusable_params['Account'] = case_params['Account']
+    ttl = 100
 
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
@@ -32,7 +33,7 @@ def execute(report_id, case_params):
             'QuoteType': '1',
             'OrderQty': reusable_params['OrderQty'],
             'OrdType': 'D',
-            'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
+            'ExpireTime': (datetime.now() + timedelta(seconds=ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
             'TransactTime': (datetime.utcnow().isoformat())}]
         }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
@@ -66,22 +67,21 @@ def execute(report_id, case_params):
                     )
             )
 
-    time.sleep(ttl)
     quote_cancel_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD5',
         'QuoteCancelType': '5'
         }
+    logger.debug("Send new order with ClOrdID = {}".format(quote_cancel_params['QuoteReqID']))
 
-    verifier.submitCheckRule(
-            bca.create_check_rule(
-                    "test",
-                    bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
-                    send_rfq.checkpoint_id,
+    act.placeQuoteFIX(
+            bca.convert_to_request(
+                    'Trying to send QuoteCancel',
                     case_params['TraderConnectivity'],
-                    case_id
-                    )
-            )
+                    case_id,
+                    bca.message_to_grpc('QuoteCancel', quote_cancel_params, case_params['TraderConnectivity'])
+                    ))
+
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))

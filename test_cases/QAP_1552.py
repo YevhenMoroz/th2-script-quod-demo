@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
 
 
@@ -33,11 +34,7 @@ def execute(report_id, case_params):
     useful_params = {
                     'RfqQty': '500000'
         }
-    messages = {
-        'ExecReportPending': 'Receive ExecutionReport (pending)',
-        'SendQuote': 'Send QuoteRequest',
-        'ReceiveQuote': 'Receive Quote message'
-        }
+
     # mdu_params = {
     #     # "MDReqID": simulator.getMDRefIDForConnection(
     #     #     request=RequestMDRefID(
@@ -91,7 +88,7 @@ def execute(report_id, case_params):
 
     send_rfq = act.placeQuoteFIX(
             bca.convert_to_request(
-                    messages['SendQuote'],
+                    text_messages['SendQR'],
                     case_params['TraderConnectivity'],
                     case_id,
                     bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
@@ -111,7 +108,7 @@ def execute(report_id, case_params):
 
     verifier.submitCheckRule(
             bca.create_check_rule(
-                    messages['ReceiveQuote'],
+                    text_messages['ReceiveQuote'],
                     bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
                     send_rfq.checkpoint_id,
                     case_params['TraderConnectivity'],
@@ -174,7 +171,7 @@ def execute(report_id, case_params):
 
     verifier.submitCheckRule(
             bca.create_check_rule(
-                    messages['ExecReportPending'],
+                    text_messages['ExecReportPending'],
                     bca.filter_to_grpc('ExecutionReport', er_pending_params, ['ClOrdID', 'OrdStatus', 'ExecType']),
                     send_order.checkpoint_id,
                     case_params['TraderConnectivity'],

@@ -13,6 +13,7 @@ timeouts = True
 
 
 def execute(report_id, case_params):
+    # FIXME: add step 4 "ORS terminates quote request and notifies the FE"
     case_name = Path(__file__).name
     case_id = bca.create_event(case_name, report_id)
 
@@ -67,19 +68,12 @@ def execute(report_id, case_params):
                     )
             )
 
-    time.sleep(ttl)
     quote_cancel_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD5',
         'QuoteCancelType': '5'
         }
-        # 'MsgType': 'Z',
-        # 'TransactTime': (datetime.utcnow().isoformat()),
-        # 'OrderQty': reusable_params['OrderQty'],
-        # 'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        # 'Product': 4,
-        # 'TimeInForce': 4
 
     verifier.submitCheckRule(
             bca.create_check_rule(
@@ -90,33 +84,6 @@ def execute(report_id, case_params):
                     case_id
                     )
             )
-
-    # er_pending_params = {
-    #     'Side': reusable_params['Side'],
-    #     'Account': reusable_params['Account'],
-    #     'ClOrdID': order_params['ClOrdID'],
-    #     'OrderQty': order_params['OrderQty'],
-    #     'TimeInForce': order_params['TimeInForce'],
-    #     'OrdRejReason': '99',
-    #     'Instrument': {
-    #         'Symbol': 'EUR/USD',
-    #         'SecurityIDSource': 8,
-    #         'SecurityID': 'EUR/USD',
-    #         'SecurityExchange': 'XQFX'
-    #         },
-    #     'Text': "11605 'OrdQty' (1000000) doesn't match the quote's 'OfferSize' (500000)",
-    #
-    #     }
-
-    # verifier.submitCheckRule(
-    #         bca.create_check_rule(
-    #                 text_messages['erPending'],
-    #                 bca.filter_to_grpc('ExecutionReport', er_pending_params, ['ClOrdID', 'OrdStatus', 'ExecType']),
-    #                 send_order.checkpoint_id,
-    #                 case_params['TraderConnectivity'],
-    #                 case_id
-    #                 )
-    #         )
 
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))
