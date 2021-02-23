@@ -11,11 +11,11 @@ from th2_grpc_sim_quod.sim_service import TemplateSimulatorServiceService
 
 class Stubs:
     factory = CommonFactory(
-        grpc_router_config_filepath="./configs/grpc.json",
-        rabbit_mq_config_filepath="./configs/rabbit.json",
-        mq_router_config_filepath="./configs/mq.json",
-        custom_config_filepath="./configs/script-params.json"
-    )
+            grpc_router_config_filepath="./configs/grpc.json",
+            rabbit_mq_config_filepath="./configs/rabbit.json",
+            mq_router_config_filepath="./configs/mq.json",
+            custom_config_filepath="./configs/script-params.json"
+            )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
@@ -28,4 +28,4 @@ class Stubs:
 
     custom_config = factory.create_custom_configuration()
     session_id = None
-    frontend_is_open = False
+    frontend_is_open = True
