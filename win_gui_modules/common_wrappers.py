@@ -1,4 +1,4 @@
-from th2_grpc_act_gui_quod import order_ticket_pb2
+from th2_grpc_act_gui_quod import common_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
 
 
@@ -24,7 +24,7 @@ class BaseTileDetails:
 
 
 class CommissionsDetails:
-    def __init__(self, commission_details: order_ticket_pb2.CommissionsDetails()):
+    def __init__(self, commission_details: common_pb2.CommissionsDetails()):
         self.request = commission_details
 
     def toggle_manual(self):
