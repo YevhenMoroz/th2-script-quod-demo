@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def create_or_get_rfq(base_request, service):
-    call(service.createRFQ, base_request.build())
+    call(service.createRFQTile, base_request.build())
 
 
 def send_order(base_request, service):
