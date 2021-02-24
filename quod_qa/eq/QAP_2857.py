@@ -1,14 +1,12 @@
 import logging
-import time
-from copy import deepcopy
+import os
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
 
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
+from rule_management import RuleManager
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -17,15 +15,17 @@ timeouts = True
 
 
 def execute(report_id):
+    rule_manager = RuleManager()
 
-    case_id = bca.create_event("Test", report_id)
-    fix_manager_qtwquod3 = FixManager('gtwquod3', case_id)
-    verifier = FixVerifier('gtwquod3', case_id)
+    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
 
-    NOS = Stubs.simulator.createQuodNOSRule(request=TemplateQuodNOSRule(
-            connection_id=ConnectionID(session_alias='fix-bs-eq-paris'),
-            Account="XPAR_CLIENT1"
-        ))
+    connectivity = 'gtwquod3'
+    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    fix_manager_qtwquod3 = FixManager(connectivity, case_id)
+    verifier = FixVerifier(connectivity, case_id)
+
+
+
 
     sor_params = {
         'Account': "CLIENT1",
@@ -33,7 +33,7 @@ def execute(report_id):
         'Side': "1",
         'OrderQty': "222",
         'TimeInForce': "0",
-        'Price': "10.6",
+        'Price': "10",
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': {
@@ -45,9 +45,10 @@ def execute(report_id):
         'OrderCapacity': 'A',
         'Currency': 'EUR',
         'TargetStrategy': "1008",
+        'SecurityExchange': 'TRERROR',
         'NoStrategyParameters': [
             {
-                'StrategyParameterName': 'AllowedVenues',
+                'StrategyParameterName': 'AllowedPassiveVenues',
                 'StrategyParameterType': '14',
                 'StrategyParameterValue': 'TRQX_er'
             },
@@ -71,15 +72,13 @@ def execute(report_id):
 
     reject_parameters = {
         'Instrument': {
-            'Symbol': 'IT0000076189_EUR',
-            'SecurityID': 'IT0000076189',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'MTAA'
+            'Symbol': 'FR0000125007_EUR',
+            'SecurityExchange': 'XPAR'
         },
         'OrdStatus': '8',
-        'Text': "unknown venue `TRXQ'",
+        'Text': "unknown venue `TRQX_er'",
         'ClOrdID': fix_message_sor.get_ClOrdID()
     }
     verifier.CheckExecutionReport(reject_parameters, response)
-    Stubs.core.removeRule(NOS)
+    Stubs.core.removeRule(nos_rule)
 
