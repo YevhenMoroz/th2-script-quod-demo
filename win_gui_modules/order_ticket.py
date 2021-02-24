@@ -2,7 +2,8 @@
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams
-from th2_grpc_act_gui_quod import order_ticket_pb2
+from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
+
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
 from .common_wrappers import CommissionsDetails
 
@@ -60,7 +61,7 @@ class OrderTicketDetails:
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
 
     def add_commissions_details(self) -> CommissionsDetails:
-        self.order.commissionsParams.CopyFrom(order_ticket_pb2.CommissionsDetails())
+        self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)
 
     def build(self):
