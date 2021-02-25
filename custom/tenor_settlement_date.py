@@ -8,6 +8,6 @@ def spo():
 
 
 def wk1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=5)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d')
 
 # TODO need to add another tenors
