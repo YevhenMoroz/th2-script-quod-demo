@@ -24,7 +24,10 @@ def execute(case_name, report_id, case_params):
     case_id = bca.create_event(case_name, report_id)
 
     mdu_params_fwd = {
-        "MDReqID": simulator.getMDRefIDForConnection303(request=RequestMDRefID(symbol="EUR/USD:FXF:WK1:HSBC", connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        "MDReqID": simulator.getMDRefIDForConnection303(
+                request=RequestMDRefID(
+                        symbol="EUR/USD:FXF:WK1:HSBC",
+                        connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
         # "MDReportID": "1",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",

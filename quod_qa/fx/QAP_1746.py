@@ -1,12 +1,13 @@
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
+
+from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,6 +18,7 @@ def execute(report_id, case_params):
     case_name = Path(__file__).name[:-3]
     act = Stubs.fix_act
     verifier = Stubs.verifier
+    simulator = Stubs.simulator
     seconds, nanos = bca.timestamps()  # Store case start time
     case_id = bca.create_event(case_name, report_id)
 
@@ -25,53 +27,53 @@ def execute(report_id, case_params):
         'Side': 1,
         'Instrument': {
             'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
+            'SecurityType': 'FXFWD'
             },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0'
+        'SettlDate': tsd.wk1(),
+        'SettlType': 'W1'
         }
     useful_params = {
-                    'RfqQty': '500000'
+        'RfqQty': '1000000'
         }
 
-    # mdu_params = {
-    #     # "MDReqID": simulator.getMDRefIDForConnection(
-    #     #     request=RequestMDRefID(
-    #     #         symbol="EUR/USD", connection_id=ConnectionID(
-    #     #             session_alias="fix-fh-fx-esp"))).MDRefID,
-    #     "MDReqID": "EUR/USD:SPO:REG:HSBC_2",
-    #     "MDReportID": "3",
-    #     # "MDTime": "TBU",
-    #     # "MDArrivalTime": "TBU",
-    #     # "OrigMDTime": "TBU",
-    #     # "OrigMDArrivalTime": "TBU",
-    #     # "ReplyReceivedTime": "TBU",
-    #     "Instrument": reusable_params['Instrument'],
-    #     # "LastUpdateTime": "TBU",
-    #     "NoMDEntries": [
-    #         {
-    #             "MDEntryType": "1",
-    #             "MDEntryPx": 100,
-    #             "MDEntrySize": 1000,
-    #             "MDEntryPositionNo": 1
-    #         },
-    #         {
-    #             "MDEntryType": "0",
-    #             "MDEntryPx": 110,
-    #             "MDEntrySize": 1000,
-    #             "MDEntryPositionNo": 1
-    #         },
-    #
-    #     ]
-    # }
-    #
-    # send_mdu = act.sendMessage(
-    #     bca.convert_to_request(
-    #         'Send MDU',
-    #         'fix-fh-fx-esp',
-    #         case_id,
-    #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params, 'fix-fh-fx-esp')
-    #     ))
+    mdu_params_fwd = {
+        "MDReqID": simulator.
+            getMDRefIDForConnection303(
+                request=RequestMDRefID(symbol="EUR/USD:FXF:WK1:HSBC",
+                                       connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        'Instrument': {
+            'Symbol': 'EUR/USD',
+            'SecurityType': 'FXFWD'
+            },
+        "NoMDEntries": [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.23456,
+                "MDEntrySize": useful_params['RfqQty'],
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.1234,
+                "MDEntryForwardPoints": 0.0002,
+                },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.23456,
+                "MDEntrySize": useful_params['RfqQty'],
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.1234,
+                "MDEntryForwardPoints": 0.0002,
+                },
+
+            ]
+        }
+
+    act.sendMessage(
+            bca.convert_to_request(
+                    'Send MDU',
+                    'fix-fh-fx-esp',
+                    case_id,
+                    bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-fx-esp')
+                    ))
+
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
         'NoRelatedSymbols': [{
@@ -97,9 +99,10 @@ def execute(report_id, case_params):
         **reusable_params,
         'QuoteReqID': rfq_params['QuoteReqID'],
         'Product': 4,
-        'OfferPx': '35.001',
+        # 'OfferPx': 35.001,
         'OfferSize': useful_params['RfqQty'],
         'QuoteID': '*',
+        'OfferSpotRate': '35.001',
         'OfferSpotRate': '35.001',
         'ValidUntilTime': '*',
         'Currency': 'EUR'
@@ -122,7 +125,7 @@ def execute(report_id, case_params):
         'OrdType': 'D',
         'TransactTime': (datetime.utcnow().isoformat()),
         'OrderQty': useful_params['RfqQty'],
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        'Price': quote_params['OfferSpotRate'],
         'Product': 4,
         'TimeInForce': 4
         }
@@ -143,7 +146,7 @@ def execute(report_id, case_params):
         'LeavesQty': order_params['OrderQty'],
         'TimeInForce': order_params['TimeInForce'],
         'OrdType': order_params['OrdType'],
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        'Price': quote_params['OfferSpotRate'],
         'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
         'NoParty': [
             {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
@@ -157,7 +160,7 @@ def execute(report_id, case_params):
         'SettlCurrency': 'USD',
         'Currency': 'EUR',
         'HandlInst': 1,
-        'AvgPx': 0,
+        'AvgPx': '0',
         'QtyType': 0,
         'LastQty': 0,
         'CumQty': 0,
@@ -235,13 +238,13 @@ def execute(report_id, case_params):
         'LeavesQty': 0,
         'TimeInForce': order_params['TimeInForce'],
         'OrdType': order_params['OrdType'],
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        'Price': quote_params['OfferSpotRate'],
         'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
         'NoParty': [
             {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
             ],
         'Instrument': {
-            'SecurityType': 'FXSPOT',
+            'SecurityType': 'FXFWD',
             'Symbol': 'EUR/USD',
             'SecurityIDSource': 8,
             'SecurityID': 'EUR/USD',
@@ -250,11 +253,11 @@ def execute(report_id, case_params):
         'SettlCurrency': 'USD',
         'Currency': 'EUR',
         'HandlInst': 1,
-        'AvgPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        'AvgPx': quote_params['OfferSpotRate'],
         'QtyType': 0,
         'LastQty': order_params['OrderQty'],
         'CumQty': order_params['OrderQty'],
-        'LastPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        'LastPx': quote_params['OfferSpotRate'],
         'OrdStatus': 2,
         'ExecType': 'F',
         'ExecID': '*',

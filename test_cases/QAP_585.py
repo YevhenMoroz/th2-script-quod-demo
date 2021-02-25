@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def create_or_get_rfq(base_request, service):
-    call(service.createRFQ, base_request.build())
+    call(service.createRFQTile, base_request.build())
 
 
 def send_order(base_request, service):
@@ -76,7 +76,7 @@ def check_ob(ex_id, base_request, instr_type, act, act_ob, qb_id):
                                                                                  ob_venue,
                                                                                  ob_exec_sts,
                                                                                  ob_id])))
-    data = call(act_ob.getOrdersDetails, ob.request())
+    call(act_ob.getOrdersDetails, ob.request())
     call(act.verifyEntities, verification(ex_id, "checking OB",
                                                  [verify_ent("OB InstrType", ob_insrt_type.name, instr_type),
                                                   verify_ent("OB Venue", ob_venue.name, "HSBCR"),
@@ -91,7 +91,7 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
+    # print_active_rules()
     case_name = "QAP-585"
     quote_owner = "kbrit"
     case_instr_type = "Spot"
