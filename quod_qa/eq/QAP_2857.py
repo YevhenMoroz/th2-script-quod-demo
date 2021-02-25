@@ -7,7 +7,6 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,7 +15,6 @@ timeouts = True
 
 def execute(report_id):
     rule_manager = RuleManager()
-
     nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
 
     connectivity = 'gtwquod3'
@@ -80,5 +78,5 @@ def execute(report_id):
         'ClOrdID': fix_message_sor.get_ClOrdID()
     }
     verifier.CheckExecutionReport(reject_parameters, response)
-    Stubs.core.removeRule(nos_rule)
+    rule_manager.remove_rule(nos_rule)
 
