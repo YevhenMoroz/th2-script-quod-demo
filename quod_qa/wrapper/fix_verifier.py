@@ -4,20 +4,40 @@ from th2_grpc_common.common_pb2 import Direction
 
 class FixVerifier:
 
-    def __init__(self, trader_connectivity, case_id):
+    def __init__(self, TraderConnectivity, case_id):
         self.verifier = Stubs.verifier
-        self.trader_connectivity = trader_connectivity,
+        self.TraderConnectivity = TraderConnectivity
         self.case_id = case_id
 
-
-    def CheckExecutionReport(self, parameters, checkpoint, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction = Direction.Value("FIRST")):
+    def CheckExecutionReport(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport'):
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("ExecutionReport", parameters, key_parameters),
-                checkpoint,
-                self.trader_connectivity,
-                self.case_id,
-                direction
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                self.case_id
+            )
+        )
+
+    def CheckReject(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check Reject'):
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("Reject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                self.case_id
+            )
+        )
+
+    def CheckNewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NewOrderSingle to buy-side'):
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("NewOrderSingle", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                self.case_id
             )
         )

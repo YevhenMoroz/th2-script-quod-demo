@@ -39,6 +39,16 @@ class FixManager:
             ))
         return response
 
+    def Send_OrderCancelReplaceRequest_FixMessage(self, fix_message, message_name='Replace order'):
+        response = self.act.placeOrderFIX(
+            bca.convert_to_request(
+                message_name,
+                self.TraderConnectivity,
+                self.case_id,
+                bca.message_to_grpc('OrderCancelReplaceRequest', fix_message.get_parameters(), self.TraderConnectivity)
+            ))
+        return response
+
     def Send_MarketDataFullSnapshotRefresh_FixMessage(self, fix_message, symbol, message_name='Send MarketData'):
         MDReqID = self.simulator.getMDRefIDForConnection(request=RequestMDRefID(
             symbol=symbol,
@@ -57,18 +67,3 @@ class FixManager:
             ))
         return response
 
-    def Send_Child_Order(self, fix_message):
-        self.connector.open_connection()
-        act = self.connector.get_act()
-        event_store = self.connector.get_event_store()
-
-        act.placeOrderFIX(
-            bca.convert_to_request(
-                'Buy-side message',
-                self.TraderConnectivity2,
-                self.case_id,
-                bca.message_to_grpc('ExecutionReport', fix_message.get_parameters())
-            ))
-
-        bca.create_event(event_store, self.case_name, self.case_id, self.root_id)
-        self.connector.close_connection()

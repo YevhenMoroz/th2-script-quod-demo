@@ -110,8 +110,23 @@
         ]
       }
     },
-    "Win_Act_RFQ": {
+    "Win_Act_Aggregated_Rates": {
       "service-class": "AggregatedRatesOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
+        ]
+      }
+    },
+    "Win_Act_Middle_Office": {
+      "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
