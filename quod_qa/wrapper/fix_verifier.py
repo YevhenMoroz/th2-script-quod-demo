@@ -31,7 +31,7 @@ class FixVerifier:
             )
         )
 
-    def ChecknewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NeworderSingle to buy-side'):
+    def CheckNewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NewOrderSingle to buy-side'):
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
