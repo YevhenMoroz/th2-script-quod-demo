@@ -20,11 +20,6 @@ def execute(report_id):
     act = Stubs.win_act_order_ticket
     act2 = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    simulator = Stubs.simulator
-    core = Stubs.core
-
-    # conn1 = ConnectionID(session_alias='fix-bs-eq-paris')
-    # conn2 = ConnectionID(session_alias='fix-bs-eq-trqx')
 
     bs_paris = 'fix-bs-eq-paris'
     bs_trqx = 'fix-bs-eq-trqx'
@@ -82,7 +77,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
-        main_order_details.set_filter(["Owner", Stubs.custom_config['qf_trading_fe_user'], "Lookup", lookup])
+        main_order_details.set_filter(["Owner", Stubs.custom_config['qf_trading_fe_user_305'], "Lookup", lookup])
 
         main_order_status = ExtractionDetail("order_status", "Sts")
         main_order_ord_type = ExtractionDetail("ordType", "OrdType")

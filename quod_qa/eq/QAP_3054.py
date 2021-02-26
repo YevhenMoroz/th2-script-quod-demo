@@ -80,16 +80,17 @@ def execute(report_id):
     fix_modify_message.change_parameter("DisplayInstruction",{"DisplayQty": '100'})
 
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-    fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
 
     time.sleep(1)
 
     # Check on bs
     new_order_single_bs_modified = {
         'OrderQty': 100,
-        'Side': 2
+        'Side': iceberg_params['Side'],
+        'OrigClOrdID': '*'
     }
-    fix_verifier_bs.CheckExecutionReport(new_order_single_bs_modified, responce)
+    fix_verifier_bs.CheckOrderCancelReplaceRequest(new_order_single_bs_modified, responce)
 
     #Cancel order
     iceberg_cancel_parms = {

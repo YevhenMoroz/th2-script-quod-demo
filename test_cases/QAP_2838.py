@@ -1,5 +1,4 @@
 import logging
-from copy import deepcopy
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -102,7 +101,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
-        main_order_details.set_filter(["Owner", config_vars["qf_trading_fe_user"]])
+        main_order_details.set_filter(["Owner", config_vars["qf_trading_fe_user_305"]])
 
         main_order_status = ExtractionDetail("order_status", "Sts")
         main_order_id = ExtractionDetail("order_id", "Order ID")
