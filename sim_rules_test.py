@@ -1,10 +1,10 @@
 from google.protobuf.empty_pb2 import Empty
 from stubs import Stubs
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodNOSRule
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodNOSRule, TemplateQuodNOSStoreRule
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodMDRRule, TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim.sim_pb2 import RuleID
+from th2_grpc_sim.sim_pb2 import *
 
 # start rule
 simulator = Stubs.simulator
@@ -20,6 +20,8 @@ simulator = Stubs.simulator
 #
 NOS = simulator.createQuodNOSRule(
     request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
+StoreNOS = simulator.createQuodNOSSRule(
+    request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
 
 
 # RFQ = simulator.createQuodRFQRule(
@@ -95,6 +97,9 @@ core = Stubs.core
 # core.removeRule(SingleExecTrqx)
 # core.removeRule(MDR_paris)
 # core.removeRule(MDR_trqx)
+
+#args={"field1":"value1","field2":"value2"}
+core.touchRule(request=TouchRequest(id=StoreNOS, args={"Symbol": "", "": ""}))
 
 # get rules
 running_rules = core.getRulesInfo(request=Empty()).info
