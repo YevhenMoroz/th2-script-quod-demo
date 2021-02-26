@@ -331,13 +331,13 @@ def execute(report_id):
         child_order_lvl1_ext_action2 = OrderAnalysisAction.create_extract_event_rows(event_number=1)
 
         child_order_lvl2_1_exec_pcy = ExtractionDetail("child_order_lvl2_1.ExecPcy", "ExecPcy")
-        child_order_lvl2_1_misc9 = ExtractionDetail("child_order_lvl2_1.Misc9", "Misc 9")
+        child_order_lvl2_1_misc9 = ExtractionDetail("child_order_lvl2_1.Misc9", "FO field 9")
         child_order_lvl2_1_info = OrderInfo.create(
             action=ExtractionAction.create_extraction_action(
                 extraction_details=[child_order_lvl2_1_exec_pcy, child_order_lvl2_1_misc9]
             ))
         child_order_lvl2_2_exec_pcy = ExtractionDetail("child_order_lvl2_2.ExecPcy", "ExecPcy")
-        child_order_lvl2_2_misc9 = ExtractionDetail("child_order_lvl2_2.Misc9", "Misc 9")
+        child_order_lvl2_2_misc9 = ExtractionDetail("child_order_lvl2_2.Misc9", "FO field 9")
         child_order_lvl2_2_info = OrderInfo.create(
             action=ExtractionAction.create_extraction_action(
                 extraction_details=[child_order_lvl2_2_exec_pcy, child_order_lvl2_2_misc9]
