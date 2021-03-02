@@ -2,7 +2,7 @@ from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
 
-from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -41,28 +41,31 @@ class ModifyRatesTileRequest:
         self.modify_request.pips = pips
 
     def widen_spread(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.WIDEN_SPREAD)
+        self._append_spread_action(SpreadAction.WIDEN_SPREAD)
 
     def narrow_spread(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.NARROW_SPREAD)
+        self._append_spread_action(SpreadAction.NARROW_SPREAD)
 
     def increase_ask(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.INCREASE_ASK)
+        self._append_spread_action(SpreadAction.INCREASE_ASK)
 
     def decrease_ask(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.DECREASE_ASK)
+        self._append_spread_action(SpreadAction.DECREASE_ASK)
 
     def increase_bid(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.INCREASE_BID)
+        self._append_spread_action(SpreadAction.INCREASE_BID)
 
     def decrease_bid(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.DECREASE_BID)
+        self._append_spread_action(SpreadAction.DECREASE_BID)
 
     def skew_towards_bid(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.SKEW_TOWARDS_BID)
+        self._append_spread_action(SpreadAction.SKEW_TOWARDS_BID)
 
     def skew_towards_ask(self):
-        self.modify_request.spreadActions.append(cp_operations_pb2.ModifyRatesTileRequest.SpreadAction.SKEW_TOWARDS_ASK)
+        self._append_spread_action(SpreadAction.SKEW_TOWARDS_ASK)
+
+    def _append_spread_action(self, action: SpreadAction):
+        self.modify_request.spreadActions.append(action.value)
 
     def build(self):
         return self.modify_request

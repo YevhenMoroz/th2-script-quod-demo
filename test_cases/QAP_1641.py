@@ -81,7 +81,6 @@ def execute(report_id):
         data = call(common_act.getOrderFields, fields_request(order_info_extraction,
                                                        ["order.status", "Sts", "order.order_id", "Order ID"]))
         care_order_id = data["order.order_id"]
-        # care_order_id = "CO1210211115759412001"
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
 

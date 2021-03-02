@@ -9,6 +9,9 @@ class FixMessage:
     def get_parameters(self):
         return self.parameters
 
+    def change_parameter(self, parametr_name, new_parametr_value):
+        self.parameters[parametr_name] = new_parametr_value
+
     def get_parameter(self, parametr_name):
         return self.parameters[parametr_name]
 

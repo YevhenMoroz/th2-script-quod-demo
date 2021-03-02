@@ -31,11 +31,22 @@ class FixVerifier:
             )
         )
 
-    def ChecknewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NeworderSingle to buy-side'):
+    def CheckNewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NewOrderSingle to buy-side'):
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("NewOrderSingle", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                self.case_id
+            )
+        )
+
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest to buy-side'):
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelReplaceRequest", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 self.case_id
