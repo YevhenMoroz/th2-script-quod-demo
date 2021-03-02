@@ -66,8 +66,8 @@ def execute(report_id):
     er_params_new ={
         'ExecType': "0",
         'OrdStatus': '0',
-        'TimeInForce': "6",
-        'ExpireDate': '20210305',
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExpireDate': multilisting_params['ExpireDate'],
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
 
     }
@@ -86,14 +86,14 @@ def execute(report_id):
 
 
     #Cancel order
-    iceberg_cancel_parms = {
+    cancel_parms = {
         "ClOrdID": fix_message_multilisting.get_ClOrdID(),
         "Account": fix_message_multilisting.get_parameter('Account'),
         "Side": fix_message_multilisting.get_parameter('Side'),
         "TransactTime": datetime.utcnow().isoformat(),
         "OrigClOrdID": fix_message_multilisting.get_ClOrdID()
     }
-    fix_cancel = FixMessage(iceberg_cancel_parms)
+    fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     cancel_er_params = {
         "OrdStatus": "4"
