@@ -4,10 +4,10 @@ import platform
 import socket
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import QAP_1537, QAP_1544, QAP_1538, QAP_1539, QAP_1540, QAP_1541, QAP_1746
+from quod_qa.fx import QAP_1537, QAP_1544, QAP_1538, QAP_1539, QAP_1540, QAP_1541, QAP_1746, ui_tests
 from rule_management import RuleManager
 from stubs import Stubs
-from test_cases import QAP_1552, QAP_585, QAP_2143
+from test_cases import QAP_1552, QAP_585, QAP_2143, QAP_1560_class
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(os.environ["COMPUTERNAME"] + ' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('QUOD tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     test_cases = {
@@ -34,13 +34,10 @@ def test_run():
         }
 
     try:
-        # QAP_585.execute(report_id)
-        QAP_2143.execute(report_id, test_cases['RFQ_example'])
-        rm = RuleManager()
-        # rm.add_RFQ('fix-fh-fx-rfq')
-        # rm.add_TRFQ('fix-fh-fx-rfq')
-        rm.print_active_rules()
 
+        QAP_1746.execute(report_id, test_cases['RFQ_example'])
+        rm = RuleManager()
+        rm.print_active_rules()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
