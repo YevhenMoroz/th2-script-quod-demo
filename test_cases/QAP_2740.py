@@ -9,7 +9,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, \
     OrderInfo, OrderAnalysisAction, CalcDataContentsRowSelector
-from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe_2
+from win_gui_modules.utils import call, get_base_request, prepare_fe, set_session_id, close_fe_2, close_fe
 from win_gui_modules.wrappers import *
 
 logger = logging.getLogger(__name__)
@@ -92,7 +92,7 @@ def execute(report_id):
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        cum_qty=int(case_params['OrderQty'] / 2),
+        cum_qty=case_params['OrderQty'],
         mask_as_connectivity="fix-fh-eq-trqx",
         md_entry_size={50: 0},
         md_entry_px={40: 30},
@@ -307,13 +307,13 @@ def execute(report_id):
 
             call(common_act.verifyEntities, verification(sub_lvl2_1_ext_action, "Checking Lvl_3 order",
                                                          [verify_ent("Sub 1 Lvl 2 Venue", sub_lv2_1_venue.name,
-                                                                     "PARIS"),
+                                                                     "TRQX"),
                                                           verify_ent("Sub 1 Lvl 2 Qty", sub_lv2_1_qty.name,
                                                                      "100"),
                                                           verify_ent("Sub 1 Lvl 2 Price", sub_lv2_1_lmt_price.name,
                                                                      "30"),
-                                                          verify_ent("OA Sub Order 1 Lvl 1 Venue", venue.name,
-                                                                     "PARIS"),
+                                                          verify_ent("OA Minimum PriceCost Venue Sub Order 1 Lvl 1", venue,
+                                                                     "TRQX"),
                                                           verify_ent("Compare venues", sub_lv2_1_venue.name, venue),
                                                           verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
                                                           ]))
@@ -321,7 +321,7 @@ def execute(report_id):
         except Exception:
             logger.error("Error execution", exc_info=True)
 
-        close_fe_2(case_id, session_id)
+        close_fe(case_id, session_id)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

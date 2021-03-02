@@ -1,3 +1,5 @@
+from enum import Enum
+
 from th2_grpc_act_gui_quod import common_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
 
@@ -40,3 +42,14 @@ class CommissionsDetails:
             var.amount = amount
         if currency is not None:
             var.currency = currency
+
+
+class SpreadAction(Enum):
+    WIDEN_SPREAD = common_pb2.WIDEN_SPREAD
+    NARROW_SPREAD = common_pb2.NARROW_SPREAD
+    INCREASE_ASK = common_pb2.INCREASE_ASK
+    DECREASE_ASK = common_pb2.DECREASE_ASK
+    INCREASE_BID = common_pb2.INCREASE_BID
+    DECREASE_BID = common_pb2.DECREASE_BID
+    SKEW_TOWARDS_BID = common_pb2.SKEW_TOWARDS_BID
+    SKEW_TOWARDS_ASK = common_pb2.SKEW_TOWARDS_ASK
