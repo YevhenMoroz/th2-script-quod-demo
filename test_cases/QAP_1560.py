@@ -26,8 +26,8 @@ class TestCase:
         self.case_id = bca.create_event('QAP-1560', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
-        self.case_base_request = get_base_request(self.session_id, self.case_id)
-        self.base_details = BaseTileDetails(base=self.case_base_request)
+        self.base_request = get_base_request(self.session_id, self.case_id)
+        self.base_details = BaseTileDetails(base=self.base_request)
 
         self.md_req_id_fe = bca.client_orderid(10)
         self.client = 'fix-qsesp-303'
