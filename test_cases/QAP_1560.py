@@ -20,7 +20,6 @@ class TestCase:
         self.common_act = Stubs.win_act
         self.fix_act = Stubs.fix_act
         self.verifier = Stubs.verifier
-        self.simulator = Stubs.simulator
         self.cp_service = Stubs.win_act_cp_service
 
         # Case parameters setup
