@@ -48,12 +48,9 @@ class TestCase:
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         username = Stubs.custom_config['qf_trading_fe_user_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        try:
-            if not Stubs.frontend_is_open:
-                prepare_fe(self.case_id, self.session_id, work_dir, username, password)
-                call(self.cp_service.createRatesTile, self.base_details.build())
-        except Exception as e:
-            logging.error('Error execution', exc_info=True)
+        if not Stubs.frontend_is_open:
+            prepare_fe(self.case_id, self.session_id, work_dir, username, password)
+            call(self.cp_service.createRatesTile, self.base_details.build())
 
     # Send MarketDataRequest subscribe method
     def send_md_subscribe(self):
