@@ -136,16 +136,19 @@ class TestCase:
             self.add_rules()
             self.create_or_get_rfq()
 
+            # Step 1
             self.send_rfq()
             self.check_qrb()
             self.check_qb()
+            # Step 2
             self.send_order_by_tob()
             self.check_ob()
             self.cancel_rfq()
-
+            # Step 3
             self.send_rfq()
             self.check_qrb()
             self.check_qb()
+            # Step 4
             self.send_order_by_venue_price()
             self.check_ob()
             self.cancel_rfq()
