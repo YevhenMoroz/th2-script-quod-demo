@@ -120,7 +120,7 @@ def execute(report_id):
 
         # Step 3
         place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(case_base_request, ar_service)
+        cancel_rfq(base_rfq_details, ar_service)
         check_ob("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # Step 4
@@ -140,7 +140,7 @@ def execute(report_id):
 
         # Step 8
         place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(case_base_request, ar_service)
+        cancel_rfq(base_rfq_details, ar_service)
         check_ob("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         close_fe_2(case_id, session_id)

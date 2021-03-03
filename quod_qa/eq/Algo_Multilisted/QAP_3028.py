@@ -25,8 +25,7 @@ def execute(report_id):
         'HandlInst': "2",
         'Side': "1",
         'OrderQty': "1000",
-        'TimeInForce': "6",
-        'ExpireDate': '20210305',
+        'TimeInForce': "7",
         'Price': "20",
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
@@ -67,7 +66,6 @@ def execute(report_id):
         'ExecType': "0",
         'OrdStatus': '0',
         'TimeInForce': multilisting_params['TimeInForce'],
-        'ExpireDate': multilisting_params['ExpireDate'],
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
 
     }
@@ -78,7 +76,6 @@ def execute(report_id):
         'Side': multilisting_params['Side'],
         'Price': multilisting_params['Price'],
         'TimeInForce': multilisting_params['TimeInForce'],
-        'ExpireDate': multilisting_params['ExpireDate'],
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce)
 
