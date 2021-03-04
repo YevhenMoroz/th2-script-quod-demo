@@ -116,13 +116,13 @@ class RuleManager:
                                                                                ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str):
+    def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
         return Stubs.simulator.createQuodSingleExecRule(
             request=TemplateQuodSingleExecRule(
-                connection_id=ConnectionID(session_alias=str),
+                connection_id=ConnectionID(session_alias=session),
                 no_party_ids=party_id,
                 cum_qty=cum_qty,
-                mask_as_connectivity=str,
+                mask_as_connectivity=mask_as_connectivity,
                 md_entry_size= md_entry_size,
                 md_entry_px= md_entry_px,
                 symbol=symbol))
