@@ -78,7 +78,7 @@ class ModifyRFQTileRequest:
         self.modify_request.farLegSettlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
 
     def set_client(self, client: str):
-        pass
+        self.modify_request.client = client
 
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
