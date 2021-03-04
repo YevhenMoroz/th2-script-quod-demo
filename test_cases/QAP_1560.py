@@ -343,11 +343,10 @@ class TestCase:
             ask, bid = self.extract_prices()
             self.check_fix_prices(ask, bid)
 
-            self.send_md_unsubscribe(market_data_params)
-            close_fe_2(self.case_id, self.session_id)
-
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+            self.send_md_unsubscribe(market_data_params)
+            close_fe_2(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
