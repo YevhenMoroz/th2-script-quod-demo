@@ -30,11 +30,11 @@ class Verifier:
 
     def compare_values(self, printed_name: str, expected_value: str, actual_value: str,
                        verification_method: VerificationMethod = VerificationMethod.EQUALS):
-        if verification_method in VerificationMethod.EQUALS:
+        if verification_method is VerificationMethod.EQUALS:
             passed = expected_value == actual_value
-        elif verification_method in VerificationMethod.NOT_EQUALS:
+        elif verification_method is VerificationMethod.NOT_EQUALS:
             passed = expected_value != actual_value
-        elif verification_method in VerificationMethod.CONTAINS:
+        elif verification_method is VerificationMethod.CONTAINS:
             passed = expected_value in actual_value
         else:
             raise Exception("Unexpected verification method")
