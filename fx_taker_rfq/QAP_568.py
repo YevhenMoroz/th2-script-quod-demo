@@ -83,20 +83,17 @@ def check_ob(ex_id, base_request, instr_type, act, act_ob, qb_id):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
-    ob_insrt_type = ExtractionDetail("orderBook.instrtype", "InstrType")
-    ob_venue = ExtractionDetail("orderBook.venue", "Venue")
+    ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_insrt_type,
-                                                                                 ob_venue,
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
                                                                                  ob_id])))
     call(act_ob.getOrdersDetails, ob.request())
     call(act.verifyEntities, verification(ex_id, "checking OB",
-                                          [verify_ent("OB InstrType", ob_insrt_type.name, instr_type),
-                                           verify_ent("OB Venue", ob_venue.name, "HSBCR"),
+                                          [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                            verify_ent("OB ID vs QB ID", ob_id.name, qb_id)]))
 
@@ -154,8 +151,9 @@ def execute(report_id):
         #
         #  Step 4
         place_order_venue(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(base_rfq_details, ar_service)
         check_ob("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        cancel_rfq(base_rfq_details, ar_service)
+
 
 
     except Exception as e:
