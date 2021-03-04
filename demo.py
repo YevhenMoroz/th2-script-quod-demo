@@ -4,10 +4,10 @@ import platform
 import socket
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import QAP_1537, QAP_1544, QAP_1538, QAP_1539, QAP_1540, QAP_1541, QAP_1746, ui_tests
+from quod_qa.fx import QAP_1537, QAP_1544, QAP_1538, QAP_1539, QAP_1540, QAP_1541, QAP_1746
 from rule_management import RuleManager
 from stubs import Stubs
-from test_cases import QAP_1552, QAP_585, QAP_2143, QAP_1560_class
+from test_cases import QAP_1552, QAP_585, QAP_2143, QAP_1560
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
