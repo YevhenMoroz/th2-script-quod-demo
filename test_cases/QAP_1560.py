@@ -345,8 +345,9 @@ class TestCase:
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-            self.send_md_unsubscribe(market_data_params)
-            close_fe_2(self.case_id, self.session_id)
+
+        self.send_md_unsubscribe(market_data_params)
+        close_fe_2(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
