@@ -5,7 +5,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
@@ -55,6 +55,7 @@ class TestCase:
     def remove_rules(self):
         self.rule_manager.remove_rule(self.RFQ)
         self.rule_manager.remove_rule(self.TRFQ)
+        self.rule_manager.print_active_rules()
 
     # Create or get RFQ method
     def create_or_get_rfq(self):
@@ -154,8 +155,9 @@ class TestCase:
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-            self.remove_rules()
-            close_fe_2(self.case_id, self.session_id)
+
+        self.remove_rules()
+        close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
