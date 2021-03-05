@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import datetime, timedelta, date
+from datetime import datetime
 
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
@@ -21,17 +21,17 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-2003"
+    case_name = "QAP-2007"
     seconds, nanos = timestamps()  # Store case start time
-    #region Declarations
+    # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
-    expireDate = date.today() + timedelta(2)
+    price = "20"
     time = datetime.utcnow().isoformat()
     # endregion
 
-    #region Open FE
+    # region Open FE
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -58,9 +58,9 @@ def execute(report_id):
         'HandlInst': "2",
         'Side': "2",
         'OrderQty': qty,
-        'TimeInForce': "6",
-        'ExpireDate':expireDate.strftime("%Y%m%d"),
-        'OrdType': "1",
+        'TimeInForce': "4",
+        'OrdType': 2,
+        'Price': price,
         'TransactTime': time,
         'ExDestination': 'CHIX',
         'Instrument': {
@@ -89,12 +89,10 @@ def execute(report_id):
     order_status = ExtractionDetail("order_status", "Sts")
     order_qty = ExtractionDetail("order_qty", "Qty")
     order_tif = ExtractionDetail("order_tif", "TIF")
-    order_expireDate= ExtractionDetail("order_expireDate","ExpireDate")
-    order_ordType= ExtractionDetail("oder_ordType","OrdType")
+    order_ordType = ExtractionDetail("oder_ordType", "OrdType")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_qty,
                                                                                             order_tif,
-                                                                                            order_expireDate,
                                                                                             order_ordType
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -102,11 +100,9 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Eliminated"),
-                                                  verify_ent("Qty", order_qty.name, qty),
-                                                  verify_ent("TIF", order_tif.name, "GoodTillDate"),
-                                                  verify_ent("ExpireDate", order_expireDate.name, expireDate.strftime("%Y/%m/%d")),
-                                                  verify_ent("OrdType", order_ordType.name, "Market")
-                                                  ]))
+                                                  verify_ent("Qty", order_qty.name, "900"),
+                                                  verify_ent("TIF", order_tif.name, "FillOrKill"),
+                                                  verify_ent("OrdType", order_ordType.name, "Limit")]))
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
