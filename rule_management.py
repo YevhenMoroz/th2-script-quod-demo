@@ -1,5 +1,5 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
-    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodNOSTradeStoreRule, TemplateQuodSingleExecRule, \
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -88,10 +88,7 @@ class RuleManager:
         return Stubs.simulator.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
-    @staticmethod
-    def add_NOS_Trade_Store(session: str, account: str = 'KEPLER'):
-        return Stubs.simulator.createQuodNosTradeStore(
-            request=TemplateQuodNOSTradeStoreRule(connection_id=ConnectionID(session_alias=session), account=account))
+
 
     @staticmethod
     def add_OCR(session: str):
