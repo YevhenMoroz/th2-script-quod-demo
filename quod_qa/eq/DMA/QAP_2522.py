@@ -1,11 +1,9 @@
 import logging
-import os
 from datetime import datetime
 
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
-from custom import basic_custom_actions as bca
-from custom.basic_custom_actions import create_event, timestamps
+from custom.basic_custom_actions import create_event
 
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -21,16 +19,16 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-2008"
-    seconds, nanos = timestamps()  # Store case start time
-
-    # region Declarations
+    #region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = 1
-    price = 0.0001
-    time = datetime.utcnow().isoformat()
-    # Open FE
+    qty = "1"
+    price = "0.0001"
+    freenotes_expected_text = "11673 'Price' (0.0001) must be a multiple of the instrument's tick size (0.001)"
+    #endregion
+
+    #region Open FE
+    case_name = "QAP-2522"
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -43,14 +41,14 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id)
-    # endregion
+    #endregion
 
-    # region Create order via FIX
+    #region Create order via FIX
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
 
     connectivity = 'gtwquod5'
-    fix_manager_qtwquod3 = FixManager(connectivity, case_id)
+    fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
     fix_params = {
         'Account': "CLIENT1",
@@ -60,7 +58,7 @@ def execute(report_id):
         'TimeInForce': "0",
         'Price': price,
         'OrdType': "2",
-        'TransactTime': time,
+        'TransactTime': datetime.utcnow().isoformat(),
         'ExDestination': 'CHIX',
         'Instrument': {
             'Symbol': 'FR0000125007_EUR',
@@ -74,11 +72,11 @@ def execute(report_id):
 
     fix_message = FixMessage(fix_params)
     fix_message.add_random_ClOrdID()
-    fix_manager_qtwquod3.Send_NewOrderSingle_FixMessage(fix_message)
+    fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
     rule_manager.remove_rule(nos_rule)
-    # endregion
+    #endregion
 
-    # region Check values in OrderBook
+    #region Check values in OrderBook
     before_order_details_id = "before_order_details"
 
     order_details = OrdersDetails()
@@ -87,8 +85,8 @@ def execute(report_id):
 
     order_status = ExtractionDetail("order_status", "Sts")
     order_freenotes = ExtractionDetail("order_freenotes", "FreeNotes")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
     order_qty = ExtractionDetail("order_qty", "Qty")
+    order_price = ExtractionDetail("order_price", "LmtPrice")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_qty,
                                                                                             order_price,
@@ -98,9 +96,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Rejected"),
-                                                  verify_ent("Qty", order_qty.name, "1"),
-                                                  verify_ent("LmtPrice", order_price.name, "0.0001"),
-                                                  verify_ent("FreeNotes", order_freenotes.name, "11673 'Price' (0.0001) must be a multiple of the instrument's tick size (0.001)")]))
-    # endregion
-
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+                                                  verify_ent("Order Qty", order_qty.name, qty),
+                                                  verify_ent("Order Price", order_price.name, price),
+                                                  verify_ent("FreeNotes", order_freenotes.name, freenotes_expected_text)]))
+    #endregion
