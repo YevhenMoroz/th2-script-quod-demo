@@ -3,13 +3,14 @@ import logging
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-import time
+
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+
 
 class TestCase:
     def __init__(self, report_id):
@@ -56,15 +57,15 @@ class TestCase:
         self.rule_manager.remove_rule(self.TRFQ)
         self.rule_manager.print_active_rules()
 
-    # Set near date method
-    def set_near_tenor(self):
-        modify_request = ModifyRFQTileRequest(details=self.base_details)
-        modify_request.set_settlement_date(bca.get_t_plus_date(3))
-        call(self.ar_service.modifyRFQTile, modify_request.build())
-
     # Create or get RFQ method
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
+
+    # Set near date method
+    def set_near_date(self):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
+        modify_request.set_settlement_date(bca.get_t_plus_date(3))
+        call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Send RFQ method
     def send_rfq(self):
@@ -96,6 +97,7 @@ class TestCase:
         qrb_status = ExtractionDetail('quoteRequestBook.status', 'Status')
         qrb_quote_status = ExtractionDetail('quoteRequestBook.qoutestatus', 'QuoteStatus')
         qrb.add_extraction_details([qrb_user, qrb_status, qrb_quote_status])
+        call(self.ar_service.getQuoteRequestBookDetails, qrb.request())
         call(self.common_act.verifyEntities, verification(execution_id, 'checking QRB',
                                                           [verify_ent('QRB User', qrb_user.name, self.user),
                                                            verify_ent('QRB Status', qrb_status.name, 'New'),
@@ -141,9 +143,8 @@ class TestCase:
             self.create_or_get_rfq()
 
             # Step 1
-            self.set_near_tenor()
+            self.set_near_date()
             self.send_rfq()
-            time.sleep(10)
             self.check_qrb()
             self.check_qb()
             # Step 2
