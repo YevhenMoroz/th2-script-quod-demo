@@ -21,7 +21,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def send_order(base_request, service):
+def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
@@ -114,7 +114,7 @@ def execute(report_id):
         #              case_to_currency, case_tenor, case_client)
 
 
-        send_order(base_rfq_details, ar_service)
+        send_rfq(base_rfq_details, ar_service)
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
@@ -124,7 +124,7 @@ def execute(report_id):
         # Step 3
         modify_order(base_rfq_details, ar_service, case_qty3, case_from_currency,
                      case_to_currency, case_tenor, case_client)
-        send_order(base_rfq_details, ar_service)
+        send_rfq(base_rfq_details, ar_service)
         #
         # # Step 4
         place_order_tob(base_rfq_details, ar_service)
