@@ -5,7 +5,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
@@ -91,7 +91,7 @@ class TestCase:
         qrb_status = ExtractionDetail('quoteRequestBook.status', 'Status')
         qrb_quote_status = ExtractionDetail('quoteRequestBook.qoutestatus', 'QuoteStatus')
         qrb.add_extraction_details([qrb_user, qrb_status, qrb_quote_status])
-        data = call(self.ar_service.getQuoteRequestBookDetails, qrb.request())
+        call(self.ar_service.getQuoteRequestBookDetails, qrb.request())
         call(self.common_act.verifyEntities, verification(execution_id, 'checking QRB',
                                                           [verify_ent('QRB User', qrb_user.name, self.user),
                                                            verify_ent('QRB Status', qrb_status.name, 'New'),
