@@ -146,24 +146,24 @@ def execute(report_id):
         cancel_rfq(base_rfq_details, ar_service)
 
         # Step 4
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
-
-        # Step 5
-        place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(base_rfq_details, ar_service)
-        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
-
-        # Step 6
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_2", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner)
-
-        # Step 7
-        place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(base_rfq_details, ar_service)
-        check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
+        # qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
+        #
+        # # Step 5
+        # place_order(base_rfq_details, ar_service, case_venue)
+        # cancel_rfq(base_rfq_details, ar_service)
+        # check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        #
+        # # Step 6
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b("QRB_2", case_base_request, ar_service, common_act)
+        # qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner)
+        #
+        # # Step 7
+        # place_order(base_rfq_details, ar_service, case_venue)
+        # cancel_rfq(base_rfq_details, ar_service)
+        # check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # close_fe_2(case_id, session_id)
 
