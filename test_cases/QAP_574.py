@@ -4,7 +4,7 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -24,7 +24,7 @@ class TestCase:
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-569', report_id)
+        self.case_id = bca.create_event('QAP-574', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -60,6 +60,12 @@ class TestCase:
     # Create or get RFQ method
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
+
+    # Set near date method
+    def set_near_date(self, date):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
+        modify_request.set_settlement_date(bca.get_t_plus_date(date))
+        call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Send RFQ method
     def send_rfq(self):
@@ -129,7 +135,7 @@ class TestCase:
                                                           [verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                                            verify_ent("OB ID vs QB ID", ob_id.name, self.quote_id)]))
 
-    # Main method. Must call in demo.py by "QAP_569.TestCase(report_id).execute()" command
+    # Main method. Must call in demo.py by "QAP_574.TestCase(report_id).execute()" command
     def execute(self):
         try:
             self.prepare_frontend()
@@ -137,6 +143,8 @@ class TestCase:
             self.create_or_get_rfq()
 
             # Step 1
+            date = 3
+            self.set_near_date(date)
             self.send_rfq()
             self.check_qrb()
             self.check_qb()

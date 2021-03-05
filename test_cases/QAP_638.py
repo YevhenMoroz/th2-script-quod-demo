@@ -4,7 +4,7 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -60,6 +60,18 @@ class TestCase:
     # Create or get RFQ method
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
+
+    # Set near tenor method
+    def set_near_tenor(self, tenor):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
+        modify_request.set_near_tenor(tenor)
+        call(self.ar_service.modifyRFQTile, modify_request.build())
+
+    # Set far leg tenor method
+    def set_far_tenor(self, tenor):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
+        modify_request.set_far_leg_tenor(tenor)
+        call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Send RFQ method
     def send_rfq(self):
@@ -137,6 +149,9 @@ class TestCase:
             self.create_or_get_rfq()
 
             # Step 1
+            near_tenor, far_tenor = '1M', '2M'
+            self.set_near_tenor(near_tenor)
+            self.set_far_tenor(far_tenor)
             self.send_rfq()
             self.check_qrb()
             self.check_qb()
