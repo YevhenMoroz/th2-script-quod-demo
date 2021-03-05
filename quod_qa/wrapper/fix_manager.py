@@ -67,3 +67,12 @@ class FixManager:
             ))
         return response
 
+    def Send_MarketDataRequest_FixMessage(self, fix_message, message_name='Send MarketDataRequest'):
+        response = self.act.placeOrderFIX(
+            bca.convert_to_request(
+                message_name,
+                self.TraderConnectivity,
+                self.case_id,
+                bca.message_to_grpc('MarketDataRequest', fix_message.get_parameters(), self.TraderConnectivity)
+            ))
+        return response

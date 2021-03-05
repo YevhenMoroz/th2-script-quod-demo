@@ -5,7 +5,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
@@ -31,7 +31,7 @@ class TestCase:
         self.base_details = BaseTileDetails(base=self.base_request)
 
         self.venue = 'HSB'
-        self.user = 'dshepelev'
+        self.user = Stubs.custom_config['qf_trading_fe_user_303']
         self.quote_id = None
 
         # Case rules
@@ -42,10 +42,9 @@ class TestCase:
     # FE open method
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
-        username = Stubs.custom_config['qf_trading_fe_user_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
         if not Stubs.frontend_is_open:
-            prepare_fe(self.case_id, self.session_id, work_dir, username, password)
+            prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
 
     # Add case rules method
     def add_rules(self):
@@ -56,6 +55,7 @@ class TestCase:
     def remove_rules(self):
         self.rule_manager.remove_rule(self.RFQ)
         self.rule_manager.remove_rule(self.TRFQ)
+        self.rule_manager.print_active_rules()
 
     # Create or get RFQ method
     def create_or_get_rfq(self):
@@ -153,11 +153,11 @@ class TestCase:
             self.check_ob()
             self.cancel_rfq()
 
-            self.remove_rules()
-            close_fe_2(self.case_id, self.session_id)
-
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+
+        self.remove_rules()
+        close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

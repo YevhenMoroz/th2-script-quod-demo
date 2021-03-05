@@ -51,7 +51,7 @@ def execute(report_id):
             'TargetCompID': 'QUOD3',
             'SenderCompID2': 'KCH_QA_RET_CHILD',
             'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'KEPLER',
+            'Account': 'MOClient',
             'HandlInst': '1',
             'Side': '2',
             'OrderQty': '100',
@@ -109,10 +109,11 @@ def execute(report_id):
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
-        settlement_details.set_settlement_currency("EUR")
+        settlement_details.set_settlement_currency("AED")
+        settlement_details.set_exchange_rate("10")
         settlement_details.set_exchange_rate_calc("Multiply")
-        settlement_details.set_settlement_date("2/21/2021")
-        settlement_details.set_pset("EURO_CLEAR")
+        settlement_details.set_settlement_date("3/27/2021")
+        # settlement_details.set_pset("EURO_CLEAR")
 
         call(middle_office_service.bookOrder, modify_request.build())
 
@@ -138,60 +139,41 @@ def execute(report_id):
         # extract_request.add_extraction_details([ExtractionDetail("middleOffice.blockId", "Block ID"),
         #                                         ExtractionDetail("middleOffice.status", "Status"),
         #                                         ExtractionDetail("middleOffice.matchStatus", "Match Status"),
-        #                                         ExtractionDetail("middleOffice.summaryStatus", "Summary Status"),
-        #                                         ExtractionDetail("middleOffice.settlType", "SettlType"),
-        #                                         ExtractionDetail("middleOffice.settlCurrency", "SettlCurrency"),
-        #                                         ExtractionDetail("middleOffice.exchangeRate", "ExchangeRate"),
-        #                                         ExtractionDetail("middleOffice.settlDate", "SettlDate"),
-        #                                         ExtractionDetail("middleOffice.PSET", "PSET"),
-        #                                         ExtractionDetail("middleOffice.PSETBIC", "PSET BIC"),
-        #                                         ExtractionDetail("middleOffice.rootCommission", "RootCommission"),
-        #                                         ExtractionDetail("middleOffice.netAmt", "Net Amt"),
-        #                                         ExtractionDetail("middleOffice.netPrice", "Net Price")])
-        #
-        # response = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
-        #
-        # # Step 3 Approve  block
-        #
-        # call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
-        #
-        # extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        # extract_request.set_extraction_id("MiddleOfficeExtractionId")
-        # extract_request.set_filter(["Order ID", main_order_id])
-        # extract_request.add_extraction_details([ExtractionDetail("middleOffice.blockId", "Block ID"),
-        #                                         ExtractionDetail("middleOffice.status", "Status"),
-        #                                         ExtractionDetail("middleOffice.matchStatus", "Match Status"),
         #                                         ExtractionDetail("middleOffice.summaryStatus", "Summary Status")])
-        #
-        # # Step 4 Allocate
-        #
-        # modify_request = ModifyTicketDetails(base=base_request)
-        #
-        # allocations_details = modify_request.add_allocations_details()
-        # allocations_details.add_allocation_param({"Account": "MOClientSA1", "BO Field 2": "123"})
-        # allocations_details.add_allocation_param({"Account": "MOClientSA2", "BO Field 3": "123"})
-        #
-        # extraction_details = modify_request.add_extraction_details()
-        # extraction_details.set_extraction_id("BookExtractionId")
-        # extraction_details.extract_net_price("book.netPrice")
-        # extraction_details.extract_net_amount("book.netAmount")
-        # extraction_details.extract_total_comm("book.totalComm")
-        # extraction_details.extract_gross_amount("book.grossAmount")
-        # extraction_details.extract_total_fees("book.totalFees")
-        # extraction_details.extract_agreed_price("book.agreedPrice")
-        #
-        # response = call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
-        #
-        # extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        # extract_request.set_extraction_id("MiddleOfficeExtractionId")
-        # extract_request.set_filter(["Order ID", main_order_id])
-        # extract_request.add_extraction_details([ExtractionDetail("middleOffice.blockId", "Block ID"),
-        #                                         ExtractionDetail("middleOffice.status", "Status"),
-        #                                         ExtractionDetail("middleOffice.matchStatus", "Match Status"),
-        #                                         ExtractionDetail("middleOffice.summaryStatus", "Summary Status")])
-        #
-        # # Step 5 Amend Allocate
 
+        # Step 4 UnBook Order
+
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        call(middle_office_service.unBookOrder, modify_request.build())
+
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+
+        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_post_trade_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order PostTradeStatus",
+                                                                 main_order_post_trade_status.name, "ReadyToBook")]))
+
+        # middle_office_service = Stubs.win_act_middle_office_service
+        # extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        # extract_request.set_extraction_id("MiddleOfficeExtractionId")
+        # extract_request.set_filter(["Order ID", main_order_id])
+        # extract_request.add_extraction_details([ExtractionDetail("middleOffice.blockId", "Block ID"),
+        #                                         ExtractionDetail("middleOffice.status", "Status"),
+        #                                         ExtractionDetail("middleOffice.matchStatus", "Match Status"),
+        #                                         ExtractionDetail("middleOffice.summaryStatus", "Summary Status")])
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
