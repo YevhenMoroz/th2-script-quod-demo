@@ -18,7 +18,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def send_order(base_request, service):
+def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
@@ -43,7 +43,7 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_qrb(ex_id, base_request, service, act):
+def check_quote_request_b(ex_id, base_request, service, act):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
     qrb.set_filter(["Venue", "HSBC"])
@@ -58,7 +58,7 @@ def check_qrb(ex_id, base_request, service, act):
                                            verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Accepted")]))
 
 
-def check_qb(ex_id, base_request, service, act, owner):
+def check_quote_book(ex_id, base_request, service, act, owner):
     qb = QuoteDetailsRequest(base=base_request)
     qb.set_extraction_id(ex_id)
     qb.set_filter(["Venue", "HSBC"])
@@ -73,7 +73,7 @@ def check_qb(ex_id, base_request, service, act, owner):
     return data[qb_id.name]
 
 
-def check_ob(ex_id, base_request, instr_type, act, act_ob, qb_id):
+def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -133,37 +133,37 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
                      case_to_currency, case_near_tenor, case_client)
-        send_order(base_rfq_details, ar_service)
-        check_qrb("QRB_0", case_base_request, ar_service, common_act)
-        qb_quote_id = check_qb("QB_0", case_base_request, ar_service, common_act, quote_owner)
+        send_rfq(base_rfq_details, ar_service)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
+        qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 3
         place_order(base_rfq_details, ar_service, case_venue)
 
-        check_ob("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
         #
         # # call(ar_service.cancelRFQ, base_rfq_details.build())
         cancel_rfq(base_rfq_details, ar_service)
 
         # Step 4
-        send_order(base_rfq_details, ar_service)
-        check_qrb("QRB_1", case_base_request, ar_service, common_act)
-        qb_quote_id = check_qb("QB_1", case_base_request, ar_service, common_act, quote_owner)
+        send_rfq(base_rfq_details, ar_service)
+        check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
+        qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 5
         place_order(base_rfq_details, ar_service, case_venue)
         cancel_rfq(base_rfq_details, ar_service)
-        check_ob("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # Step 6
-        send_order(base_rfq_details, ar_service)
-        check_qrb("QRB_2", case_base_request, ar_service, common_act)
-        qb_quote_id = check_qb("QB_2", case_base_request, ar_service, common_act, quote_owner)
+        send_rfq(base_rfq_details, ar_service)
+        check_quote_request_b("QRB_2", case_base_request, ar_service, common_act)
+        qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 7
         place_order(base_rfq_details, ar_service, case_venue)
         cancel_rfq(base_rfq_details, ar_service)
-        check_ob("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # close_fe_2(case_id, session_id)
 
