@@ -72,13 +72,13 @@ class TestCase:
     def create_3_rfq(self):
         call(self.ar_service.maximizeWindow, self.base_request)
 
-        rfq_1 = BaseTileDetails(base=self.base_request, window_index=0)
+        rfq_1 = BaseTileDetails(base=self.base_request, window_index=1)
         call(self.ar_service.createRFQTile, rfq_1.build())
 
-        rfq_2 = BaseTileDetails(base=self.base_request, window_index=1)
+        rfq_2 = BaseTileDetails(base=self.base_request, window_index=2)
         call(self.ar_service.createRFQTile, rfq_2.build())
 
-        rfq_3 = BaseTileDetails(base=self.base_request, window_index=2)
+        rfq_3 = BaseTileDetails(base=self.base_request, window_index=3)
         call(self.ar_service.createRFQTile, rfq_3.build())
 
     # Send RFQ method
@@ -157,7 +157,7 @@ class TestCase:
             self.create_3_rfq()
             #
             # # Step 1
-            # self.set_near_date()
+            self.set_near_date()
             # self.send_rfq()
             # self.check_qrb()
             # self.check_qb()
