@@ -3,7 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
-from my_test_cases import QAP_585, QAP_568
+from quod_qa.fx.fx_taker_rfq import QAP_574
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -34,7 +34,10 @@ def test_run():
         # QAP_1746.execute(report_id, test_cases['RFQ_example'])
         # TEST_QAP_2000.execute(report_id)
         # QAP_585.execute(report_id)
-        QAP_568.execute(report_id)
+        # QAP_568.execute(report_id)
+        # QAP_569.execute(report_id)
+        # QAP_570.execute(report_id)
+        QAP_574.execute(report_id)
         # rfq_tile_example.execute(report_id)
         rm = RuleManager()
 
