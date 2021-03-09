@@ -44,4 +44,5 @@ def execute(report_id):
     }
 
     fix_message_sor = FixMessage(md_req_params)
+    fix_message_sor.add_random_ClOrdID()
     fix_manager_qtwquod3.Send_NewOrderSingle_FixMessage(fix_message_sor)
