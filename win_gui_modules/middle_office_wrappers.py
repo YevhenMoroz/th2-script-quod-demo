@@ -34,6 +34,8 @@ class ExtractionField(Enum):
     TOTAL_FEES = middle_office_pb2.ExtractionDetails.ExtractionField.TOTAL_FEES
     NET_AMOUNT = middle_office_pb2.ExtractionDetails.ExtractionField.NET_AMOUNT
     NET_PRICE = middle_office_pb2.ExtractionDetails.ExtractionField.NET_PRICE
+    PSET_BIC = middle_office_pb2.ExtractionDetails.ExtractionField.PSET_BIC
+    EXCHANGE_RATE = middle_office_pb2.ExtractionDetails.ExtractionField.EXCHANGE_RATE
 
 
 class ExtractionDetails:
@@ -60,6 +62,12 @@ class ExtractionDetails:
 
     def extract_net_price(self, name: str):
         self.extract_value(ExtractionField.NET_PRICE, name)
+
+    def extract_pset_bic(self, name: str):
+        self.extract_value(ExtractionField.PSET_BIC, name)
+
+    def extract_exchange_rate(self, name: str):
+        self.extract_value(ExtractionField.EXCHANGE_RATE, name)
 
     def extract_value(self, field: ExtractionField, name: str):
         extracted_value = middle_office_pb2.ExtractionDetails.ExtractionParam()
@@ -94,7 +102,7 @@ class SettlementDetails:
         self.request.settlementDate = settlement_date
 
     def set_pset(self, pset: str):
-        pass
+        self.request.pset = pset
 
     def set_pset_bic(self, pset_bic: str):
         pass

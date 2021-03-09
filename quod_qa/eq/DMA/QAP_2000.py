@@ -5,7 +5,7 @@ from datetime import datetime
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom import basic_custom_actions as bca
-from custom.basic_custom_actions import create_event
+from custom.basic_custom_actions import create_event, timestamps
 
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -21,13 +21,18 @@ timeouts = True
 
 
 def execute(report_id):
-    # Declarations
+    case_name = "QAP-2000"
+    seconds, nanos = timestamps()  # Store case start time
+
+    # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "1300"
-    # price = 0.0001
-    # Open FE
-    case_name = "QAP-2000"
+    qty = "900"
+    time = datetime.utcnow().isoformat()
+    # endregion
+
+    # region Open FE
+
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -40,8 +45,9 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id)
+    # endregion
 
-    # Create order via FIX
+    # region Create order via FIX
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
 
@@ -55,7 +61,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': "0",
         'OrdType': 1,
-        'TransactTime': datetime.utcnow().isoformat(),
+        'TransactTime': time,
         'ExDestination': 'CHIX',
         'Instrument': {
             'Symbol': 'FR0000125007_EUR',
@@ -64,15 +70,16 @@ def execute(report_id):
             'SecurityExchange': 'XPAR'
         },
         'Currency': 'EUR',
-        'SecurityExchange': 'TRERROR',
+        'SecurityExchange': 'XPAR',
     }
 
     fix_message = FixMessage(fix_params)
     fix_message.add_random_ClOrdID()
     fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
     rule_manager.remove_rule(nos_rule)
+    # endregion
 
-    # Check values in OrderBook
+    # region Check values in OrderBook
     before_order_details_id = "before_order_details"
 
     order_details = OrdersDetails()
@@ -93,6 +100,9 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Eliminated"),
-                                                  verify_ent("Qty", order_qty.name, "1,300"),
+                                                  verify_ent("Qty", order_qty.name, qty),
                                                   verify_ent("TIF", order_tif.name, "Day"),
                                                   verify_ent("OrdType", order_ordType.name, "Market")]))
+    # endregion
+
+    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

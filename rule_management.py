@@ -1,5 +1,6 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule,\
-    TemplateQuodRFQRule, TemplateQuodRFQTRADERule
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
+    TemplateNoPartyIDs
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -87,6 +88,8 @@ class RuleManager:
         return Stubs.simulator.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
+
+
     @staticmethod
     def add_OCR(session: str):
         return Stubs.simulator.createQuodOCRRule(request=
@@ -108,6 +111,18 @@ class RuleManager:
         return Stubs.simulator.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
                                                                                ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
+        return Stubs.simulator.createQuodSingleExecRule(
+            request=TemplateQuodSingleExecRule(
+                connection_id=ConnectionID(session_alias=session),
+                no_party_ids=party_id,
+                cum_qty=cum_qty,
+                mask_as_connectivity=mask_as_connectivity,
+                md_entry_size= md_entry_size,
+                md_entry_px= md_entry_px,
+                symbol=symbol))
 
     # ------------------------
 

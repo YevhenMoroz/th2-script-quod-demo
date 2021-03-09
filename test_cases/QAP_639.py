@@ -1,16 +1,17 @@
 import logging
+import time
 
+from demo import timeouts
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-
 
 class TestCase:
     def __init__(self, report_id):
@@ -24,7 +25,7 @@ class TestCase:
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-569', report_id)
+        self.case_id = bca.create_event('QAP-639', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -57,9 +58,28 @@ class TestCase:
         self.rule_manager.remove_rule(self.TRFQ)
         self.rule_manager.print_active_rules()
 
+    # Set near date method
+    def set_near_date(self):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
+        modify_request.set_settlement_date(bca.get_t_plus_date(3))
+        call(self.ar_service.modifyRFQTile, modify_request.build())
+
     # Create or get RFQ method
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
+
+    # Create three tiles
+    def create_3_rfq(self):
+        call(self.ar_service.maximizeWindow, self.base_request)
+
+        rfq_1 = BaseTileDetails(base=self.base_request, window_index=0)
+        call(self.ar_service.createRFQTile, rfq_1.build())
+
+        rfq_2 = BaseTileDetails(base=self.base_request, window_index=1)
+        call(self.ar_service.createRFQTile, rfq_2.build())
+
+        rfq_3 = BaseTileDetails(base=self.base_request, window_index=2)
+        call(self.ar_service.createRFQTile, rfq_3.build())
 
     # Send RFQ method
     def send_rfq(self):
@@ -91,7 +111,6 @@ class TestCase:
         qrb_status = ExtractionDetail('quoteRequestBook.status', 'Status')
         qrb_quote_status = ExtractionDetail('quoteRequestBook.qoutestatus', 'QuoteStatus')
         qrb.add_extraction_details([qrb_user, qrb_status, qrb_quote_status])
-        call(self.ar_service.getQuoteRequestBookDetails, qrb.request())
         call(self.common_act.verifyEntities, verification(execution_id, 'checking QRB',
                                                           [verify_ent('QRB User', qrb_user.name, self.user),
                                                            verify_ent('QRB Status', qrb_status.name, 'New'),
@@ -129,34 +148,36 @@ class TestCase:
                                                           [verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                                            verify_ent("OB ID vs QB ID", ob_id.name, self.quote_id)]))
 
-    # Main method. Must call in demo.py by "QAP_569.TestCase(report_id).execute()" command
+    # Main method. Must call in demo.py by "QAP_574.TestCase(report_id).execute()" command
     def execute(self):
         try:
             self.prepare_frontend()
-            self.add_rules()
-            self.create_or_get_rfq()
-
-            # Step 1
-            self.send_rfq()
-            self.check_qrb()
-            self.check_qb()
-            # Step 2
-            self.send_order_by_tob()
-            self.check_ob()
-            self.cancel_rfq()
-            # Step 3
-            self.send_rfq()
-            self.check_qrb()
-            self.check_qb()
-            # Step 4
-            self.send_order_by_venue_price()
-            self.check_ob()
-            self.cancel_rfq()
+            # self.add_rules()
+            # self.create_or_get_rfq()
+            self.create_3_rfq()
+            #
+            # # Step 1
+            # self.set_near_date()
+            # self.send_rfq()
+            # self.check_qrb()
+            # self.check_qb()
+            # # Step 2
+            # self.send_order_by_tob()
+            # self.check_ob()
+            # self.cancel_rfq()
+            # # Step 3
+            # self.send_rfq()
+            # self.check_qrb()
+            # self.check_qb()
+            # # Step 4
+            # self.send_order_by_venue_price()
+            # self.check_ob()
+            # self.cancel_rfq()
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
-        self.remove_rules()
+        # self.remove_rules()
         close_fe(self.case_id, self.session_id)
 
 
