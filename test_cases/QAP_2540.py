@@ -3,9 +3,8 @@ from copy import deepcopy
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from grpc_modules import infra_pb2
-from grpc_modules.infra_pb2 import Direction, ConnectionID
-from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from th2_grpc_common.common_pb2 import Direction
+# from grpc_modules.quod_simulator_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
@@ -97,13 +96,14 @@ def execute(report_id):
             'Send NewSingleOrder Iceberg',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('NewOrderSingle', new_order_params)
+            bca.message_to_grpc('NewOrderSingle', new_order_params, case_params['TraderConnectivity'])
         ))
     checkpoint_1 = new_ib_order.checkpoint_id
     execution_report1_params = {
         **reusable_order_params,
         'ClOrdID': new_order_params['ClOrdID'],
-        'OrderID': new_ib_order.response_messages_list[0].fields['OrderID'].simple_value,
+        # 'OrderID': new_ib_order.response_messages_list[0].fields['OrderID'].simple_value,
+        'OrderID': '*',
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -118,11 +118,11 @@ def execute(report_id):
     }
     # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             "ER Pending Received",
             bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_id
-        )
+        ), timeout=3000
     )
 
     execution_report2_params = deepcopy(execution_report1_params)
@@ -132,11 +132,11 @@ def execute(report_id):
         'SecurityExchange': case_params['Instrument']['SecurityExchange']
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             "Receive Execution Report New",
             bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID', 'OrdStatus']),
             checkpoint_1, case_params['TraderConnectivity'], case_id
-        )
+        ), timeout=3000
     )
 
     instrument_1_2 = case_params['Instrument']
@@ -162,13 +162,13 @@ def execute(report_id):
 
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Transmitted NewOrderSingle',
             bca.filter_to_grpc('NewOrderSingle', newordersingle_params, ["ClOrdID"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_id
-        )
+        ), timeout=3000
     )
 
     er_sim_params = {
@@ -190,14 +190,14 @@ def execute(report_id):
 
     logger.debug("Verify received Execution Report (OrdStatus = New)")
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive ExecutionReport New Sim',
             bca.filter_to_grpc('ExecutionReport', er_sim_params, ["ClOrdID", "OrdStatus"]),
             checkpoint_1,
             case_params['TraderConnectivity2'],
             case_id,
-            infra_pb2.Direction.Value("SECOND")
-        )
+            Direction.Value("SECOND")
+        ), timeout=3000
     )
 
     cancel_order_params = {
@@ -217,7 +217,7 @@ def execute(report_id):
             'Send CancelOrderRequest',
             case_params['TraderConnectivity'],
             case_id,
-            bca.message_to_grpc('OrderCancelRequest', cancel_order_params),
+            bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
         ))
 
     execution_report3_params = {
@@ -236,13 +236,13 @@ def execute(report_id):
         'Instrument': instrument_2
     }
     verifier.submitCheckRule(
-        bca.create_check_rule(
+        request=bca.create_check_rule(
             'Receive CancellationReport',
             bca.filter_to_grpc('ExecutionReport', execution_report3_params, ["ClOrdID", "OrdStatus"]),
             cancel_order.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
-        )
+        ), timeout=3000
     )
 
     sim_cancel_order_params = {
@@ -276,7 +276,6 @@ def execute(report_id):
             connectivity=case_params['TraderConnectivity2'],
             event_id=case_id,
             timeout=2000
-
         )
     )
 

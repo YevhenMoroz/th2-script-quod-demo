@@ -1,0 +1,174 @@
+{
+  "services": {
+    "Act": {
+      "service-class": "ActFixService",
+      "endpoints": {
+        "act_fix": {
+          "host": "10.0.22.22",
+          "port": 32130
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["act_fix"]
+      }
+    },
+    "Act-1": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act_1": {
+          "host": "10.0.22.22",
+          "port": 32134
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["act_1"]
+      }
+    },
+    "Check1": {
+      "service-class": "Check1Service",
+      "endpoints": {
+        "check1": {
+          "host": "10.0.22.22",
+          "port": 32132
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["check1"]
+      }
+    },
+    "Simulator": {
+      "service-class": "TemplateSimulatorServiceService",
+      "endpoints": {
+        "simulator": {
+          "host": "10.0.22.22",
+          "port": 32133
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator"]
+      }
+    },
+    "Simulator2": {
+      "service-class": "SimService",
+      "endpoints": {
+        "simulator": {
+          "host": "10.0.22.22",
+          "port": 32133
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator"]
+      }
+    },
+    "Win_Act": {
+      "service-class": "ActUIWinService",
+      "endpoints": {
+        "act_win": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_win"
+        ]
+      }
+    },
+    "Win_Act_Order_Ticket": {
+      "service-class": "OrderTicketServiceService",
+      "endpoints": {
+        "act_order_ticket": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_ticket"
+        ]
+      }
+    },
+	"Win_Act_Order_Book": {
+      "service-class": "OrderBookServiceService",
+      "endpoints": {
+        "act_order_book": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book"
+        ]
+      }
+    },
+    "Win_Act_Aggregated_Rates": {
+      "service-class": "AggregatedRatesOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
+        ]
+      }
+    },
+    "Win_Act_Client_Pricing": {
+      "service-class": "ClientPricingOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
+        ]
+      }
+    },
+    "Win_Act_Middle_Office": {
+      "service-class": "MiddleOfficeOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
+        ]
+      }
+    },
+    "Win_Act_Dealer_Intervention": {
+      "service-class": "DealerInterventionOperationsService",
+      "endpoints": {
+        "act_rfq": {
+          "host": "10.0.22.22",
+          "port": 31280
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rfq"
+        ]
+      }
+    }
+  }
+}
