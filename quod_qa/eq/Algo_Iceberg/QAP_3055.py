@@ -22,16 +22,16 @@ timeouts = True
 def execute(report_id):
     rule_manager = RuleManager()
     # nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT2")
-    ocr_rule = rule_manager.add_OCR("fix-bs-eq-paris")
-    ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
-    trade_rule = rule_manager.add_NOS_Trade_Store("fix-bs-eq-paris", "XPAR_CLIENT2")
+    ocr_rule = rule_manager.add_OCR("fix-bs-eq-trqx")
+    ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-trqx")
+    trade_rule = rule_manager.add_NOS_Trade_Store("fix-bs-eq-trqx", "TRQX_CLIENT2")
 
 
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
     fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
     fix_verifier_ss = FixVerifier('gtwquod5', case_id)
-    fix_verifier_bs = FixVerifier('fix-bs-eq-paris', case_id)
+    fix_verifier_bs = FixVerifier('fix-bs-eq-trqx', case_id)
 
     # Send NewOrderSingle
     iceberg_params = {
@@ -44,13 +44,13 @@ def execute(report_id):
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': {
-            'Symbol': 'FR0010380626_EUR',
-            'SecurityID': 'FR0010380626',
+            'Symbol': 'SE0000818569_SEK',
+            'SecurityID': 'SE0000818569',
             'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
+            'SecurityExchange': 'XSTO'
         },
         'OrderCapacity': 'A',
-        'Currency': 'EUR',
+        'Currency': 'SEK',
         'TargetStrategy': "1004",
         "DisplayInstruction":
             {
@@ -98,7 +98,7 @@ def execute(report_id):
     core = Stubs.core
 
     #Тут должен быть трейд ордера
-    core.touchRule(request=TouchRequest(id=trade_rule, args={"Symbol": "FR0010380626_EUR","":""}))
+    core.touchRule(request=TouchRequest(id=trade_rule, args={"Symbol": "PAR_ST"}))
 
     time.sleep(1)
     #Cancel order
@@ -110,11 +110,11 @@ def execute(report_id):
         "OrigClOrdID": fix_message_iceberg.get_ClOrdID()
     }
     fix_cancel = FixMessage(iceberg_cancel_parms)
-    responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
+    # responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     cancel_er_params = {
         "OrdStatus": "4"
     }
-    fix_verifier_ss.CheckExecutionReport(cancel_er_params,responce_cancel )
-    rule_manager.remove_rule(trade_rule)
+    # fix_verifier_ss.CheckExecutionReport(cancel_er_params,responce_cancel )
+    # rule_manager.remove_rule(trade_rule)
     rule_manager.remove_rule(ocr_rule)
     rule_manager.remove_rule(ocrr_rule)
