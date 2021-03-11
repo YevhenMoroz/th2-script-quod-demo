@@ -64,10 +64,10 @@ def check_quote_request_b(ex_id, base_request, service, act):
                                            verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Accepted")]))
 
 
-def check_quote_book(ex_id, base_request, service, act, owner):
+def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
     qb = QuoteDetailsRequest(base=base_request)
     qb.set_extraction_id(ex_id)
-    # qb.set_filter(["Venue", "HSBC"])
+    qb.set_filter(["Id", quote_id])
     qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
     qb_id = ExtractionDetail("quoteBook.id", "Id")
@@ -75,11 +75,11 @@ def check_quote_book(ex_id, base_request, service, act, owner):
     data = call(service.getQuoteBookDetails, qb.request())
     call(act.verifyEntities, verification(ex_id, "checking QB",
                                           [verify_ent("QB Owner", qb_owner.name, owner),
-                                           verify_ent("QB QuoteStatus", qb_quote_status.name, "Accepted")]))
-    return data[qb_id.name]
+                                           verify_ent("QB QuoteStatus", qb_quote_status.name, "Terminated"),
+                                           verify_ent("QB Id vs OB Id", qb_id.name, quote_id)]))
 
 
-def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id):
+def check_order_book(ex_id, base_request, instr_type, act, act_ob):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -91,15 +91,17 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id):
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
                                                                                  ob_id])))
-    call(act_ob.getOrdersDetails, ob.request())
+    data = call(act_ob.getOrdersDetails, ob.request())
     call(act.verifyEntities, verification(ex_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
-                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB ID vs QB ID", ob_id.name, qb_id)]))
+                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled")]))
+    return data[ob_id.name]
 
 
 def execute(report_id):
     common_act = Stubs.win_act
+    ar_service = Stubs.win_act_aggregated_rates_service
+    ob_act = Stubs.win_act_order_book
 
     # Rules
     rule_manager = rm.RuleManager()
@@ -121,8 +123,7 @@ def execute(report_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-    ob_act = Stubs.win_act_order_book
+
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
     if not Stubs.frontend_is_open:
@@ -137,21 +138,21 @@ def execute(report_id):
                      case_to_currency, case_near_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)
-        #
+
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
+        check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
-        #
+
         # Step 3
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
-        #
+
         #  Step 4
         place_order_venue(base_rfq_details, ar_service, case_venue)
-        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        ob_quote_id = check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act)
+        check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
 
 
