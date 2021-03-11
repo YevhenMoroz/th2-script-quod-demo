@@ -7,7 +7,7 @@
   "web_admin_password": "adm03",
 
   "qf_trading_fe_folder_305": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210222_5.1.125.138_rev169816(quod301saturn)EQ",
-  "qf_trading_fe_folder_308": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210222_5.1.125.138_rev169816(quod308mercury)",
+  "qf_trading_fe_folder_308": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210309_5.1.127.140_rev192993(quod308@mercury)",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
   "qf_trading_fe_user_305": "HD3",
   "qf_trading_fe_password_305": "HD3",

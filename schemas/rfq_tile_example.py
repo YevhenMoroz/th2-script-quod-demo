@@ -71,13 +71,13 @@ def execute(report_id):
 
         # extracting rfq value
         extract_values_request = ExtractRFQTileValues(details=base_details)
-        extract_values_request.extract_tenor("aggrRfqTile.tenor")
+        extract_values_request.extract_near_leg_tenor("aggrRfqTile.tenor")
         extract_values_request.extract_currency("aggrRfqTile.currency")
         extract_values_request.extract_quantity("aggrRfqTile.qty")
         extract_values_request.extract_currency_pair("aggrRfqTile.currencyPair")
         extract_values_request.extract_far_leg_tenor("aggrRfqTile.farLegTenor")
         extract_values_request.extract_near_settlement_date("aggrRfqTile.nearSettlement")
-        extract_values_request.extract_far_left_settlement_data("aggrRfqTile.farLegSettlement")
+        extract_values_request.extract_far_leg_settlement_data("aggrRfqTile.farLegSettlement")
         call(ar_service.extractRFQTileValues, extract_values_request.build())
 
         # check venues in table, could be used with verify action
