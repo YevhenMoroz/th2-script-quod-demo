@@ -29,7 +29,7 @@ def execute(report_id):
     bs_trqx = 'fix-bs-eq-trqx'
 
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "QAP-3352"
+    case_name = "QAP-3349"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
