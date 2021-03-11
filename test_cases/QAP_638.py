@@ -24,7 +24,7 @@ class TestCase:
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-569', report_id)
+        self.case_id = bca.create_event('QAP-638', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -62,9 +62,10 @@ class TestCase:
         call(self.ar_service.createRFQTile, self.base_details.build())
 
     # Set near tenor method
-    def set_near_tenor(self, tenor):
+    def set_tenors(self, near_tenor, far_tenor):
         modify_request = ModifyRFQTileRequest(details=self.base_details)
-        modify_request.set_near_tenor(tenor)
+        modify_request.set_near_tenor(near_tenor)
+        modify_request.set_far_leg_tenor(far_tenor)
         call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Set far leg tenor method
@@ -149,9 +150,7 @@ class TestCase:
             self.create_or_get_rfq()
 
             # Step 1
-            near_tenor, far_tenor = '1M', '2M'
-            self.set_near_tenor(near_tenor)
-            self.set_far_tenor(far_tenor)
+            self.set_tenors('1M', '2M')
             self.send_rfq()
             self.check_qrb()
             self.check_qb()
