@@ -1,5 +1,11 @@
-from grpc_modules import order_ticket_pb2
-from .algo_strategies import TWAPStrategy
+# from th2_grpc_act_gui_quod.order_ticket_pb2 import OrderDetails
+# from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
+# from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
+# from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams
+from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
+
+from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
+from .common_wrappers import CommissionsDetails
 
 
 class OrderTicketDetails:
@@ -12,6 +18,9 @@ class OrderTicketDetails:
 
     def set_limit(self, limit: str):
         self.order.limit = limit
+
+    def set_stop_price(self, stop_price: str):
+        self.order.stopPrice = stop_price
 
     def set_quantity(self, qty: str):
         self.order.qty = qty
@@ -37,6 +46,23 @@ class OrderTicketDetails:
         self.order.algoOrderParams.strategyType = strategy_type
         self.order.algoOrderParams.twapStrategy.CopyFrom(order_ticket_pb2.TWAPStrategyParams())
         return TWAPStrategy(self.order.algoOrderParams.twapStrategy)
+
+    def add_multilisting_strategy(self, strategy_type: str) -> MultilistingStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.multilistingStrategy.CopyFrom(order_ticket_pb2.MultilistingStrategy())
+        return MultilistingStrategy(self.order.algoOrderParams.multilistingStrategy)
+
+    def add_quod_participation_strategy(self, strategy_type: str) -> QuodParticipationStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.quodParticipationStrategyParams.CopyFrom(
+            order_ticket_pb2.QuodParticipationStrategyParams())
+        return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
+
+    def add_commissions_details(self) -> CommissionsDetails:
+        self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
+        return CommissionsDetails(self.order.commissionsParams)
 
     def build(self):
         return self.order

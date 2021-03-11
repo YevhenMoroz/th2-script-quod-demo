@@ -3,6 +3,5 @@ __all__ = (
     'simple_trade',
     'part_trade',
     'amend_and_trade',
-    'simple_trade2',
-    'RFQ_example'
+    'simple_trade2'
 )
