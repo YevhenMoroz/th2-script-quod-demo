@@ -46,6 +46,45 @@ class ContextAction:
         return self.request
 
 
+class ContextActionRatesTile:
+    def __init__(self):
+        self.request = ar_operations_pb2.ContextActionRatesTile()
+
+    @staticmethod
+    def create_venue_filter(venue: str):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterVenues()
+        action.venues.append(venue)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def create_venue_filters(venues: list):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterVenues()
+        for venue in venues:
+            action.venues.append(venue)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def create_button_click(button_name: str):
+        action = ar_operations_pb2.ContextActionRatesTile.ClickToButton()
+        action.buttonName = button_name
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    def add_action(self, action):
+        if isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterVenues):
+            self.request.filterVenues.CopyFrom(action)
+        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.ClickToButton):
+            self.request.buttonClick.CopyFrom(action)
+
+    def build(self):
+        return self.request
+
+
 class ModifyRFQTileRequest:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:
@@ -84,6 +123,42 @@ class ModifyRFQTileRequest:
         self.modify_request.quantity.value = quantity
 
     def add_context_action(self, context_action: ContextAction):
+        self.modify_request.contextActions.append(context_action.build())
+
+    def add_context_actions(self, context_actions: list):
+        for action in context_actions:
+            self.add_context_action(action)
+
+    def build(self):
+        return self.modify_request
+
+
+class ModifyRatesTileRequest:
+    def __init__(self, details: BaseTileDetails = None):
+        if details is not None:
+            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest(data=details.build())
+        else:
+            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
+
+    def set_details(self, details: BaseTileDetails):
+        self.modify_request.data.CopyFrom(details.build())
+
+    def set_from_currency(self, currency: str):
+        self.modify_request.fromCurrency = currency
+
+    def set_to_currency(self, currency: str):
+        self.modify_request.toCurrency = currency
+
+    # def set_tenor(self, tenor: str):
+    #     self.modify_request.tenor = tenor
+    #
+    # def set_change_currency(self, change_currency: bool):
+    #     self.modify_request.changeCurrency = change_currency
+
+    def set_quantity(self, quantity: int):
+        self.modify_request.quantity.value = quantity
+
+    def add_context_action(self, context_action: ContextActionRatesTile):
         self.modify_request.contextActions.append(context_action.build())
 
     def add_context_actions(self, context_actions: list):
