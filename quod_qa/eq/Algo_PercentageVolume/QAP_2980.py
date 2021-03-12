@@ -22,7 +22,6 @@ def execute(report_id):
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT2")
     ocr_rule = rule_manager.add_OCR("fix-bs-eq-paris")
-    ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
 
 
 
@@ -130,4 +129,3 @@ def execute(report_id):
     fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel )
     rule_manager.remove_rule(nos_rule)
     rule_manager.remove_rule(ocr_rule)
-    rule_manager.remove_rule(ocrr_rule)
