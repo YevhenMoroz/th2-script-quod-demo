@@ -65,7 +65,7 @@ def execute(report_id):
         'Side': "1",
         'OrderQty': "1000",
         'TimeInForce': "0",
-        'Price': "20",
+        'Price': "35",
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': {
@@ -104,6 +104,7 @@ def execute(report_id):
 
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce)
+    time.sleep(1)
     #Check on bs
     new_order_single_bs = {
         'Side': iceberg_params['Side'],
@@ -112,20 +113,18 @@ def execute(report_id):
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce)
 
-
-
-
     #Cancel order
-    iceberg_cancel_parms = {
+    cancel_parms = {
         "ClOrdID": fix_message_PerVolume.get_ClOrdID(),
         "Account": fix_message_PerVolume.get_parameter('Account'),
         "Side": fix_message_PerVolume.get_parameter('Side'),
         "TransactTime": datetime.utcnow().isoformat(),
         "OrigClOrdID": fix_message_PerVolume.get_ClOrdID()
     }
-    fix_cancel = FixMessage(iceberg_cancel_parms)
+    fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     cancel_er_params = {
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
         "OrdStatus": "4"
     }
     fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel )
