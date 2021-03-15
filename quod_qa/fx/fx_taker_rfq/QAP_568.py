@@ -72,7 +72,7 @@ def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
     qb_id = ExtractionDetail("quoteBook.id", "Id")
     qb.add_extraction_details([qb_owner, qb_quote_status, qb_id])
-    data = call(service.getQuoteBookDetails, qb.request())
+    call(service.getQuoteBookDetails, qb.request())
     call(act.verifyEntities, verification(ex_id, "checking QB",
                                           [verify_ent("QB Owner", qb_owner.name, owner),
                                            verify_ent("QB QuoteStatus", qb_quote_status.name, "Terminated"),
@@ -113,7 +113,6 @@ def execute(report_id):
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
-    # case_far_tenor = "1W"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
