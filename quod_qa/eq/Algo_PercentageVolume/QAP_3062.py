@@ -85,7 +85,7 @@ def execute(report_id):
             {
                 'StrategyParameterName': 'Aggressivity',
                 'StrategyParameterType': '1',
-                'StrategyParameterValue': '1'
+                'StrategyParameterValue': '2'
             }
         ]
 
