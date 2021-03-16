@@ -104,7 +104,7 @@ def execute(report_id):
     quote_owner = "QA2"
     case_instr_type = "Spot"
     case_sts_new='New'
-    case_sts_terminated='New'
+    case_sts_terminated='Terminated'
     case_quote_sts_accepted="Accepted"
     case_quote_sts_terminated="Terminated"
     case_venue = "HSBC"
