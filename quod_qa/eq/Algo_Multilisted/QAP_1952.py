@@ -88,9 +88,9 @@ def execute(report_id):
     fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     cancel_er_params = {
-        "OrigClOrdID": fix_message_multilisting.get_ClOrdID(),
+        "ClOrdID": fix_message_multilisting.get_ClOrdID(),
         "OrdStatus": "4"
     }
-    fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel )
+    fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel)
     rule_manager.remove_rule(nos_rule)
     rule_manager.remove_rule(ocr_rule)
