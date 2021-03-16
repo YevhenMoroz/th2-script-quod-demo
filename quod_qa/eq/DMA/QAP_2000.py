@@ -60,9 +60,9 @@ def execute(report_id):
         'Side': "2",
         'OrderQty': qty,
         'TimeInForce': "0",
-        'OrdType': 1,
+        'OrdType': 2,
         'TransactTime': time,
-        'ExDestination': 'CHIX',
+        'ExDestination': 'PARIS',
         'Instrument': {
             'Symbol': 'FR0000125007_EUR',
             'SecurityID': 'FR0000125007',
