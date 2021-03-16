@@ -13,6 +13,7 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
@@ -136,7 +137,7 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
         qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)
-        #
+
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
         check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)

@@ -92,18 +92,15 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob):
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
-    ob_currency = ExtractionDetail("orderBook.currency", "Currency")
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
-                                                                                 ob_id,
-                                                                                 ob_currency])))
+                                                                                 ob_id])))
     data = call(act_ob.getOrdersDetails, ob.request())
     call(act.verifyEntities, verification(ex_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
-                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB Currency", ob_currency.name, "USD")]))
+                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled")]))
     return data[ob_id.name]
 
 

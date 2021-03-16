@@ -98,7 +98,7 @@ class RFQTileValues(Enum):
     CURRENCY_PAIR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CURRENCY_PAIR
     CURRENCY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CURRENCY
     QUANTITY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.QUANTITY
-    NEAR_LEG_TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_LEG_TENOR
+    TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.TENOR
     FAR_LEG_TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_TENOR
     NEAR_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_SETTLEMENT_DATE
     FAR_LEG_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_SETTLEMENT_DATE
@@ -126,8 +126,8 @@ class ExtractRFQTileValues:
     def extract_quantity(self, name: str):
         self.extract_value(RFQTileValues.QUANTITY, name)
 
-    def extract_near_leg_tenor(self, name: str):
-        self.extract_value(RFQTileValues.NEAR_LEG_TENOR, name)
+    def extract_tenor(self, name: str):
+        self.extract_value(RFQTileValues.TENOR, name)
 
     def extract_far_leg_tenor(self, name: str):
         self.extract_value(RFQTileValues.FAR_LEG_TENOR, name)
@@ -135,7 +135,7 @@ class ExtractRFQTileValues:
     def extract_near_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.NEAR_SETTLEMENT_DATE, name)
 
-    def extract_far_leg_settlement_data(self, name: str):
+    def extract_far_leg_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.FAR_LEG_SETTLEMENT_DATE, name)
 
     def extract_value(self, field: RFQTileValues, name: str):

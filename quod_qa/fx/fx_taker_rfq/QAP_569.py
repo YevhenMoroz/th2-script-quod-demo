@@ -131,7 +131,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
-        # Step 1
+        # # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
                      case_to_currency, case_tenor, case_client)
