@@ -100,6 +100,9 @@ def execute(report_id):
         # cancel rfq tile
         call(ar_service.cancelRFQ, base_details.build())
 
+        # close rfq tile
+        call(ar_service.closeRFQTile, base_details.build())
+
         # minimize aggregated rates window
         call(ar_service.minimizeWindow, base_request)
 
