@@ -3,7 +3,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.wrappers import set_base
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ModifyRatesTileRequest, \
     ExtractRatesTileTableValuesRequest, ExtractRatesTileValues
@@ -17,18 +17,16 @@ class TestCase:
         self.logger.setLevel(logging.INFO)
 
         # Services setup
-        self.common_act = Stubs.win_act
         self.fix_act = Stubs.fix_act
         self.verifier = Stubs.verifier
-        self.simulator = Stubs.simulator
         self.cp_service = Stubs.win_act_cp_service
 
         # Case parameters setup
         self.case_id = bca.create_event('QAP-1560', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
-        self.case_base_request = get_base_request(self.session_id, self.case_id)
-        self.base_details = BaseTileDetails(base=self.case_base_request)
+        self.base_request = get_base_request(self.session_id, self.case_id)
+        self.base_details = BaseTileDetails(base=self.base_request)
 
         self.md_req_id_fe = bca.client_orderid(10)
         self.client = 'fix-qsesp-303'
@@ -40,17 +38,17 @@ class TestCase:
             'SecurityType': 'FXSPOT'
         }
 
+        # Last checkpoint. Need in the future for check MD via FIX
+        self.last_checkpoint = None
+
     # FE open method
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         username = Stubs.custom_config['qf_trading_fe_user_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        try:
-            if not Stubs.frontend_is_open:
-                prepare_fe(self.case_id, self.session_id, work_dir, username, password)
-                call(self.cp_service.createRatesTile, self.base_details.build())
-        except Exception as e:
-            logging.error('Error execution', exc_info=True)
+        if not Stubs.frontend_is_open:
+            prepare_fe(self.case_id, self.session_id, work_dir, username, password)
+            call(self.cp_service.createRatesTile, self.base_details.build())
 
     # Send MarketDataRequest subscribe method
     def send_md_subscribe(self):
@@ -92,7 +90,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': 1000000,
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.settl_date,
@@ -106,7 +104,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': 1000000,
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.settl_date,
@@ -185,7 +183,7 @@ class TestCase:
         # Change MarketDataRequest from 'Subscribe' to 'Unsubscribe'
         md_params['SubscriptionRequestType'] = '2'
         # Send MarketDataRequest via FIX
-        self.fix_act.placeMarketDataRequestFIX(
+        self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send MDR (unsubscribe)',
                 self.client,
@@ -193,6 +191,7 @@ class TestCase:
                 bca.message_to_grpc('MarketDataRequest', md_params, self.client)
             ))
 
+    # Extract prices from GUI
     def extract_prices(self):
         extract_request = ExtractRatesTileValues(details=self.base_details)
         extract_request.extract_ask_large_value("ratesTile.askLargeValue")
@@ -210,20 +209,26 @@ class TestCase:
         return float(data_tile["ratesTile.askLargeValue"] + data_table["rateTile.AskPx"]), \
                float(data_tile["ratesTile.bidLargeValue"] + data_table["rateTile.BidPx"])
 
+    # Update last checkpoint method
+    def get_last_checkpoint(self):
+        self.last_checkpoint = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(self.case_id)).checkpoint
+
+    # Decrease bid method
     def decrease_bid(self):
+        self.get_last_checkpoint()
         modify_request = ModifyRatesTileRequest(details=self.base_details)
         modify_request.decrease_bid()
         call(self.cp_service.modifyRatesTile, modify_request.build())
 
+    # Press defaults button method
     def use_defaults(self):
+        self.get_last_checkpoint()
         modify_request = ModifyRatesTileRequest(details=self.base_details)
         modify_request.press_use_defaults()
         call(self.cp_service.modifyRatesTile, modify_request.build())
 
+    # Check prices via Fix method
     def check_fix_prices(self, ask_px, bid_px):
-        checkpoint_request = bca.create_checkpoint_request(self.case_id)
-        checkpoint_response = Stubs.verifier.createCheckpoint(checkpoint_request)
-
         # MarketDataSnapshot response parameters
         md_response = {
             'MDReqID': self.md_req_id_fe,
@@ -237,7 +242,7 @@ class TestCase:
                     'MDEntryPx': bid_px,
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': 1000000,
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.settl_date,
@@ -251,7 +256,7 @@ class TestCase:
                     'MDEntryPx': ask_px,
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': 1000000,
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.settl_date,
@@ -315,8 +320,8 @@ class TestCase:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive MarketDataSnapshotFullRefresh (pending)',
-                bca.filter_to_grpc('MarketDataSnapshotFullRefresh', md_response, ['MDReqID', 'NoMDEntries']),
-                checkpoint_response.checkpoint,
+                bca.filter_to_grpc('MarketDataSnapshotFullRefresh', md_response, ['MDReqID']),
+                self.last_checkpoint,
                 self.client,
                 self.case_id
             )
@@ -324,19 +329,25 @@ class TestCase:
 
     def execute(self):
         try:
+            # Step 1
             market_data_params = self.send_md_subscribe()
             self.prepare_frontend()
+            # Step 2
             self.decrease_bid()
+            # Steps 3-5
             ask, bid = self.extract_prices()
             self.check_fix_prices(ask, bid)
+            # Step 6
             self.use_defaults()
+            # Steps 7-9
             ask, bid = self.extract_prices()
             self.check_fix_prices(ask, bid)
-            self.send_md_unsubscribe(market_data_params)
-            close_fe_2(self.case_id, self.session_id)
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+
+        self.send_md_unsubscribe(market_data_params)
+        close_fe_2(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

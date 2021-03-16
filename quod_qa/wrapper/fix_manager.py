@@ -20,7 +20,7 @@ class FixManager:
     def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle'):
 
         response = self.act.placeOrderFIX(
-            bca.convert_to_request(
+            request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 self.case_id,
@@ -30,8 +30,8 @@ class FixManager:
         return response
 
     def Send_OrderCancelRequest_FixMessage(self, fix_message, message_name='Cancel order'):
-        response = self.act.placeOrderFIX(
-            bca.convert_to_request(
+        response = self.act.sendMessage(
+            request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 self.case_id,
@@ -40,8 +40,8 @@ class FixManager:
         return response
 
     def Send_OrderCancelReplaceRequest_FixMessage(self, fix_message, message_name='Replace order'):
-        response = self.act.placeOrderFIX(
-            bca.convert_to_request(
+        response = self.act.sendMessage(
+            request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 self.case_id,
@@ -58,8 +58,8 @@ class FixManager:
         fix_message.add_tag({'Instrument': {'Symbol': symbol}})
         fix_message.add_tag({'MDReqID': MDReqID})
 
-        response = self.act.placeOrderFIX(
-            bca.convert_to_request(
+        response = self.act.sendMessage(
+            request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 self.case_id,
@@ -67,3 +67,28 @@ class FixManager:
             ))
         return response
 
+
+    def Send_MarketDataIncrementalRefresh_FixMessage(self, fix_message, symbol, message_name='Send Incremental MarketData'):
+        MDReqID = self.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol,
+            connection_id=ConnectionID(session_alias=self.TraderConnectivity)
+        )).MDRefID
+        fix_message.add_tag({'MDReqID': MDReqID})
+        response = self.act.sendMessage(
+            request=bca.convert_to_request(
+                message_name,
+                self.TraderConnectivity,
+                self.case_id,
+                bca.message_to_grpc('MarketDataIncrementalRefresh', fix_message.get_parameters(), self.TraderConnectivity)
+            ))
+        return response
+
+    def Send_MarketDataRequest_FixMessage(self, fix_message, message_name='Send MarketDataRequest'):
+        response = self.act.sendMessage(
+            request=bca.convert_to_request(
+                message_name,
+                self.TraderConnectivity,
+                self.case_id,
+                bca.message_to_grpc('MarketDataRequest', fix_message.get_parameters(), self.TraderConnectivity)
+            ))
+        return response

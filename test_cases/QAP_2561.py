@@ -10,7 +10,7 @@ from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule
 from th2_grpc_common.common_pb2 import ConnectionID
 
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe_2, close_fe_2
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe_2, close_fe_2, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, create_verification_request, check_value, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, \
     ExtractionDetail, ExtractionAction
@@ -35,7 +35,7 @@ def execute(report_id):
     NOS = rule_man.add_NOS(session_alias)
     OCRR = rule_man.add_OCRR(session_alias)
     OCR = rule_man.add_OCR(session_alias)
-    # logger.info(f"Start rules with id's: \n {NOS}, {OCRR}, {OCR}")
+    logger.info(f"Start rules with id's: \n {NOS}, {OCRR}, {OCR}")
     # NOS = simulator.createQuodNOSRule(request=TemplateQuodNOSRule(connection_id=conn))
     # OCRR = simulator.createQuodOCRRRule(request=TemplateQuodOCRRRule(connection_id=conn))
     # OCR = simulator.createQuodOCRRule(request=TemplateQuodOCRRule(connection_id=conn))
@@ -112,7 +112,7 @@ def execute(report_id):
         'OrderQty': new_iceberg_order_params['OrderQty'],
         'Price': new_iceberg_order_params['Price'],
         'ClOrdID': new_iceberg_order_params['ClOrdID'],
-        'OrderID': '*',
+        'OrderID': new_iceberg_order.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'CumQty': '0',
         'LastPx': '0',
@@ -228,13 +228,17 @@ def execute(report_id):
     act_order_book = Stubs.win_act_order_book
     common_win_act = Stubs.win_act
 
+    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
+        prepare_fe(case_id, session_id, work_dir, username, password)
 
     try:
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
+        main_order_details.set_filter(["ClOrdID", new_iceberg_order_params['ClOrdID']])
 
         main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
         main_order_qty = ExtractionDetail("order.Qty", "Qty")
@@ -247,10 +251,13 @@ def execute(report_id):
                                 main_order_order_id])
 
         sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-
-        lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
+        sub_order_1_lv1_qty = ExtractionDetail("subOrder_lvl1.Qty", "Qty")
+        sub_order_1_lv1_displ_qty = ExtractionDetail("subOrder_lvl1.DisplayQty", "DisplQty")
+        sub_order_1_lv1_exec_pcy = ExtractionDetail("subOrder_lvl1.ExecPcy", "ExecPcy")
+        sub_lvl1_ext_action = ExtractionAction.create_extraction_action(
+            extraction_details=[sub_order_1_lv1_qty, sub_order_1_lv1_displ_qty, sub_order_1_lv1_exec_pcy, sub_order_id_dt])
+        lvl1_info = OrderInfo.create(action=sub_lvl1_ext_action)
         lvl1_details = OrdersDetails.create(info=lvl1_info)
-
         main_order_details.add_single_order_info(
             OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
 
@@ -260,11 +267,17 @@ def execute(report_id):
                                                                  "Synth (Quod Split Manager)"),
                                                       verify_ent("Order Qty", main_order_qty.name, "400"),
                                                       verify_ent("Order Display Qty", main_order_disp_qty.name,
-                                                                 "50")]))
-
-        sub_order_id = request[sub_order_id_dt.name]
-        if not sub_order_id:
-            raise Exception("Order id is not returned")
+                                                                 "50"),
+                                                      verify_ent("Sub Lvl 1 Qty", sub_order_1_lv1_qty.name, "400"),
+                                                      verify_ent("Sub Lvl 1 Display Qty",
+                                                                 sub_order_1_lv1_displ_qty.name, "50"),
+                                                      verify_ent("Sub Lvl 1 ExecPcy", sub_order_1_lv1_exec_pcy.name,
+                                                                 "Synth (Quod Synthetic Iceberg)"),
+                                                      ]))
+        #
+        # sub_order_id = request[sub_order_id_dt.name]
+        # if not sub_order_id:
+        #     raise Exception("Order id is not returned")
 
         # 2 step
 
@@ -277,19 +290,16 @@ def execute(report_id):
         lvl2_length = "subOrders_lv2.length"
         algo_split_man_extr_id = "order.algo_split_man"
 
-        sub_order_1_lvl2_qty = ExtractionDetail("subOrder_1_lv2.Qty", "Qty")
+        sub_order_1_lvl2_qty = ExtractionDetail("subOrder_lv2.Qty", "Qty")
         sub_order_1_lvl2_exec_pcy = ExtractionDetail("subOrder_1_lv2.ExecPcy", "ExecPcy")
-        sub_order_1_lvl2_ext_action = ExtractionAction.create_extraction_action(
-            extraction_details=[sub_order_1_lvl2_qty, sub_order_1_lvl2_exec_pcy])
 
-        lvl2_details = OrdersDetails()
+        lvl2_details = OrdersDetails.create()
         lvl2_details.set_default_params(base_request)
         lvl2_details.set_extraction_id(algo_split_man_extr_id)
         lvl2_details.set_filter(["ParentOrdID", sub_order_id])
         lvl2_details.add_single_order_info(OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_1_lvl2_qty,
-                                                                                 sub_order_1_lvl2_exec_pcy])
-        ))
+                action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_1_lvl2_qty,
+                                                                                     sub_order_1_lvl2_exec_pcy])))
         lvl2_details.extract_length(lvl2_length)
 
         call(act2.getChildOrdersDetails, lvl2_details.request())
@@ -298,56 +308,60 @@ def execute(report_id):
                                                                  "50"),
                                                       verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_1_lvl2_exec_pcy.name,
                                                                  "DMA"),
-                                                      verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
-                                                      ]))
-
-        sub_order_1_lvl2_info = OrderInfo.create(action=sub_order_1_lvl2_ext_action)
-
-        sub_order_2_lvl2_qty = ExtractionDetail("subOrder_2_lvl2.Qty", "Qty")
-        sub_order_2_lvl2_exec_pcy = ExtractionDetail("subOrder_2_lvl2.ExecPcy", "ExecPcy")
-        sub_order_2_lv2_ext_action = ExtractionAction.create_extraction_action(
-            extraction_details=[sub_order_2_lvl2_qty, sub_order_2_lvl2_exec_pcy])
-
-        sub_order_2_lvl2_info = OrderInfo.create(action=sub_order_2_lv2_ext_action)
-        #
-        lvl2_count = "subOrders_lvl2.length"
-        sub_order_1_lv1_qty = ExtractionDetail("subOrder_lvl1.Qty", "Qty")
-        sub_order_1_lv1_displ_qty = ExtractionDetail("subOrder_lvl1.DisplayQty", "DisplQty")
-        sub_order_1_lv1_exec_pcy = ExtractionDetail("subOrder_lvl1.ExecPcy", "ExecPcy")
-        sub_order_1_lv1_ext_action = ExtractionAction.create_extraction_action(
-            extraction_details=[sub_order_1_lv1_qty, sub_order_1_lv1_displ_qty, sub_order_1_lv1_exec_pcy])
-        sub_lv2_details = OrdersDetails.create(order_info_list=[sub_order_1_lvl2_info, sub_order_2_lvl2_info])
-        sub_lv2_details.extract_length(lvl2_count)
-
-        sub_1_lv1_info = OrderInfo.create(action=sub_order_1_lv1_ext_action, sub_order_details=sub_lv2_details)
-        sub_1_lv1_details = OrdersDetails.create(info=sub_1_lv1_info)
-        main_order_info = OrderInfo.create(sub_order_details=sub_1_lv1_details)
-
-        main_co_details = OrdersDetails()
-        main_co_details.set_default_params(base_request)
-        main_co_details.set_extraction_id(algo_split_man_extr_id)
-        main_co_details.add_single_order_info(main_order_info)
-        main_co_details.set_filter(["Lookup", "RSC.[PARIS]", "ExecPcy", "Synth (Quod Split Manager)"])
-
-        call(act2.getOrdersDetails, main_co_details.request())
-
-        call(common_act.verifyEntities, verification(algo_split_man_extr_id, "checking order",
-                                                     [verify_ent("Sub Lvl 1 Qty", sub_order_1_lv1_qty.name, "400"),
-                                                      verify_ent("Sub Lvl 1 Display Qty",
-                                                                 sub_order_1_lv1_displ_qty.name, "50"),
-                                                      verify_ent("Sub Lvl 1 ExecPcy", sub_order_1_lv1_exec_pcy.name,
-                                                                 "Synth (Quod Synthetic Iceberg)"),
-                                                      verify_ent("Sub 1 Lvl 2 Qty", sub_order_1_lvl2_qty.name, "45"),
+                                                      verify_ent("Sub order Lvl 2 count", lvl2_length, "1"),
                                                       verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_1_lvl2_exec_pcy.name,
-                                                                 "DMA"),
-                                                      verify_ent("Sub 2 Lvl 2 Qty", sub_order_2_lvl2_qty.name, "50"),
-                                                      verify_ent("Sub 2 Lvl 2 ExecPcy", sub_order_2_lvl2_exec_pcy.name,
-                                                                 "DMA"),
-                                                      verify_ent("Sub order Lvl 2 count", lvl2_count, "3")]))
+                                                                 "DMA")
+                                                      ]))
+        #
+        # sub_order_1_lvl2_info = OrderInfo.create(action=sub_order_1_lvl2_ext_action)
+        #
+        # sub_order_2_lvl2_qty = ExtractionDetail("subOrder_2_lvl2.Qty", "Qty")
+        # sub_order_2_lvl2_exec_pcy = ExtractionDetail("subOrder_2_lvl2.ExecPcy", "ExecPcy")
+        # sub_order_2_lvl2_ext_action = ExtractionAction.create_extraction_action(
+        #     extraction_details=[sub_order_2_lvl2_qty, sub_order_2_lvl2_exec_pcy])
+        #
+        # sub_order_2_lvl2_info = OrderInfo.create(action=sub_order_2_lvl2_ext_action)
+        # #
+        # lvl2_count = "subOrders_lvl2.length"
+        #
+        #
+        #
+        # sub_order_1_lvl1_ext_action = ExtractionAction.create_extraction_action(
+        #     extraction_details=[sub_order_1_lv1_qty, sub_order_1_lv1_displ_qty, sub_order_1_lv1_exec_pcy])
+        # sub_lvl2_details = OrdersDetails.create(order_info_list=[sub_order_1_lvl2_info, sub_order_2_lvl2_info])
+        # sub_lvl2_details.extract_length(lvl2_count)
+        #
+        # sub_1_lvl1_info = OrderInfo.create(action=sub_order_1_lvl1_ext_action, sub_order_details=sub_lvl2_details)
+        # sub_1_lvl1_details = OrdersDetails.create(info=sub_1_lvl1_info)
+        # main_order_info = OrderInfo.create(sub_order_details=sub_1_lvl1_details)
+        #
+        # main_co_details = OrdersDetails()
+        # main_co_details.set_default_params(base_request)
+        # main_co_details.set_extraction_id(algo_split_man_extr_id)
+        # main_co_details.add_single_order_info(main_order_info)
+        # main_co_details.set_filter(["Order ID", pending_er_params['OrderID']])
+        # # main_co_details.set_filter(["Lookup", "RSC.[PARIS]", "ExecPcy", "Synth (Quod Split Manager)"])
+        #
+        # call(act2.getOrdersDetails, main_co_details.request())
+        #
+        # call(common_act.verifyEntities, verification(algo_split_man_extr_id, "checking order",
+        #                                              [verify_ent("Sub Lvl 1 Qty", sub_order_1_lv1_qty.name, "400"),
+        #                                               verify_ent("Sub Lvl 1 Display Qty",
+        #                                                          sub_order_1_lv1_displ_qty.name, "50"),
+        #                                               verify_ent("Sub Lvl 1 ExecPcy", sub_order_1_lv1_exec_pcy.name,
+        #                                                          "Synth (Quod Synthetic Iceberg)"),
+        #
+        #                                               verify_ent("Sub 1 Lvl 2 Qty", sub_order_1_lvl2_qty.name, "45"),
+        #                                               verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_1_lvl2_exec_pcy.name,
+        #                                                          "DMA"),
+        #                                               verify_ent("Sub 2 Lvl 2 Qty", sub_order_2_lvl2_qty.name, "50"),
+        #                                               verify_ent("Sub 2 Lvl 2 ExecPcy", sub_order_2_lvl2_exec_pcy.name,
+        #                                                          "DMA"),
+        #                                               verify_ent("Sub order Lvl 2 count", lvl2_count, "3")]))
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
-    close_fe_2(case_id, session_id)
+    close_fe(case_id, session_id)
     # GUI section end
 
     replace_order_params = {
@@ -593,11 +607,11 @@ def execute(report_id):
             timeout=2000
         )
     )
-
-    if timeouts:
-        sleep(5)
+    #
+    # if timeouts:
+    #     sleep(5)
 
     for rule in [NOS, OCRR, OCR]:
         rule_man.remove_rule(rule)
-
+    rule_man.print_active_rules()
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
