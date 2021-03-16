@@ -92,3 +92,13 @@ class FixManager:
                 bca.message_to_grpc('MarketDataRequest', fix_message.get_parameters(), self.TraderConnectivity)
             ))
         return response
+
+    def CheckSubscription(self, MDSymbol):
+        #TODO Need Update
+        simulator = Stubs.simulator
+        allMDRefID = simulator.getAllMDRefID(request=RequestMDRefID(
+            connection_id=ConnectionID(session_alias=self.TraderConnectivity)
+        ))
+        for i in allMDRefID.PairsMDRefID:
+            print({i.symbol: i.MDRefID}, type({i.symbol: i.MDRefID}))
+
