@@ -11,7 +11,7 @@ from rule_management import RuleManager
 
 def execute(report_id):
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-trqx", "TRQX_CLIENT2")
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-trqx", "TRQX_CLIENT2", "TRQX", 20)
     ocr_rule = rule_manager.add_OCR("fix-bs-eq-trqx")
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
