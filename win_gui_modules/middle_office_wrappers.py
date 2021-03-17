@@ -203,6 +203,10 @@ class ModifyTicketDetails:
             self._request.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
+    def set_selected_row_count(self, selected_row_count: int):
+        self._request.multipleRowSelection = True
+        self._request.selectedRowCount = selected_row_count
+
     def add_commissions_details(self) -> CommissionsDetails:
         self._request.commissionsDetails.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self._request.commissionsDetails)

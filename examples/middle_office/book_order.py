@@ -32,6 +32,7 @@ def execute(report_id):
 
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["Owner", username, "Order ID", "MO"])
+        # modify_request.set_selected_row_count(4)
 
         ticket_details = modify_request.add_ticket_details()
         ticket_details.set_client("MOClient")
