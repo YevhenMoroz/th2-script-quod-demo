@@ -45,10 +45,10 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts):
+def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
-    qrb.set_filter(["Venue", "HSB"])
+    qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
@@ -106,10 +106,10 @@ def execute(report_id):
     case_name = "QAP-580"
     quote_owner = "QA2"
     case_instr_type = "Spot"
-    case_sts_new='New'
-    case_sts_terminated='Terminated'
-    case_quote_sts_accepted="Accepted"
-    case_quote_sts_terminated="Terminated"
+    case_sts_new = 'New'
+    case_sts_terminated = 'Terminated'
+    case_quote_sts_accepted = "Accepted"
+    case_quote_sts_terminated = "Terminated"
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
@@ -135,18 +135,20 @@ def execute(report_id):
         # # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client,venues)
+                     case_to_currency, case_near_tenor, case_client, venues)
         # # Step 2
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act, case_sts_new, case_quote_sts_accepted)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+                              case_sts_new, case_quote_sts_accepted, case_venue)
         # # Step 3
         cancel_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,case_sts_terminated,
-                              case_quote_sts_terminated)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+                              case_sts_terminated,case_quote_sts_terminated, case_venue)
 
         # Step 4
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,case_sts_new, case_quote_sts_accepted)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+                              case_sts_new, case_quote_sts_accepted, case_venue)
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
