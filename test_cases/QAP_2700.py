@@ -12,7 +12,8 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -135,12 +136,10 @@ def execute(report_id):
         extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
         extract_request.set_extraction_id(ext_id)
         extract_request.set_filter(["Order ID", block_order_id])
-        block_order_id = ExtractionDetail("middleOffice.blockId", "Order ID")
-        block_id = ExtractionDetail("middleOffice.blockId", "Block ID")
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request.add_extraction_details([block_order_id, block_id,block_order_status,block_order_match_status,block_order_summary_status])
+        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier2 = Verifier(case_id)
@@ -160,13 +159,10 @@ def execute(report_id):
         middle_office_service_approve = Stubs.win_act_middle_office_service
         extract_request_approve = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
         extract_request_approve.set_extraction_id(ext_id_approve)
-        block_order_id = ExtractionDetail("middleOffice.blockId", "Order ID")
-        block_id = ExtractionDetail("middleOffice.blockId", "Block ID")
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request_approve.add_extraction_details(
-            [block_order_id, block_id, block_order_status, block_order_match_status, block_order_summary_status])
+        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier2 = Verifier(case_id)
@@ -179,7 +175,7 @@ def execute(report_id):
 
         # Step 3 Allocate Order
 
-        middle_office_service = Stubs.win_act_middle_office_service
+        middle_office_service_allocate = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
 
@@ -188,6 +184,42 @@ def execute(report_id):
         allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": "50"})
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
+
+        ext_id_allocate = "MiddleOfficeExtractionId2"
+        extract_request_allocate = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request_allocate.set_extraction_id(ext_id_allocate)
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request_allocate.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
+        request_allocate = call(middle_office_service_allocate.extractMiddleOfficeBlotterValues, extract_request.build())
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking block order after allocate")
+        verifier2.compare_values("Order Status", request_allocate[block_order_status.name], "Accepted")
+        verifier2.compare_values("Order Match Status", request_allocate[block_order_match_status.name], "Matched")
+        verifier2.compare_values("Order Summary Status", request_allocate[block_order_summary_status.name],"MatchedAgreed")
+        verifier2.verify()
+
+        # Check allocations blotter
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking allocate blotter")
+        verifier2.compare_values("Allocation Status", request_allocate_blotter[allocate_status.name], "Affirmed")
+        verifier2.compare_values("Allocation Account ID", request_allocate_blotter[allocate_account_id.name], "MOClientSA1")
+        verifier2.compare_values("Allocation Match Status", request_allocate_blotter[allocate_status_match_status.name], "Matched")
+        verifier2.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
