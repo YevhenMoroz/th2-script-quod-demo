@@ -30,7 +30,6 @@ class TestCase:
 
         self.md_req_id_fe = bca.client_orderid(10)
         self.client = 'fix-qsesp-303'
-        self.provider = 'fix-fh-fx-esp'
         self.settl_date = tsd.spo()
         self.case_instrument = {
             'Symbol': 'EUR/USD',
