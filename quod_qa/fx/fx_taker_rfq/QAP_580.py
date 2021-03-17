@@ -3,7 +3,8 @@ import logging
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -22,8 +23,10 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, tenor, client):
+def modify_order(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
+    action = ContextAction.create_venue_filters(venues)
+    modify_request.add_context_action(action)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -113,7 +116,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB", "CIT", "BAR"]
+    venues = ["HSB", "CIT"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -132,7 +135,7 @@ def execute(report_id):
         # # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client)
+                     case_to_currency, case_near_tenor, case_client,venues)
         # # Step 2
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act, case_sts_new, case_quote_sts_accepted)

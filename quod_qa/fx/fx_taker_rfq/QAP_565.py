@@ -3,7 +3,8 @@ import logging
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -13,16 +14,17 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
-def modify_order(base_request, service, qty, cur1, cur2, tenor):
+
+def modify_order(base_request, service, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_quantity(qty)
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
+    action = ContextAction.create_venue_filters(venues)
+    modify_request.add_context_action(action)
     call(service.modifyRFQTile, modify_request.build())
+
 
 def execute(report_id):
     common_act = Stubs.win_act
@@ -38,6 +40,7 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     base_rfq_details = BaseTileDetails(base=case_base_request)
+    venues=["HCB", '"CIT']
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
@@ -47,6 +50,7 @@ def execute(report_id):
     try:
         # Steps 1-2
         create_or_get_rfq(base_rfq_details, ar_service)
+        modify_order(base_rfq_details, ar_service, venues)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
