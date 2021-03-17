@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
@@ -74,7 +75,12 @@ def execute(report_id):
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce)
 
-
+    #Check answer from sim
+    er_bs_params = {
+        'OrdStatus': "0",
+        'Text': 'New status'
+    }
+    fix_verifier_bs.CheckExecutionReport(er_bs_params, responce, direction="SECOND")
 
 
     #Cancel order
@@ -92,5 +98,7 @@ def execute(report_id):
         "OrdStatus": "4"
     }
     fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel)
+
+    time.sleep(1)
     rule_manager.remove_rule(nos_rule)
     rule_manager.remove_rule(ocr_rule)
