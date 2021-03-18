@@ -4,7 +4,7 @@ import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
-                                                       ContextActionRatesTile)
+                                                       ContextActionRatesTile, ModifyRFQTileRequest, ContextAction)
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -27,11 +27,13 @@ def modify_rates_tile(base_request, service, cur1, cur2, qty, venue):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
+    modify_request.set_change_instrument(True)
     modify_request.set_quantity(qty)
+    modify_request.set_change_qty(True)
     context_action = ContextActionRatesTile()
     context_action.create_venue_filter(venue)
     modify_request.add_context_action(context_action)
-    call(service.modifyRatesTile, base_request.build())
+    call(service.modifyRatesTile, modify_request.build())
 
 
 
@@ -67,9 +69,31 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
+        # modify rfq order
+        # modify_request = ModifyRFQTileRequest()
+        # modify_request.set_quantity(123)
+        # modify_request.set_from_currency("EUR")
+        # modify_request.set_to_currency("USD")
+        # modify_request.set_near_tenor("Spot")
+        # modify_request.set_far_leg_tenor("1W")
+        # modify_request.set_change_currency(True)
+        # # add context action
+        # action = ContextAction.create_venue_filters(["HSB", "MGS"])
+        # modify_request.add_context_action(action)
+        # # or
+        # # action = ContextAction.create_venue_filter("HSB")
+        # # action1 = ContextAction.create_venue_filter("MGS")
+        # # modify_request.add_context_actions([action, action1])
+        #
+        # # context button click
+        # click_action = ContextAction.create_button_click("Quotes")
+        # modify_request.add_context_action(click_action)
+        #
+        # call(ar_service.modifyRFQTile, modify_request.build())
+        #
 
         create_or_get_rates_tile(base_rfq_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, 'GBP', 'USD', 1234567, case_venue)
+        modify_rates_tile(base_esp_details, ar_service, 'GBP', 'USD', 1000000, case_venue)
 
         # close_fe_2(case_id, session_id)
 
