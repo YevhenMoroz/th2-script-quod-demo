@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from schemas import rfq_tile_example
 from stubs import Stubs
-from quod_qa.fx.fx_taker_rfq import QAP_574, QAP_585, QAP_569, testing, QAP_578, QAP_579, QAP_580
+from quod_qa.fx.fx_taker_rfq import QAP_574, QAP_585, QAP_569, QAP_578, QAP_579, QAP_580
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
