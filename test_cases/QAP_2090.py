@@ -4,6 +4,7 @@ import time
 # from demo import timeouts
 from rule_management import RuleManager
 from stubs import Stubs
+from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, \
@@ -27,21 +28,77 @@ class TestCase:
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-639', report_id)
+        self.case_id = bca.create_event('QAP-2090', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
-
-        self.rfq_1 = BaseTileDetails(base=self.base_request, window_index=0)
-        self.rfq_2 = BaseTileDetails(base=self.base_request, window_index=1)
-        self.rfq_3 = BaseTileDetails(base=self.base_request, window_index=2)
+        self.base_details = BaseTileDetails(base=self.base_request)
 
         self.venue = 'HSB'
         self.user = Stubs.custom_config['qf_trading_fe_user_303']
         self.quote_id = None
+        self.case_params = {
+            'Connectivity': 'fix-qsesp-303',
+            'MDReqID': bca.client_orderid(10),
+            'Account': 'MMCLIENT1',
+            'HandlInst': '1',
+            'Side': '1',
+            'OrderQty': 1000000,
+            'OrdType': '2',
+            'Price': 35.002,
+            'TimeInForce': '3',
+            'SettlType': 0,
+            'SettlDate': tsd.spo(),
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'Product': '4',
+                'SecurityType': 'FXSPOT'
+            }
+        }
+
+        # This parameters can be used for ExecutionReport message
+        self.reusable_order_params = {
+            'Account': self.case_params['Account'],
+            'HandlInst': self.case_params['HandlInst'],
+            'Side': self.case_params['Side'],
+            'TimeInForce': self.case_params['TimeInForce'],
+            'OrdType': self.case_params['OrdType'],
+            'OrderCapacity': 'A',
+            'Currency': 'EUR'
+        }
+        self.case_params = {
+            'Connectivity': 'fix-qsesp-303',
+            'MDReqID': bca.client_orderid(10),
+            'Account': 'MMCLIENT1',
+            'HandlInst': '1',
+            'Side': '1',
+            'OrderQty': 1000000,
+            'OrdType': '2',
+            'Price': 35.002,
+            'TimeInForce': '3',
+            'SettlType': 0,
+            'SettlDate': tsd.spo(),
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'Product': '4',
+                'SecurityType': 'FXSPOT'
+            }
+        }
+
+        # This parameters can be used for ExecutionReport message
+        self.reusable_order_params = {
+            'Account': self.case_params['Account'],
+            'HandlInst': self.case_params['HandlInst'],
+            'Side': self.case_params['Side'],
+            'TimeInForce': self.case_params['TimeInForce'],
+            'OrdType': self.case_params['OrdType'],
+            'OrderCapacity': 'A',
+            'Currency': 'EUR'
+        }
 
         # Case rules
         self.rule_manager = RuleManager()
+        self.NOS = None
         self.RFQ = None
         self.TRFQ = None
 
@@ -57,18 +114,20 @@ class TestCase:
 
     # Add case rules method
     def add_rules(self):
+        self.NOS = self.rule_manager.add_NOS('fix-qsesp-303')
         self.RFQ = self.rule_manager.add_RFQ('fix-fh-fx-rfq')
         self.TRFQ = self.rule_manager.add_TRFQ('fix-fh-fx-rfq')
 
     # Remove case rules method
     def remove_rules(self):
+        self.rule_manager.remove_rule(self.NOS)
         self.rule_manager.remove_rule(self.RFQ)
         self.rule_manager.remove_rule(self.TRFQ)
         self.rule_manager.print_active_rules()
 
     # Set near date method
-    def modify_tile(self, details, near, far, cur_from, cur_to):
-        modify_request = ModifyRFQTileRequest(details=details)
+    def modify_tile(self, near, far, cur_from, cur_to):
+        modify_request = ModifyRFQTileRequest(details=self.base_details)
         modify_request.set_from_currency(cur_from)
         modify_request.set_to_currency(cur_to)
         modify_request.set_near_tenor(near)
@@ -82,36 +141,36 @@ class TestCase:
         call(self.ar_service.minimizeWindow, self.base_request)
 
     # Create or get RFQ method
-    def create_rfq_tile(self, rfq):
-        call(self.ar_service.createRFQTile, rfq.build())
+    def create_rfq_tile(self):
+        call(self.ar_service.createRFQTile, self.base_details.build())
 
     # Send RFQ method
-    def send_rfq(self, rfq):
-        call(self.ar_service.sendRFQOrder, rfq.build())
-
-    # Cancel RFQ method
-    def cancel_rfq(self):
-        call(self.ar_service.cancelRFQ, self.rfq_1.build())
-
-    # Send an order by clicking from Top Of Book button method
-    def send_order_by_tob(self):
-        rfq_request = PlaceRFQRequest(details=self.rfq_1)
-        rfq_request.set_action(RFQTileOrderSide.BUY)
-        call(self.ar_service.placeRFQOrder, rfq_request.build())
-
-    # Send an order by clicking price in a venue method
-    def send_order_by_venue_price(self):
-        rfq_request = PlaceRFQRequest(details=self.rfq_1)
-        rfq_request.set_venue(self.venue)
-        rfq_request.set_action(RFQTileOrderSide.BUY)
-        call(self.ar_service.placeRFQOrder, rfq_request.build())
+    def send_rfq(self):
+        call(self.ar_service.sendRFQOrder, self.base_details.build())
+    #
+    # # Cancel RFQ method
+    # def cancel_rfq(self):
+    #     call(self.ar_service.cancelRFQ, self.rfq_1.build())
+    #
+    # # Send an order by clicking from Top Of Book button method
+    # def send_order_by_tob(self):
+    #     rfq_request = PlaceRFQRequest(details=self.rfq_1)
+    #     rfq_request.set_action(RFQTileOrderSide.BUY)
+    #     call(self.ar_service.placeRFQOrder, rfq_request.build())
+    #
+    # # Send an order by clicking price in a venue method
+    # def send_order_by_venue_price(self):
+    #     rfq_request = PlaceRFQRequest(details=self.rfq_1)
+    #     rfq_request.set_venue(self.venue)
+    #     rfq_request.set_action(RFQTileOrderSide.BUY)
+    #     call(self.ar_service.placeRFQOrder, rfq_request.build())
 
     # Check QuoteRequestBook method
     def check_qrb(self, cur):
         execution_id = bca.client_orderid(4)
         qrb = QuoteDetailsRequest(base=self.base_request)
         qrb.set_extraction_id(execution_id)
-        # qrb.set_filter(["Currency", cur])
+        qrb.set_filter(["Currency", cur])
         qrb_user = ExtractionDetail('quoteRequestBook.user', 'User')
         qrb_status = ExtractionDetail('quoteRequestBook.status', 'Status')
         qrb_quote_status = ExtractionDetail('quoteRequestBook.qoutestatus', 'QuoteStatus')
@@ -160,19 +219,11 @@ class TestCase:
             self.add_rules()
             #
             # # Step 1
-            self.maximize_ar_window()
-            self.create_rfq_tile(self.rfq_1)
-            self.modify_tile(self.rfq_1, "Spot", "1W", "EUR", "USD")
-            self.create_rfq_tile(self.rfq_2)
-            self.modify_tile(self.rfq_2, "2W", "3W", "AUD", "BRL")
-            self.create_rfq_tile(self.rfq_3)
-            self.modify_tile(self.rfq_3, "1M", "2M", "EUR", "GBP")
+            self.create_rfq_tile()
+            self.modify_tile("Spot", "1W", "EUR", "USD")
+            self.send_rfq()
             # Step 2
-            self.send_rfq(self.rfq_1)
-            self.send_rfq(self.rfq_2)
-            self.send_rfq(self.rfq_3)
-            # self.minimize_ar_window()
-            # self.check_qrb("EUR")
+            self.check_qrb("EUR")
             # self.check_qb()
             # # Step 2
             # self.send_order_by_tob()
@@ -190,7 +241,7 @@ class TestCase:
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
-        # self.remove_rules()
+        self.remove_rules()
         # close_fe(self.case_id, self.session_id)
 
 

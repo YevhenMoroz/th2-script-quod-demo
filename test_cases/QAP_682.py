@@ -32,6 +32,7 @@ class TestCase:
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
+        self.base_details = BaseTileDetails(base=self.base_request)
 
         self.rfq_1 = BaseTileDetails(base=self.base_request, window_index=0)
         self.rfq_2 = BaseTileDetails(base=self.base_request, window_index=1)
@@ -79,12 +80,12 @@ class TestCase:
 
     # extracting rfq value method
     def check_rfq_values(self, details, c_pair, n_tenor, f_tenor):
-        extract_values_request = ExtractRFQTileValues(details=details)
         cur_pair = "aggrRfqTile.currencyPair"
-        extract_values_request.extract_currency_pair(cur_pair)
         near_tenor = "aggrRfqTile.nearSettlement"
-        extract_values_request.extract_far_leg_tenor(near_tenor)
         far_tenor = "aggrRfqTile.farLegTenor"
+        extract_values_request = ExtractRFQTileValues(details=details)
+        extract_values_request.extract_currency_pair(cur_pair)
+        extract_values_request.extract_tenor(near_tenor)
         extract_values_request.extract_far_leg_tenor(far_tenor)
         response = call(self.ar_service.extractRFQTileValues, extract_values_request.build())
         verifier = Verifier(self.case_id)
@@ -118,6 +119,10 @@ class TestCase:
         call(self.ar_service.closeRFQTile, details.build())
 
     # Create or get RFQ method
+    def create_or_get_rfq(self):
+        call(self.ar_service.createRFQTile, self.base_details.build())
+
+    # Create or get RFQ method
     def create_rfq_tile(self, rfq):
         call(self.ar_service.createRFQTile, rfq.build())
 
@@ -127,6 +132,7 @@ class TestCase:
             self.prepare_frontend()
             #
             # # Step 1
+            # self.create_or_get_rfq()
             self.maximize_ar_window()
             self.create_rfq_tile(self.rfq_1)
             self.modify_tile(self.rfq_1, "Spot", "Mar IMM", "EUR", "USD")
