@@ -155,7 +155,7 @@ def execute(report_id):
         #
         # # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_qty,case_id)  #common_act
+        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)  #common_act
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
 

@@ -56,16 +56,14 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
     qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
     response = call(service.getQuoteRequestBookDetails, qrb.request())
-    # call(act.verifyEntities, verification(ex_id, "checking QRB",
-    #                                       [verify_ent("QRB Venue", qrb_venue.name, "HSBCR"),
-    #                                        verify_ent("QRB Status", qrb_status.name, status),
-    #                                        verify_ent("QRB QuoteStatus", qrb_quote_status.name, quote_sts)]))
+
     verifier = Verifier(case_id)
     verifier.set_event_name("Check QuoteRequest book")
     verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
     verifier.compare_values('Status', status,  response[qrb_status.name])
     verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
     verifier.verify()
+
 
 def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     qb = QuoteDetailsRequest(base=base_request)
