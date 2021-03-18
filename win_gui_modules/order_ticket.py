@@ -28,6 +28,9 @@ class OrderTicketDetails:
     def set_order_type(self, order_type: str):
         self.order.orderType = order_type
 
+    def set_tif(self, tif: str):
+        self.order.timeInForce = tif
+
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
 
