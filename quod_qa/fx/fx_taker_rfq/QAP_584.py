@@ -61,7 +61,7 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     #                                        verify_ent("QRB Status", qrb_status.name, status),
     #                                        verify_ent("QRB QuoteStatus", qrb_quote_status.name, quote_sts)]))
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check Quote book")
+    verifier.set_event_name("Check QuoteRequest book")
     verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
     verifier.compare_values('Status', status,  response[qrb_status.name])
     verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
@@ -148,29 +148,29 @@ def execute(report_id):
 
     try:
         # Step 1
-        # create_or_get_rfq(base_rfq_details, ar_service)
-        # modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-        #              case_to_currency, case_near_tenor, case_client, venues)
-        # # Step 2
+        create_or_get_rfq(base_rfq_details, ar_service)
+        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
+                     case_to_currency, case_near_tenor, case_client, venues)
+        # Step 2
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
-        # # Step 3
-        # cancel_rfq(base_rfq_details, ar_service)
-        # # Step 4
-        # send_rfq(base_rfq_details, ar_service)
-        # check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
-        #                       quote_sts_new, quote_quote_sts_accepted, case_venue)
-        # # Step 5
-        # time.sleep(35)
-        # check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
-        #                       quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
-        #
-        # # Step 6
-        # send_rfq(base_rfq_details, ar_service)
-        # place_order_tob(base_rfq_details, ar_service)
-        # ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
-        # check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
+        # Step 3
+        cancel_rfq(base_rfq_details, ar_service)
+        # Step 4
+        send_rfq(base_rfq_details, ar_service)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
+                              quote_sts_new, quote_quote_sts_accepted, case_venue)
+        # Step 5
+        time.sleep(35)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
+                              quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
+
+        # Step 6
+        send_rfq(base_rfq_details, ar_service)
+        place_order_tob(base_rfq_details, ar_service)
+        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
+        check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
 
 
 

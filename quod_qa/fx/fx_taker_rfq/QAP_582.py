@@ -47,7 +47,7 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts, venue):
+def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
     qrb.set_filter(["Venue", venue])
@@ -55,14 +55,17 @@ def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts, 
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
     qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
-    call(service.getQuoteRequestBookDetails, qrb.request())
-    call(act.verifyEntities, verification(ex_id, "checking QRB",
-                                          [verify_ent("QRB Venue", qrb_venue.name, "HSBCR"),
-                                           verify_ent("QRB Status", qrb_status.name, status),
-                                           verify_ent("QRB QuoteStatus", qrb_quote_status.name, quote_sts)]))
+    response = call(service.getQuoteRequestBookDetails, qrb.request())
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check QuoteRequest book")
+    verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
+    verifier.compare_values('Status', status,  response[qrb_status.name])
+    verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
+    verifier.verify()
 
 
-def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
+def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     qb = QuoteDetailsRequest(base=base_request)
     qb.set_extraction_id(ex_id)
     qb.set_filter(["Id", quote_id])
@@ -70,11 +73,14 @@ def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
     qb_id = ExtractionDetail("quoteBook.id", "Id")
     qb.add_extraction_details([qb_owner, qb_quote_status, qb_id])
-    call(service.getQuoteBookDetails, qb.request())
-    call(act.verifyEntities, verification(ex_id, "checking QB",
-                                          [verify_ent("QB Owner", qb_owner.name, owner),
-                                           verify_ent("QB QuoteStatus", qb_quote_status.name, "Terminated"),
-                                           verify_ent("QB Id vs OB Id", qb_id.name, quote_id)]))
+    response = call(service.getQuoteBookDetails, qb.request())
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check Quote book")
+    verifier.compare_values('Owner', owner, response[qb_owner.name])
+    verifier.compare_values('QuoteStatus', 'Terminated', response[qb_quote_status.name])
+    verifier.compare_values("QuoteID", quote_id, response[qb_id.name])
+    verifier.verify()
 
 
 def check_order_book(ex_id, base_request, instr_type, act_ob, case_id):
@@ -110,7 +116,7 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-581"
+    case_name = "QAP-582"
     quote_owner = "QA2"
     case_instr_type = "Spot"
     case_venue = "HSBC"
@@ -145,15 +151,15 @@ def execute(report_id):
                      case_to_currency, case_near_tenor, case_client, venues)
         # Step 2
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 3
-        time.sleep(120)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+        time.sleep(35)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
         # Step 4
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
 
@@ -162,7 +168,7 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
-        check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
+        check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
         # cancel_rfq(base_rfq_details, ar_service)
 
 
