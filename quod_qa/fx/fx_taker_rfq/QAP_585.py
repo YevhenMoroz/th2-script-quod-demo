@@ -130,40 +130,40 @@ def execute(report_id):
 
     try:
         # Steps 1-2
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client)
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
+        # create_or_get_rfq(base_rfq_details, ar_service)
+        # modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
+        #              case_to_currency, case_near_tenor, case_client)
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
         qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)
 
         # Step 3
-        place_order(base_rfq_details, ar_service, case_venue)
+        # place_order(base_rfq_details, ar_service, case_venue)
 
         check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
         #
-        # call(ar_service.cancelRFQ, base_rfq_details.build())
-        cancel_rfq(base_rfq_details, ar_service)
+        # # call(ar_service.cancelRFQ, base_rfq_details.build())
+        # cancel_rfq(base_rfq_details, ar_service)
 
         # Step 4
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
-
-        # Step 5
-        place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(base_rfq_details, ar_service)
-        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
-
-        # Step 6
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_2", case_base_request, ar_service, common_act)
-        qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner)
-
-        # Step 7
-        place_order(base_rfq_details, ar_service, case_venue)
-        cancel_rfq(base_rfq_details, ar_service)
-        check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
+        # qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner)
+        #
+        # # Step 5
+        # place_order(base_rfq_details, ar_service, case_venue)
+        # cancel_rfq(base_rfq_details, ar_service)
+        # check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
+        #
+        # # Step 6
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b("QRB_2", case_base_request, ar_service, common_act)
+        # qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner)
+        #
+        # # Step 7
+        # place_order(base_rfq_details, ar_service, case_venue)
+        # cancel_rfq(base_rfq_details, ar_service)
+        # check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
 
         # close_fe_2(case_id, session_id)
 
