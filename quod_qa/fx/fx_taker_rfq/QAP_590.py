@@ -105,8 +105,8 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,near_tenor
     verifier.verify()
     return response[ob_id.name]
 
+
 def execute(report_id):
-    common_act = Stubs.win_act
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 

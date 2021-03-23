@@ -89,7 +89,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor)
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
-    ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Far Leg Tenor")
+    ob_tenor = ExtractionDetail("orderBook.farlegtenor", "Far Leg Tenor")
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
@@ -101,12 +101,12 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Near Leg Tenor", "1W", response[ob_tenor.name])
+    verifier.compare_values("Far Leg Tenor", "1W", response[ob_tenor.name])
     verifier.verify()
     return response[ob_id.name]
 
+
 def execute(report_id):
-    common_act = Stubs.win_act
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
