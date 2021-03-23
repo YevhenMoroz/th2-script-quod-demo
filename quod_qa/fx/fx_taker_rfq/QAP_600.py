@@ -74,10 +74,10 @@ def execute(report_id):
 
     try:
         # Step 1
-        # create_or_get_rfq(base_rfq_details, ar_service)
-        # modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-        #              case_to_currency, click_to_sunday, case_client)
-        # time.sleep(10)
+        create_or_get_rfq(base_rfq_details, ar_service)
+        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
+                     case_to_currency, click_to_sunday, case_client)
+        time.sleep(10)
         check_date("RFQ", base_rfq_details, ar_service, case_id, next_monday())
 
 
