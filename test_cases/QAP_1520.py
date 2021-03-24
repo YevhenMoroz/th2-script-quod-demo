@@ -365,9 +365,16 @@ class TestCase:
     def execute(self):
         try:
             self.prepare_frontend()
+
+            # Step 1
             market_data_params = self.send_md_subscribe()
+            # Step 2
             self.send_order()
+            # Step 3 not implemented
+
+            # Steps 4-5
             self.check_filled()
+
             self.send_md_unsubscribe(market_data_params)
         except Exception as e:
             logging.error('Error execution', exc_info=True)
