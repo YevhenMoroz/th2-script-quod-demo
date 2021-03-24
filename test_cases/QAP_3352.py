@@ -12,7 +12,8 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -257,27 +258,139 @@ def execute(report_id):
         verifier2.compare_values("Order Summary Status", request_allocate[block_order_summary_status.name], "MatchedAgreed")
         verifier2.verify()
 
-        # # Step 5 Amend
-        #
-        # middle_office_service = Stubs.win_act_middle_office_service
-        #
-        # modify_request = ModifyTicketDetails(base=base_request)
-        #
-        # settlement_details = modify_request.add_settlement_details()
-        # settlement_details.set_settlement_currency("EUR")
-        #
-        # call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
-        #
-        # # Step 6 Amend
-        #
-        # middle_office_service = Stubs.win_act_middle_office_service
-        #
-        # modify_request = ModifyTicketDetails(base=base_request)
-        #
-        # settlement_details = modify_request.add_settlement_details()
-        # settlement_details.set_settlement_currency("EUR")
-        #
-        # call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+        # Check allocations blotter
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking allocate blotter")
+        verifier2.compare_values("Allocation Status", request_allocate_blotter[allocate_status.name], "Affirmed")
+        verifier2.compare_values("Allocation Account ID", request_allocate_blotter[allocate_account_id.name],
+                                 "MOClientSA1")
+        verifier2.compare_values("Allocation Match Status", request_allocate_blotter[allocate_status_match_status.name],
+                                 "Matched")
+        verifier2.verify()
+
+        # Step 5 Amend allocation
+
+        middle_office_service = Stubs.win_act_middle_office_service
+        modify_request = ModifyTicketDetails(base=base_request)
+        amend_allocations_details = modify_request.add_amend_allocations_details()
+        amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
+        settlement_details = modify_request.add_settlement_details()
+        settlement_details.set_settlement_currency("FIM")
+        settlement_details.set_exchange_rate("100")
+        settlement_details.set_exchange_rate_calc("Divide")
+        settlement_details.set_settlement_date("3/27/2022")
+        settlement_details.set_pset("CREST")
+
+        # Remove comissions
+
+        gross_amount_amend = "book.grossAmount"
+        total_comm_amend = "book.totalComm"
+        total_fees_amend = "book.totalFees"
+        net_price_amend = "book.netPrice"
+        net_amount_amend = "book.netAmount"
+        pset_bic_amend = "book.psetBic"
+        exchange_rate_amend = "book.exchangeRate"
+        extraction_details = modify_request.add_extraction_details()
+        extraction_details.extract_gross_amount(gross_amount_amend)
+        extraction_details.extract_total_comm(total_comm_amend)
+        extraction_details.extract_total_fees(total_fees_amend)
+        extraction_details.extract_net_price(net_price_amend)
+        extraction_details.extract_net_amount(net_amount_amend)
+        extraction_details.extract_pset_bic(pset_bic_amend)
+        extraction_details.extract_exchange_rate(exchange_rate_amend)
+        request_amend1 = call(middle_office_service.amendAllocations, modify_request.build())
+
+        middle_office_service = Stubs.win_act_middle_office_service
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        allocate_order_settl_currency = ExtractionDetail("middleOffice.settlCurrency", "Settl Currency")
+        allocate_order_exchange_rate = ExtractionDetail("middleOffice.exchangeRate", "Settl Curr Fx Rate")
+        allocate_order_settl_curr_fx_rate_calc = ExtractionDetail("middleOffice.settlCurrFxRateCalc", "Settl Curr Fx Rate Calc Text")
+        allocate_order_curr_amt = ExtractionDetail("middleOffice.currAmt", "Settl Curr Amt")
+        allocate_order_settl_date = ExtractionDetail("middleOffice.settlDate", "SettlDate")
+        allocate_order_pset = ExtractionDetail("middleOffice.pset", "PSET")
+        allocate_order_pset_bic = ExtractionDetail("middleOffice.psetBic", "PSET BIC")
+        allocate_order_fees = ExtractionDetail("middleOffice.rootCommission", "FeeMarket")
+        allocate_order_gross_amt = ExtractionDetail("middleOffice.netAmt", "Gross Amt")
+        allocate_order_net_amt = ExtractionDetail("middleOffice.netAmt", "Net Amt")
+        allocate_order_net_price = ExtractionDetail("middleOffice.netPrice", "Net Price")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details(
+            [allocate_order_settl_currency, allocate_order_exchange_rate, allocate_order_settl_curr_fx_rate_calc,
+             allocate_order_curr_amt, allocate_order_settl_date, allocate_order_pset, allocate_order_pset_bic, allocate_order_fees,
+             allocate_order_gross_amt, allocate_order_net_amt, allocate_order_net_price])
+        amend1_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking realtime parameters")
+        verifier2.compare_values("Order Ticket Total Comm", request_amend1[total_comm_amend], "0")
+        verifier2.compare_values("Order Ticket Total Fees", request_amend1[total_fees_amend], "0")
+        verifier2.compare_values("Order Ticket Net Amount", request_amend1[net_amount_amend], "10000")
+        verifier2.compare_values("Order Ticket Net Price", request_amend1[net_price_amend], "100")
+        verifier2.verify()
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking allocate blotter after amend")
+        verifier2.compare_values("Allocation blotter Settl Currency", amend1_allocate_blotter[allocate_order_settl_currency.name], "FIM")
+        verifier2.compare_values("Allocation blotter Settl Curr Fx Rate", amend1_allocate_blotter[allocate_order_exchange_rate.name], request_amend1[exchange_rate_amend])
+        verifier2.compare_values("Allocation blotter Settl Curr Fx Rate Calc Text", amend1_allocate_blotter[allocate_order_settl_curr_fx_rate_calc.name], "Divide")
+        verifier2.compare_values("Allocation blotter Settl Curr Amt", amend1_allocate_blotter[allocate_order_curr_amt.name], "999,000")
+        verifier2.compare_values("Allocation blotter SettlDate", amend1_allocate_blotter[allocate_order_settl_date.name], "3/27/2022")
+        verifier2.compare_values("Allocation blotter PSET", amend1_allocate_blotter[allocate_order_pset.name], "CREST")
+        verifier2.compare_values("Allocation blotter PSET BIC", amend1_allocate_blotter[allocate_order_pset_bic.name], request_amend1[pset_bic_amend])
+        verifier2.compare_values("Allocation blotter FeeMarket", amend1_allocate_blotter[allocate_order_fees.name], request_amend1[total_fees_amend])
+        verifier2.compare_values("Allocation blotter Gross Amt", amend1_allocate_blotter[allocate_order_gross_amt.name], request_amend1[gross_amount_amend])
+        verifier2.compare_values("Allocation blotter Net Amt", amend1_allocate_blotter[allocate_order_net_amt.name], request_amend1[net_amount_amend])
+        verifier2.compare_values("Allocation blotter Net Price", amend1_allocate_blotter[allocate_order_net_price.name], request_amend1[net_price_amend])
+        verifier2.verify()
+
+        # Step 6 Amend allocation 2
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        amend_allocations_details = modify_request.add_amend_allocations_details()
+        amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
+        agreed_price = "book.agreedPrice"
+        gross_amount = "book.grossAmount"
+        total_comm = "book.totalComm"
+        total_fees = "book.totalFees"
+        net_price = "book.netPrice"
+        net_amount = "book.netAmount"
+        pset_bic = "book.psetBic"
+        exchange_rate = "book.exchangeRate"
+        extraction_details = modify_request.add_extraction_details()
+        extraction_details.extract_agreed_price(agreed_price)
+        extraction_details.extract_gross_amount(gross_amount)
+        extraction_details.extract_total_comm(total_comm)
+        extraction_details.extract_total_fees(total_fees)
+        extraction_details.extract_net_price(net_price)
+        extraction_details.extract_net_amount(net_amount)
+        extraction_details.extract_pset_bic(pset_bic)
+        extraction_details.extract_exchange_rate(exchange_rate)
+
+        request_amend2 = call(middle_office_service.amendAllocations, modify_request.build())
+
+        verifier2 = Verifier(case_id)
+
+        verifier2.set_event_name("Checking order ticket window after ament allocation 2")
+        verifier2.compare_values("Order PSET BIC", request_amend2[pset_bic], request_amend1[pset_bic_amend])
+        verifier2.compare_values("Order Total Comm", request_amend2[total_comm], request_amend1[total_comm_amend])
+        verifier2.compare_values("Order Total Fees", request_amend2[total_fees], request_amend1[total_fees_amend])
+        verifier2.compare_values("Order Net Amount", request_amend2[net_amount], request_amend1[net_amount_amend])
+        verifier2.compare_values("Order Net Price", request_amend2[net_price], request_amend1[net_price_amend])
+        verifier2.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
