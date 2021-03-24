@@ -130,8 +130,8 @@ class AllocationsDetails:
         self.request.allocationsParams.append(params)
 
 
-class OrderInfo:
-    def __init__(self, request: middle_office_pb2.OrderBookAllocationsExtractionDetails.OrderInfo()):
+class OrderDetails:
+    def __init__(self, request):
         self.request = request
 
     def set_order_number(self, number: int):
@@ -147,28 +147,43 @@ class OrderInfo:
             self.add_extraction_detail(detail)
 
 
-class OrderBookAllocationsExtractionDetails:
-    def __init__(self, request: middle_office_pb2.OrderBookAllocationsExtractionDetails()):
-        self.request = request
+class ViewOrderExtractionDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = middle_office_pb2.ViewOrderExtractionDetails(base=base)
+        else:
+            self._request = middle_office_pb2.ViewOrderExtractionDetails()
 
-    def set_extraction_id(self, extraction_id: str):
-        self.request.extractionId = extraction_id
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
 
-    def set_filter(self, filter_list: list):
-        length = len(filter_list)
-        i = 0
-        while i < length:
-            self.request.filter[filter_list[i]] = filter_list[i + 1]
-            i += 2
+    def set_block_filter(self, block_filter: dict):
+        self._request.blockFilter.update(block_filter)
+
+    def set_view_orders_filter(self, view_orders_filter: dict):
+        self._request.viewOrdersFilter.update(view_orders_filter)
+
+    def add_order_details(self) -> OrderDetails:
+        var = self._request.ordersDetails.add()
+        return OrderDetails(var)
 
     def extract_length(self, count_id: str):
-        self.request.extractCount = True
-        self.request.countId = count_id
+        self._request.extractCount = True
+        self._request.countId = count_id
 
-    def add_order_info(self) -> OrderInfo:
-        order_info = middle_office_pb2.OrderBookAllocationsExtractionDetails.OrderInfo()
-        self.request.orders.append(order_info)
-        return OrderInfo(order_info)
+    def build(self):
+        return self._request
+
+
+class AmendAllocationsDetails:
+    def __init__(self, request: middle_office_pb2.AmendAllocationsDetails()):
+        self.request = request
+
+    def set_filter(self, filter_dict: dict):
+        self.request.filter.update(filter_dict)
+
+    def set_row_number(self, row_number: int):
+        self.request.rowNumber = row_number
 
 
 class ModifyTicketDetails:
@@ -188,6 +203,10 @@ class ModifyTicketDetails:
             self._request.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
+    def set_selected_row_count(self, selected_row_count: int):
+        self._request.multipleRowSelection = True
+        self._request.selectedRowCount = selected_row_count
+
     def add_commissions_details(self) -> CommissionsDetails:
         self._request.commissionsDetails.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self._request.commissionsDetails)
@@ -195,11 +214,6 @@ class ModifyTicketDetails:
     def add_extraction_details(self):
         self._request.extractionDetails.CopyFrom(middle_office_pb2.ExtractionDetails())
         return ExtractionDetails(self._request.extractionDetails)
-
-    def add_order_book_allocations_extraction_details(self) -> OrderBookAllocationsExtractionDetails:
-        self._request.orderBookAllocationsExtractionDetails.CopyFrom(
-            middle_office_pb2.OrderBookAllocationsExtractionDetails())
-        return OrderBookAllocationsExtractionDetails(self._request.orderBookAllocationsExtractionDetails)
 
     def add_ticket_details(self) -> TicketDetails:
         self._request.ticketDetails.CopyFrom(middle_office_pb2.TicketDetails())
@@ -212,6 +226,10 @@ class ModifyTicketDetails:
     def add_allocations_details(self) -> AllocationsDetails:
         self._request.allocationsDetails.CopyFrom(middle_office_pb2.AllocationsDetails())
         return AllocationsDetails(self._request.allocationsDetails)
+
+    def add_amend_allocations_details(self) -> AmendAllocationsDetails:
+        self._request.amendAllocationsDetails.CopyFrom(middle_office_pb2.AmendAllocationsDetails())
+        return AmendAllocationsDetails(self._request.amendAllocationsDetails)
 
     def build(self):
         return self._request
@@ -245,6 +263,30 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def add_extraction_details(self, details: list):
         for detail in details:
             self.add_extraction_detail(detail)
+
+    def build(self):
+        return self._request
+
+
+class AllocationsExtractionDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = middle_office_pb2.AllocationsExtractionDetails(base=base)
+        else:
+            self._request = middle_office_pb2.AllocationsExtractionDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_block_filter(self, block_filter: dict):
+        self._request.blockFilter.update(block_filter)
+
+    def set_allocations_filter(self, allocations_filter: dict):
+        self._request.allocationsFilter.update(allocations_filter)
+
+    def add_order_details(self) -> OrderDetails:
+        var = self._request.ordersDetails.add()
+        return OrderDetails(var)
 
     def build(self):
         return self._request

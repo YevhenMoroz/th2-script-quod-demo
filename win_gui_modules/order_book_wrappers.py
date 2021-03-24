@@ -20,6 +20,10 @@ class ModifyOrderDetails:
     def set_default_params(self, base_request):
         self.modify_order_details.base.CopyFrom(base_request)
 
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
     def build(self):
         return self.modify_order_details
 
@@ -43,6 +47,10 @@ class CancelOrderDetails:
 
     def set_cancel_children(self, cancel_children: bool):
         self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
 
     def build(self):
         return self.cancel_order_details

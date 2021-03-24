@@ -142,7 +142,7 @@ class TestCase:
                                                           [verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                                            verify_ent("OB ID vs QB ID", ob_id.name, self.quote_id)]))
 
-    # Main method. Must call in demo.py by "QAP_569.TestCase(report_id).execute()" command
+    # Main method. Must call in demo.py by "QAP_638.TestCase(report_id).execute()" command
     def execute(self):
         try:
             self.prepare_frontend()

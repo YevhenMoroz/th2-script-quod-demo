@@ -78,7 +78,7 @@ class ModifyRFQTileRequest:
         self.modify_request.farLegSettlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
 
     def set_client(self, client: str):
-        pass
+        self.modify_request.client = client
 
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
@@ -135,7 +135,7 @@ class ExtractRFQTileValues:
     def extract_near_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.NEAR_SETTLEMENT_DATE, name)
 
-    def extract_far_left_settlement_data(self, name: str):
+    def extract_far_leg_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.FAR_LEG_SETTLEMENT_DATE, name)
 
     def extract_value(self, field: RFQTileValues, name: str):

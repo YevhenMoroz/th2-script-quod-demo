@@ -1,0 +1,220 @@
+from custom.verifier import Verifier
+from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, \
+    CancelOrderDetails, ExtractionAction
+from stubs import Stubs
+from win_gui_modules.wrappers import *
+from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
+from custom.basic_custom_actions import timestamps, create_event
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+import logging
+from rule_management import RuleManager
+from datetime import datetime
+from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
+from custom import basic_custom_actions as bca
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    ViewOrderExtractionDetails
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+def execute(report_id):
+    fix_act = Stubs.fix_act
+    act = Stubs.win_act_order_ticket
+    act2 = Stubs.win_act_order_book
+    common_act = Stubs.win_act
+    simulator = Stubs.simulator
+
+    bs_paris = 'fix-bs-eq-paris'
+    bs_trqx = 'fix-bs-eq-trqx'
+
+    seconds, nanos = timestamps()  # Store case start time
+    case_name = "QAP-2780"
+
+    # Create sub-report for case
+    case_id = create_event(case_name, report_id)
+
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+
+    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
+    if not Stubs.frontend_is_open:
+        prepare_fe(case_id, session_id, work_dir, username, password)
+    try:
+
+        case_params = {
+            'TraderConnectivity': 'gtwquod3',
+            'TraderConnectivity2': 'fix-bs-eq-paris',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD3',
+            'SenderCompID2': 'KCH_QA_RET_CHILD',
+            'TargetCompID2': 'QUOD_QA_RET_CHILD',
+            'Account': 'MOClient',
+            'HandlInst': '1',
+            'Side': '2',
+            'OrderQty': '100',
+            'OrdType': '2',
+            'Price': '100',
+            'TimeInForce': '0',
+            'DeliverToCompID': 'PARIS',
+            'Instrument': {
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityID': 'FR0004186856',
+                'SecurityIDSource': 4,
+                'SecurityExchange': 'XPAR'
+            }
+        }
+
+        trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
+            connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
+            no_party_ids=[
+                TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
+                TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
+                TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
+            ],
+            cum_qty=100,
+            mask_as_connectivity="fix-fh-eq-paris",
+            md_entry_size={500: 0},
+            md_entry_px={30: 25},
+            symbol={"XPAR": '1224'}))
+
+        dma1_order_params = {
+            'Account': case_params['Account'],
+            'HandlInst': case_params['HandlInst'],
+            'Side': case_params['Side'],
+            'OrderQty': case_params['OrderQty'],
+            'TimeInForce': case_params['TimeInForce'],
+            'Price': case_params['Price'],
+            'OrdType': case_params['OrdType'],
+            'ClOrdID': bca.client_orderid(9),
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': case_params['Instrument'],
+            'OrderCapacity': 'A',
+            'Currency': 'EUR'
+        }
+
+        dma2_order_params = {
+            'Account': case_params['Account'],
+            'HandlInst': case_params['HandlInst'],
+            'Side': case_params['Side'],
+            'OrderQty': case_params['OrderQty'],
+            'TimeInForce': case_params['TimeInForce'],
+            'Price': case_params['Price'],
+            'OrdType': case_params['OrdType'],
+            'ClOrdID': bca.client_orderid(9),
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': case_params['Instrument'],
+            'OrderCapacity': 'A',
+            'Currency': 'EUR'
+        }
+        new_dma_order1 = fix_act.placeOrderFIX(
+            request=bca.convert_to_request(
+                "Send new dma order", "gtwquod5", case_id,
+                bca.message_to_grpc('NewOrderSingle', dma1_order_params, "gtwquod5")
+            ))
+
+        new_dma_order2 = fix_act.placeOrderFIX(
+            request=bca.convert_to_request(
+                "Send new dma order", "gtwquod5", case_id,
+                bca.message_to_grpc('NewOrderSingle', dma2_order_params, "gtwquod5")
+            ))
+
+        Stubs.core.removeRule(trade_rule_1)
+
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Symbol", "VETO", "Sts", "Terminated", "PostTradeStatus", "ReadyToBook"])
+        modify_request.set_selected_row_count(2)
+        call(middle_office_service.bookOrder, modify_request.build())
+
+        dma1_extraction_id = "dma1_order"
+        dma1_order_details = OrdersDetails()
+        dma1_order_details.set_default_params(base_request)
+        dma1_order_details.set_extraction_id(dma1_extraction_id)
+        dma1_order_details.set_filter(["ClOrdID", dma1_order_params['ClOrdID']])
+
+        dma1_order_status = ExtractionDetail("status", "Sts")
+        dma1_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        dma1_order_id = ExtractionDetail("dma1_order_id", "Order ID")
+        dma1_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[dma1_order_status, dma1_order_post_trade_status, dma1_order_id])
+        dma1_order_details.add_single_order_info(OrderInfo.create(action=dma1_order_extraction_action))
+
+        dma2_extraction_id = "dma2_order"
+        dma2_order_details = OrdersDetails()
+        dma2_order_details.set_default_params(base_request)
+        dma2_order_details.set_extraction_id(dma2_extraction_id)
+        dma2_order_details.set_filter(["ClOrdID", dma2_order_params['ClOrdID']])
+
+        dma2_order_status = ExtractionDetail("status", "Sts")
+        dma2_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        dma2_order_id = ExtractionDetail("dma2_order_id", "Order ID")
+        dma2_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[dma2_order_status, dma2_order_post_trade_status, dma2_order_id])
+        dma2_order_details.add_single_order_info(OrderInfo.create(action=dma2_order_extraction_action))
+
+        request1 = call(act2.getOrdersDetails, dma1_order_details.request())
+        request2 = call(act2.getOrdersDetails, dma2_order_details.request())
+        call(common_act.verifyEntities, verification(dma1_extraction_id, "checking order",
+                                                     [verify_ent("Order PostTradeStatus", dma1_order_status.name, "Terminated"),
+                                                      verify_ent("Order PostTradeStatus", dma1_order_post_trade_status.name, "Booked"),
+                                                      verify_ent("Order PostTradeStatus", dma2_order_status.name, "Terminated"),
+                                                      verify_ent("Order PostTradeStatus", dma1_order_post_trade_status.name, "Booked")]))
+
+        both_order_id = "Multi"
+        if not both_order_id:
+            raise Exception("Block order id is not returned")
+        print("Block order id " + both_order_id)
+
+        ext_id = "MiddleOfficeExtractionId"
+        middle_office_service = Stubs.win_act_middle_office_service
+        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request.set_extraction_id(ext_id)
+        extract_request.set_filter(["Order ID", both_order_id])
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
+        request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
+        verifier.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
+        verifier.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
+        verifier.verify()
+
+        # Step 3 check View Orders
+
+        extract_request = ViewOrderExtractionDetails(base=base_request)
+        extract_request.set_block_filter({"Order ID": "Multi"})
+        lenght = "middleOffice.viewOrdersCount"
+        extract_request.extract_length(lenght)
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(1)
+        dma1_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
+        order_details.add_extraction_detail(dma1_order_id_view)
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(2)
+        dma2_order_id_view = ExtractionDetail("middleOffice.orderId2", "Order ID")
+        order_details.add_extraction_detail(dma2_order_id_view)
+        response = call(middle_office_service.extractViewOrdersTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking view order table")
+        verifier.compare_values("Order ID for dma1", request1[dma1_order_id.name], response[dma2_order_id_view.name])
+        verifier.compare_values("Order ID for dma2", request2[dma2_order_id.name], response[dma1_order_id_view.name])
+        verifier.compare_values("Orders count", response[lenght], "2")
+        verifier.verify()
+
+    except Exception as e:
+        logging.error("Error execution", exc_info=True)
+    close_fe(case_id, session_id)
+    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

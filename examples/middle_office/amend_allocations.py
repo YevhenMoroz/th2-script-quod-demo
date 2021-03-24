@@ -13,7 +13,7 @@ logger.setLevel(INFO)
 
 def execute(report_id):
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "Book order example"
+    case_name = "Amend allocations example"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
@@ -31,28 +31,19 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["Owner", username, "Order ID", "MO"])
-        # modify_request.set_selected_row_count(4)
-
-        ticket_details = modify_request.add_ticket_details()
-        ticket_details.set_client("MOClient")
-        ticket_details.set_trade_date("2/21/2021")
-        ticket_details.set_net_gross_ind("Gross")
-        # ticket_details.set_give_up_broker("GiveUpBroker")
-        ticket_details.set_agreed_price("5")
 
         settlement_details = modify_request.add_settlement_details()
-        settlement_details.set_settlement_type("Regular")
         settlement_details.set_settlement_currency("EUR")
-        settlement_details.set_exchange_rate("1")
         settlement_details.set_exchange_rate_calc("Multiply")
-        # settlement_details.toggle_settlement_date()
-        settlement_details.set_settlement_date("2/21/2021")
-        settlement_details.toggle_recompute()
+        settlement_details.set_settlement_date("2/27/2021")
+        settlement_details.set_pset("EURO_CLEAR")
 
         commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(basis="Absolute", rate="5")
+
+        ticket_details = modify_request.add_ticket_details()
+        ticket_details.set_agreed_price("100")
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -63,7 +54,7 @@ def execute(report_id):
         extraction_details.extract_total_fees("book.totalFees")
         extraction_details.extract_agreed_price("book.agreedPrice")
 
-        response = call(middle_office_service.bookOrder, modify_request.build())
+        response = call(middle_office_service.amendAllocations, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
