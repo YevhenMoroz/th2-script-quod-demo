@@ -93,15 +93,26 @@ def execute(report_id):
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
 
-    cancel_ss_params = {
+    replace_ss_params = {
         'ExecType': '5',
         'Price': '19',
         'OrderQty': '900',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
     }
-    fix_verifier_ss.CheckExecutionReport(cancel_ss_params, responce, message_name='Check modify ER to SS')
+    time.sleep(1)
+
+    fix_verifier_ss.CheckExecutionReport(replace_ss_params, responce,
+                                         message_name='Check modify ER to SS(test key parameters)',
+                                         key_parameters=['OrderQty', 'Price', 'ExecType'])
 
 
+    # Check new order on bs
+    new_order_single_bs = {
+        'OrderQty': replace_ss_params['OrderQty'],
+        'Side': multilisting_params['Side'],
+        'Price': replace_ss_params['Price'],
+    }
+    fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce, key_parameters = ['Side', 'OrderQty', 'Price'], message_name= 'Check NewOrderSingle To BS')
 
     time.sleep(3)
     #Cancel order
