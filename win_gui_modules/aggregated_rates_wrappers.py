@@ -148,6 +148,8 @@ class ModifyRatesTileRequest:
 
     def set_to_currency(self, currency: str):
         self.modify_request.toCurrency = currency
+    def set_tenor(self, tenor: str):
+        self.modify_request.tenor = tenor
 
     def set_change_instrument(self, change_instrument: bool):
         self.modify_request.changeInstrument = change_instrument
@@ -164,6 +166,9 @@ class ModifyRatesTileRequest:
     def add_context_actions(self, context_actions: list):
         for action in context_actions:
             self.add_context_action(action)
+
+    def set_click_on_one_click_button(self):
+        self.modify_request.clickOnOneClick = True
 
     def build(self):
         return self.modify_request
