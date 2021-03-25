@@ -25,7 +25,7 @@ def execute(report_id):
 
     # Store case start time
     seconds, nanos = bca.timestamps()
-    case_name = "QAP-3336"
+    case_name = "QAP-3332"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -41,12 +41,14 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
         qty = "150"
+        limit = "20"
         lookup = "VETO"
 
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
+        order_ticket.set_limit(limit)
         order_ticket.set_client("MOClient")
-        order_ticket.set_order_type("Market")
+        order_ticket.set_order_type("Limit")
         order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_305'], True)
 
         new_order_details = NewOrderDetails()

@@ -41,6 +41,10 @@ def execute(report_id):
         commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(basis="Absolute", rate="5")
+        # commissions_details.remove_commissions()
+
+        # fees_details = modify_request.add_fees_details()
+        # fees_details.remove_fees()
 
         ticket_details = modify_request.add_ticket_details()
         ticket_details.set_agreed_price("100")

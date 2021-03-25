@@ -43,6 +43,9 @@ class CommissionsDetails:
         if currency is not None:
             var.currency = currency
 
+    def remove_commissions(self):
+        self.request.removeCommissions = True
+
 
 class SpreadAction(Enum):
     WIDEN_SPREAD = common_pb2.WIDEN_SPREAD
