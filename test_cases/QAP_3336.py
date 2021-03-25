@@ -40,15 +40,13 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "100"
-        limit = "100"
+        qty = "150"
         lookup = "VETO"
 
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
-        order_ticket.set_limit(limit)
         order_ticket.set_client("MOClient")
-        order_ticket.set_order_type("Limit")
+        order_ticket.set_order_type("Market")
         order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_305'], True)
 
         new_order_details = NewOrderDetails()
