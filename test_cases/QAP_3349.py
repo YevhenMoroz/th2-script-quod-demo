@@ -106,7 +106,7 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
@@ -140,7 +140,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
         main_order_id = ExtractionDetail("main_order_id", "Order ID")
@@ -184,24 +184,24 @@ def execute(report_id):
              block_order_settl_date, block_order_pset, block_order_pset_bic, block_order_root_commission, block_order_net_amt, block_order_net_price])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
-        verifier2.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
-        verifier2.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
 
-        verifier2.compare_values("Order SettlType", request[block_order_settl_type.name], "Regular")
-        verifier2.compare_values("Order SettlCurrency", request[block_order_settl_currency.name], "AED")
-        verifier2.compare_values("Order ExchangeRate", request[block_order_exchange_rate.name], request_book[exchange_rate])
-        verifier2.compare_values("Order SettlCurrFxRateCalc", request[block_order_settl_curr_fx_rate_calc.name], "M")
-        verifier2.compare_values("Order SettlDate", request[block_order_settl_date.name], "3/27/2021")
-        verifier2.compare_values("Order PSET", request[block_order_pset.name], "EURO_CLEAR")
-        verifier2.compare_values("Order PSET BIC", request[block_order_pset_bic.name], request_book[pset_bic])
-        verifier2.compare_values("Order RootCommission", request[block_order_root_commission.name], request_book[total_fees])
-        verifier2.compare_values("Order Net Amt", request[block_order_net_amt.name], request_book[net_amount])
-        verifier2.compare_values("Order Net Price", request[block_order_net_price.name], request_book[net_price])
-        verifier2.verify()
+        verifier.compare_values("Order SettlType", "Regular", request[block_order_settl_type.name])
+        verifier.compare_values("Order SettlCurrency", "AED", request[block_order_settl_currency.name])
+        verifier.compare_values("Order ExchangeRate", request_book[exchange_rate], request[block_order_exchange_rate.name])
+        verifier.compare_values("Order SettlCurrFxRateCalc", "M", request[block_order_settl_curr_fx_rate_calc.name])
+        verifier.compare_values("Order SettlDate", "3/27/2021", request[block_order_settl_date.name])
+        verifier.compare_values("Order PSET", "EURO_CLEAR", request[block_order_pset.name])
+        verifier.compare_values("Order PSET BIC", request_book[pset_bic], request[block_order_pset_bic.name])
+        verifier.compare_values("Order RootCommission", request_book[total_fees], request[block_order_root_commission.name])
+        verifier.compare_values("Order Net Amt", request_book[net_amount], request[block_order_net_amt.name])
+        verifier.compare_values("Order Net Price", request_book[net_price], request[block_order_net_price.name])
+        verifier.verify()
 
         # Step 3 Amend
 
@@ -242,8 +242,8 @@ def execute(report_id):
 
         ext_id = "MiddleOfficeExtractionId"
         middle_office_service = Stubs.win_act_middle_office_service
-        extract_request_amend1 = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request_amend1.set_extraction_id(ext_id)
+        extract_request= ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request.set_extraction_id(ext_id)
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
@@ -266,25 +266,25 @@ def execute(report_id):
              block_order_net_amt, block_order_net_price])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order after amend")
-        verifier2.compare_values("Order Total Comm", request_amend_ticket[total_comm], "0")
-        verifier2.compare_values("Order Total Fees", request_amend_ticket[total_fees], "0")
-        verifier2.compare_values("Order Net Amount", request_amend_ticket[net_amount], "10,000")
-        verifier2.compare_values("Order Net Price", request_amend_ticket[net_price], "100")
+        verifier.set_event_name("Checking block order after amend")
+        verifier.compare_values("Order Total Comm", "0", request_amend_ticket[total_comm])
+        verifier.compare_values("Order Total Fees", "0", request_amend_ticket[total_fees])
+        verifier.compare_values("Order Net Amount", "10,000", request_amend_ticket[net_amount])
+        verifier.compare_values("Order Net Price", "100", request_amend_ticket[net_price])
 
-        verifier2.compare_values("Order SettlType", request[block_order_settl_type.name], "Regular")
-        verifier2.compare_values("Order SettlCurrency", request[block_order_settl_currency.name], "FIM")
-        verifier2.compare_values("Order ExchangeRate", request[block_order_exchange_rate.name], request_amend_ticket[exchange_rate])
-        verifier2.compare_values("Order SettlCurrFxRateCalc", request[block_order_settl_curr_fx_rate_calc.name], "D")
-        verifier2.compare_values("Order SettlDate", request[block_order_settl_date.name], "3/27/2022")
-        verifier2.compare_values("Order PSET", request[block_order_pset.name], "CREST")
-        verifier2.compare_values("Order PSET BIC", request[block_order_pset_bic.name], request_amend_ticket[pset_bic])
-        verifier2.compare_values("Order RootCommission", request[block_order_root_commission.name],request_amend_ticket[total_fees])
-        verifier2.compare_values("Order Net Amt", request[block_order_net_amt.name], request_amend_ticket[net_amount])
-        verifier2.compare_values("Order Net Price", request[block_order_net_price.name], request_amend_ticket[net_price])
-        verifier2.verify()
+        verifier.compare_values("Order SettlType", "Regular", request[block_order_settl_type.name])
+        verifier.compare_values("Order SettlCurrency", "FIM", request[block_order_settl_currency.name])
+        verifier.compare_values("Order ExchangeRate", request_amend_ticket[exchange_rate], request[block_order_exchange_rate.name])
+        verifier.compare_values("Order SettlCurrFxRateCalc", "D", request[block_order_settl_curr_fx_rate_calc.name])
+        verifier.compare_values("Order SettlDate", "3/27/2022", request[block_order_settl_date.name])
+        verifier.compare_values("Order PSET", "CREST", request[block_order_pset.name])
+        verifier.compare_values("Order PSET BIC", request_amend_ticket[pset_bic], request[block_order_pset_bic.name])
+        verifier.compare_values("Order RootCommission", request_amend_ticket[total_fees], request[block_order_root_commission.name])
+        verifier.compare_values("Order Net Amt", request_amend_ticket[net_amount], request[block_order_net_amt.name])
+        verifier.compare_values("Order Net Price", request_amend_ticket[net_price], request[block_order_net_price.name])
+        verifier.verify()
 
         # Step 4 Amend (just check amend ticket)
 
@@ -309,15 +309,15 @@ def execute(report_id):
 
         request_amend2 = call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking order ticket window")
-        verifier2.compare_values("Order PSET BIC", request_amend2[pset_bic], request_amend_ticket[pset_bic])
-        verifier2.compare_values("Order Total Comm", request_amend2[total_comm], request_amend_ticket[total_comm])
-        verifier2.compare_values("Order Total Fees", request_amend2[total_fees], request_amend_ticket[total_fees])
-        verifier2.compare_values("Order Net Amount", request_amend2[net_amount], request_amend_ticket[net_amount])
-        verifier2.compare_values("Order Net Price", request_amend2[net_price], request_amend_ticket[net_price])
-        verifier2.verify()
+        verifier.set_event_name("Checking order ticket window")
+        verifier.compare_values("Order PSET BIC", request_amend_ticket[pset_bic], request_amend2[pset_bic])
+        verifier.compare_values("Order Total Comm", request_amend_ticket[total_comm], request_amend2[total_comm])
+        verifier.compare_values("Order Total Fees", request_amend_ticket[total_fees], request_amend2[total_fees])
+        verifier.compare_values("Order Net Amount", request_amend_ticket[net_amount], request_amend2[net_amount])
+        verifier.compare_values("Order Net Price", request_amend_ticket[net_price], request_amend2[net_price])
+        verifier.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

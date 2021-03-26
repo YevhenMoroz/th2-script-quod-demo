@@ -107,7 +107,7 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
@@ -141,7 +141,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
         main_order_id = ExtractionDetail("main_order_id", "Order ID")
@@ -185,24 +185,24 @@ def execute(report_id):
              block_order_settl_date, block_order_pset, block_order_pset_bic, block_order_root_commission, block_order_net_amt, block_order_net_price])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
-        verifier2.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
-        verifier2.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
 
-        verifier2.compare_values("Order SettlType", request[block_order_settl_type.name], "Regular")
-        verifier2.compare_values("Order SettlCurrency", request[block_order_settl_currency.name], "AED")
-        verifier2.compare_values("Order ExchangeRate", request[block_order_exchange_rate.name],request_book[exchange_rate])
-        verifier2.compare_values("Order SettlCurrFxRateCalc", request[block_order_settl_curr_fx_rate_calc.name], "M")
-        verifier2.compare_values("Order SettlDate", request[block_order_settl_date.name], "3/27/2021")
-        verifier2.compare_values("Order PSET", request[block_order_pset.name], "EURO_CLEAR")
-        verifier2.compare_values("Order PSET BIC", request[block_order_pset_bic.name], request_book[pset_bic])
-        verifier2.compare_values("Order RootCommission", request[block_order_root_commission.name], request_book[total_fees])
-        verifier2.compare_values("Order Net Amt", request[block_order_net_amt.name], request_book[net_amount])
-        verifier2.compare_values("Order Net Price", request[block_order_net_price.name], request_book[net_price])
-        verifier2.verify()
+        verifier.compare_values("Order SettlType", "Regular", request[block_order_settl_type.name])
+        verifier.compare_values("Order SettlCurrency", "AED", request[block_order_settl_currency.name])
+        verifier.compare_values("Order ExchangeRate", request_book[exchange_rate], request[block_order_exchange_rate.name])
+        verifier.compare_values("Order SettlCurrFxRateCalc", "M", request[block_order_settl_curr_fx_rate_calc.name])
+        verifier.compare_values("Order SettlDate", "3/27/2021", request[block_order_settl_date.name])
+        verifier.compare_values("Order PSET", "EURO_CLEAR", request[block_order_pset.name])
+        verifier.compare_values("Order PSET BIC", request_book[pset_bic], request[block_order_pset_bic.name])
+        verifier.compare_values("Order RootCommission", request_book[total_fees], request[block_order_root_commission.name],)
+        verifier.compare_values("Order Net Amt", request_book[net_amount], request[block_order_net_amt.name])
+        verifier.compare_values("Order Net Price", request_book[net_price], request[block_order_net_price.name])
+        verifier.verify()
 
         # Step 3 Approve
 
@@ -220,15 +220,15 @@ def execute(report_id):
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
         extract_request_approve.add_extraction_details(
             [block_order_id, block_id, block_order_status, block_order_match_status, block_order_summary_status])
-        request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
+        request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request_approve.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request_approve[block_order_status.name], "Accepted")
-        verifier2.compare_values("Order Match Status", request_approve[block_order_match_status.name], "Matched")
-        verifier2.compare_values("Order Summary Status", request_approve[block_order_summary_status.name], "")
-        verifier2.verify()
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request_approve[block_order_summary_status.name])
+        verifier.verify()
 
         # Step 4 Allocate
 
@@ -248,15 +248,15 @@ def execute(report_id):
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
         extract_request_allocate.add_extraction_details(
             [block_order_status, block_order_match_status, block_order_summary_status])
-        request_allocate = call(middle_office_service_allocate.extractMiddleOfficeBlotterValues, extract_request.build())
+        request_allocate = call(middle_office_service_allocate.extractMiddleOfficeBlotterValues, extract_request_allocate.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request_allocate[block_order_status.name], "Accepted")
-        verifier2.compare_values("Order Match Status", request_allocate[block_order_match_status.name], "Matched")
-        verifier2.compare_values("Order Summary Status", request_allocate[block_order_summary_status.name], "MatchedAgreed")
-        verifier2.verify()
+        verifier.set_event_name("Checking block order after approve")
+        verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "MatchedAgreed", request_allocate[block_order_summary_status.name])
+        verifier.verify()
 
         # Check allocations blotter
 
@@ -269,15 +269,13 @@ def execute(report_id):
         order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
         request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking allocate blotter")
-        verifier2.compare_values("Allocation Status", request_allocate_blotter[allocate_status.name], "Affirmed")
-        verifier2.compare_values("Allocation Account ID", request_allocate_blotter[allocate_account_id.name],
-                                 "MOClientSA1")
-        verifier2.compare_values("Allocation Match Status", request_allocate_blotter[allocate_status_match_status.name],
-                                 "Matched")
-        verifier2.verify()
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
 
         # Step 5 Amend allocation
 
@@ -293,6 +291,11 @@ def execute(report_id):
         settlement_details.set_pset("CREST")
 
         # Remove comissions
+
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.remove_commissions()
+        fees_details = modify_request.add_fees_details()
+        fees_details.remove_fees()
 
         gross_amount_amend = "book.grossAmount"
         total_comm_amend = "book.totalComm"
@@ -321,7 +324,7 @@ def execute(report_id):
         allocate_order_settl_date = ExtractionDetail("middleOffice.settlDate", "SettlDate")
         allocate_order_pset = ExtractionDetail("middleOffice.pset", "PSET")
         allocate_order_pset_bic = ExtractionDetail("middleOffice.psetBic", "PSET BIC")
-        allocate_order_fees = ExtractionDetail("middleOffice.rootCommission", "FeeMarket")
+        allocate_order_fees = ExtractionDetail("middleOffice.feeMarket", "FeeMarket")
         allocate_order_gross_amt = ExtractionDetail("middleOffice.netAmt", "Gross Amt")
         allocate_order_net_amt = ExtractionDetail("middleOffice.netAmt", "Net Amt")
         allocate_order_net_price = ExtractionDetail("middleOffice.netPrice", "Net Price")
@@ -332,30 +335,30 @@ def execute(report_id):
              allocate_order_gross_amt, allocate_order_net_amt, allocate_order_net_price])
         amend1_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking realtime parameters")
-        verifier2.compare_values("Order Ticket Total Comm", request_amend1[total_comm_amend], "0")
-        verifier2.compare_values("Order Ticket Total Fees", request_amend1[total_fees_amend], "0")
-        verifier2.compare_values("Order Ticket Net Amount", request_amend1[net_amount_amend], "10000")
-        verifier2.compare_values("Order Ticket Net Price", request_amend1[net_price_amend], "100")
-        verifier2.verify()
+        verifier.set_event_name("Checking realtime parameters")
+        verifier.compare_values("Order Ticket Total Comm", "0", request_amend1[total_comm_amend])
+        verifier.compare_values("Order Ticket Total Fees", "0", request_amend1[total_fees_amend])
+        verifier.compare_values("Order Ticket Net Amount", "10,000", request_amend1[net_amount_amend])
+        verifier.compare_values("Order Ticket Net Price", "100", request_amend1[net_price_amend])
+        verifier.verify()
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking allocate blotter after amend")
-        verifier2.compare_values("Allocation blotter Settl Currency", amend1_allocate_blotter[allocate_order_settl_currency.name], "FIM")
-        verifier2.compare_values("Allocation blotter Settl Curr Fx Rate", amend1_allocate_blotter[allocate_order_exchange_rate.name], request_amend1[exchange_rate_amend])
-        verifier2.compare_values("Allocation blotter Settl Curr Fx Rate Calc Text", amend1_allocate_blotter[allocate_order_settl_curr_fx_rate_calc.name], "Divide")
-        verifier2.compare_values("Allocation blotter Settl Curr Amt", amend1_allocate_blotter[allocate_order_curr_amt.name], "999,000")
-        verifier2.compare_values("Allocation blotter SettlDate", amend1_allocate_blotter[allocate_order_settl_date.name], "3/27/2022")
-        verifier2.compare_values("Allocation blotter PSET", amend1_allocate_blotter[allocate_order_pset.name], "CREST")
-        verifier2.compare_values("Allocation blotter PSET BIC", amend1_allocate_blotter[allocate_order_pset_bic.name], request_amend1[pset_bic_amend])
-        verifier2.compare_values("Allocation blotter FeeMarket", amend1_allocate_blotter[allocate_order_fees.name], request_amend1[total_fees_amend])
-        verifier2.compare_values("Allocation blotter Gross Amt", amend1_allocate_blotter[allocate_order_gross_amt.name], request_amend1[gross_amount_amend])
-        verifier2.compare_values("Allocation blotter Net Amt", amend1_allocate_blotter[allocate_order_net_amt.name], request_amend1[net_amount_amend])
-        verifier2.compare_values("Allocation blotter Net Price", amend1_allocate_blotter[allocate_order_net_price.name], request_amend1[net_price_amend])
-        verifier2.verify()
+        verifier.set_event_name("Checking allocate blotter after amend")
+        verifier.compare_values("Allocation blotter Settl Currency", "FIM", amend1_allocate_blotter[allocate_order_settl_currency.name])
+        verifier.compare_values("Allocation blotter Settl Curr Fx Rate", request_amend1[exchange_rate_amend], amend1_allocate_blotter[allocate_order_exchange_rate.name])
+        verifier.compare_values("Allocation blotter Settl Curr Fx Rate Calc Text", "Divide", amend1_allocate_blotter[allocate_order_settl_curr_fx_rate_calc.name])
+        verifier.compare_values("Allocation blotter Settl Curr Amt", "1,000,000", amend1_allocate_blotter[allocate_order_curr_amt.name])
+        verifier.compare_values("Allocation blotter SettlDate", "3/27/2022", amend1_allocate_blotter[allocate_order_settl_date.name])
+        verifier.compare_values("Allocation blotter PSET", "CREST", amend1_allocate_blotter[allocate_order_pset.name])
+        verifier.compare_values("Allocation blotter PSET BIC", request_amend1[pset_bic_amend], amend1_allocate_blotter[allocate_order_pset_bic.name])
+        verifier.compare_values("Allocation blotter FeeMarket", request_amend1[total_fees_amend], amend1_allocate_blotter[allocate_order_fees.name])
+        verifier.compare_values("Allocation blotter Gross Amt", request_amend1[gross_amount_amend], amend1_allocate_blotter[allocate_order_gross_amt.name])
+        verifier.compare_values("Allocation blotter Net Amt", request_amend1[net_amount_amend], amend1_allocate_blotter[allocate_order_net_amt.name])
+        verifier.compare_values("Allocation blotter Net Price", request_amend1[net_price_amend], amend1_allocate_blotter[allocate_order_net_price.name])
+        verifier.verify()
 
         # Step 6 Amend allocation 2
 
@@ -382,15 +385,15 @@ def execute(report_id):
 
         request_amend2 = call(middle_office_service.amendAllocations, modify_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking order ticket window after ament allocation 2")
-        verifier2.compare_values("Order PSET BIC", request_amend2[pset_bic], request_amend1[pset_bic_amend])
-        verifier2.compare_values("Order Total Comm", request_amend2[total_comm], request_amend1[total_comm_amend])
-        verifier2.compare_values("Order Total Fees", request_amend2[total_fees], request_amend1[total_fees_amend])
-        verifier2.compare_values("Order Net Amount", request_amend2[net_amount], request_amend1[net_amount_amend])
-        verifier2.compare_values("Order Net Price", request_amend2[net_price], request_amend1[net_price_amend])
-        verifier2.verify()
+        verifier.set_event_name("Checking order ticket window after ament allocation 2")
+        verifier.compare_values("Order PSET BIC", request_amend1[pset_bic_amend], request_amend2[pset_bic])
+        verifier.compare_values("Order Total Comm", request_amend1[total_comm_amend], request_amend2[total_comm])
+        verifier.compare_values("Order Total Fees", request_amend1[total_fees_amend], request_amend2[total_fees])
+        verifier.compare_values("Order Net Amount", request_amend1[net_amount_amend], request_amend2[net_amount])
+        verifier.compare_values("Order Net Price", request_amend1[net_price_amend], request_amend2[net_price])
+        verifier.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
