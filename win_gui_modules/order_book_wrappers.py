@@ -1,3 +1,5 @@
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+
 from .order_ticket import OrderTicketDetails
 from th2_grpc_act_gui_quod import order_book_pb2
 from dataclasses import dataclass
@@ -313,3 +315,47 @@ class OrderInfo:
 
     def build(self):
         return self.order_info
+
+
+class ExecutionsDetails:
+    def __init__(self, request: order_book_pb2.ManualExecutionDetails.ExecutionDetails):
+        self.request = request
+
+    def set_quantity(self, quantity: str):
+        self.request.quantity = quantity
+
+    def set_price(self, price: str):
+        self.request.price = price
+
+    def set_executing_firm(self, executing_firm: str):
+        self.request.executingFirm = executing_firm
+
+    def set_contra_firm(self, contra_firm: str):
+        self.request.contraFirm = contra_firm
+
+    def set_last_capacity(self, last_capacity: str):
+        self.request.lastCapacity = last_capacity
+
+
+class ManualExecutingDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.ManualExecutionDetails(base=base)
+        else:
+            self._request = order_book_pb2.ManualExecutionDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_row_number(self, row_number: int):
+        self._request.rowNumber = row_number
+
+    def add_executions_details(self) -> ExecutionsDetails:
+        var = self._request.executionDetails.add()
+        return ExecutionsDetails(var)
+
+    def build(self):
+        return self._request
