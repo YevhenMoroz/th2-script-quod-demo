@@ -1,10 +1,27 @@
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def tom():
     return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def broken_1():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def broken_2():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=4)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def next_monday():
+    monday = 6 - int(datetime.now().strftime('%w'))
+    return (tm(datetime.utcnow().isoformat()) + bd(n=monday)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def today():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=0)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def spo():
