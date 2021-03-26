@@ -7,12 +7,14 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+from win_gui_modules.order_book_wrappers import ManualExecutingDetails
 from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
 from win_gui_modules.wrappers import set_base, verification, verify_ent, order_analysis_algo_parameters_request, \
     create_order_analysis_events_request, create_verification_request, check_value
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo,\
     ExtractionDetail, ExtractionAction, ModifyOrderDetails, CancelOrderDetails
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
+from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
 
@@ -40,6 +42,7 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
+        #step 1 create care order
         qty = "150"
         lookup = "VETO"
 
@@ -62,6 +65,7 @@ def execute(report_id):
 
         call(order_ticket_service.placeOrder, new_order_details.build())
 
+
         order_info_extraction = "getOrderInfo"
 
         data = call(common_act.getOrderFields, fields_request(order_info_extraction,
@@ -69,6 +73,22 @@ def execute(report_id):
         care_order_id = data["order.order_id"]
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
+
+        #step 2 manual execution
+        service = Stubs.win_act_order_book
+
+        manual_executing_details = ManualExecutingDetails(base_request)
+        manual_executing_details.set_filter({"Order ID": care_order_id})
+        # manual_executing_details.set_row_number(1)
+
+        executions_details = manual_executing_details.add_executions_details()
+        executions_details.set_quantity("100")
+        executions_details.set_price("100")
+        executions_details.set_executing_firm("ExecutingFirm")
+        executions_details.set_contra_firm("Contra_Firm")
+        executions_details.set_last_capacity("Agency")
+
+        call(service.manualExecution, manual_executing_details.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
