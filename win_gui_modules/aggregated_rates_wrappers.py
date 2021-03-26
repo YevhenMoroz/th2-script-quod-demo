@@ -83,6 +83,9 @@ class ModifyRFQTileRequest:
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
 
+    def set_far_leg_qty(self, quantity: int):
+        self.modify_request.farLegQuantity.value = quantity
+
     def add_context_action(self, context_action: ContextAction):
         self.modify_request.contextActions.append(context_action.build())
 
@@ -98,6 +101,7 @@ class RFQTileValues(Enum):
     CURRENCY_PAIR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CURRENCY_PAIR
     CURRENCY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CURRENCY
     QUANTITY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.QUANTITY
+    FAR_LEG_QTY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_QUANTITY
     TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.TENOR
     FAR_LEG_TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_TENOR
     NEAR_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_SETTLEMENT_DATE
@@ -125,6 +129,9 @@ class ExtractRFQTileValues:
 
     def extract_quantity(self, name: str):
         self.extract_value(RFQTileValues.QUANTITY, name)
+
+    def extract_far_leg_qty(self, name: str):
+        self.extract_value(RFQTileValues.FAR_LEG_QTY, name)
 
     def extract_tenor(self, name: str):
         self.extract_value(RFQTileValues.TENOR, name)
