@@ -132,9 +132,9 @@ def execute(report_id):
     case_side_buy = "Buy"
     case_qty = 2000000
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
+
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
+
     case_instr_type = 'Spot'
     quote_owner = "QA2"
 
