@@ -38,8 +38,8 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "150"
-        limit = "20"
+        qty = "50"
+        limit = "10"
         lookup = "VETO"
 
         # create care order
