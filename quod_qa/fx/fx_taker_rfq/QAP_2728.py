@@ -89,7 +89,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, side, ccy
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
-    ob_side = ExtractionDetail("orderbook.side", '"Side')
+    ob_side = ExtractionDetail("orderbook.side", 'Side')
     ob_ccy1_side = ExtractionDetail("orderbook.ccy1side", "CCY1 Side")
     ob_currency = ExtractionDetail("orderbook.currency", "Currency")
 
@@ -126,7 +126,8 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = "CITI"
+    case_venue = ["CITI"]
+    case_filter_venue="CITI"
     case_side_sell = "Sell"
     case_side_buy = "Buy"
     case_qty = 2000000
@@ -157,22 +158,22 @@ def execute(report_id):
                      case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id,
-                                    case_side_sell, case_side_sell, case_from_currency)
+                                    case_side_buy, case_side_buy, case_from_currency)
         check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, quote_id)
         # Step 3
         modify_request.set_change_currency(True)
         call(ar_service.modifyRFQTile, modify_request.build())
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 4
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book("OB_1", case_base_request, case_instr_type, ob_act, case_id,
-                                    case_side_sell, case_side_sell, case_from_currency)
+                                    case_side_sell, case_side_buy, case_to_currency)
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, quote_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
