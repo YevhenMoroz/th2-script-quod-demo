@@ -141,9 +141,7 @@ def execute(report_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-
     base_rfq_details = BaseTileDetails(base=case_base_request)
-
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
