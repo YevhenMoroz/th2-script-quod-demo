@@ -5,8 +5,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe, prepare_fe_2, \
-    get_opened_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
