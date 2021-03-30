@@ -60,6 +60,10 @@ def m4():
     return (tm(datetime.utcnow().isoformat()) + bd(n=90)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
+def next_working_day_after_25dec():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=194)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
 def y1():
     return (tm(datetime.utcnow().isoformat()) + bd(n=263)).date().strftime('%Y-%m-%d %H:%M:%S')
 
