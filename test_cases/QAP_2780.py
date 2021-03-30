@@ -185,9 +185,9 @@ def execute(report_id):
         verifier = Verifier(case_id)
 
         verifier.set_event_name("Checking block order")
-        verifier.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
-        verifier.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
-        verifier.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
         verifier.verify()
 
         # Step 3 check View Orders
@@ -211,7 +211,7 @@ def execute(report_id):
         verifier.set_event_name("Checking view order table")
         verifier.compare_values("Order ID for dma1", request1[dma1_order_id.name], response[dma2_order_id_view.name])
         verifier.compare_values("Order ID for dma2", request2[dma2_order_id.name], response[dma1_order_id_view.name])
-        verifier.compare_values("Orders count", response[lenght], "2")
+        verifier.compare_values("Orders count", "2", response[lenght])
         verifier.verify()
 
     except Exception as e:
