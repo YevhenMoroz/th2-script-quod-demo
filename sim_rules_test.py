@@ -1,7 +1,7 @@
 from google.protobuf.empty_pb2 import Empty
 from stubs import Stubs
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodNOSRule, TemplateQuodNOSStoreRule
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodMDRRule, TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from th2_grpc_sim_quod.sim_pb2 import *
+from th2_grpc_sim_quod.sim_service import *
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim.sim_pb2 import *
@@ -18,10 +18,8 @@ simulator = Stubs.simulator
 # OCR = simulator.createQuodOCRRule(
 #     request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
 #
-NOS = simulator.createQuodNOSRule(
-    request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
-StoreNOS = simulator.createQuodNOSSRule(
-    request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
+# NOS = simulator.createQuodNOSRule(
+#     request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
 
 
 # RFQ = simulator.createQuodRFQRule(
@@ -86,9 +84,12 @@ StoreNOS = simulator.createQuodNOSSRule(
 # DefRule1 = simulator.createQuodDefMDRRule1(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
 # ))
+StoreNOS = simulator.createQuodNOSStoreRule(
+    request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
 
 # stop rule
 core = Stubs.core
+
 
 # core.removeRule(OCR)
 # core.removeRule(RFQ)
@@ -100,7 +101,7 @@ core = Stubs.core
 
 #args={"field1":"value1","field2":"value2"}
 core.touchRule(request=TouchRequest(id=StoreNOS, args={"Symbol": "", "": ""}))
-
+core.removeRule(StoreNOS)
 # get rules
 running_rules = core.getRulesInfo(request=Empty()).info
 print(running_rules, "Rules running:", len(running_rules))
@@ -119,6 +120,11 @@ MDRefID303 = simulator.getMDRefIDForConnection303(request=RequestMDRefID(
     symbol="EUR/USD:FXF:YR1:HSBC",
     connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
 )).MDRefID
+
+allMDRefID = simulator.getAllMDRefID(request=RequestMDRefID(
+    connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
+))
+
 
 for i in range(479,483):
     core.removeRule(RuleID(id=i))

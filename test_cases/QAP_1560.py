@@ -17,22 +17,19 @@ class TestCase:
         self.logger.setLevel(logging.INFO)
 
         # Services setup
-        self.common_act = Stubs.win_act
         self.fix_act = Stubs.fix_act
         self.verifier = Stubs.verifier
-        self.simulator = Stubs.simulator
         self.cp_service = Stubs.win_act_cp_service
 
         # Case parameters setup
         self.case_id = bca.create_event('QAP-1560', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
-        self.case_base_request = get_base_request(self.session_id, self.case_id)
-        self.base_details = BaseTileDetails(base=self.case_base_request)
+        self.base_request = get_base_request(self.session_id, self.case_id)
+        self.base_details = BaseTileDetails(base=self.base_request)
 
         self.md_req_id_fe = bca.client_orderid(10)
         self.client = 'fix-qsesp-303'
-        self.provider = 'fix-fh-fx-esp'
         self.settl_date = tsd.spo()
         self.case_instrument = {
             'Symbol': 'EUR/USD',
@@ -48,12 +45,9 @@ class TestCase:
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         username = Stubs.custom_config['qf_trading_fe_user_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        try:
-            if not Stubs.frontend_is_open:
-                prepare_fe(self.case_id, self.session_id, work_dir, username, password)
-                call(self.cp_service.createRatesTile, self.base_details.build())
-        except Exception as e:
-            logging.error('Error execution', exc_info=True)
+        if not Stubs.frontend_is_open:
+            prepare_fe(self.case_id, self.session_id, work_dir, username, password)
+            call(self.cp_service.createRatesTile, self.base_details.build())
 
     # Send MarketDataRequest subscribe method
     def send_md_subscribe(self):
@@ -348,11 +342,11 @@ class TestCase:
             ask, bid = self.extract_prices()
             self.check_fix_prices(ask, bid)
 
-            self.send_md_unsubscribe(market_data_params)
-            close_fe_2(self.case_id, self.session_id)
-
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+
+        self.send_md_unsubscribe(market_data_params)
+        close_fe_2(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

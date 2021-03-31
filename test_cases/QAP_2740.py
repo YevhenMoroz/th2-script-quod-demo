@@ -4,6 +4,8 @@ from datetime import datetime
 
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
+
+from custom.verifier import Verifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
@@ -18,18 +20,21 @@ timeouts = False
 
 
 def execute(report_id):
-    act = Stubs.fix_act
-    common_act = Stubs.win_act
-    act2 = Stubs.win_act_order_book
-    verifier = Stubs.verifier
-    simulator = Stubs.simulator
-    sim = Stubs.core
-
-    seconds, nanos = bca.timestamps()  # Store case start time
     case_name = "QAP-2740 [SORPING] Send SORPING algo order to check PriceCost criteria in Aggressive phase"
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
+
+    act = Stubs.fix_act
+    common_act = Stubs.win_act
+    act2 = Stubs.win_act_order_book
+    verifier = Stubs.verifier
+    verifier2 = Verifier(case_id)
+    simulator = Stubs.simulator
+    sim = Stubs.core
+
+    seconds, nanos = bca.timestamps()  # Store case start time
+
     rule_man = RuleManager()
     OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
     OCR2 = rule_man.add_OCR('fix-bs-eq-trqx')
@@ -303,28 +308,24 @@ def execute(report_id):
                                                                                      sub_lv2_1_lmt_price])))
             lvl2_details.extract_length(lvl2_length)
 
-            call(act2.getChildOrdersDetails, lvl2_details.request())
+            request2 = call(act2.getChildOrdersDetails, lvl2_details.request())
 
-            call(common_act.verifyEntities, verification(sub_lvl2_1_ext_action, "Checking Lvl_3 order",
-                                                         [verify_ent("Sub 1 Lvl 2 Venue", sub_lv2_1_venue.name,
-                                                                     "TRQX"),
-                                                          verify_ent("Sub 1 Lvl 2 Qty", sub_lv2_1_qty.name,
-                                                                     "100"),
-                                                          verify_ent("Sub 1 Lvl 2 Price", sub_lv2_1_lmt_price.name,
-                                                                     "30"),
-                                                          verify_ent("OA Minimum PriceCost Venue Sub Order 1 Lvl 1", venue,
-                                                                     "TRQX"),
-                                                          verify_ent("Compare venues", sub_lv2_1_venue.name, venue),
-                                                          verify_ent("Sub order Lvl 2 count", lvl2_length, "1")
-                                                          ]))
+            verifier2.set_event_name("Checking Lvl_3 order")
+            verifier2.compare_values("Sub 1 Lvl 2 Venue", request2[sub_lv2_1_venue.name], "TRQX")
+            verifier2.compare_values("Sub 1 Lvl 2 Qty", request2[sub_lv2_1_qty.name], "100")
+            verifier2.compare_values("Sub 1 Lvl 2 Price", request2[sub_lv2_1_lmt_price.name], "30")
+            verifier2.compare_values("OA Minimum PriceCost Venue Sub Order 1 Lvl 1", request[sub_lvl1_1_venue_OA.name], "TRQX")
+            verifier2.compare_values("Compare venues", request2[sub_lv2_1_venue.name], request[sub_lvl1_1_venue_OA.name])
+            verifier2.compare_values("Sub order Lvl 2 count", request2[lvl2_length], "1")
+            verifier2.verify()
 
         except Exception:
-            logger.error("Error execution", exc_info=True)
+            logger.error("Error execution in GUI part", exc_info=True)
 
         close_fe(case_id, session_id)
 
     except Exception as e:
-        logging.error("Error execution", exc_info=True)
+        logging.error("Error execution in FIX part", exc_info=True)
 
     sim.removeRule(trade_rule_1)
     sim.removeRule(trade_rule_2)

@@ -31,19 +31,23 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Block ID", "123456"])
+
+        amend_allocations_details = modify_request.add_amend_allocations_details()
+        amend_allocations_details.set_filter({"Alloc Qty": "100"})
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
         settlement_details.set_settlement_currency("EUR")
-        settlement_details.set_exchange_rate("1")
         settlement_details.set_exchange_rate_calc("Multiply")
-        # settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date("2/21/2021")
-        settlement_details.toggle_recompute()
 
         commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(basis="Absolute", rate="5")
+
+        ticket_details = modify_request.add_ticket_details()
+        ticket_details.set_agreed_price("100")
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")

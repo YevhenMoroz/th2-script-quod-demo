@@ -9,14 +9,15 @@ class FixVerifier:
         self.TraderConnectivity = TraderConnectivity
         self.case_id = case_id
 
-    def CheckExecutionReport(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport'):
+    def CheckExecutionReport(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction='FIRST'):
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("ExecutionReport", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
-                self.case_id
+                self.case_id,
+                Direction.Value(direction)
             )
         )
 
