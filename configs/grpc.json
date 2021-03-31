@@ -85,7 +85,7 @@
       "endpoints": {
         "act_order_ticket": {
           "host": "10.0.22.22",
-          "port": 31280
+          "port": 31283
         }
       },
       "strategy": {
@@ -100,7 +100,7 @@
       "endpoints": {
         "act_order_book": {
           "host": "10.0.22.22",
-          "port": 31280
+          "port": 31283
         }
       },
       "strategy": {

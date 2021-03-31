@@ -4,7 +4,8 @@ import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
-                                                       ContextActionRatesTile, ModifyRFQTileRequest, ContextAction)
+                                                       ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
+                                                       TableActionsRequest, TableAction)
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -62,8 +63,20 @@ def get_my_orders_details(ob_act, base_request, order_id):
     print(result[ob_instr_type.name])
 
 
+def extract_rfq_table_date(base_details, ar_service):
+    table_actions_request = TableActionsRequest(details=base_details)
+    check1 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.hsbVenue", "Pts"))
+    check2 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.msVenue", "MGS"))
+    table_actions_request.set_extraction_id("extrId")
+    table_actions_request.add_actions([check1, check2])
+    result = call(ar_service.processTableActions, table_actions_request.build())
+    print(result)
+    print(f' pts {result["aggrRfqTile.hsbVenue"]}')
+    print(f' ms {result["aggrRfqTile.msVenue"]}')
+
 
 def execute(report_id):
+    #region Preparation
     print('start time = ' + str(datetime.now()))
     common_act = Stubs.win_act
 
@@ -85,25 +98,30 @@ def execute(report_id):
     base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
-    base_rfq_details = BaseTileDetails(base=base_request)
-    base_esp_details = BaseTileDetails(base=base_request)
-
+    base_tile_details = BaseTileDetails(base=base_request)
     order_id = "MO1210310103937245001"
+    #endregion
 
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
+        prepare_fe_2(case_id, session_id,
+                     fe_dir='qf_trading_fe_folder_308',
+                     fe_user='qf_trading_fe_user_308',
+                     fe_pass='qf_trading_fe_password_308')
     else:
         get_opened_fe(case_id, session_id)
 
     try:
+        #  RFQ tile
+        extract_rfq_table_date(base_tile_details, ar_service)
         # ESP tile ↓
-        # create_or_get_rates_tile(base_rfq_details, ar_service)
+        # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_esp_details, ar_service, 'GBP', 'USD', 1000000, case_venue)
 
         # My Orders ↓
 
-        get_my_orders_details(ob_act,  base_request, order_id)
+        # get_my_orders_details(ob_act,  base_request, order_id)
         # close_fe_2(case_id, session_id)
+
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

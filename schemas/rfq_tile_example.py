@@ -61,7 +61,7 @@ def execute(report_id):
         # or
         # action = ContextAction.create_venue_filter("HSB")
         # action1 = ContextAction.create_venue_filter("MGS")
-        # modify_request.add_context_actions([action, action1])
+        modify_request.add_context_actions([action, action1])
 
         # context button click
         # click_action = ContextAction.create_button_click("Quotes")
