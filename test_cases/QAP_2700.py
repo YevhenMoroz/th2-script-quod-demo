@@ -107,7 +107,7 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         call(middle_office_service.bookOrder, modify_request.build())
 
@@ -115,7 +115,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID'], "Symbol", "VETO"])
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
         main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
         main_order_id = ExtractionDetail("main_order_id", "Order ID")
@@ -142,13 +142,13 @@ def execute(report_id):
         extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
-        verifier2.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
-        verifier2.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
-        verifier2.verify()
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
+        verifier.verify()
 
         # Step 2 Approve Order
 
@@ -165,13 +165,13 @@ def execute(report_id):
         extract_request_approve.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order")
-        verifier2.compare_values("Order Status", request_approve[block_order_status.name], "Accepted")
-        verifier2.compare_values("Order Match Status", request_approve[block_order_match_status.name], "Matched")
-        verifier2.compare_values("Order Summary Status", request_approve[block_order_summary_status.name], "")
-        verifier2.verify()
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request_approve[block_order_summary_status.name])
+        verifier.verify()
 
         # Step 3 Allocate Order
 
@@ -194,13 +194,13 @@ def execute(report_id):
         extract_request_allocate.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request_allocate = call(middle_office_service_allocate.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking block order after allocate")
-        verifier2.compare_values("Order Status", request_allocate[block_order_status.name], "Accepted")
-        verifier2.compare_values("Order Match Status", request_allocate[block_order_match_status.name], "Matched")
-        verifier2.compare_values("Order Summary Status", request_allocate[block_order_summary_status.name],"MatchedAgreed")
-        verifier2.verify()
+        verifier.set_event_name("Checking block order after allocate")
+        verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "MatchedAgreed", request_allocate[block_order_summary_status.name])
+        verifier.verify()
 
         # Check allocations blotter
 
@@ -213,13 +213,13 @@ def execute(report_id):
         order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
         request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
 
-        verifier2 = Verifier(case_id)
+        verifier = Verifier(case_id)
 
-        verifier2.set_event_name("Checking allocate blotter")
-        verifier2.compare_values("Allocation Status", request_allocate_blotter[allocate_status.name], "Affirmed")
-        verifier2.compare_values("Allocation Account ID", request_allocate_blotter[allocate_account_id.name], "MOClientSA1")
-        verifier2.compare_values("Allocation Match Status", request_allocate_blotter[allocate_status_match_status.name], "Matched")
-        verifier2.verify()
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
