@@ -1,6 +1,7 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
-    TemplateNoPartyIDs,TemplateNewOrdSingleExecutionReportTrade
+    TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -92,6 +93,14 @@ class RuleManager:
                                                                price=price,
                                                                tradedQty=traded_qty,
                                                                delay= delay))
+
+    @staticmethod
+    def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: int):
+        return Stubs.simulator.createNewOrdSingleExecutionReportPendingAndNew(
+            request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             price=price))
 
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):

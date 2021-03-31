@@ -8,11 +8,9 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
-from win_gui_modules.wrappers import set_base, verification, verify_ent, order_analysis_algo_parameters_request, \
-    create_order_analysis_events_request, create_verification_request, check_value
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo,\
-    ExtractionDetail, ExtractionAction, ModifyOrderDetails, CancelOrderDetails
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
+from win_gui_modules.order_book_wrappers import ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import CompleteOrdersDetails
+from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
 
@@ -44,6 +42,7 @@ def execute(report_id):
         limit = "20"
         lookup = "VETO"
 
+        #create care order
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
         order_ticket.set_limit(limit)
@@ -71,6 +70,31 @@ def execute(report_id):
         care_order_id = data["order.order_id"]
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
+
+        #create manual execution
+        service = Stubs.win_act_order_book
+
+        manual_executing_details = ManualExecutingDetails(base_request)
+        manual_executing_details.set_filter({"Order ID": care_order_id})
+        # manual_executing_details.set_row_number(1)
+
+        executions_details = manual_executing_details.add_executions_details()
+        executions_details.set_quantity(qty)
+        executions_details.set_price(limit)
+        executions_details.set_executing_firm("ExecutingFirm")
+        executions_details.set_contra_firm("Contra_Firm")
+        executions_details.set_last_capacity("Agency")
+
+        call(service.manualExecution, manual_executing_details.build())
+
+        #complete order
+        service = Stubs.win_act_order_book
+
+        complete_orders_details = CompleteOrdersDetails(base_request)
+        complete_orders_details.set_filter({"Order ID": care_order_id})
+        # complete_orders_details.set_selected_row_count(2)
+
+        call(service.completeOrders, complete_orders_details.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
