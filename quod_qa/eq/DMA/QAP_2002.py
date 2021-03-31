@@ -78,16 +78,14 @@ def execute(report_id):
         'TimeInForce': 4,
         'OrdType': 1,
         'TransactTime': datetime.utcnow().isoformat(),
-        'ExDestination': 'CHIX',
         'Instrument': {
-            'Symbol': 'FR0000125007_EUR',
-            'SecurityID': 'FR0000125007',
+            'Symbol': 'FR0004186856_EUR',
+            'SecurityID': 'FR0004186856',
             'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR',
-
+            'SecurityExchange': 'XPAR'
         },
         'Currency': 'EUR',
-        'SecurityExchange': 'TRERROR',
+        'SecurityExchange': 'XPAR',
     }
 
     fix_message = FixMessage(fix_params)
