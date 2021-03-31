@@ -8,7 +8,7 @@ pip install --index-url https://quod-repos.exactpro.com/repository/quod-pypi/sim
 pip install  th2-grpc-hand==2.5.4
 
 
-pip install --index-url https://quod-repos.exactpro.com/repository/quod-pypi/simple/ th2-grpc-act-gui-quod==1.10.11-quod-dev.133
+pip install --index-url https://quod-repos.exactpro.com/repository/quod-pypi/simple/ th2-grpc-act-gui-quod==1.11.6-quod-dev.154
 
 
 

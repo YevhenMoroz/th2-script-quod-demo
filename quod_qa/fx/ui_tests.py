@@ -65,19 +65,17 @@ def get_my_orders_details(ob_act, base_request, order_id):
 
 def extract_rfq_table_date(base_details, ar_service):
     table_actions_request = TableActionsRequest(details=base_details)
-    check1 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.hsbVenue", "Pts"))
-    check2 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.msVenue", "MGS"))
+    check1 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.mgsVenue", "MGS"))
+    check2 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.distColl", "Dist"))
     table_actions_request.set_extraction_id("extrId")
     table_actions_request.add_actions([check1, check2])
     result = call(ar_service.processTableActions, table_actions_request.build())
     print(result)
-    print(f' pts {result["aggrRfqTile.hsbVenue"]}')
-    print(f' ms {result["aggrRfqTile.msVenue"]}')
 
 
 def execute(report_id):
     #region Preparation
-    print('start time = ' + str(datetime.now()))
+    # print('start time = ' + str(datetime.now()))
     common_act = Stubs.win_act
 
     # Rules
@@ -103,10 +101,11 @@ def execute(report_id):
     #endregion
 
     if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id,
-                     fe_dir='qf_trading_fe_folder_308',
-                     fe_user='qf_trading_fe_user_308',
-                     fe_pass='qf_trading_fe_password_308')
+        prepare_fe_2(case_id, session_id)\
+            # ,
+            #          fe_dir='qf_trading_fe_folder_308',
+            #          fe_user='qf_trading_fe_user_308',
+            #          fe_pass='qf_trading_fe_password_308')
     else:
         get_opened_fe(case_id, session_id)
 
@@ -126,6 +125,6 @@ def execute(report_id):
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    print('end time = ' + str(datetime.now()))
+    # print('end time = ' + str(datetime.now()))
     # for rule in [RFQ, TRFQ]:
     #     rule_manager.remove_rule(rule)

@@ -5,7 +5,7 @@ from custom import basic_custom_actions as bca
 # from quod_qa.fx import ui_tests, QAP_1746
 from rule_management import RuleManager
 from stubs import Stubs
-from quod_qa.fx import ui_tests, QAP_568
+from quod_qa.fx import ui_tests
 
 # from test_cases import QAP_1552, QAP_585, QAP_2143, QAP_1560_class
 # from test_cases import QAP_1552
@@ -38,7 +38,10 @@ def test_run():
         rm = RuleManager()
         # rm.add_RFQ('fix-fh-fx-rfq')
         # rm.add_RFQ('fix-fh-fx-rfq')
-        rm.print_active_rules()
+        # rm.remove_rules_by_id_range( 7,15)
+        # rm.print_active_rules()
+
+
         ui_tests.execute(report_id)
 
         # QAP_568.execute(report_id)
