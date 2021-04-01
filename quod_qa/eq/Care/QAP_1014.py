@@ -1,16 +1,22 @@
 import logging
+import os
 from datetime import datetime
-from time import sleep
 
 from win_gui_modules.order_book_wrappers import OrdersDetails
+
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
+
+from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe, close_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
+from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, fields_request
+import pyautogui
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,18 +24,19 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1012"
+    case_name = "QAP-1014"
     seconds, nanos = timestamps()  # Store case start time
-
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
     price = "20"
     client = "CLIENT1"
+    time = datetime.utcnow().isoformat()
     lookup = "PROL"
     # endregion
     # region Open FE
+
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -48,28 +55,35 @@ def execute(report_id):
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
                                                                              "XPAR_" + client, "XPAR", 20)
-        order_ticket = OrderTicketDetails()
-        order_ticket.set_quantity(qty)
-        order_ticket.set_limit(price)
-        order_ticket.set_client(client)
-        order_ticket.set_order_type("Limit")
-        order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user'])
+        connectivity = 'gtwquod5'
+        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
-        new_order_details = NewOrderDetails()
-        new_order_details.set_lookup_instr(lookup)
-        new_order_details.set_order_details(order_ticket)
-        new_order_details.set_default_params(base_request)
-
-        set_base(session_id, case_id)
-
-        order_ticket_service = Stubs.win_act_order_ticket
-        common_act = Stubs.win_act
-
-        call(order_ticket_service.placeOrder, new_order_details.build())
+        fix_params = {
+            'Account': client,
+            'HandlInst': "3",
+            'Side': "2",
+            'OrderQty': qty,
+            'TimeInForce': "0",
+            'OrdType': 2,
+            'Price': price,
+            'TransactTime': time,
+            'Instrument': {
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityID': 'FR0004186856',
+                'SecurityIDSource': '4',
+                'SecurityExchange': 'XPAR'
+            },
+            'Currency': 'EUR',
+            'SecurityExchange': 'XPAR',
+        }
+        fix_message = FixMessage(fix_params)
+        fix_message.add_random_ClOrdID()
+        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(nos_rule)
+
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
@@ -105,5 +119,4 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open")]))
     # endregion
-
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
