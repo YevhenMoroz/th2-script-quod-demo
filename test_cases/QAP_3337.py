@@ -104,7 +104,22 @@ def execute(report_id):
         modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
         # modify_request.set_selected_row_count(4)
 
-        response = call(middle_office_service.bookOrder, modify_request.build())
+        call(middle_office_service.bookOrder, modify_request.build())
+
+        #approve
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Order ID", care_order_id])
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+
+        #allocate (in progress)
+        allocations_details = modify_request.add_allocations_details()
+        modify_request = ModifyTicketDetails(base=base_request)
+
+        allocations_details.add_allocation_param({"Account": "MOClient", "BO Field 2": qty})
+
+        call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

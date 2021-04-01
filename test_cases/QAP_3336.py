@@ -106,6 +106,13 @@ def execute(report_id):
 
         response = call(middle_office_service.bookOrder, modify_request.build())
 
+        #unbook order
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
+
+        response = call(middle_office_service.unBookOrder, modify_request.build())
 
 
     except Exception as e:
