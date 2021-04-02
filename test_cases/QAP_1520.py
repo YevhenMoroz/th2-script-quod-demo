@@ -41,7 +41,7 @@ class TestCase:
             'Side': '1',
             'OrderQty': 1000000,
             'OrdType': '2',
-            'Price': 35.002,
+            # 'Price': 35.002,
             'TimeInForce': '3',
             'Currency': 'EUR',
             'SettlCurrency': 'USD',
@@ -114,6 +114,11 @@ class TestCase:
                 self.case_id,
                 bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
             ))
+
+        self.case_params['Price'] = subscribe \
+            .response_messages_list[0].fields['NoMDEntries'] \
+            .message_value.fields['NoMDEntries'].list_value.values[1] \
+            .message_value.fields['MDEntryPx'].simple_value
 
         md_subscribe_response = {
             'MDReqID': md_params['MDReqID'],
@@ -358,7 +363,8 @@ class TestCase:
                 action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_cl_ord_id])))
         call(self.ob_act.getOrdersDetails, ob.request())
         call(self.common_act.verifyEntities, verification(execution_id, "checking OB",
-                                                          [verify_ent("OB ClOrdID vs FIX ClOrdID", ob_cl_ord_id.name, er_filled['ClOrdID']),
+                                                          [verify_ent("OB ClOrdID vs FIX ClOrdID", ob_cl_ord_id.name,
+                                                                      er_filled['ClOrdID']),
                                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled")]))
 
     # Main method. Must call in demo.py by "QAP_1520.TestCase(report_id).execute()" command

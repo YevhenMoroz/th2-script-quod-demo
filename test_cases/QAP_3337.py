@@ -10,6 +10,7 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
 from win_gui_modules.order_book_wrappers import ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import CompleteOrdersDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
@@ -79,8 +80,8 @@ def execute(report_id):
         # manual_executing_details.set_row_number(1)
 
         executions_details = manual_executing_details.add_executions_details()
-        executions_details.set_quantity(qty)
-        executions_details.set_price(limit)
+        #executions_details.set_quantity(qty)
+        #executions_details.set_price(limit)
         executions_details.set_executing_firm("ExecutingFirm")
         executions_details.set_contra_firm("Contra_Firm")
         executions_details.set_last_capacity("Agency")
@@ -95,6 +96,30 @@ def execute(report_id):
         # complete_orders_details.set_selected_row_count(2)
 
         call(service.completeOrders, complete_orders_details.build())
+
+        #book order
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
+        # modify_request.set_selected_row_count(4)
+
+        call(middle_office_service.bookOrder, modify_request.build())
+
+        #approve
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Order ID", care_order_id])
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+
+        #allocate (in progress)
+        allocations_details = modify_request.add_allocations_details()
+        modify_request = ModifyTicketDetails(base=base_request)
+
+        allocations_details.add_allocation_param({"Account": "MOClient", "BO Field 2": qty})
+
+        call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
