@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
+from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
 
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -135,10 +137,7 @@ class ModifyRFQTileRequest:
 
 class ModifyRatesTileRequest:
     def __init__(self, details: BaseTileDetails = None):
-        if details is not None:
-            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest(data=details.build())
-        else:
-            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
+        self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
 
     def set_details(self, details: BaseTileDetails):
         self.modify_request.data.CopyFrom(details.build())
@@ -241,12 +240,34 @@ class TableAction:
         action.set_action(check_venue)
         return action
 
+    @staticmethod
+    def extract_cell_value(detail: CellExtractionDetails):
+        extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
+        extract_cell.extractionField.name = detail.name
+        extract_cell.extractionField.colName = detail.colName
+        extract_cell.extractionField.venueName = detail.venueName
+        extract_cell.extractionField.intSide = detail.intSide
+        action = TableAction()
+        action.set_action(extract_cell)
+        return action
+
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
+        if isinstance(action,ar_operations_pb2.TableAction.ExtractCellValue):
+            self.request.extractCellValue.CopyFrom(action)
+
 
     def build(self):
         return self.request
+
+
+@dataclass
+class CellExtractionDetails:
+    name: str
+    colName: str
+    venueName: str
+    intSide: int
 
 
 class TableActionsRequest:
@@ -276,7 +297,6 @@ class TableActionsRequest:
 class RFQTileOrderSide(Enum):
     BUY = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
-
 
 class PlaceRFQRequest:
     def __init__(self, details: BaseTileDetails = None):
