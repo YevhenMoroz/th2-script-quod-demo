@@ -53,11 +53,11 @@ def get_my_orders_details(ob_act, base_request, order_id):
     # ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     # ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Near Leg Tenor")
     main_order_details.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
-                                                                                 ob_exec_sts,
-                                                                                 ob_lookup,
-                                                                                 ob_creat_time])))
+            OrderInfo.create(
+                    action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
+                                                                                         ob_exec_sts,
+                                                                                         ob_lookup,
+                                                                                         ob_creat_time])))
 
     result = call(ob_act.getMyOrdersDetails, main_order_details.request())
     print(result)
@@ -74,7 +74,7 @@ def check_venue(base_details, ar_service):
     print(result)
 
 
-def extract_rfq_table_date(base_details, ar_service):
+def extract_rfq_table_data(base_details, ar_service):
 
     """
     It is simple demonstration of hot to cell data extract.
@@ -137,7 +137,7 @@ def execute(report_id):
     try:
         #  RFQ tile
         # check_venue(base_tile_details, ar_service)
-        extract_rfq_table_date(base_tile_details, ar_service)
+        extract_rfq_table_data(base_tile_details, ar_service)
         # ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
