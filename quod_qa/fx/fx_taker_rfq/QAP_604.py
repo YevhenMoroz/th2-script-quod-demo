@@ -89,7 +89,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
-    ob_liit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Tenor")
 
@@ -108,7 +108,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
                                                                                  ob_qty,
                                                                                  ob_id,
                                                                                  ob_tenor,
-                                                                                 ob_liit_price]),
+                                                                                 ob_limit_price]),
             sub_order_details=lvl1_details))
 
     response = call(act_ob.getOrdersDetails, ob.request())
@@ -119,7 +119,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Tenor', tenor, response[ob_tenor.name])
     verifier.compare_values('Exec Qty', response[sub_order_qty.name], response[ob_qty.name])
-    verifier.compare_values('Exec Price', response[ob_liit_price.name], response[sub_order_price.name])
+    verifier.compare_values('Exec Price', response[ob_limit_price.name], response[sub_order_price.name])
     verifier.verify()
     return response[ob_id.name]
 
