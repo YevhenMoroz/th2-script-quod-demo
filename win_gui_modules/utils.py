@@ -41,7 +41,7 @@ def prepare_fe(main_event, session, working_dir: str, username: str, password: s
         parentEventId=init_event,
         username=username,
         password=password,
-        mainWindowName="Quod Financial - Quod site",
+        mainWindowName=Stubs.custom_config['qf_trading_fe_main_win_name'],
         loginWindowName=Stubs.custom_config['qf_trading_fe_login_win_name'])
     logging.debug("RPC login:\n%s", stub.login(login_details))
     Stubs.frontend_is_open = True
