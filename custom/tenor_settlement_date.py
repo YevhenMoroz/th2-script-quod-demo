@@ -61,7 +61,7 @@ def m4():
 
 
 def next_working_day_after_25dec():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=194)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime(2021, 12, 25).isoformat()) + bd(n=0)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def y1():
