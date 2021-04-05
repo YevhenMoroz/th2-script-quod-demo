@@ -145,10 +145,9 @@ def execute(report_id):
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
         #allocate (in progress)
-        #middle_office_service = Stubs.win_act_middle_office_service
+        modify_request = ModifyTicketDetails(base=base_request)
 
         allocations_details = modify_request.add_allocations_details()
-        modify_request = ModifyTicketDetails(base=base_request)
         allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
         allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": qty})
 
