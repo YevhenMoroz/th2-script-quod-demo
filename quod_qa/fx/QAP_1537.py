@@ -13,7 +13,7 @@ timeouts = True
 
 
 def execute(report_id, case_params):
-    case_name = Path(__file__).name
+    case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
     act = Stubs.fix_act

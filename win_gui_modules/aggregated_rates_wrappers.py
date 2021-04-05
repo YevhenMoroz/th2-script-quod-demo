@@ -147,6 +147,7 @@ class ModifyRatesTileRequest:
 
     def set_to_currency(self, currency: str):
         self.modify_request.toCurrency = currency
+
     def set_tenor(self, tenor: str):
         self.modify_request.tenor = tenor
 
@@ -182,6 +183,19 @@ class RFQTileValues(Enum):
     NEAR_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_SETTLEMENT_DATE
     FAR_LEG_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_SETTLEMENT_DATE
 
+    BEST_BID_LARGE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_BID_LARGE
+    BEST_BID_SMALL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_BID_SMALL
+    BEST_ASK_LARGE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_ASK_LARGE
+    BEST_ASK_SMALL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_ASK_SMALL
+    SPREAD = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SPREAD
+    SWAP_DIFF_DAYS = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SWAP_DIFF_DAYS
+    BENEFICIARY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BENEFICIARY
+    BEST_BID = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_BID
+    BEST_ASK = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_ASK
+    CLIENT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CLIENT
+    LABEL_BUY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_BUY
+    LABEL_SELL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_SELL
+
 
 class ExtractRFQTileValues:
     def __init__(self, details: BaseTileDetails = None):
@@ -216,6 +230,42 @@ class ExtractRFQTileValues:
 
     def extract_far_leg_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.FAR_LEG_SETTLEMENT_DATE, name)
+
+    def extract_best_bid(self, name: str):
+        self.extract_value(RFQTileValues.BEST_BID, name)
+
+    def extract_best_bid_large(self, name: str):
+        self.extract_value(RFQTileValues.BEST_BID_LARGE, name)
+
+    def extract_best_bid_small(self, name: str):
+        self.extract_value(RFQTileValues.BEST_BID_SMALL, name)
+
+    def extract_best_ask(self, name: str):
+        self.extract_value(RFQTileValues.BEST_ASK, name)
+
+    def extract_best_ask_large(self, name: str):
+        self.extract_value(RFQTileValues.BEST_ASK_LARGE, name)
+
+    def extract_best_ask_small(self, name: str):
+        self.extract_value(RFQTileValues.BEST_ASK_SMALL, name)
+
+    def extract_spread(self, name: str):
+        self.extract_value(RFQTileValues.SPREAD, name)
+
+    def extract_swap_diff_days(self, name: str):
+        self.extract_value(RFQTileValues.SWAP_DIFF_DAYS, name)
+
+    def extract_beneficiary(self, name: str):
+        self.extract_value(RFQTileValues.BENEFICIARY, name)
+
+    def extract_client(self, name: str):
+        self.extract_value(RFQTileValues.CLIENT, name)
+
+    def extract_label_sell(self, name: str):
+        self.extract_value(RFQTileValues.LABEL_BUY, name)
+
+    def extract_label_buy(self, name: str):
+        self.extract_value(RFQTileValues.LABEL_SELL, name)
 
     def extract_value(self, field: RFQTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedValue()
@@ -254,9 +304,8 @@ class TableAction:
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
-        if isinstance(action,ar_operations_pb2.TableAction.ExtractCellValue):
+        if isinstance(action, ar_operations_pb2.TableAction.ExtractCellValue):
             self.request.extractCellValue.CopyFrom(action)
-
 
     def build(self):
         return self.request
@@ -297,6 +346,7 @@ class TableActionsRequest:
 class RFQTileOrderSide(Enum):
     BUY = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
+
 
 class PlaceRFQRequest:
     def __init__(self, details: BaseTileDetails = None):

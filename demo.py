@@ -37,7 +37,7 @@ def test_run():
     try:
         rm = RuleManager()
         # rm.add_RFQ('fix-fh-fx-rfq')
-        # rm.add_RFQ('fix-fh-fx-rfq')
+        # rm.add_TRFQ('fix-fh-fx-rfq')
         # rm.remove_rules_by_id_range( 7,15)
         # rm.print_active_rules()
 
