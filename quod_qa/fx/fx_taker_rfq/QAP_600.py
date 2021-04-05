@@ -27,7 +27,7 @@ def modify_order(base_request, service, qty, cur1, cur2, date, client):
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
-    modify_request.set_settlement_date(bca.get_t_plus_date(date,is_weekend_holiday=False))
+    modify_request.set_settlement_date(bca.get_t_plus_date(date, is_weekend_holiday=False))
     modify_request.set_client(client)
     call(service.modifyRFQTile, modify_request.build())
 
