@@ -89,25 +89,37 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
+    ob_liit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Tenor")
+
+    sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "ExecID")
+    sub_order_qty = ExtractionDetail("subOrder_lvl_1.id", "Qty")
+    sub_order_price = ExtractionDetail("subOrder_lvl_1.execprice", "ExecPrice")
+    lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_id_dt,
+                                                                                                      sub_order_qty,
+                                                                                                      sub_order_price]))
+    lvl1_details = OrdersDetails.create(info=lvl1_info)
+
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
                                                                                  ob_qty,
                                                                                  ob_id,
-                                                                                 ob_tenor])))
+                                                                                 ob_tenor,
+                                                                                 ob_liit_price]),
+            sub_order_details=lvl1_details))
+
     response = call(act_ob.getOrdersDetails, ob.request())
-    execution = call(act_ob.getChildOrdersDetails, ob.request())
-    print(execution)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values('Qty', str(qty), response[ob_qty.name])
+    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Tenor', tenor, response[ob_tenor.name])
-
+    verifier.compare_values('Exec Qty', response[sub_order_qty.name], response[ob_qty.name])
+    verifier.compare_values('Exec Price', response[ob_liit_price.name], response[sub_order_price.name])
     verifier.verify()
     return response[ob_id.name]
 
