@@ -39,8 +39,8 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "50"
-        limit = "10"
+        qty = "150"
+        limit = "20"
         lookup = "VETO"
 
         # create care order
@@ -80,8 +80,8 @@ def execute(report_id):
         # manual_executing_details.set_row_number(1)
 
         executions_details = manual_executing_details.add_executions_details()
-        executions_details.set_quantity(qty)
-        executions_details.set_price(limit)
+        #executions_details.set_quantity(qty)
+        #executions_details.set_price(limit)
         executions_details.set_executing_firm("ExecutingFirm")
         executions_details.set_contra_firm("Contra_Firm")
         executions_details.set_last_capacity("Agency")
@@ -106,24 +106,25 @@ def execute(report_id):
         #modify_request.set_selected_row_count(4)
 
         ticket_details = modify_request.add_ticket_details()
-        ticket_details.set_client("MOClient")
-        ticket_details.set_trade_date("2/21/2021")
-        ticket_details.set_net_gross_ind("Gross")
-        # ticket_details.set_give_up_broker("GiveUpBroker")
-        ticket_details.set_agreed_price("5")
+        #ticket_details.set_client("MOClient")
+        #ticket_details.set_trade_date("3/31/2021")
+        #ticket_details.set_net_gross_ind("Gross")
+        #ticket_details.set_give_up_broker("GiveUpBroker")
+        #ticket_details.set_agreed_price("5")
 
-        settlement_details = modify_request.add_settlement_details()
-        settlement_details.set_settlement_type("Regular")
-        settlement_details.set_settlement_currency("EUR")
-        settlement_details.set_exchange_rate("1")
-        settlement_details.set_exchange_rate_calc("Multiply")
-        # settlement_details.toggle_settlement_date()
-        settlement_details.set_settlement_date("2/21/2021")
-        settlement_details.toggle_recompute()
+        #settlement_details = modify_request.add_settlement_details()
+        #settlement_details.set_settlement_type("Regular")
+        #settlement_details.set_settlement_currency("EUR")
+        #settlement_details.set_exchange_rate("1")
+        #settlement_details.set_exchange_rate_calc("Multiply")
+        #settlement_details.toggle_settlement_date()
+        #settlement_details.set_settlement_date("3/31/2021")
+        #settlement_details.toggle_recompute()
 
         commissions_details = modify_request.add_commissions_details()
         #commissions_details.toggle_manual()
-        commissions_details.add_commission(basis="Absolute", rate="5")
+        commissions_details.remove_commissions()
+        commissions_details.add_commission(basis="Absolute", rate="21", amount="21")
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -135,6 +136,32 @@ def execute(report_id):
         extraction_details.extract_agreed_price("book.agreedPrice")
 
         response = call(middle_office_service.bookOrder, modify_request.build())
+
+        #approve
+        #middle_office_service = Stubs.win_act_middle_office_service
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Order ID", care_order_id])
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+
+        #allocate (in progress)
+        #middle_office_service = Stubs.win_act_middle_office_service
+
+        allocations_details = modify_request.add_allocations_details()
+        modify_request = ModifyTicketDetails(base=base_request)
+        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
+        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": qty})
+
+        extraction_details = modify_request.add_extraction_details()
+        extraction_details.set_extraction_id("BookExtractionId")
+        extraction_details.extract_net_price("book.netPrice")
+        extraction_details.extract_net_amount("book.netAmount")
+        extraction_details.extract_total_comm("book.totalComm")
+        extraction_details.extract_gross_amount("book.grossAmount")
+        extraction_details.extract_total_fees("book.totalFees")
+        extraction_details.extract_agreed_price("book.agreedPrice")
+
+        call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
