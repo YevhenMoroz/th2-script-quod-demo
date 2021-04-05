@@ -186,6 +186,14 @@ class AmendAllocationsDetails:
         self.request.rowNumber = row_number
 
 
+class FeesDetails:
+    def __init__(self, request: middle_office_pb2.FeesDetails()):
+        self.request = request
+
+    def remove_fees(self):
+        self.request.removeFees = True
+
+
 class ModifyTicketDetails:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -202,6 +210,10 @@ class ModifyTicketDetails:
         while i < length:
             self._request.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self._request.multipleRowSelection = True
+        self._request.selectedRowCount = selected_row_count
 
     def add_commissions_details(self) -> CommissionsDetails:
         self._request.commissionsDetails.CopyFrom(common_pb2.CommissionsDetails())
@@ -226,6 +238,10 @@ class ModifyTicketDetails:
     def add_amend_allocations_details(self) -> AmendAllocationsDetails:
         self._request.amendAllocationsDetails.CopyFrom(middle_office_pb2.AmendAllocationsDetails())
         return AmendAllocationsDetails(self._request.amendAllocationsDetails)
+
+    def add_fees_details(self) -> FeesDetails:
+        self._request.feesDetails.CopyFrom(middle_office_pb2.FeesDetails())
+        return FeesDetails(self._request.feesDetails)
 
     def build(self):
         return self._request

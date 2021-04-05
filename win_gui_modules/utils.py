@@ -59,7 +59,10 @@ def close_fe(main_event, session):
     Stubs.frontend_is_open = False
 
 
-def prepare_fe_2(main_event, session, fe_dir: str = 'qf_trading_fe_folder_308'):
+def prepare_fe_2(main_event, session,
+                 fe_dir: str = 'qf_trading_fe_folder_303',
+                 fe_user: str = 'qf_trading_fe_user_303',
+                 fe_pass: str = 'qf_trading_fe_password_303'):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
 
@@ -73,8 +76,8 @@ def prepare_fe_2(main_event, session, fe_dir: str = 'qf_trading_fe_folder_308'):
     login_details_req = LoginDetailsRequest()
     login_details_req.set_session_id(session)
     login_details_req.set_parent_event_id(init_event)
-    login_details_req.set_username(Stubs.custom_config['qf_trading_fe_user_308'])
-    login_details_req.set_password(Stubs.custom_config['qf_trading_fe_password_308'])
+    login_details_req.set_username(Stubs.custom_config[fe_user])
+    login_details_req.set_password(Stubs.custom_config[fe_pass])
     login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
     login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
     stub.login(login_details_req.build())

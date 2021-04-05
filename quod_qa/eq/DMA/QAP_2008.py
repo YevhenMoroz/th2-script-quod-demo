@@ -24,6 +24,7 @@ timeouts = True
 def execute(report_id):
     case_name = "QAP-2008"
     seconds, nanos = timestamps()  # Store case start time
+
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
@@ -96,7 +97,6 @@ def execute(report_id):
     order_expireDate = ExtractionDetail("order_expireDate", "ExpireDate")
     order_ordType = ExtractionDetail("oder_ordType", "OrdType")
     order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_leavesQty = ExtractionDetail("order_leavesQty", "LeavesQty")
     main_order_id = ExtractionDetail("order_id", "Order ID")
 
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
@@ -113,7 +113,6 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open"),
                                                   verify_ent("Qty", order_qty.name, qty),
-                                                  #verify_ent("LeavesQty", order_leavesQty.name, qty),
                                                   verify_ent("LmtPrice", order_price.name, price),
                                                   verify_ent("TIF", order_tif.name, "GoodTillDate"),
                                                   verify_ent("OrdType", order_ordType.name, "Limit")
@@ -148,9 +147,7 @@ def execute(report_id):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(base_request)
     cancel_order_details.set_filter(["Order ID", order_id])
-    cancel_order_details.set_comment("Order cancelled by script")
     cancel_order_details.set_cancel_children(True)
-
     call(act.cancelOrder, cancel_order_details.build())
     # endregion
 
@@ -158,7 +155,6 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Cancelled"),
-                                                  # verify_ent("LeavesQty", order_leavesQty.name, qty),
                                                   verify_ent("TIF", order_tif.name, "GoodTillDate"),
                                                   ]))
     # endregion

@@ -12,7 +12,8 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    ViewOrderExtractionDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -126,51 +127,92 @@ def execute(report_id):
 
         middle_office_service = Stubs.win_act_middle_office_service
 
-        modify_request2 = ModifyTicketDetails(base=base_request)
-        modify_request2.set_filter(["Symbol", "VETO", "Sts", "Terminated", "PostTradeStatus", "ReadyToBook"])
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Symbol", "VETO", "Sts", "Terminated", "PostTradeStatus", "ReadyToBook"])
+        modify_request.set_selected_row_count(2)
+        call(middle_office_service.bookOrder, modify_request.build())
 
-        call(middle_office_service.bookOrder, modify_request2.build())
-        #
-        # extraction_id = "main_order"
-        # main_order_details = OrdersDetails()
-        # main_order_details.set_default_params(base_request)
-        # main_order_details.set_extraction_id(extraction_id)
-        # main_order_details.set_filter(["ClOrdID", dma1_order_params['ClOrdID'], "Symbol", "VETO"])
-        #
-        # main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
-        # main_order_id = ExtractionDetail("main_order_id", "Order ID")
-        # main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_post_trade_status, main_order_id])
-        # main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
-        #
-        # request = call(act2.getOrdersDetails, main_order_details.request())
-        # call(common_act.verifyEntities, verification(extraction_id, "checking order",
-        #                                              [verify_ent("Order PostTradeStatus", main_order_post_trade_status.name, "Booked")]))
-        #
-        # block_order_id = "Multi"
-        # if not block_order_id:
-        #     raise Exception("Block order id is not returned")
-        # print("Block order id " + block_order_id)
-        #
-        # ext_id = "MiddleOfficeExtractionId"
-        # middle_office_service = Stubs.win_act_middle_office_service
-        # extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        # extract_request.set_extraction_id(ext_id)
-        # extract_request.set_filter(["Order ID", block_order_id])
-        # block_order_id = ExtractionDetail("middleOffice.blockId", "Order ID")
-        # block_id = ExtractionDetail("middleOffice.blockId", "Block ID")
-        # block_order_status = ExtractionDetail("middleOffice.status", "Status")
-        # block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        # block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        # extract_request.add_extraction_details([block_order_id, block_id,block_order_status,block_order_match_status,block_order_summary_status])
-        # request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
-        #
-        # verifier2 = Verifier(case_id)
-        #
-        # verifier2.set_event_name("Checking block order")
-        # verifier2.compare_values("Order Status", request[block_order_status.name], "ApprovalPending")
-        # verifier2.compare_values("Order Match Status", request[block_order_match_status.name], "Unmatched")
-        # verifier2.compare_values("Order Summary Status", request[block_order_summary_status.name], "")
-        # verifier2.verify()
+        dma1_extraction_id = "dma1_order"
+        dma1_order_details = OrdersDetails()
+        dma1_order_details.set_default_params(base_request)
+        dma1_order_details.set_extraction_id(dma1_extraction_id)
+        dma1_order_details.set_filter(["ClOrdID", dma1_order_params['ClOrdID']])
+
+        dma1_order_status = ExtractionDetail("status", "Sts")
+        dma1_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        dma1_order_id = ExtractionDetail("dma1_order_id", "Order ID")
+        dma1_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[dma1_order_status, dma1_order_post_trade_status, dma1_order_id])
+        dma1_order_details.add_single_order_info(OrderInfo.create(action=dma1_order_extraction_action))
+
+        dma2_extraction_id = "dma2_order"
+        dma2_order_details = OrdersDetails()
+        dma2_order_details.set_default_params(base_request)
+        dma2_order_details.set_extraction_id(dma2_extraction_id)
+        dma2_order_details.set_filter(["ClOrdID", dma2_order_params['ClOrdID']])
+
+        dma2_order_status = ExtractionDetail("status", "Sts")
+        dma2_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        dma2_order_id = ExtractionDetail("dma2_order_id", "Order ID")
+        dma2_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[dma2_order_status, dma2_order_post_trade_status, dma2_order_id])
+        dma2_order_details.add_single_order_info(OrderInfo.create(action=dma2_order_extraction_action))
+
+        request1 = call(act2.getOrdersDetails, dma1_order_details.request())
+        request2 = call(act2.getOrdersDetails, dma2_order_details.request())
+        call(common_act.verifyEntities, verification(dma1_extraction_id, "checking order",
+                                                     [verify_ent("Order PostTradeStatus", dma1_order_status.name, "Terminated"),
+                                                      verify_ent("Order PostTradeStatus", dma1_order_post_trade_status.name, "Booked"),
+                                                      verify_ent("Order PostTradeStatus", dma2_order_status.name, "Terminated"),
+                                                      verify_ent("Order PostTradeStatus", dma1_order_post_trade_status.name, "Booked")]))
+
+        both_order_id = "Multi"
+        if not both_order_id:
+            raise Exception("Block order id is not returned")
+        print("Block order id " + both_order_id)
+
+        ext_id = "MiddleOfficeExtractionId"
+        middle_office_service = Stubs.win_act_middle_office_service
+        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request.set_extraction_id(ext_id)
+        extract_request.set_filter(["Order ID", both_order_id])
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
+        request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
+        verifier.verify()
+
+        # Step 3 check View Orders
+
+        extract_request = ViewOrderExtractionDetails(base=base_request)
+        extract_request.set_block_filter({"Order ID": "Multi"})
+        lenght = "middleOffice.viewOrdersCount"
+        extract_request.extract_length(lenght)
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(1)
+        dma1_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
+        order_details.add_extraction_detail(dma1_order_id_view)
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(2)
+        dma2_order_id_view = ExtractionDetail("middleOffice.orderId2", "Order ID")
+        order_details.add_extraction_detail(dma2_order_id_view)
+        response = call(middle_office_service.extractViewOrdersTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking view order table")
+        verifier.compare_values("Order ID for dma1", request1[dma1_order_id.name], response[dma2_order_id_view.name])
+        verifier.compare_values("Order ID for dma2", request2[dma2_order_id.name], response[dma1_order_id_view.name])
+        verifier.compare_values("Orders count", "2", response[lenght])
+        verifier.verify()
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

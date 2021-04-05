@@ -43,8 +43,7 @@ class TestCase:
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        if not Stubs.frontend_is_open:
-            prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
+        prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
 
     # Add case rules method
     def add_rules(self):
@@ -61,17 +60,11 @@ class TestCase:
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
 
-    # Set near tenor method
+    # Set tenors method
     def set_tenors(self, near_tenor, far_tenor):
         modify_request = ModifyRFQTileRequest(details=self.base_details)
         modify_request.set_near_tenor(near_tenor)
         modify_request.set_far_leg_tenor(far_tenor)
-        call(self.ar_service.modifyRFQTile, modify_request.build())
-
-    # Set far leg tenor method
-    def set_far_tenor(self, tenor):
-        modify_request = ModifyRFQTileRequest(details=self.base_details)
-        modify_request.set_far_leg_tenor(tenor)
         call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Send RFQ method
@@ -85,14 +78,14 @@ class TestCase:
     # Send an order by clicking from Top Of Book button method
     def send_order_by_tob(self):
         rfq_request = PlaceRFQRequest(details=self.base_details)
-        rfq_request.set_action(RFQTileOrderSide.BUY)
+        rfq_request.set_action(RFQTileOrderSide.SELL)
         call(self.ar_service.placeRFQOrder, rfq_request.build())
 
     # Send an order by clicking price in a venue method
     def send_order_by_venue_price(self):
         rfq_request = PlaceRFQRequest(details=self.base_details)
         rfq_request.set_venue(self.venue)
-        rfq_request.set_action(RFQTileOrderSide.BUY)
+        rfq_request.set_action(RFQTileOrderSide.SELL)
         call(self.ar_service.placeRFQOrder, rfq_request.build())
 
     # Check QuoteRequestBook method
@@ -142,7 +135,7 @@ class TestCase:
                                                           [verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                                            verify_ent("OB ID vs QB ID", ob_id.name, self.quote_id)]))
 
-    # Main method. Must call in demo.py by "QAP_569.TestCase(report_id).execute()" command
+    # Main method. Must call in demo.py by "QAP_638.TestCase(report_id).execute()" command
     def execute(self):
         try:
             self.prepare_frontend()
@@ -150,7 +143,7 @@ class TestCase:
             self.create_or_get_rfq()
 
             # Step 1
-            self.set_tenors('1M', '2M')
+            self.set_tenors('Spot', '1M')
             self.send_rfq()
             self.check_qrb()
             self.check_qb()

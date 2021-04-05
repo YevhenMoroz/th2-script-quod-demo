@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
+from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
 
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -40,6 +42,45 @@ class ContextAction:
         if isinstance(action, ar_operations_pb2.ContextAction.FilterVenues):
             self.request.filterVenues.CopyFrom(action)
         elif isinstance(action, ar_operations_pb2.ContextAction.ClickToButton):
+            self.request.buttonClick.CopyFrom(action)
+
+    def build(self):
+        return self.request
+
+
+class ContextActionRatesTile:
+    def __init__(self):
+        self.request = ar_operations_pb2.ContextActionRatesTile()
+
+    @staticmethod
+    def create_venue_filter(venue: str):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterVenues()
+        action.venues.append(venue)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def create_venue_filters(venues: list):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterVenues()
+        for venue in venues:
+            action.venues.append(venue)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def create_button_click(button_name: str):
+        action = ar_operations_pb2.ContextActionRatesTile.ClickToButton()
+        action.buttonName = button_name
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    def add_action(self, action):
+        if isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterVenues):
+            self.request.filterVenues.CopyFrom(action)
+        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.ClickToButton):
             self.request.buttonClick.CopyFrom(action)
 
     def build(self):
@@ -92,6 +133,44 @@ class ModifyRFQTileRequest:
     def add_context_actions(self, context_actions: list):
         for action in context_actions:
             self.add_context_action(action)
+
+    def build(self):
+        return self.modify_request
+
+
+class ModifyRatesTileRequest:
+    def __init__(self, details: BaseTileDetails = None):
+        self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
+
+    def set_details(self, details: BaseTileDetails):
+        self.modify_request.data.CopyFrom(details.build())
+
+    def set_from_currency(self, currency: str):
+        self.modify_request.fromCurrency = currency
+
+    def set_to_currency(self, currency: str):
+        self.modify_request.toCurrency = currency
+    def set_tenor(self, tenor: str):
+        self.modify_request.tenor = tenor
+
+    def set_change_instrument(self, change_instrument: bool):
+        self.modify_request.changeInstrument = change_instrument
+
+    def set_quantity(self, quantity: int):
+        self.modify_request.quantity.value = quantity
+
+    def set_change_qty(self, qty: bool):
+        self.modify_request.changeQty = qty
+
+    def add_context_action(self, context_action: ContextActionRatesTile):
+        self.modify_request.contextActions.append(context_action.build())
+
+    def add_context_actions(self, context_actions: list):
+        for action in context_actions:
+            self.add_context_action(action)
+
+    def set_click_on_one_click_button(self):
+        self.modify_request.clickOnOneClick = True
 
     def build(self):
         return self.modify_request
@@ -168,12 +247,34 @@ class TableAction:
         action.set_action(check_venue)
         return action
 
+    @staticmethod
+    def extract_cell_value(detail: CellExtractionDetails):
+        extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
+        extract_cell.extractionField.name = detail.name
+        extract_cell.extractionField.colName = detail.colName
+        extract_cell.extractionField.venueName = detail.venueName
+        extract_cell.extractionField.intSide = detail.intSide
+        action = TableAction()
+        action.set_action(extract_cell)
+        return action
+
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
+        if isinstance(action,ar_operations_pb2.TableAction.ExtractCellValue):
+            self.request.extractCellValue.CopyFrom(action)
+
 
     def build(self):
         return self.request
+
+
+@dataclass
+class CellExtractionDetails:
+    name: str
+    colName: str
+    venueName: str
+    intSide: int
 
 
 class TableActionsRequest:
@@ -203,7 +304,6 @@ class TableActionsRequest:
 class RFQTileOrderSide(Enum):
     BUY = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
-
 
 class PlaceRFQRequest:
     def __init__(self, details: BaseTileDetails = None):
