@@ -120,17 +120,13 @@ def execute(report_id):
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
-
-    #TODO  Wait PFX-3194
-    case_far_tenor = "11W"
+    case_far_tenor = "1W"
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
