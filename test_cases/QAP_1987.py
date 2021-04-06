@@ -4,7 +4,7 @@ from stubs import Stubs
 from win_gui_modules.wrappers import *
 from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 from custom.basic_custom_actions import timestamps, create_event
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe, get_opened_fe
 import logging
 from rule_management import RuleManager
 from datetime import datetime
@@ -48,12 +48,14 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password_305']
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
+    else:
+        get_opened_fe(case_id, session_id)
     try:
         qty = "1300"
         limit = "20"
         stop_price = "20"
-        # lookup = "BP"
-        lookup = "SGOA"
+        lookup = "BP"
+        # lookup = "SGOA"
 
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
