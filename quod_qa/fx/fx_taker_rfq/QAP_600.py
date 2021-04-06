@@ -6,7 +6,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, next_monday
+from custom.tenor_settlement_date import spo, next_monday, next_monday_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -57,7 +57,7 @@ def execute(report_id):
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
-    next_monday()
+    case_date=next_monday_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -78,7 +78,7 @@ def execute(report_id):
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
                      case_to_currency, click_to_sunday, case_client)
         time.sleep(10)
-        check_date("RFQ", base_rfq_details, ar_service, case_id, next_monday())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_date)
 
 
 

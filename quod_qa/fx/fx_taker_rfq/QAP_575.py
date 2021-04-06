@@ -6,7 +6,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, next_monday, next_working_day_after_25dec
+from custom.tenor_settlement_date import spo, next_working_day_after_25dec_front_end, next_monday_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -58,8 +58,8 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     click_to_25dec= int(str(datetime(2021, 12, 25) - datetime.now()).split()[0])
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
-    next_monday()
-    next_working_day_after_25dec()
+    next_monday_front_end()
+    next_working_day_after_25dec_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -80,12 +80,12 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
                      case_to_currency, click_to_sunday, case_client)
-        check_date("RFQ", base_rfq_details, ar_service, case_id, next_monday())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, next_monday_front_end())
 
         # Step 2
         modify_request.set_settlement_date(bca.get_t_plus_date(click_to_25dec, is_weekend_holiday=False))
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_date("RFQ", base_rfq_details, ar_service, case_id, next_working_day_after_25dec())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, next_working_day_after_25dec_front_end())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

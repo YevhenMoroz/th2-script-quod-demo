@@ -4,7 +4,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, wk1
+from custom.tenor_settlement_date import spo, wk1, wk1_front_end, spo_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -105,8 +105,8 @@ def execute(report_id):
     case_qty3 = 100000
     case_tenor1 = "Spot"
     case_tenor2 = "1W"
-    spo()
-    wk1()
+    spo_front_end()
+    wk1_front_end()
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
@@ -123,7 +123,7 @@ def execute(report_id):
         check_currency_pair("RFQ_0", base_rfq_details, ar_service, case_id, case_pair)
 
         # Step 3
-        check_date("RFQ_1", base_rfq_details, ar_service, case_id, spo())
+        check_date("RFQ_1", base_rfq_details, ar_service, case_id, spo_front_end())
 
         # Step 4
         modify_request.set_change_currency(True)
@@ -143,7 +143,7 @@ def execute(report_id):
         # Step 7
         modify_request.set_near_tenor(case_tenor2)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_date("RFQ_1", base_rfq_details, ar_service, case_id, wk1())
+        check_date("RFQ_1", base_rfq_details, ar_service, case_id, wk1_front_end())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
