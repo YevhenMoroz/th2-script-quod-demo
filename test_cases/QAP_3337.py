@@ -14,6 +14,8 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
+#from test_cases.QAP_1560 import TestCase
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -69,6 +71,8 @@ def execute(report_id):
         data = call(common_act.getOrderFields, fields_request(order_info_extraction,
                                                              ["order.status", "Sts", "order.order_id", "Order ID"]))
         care_order_id = data["order.order_id"]
+        logger.info(f"care_order_id value (id = {care_order_id})")
+        logger.info(f"care_order_id type (id = {type(care_order_id)})")
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
 
@@ -97,11 +101,17 @@ def execute(report_id):
 
         call(service.completeOrders, complete_orders_details.build())
 
+        # Checkpoint creation
+        checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id = checkpoint_response.checkpoint
+        logger.info(f"checkpoint_id value (id = {checkpoint_id})")
+        logger.info(f"checkpoint_id type (id = {type(checkpoint_id)})")
+
         #book order
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
+        modify_request.set_filter(["Order ID", care_order_id])
         # modify_request.set_selected_row_count(4)
 
         extraction_details = modify_request.add_extraction_details()
@@ -122,7 +132,7 @@ def execute(report_id):
         modify_request.set_filter(["Order ID", care_order_id])
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
-        #allocate (in progress)
+        #allocate
         #middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
@@ -143,6 +153,23 @@ def execute(report_id):
         #unallocate
         modify_request = ModifyTicketDetails(base=base_request)
         call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
+
+        #verify
+        execution_report1_params = {
+            'OrdAllocGrp': {
+                'OrderID': care_order_id
+            },
+            'AllocTransType': '2',
+            'AllocType': '2'
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Allocation Instruction Report",
+                bca.filter_to_grpc("AllocationInstruction", execution_report1_params, ['OrderID']),
+                checkpoint_id, 'fix-ss-back-office', case_id
+            )
+        )
+        logger.info(f"filter_to_grpc value (id = {bca.filter_to_grpc('AllocationInstruction', execution_report1_params, ['OrderID'])})")
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
