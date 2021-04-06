@@ -105,6 +105,10 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     """
     Class ExtractRFQTileValues was extended.
     Here bellow you can see all available methods.
+
+    param name is common for all extract.. methods.
+    name it's unique str. It need to extract value from result dict
+
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
