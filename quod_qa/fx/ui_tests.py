@@ -3,10 +3,12 @@ from datetime import datetime
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
-                                                       TableActionsRequest, TableAction, CellExtractionDetails)
+                                                       TableActionsRequest, TableAction, CellExtractionDetails,
+                                                       ExtractRFQTileValues)
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -99,6 +101,43 @@ def extract_rfq_table_data(base_details, ar_service):
     print(result)
 
 
+def extract_rfq_tile_data(exec_id, base_request, service ):
+    """
+    Class ExtractRFQTileValues was extended.
+    Here bellow you can see all available methods.
+    """
+    extract_value = ExtractRFQTileValues(details=base_request)
+    extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
+    extract_value.extract_currency("ar_rfq.extract_currency")
+    extract_value.extract_quantity("ar_rfq.extract_quantity")
+    extract_value.extract_tenor("ar_rfq.extract_tenor")
+    extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
+    extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
+    extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
+    extract_value.extract_best_bid("ar_rfq.extract_best_bid")
+    extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
+    extract_value.extract_best_bid_small("ar_rfq.extract_best_bid_small")
+    extract_value.extract_best_ask("ar_rfq.extract_best_ask")
+    extract_value.extract_best_ask_large("ar_rfq.extract_best_ask_large")
+    extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
+    extract_value.extract_spread("ar_rfq.extract_spread")
+    extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
+    extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
+    extract_value.extract_client("ar_rfq.extract_client")
+    extract_value.extract_label_buy("ar_rfq.extract_label_buy")
+    extract_value.extract_label_sell("ar_rfq.extract_label_sell")
+
+
+    extract_value.set_extraction_id(exec_id)
+    response = call(service.extractRFQTileValues, extract_value.build())
+    for line in response:
+        print(f'{line} = {response[line]}')
+    # extract_qty = response["ar_rfq.qty"]
+    # verifier = Verifier(case_id)
+    # verifier.set_event_name("Verify Qty on RFQ tile")
+    # verifier.compare_values("Qty", '10,000,000.00', extract_qty)
+
+
 def execute(report_id):
     # region Preparation
     # print('start time = ' + str(datetime.now()))
@@ -137,7 +176,8 @@ def execute(report_id):
     try:
         #  RFQ tile
         # check_venue(base_tile_details, ar_service)
-        extract_rfq_table_data(base_tile_details, ar_service)
+        # extract_rfq_table_data(base_tile_details, ar_service)
+        extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
         # ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
