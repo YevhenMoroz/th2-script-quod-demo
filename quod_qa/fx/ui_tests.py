@@ -83,9 +83,9 @@ def extract_rfq_table_data(base_details, ar_service):
     In example bellow created one TableActionsRequest and 4 cells extracting.
     CellExtractionDetails() use next income position args:
         name - is unique name for cell,
-        columnName - is actual column name from FE Trading,
-        venue - it is the venue short name from FE Trading( used for search correct row),
-        intSide - it need for search correct column from same sell/buy cells( SELL=0/BUY=1)
+        column_name - is actual column name from FE Trading,
+        venue_name - it is the venue short name from FE Trading( used for search correct row),
+        int_side - it need for search correct column from same sell/buy cells( SELL=0/BUY=1)
 
     result - is a dictionary with string values
 
