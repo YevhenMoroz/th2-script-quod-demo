@@ -5,7 +5,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, tom, wk1, y2
+from custom.tenor_settlement_date import spo, tom, wk1, y2, y2_front_end
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -61,7 +61,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "2Y"
-    date = y2()
+    date = y2_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

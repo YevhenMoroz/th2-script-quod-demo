@@ -6,7 +6,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, next_monday, sn, tom, today
+from custom.tenor_settlement_date import spo, next_monday, sn, tom, today, today_front_end, tom_front_end, sn_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -50,9 +50,9 @@ def execute(report_id):
     case_tenor_today="TODAY"
     case_tenor_tom="TOM"
     case_tenor_sn="SN"
-    today()
-    tom()
-    sn()
+    case_today=today_front_end()
+    case_tom=tom_front_end()
+    case_sn=sn_front_end()
 
 
     # Create sub-report for case
@@ -78,17 +78,17 @@ def execute(report_id):
         modify_request.set_client(case_client)
         modify_request.set_near_tenor(case_tenor_today)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_date("RFQ", base_rfq_details, ar_service, case_id, today())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_today)
 
         # Step 2
         modify_request.set_near_tenor(case_tenor_sn)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_date("RFQ", base_rfq_details, ar_service, case_id, sn())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_sn)
 
         # Step 3
         modify_request.set_near_tenor(case_tenor_tom)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_date("RFQ", base_rfq_details, ar_service, case_id, tom())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_tom)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

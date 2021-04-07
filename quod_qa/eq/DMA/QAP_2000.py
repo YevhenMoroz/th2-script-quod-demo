@@ -60,12 +60,11 @@ def execute(report_id):
         'Side': "2",
         'OrderQty': qty,
         'TimeInForce': "0",
-        'OrdType': 2,
+        'OrdType': 1,
         'TransactTime': time,
-        'ExDestination': 'PARIS',
         'Instrument': {
-            'Symbol': 'FR0000125007_EUR',
-            'SecurityID': 'FR0000125007',
+            'Symbol': 'FR0004186856_EUR',
+            'SecurityID': 'FR0004186856',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         },

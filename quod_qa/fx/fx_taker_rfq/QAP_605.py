@@ -82,7 +82,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     verifier.verify()
 
 
-def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,near_tenor):
+def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, near_tenor, far_tenor):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -90,18 +90,34 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,near_tenor
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Near Leg Tenor")
+    ob_far_tenor = ExtractionDetail("orderBook.farlegtenor", "Far Leg Tenor")
+
+    sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "ExecID")
+    sub_order_near_tenor = ExtractionDetail("subOrder_lvl_1.nearlegtenor", "NearTenor")
+    sub_order_far_tenor = ExtractionDetail("subOrder_lvl_1.farlegtenor", "FarTenor")
+    lvl1_info = OrderInfo.create(action=ExtractionAction.
+                                 create_extraction_action(extraction_details=[sub_order_id_dt,
+                                                                              sub_order_near_tenor,
+                                                                              sub_order_far_tenor]))
+    lvl1_details = OrdersDetails.create(info=lvl1_info)
+
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
                                                                                  ob_id,
-                                                                                 ob_tenor])))
+                                                                                 ob_tenor,
+                                                                                 ob_far_tenor]),
+            sub_order_details=lvl1_details))
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Near Leg Tenor",near_tenor , response[ob_tenor.name])
+    verifier.compare_values("Near Leg Tenor", near_tenor, response[ob_tenor.name])
+    verifier.compare_values("Near Far Tenor", far_tenor, response[ob_far_tenor.name])
+    verifier.compare_values("Exec Near Leg Tenor", response[sub_order_near_tenor.name], response[ob_tenor.name])
+    verifier.compare_values("Exec Far Tenor", response[sub_order_far_tenor.name], response[ob_far_tenor.name])
     verifier.verify()
     return response[ob_id.name]
 
@@ -120,17 +136,13 @@ def execute(report_id):
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
-
-    #TODO  Wait PFX-3194
-    case_far_tenor = "11W"
+    case_far_tenor = "1W"
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -157,7 +169,7 @@ def execute(report_id):
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act,
-                                       case_id, case_near_tenor)
+                                       case_id, case_near_tenor, case_far_tenor)
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
 
 
@@ -170,20 +182,3 @@ def execute(report_id):
 
     for rule in [RFQ, TRFQ]:
         rule_manager.remove_rule(rule)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

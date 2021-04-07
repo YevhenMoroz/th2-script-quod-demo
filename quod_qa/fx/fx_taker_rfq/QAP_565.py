@@ -27,7 +27,6 @@ def modify_order(base_request, service, venues):
 
 
 def execute(report_id):
-    common_act = Stubs.win_act
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
@@ -38,9 +37,8 @@ def execute(report_id):
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
-    ob_act = Stubs.win_act_order_book
     base_rfq_details = BaseTileDetails(base=case_base_request)
-    venues=["HCB", '"CIT']
+    venues=["HCB", "CIT"]
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
