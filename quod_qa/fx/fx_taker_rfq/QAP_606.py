@@ -88,10 +88,10 @@ def execute(report_id):
     case_blank_tenor = ""
     case_near_date = spo()
     case_far_date = wk1()
-    case_left_eur_label = "Sell EUR"
-    case_right_eur_label = "Buy EUR"
-    case_left_usd_label = "Buy USD"
-    case_right_usd_label = "Sell USD"
+    case_left_eur_label = "Sell EUR Far"
+    case_right_eur_label = "Buy EUR Far"
+    case_left_usd_label = "Buy USD Far"
+    case_right_usd_label = "Sell USD Far"
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
