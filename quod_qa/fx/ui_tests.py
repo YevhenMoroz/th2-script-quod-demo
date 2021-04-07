@@ -1,0 +1,200 @@
+import logging
+from datetime import datetime
+
+import rule_management as rm
+from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
+from stubs import Stubs
+from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
+                                                       ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
+                                                       TableActionsRequest, TableAction, CellExtractionDetails,
+                                                       ExtractRFQTileValues)
+from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base, verification, verify_ent
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+def create_or_get_rfq(base_request, service):
+    call(service.createRFQTile, base_request.build())
+
+
+def create_or_get_rates_tile(base_request, service):
+    call(service.createRatesTile, base_request.build())
+
+
+def modify_rates_tile(base_request, service, cur1, cur2, qty, venue):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.set_from_currency(cur1)
+    modify_request.set_to_currency(cur2)
+    modify_request.set_change_instrument(False)
+    modify_request.set_quantity(qty)
+    modify_request.set_change_qty(True)
+    modify_request.set_tenor("1W")
+    modify_request.set_click_on_one_click_button()
+    # action = []
+    # action.append(ContextActionRatesTile.create_button_click('Statistics'))
+    # modify_request.add_context_actions(action)
+    call(service.modifyRatesTile, modify_request.build())
+
+
+def get_my_orders_details(ob_act, base_request, order_id):
+    extraction_id = "order.care"
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id(extraction_id)
+    # main_order_details.set_filter(["Order ID", order_id])
+    ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
+    ob_exec_sts = ExtractionDetail("orderBook.orderid", "Order ID")
+    ob_lookup = ExtractionDetail("orderBook.lookup", "Lookup")
+    ob_creat_time = ExtractionDetail("orderBook.creattime", "CreatTime")
+    # ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
+    # ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Near Leg Tenor")
+    main_order_details.add_single_order_info(
+            OrderInfo.create(
+                    action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
+                                                                                         ob_exec_sts,
+                                                                                         ob_lookup,
+                                                                                         ob_creat_time])))
+
+    result = call(ob_act.getMyOrdersDetails, main_order_details.request())
+    print(result)
+    print(result[ob_instr_type.name])
+
+
+def check_venue(base_details, ar_service):
+    table_actions_request = TableActionsRequest(details=base_details)
+    check1 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.hsbVenue", "HSB"))
+    check2 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.mgsVenue", "MGS"))
+    table_actions_request.set_extraction_id("extrId")
+    table_actions_request.add_actions([check1, check2])
+    result = call(ar_service.processTableActions, table_actions_request.build())
+    print(result)
+
+
+def extract_rfq_table_data(base_details, ar_service):
+
+    """
+    It is simple demonstration of hot to cell data extract.
+    In example bellow created one TableActionsRequest and 4 cells extracting.
+    CellExtractionDetails() use next income position args:
+        name - is unique name for cell,
+        column_name - is actual column name from FE Trading,
+        venue_name - it is the venue short name from FE Trading( used for search correct row),
+        int_side - it need for search correct column from same sell/buy cells( SELL=0/BUY=1)
+
+    result - is a dictionary with string values
+
+    """
+    table_actions_request = TableActionsRequest(details=base_details)
+    extract1 = TableAction.extract_cell_value(CellExtractionDetails("DistSell","Dist", "HSB", 0))
+    extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell","Pts", "HSB", 0))
+    extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy","Pts", "HSB", 1))
+    extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy","Dist", "HSB", 1))
+    table_actions_request.set_extraction_id("extrId")
+    table_actions_request.add_actions([extract1, extract2, extract3, extract4])
+    result = call(ar_service.processTableActions, table_actions_request.build())
+    print(result)
+
+
+def extract_rfq_tile_data(exec_id, base_request, service ):
+    """
+    Class ExtractRFQTileValues was extended.
+    Here bellow you can see all available methods.
+
+    param name is common for all extract.. methods.
+    name it's unique str. It need to extract value from result dict
+
+    """
+    extract_value = ExtractRFQTileValues(details=base_request)
+    extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
+    extract_value.extract_currency("ar_rfq.extract_currency")
+    extract_value.extract_quantity("ar_rfq.extract_quantity")
+    extract_value.extract_tenor("ar_rfq.extract_tenor")
+    extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
+    extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
+    extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
+    extract_value.extract_best_bid("ar_rfq.extract_best_bid")
+    extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
+    extract_value.extract_best_bid_small("ar_rfq.extract_best_bid_small")
+    extract_value.extract_best_ask("ar_rfq.extract_best_ask")
+    extract_value.extract_best_ask_large("ar_rfq.extract_best_ask_large")
+    extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
+    extract_value.extract_spread("ar_rfq.extract_spread")
+    extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
+    extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
+    extract_value.extract_client("ar_rfq.extract_client")
+    extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
+    extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
+
+
+    extract_value.set_extraction_id(exec_id)
+    response = call(service.extractRFQTileValues, extract_value.build())
+    for line in response:
+        print(f'{line} = {response[line]}')
+    # extract_qty = response["ar_rfq.qty"]
+    # verifier = Verifier(case_id)
+    # verifier.set_event_name("Verify Qty on RFQ tile")
+    # verifier.compare_values("Qty", '10,000,000.00', extract_qty)
+
+
+def execute(report_id):
+    # region Preparation
+    # print('start time = ' + str(datetime.now()))
+    common_act = Stubs.win_act
+
+    # Rules
+    rule_manager = rm.RuleManager()
+    # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
+    # print_active_rules()
+    case_name = "kbrit_ui_tests"
+    quote_owner = "kbrit"
+    case_instr_type = "Spot"
+    case_venue = "HSB"
+
+    # Create sub-report for case
+    case_id = bca.create_event(case_name, report_id)
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+    ar_service = Stubs.win_act_aggregated_rates_service
+    ob_act = Stubs.win_act_order_book
+    base_tile_details = BaseTileDetails(base=base_request)
+    order_id = "MO1210310103937245001"
+    # endregion
+
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+        # ,
+        #          fe_dir='qf_trading_fe_folder_308',
+        #          fe_user='qf_trading_fe_user_308',
+        #          fe_pass='qf_trading_fe_password_308')
+    else:
+        get_opened_fe(case_id, session_id)
+
+    try:
+        #  RFQ tile
+        # check_venue(base_tile_details, ar_service)
+        # extract_rfq_table_data(base_tile_details, ar_service)
+        extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
+        # ESP tile ↓
+        # create_or_get_rates_tile(base_tile_details, ar_service)
+        # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
+
+        # My Orders ↓
+
+        # get_my_orders_details(ob_act,  base_request, order_id)
+        # close_fe_2(case_id, session_id)
+
+
+    except Exception as e:
+        logging.error("Error execution", exc_info=True)
+
+    # print('end time = ' + str(datetime.now()))
+    # for rule in [RFQ, TRFQ]:
+    #     rule_manager.remove_rule(rule)
