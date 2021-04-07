@@ -128,8 +128,8 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
     extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
-    extract_value.extract_label_buy("ar_rfq.extract_label_buy")
-    extract_value.extract_label_sell("ar_rfq.extract_label_sell")
+    extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
+    extract_value.extract_cur_label_sell("ar_rfq.extract_label_sell")
 
 
     extract_value.set_extraction_id(exec_id)

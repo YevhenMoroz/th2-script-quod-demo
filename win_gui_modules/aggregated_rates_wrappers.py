@@ -261,10 +261,10 @@ class ExtractRFQTileValues:
     def extract_client(self, name: str):
         self.extract_value(RFQTileValues.CLIENT, name)
 
-    def extract_label_sell(self, name: str):
+    def extract_cur_label_sell(self, name: str):
         self.extract_value(RFQTileValues.LABEL_BUY, name)
 
-    def extract_label_buy(self, name: str):
+    def extract_cur_label_right(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
 
     def extract_value(self, field: RFQTileValues, name: str):
