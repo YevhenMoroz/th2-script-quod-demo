@@ -303,9 +303,9 @@ class TableAction:
     def extract_cell_value(detail: CellExtractionDetails):
         extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
         extract_cell.extractionField.name = detail.name
-        extract_cell.extractionField.col_name = detail.col_name
-        extract_cell.extractionField.venue_name = detail.venue_name
-        extract_cell.extractionField.int_side = detail.int_side
+        extract_cell.extractionField.colName = detail.col_name
+        extract_cell.extractionField.venueName = detail.venue_name
+        extract_cell.extractionField.intSide = detail.int_side
         action = TableAction()
         action.set_action(extract_cell)
         return action
