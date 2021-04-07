@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 import logging
 from custom.basic_custom_actions import timestamps, create_event
-from win_gui_modules.utils import set_session_id, call, get_base_request, prepare_fe, close_fe
+from win_gui_modules.utils import set_session_id, call, get_base_request, prepare_fe, close_fe, get_opened_fe
 from stubs import Stubs
 from rule_management import RuleManager
 
@@ -36,6 +36,8 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password_305']
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
+    else:
+        get_opened_fe(case_id, session_id)
     try:
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
