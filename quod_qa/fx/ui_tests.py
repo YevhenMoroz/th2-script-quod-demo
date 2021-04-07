@@ -83,9 +83,9 @@ def extract_rfq_table_data(base_details, ar_service):
     In example bellow created one TableActionsRequest and 4 cells extracting.
     CellExtractionDetails() use next income position args:
         name - is unique name for cell,
-        columnName - is actual column name from FE Trading,
-        venue - it is the venue short name from FE Trading( used for search correct row),
-        intSide - it need for search correct column from same sell/buy cells( SELL=0/BUY=1)
+        column_name - is actual column name from FE Trading,
+        venue_name - it is the venue short name from FE Trading( used for search correct row),
+        int_side - it need for search correct column from same sell/buy cells( SELL=0/BUY=1)
 
     result - is a dictionary with string values
 
@@ -105,6 +105,10 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     """
     Class ExtractRFQTileValues was extended.
     Here bellow you can see all available methods.
+
+    param name is common for all extract.. methods.
+    name it's unique str. It need to extract value from result dict
+
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
@@ -124,8 +128,8 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
     extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
-    extract_value.extract_label_buy("ar_rfq.extract_label_buy")
-    extract_value.extract_label_sell("ar_rfq.extract_label_sell")
+    extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
+    extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
 
     extract_value.set_extraction_id(exec_id)

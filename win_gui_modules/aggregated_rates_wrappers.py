@@ -270,10 +270,10 @@ class ExtractRFQTileValues:
     def extract_client(self, name: str):
         self.extract_value(RFQTileValues.CLIENT, name)
 
-    def extract_label_sell(self, name: str):
+    def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_BUY, name)
 
-    def extract_label_buy(self, name: str):
+    def extract_cur_label_right(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
 
     def extract_value(self, field: RFQTileValues, name: str):
@@ -303,9 +303,9 @@ class TableAction:
     def extract_cell_value(detail: CellExtractionDetails):
         extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
         extract_cell.extractionField.name = detail.name
-        extract_cell.extractionField.colName = detail.colName
-        extract_cell.extractionField.venueName = detail.venueName
-        extract_cell.extractionField.intSide = detail.intSide
+        extract_cell.extractionField.col_name = detail.col_name
+        extract_cell.extractionField.venue_name = detail.venue_name
+        extract_cell.extractionField.int_side = detail.int_side
         action = TableAction()
         action.set_action(extract_cell)
         return action
@@ -323,9 +323,9 @@ class TableAction:
 @dataclass
 class CellExtractionDetails:
     name: str
-    colName: str
-    venueName: str
-    intSide: int
+    col_name: str
+    venue_name: str
+    int_side: int
 
 
 class TableActionsRequest:
