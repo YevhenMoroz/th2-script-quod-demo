@@ -44,6 +44,7 @@ def execute(report_id):
         qty = "150"
         limit = "20"
         lookup = "VETO"
+        today = datetime.now().strftime('%Y%m%d')
 
         #create care order
         order_ticket = OrderTicketDetails()
@@ -71,8 +72,6 @@ def execute(report_id):
         data = call(common_act.getOrderFields, fields_request(order_info_extraction,
                                                              ["order.status", "Sts", "order.order_id", "Order ID"]))
         care_order_id = data["order.order_id"]
-        logger.info(f"care_order_id value (id = {care_order_id})")
-        logger.info(f"care_order_id type (id = {type(care_order_id)})")
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
 
@@ -104,8 +103,6 @@ def execute(report_id):
         # Checkpoint creation
         checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id = checkpoint_response.checkpoint
-        logger.info(f"checkpoint_id value (id = {checkpoint_id})")
-        logger.info(f"checkpoint_id type (id = {type(checkpoint_id)})")
 
         #book order
         middle_office_service = Stubs.win_act_middle_office_service
@@ -132,6 +129,52 @@ def execute(report_id):
         modify_request.set_filter(["Order ID", care_order_id])
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
+        #verify allocationinstruction 1
+        allocation_instruction_report1_params = {
+            'TransactTime': '*',
+            'Side': '1',
+            'AvgPx': limit,
+            'Currency': 'EUR',
+            'Quantity': qty,
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocType': 5,
+            'AllocTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Allocation Instruction Report",
+                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report1_params, ['AllocType']),
+                checkpoint_id, 'fix-ss-back-office', case_id
+            )
+        )
+
         #allocate
         #middle_office_service = Stubs.win_act_middle_office_service
 
@@ -150,26 +193,103 @@ def execute(report_id):
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
-        #unallocate
-        modify_request = ModifyTicketDetails(base=base_request)
-        call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
+        #verify confirmation
+        confirmation_report_params = {
+            'TransactTime': '*',
+            'AllocAccount': 'MOClientSA1',
+            'ConfirmType': '*',
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'ConfirmID': '*',
+            'AllocQty': qty,
+            'Currency': 'EUR',
+            'Side': '1',
+            'AvgPx': limit,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
 
-        #verify
-        execution_report1_params = {
-            'OrdAllocGrp': {
-                'OrderID': care_order_id
             },
-            'AllocTransType': '2',
-            'AllocType': '2'
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'ConfirmTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Confirmation Report",
+                bca.filter_to_grpc("Confirmation", confirmation_report_params),
+                checkpoint_id, 'fix-ss-back-office', case_id
+            )
+        )
+
+        #verify allocationinstruction2
+        allocation_instruction_report2_params = {
+            'TransactTime': '*',
+            'Side': '1',
+            'AvgPx': limit,
+            'Currency': 'EUR',
+            'Quantity': qty,
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocType': 2,
+            'AllocTransType': 2,
         }
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
-                bca.filter_to_grpc("AllocationInstruction", execution_report1_params, ['OrderID']),
+                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report2_params, ['AllocType']),
                 checkpoint_id, 'fix-ss-back-office', case_id
             )
         )
-        logger.info(f"filter_to_grpc value (id = {bca.filter_to_grpc('AllocationInstruction', execution_report1_params, ['OrderID'])})")
+
+        #unallocate
+        modify_request = ModifyTicketDetails(base=base_request)
+        call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
