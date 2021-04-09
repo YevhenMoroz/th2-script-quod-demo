@@ -111,7 +111,7 @@ class ModifyRFQTileRequest:
     def set_far_leg_tenor(self, tenor: str):
         self.modify_request.farLegTenor = tenor
 
-    def set_change_currency(self, change_currency: bool):
+    def set_change_currency(self, change_currency: bool = False):
         self.modify_request.changeCurrency = change_currency
 
     def set_settlement_date(self, settlement_date: date):
