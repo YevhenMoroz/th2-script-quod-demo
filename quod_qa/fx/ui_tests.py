@@ -128,11 +128,11 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
     extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
-    extract_value.extract_label_buy("ar_rfq.extract_label_buy")
-    extract_value.extract_label_sell("ar_rfq.extract_label_sell")
+    extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
+    extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
 
-    extract_value.set_extraction_id(exec_id)
+    extract_value.set_extraction_id(exec_id )
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
@@ -140,6 +140,18 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     # verifier = Verifier(case_id)
     # verifier.set_event_name("Verify Qty on RFQ tile")
     # verifier.compare_values("Qty", '10,000,000.00', extract_qty)
+
+
+def extruct_popup_lists_demo(exec_id, base_request, service):
+    extract_value = ExtractRFQTileValues(details=base_request)
+    extract_value.extract_near_tenor_list("1")
+
+
+    extract_value.set_extraction_id(exec_id)
+    response = call(service.extractRFQTileValues, extract_value.build())
+    for line in response:
+        print(f'{line} = {response[line]}')
+
 
 
 def execute(report_id):
@@ -181,7 +193,9 @@ def execute(report_id):
         #  RFQ tile
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
-        extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
+        # extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
+        extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details, ar_service)
+
         # ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)

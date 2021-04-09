@@ -1,12 +1,13 @@
 import logging
 import time
+from datetime import datetime, timedelta
 
 import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, tom, tom_front_end
-from custom.verifier import Verifier
+from custom.tenor_settlement_date import spo, next_monday, sn, tom, today, today_front_end, tom_front_end, sn_front_end
+from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
     ContextAction, ExtractRFQTileValues
@@ -15,9 +16,6 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Extrac
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def create_or_get_rfq(base_request, service):
@@ -30,6 +28,7 @@ def check_date(exec_id, base_request, service, case_id, date):
     extract_value.set_extraction_id(exec_id)
     response = call(service.extractRFQTileValues, extract_value.build())
     extract_date = response["aggrRfqTile.nearSettlement"]
+    print(extract_date)
     extract_date = timestring.Date(extract_date)
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Tenor date on RFQ tile")
@@ -37,50 +36,59 @@ def check_date(exec_id, base_request, service, case_id, date):
     verifier.verify()
 
 
-def modify_order(base_request, service, cur1, cur2, client, tenor):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
-    modify_request.set_client(client)
-    call(service.modifyRFQTile, modify_request.build())
-
-
 def execute(report_id):
-    common_act = Stubs.win_act
-    ar_service = Stubs.win_act_aggregated_rates_service
-    ob_act = Stubs.win_act_order_book
-
     # Rules
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-589"
-    quote_owner = "QA2"
-    case_client = "MMCLIENT2"
+
+    case_name = "QAP-600"
+    case_qty = 1000000
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_tenor = "TOM"
-    date = tom_front_end()
+    case_client = "ASPECT_CITI"
+    case_tenor_today="TODAY"
+    case_tenor_tom="TOM"
+    case_tenor_sn="SN"
+    case_today=today_front_end()
+    case_tom=tom_front_end()
+    case_sn=sn_front_end()
+
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-
+    ar_service = Stubs.win_act_aggregated_rates_service
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
     else:
         get_opened_fe(case_id, session_id)
+
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_from_currency,
-                     case_to_currency, case_client, case_tenor)
-        check_date("RFQ", base_rfq_details, ar_service, case_id, date)
+
+        modify_request = ModifyRFQTileRequest(details=base_rfq_details)
+        modify_request.set_from_currency(case_from_currency)
+        modify_request.set_to_currency(case_to_currency)
+        modify_request.set_client(case_client)
+        modify_request.set_near_tenor(case_tenor_today)
+        call(ar_service.modifyRFQTile, modify_request.build())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_today)
+
+        # Step 2
+        modify_request.set_near_tenor(case_tenor_sn)
+        call(ar_service.modifyRFQTile, modify_request.build())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_sn)
+
+        # Step 3
+        modify_request.set_near_tenor(case_tenor_tom)
+        call(ar_service.modifyRFQTile, modify_request.build())
+        check_date("RFQ", base_rfq_details, ar_service, case_id, case_tom)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
