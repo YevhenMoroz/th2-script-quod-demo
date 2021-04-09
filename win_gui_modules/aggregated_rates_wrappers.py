@@ -210,6 +210,8 @@ class ExtractRFQTileValues:
         else:
             self.request = ar_operations_pb2.ExtractRFQTileValuesRequest()
 
+        self.request.tenorFilter = 'none'
+
     def set_details(self, details: BaseTileDetails):
         self.request.data.CopyFrom(details.build())
 
@@ -275,6 +277,12 @@ class ExtractRFQTileValues:
 
     def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
+
+    def extract_near_tenor_list(self, preFilter: str = None):
+        if preFilter is not None:
+            self.request.tenorFilter = preFilter
+        else:
+            self.request.tenorFilter = ''
 
     def extract_value(self, field: RFQTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedValue()
