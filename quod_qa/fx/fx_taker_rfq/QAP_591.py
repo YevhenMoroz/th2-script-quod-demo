@@ -82,7 +82,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     verifier.verify()
 
 
-def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor):
+def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, far_tenor):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -101,7 +101,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Far Leg Tenor", "1W", response[ob_tenor.name])
+    verifier.compare_values("Far Leg Tenor", far_tenor, response[ob_tenor.name])
     verifier.verify()
     return response[ob_id.name]
 
@@ -121,16 +121,13 @@ def execute(report_id):
     case_qty = 1000000
     case_near_tenor = "Spot"
 
-    #TODO  Wait PFX-3194
-    case_far_tenor = "11W"
+    case_far_tenor = "1W"
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
