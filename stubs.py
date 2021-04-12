@@ -1,6 +1,7 @@
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
+from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 from th2_grpc_act_gui_quod.middle_office_service import MiddleOfficeOperationsService
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
@@ -29,6 +30,7 @@ class Stubs:
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
     win_act_middle_office_service = factory.grpc_router.get_service(MiddleOfficeOperationsService)
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
+    win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None
