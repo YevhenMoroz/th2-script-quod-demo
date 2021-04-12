@@ -13,32 +13,53 @@ from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, 
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager
-
+from custom.verifier import Verifier
 
 logger = getLogger(__name__)
 logger.setLevel(INFO)
+qty = 2000
+limit = 20
+lookup = "CH0012268360_CHF"
+ex_destination = "XPAR"
+client = "CLIENT2"
+order_type = "Limit"
+case_name = os.path.basename(__file__)
+report_id = None
 
 
-def execute(report_id):
-    seconds, nanos = timestamps()  # Store case start time
-    case_name = os.path.basename(__file__)
+def create_order(base_request):
+    order_ticket = OrderTicketDetails()
+    order_ticket.set_quantity(qty)
+    order_ticket.set_limit(str(limit))
+    order_ticket.set_client(client)
+    order_ticket.set_order_type(order_type)
 
-    # Create sub-report for case
-    case_id = create_event(case_name, report_id)
+    twap_strategy = order_ticket.add_twap_strategy("Quod TWAP")
+    twap_strategy.set_start_date("Now")
+    twap_strategy.set_end_date("Now", "0.2")
+    twap_strategy.set_aggressivity("Passive")
+
+    new_order_details = NewOrderDetails()
+    new_order_details.set_lookup_instr(lookup)
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
 
 
+    order_ticket_service = Stubs.win_act_order_ticket
+    call(order_ticket_service.placeOrder, new_order_details.build())
 
-    qty = "2000"
-    limit = 20
-    lookup = "BRNL"
-    ex_destination = "XPAR"
-    client = "CLIENT2"
-
-
+def rule_creation(limit, client, ex_destination):
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-trqx", ex_destination +"_"+ client, ex_destination, limit)
-    ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-trqx','TRQX_CLIENT2','TRQX', True)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-" + ex_destination.lower(), ex_destination + "_" + client, ex_destination, limit)
+    ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-'+ ex_destination.lower(), ex_destination + '_' + client, ex_destination, True)
+    return [nos_rule, ocr_rule]
 
+def rule_destroyer(list_rules):
+    rule_manager = RuleManager()
+    for rule in list_rules:
+        rule_manager.remove_rule(rule)
+
+def prepared_fe(case_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
@@ -49,76 +70,74 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id, work_dir)
+    return  base_request
+
+def check_order_book(ex_id, base_request, case_id):
+    act_ob = Stubs.win_act_order_book
+    act = Stubs.win_act
+    ob = OrdersDetails()
+    ob.set_default_params(base_request)
+    ob.set_extraction_id(ex_id)
+    ob_qty = ExtractionDetail("orderbook.qty", "Qty")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
+    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
+
+    sub_order_qty = ExtractionDetail("subOrder_lvl_2.id", "Qty")
+    sub_order_price = ExtractionDetail("subOrder_lvl_2.lmtprice", "LmtPrice")
+    sub_order_status = ExtractionDetail("subOrder_lvl_2.status", "Sts")
+    sub_order_order_id = ExtractionDetail("subOrder_lvl_2.orderid", "Order ID")
+    lvl2_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_status,
+                                                                                                      sub_order_qty,
+                                                                                                      sub_order_price,
+                                                                                                      sub_order_order_id]))
+    lvl2_details = OrdersDetails.create(info=lvl2_info)
+
+    ob.add_single_order_info(
+        OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty,
+                                                                                 ob_id,
+                                                                                 ob_limit_price,
+                                                                                 ob_sts]),
+            sub_order_details=lvl2_details))
+
+    response = call(act_ob.getOrdersDetails, ob.request())
 
 
-    try:
-        order_ticket = OrderTicketDetails()
-        order_ticket.set_quantity(qty)
-        order_ticket.set_limit(str(limit))
-        order_ticket.set_client(client)
-        order_ticket.set_order_type("Limit")
+    # print(ob_qty.name)
+    # print(ob_id.name)
+    # print(ob_limit_price.name)
+    # print(sub_order_status.name)
+    # print(sub_order_qty.name)
+    # print(sub_order_price.name)
 
-        twap_strategy = order_ticket.add_twap_strategy("Quod TWAP")
-        twap_strategy.set_start_date("Now")
-        twap_strategy.set_end_date("Now", "0.2")
-        twap_strategy.set_aggressivity("Passive")
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check algo order")
+    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
+    verifier.compare_values('Sts', 'Open', response[ob_sts.name])
+    verifier.compare_values('LmtPrice', str(limit), response[ob_limit_price.name])
+    verifier.verify()
 
-        new_order_details = NewOrderDetails()
-        new_order_details.set_lookup_instr(lookup)
-        new_order_details.set_order_details(order_ticket)
-        new_order_details.set_default_params(base_request)
+    verifier.set_event_name("Check child order")
+    verifier.compare_values('Qty', str(int(qty/2)), response[sub_order_qty.name].replace(",", ""))
+    verifier.compare_values('Sts', 'Open', response[sub_order_status.name])
+    verifier.compare_values('LmtPrice', str(limit), response[sub_order_price.name])
+    verifier.verify()
+
+    extraction_id = "getOrderAnalysisAlgoParameters"
+
+    call(act.getOrderAnalysisAlgoParameters,
+         order_analysis_algo_parameters_request(extraction_id, ["Waves"], {"Order ID": response[ob_id.name]}))
+
+    call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
+                                                 [verify_ent("Aggressivity", "Aggressivity", '1')]))
 
 
-        set_base(session_id, case_id)
-        order_ticket_service = Stubs.win_act_order_ticket
-        call(order_ticket_service.placeOrder, new_order_details.build())
-
-        time.sleep(10)
-
-        order_info_extraction = "getOrderInfo"
-
-        common_act = Stubs.win_act
-        act2 = Stubs.win_act_order_book
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(order_info_extraction)
-        # main_order_details.set_filter(["Misc3", "test tag 5005"])
-
-        main_order_qty = ExtractionDetail("order.Qty", "Qty")
-        # main_order_field4 = ExtractionDetail("order.FOfield4", "FO field 4")
-        main_order_price = ExtractionDetail("order.Price", "LmtPrice")
-        main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
-        # main_order_display_qty = ExtractionDetail("order.DisplayQty", "DisplQty")
-        main_order_order_id = ExtractionDetail("order.Id", "Order ID")
-        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_qty,
-                                                                                                     main_order_price,
-                                                                                                     # main_order_field4,
-                                                                                                     main_order_exec_pcy,
-                                                                                                     # main_order_display_qty,
-                                                                                                     main_order_order_id])
-
-        sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-
-        lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
-        lvl1_details = OrdersDetails.create(info=lvl1_info)
-
-        main_order_details.add_single_order_info(
-            OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
-
-        request = call(act2.getOrdersDetails, main_order_details.request())
-        call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
-                                                     [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
-                                                                 "Synth (Quod TWAP)"),
-                                                      verify_ent("Order Price", main_order_price.name, str(limit)),
-                                                      verify_ent("Order Qty", main_order_qty.name, qty)
-
-                                                      ]))
-
-        # sub_order_id = request[sub_order_id_dt.name]
-
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    rule_manager.remove_rule(nos_rule)
-    rule_manager.remove_rule(ocr_rule)
-    # close_fe(case_id, session_id)
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+def execute(reportid):
+    report_id = reportid
+    case_id = create_event(case_name, report_id)
+    base_request = prepared_fe(case_id)
+    rule_list = rule_creation(limit, client, ex_destination)
+    create_order(base_request)
+    rule_destroyer(rule_list)
+    check_order_book("Test_FE_id", base_request, case_id)
