@@ -94,7 +94,7 @@ def execute(report_id):
             },
             'Instrument': {
                 'SecurityDesc': 'VETOQUINOL',
-                'Symbol': 'FR0004186856_EUR',
+                'Symbol': 'VETO',
                 'SecurityIDSource': '4',
                 'SecurityID': 'VETO',
                 'SecurityExchange': 'XPAR',
