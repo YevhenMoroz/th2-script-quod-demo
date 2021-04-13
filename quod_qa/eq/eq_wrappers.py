@@ -3,6 +3,7 @@ from demo import logger
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.order_book_wrappers import ManualExecutingDetails, OrdersDetails, ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
@@ -27,12 +28,13 @@ def create_care_order(base_request, qty, client, lookup, order_type, user, desk,
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                            "XPAR_" + client, "XPAR", 20)
+                                                                             "XPAR_" + client, "XPAR", 20)
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
         order_ticket.set_client(client)
         order_ticket.set_order_type(order_type)
         order_ticket.set_care_order(user, desk)
+        order_ticket.sell()
         if price is not None:
             order_ticket.set_limit(price)
         new_order_details = NewOrderDetails()
@@ -55,5 +57,24 @@ def switch_user(session_id, case_id):
     Stubs.win_act.moveToActiveFE(search_fe_req.build())
     set_base(session_id, case_id)
 
+
 def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
+
+
+def manual_execution(request, qty, price):
+    manual_executing_details = ManualExecutingDetails(request)
+    executions_details = manual_executing_details.add_executions_details()
+    executions_details.set_quantity(qty)
+    executions_details.set_price(price)
+    executions_details.set_executing_firm("ExecutingFirm")
+    executions_details.set_contra_firm("Contra_Firm")
+    executions_details.set_last_capacity("Agency")
+    call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
+
+def complete_order(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    complete_order_details = ModifyOrderDetails()
+    complete_order_details.set_default_params(request)
+    call(Stubs.win_act_order_book.completeOrders, complete_order_details.build())
