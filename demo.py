@@ -5,6 +5,7 @@ from rule_management import RuleManager
 from schemas import rfq_tile_example
 from stubs import Stubs
 from quod_qa.fx import ui_tests
+from quod_qa.eq.Care import QAP_1012
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,7 +16,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('kbrit tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     test_cases = {
@@ -28,18 +29,20 @@ def test_run():
             'TargetCompID': 'QUOD5',
             }
         }
-
     try:
-
-        rm = RuleManager()
-
-        rm.print_active_rules()
-
-        ui_tests.execute(report_id)
-
+        QAP_1012.execute(report_id)
     except Exception:
-        logging.error("Error execution", exc_info=True)
+        logging.error("Error execution",exc_info=True)
+   # try:
+#
+    #    rm = RuleManager()
+#
+   #     rm.print_active_rules()
+#
+    #   ui_tests.execute(report_id)
 
+    #except Exception:
+        #logging.error("Error execution", exc_info=True)
 
 if __name__ == '__main__':
     logging.basicConfig()
