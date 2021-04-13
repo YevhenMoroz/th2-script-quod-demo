@@ -17,7 +17,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1035"
+    case_name = "QAP-1036"
     seconds, nanos = timestamps()  # Store case start time
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -39,6 +39,7 @@ def execute(report_id):
     session_id2 = Stubs.session_id = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     base_request = get_base_request(session_id, case_id)
+    base_request2 = get_base_request(session_id2, case_id)
     # endregion
 
     # region Open FE
@@ -83,11 +84,11 @@ def execute(report_id):
     # region accept CO
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
+    # region manual execution
+    eq_wrappers.manual_execution(base_request2, qty, price)
+    # endregion
     # region switch to user1
     eq_wrappers.switch_user(session_id, case_id)
-    # endregion
-    # region manual execution
-    eq_wrappers.manual_execution(base_request, qty, price)
     # endregion
     # region complete
     eq_wrappers.complete_order(base_request)
