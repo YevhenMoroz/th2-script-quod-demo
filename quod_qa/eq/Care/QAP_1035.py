@@ -25,9 +25,9 @@ def execute(report_id):
     qty = "900"
     price = "20"
     client = "CLIENT1"
-    lookup = "PROL"
+    lookup = "VETO"
     order_type = "Limit"
-    desk = True
+    desk = False
     recipient = Stubs.custom_config['qf_trading_fe_user']
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
@@ -48,13 +48,8 @@ def execute(report_id):
     eq_wrappers.switch_user(session_id, case_id)
     # endregion
     # region create CO
-    eq_wrappers.create_care_order(base_request,qty, client, lookup, order_type, recipient, desk)
+    eq_wrappers.create_care_order(base_request, qty, client, lookup, order_type, recipient, desk,price)
     # endregion
-
-    # region switch to user2
-    eq_wrappers.switch_user(session_id2, case_id)
-    # endregion
-
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -72,4 +67,18 @@ def execute(report_id):
                                                   ]))
 
     # endregion
-
+    # region switch to user2
+    eq_wrappers.switch_user(session_id2, case_id)
+    # endregion
+    # region accept CO
+    eq_wrappers.accept_order(lookup, qty, price)
+    # endregion
+    # region switch to user1
+    eq_wrappers.switch_user(session_id, case_id)
+    # endregion
+    # region manual execution
+    eq_wrappers.manual_execution(base_request, qty, price)
+    # endregion
+    # region complete
+    eq_wrappers.complete_order(base_request)
+    # endregion
