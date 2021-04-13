@@ -29,7 +29,7 @@ def modify_order(base_request, service, qty, cur1, cur2, tenor, client):
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
-    modify_request.set_change_currency(True)
+    modify_request.set_change_currency()
     call(service.modifyRFQTile, modify_request.build())
 
 

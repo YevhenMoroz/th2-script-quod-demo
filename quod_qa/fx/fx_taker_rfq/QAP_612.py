@@ -40,27 +40,38 @@ def modify_order(base_request, service, qty, cur1, cur2, tenor, client, venues):
 def check_value_in_column(exec_id, base_request, service, case_id):
     table_actions_request = TableActionsRequest(details=base_request)
     table_actions_request.set_extraction_id(exec_id)
-    extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
+    extract_value = ExtractRFQTileValues(details=base_request)
+    extract_value.set_extraction_id(exec_id)
+    extract_value.extract_best_bid("ar_rfq.extract_best_bid")
+    # extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
     extract2 = TableAction.extract_cell_value(CellExtractionDetails("SP_Sell", "SP", "HSB", 0))
     extract3 = TableAction.extract_cell_value(CellExtractionDetails("1W_Sell", "1W", "HSB", 0))
 
-    table_actions_request.add_actions([extract1, extract2, extract3])
+    table_actions_request.add_actions([extract2, extract3])
     response = call(service.processTableActions, table_actions_request.build())
-    extracted_pts = float(response["PtsSell"])
+    best_bid=call(service.extractRFQTileValues, extract_value.build())
+
+    # extracted_pts = float(best_bid["ar_rfq.extract_best_bid"])
+    extracted_pts = best_bid["ar_rfq.extract_best_bid"]
     extracted_sp = float(response["SP_Sell"])
     extracted_1w = float(response["1W_Sell"]) * 0.0001
-    column_1w = round(extracted_pts - extracted_sp, 5)
-
-    def check_dif():
-        if int((extracted_1w - column_1w) * 10000) <= 1:
-            return str(extracted_1w)
-        else:
-            return str(column_1w)
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check calculation 1W")
-    verifier.compare_values("1W", check_dif(), str(extracted_1w))
-    verifier.verify()
+    # column_1w = round(extracted_pts - extracted_sp, 5)
+    #
+    # def check_dif():
+    #     if int((extracted_1w - column_1w) * 10000) <= 1:
+    #         return str(extracted_1w)
+    #     else:
+    #         return str(column_1w)
+    #
+    # verifier = Verifier(case_id)
+    # verifier.set_event_name("Check calculation 1W")
+    # verifier.compare_values("1W", check_dif(), str(extracted_1w))
+    # verifier.verify()
+    print(str(extracted_pts)+" PTS")
+    print(str(extracted_sp)+" SP")
+    print(str(extracted_1w)+" Ex 1W")
+    # print(column_1w)
+    # print(check_dif())
 
 
 def cancel_rfq(base_request, service):
@@ -97,12 +108,12 @@ def execute(report_id):
 
     try:
         # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client, venues)
-        # Step 2
-        send_rfq(base_rfq_details, ar_service)
-        cancel_rfq(base_rfq_details, ar_service)
+        # create_or_get_rfq(base_rfq_details, ar_service)
+        # modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
+        #              case_to_currency, case_near_tenor, case_client, venues)
+        # # Step 2
+        # send_rfq(base_rfq_details, ar_service)
+        # cancel_rfq(base_rfq_details, ar_service)
         check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id)
 
 

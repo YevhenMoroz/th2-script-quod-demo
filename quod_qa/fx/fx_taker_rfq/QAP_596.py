@@ -26,7 +26,7 @@ def modify_order(base_request, service, qty, cur1, cur2, near_tenor, client, ven
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
-    modify_request.set_change_currency(True)
+    modify_request.set_change_currency()
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)

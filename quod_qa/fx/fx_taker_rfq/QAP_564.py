@@ -126,7 +126,7 @@ def execute(report_id):
         check_date("RFQ_1", base_rfq_details, ar_service, case_id, spo_front_end())
 
         # Step 4
-        modify_request.set_change_currency(True)
+        modify_request.set_change_currency()
         call(ar_service.modifyRFQTile, modify_request.build())
         check_currency("RFQ_2", base_rfq_details, ar_service, case_id, case_to_currency)
 

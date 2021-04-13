@@ -132,7 +132,7 @@ def execute(report_id):
         check_labels("CL_0", base_rfq_details, ar_service, case_id, case_left_eur_label, case_right_eur_label)
 
         # Step 5
-        modify_request.set_change_currency(True)
+        modify_request.set_change_currency()
         call(ar_service.modifyRFQTile, modify_request.build())
         check_labels("CL_1", base_rfq_details, ar_service, case_id, case_left_usd_label, case_right_usd_label)
 

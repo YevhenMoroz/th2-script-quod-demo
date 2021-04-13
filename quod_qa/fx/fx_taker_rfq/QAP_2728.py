@@ -165,7 +165,7 @@ def execute(report_id):
                                     case_side_buy, case_side_buy, case_from_currency)
         check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, quote_id)
         # Step 3
-        modify_request.set_change_currency(True)
+        modify_request.set_change_currency()
         call(ar_service.modifyRFQTile, modify_request.build())
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, case_id,
