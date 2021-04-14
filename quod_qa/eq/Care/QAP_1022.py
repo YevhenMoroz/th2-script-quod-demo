@@ -37,7 +37,7 @@ def execute(report_id):
     stub = Stubs.win_act
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
-    session_id2 = Stubs.session_id = Stubs.win_act.register(
+    session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     init_event = create_event("Initialization", parent_id=report_id)
     set_base(session_id, case_id)

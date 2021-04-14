@@ -37,7 +37,7 @@ def execute(report_id):
     password2 = Stubs.custom_config['qf_trading_fe_password2']
     desk = Stubs.custom_config['qf_trading_fe_user_desk']
     session_id = set_session_id()
-    session_id2 = Stubs.session_id = Stubs.win_act.register(
+    session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     base_request = get_base_request(session_id, case_id)
     base_request2 = get_base_request(session_id2, case_id)
