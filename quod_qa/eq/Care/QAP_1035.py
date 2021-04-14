@@ -47,7 +47,7 @@ def execute(report_id):
     switch_user(session_id, case_id)
     # endregion
     # region create CO
-    create_Care(base_request, qty, client, lookup, order_type, desk,to_user=False, price=price)
+    create_order(base_request, qty, client, lookup, order_type,is_care=True,resipient=desk,price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
@@ -93,7 +93,7 @@ def execute(report_id):
     # region Check values after complete
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
+                                                 [verify_ent("Order Status", order_status.name, "Filled"),
                                                   verify_ent("Order Qty", order_qty.name, qty),
                                                   verify_ent("Order Price", order_price.name, price),
                                                   verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
