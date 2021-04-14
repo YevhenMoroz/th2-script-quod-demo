@@ -66,7 +66,7 @@ def execute(report_id):
     order_ticket.set_limit(price)
     order_ticket.set_client(client)
     order_ticket.set_order_type("Limit")
-    order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user2'],True)
+    order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_desk'])
 
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
