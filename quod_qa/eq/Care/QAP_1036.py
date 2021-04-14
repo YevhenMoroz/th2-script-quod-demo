@@ -4,11 +4,11 @@ from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 
 from custom.basic_custom_actions import create_event, timestamps
+from quod_qa.wrapper.eq_wrappers import *
 from stubs import Stubs
-from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import set_session_id, call, get_base_request
-from quod_qa.eq import eq_wrappers
+from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.wrappers import verify_ent, verification
 
 logger = logging.getLogger(__name__)
@@ -41,16 +41,15 @@ def execute(report_id):
     base_request = get_base_request(session_id, case_id)
     base_request2 = get_base_request(session_id2, case_id)
     # endregion
-
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    eq_wrappers.open_fe2(session_id2, report_id, case_id, work_dir, username2, password2)
+    open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe2(session_id2, report_id, case_id, work_dir, username2, password2)
     #  endregion
     # region switch to user1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user(session_id, case_id)
     # endregion
     # region create CO
-    eq_wrappers.create_care_order(base_request, qty, client, lookup, order_type, recipient, desk, price)
+    create_Care(base_request, qty, client, lookup, order_type, username2, to_user=False, price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
@@ -79,19 +78,19 @@ def execute(report_id):
 
     # endregion
     # region switch to user2
-    eq_wrappers.switch_user(session_id2, case_id)
+    switch_user(session_id2, case_id)
     # endregion
     # region accept CO
-    eq_wrappers.accept_order(lookup, qty, price)
+    accept_order(lookup, qty, price)
     # endregion
     # region manual execution
-    eq_wrappers.manual_execution(base_request2, qty, price)
+    manual_execution(base_request2, qty, price)
     # endregion
     # region switch to user1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user(session_id, case_id)
     # endregion
     # region complete
-    eq_wrappers.complete_order(base_request)
+    complete_order(base_request)
     # endregion
     # region Check values after complete
     call(act.getOrdersDetails, order_details.request())
