@@ -65,6 +65,19 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorHttp": {
+      "service-class": "SimTemplateService",
+      "endpoints": {
+        "simulatorHttp": {
+          "host": "10.0.22.22",
+          "port": 31123
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulatorHttp"]
+      }
+    },
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
