@@ -35,6 +35,7 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     username2 = Stubs.custom_config['qf_trading_fe_user2']
     password2 = Stubs.custom_config['qf_trading_fe_password2']
+    desk = Stubs.custom_config['qf_trading_fe_user_desk']
     session_id = set_session_id()
     session_id2 = Stubs.session_id = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
@@ -49,7 +50,7 @@ def execute(report_id):
     switch_user(session_id, case_id)
     # endregion
     # region create CO
-    create_Care(base_request, qty, client, lookup, order_type, username2, to_user=False, price=price)
+    create_Care(base_request, qty, client, lookup, order_type, desk, to_user=False, price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
