@@ -124,7 +124,6 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, owner, di
     verifier.compare_values("Owner", owner, response[ob_owner.name])
     verifier.compare_values("Dispaly Px", display_px, response[ob_display_px.name][:-3])
     verifier.verify()
-    print(response)
     return response
 
 
