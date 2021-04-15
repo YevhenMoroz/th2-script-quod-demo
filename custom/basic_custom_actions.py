@@ -16,7 +16,7 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
 from th2_grpc_common.common_pb2 import ComparisonSettings
-from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES
+from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
 
 
 def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
@@ -97,7 +97,8 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
     )
 
 
-def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None, fail_unexpected=True) \
+        -> MessageFilter:
     """ Creates grpc wrapper for filter
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
@@ -106,6 +107,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
             keys (list): Optional parameter. A list of fields, that must be used as key fields during the message
                 verification. Default value is None.
             ignored_fields (list): Optional parameter.
+            fail_unexpected (bool): Defines, fail_unexpected feature is used or not. True as default.
         Returns:
             filter_to_grpc (MessageFilter): grpc wrapper for filter
     """
@@ -114,7 +116,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     if ignored_fields is None:
         ignored_fields = []
     ignored_fields += ['header', 'trailer']
-    settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
+    settings = ComparisonSettings(ignore_fields=ignored_fields,
+                                  fail_unexpected=FIELDS_AND_MESSAGES if fail_unexpected else NO)
     content = deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
