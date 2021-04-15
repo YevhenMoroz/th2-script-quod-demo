@@ -35,7 +35,7 @@ def execute(report_id):
     stub = Stubs.win_act
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
-    session_id2 = Stubs.session_id = Stubs.win_act.register(
+    session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     init_event = create_event("Initialization", parent_id=report_id)
     set_base(session_id, case_id)
@@ -66,7 +66,7 @@ def execute(report_id):
     order_ticket.set_limit(price)
     order_ticket.set_client(client)
     order_ticket.set_order_type("Limit")
-    order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user2'],True)
+    order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_desk'])
 
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
