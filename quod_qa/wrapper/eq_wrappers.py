@@ -26,13 +26,13 @@ def open_fe2(session_id, report_id,  folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def create_order(base_request, qty, client, lookup, order_type,tif="Day",is_care=False,resipient=None,to_user=False,price=None,sell_side=False):
+def create_order(base_request, qty, client, lookup, order_type,tif="Day",is_care=False,resipient=None,price=None,sell_side=False):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(resipient,to_user)
+        order_ticket.set_care_order(resipient)
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
