@@ -19,7 +19,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def modify_order(base_request, service, venues):
+def modify_rfq_tile(base_request, service, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -48,7 +48,7 @@ def execute(report_id):
     try:
         # Steps 1-2
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, venues)
+        modify_rfq_tile(base_rfq_details, ar_service, venues)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

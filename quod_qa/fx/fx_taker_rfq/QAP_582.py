@@ -25,7 +25,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, tenor, client, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -60,7 +60,7 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     verifier = Verifier(case_id)
     verifier.set_event_name("Check QuoteRequest book")
     verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
-    verifier.compare_values('Status', status,  response[qrb_status.name])
+    verifier.compare_values('Status', status, response[qrb_status.name])
     verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
     verifier.verify()
 
@@ -147,8 +147,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client, venues)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_client, venues)
         # Step 2
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,

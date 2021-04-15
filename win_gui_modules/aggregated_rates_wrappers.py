@@ -210,8 +210,6 @@ class ExtractRFQTileValues:
         else:
             self.request = ar_operations_pb2.ExtractRFQTileValuesRequest()
 
-        self.request.tenorFilter = 'none'
-
     def set_details(self, details: BaseTileDetails):
         self.request.data.CopyFrom(details.build())
 

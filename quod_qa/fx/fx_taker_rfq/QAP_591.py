@@ -25,7 +25,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -82,7 +82,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     verifier.verify()
 
 
-def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor):
+def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, far_tenor):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -101,7 +101,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id,far_tenor)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Far Leg Tenor", "1W", response[ob_tenor.name])
+    verifier.compare_values("Far Leg Tenor", far_tenor, response[ob_tenor.name])
     verifier.verify()
     return response[ob_id.name]
 
@@ -121,16 +121,13 @@ def execute(report_id):
     case_qty = 1000000
     case_near_tenor = "Spot"
 
-    #TODO  Wait PFX-3194
-    case_far_tenor = "11W"
+    case_far_tenor = "1W"
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -148,8 +145,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_far_tenor, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_far_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
@@ -170,20 +167,3 @@ def execute(report_id):
 
     for rule in [RFQ, TRFQ]:
         rule_manager.remove_rule(rule)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

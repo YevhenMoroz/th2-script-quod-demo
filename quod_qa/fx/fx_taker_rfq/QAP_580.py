@@ -23,7 +23,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, tenor, client, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -134,8 +134,8 @@ def execute(report_id):
     try:
         # # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client, venues)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_client, venues)
         # # Step 2
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
@@ -143,7 +143,7 @@ def execute(report_id):
         # # Step 3
         cancel_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
-                              case_sts_terminated,case_quote_sts_terminated, case_venue)
+                              case_sts_terminated, case_quote_sts_terminated, case_venue)
 
         # Step 4
         send_rfq(base_rfq_details, ar_service)
@@ -153,8 +153,6 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
-
-
 
 
 

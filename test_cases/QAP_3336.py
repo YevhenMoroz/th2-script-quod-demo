@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -42,6 +42,14 @@ def execute(report_id):
         qty = "250"
         limit = "50"
         lookup = "VETO"
+        today = datetime.now()
+        todayp2 = today + timedelta(days=2)
+        todayp2 = todayp2.strftime('%Y%m%d')
+        today = today.strftime('%Y%m%d')
+
+        # Checkpoint1 creation
+        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id1 = checkpoint_response1.checkpoint
 
         # create care order
         order_ticket = OrderTicketDetails()
@@ -72,6 +80,48 @@ def execute(report_id):
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
 
+        #verify execution report
+        execution_report1_params = {
+            'ClOrdID': care_order_id,
+            'OrderID': care_order_id,
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '0',
+            'SettlDate': todayp2,
+
+            'OrderQtyData': {
+                'OrderQty': qty
+            },
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'OrdType': '2',
+            'Side': '1',
+            'AvgPx': '0',
+            'OrdStatus': '0',
+            'ExecType': '0',
+            'LeavesQty': qty,
+            'Price': limit,
+            'TimeInForce': '0'
+        }
+
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Execution Report",
+                bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID']),
+                checkpoint_id1, 'fix-ss-back-office', case_id
+            )
+        )
+
+        # Checkpoint2 creation
+        checkpoint_response2 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id2 = checkpoint_response2.checkpoint
+
         #create manual execution
         service = Stubs.win_act_order_book
 
@@ -88,6 +138,44 @@ def execute(report_id):
 
         call(service.manualExecution, manual_executing_details.build())
 
+        #verify execution report2
+        execution_report2_params = {
+            'ClOrdID': care_order_id,
+            'OrderID': care_order_id,
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': qty,
+            'Price': limit,
+            'SettlDate': todayp2,
+            'OrderQtyData': {
+                'OrderQty': qty
+            },
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'OrdType': '2',
+            'Side': '1',
+            'AvgPx': limit,
+            'OrdStatus': '2',
+            'ExecType': 'F',
+            'LeavesQty': '0',
+            'TimeInForce': '0',
+            'TradeDate': today
+        }
+
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Execution Report",
+                bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID']),
+                checkpoint_id2, 'fix-ss-back-office', case_id
+            )
+        )
+
         #complete order
         service = Stubs.win_act_order_book
 
@@ -96,6 +184,10 @@ def execute(report_id):
         # complete_orders_details.set_selected_row_count(2)
 
         call(service.completeOrders, complete_orders_details.build())
+
+        # Checkpoint creation
+        checkpoint_response3 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id3 = checkpoint_response3.checkpoint
 
         #book order
         middle_office_service = Stubs.win_act_middle_office_service
@@ -106,6 +198,56 @@ def execute(report_id):
 
         response = call(middle_office_service.bookOrder, modify_request.build())
 
+        #verify allocationinstruction1
+        allocation_instruction_report_params1 = {
+            'TransactTime': '*',
+            'Side': '1',
+            'AvgPx': limit,
+            'Currency': 'EUR',
+            'Quantity': qty,
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocType': 5,
+            'AllocTransType': 0,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Allocation Instruction Report",
+                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report_params1, ['AllocTransType']),
+                checkpoint_id3, 'fix-ss-back-office', case_id
+            )
+        )
+
+        # Checkpoint creation4
+        checkpoint_response4 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id4 = checkpoint_response4.checkpoint
+
         #unbook order
         middle_office_service = Stubs.win_act_middle_office_service
 
@@ -113,6 +255,52 @@ def execute(report_id):
         modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
 
         response = call(middle_office_service.unBookOrder, modify_request.build())
+
+        #verify allocationinstruction1
+        allocation_instruction_report_params2 = {
+            'TransactTime': '*',
+            'Side': '1',
+            'AvgPx': limit,
+            'Currency': 'EUR',
+            'Quantity': qty,
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocType': 5,
+            'AllocTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Allocation Instruction Report",
+                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report_params2, ['AllocTransType']),
+                checkpoint_id4, 'fix-ss-back-office', case_id
+            )
+        )
 
 
     except Exception as e:
