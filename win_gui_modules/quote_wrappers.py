@@ -32,5 +32,8 @@ class QuoteDetailsRequest:
     def set_extraction_id(self, extraction_id: str):
         self._request.extractionId = extraction_id
 
+    def set_row_number(self, row_number: int):
+        self._request.rowNumber = row_number
+
     def request(self) -> ar_operations_pb2.QuoteDetailsRequest:
         return self._request

@@ -2,7 +2,8 @@ import logging
 import os
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
+from win_gui_modules.dealer_intervention_wrappers import ModificationRequest
+from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
@@ -15,7 +16,8 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, fields_request
+from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, fields_request, \
+    reject_order_request
 import pyautogui
 
 logger = logging.getLogger(__name__)
@@ -24,15 +26,14 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1020"
+    case_name = "QAP-1013"
     seconds, nanos = timestamps()  # Store case start time
+
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
-    qty2 = "400"
     price = "20"
-    price2 = "50"
     client = "CLIENT1"
     time = datetime.utcnow().isoformat()
     lookup = "PROL"
@@ -57,35 +58,29 @@ def execute(report_id):
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
                                                                              "XPAR_" + client, "XPAR", 20)
-        connectivity = 'gtwquod5'
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+        order_ticket = OrderTicketDetails()
+        order_ticket.set_quantity(qty)
+        order_ticket.set_limit(price)
+        order_ticket.set_client(client)
+        order_ticket.set_order_type("Limit")
+        order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user'])
 
-        fix_params = {
-            'Account': client,
-            'HandlInst': "3",
-            'Side': "2",
-            'OrderQty': qty,
-            'TimeInForce': "0",
-            'OrdType': 2,
-            'Price': price,
-            'TransactTime': time,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
-        }
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        new_order_details = NewOrderDetails()
+        new_order_details.set_lookup_instr(lookup)
+        new_order_details.set_order_details(order_ticket)
+        new_order_details.set_default_params(base_request)
+
+        set_base(session_id, case_id)
+
+        order_ticket_service = Stubs.win_act_order_ticket
+        order_book_service = Stubs.win_act_order_book
+        common_act = Stubs.win_act
+
+        call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(nos_rule)
-
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
@@ -96,12 +91,12 @@ def execute(report_id):
 
     order_status = ExtractionDetail("order_status", "Sts")
     order_qty = ExtractionDetail("order_qty", "Qty")
+    order_tif = ExtractionDetail("order_tif", "TIF")
+    order_ordType = ExtractionDetail("oder_ordType", "OrdType")
     order_price = ExtractionDetail("order_price", "LmtPrice")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_qty,
                                                                                             order_price,
-                                                                                            main_order_id,
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
@@ -112,47 +107,15 @@ def execute(report_id):
                                                   verify_ent("LmtPrice", order_price.name, price)
                                                   ]))
     # endregion
-    # region Accept CO
-    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
-    # endregion
+    #region Reject CO
+    call(common_act.rejectOrder, reject_order_request(lookup, qty, price))
+    #endregion
     # region Check values in OrderBook after Accept
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open")]))
-    # endregion
-    # region Amend order
-    request = call(act.getOrdersDetails, order_details.request())
-    order_id = request[main_order_id.name]
-    if not order_id:
-        raise Exception("Order id is not returned")
-    order_amend = OrderTicketDetails()
-    order_amend.set_limit(price2)
-    order_amend.set_quantity(qty2)
-    amend_order_details = ModifyOrderDetails()
-    amend_order_details.set_default_params(base_request)
-    amend_order_details.set_order_details(order_amend)
-    amend_order_details.set_filter(["Order ID", order_id])
-    call(act.amendOrder, amend_order_details.build())
-    # endregion
-    # region Check values after Amend
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open")
-                                                  ]))
-    # endregion
-    # region Cancelling order
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    cancel_order_details.set_filter(["Order ID", order_id])
-    cancel_order_details.set_comment("Order cancelled by script")
-    cancel_order_details.set_cancel_children(True)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
-    call(act.cancelOrder, cancel_order_details.build())
-    # endregion
-    # region Check values after Cancel
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Cancelled")
-                                                  ]))
+                                                 [verify_ent("Order Status", order_status.name, "Rejected")]))
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
