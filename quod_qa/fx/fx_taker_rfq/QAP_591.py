@@ -25,7 +25,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -145,8 +145,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_far_tenor, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_far_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
@@ -167,20 +167,3 @@ def execute(report_id):
 
     for rule in [RFQ, TRFQ]:
         rule_manager.remove_rule(rule)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

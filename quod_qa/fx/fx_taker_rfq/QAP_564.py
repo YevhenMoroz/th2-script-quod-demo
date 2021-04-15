@@ -20,7 +20,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def modify_order(base_request, service, near_qty, cur1, cur2, near_tenor, client):
+def modify_rfq_tile(base_request, service, near_qty, cur1, cur2, near_tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_near_tenor(near_tenor)
     modify_request.set_quantity(near_qty)
@@ -118,8 +118,8 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
 
         # Step 2
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_tenor1, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_tenor1, case_client)
         check_currency_pair("RFQ_0", base_rfq_details, ar_service, case_id, case_pair)
 
         # Step 3

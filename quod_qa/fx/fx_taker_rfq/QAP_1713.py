@@ -26,7 +26,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, near_tenor, client, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -111,15 +111,15 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id):
     print(response["orderBook.netprice"])
     print(response["orderbook.avgprice"])
     avg_price = float(response["orderbook.avgprice"])
-    net_amount = float(response["orderBook.cumqty"].replace(',','')) * avg_price
-    net_price = net_amount / float(response["orderBook.cumqty"].replace(',',''))
+    net_amount = float(response["orderBook.cumqty"].replace(',', '')) * avg_price
+    net_price = net_amount / float(response["orderBook.cumqty"].replace(',', ''))
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
     verifier.compare_values('Net Price', str(net_price), response[ob_net_price.name])
-    verifier.compare_values('Net Amount', str(int(net_amount)), response[ob_net_amount.name].replace(',',''))
+    verifier.compare_values('Net Amount', str(int(net_amount)), response[ob_net_amount.name].replace(',', ''))
     verifier.verify()
     return response[ob_id.name]
 
@@ -162,8 +162,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client, venue_list)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_client, venue_list)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)

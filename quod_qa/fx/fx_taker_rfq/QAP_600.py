@@ -22,7 +22,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, date, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, date, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -57,7 +57,7 @@ def execute(report_id):
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
-    case_date=next_monday_front_end()
+    case_date = next_monday_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -75,8 +75,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, click_to_sunday, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, click_to_sunday, case_client)
         time.sleep(10)
         check_date("RFQ", base_rfq_details, ar_service, case_id, case_date)
 

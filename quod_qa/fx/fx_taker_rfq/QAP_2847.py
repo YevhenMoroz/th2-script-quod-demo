@@ -22,7 +22,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, near_tenor, client, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -72,6 +72,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_sts, ve
     verifier.compare_values('QuoteStatus', quote_sts, response[qb_quote_status.name])
     verifier.verify()
 
+
 # TODO Change in webadmin->Venue->CITIR->SuportQuoteCancel
 
 
@@ -111,8 +112,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
-                     case_near_tenor, case_client, case_venue)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
+                        case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_HSB", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue_1)
