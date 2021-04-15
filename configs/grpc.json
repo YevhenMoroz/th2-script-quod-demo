@@ -182,6 +182,19 @@
           "act_rfq"
         ]
       }
+    },
+    "SimulatorHttp": {
+      "service-class": "SimTemplateService",
+      "endpoints": {
+        "simulatorHttp": {
+          "host": "10.0.22.22",
+          "port": 31123
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulatorHttp"]
+      }
     }
   }
 }
