@@ -42,36 +42,41 @@ def check_value_in_column(exec_id, base_request, service, case_id):
     table_actions_request.set_extraction_id(exec_id)
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.set_extraction_id(exec_id)
-    extract_value.extract_best_bid("ar_rfq.extract_best_bid")
-    # extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
+    extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
+    extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
     extract2 = TableAction.extract_cell_value(CellExtractionDetails("SP_Sell", "SP", "HSB", 0))
     extract3 = TableAction.extract_cell_value(CellExtractionDetails("1W_Sell", "1W", "HSB", 0))
 
-    table_actions_request.add_actions([extract2, extract3])
+    table_actions_request.add_actions([extract1, extract2, extract3])
     response = call(service.processTableActions, table_actions_request.build())
-    best_bid=call(service.extractRFQTileValues, extract_value.build())
+    best_bid = call(service.extractRFQTileValues, extract_value.build())
 
-    # extracted_pts = float(best_bid["ar_rfq.extract_best_bid"])
-    extracted_pts = best_bid["ar_rfq.extract_best_bid"]
-    extracted_sp = float(response["SP_Sell"])
-    extracted_1w = float(response["1W_Sell"]) * 0.0001
-    # column_1w = round(extracted_pts - extracted_sp, 5)
-    #
-    # def check_dif():
-    #     if int((extracted_1w - column_1w) * 10000) <= 1:
-    #         return str(extracted_1w)
-    #     else:
-    #         return str(column_1w)
-    #
-    # verifier = Verifier(case_id)
-    # verifier.set_event_name("Check calculation 1W")
-    # verifier.compare_values("1W", check_dif(), str(extracted_1w))
-    # verifier.verify()
-    print(str(extracted_pts)+" PTS")
-    print(str(extracted_sp)+" SP")
-    print(str(extracted_1w)+" Ex 1W")
-    # print(column_1w)
-    # print(check_dif())
+    extracted_large = best_bid["ar_rfq.extract_best_bid_large"]
+    extracted_sp = response["SP_Sell"]
+    price = float(best_bid["ar_rfq.extract_best_bid_large"] + response["PtsSell"])
+    if len(extracted_sp) <= 3:
+        column_sp = float(extracted_large + extracted_sp)
+    else:
+        column_sp = float(extracted_sp)
+
+    extracted_1w = response["1W_Sell"]
+
+    column_1w = round(price - column_sp, 5)
+
+    def check_dif():
+        if int((float(extracted_1w) * 0.0001 - column_1w) * 10000) <= 1:
+            return str(extracted_1w)
+        else:
+            return str(column_1w)
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check calculation 1W")
+    verifier.compare_values("1W", check_dif(), str(extracted_1w))
+    verifier.verify()
+
+    print(response)
+    print(best_bid)
+    print(check_dif())
 
 
 def cancel_rfq(base_request, service):
@@ -108,14 +113,13 @@ def execute(report_id):
 
     try:
         # Step 1
-        # create_or_get_rfq(base_rfq_details, ar_service)
-        # modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-        #              case_to_currency, case_near_tenor, case_client, venues)
-        # # Step 2
-        # send_rfq(base_rfq_details, ar_service)
-        # cancel_rfq(base_rfq_details, ar_service)
+        create_or_get_rfq(base_rfq_details, ar_service)
+        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
+                     case_to_currency, case_near_tenor, case_client, venues)
+        # Step 2
+        send_rfq(base_rfq_details, ar_service)
+        cancel_rfq(base_rfq_details, ar_service)
         check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id)
-
 
 
     except Exception as e:
