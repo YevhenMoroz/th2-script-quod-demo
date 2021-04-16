@@ -170,7 +170,7 @@ def execute(report_id):
         quote_id = check_order_book("OB_1", case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, quote_id)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)

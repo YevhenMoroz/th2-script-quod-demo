@@ -116,7 +116,7 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         cancel_rfq(base_rfq_details, ar_service)
         check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

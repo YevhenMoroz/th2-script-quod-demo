@@ -106,7 +106,7 @@ def execute(report_id):
         cancel_rfq(base_rfq_details, ar_service)
         # Step 2-3
         check_value_in_column("CH_0", base_rfq_details, ar_service, case_id)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
     except Exception as e:

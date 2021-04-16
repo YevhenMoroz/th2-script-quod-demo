@@ -1,19 +1,15 @@
 import logging
-
 import timestring
-
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, wk1, wk1_front_end, spo_front_end
-from custom.verifier import Verifier, VerificationMethod
+from custom.tenor_settlement_date import wk1_front_end, spo_front_end
+from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -84,7 +80,7 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    # print_active_rules()
+
     case_name = "QAP-564"
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
@@ -144,6 +140,7 @@ def execute(report_id):
         modify_request.set_near_tenor(case_tenor2)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date("RFQ_1", base_rfq_details, ar_service, case_id, wk1_front_end())
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)

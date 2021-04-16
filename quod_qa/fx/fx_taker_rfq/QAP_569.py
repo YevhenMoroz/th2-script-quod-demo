@@ -1,5 +1,5 @@
 import logging
-
+from pathlib import Path
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -7,7 +7,7 @@ from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQ
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import set_session_id, prepare_fe_2,get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,6 @@ def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
     qb_id = ExtractionDetail("quoteBook.id", "Id")
     qb.add_extraction_details([qb_owner, qb_quote_status, qb_id])
-    data = call(service.getQuoteBookDetails, qb.request())
     call(act.verifyEntities, verification(ex_id, "checking QB",
                                           [verify_ent("QB Owner", qb_owner.name, owner),
                                            verify_ent("QB QuoteStatus", qb_quote_status.name, "Terminated"),
@@ -107,7 +106,7 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-569"
+    case_name = Path(__file__).name[:-3]
     quote_owner = "QA2"
     case_instr_type = "FXForward"
     case_venue = "HSBC"
@@ -153,6 +152,7 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
 
