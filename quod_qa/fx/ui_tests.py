@@ -93,17 +93,17 @@ def extract_rfq_table_data(base_details, ar_service):
 
     """
     table_actions_request = TableActionsRequest(details=base_details)
-    extract1 = TableAction.extract_cell_value(CellExtractionDetails("DistSell", "Dist", "HSB", 0))
-    extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
-    extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy", "Pts", "HSB", 1))
-    extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy", "Dist", "HSB", 1))
+    extract1 = TableAction.extract_cell_value(CellExtractionDetails("DistSell1", "Dist", "HSB", 0))
+    extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell1", "Pts", "HSB", 0))
+    extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy1", "Pts", "HSB", 1))
+    extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy1", "Dist", "HSB", 1))
     table_actions_request.set_extraction_id("extrId")
     table_actions_request.add_actions([extract1, extract2, extract3, extract4])
     result = call(ar_service.processTableActions, table_actions_request.build())
     print(result)
 
 
-def extract_rfq_tile_data(exec_id, base_request, service):
+def extract_rfq_panel(exec_id, base_request, service):
     """
     Class ExtractRFQTileValues was extended.
     Here bellow you can see all available methods.
@@ -128,7 +128,7 @@ def extract_rfq_tile_data(exec_id, base_request, service):
     extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
     extract_value.extract_spread("ar_rfq.extract_spread")
     extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
-    extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
+    # extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
     extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
@@ -166,14 +166,25 @@ def modify_order(base_request, service):
     call(service.modifyRFQTile, modify_request.build())
 
 
-def import_data(base_request, option_service):
+def export_layout(base_request, option_service):
     modification_request = WorkspaceModificationRequest()
     modification_request.set_default_params(base_request=base_request)
     modification_request.set_filename("demo_export_file.xml")
-    modification_request.set_path('C://Users//kbrit//PycharmProjects//prev_th2-script-quod-demo//quod_qa//fx//fx_taker_rfq')
+    modification_request.set_path('C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
     modification_request.do_export()
 
     call(option_service.modifyWorkspace, modification_request.build())
+
+
+def import_layout(base_request, option_service):
+    modification_request = WorkspaceModificationRequest()
+    modification_request.set_default_params(base_request=base_request)
+    modification_request.set_filename("demo_export_file.xml")
+    modification_request.set_path('C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+    modification_request.do_import()
+
+    call(option_service.modifyWorkspace, modification_request.build())
+
 
 def execute(report_id):
     # region Preparation
@@ -212,23 +223,36 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
-        # RFQ tile
+        # region FE workspace ↓
+        # import_layout(base_request, option_service)
+        # export_layout(base_request, option_service)
+        # endregion
+
+        # region FE options ↓
+        # get_default_fx_value(base_request, option_service)
+        # export_layout(base_request, option_service)
+        # endregion
+
+        # region RFQ tile ↓
         # modify_order(base_tile_details, ar_service)
-        import_data(base_request,option_service)
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
-        # extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
+        extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
 
         # temporary doesn't available because of PROC-261
         # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
+        # endregion
 
-        # ESP tile ↓
+        # region ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
+        # endregion
 
-        # My Orders ↓
+        # region My Orders ↓
 
         # get_my_orders_details(ob_act,  base_request, order_id)
+        # endregion
+
         # close_fe_2(case_id, session_id)
 
     except Exception as e:
