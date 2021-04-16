@@ -74,10 +74,6 @@ def check_value_in_column(exec_id, base_request, service, case_id):
     verifier.compare_values("1W", check_dif(), str(extracted_1w))
     verifier.verify()
 
-    print(response)
-    print(best_bid)
-    print(check_dif())
-
 
 def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
