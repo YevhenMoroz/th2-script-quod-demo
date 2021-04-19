@@ -49,9 +49,10 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_sts, venue, user):
+def check_quote_request_b(base_request, service, case_id, status, quote_sts, venue, user):
     qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_extraction_id(ex_id)
+    execution_id = bca.client_orderid(4)
+    qrb.set_extraction_id(execution_id)
     qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
@@ -113,11 +114,11 @@ def execute(report_id):
         # Step 2
         send_rfq(base_rfq_details, ar_service)
 
-        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id, quote_sts_new,
+        check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_venue_hsbcr, quote_owner)
         place_order_tob(base_rfq_details, ar_service)
         # Step 3
-        check_quote_request_b("QRB_1", case_base_request, ar_service, case_id, quote_quote_sts_terminated,
+        check_quote_request_b(case_base_request, ar_service, case_id, quote_quote_sts_terminated,
                               quote_quote_sts_terminated, case_venue_hsbcr, quote_owner)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
