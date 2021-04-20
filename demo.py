@@ -1,14 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import ui_tests, fix_demo
+from quod_qa.fx import fix_demo, ui_tests
 from rule_management import RuleManager
-from schemas import rfq_tile_example
 from stubs import Stubs
-from quod_qa.fx.fx_taker_rfq import (QAP_574, QAP_585, QAP_569, QAP_578, QAP_579, QAP_580, QAP_611, QAP_596, QAP_589,
-                                     QAP_590, QAP_591, QAP_593, QAP_597, QAP_599)
-from quod_qa.fx.fx_taker_rfq import QAP_574, QAP_585, QAP_569, QAP_578, QAP_579, QAP_580
-from test_cases import QAP_638, QAP_1520
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -25,16 +20,14 @@ def test_run():
 
     try:
 
-        test_cases = {
-            'RFQ_example': {
-                **channels,
+        test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',
                 'Account': 'MMCLIENT1',
                 'SenderCompID': 'QUODFX_UAT',
                 'TargetCompID': 'QUOD5',
                 }
-            }
+
 
         rm = RuleManager()
         # rm.remove_rules_by_id_range(5,150)
@@ -45,8 +38,8 @@ def test_run():
         start = datetime.now()
         print(f'start time = {start}')
 
-        fix_demo.execute(report_id,test_cases['RFQ_example'])
-        # ui_tests.execute(report_id)
+        # fix_demo.execute(report_id,test_cases)
+        ui_tests.execute(report_id)
         # QAP_1520.TestCase(report_id).execute()
         print("1 - done")
         print('duration time = ' + str(datetime.now() - start), str(report_id))

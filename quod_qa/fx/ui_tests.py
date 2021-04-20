@@ -224,7 +224,7 @@ def execute(report_id):
     base_tile_details = BaseTileDetails(base=base_request)
     option_service = Stubs.win_act_options
     # endregion
-
+    Stubs.frontend_is_open = False
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
         # ,
@@ -249,8 +249,8 @@ def execute(report_id):
         # modify_order(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
-        extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
-
+        # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
+        print("test stub")
         # temporary doesn't available because of PROC-261
         # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
         # endregion
