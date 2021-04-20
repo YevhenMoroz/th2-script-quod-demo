@@ -6,7 +6,7 @@ th2-grpc-act-quod==3.0.1
 th2-grpc-sim-quod==3.0.1
 th2-grpc-sim==3.0.0
 th2-grpc-sim-http==3.0.11
-th2-grpc-act-gui-quod==1.11.6
+th2-grpc-act-gui-quod==1.11.11
 th2-grpc-hand==2.6.3
 
 grpcio
