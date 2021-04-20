@@ -96,10 +96,8 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         fields=content
     )
 
-
-def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None, fail_unexpected=True) \
-        -> MessageFilter:
-    """ Creates grpc wrapper for filter
+def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+    """ Creates grpc wrapper for filter without fail unexpected
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
             content (dict): Fields and values, represented in Python dictionary format ({'Price': 10,
@@ -107,7 +105,6 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
             keys (list): Optional parameter. A list of fields, that must be used as key fields during the message
                 verification. Default value is None.
             ignored_fields (list): Optional parameter.
-            fail_unexpected (bool): Defines, fail_unexpected feature is used or not. True as default.
         Returns:
             filter_to_grpc (MessageFilter): grpc wrapper for filter
     """
@@ -116,8 +113,65 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     if ignored_fields is None:
         ignored_fields = []
     ignored_fields += ['header', 'trailer']
-    settings = ComparisonSettings(ignore_fields=ignored_fields,
-                                  fail_unexpected=FIELDS_AND_MESSAGES if fail_unexpected else NO)
+    settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=NO)
+    content = deepcopy(content)
+    for tag in content:
+        if isinstance(content[tag], (str, int, float)):
+            if content[tag] == '*':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
+            elif content[tag] == '#':
+                content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            else:
+                content[tag] = ValueFilter(
+                    simple_filter=str(content[tag]), key=(True if tag in keys else False)
+                )
+        elif isinstance(content[tag], bytes):
+            content[tag] = ValueFilter(
+                simple_filter=content[tag], key=(True if tag in keys else False)
+            )
+        elif isinstance(content[tag], dict):
+            content[tag] = ValueFilter(message_filter=(filter_to_grpc_nfu(tag, content[tag], keys)))
+        elif isinstance(content[tag], tuple):
+            value, operation = content[tag].__iter__()
+            content[tag] = ValueFilter(
+                simple_filter=str(value), operation=FilterOperation.Value(operation)
+            )
+        elif isinstance(content[tag], list):
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=filter_to_grpc_nfu(tag, group)
+                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
+                            )
+                        )
+                    }
+                )
+            )
+    return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
+
+def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+    """ Creates grpc wrapper for filter
+        Parameters:
+            message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
+            content (dict): Fields and values, represented in Python dictionary format ({'Price': 10,
+                'OrderQty': 100}).
+            keys (list): Optional parameter. A list of fields, that must be used as key fields during the message
+                verification. Default value is None.
+            ignored_fields (list): Optional parameter.
+        Returns:
+            filter_to_grpc (MessageFilter): grpc wrapper for filter
+    """
+    if keys is None:
+        keys = []
+    if ignored_fields is None:
+        ignored_fields = []
+    ignored_fields += ['header', 'trailer']
+    settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:
         if isinstance(content[tag], (str, int, float)):
