@@ -19,10 +19,11 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def check_date(exec_id, base_request, service, case_id, date):
+def check_date(base_request, service, case_id, date):
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_near_settlement_date("aggrRfqTile.nearSettlement")
-    extract_value.set_extraction_id(exec_id)
+    extraction_id = bca.client_orderid(4)
+    extract_value.set_extraction_id(extraction_id)
     response = call(service.extractRFQTileValues, extract_value.build())
     extract_date = response["aggrRfqTile.nearSettlement"]
     extract_date = timestring.Date(extract_date)
@@ -72,7 +73,7 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_from_currency,
                         case_to_currency, case_client, case_tenor)
-        check_date("RFQ", base_rfq_details, ar_service, case_id, date)
+        check_date(base_rfq_details, ar_service, case_id, date)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
