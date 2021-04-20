@@ -1,5 +1,7 @@
 import logging
 import time
+from pathlib import Path
+
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
@@ -112,7 +114,7 @@ def execute(report_id):
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     # print_active_rules()
-    case_name = "QAP-596"
+    case_name = Path(__file__).name[:-3]
     quote_owner = "QA2"
     case_instr_type = "Spot"
     case_venue = "HSB"
@@ -140,21 +142,21 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
-        # Step 1
+        # Step 1-2
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
                         case_to_currency, case_near_tenor, case_client, venue_list)
-        # Step 2
+        # Step 3
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
-
+        # Step 4
         place_order_venue(base_rfq_details, ar_service, case_venue)
         quote_book_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act,
                                          case_id, case_to_currency)
 
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, quote_book_id)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
