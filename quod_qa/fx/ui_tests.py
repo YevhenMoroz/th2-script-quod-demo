@@ -12,7 +12,8 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues)
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.layout_panel_wrappers import WorkspaceModificationRequest
+from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
+                                                   DefaultFXValues)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
@@ -114,12 +115,12 @@ def extract_rfq_panel(exec_id, base_request, service):
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
-    extract_value.extract_currency("ar_rfq.extract_currency")
-    extract_value.extract_quantity("ar_rfq.extract_quantity")
-    extract_value.extract_tenor("ar_rfq.extract_tenor")
-    extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
-    extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
-    extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
+    # extract_value.extract_currency("ar_rfq.extract_currency")
+    # extract_value.extract_quantity("ar_rfq.extract_quantity")
+    # extract_value.extract_tenor("ar_rfq.extract_tenor")
+    # extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
+    # extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
+    # extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
     extract_value.extract_best_bid("ar_rfq.extract_best_bid")
     extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
     extract_value.extract_best_bid_small("ar_rfq.extract_best_bid_small")
@@ -127,7 +128,7 @@ def extract_rfq_panel(exec_id, base_request, service):
     extract_value.extract_best_ask_large("ar_rfq.extract_best_ask_large")
     extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
     extract_value.extract_spread("ar_rfq.extract_spread")
-    extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
+    # extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
     # extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
     extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
@@ -170,7 +171,8 @@ def export_layout(base_request, option_service):
     modification_request = WorkspaceModificationRequest()
     modification_request.set_default_params(base_request=base_request)
     modification_request.set_filename("demo_export_file.xml")
-    modification_request.set_path('C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+    modification_request.set_path(
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
     modification_request.do_export()
 
     call(option_service.modifyWorkspace, modification_request.build())
@@ -180,10 +182,19 @@ def import_layout(base_request, option_service):
     modification_request = WorkspaceModificationRequest()
     modification_request.set_default_params(base_request=base_request)
     modification_request.set_filename("demo_export_file.xml")
-    modification_request.set_path('C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+    modification_request.set_path(
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
     modification_request.do_import()
 
     call(option_service.modifyWorkspace, modification_request.build())
+
+
+def set_order_ticket_options(option_service, base_request):
+    order_ticket_options = OptionOrderTicketRequest(base=base_request)
+    fx_values = DefaultFXValues();
+    fx_values.AggressiveTIF = "Pegger"
+    order_ticket_options.set_default_fx_values(fx_values)
+    call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def execute(report_id):
@@ -230,7 +241,7 @@ def execute(report_id):
 
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
-        # export_layout(base_request, option_service)
+        # set_order_ticket_options(option_service, base_request)
         # endregion
 
         # region RFQ tile ↓
