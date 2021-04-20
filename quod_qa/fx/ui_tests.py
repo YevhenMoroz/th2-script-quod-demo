@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from pathlib import Path
 
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 
@@ -207,7 +208,7 @@ def execute(report_id):
     # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     # print_active_rules()
-    case_name = "kbrit_ui_tests"
+    case_name = Path(__file__).name[:-3]
     quote_owner = "kbrit"
     case_instr_type = "Spot"
     case_venue = "HSB"
