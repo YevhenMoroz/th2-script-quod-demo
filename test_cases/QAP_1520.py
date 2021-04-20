@@ -12,6 +12,7 @@ from copy import deepcopy
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
+import time
 
 
 class TestCase:
@@ -53,8 +54,8 @@ class TestCase:
                 'SecurityIDSource': '8',
                 'SecurityID': 'EUR/USD',
                 'SecurityExchange': 'XQFX',
-            },
-            'Product': '4',
+                'Product': '4'
+            }
         }
 
         # This parameters can be used for ExecutionReport message
@@ -70,7 +71,8 @@ class TestCase:
                 'Symbol': self.case_params['Instrument']['Symbol'],
                 'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
                 'SecurityID': self.case_params['Instrument']['SecurityID'],
-                'SecurityExchange': self.case_params['Instrument']['SecurityExchange']
+                'SecurityExchange': self.case_params['Instrument']['SecurityExchange'],
+                'Product': self.case_params['Instrument']['Product']
             }
         }
 
@@ -98,13 +100,13 @@ class TestCase:
                 {
                     'Instrument': {
                         'Symbol': self.case_params['Instrument']['Symbol'],
-                        'SecurityType': self.case_params['Instrument']['SecurityType']
+                        'SecurityType': self.case_params['Instrument']['SecurityType'],
+                        'Product': self.case_params['Instrument']['Product']
                     },
                     'SettlDate': self.case_params['SettlDate'],
                     'SettlType': self.case_params['SettlType']
                 }
             ],
-            'Product': self.case_params['Product']
         }
 
         subscribe = self.fix_act.placeMarketDataRequestFIX(
@@ -115,10 +117,10 @@ class TestCase:
                 bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
             ))
 
-        self.case_params['Price'] = subscribe \
-            .response_messages_list[0].fields['NoMDEntries'] \
-            .message_value.fields['NoMDEntries'].list_value.values[1] \
-            .message_value.fields['MDEntryPx'].simple_value
+        time.sleep(3)
+
+        self.case_params['Price'] = subscribe.response_messages_list[0].fields['NoMDEntries'].message_value.fields['NoMDEntries'].list_value.values[1].message_value.fields['MDEntryPx'].simple_value
+        print(f"Price is: {self.case_params['Price']}")
 
         md_subscribe_response = {
             'MDReqID': md_params['MDReqID'],
@@ -247,9 +249,9 @@ class TestCase:
             'SettlDate': self.case_params['SettlDate'],
             'Instrument': {
                 'Symbol': self.case_params['Instrument']['Symbol'],
+                'Product': self.case_params['Instrument']['Product']
             },
-            'Currency': self.case_params['Currency'],
-            'Product': self.case_params['Product']
+            'Currency': self.case_params['Currency']
         }
 
         new_order = self.fix_act.placeOrderFIX(
@@ -257,6 +259,9 @@ class TestCase:
                 'Send new IOC order', self.case_params['Connectivity'], self.case_id,
                 bca.message_to_grpc('NewOrderSingle', order_params, self.case_params['Connectivity'])
             ))
+
+        time.sleep(3)
+        print(new_order.response_messages_list[0])
 
         checkpoint = new_order.checkpoint_id
         pending_er_params = {
@@ -370,7 +375,7 @@ class TestCase:
     # Main method. Must call in demo.py by "QAP_1520.TestCase(report_id).execute()" command
     def execute(self):
         try:
-            self.prepare_frontend()
+            # self.prepare_frontend()
 
             # Step 1
             market_data_params = self.send_md_subscribe()
@@ -379,13 +384,13 @@ class TestCase:
             # Step 3 not implemented
 
             # Steps 4-5
-            self.check_filled()
+            # self.check_filled()
 
             self.send_md_unsubscribe(market_data_params)
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
-        close_fe(self.case_id, self.session_id)
+        # close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

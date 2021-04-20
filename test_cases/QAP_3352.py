@@ -111,10 +111,10 @@ def execute(report_id):
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
-        settlement_details.set_settlement_currency("AED")
+        #settlement_details.set_settlement_currency("AED")
         settlement_details.set_exchange_rate("10")
         settlement_details.set_exchange_rate_calc("Multiply")
-        settlement_details.set_settlement_date("3/27/2021")
+        #settlement_details.set_settlement_date("3/27/2021")
         settlement_details.set_pset("EURO_CLEAR")
 
         agreed_price = "book.agreedPrice"
@@ -284,10 +284,10 @@ def execute(report_id):
         amend_allocations_details = modify_request.add_amend_allocations_details()
         amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
         settlement_details = modify_request.add_settlement_details()
-        settlement_details.set_settlement_currency("FIM")
+        #settlement_details.set_settlement_currency("FIM")
         settlement_details.set_exchange_rate("100")
         settlement_details.set_exchange_rate_calc("Divide")
-        settlement_details.set_settlement_date("3/27/2022")
+        #settlement_details.set_settlement_date("3/27/2022")
         settlement_details.set_pset("CREST")
 
         # Remove comissions
