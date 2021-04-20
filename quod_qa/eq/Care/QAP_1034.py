@@ -24,15 +24,6 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def accept():
-    pyautogui.press("c")
-    # Holds down the alt key
-    pyautogui.keyDown("ctrl")
-    # Presses the tab key once
-    pyautogui.press("h")
-    # Lets go of the alt key
-    pyautogui.keyUp("ctrl")
-    pyautogui.click()
 
 def execute(report_id):
     case_name = "QAP-1034"

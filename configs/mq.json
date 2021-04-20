@@ -7,9 +7,8 @@
       ],
       "exchange": "th2-exchange",
       "filters": [],
-      "name": "key[schema-quod:script-entry-point:estore-pin]",
+      "name": "key[schema-quod-common3:script-entry-point:estore-pin]",
       "queue": ""
     }
   }
 }
-

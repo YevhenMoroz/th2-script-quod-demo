@@ -44,7 +44,7 @@ def execute(report_id):
     session_alias2 = 'fix-bs-eq-trqx'
 
     NOS1 = rule_man.add_NOS(session_alias)
-    NOS2 = rule_man.add_NOS(session_alias2)
+    NOS2 = rule_man.add_NOS(session_alias2, "TRQX_CLIENT1")
     OCR1 = rule_man.add_OCR(session_alias)
     OCR2 = rule_man.add_OCR(session_alias2)
     logger.info(f"Start rules with id's: \n {NOS1}, {OCR1},{NOS2}, {OCR2}")

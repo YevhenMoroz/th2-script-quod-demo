@@ -82,7 +82,7 @@ def execute(report_id):
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': case_params['Instrument'],
         'OrderCapacity': 'A',
-        'OrdSubStatus': 'SORPING',
+        # 'OrdSubStatus': 'SORPING',
         'Currency': 'EUR',
         'ComplianceID': 'FX5',
         'ClientAlgoPolicyID': 'QA_SORPING',
@@ -104,76 +104,76 @@ def execute(report_id):
                 case_id,
                 bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
             ))
-
-        MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol="1062",
-            connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
-        )).MDRefID
-        MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol="3503",
-            connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
-        )).MDRefID
-
-        mdfr_params_1 = {
-            'MDReportID': "1",
-            'MDReqID': MDRefID_1,
-            'Instrument': {
-                'Symbol': "1062"
-            },
-            # 'LastUpdateTime': "",
-            'NoMDEntries': [
-                {
-                    'MDEntryType': '0',
-                    'MDEntryPx': '10',
-                    'MDEntrySize': '1000',
-                    'MDEntryPositionNo': '1'
-                },
-                {
-                    'MDEntryType': '1',
-                    'MDEntryPx': '30',
-                    'MDEntrySize': '1000',
-                    'MDEntryPositionNo': '1'
-                }
-            ]
-        }
-        mdfr_params_2 = {
-            'MDReportID': "1",
-            'MDReqID': MDRefID_2,
-            'Instrument': {
-                'Symbol': "3503"
-            },
-            # 'LastUpdateTime': "",
-            'NoMDEntries': [
-                {
-                    'MDEntryType': '0',
-                    'MDEntryPx': '10',
-                    'MDEntrySize': '1000',
-                    'MDEntryPositionNo': '1'
-                },
-                {
-                    'MDEntryType': '1',
-                    'MDEntryPx': '30',
-                    'MDEntrySize': '1000',
-                    'MDEntryPositionNo': '1'
-                }
-            ]
-        }
-        act.sendMessage(
-            request=bca.convert_to_request(
-                'Send MarketDataSnapshotFullRefresh',
-                "fix-fh-eq-paris",
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
-            )
-        )
-        act.sendMessage(
-            request=bca.convert_to_request(
-                'Send MarketDataSnapshotFullRefresh',
-                "fix-fh-eq-trqx",
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
-            )
-        )
+        #
+        # MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        #     symbol="1062",
+        #     connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
+        # )).MDRefID
+        # MDRefID_2 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        #     symbol="3503",
+        #     connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+        # )).MDRefID
+        #
+        # mdfr_params_1 = {
+        #     'MDReportID': "1",
+        #     'MDReqID': MDRefID_1,
+        #     'Instrument': {
+        #         'Symbol': "1062"
+        #     },
+        #     # 'LastUpdateTime': "",
+        #     'NoMDEntries': [
+        #         {
+        #             'MDEntryType': '0',
+        #             'MDEntryPx': '10',
+        #             'MDEntrySize': '1000',
+        #             'MDEntryPositionNo': '1'
+        #         },
+        #         {
+        #             'MDEntryType': '1',
+        #             'MDEntryPx': '30',
+        #             'MDEntrySize': '1000',
+        #             'MDEntryPositionNo': '1'
+        #         }
+        #     ]
+        # }
+        # mdfr_params_2 = {
+        #     'MDReportID': "1",
+        #     'MDReqID': MDRefID_2,
+        #     'Instrument': {
+        #         'Symbol': "3503"
+        #     },
+        #     # 'LastUpdateTime': "",
+        #     'NoMDEntries': [
+        #         {
+        #             'MDEntryType': '0',
+        #             'MDEntryPx': '10',
+        #             'MDEntrySize': '1000',
+        #             'MDEntryPositionNo': '1'
+        #         },
+        #         {
+        #             'MDEntryType': '1',
+        #             'MDEntryPx': '30',
+        #             'MDEntrySize': '1000',
+        #             'MDEntryPositionNo': '1'
+        #         }
+        #     ]
+        # }
+        # act.sendMessage(
+        #     request=bca.convert_to_request(
+        #         'Send MarketDataSnapshotFullRefresh',
+        #         "fix-fh-eq-paris",
+        #         case_id,
+        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
+        #     )
+        # )
+        # act.sendMessage(
+        #     request=bca.convert_to_request(
+        #         'Send MarketDataSnapshotFullRefresh',
+        #         "fix-fh-eq-trqx",
+        #         case_id,
+        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_2, "fix-fh-eq-trqx")
+        #     )
+        # )
 
         checkpoint_1 = new_sor_order.checkpoint_id
         pending_er_params = {

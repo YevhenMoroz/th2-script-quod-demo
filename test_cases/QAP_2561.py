@@ -88,7 +88,7 @@ def execute(report_id):
         'ComplianceID': 'FX5',
         'IClOrdIdCO': 'OD_5fgfDXg-00',
         'IClOrdIdAO': 'OD_5fgfDXg-00',
-        'F_ShortCode': '17536',
+        'ShortCode': '17536',
         'StrategyName': 'ICEBERG',
         'DisplayInstruction': {
             'DisplayQty': '50'
@@ -312,52 +312,6 @@ def execute(report_id):
                                                       verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_1_lvl2_exec_pcy.name,
                                                                  "DMA")
                                                       ]))
-        #
-        # sub_order_1_lvl2_info = OrderInfo.create(action=sub_order_1_lvl2_ext_action)
-        #
-        # sub_order_2_lvl2_qty = ExtractionDetail("subOrder_2_lvl2.Qty", "Qty")
-        # sub_order_2_lvl2_exec_pcy = ExtractionDetail("subOrder_2_lvl2.ExecPcy", "ExecPcy")
-        # sub_order_2_lvl2_ext_action = ExtractionAction.create_extraction_action(
-        #     extraction_details=[sub_order_2_lvl2_qty, sub_order_2_lvl2_exec_pcy])
-        #
-        # sub_order_2_lvl2_info = OrderInfo.create(action=sub_order_2_lvl2_ext_action)
-        # #
-        # lvl2_count = "subOrders_lvl2.length"
-        #
-        #
-        #
-        # sub_order_1_lvl1_ext_action = ExtractionAction.create_extraction_action(
-        #     extraction_details=[sub_order_1_lv1_qty, sub_order_1_lv1_displ_qty, sub_order_1_lv1_exec_pcy])
-        # sub_lvl2_details = OrdersDetails.create(order_info_list=[sub_order_1_lvl2_info, sub_order_2_lvl2_info])
-        # sub_lvl2_details.extract_length(lvl2_count)
-        #
-        # sub_1_lvl1_info = OrderInfo.create(action=sub_order_1_lvl1_ext_action, sub_order_details=sub_lvl2_details)
-        # sub_1_lvl1_details = OrdersDetails.create(info=sub_1_lvl1_info)
-        # main_order_info = OrderInfo.create(sub_order_details=sub_1_lvl1_details)
-        #
-        # main_co_details = OrdersDetails()
-        # main_co_details.set_default_params(base_request)
-        # main_co_details.set_extraction_id(algo_split_man_extr_id)
-        # main_co_details.add_single_order_info(main_order_info)
-        # main_co_details.set_filter(["Order ID", pending_er_params['OrderID']])
-        # # main_co_details.set_filter(["Lookup", "RSC.[PARIS]", "ExecPcy", "Synth (Quod Split Manager)"])
-        #
-        # call(act2.getOrdersDetails, main_co_details.request())
-        #
-        # call(common_act.verifyEntities, verification(algo_split_man_extr_id, "checking order",
-        #                                              [verify_ent("Sub Lvl 1 Qty", sub_order_1_lv1_qty.name, "400"),
-        #                                               verify_ent("Sub Lvl 1 Display Qty",
-        #                                                          sub_order_1_lv1_displ_qty.name, "50"),
-        #                                               verify_ent("Sub Lvl 1 ExecPcy", sub_order_1_lv1_exec_pcy.name,
-        #                                                          "Synth (Quod Synthetic Iceberg)"),
-        #
-        #                                               verify_ent("Sub 1 Lvl 2 Qty", sub_order_1_lvl2_qty.name, "45"),
-        #                                               verify_ent("Sub 1 Lvl 2 ExecPcy", sub_order_1_lvl2_exec_pcy.name,
-        #                                                          "DMA"),
-        #                                               verify_ent("Sub 2 Lvl 2 Qty", sub_order_2_lvl2_qty.name, "50"),
-        #                                               verify_ent("Sub 2 Lvl 2 ExecPcy", sub_order_2_lvl2_exec_pcy.name,
-        #                                                          "DMA"),
-        #                                               verify_ent("Sub order Lvl 2 count", lvl2_count, "3")]))
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
@@ -372,7 +326,7 @@ def execute(report_id):
         'TransactTime': (datetime.utcnow().isoformat()),
         'OrderQty': case_params['OrderQty'],
         'Price': case_params['NewPrice'],
-        'CFICode': 'EMXXXB',
+        # 'CFICode': 'EMXXXB',
         'ExDestination': 'QDL1',
         'DisplayInstruction': {
             'DisplayQty': '45'

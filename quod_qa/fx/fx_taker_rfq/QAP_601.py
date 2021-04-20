@@ -6,7 +6,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, next_monday, sn, tom, today, today_front_end, tom_front_end, sn_front_end
+from custom.tenor_settlement_date import spo, sn, tom, today, today_front_end, tom_front_end, sn_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -47,13 +47,12 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
-    case_tenor_today="TODAY"
-    case_tenor_tom="TOM"
-    case_tenor_sn="SN"
-    case_today=today_front_end()
-    case_tom=tom_front_end()
-    case_sn=sn_front_end()
-
+    case_tenor_today = "TODAY"
+    case_tenor_tom = "TOM"
+    case_tenor_sn = "SN"
+    case_today = today_front_end()
+    case_tom = tom_front_end()
+    case_sn = sn_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

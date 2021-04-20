@@ -22,7 +22,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, date, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, date, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -56,7 +56,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    click_to_25dec= int(str(datetime(2021, 12, 25) - datetime.now()).split()[0])
+    click_to_25dec = int(str(datetime(2021, 12, 25) - datetime.now()).split()[0])
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
     next_monday_front_end()
     next_working_day_after_25dec_front_end()
@@ -68,7 +68,7 @@ def execute(report_id):
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
     base_rfq_details = BaseTileDetails(base=case_base_request)
-    modify_request=ModifyRFQTileRequest(base_rfq_details)
+    modify_request = ModifyRFQTileRequest(base_rfq_details)
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
@@ -78,8 +78,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, click_to_sunday, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, click_to_sunday, case_client)
         check_date("RFQ", base_rfq_details, ar_service, case_id, next_monday_front_end())
 
         # Step 2

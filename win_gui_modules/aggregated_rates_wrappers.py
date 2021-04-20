@@ -111,8 +111,8 @@ class ModifyRFQTileRequest:
     def set_far_leg_tenor(self, tenor: str):
         self.modify_request.farLegTenor = tenor
 
-    def set_change_currency(self, change_currency: bool):
-        self.modify_request.changeCurrency = change_currency
+    def set_change_currency(self):
+        self.modify_request.changeCurrency = True
 
     def set_settlement_date(self, settlement_date: date):
         self.modify_request.settlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
@@ -273,9 +273,14 @@ class ExtractRFQTileValues:
     def extract_cur_label_right(self, name: str):
         self.extract_value(RFQTileValues.LABEL_BUY, name)
 
-
     def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
+
+    def extract_near_tenor_list(self, preFilter: str = None):
+        if preFilter is not None:
+            self.request.tenorFilter = preFilter
+        else:
+            self.request.tenorFilter = ''
 
     def extract_value(self, field: RFQTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedValue()
