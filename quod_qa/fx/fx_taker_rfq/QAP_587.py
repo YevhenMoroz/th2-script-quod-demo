@@ -221,6 +221,8 @@ def execute(report_id):
                                        case_qty, case_venue_citir)
         check_quote_book("QB_4", case_base_request, ar_service, case_id, quote_owner,
                          quote_citir, quote_sts_terminated)
+        call(ar_service.closeRFQTile, base_rfq_details_0.build())
+        call(ar_service.closeRFQTile, base_rfq_details_1.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
