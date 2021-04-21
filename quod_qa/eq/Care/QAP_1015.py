@@ -23,7 +23,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1019"
+    case_name = "QAP-1015"
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
@@ -48,6 +48,7 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     username2 = Stubs.custom_config['qf_trading_fe_user2']
     password2 = Stubs.custom_config['qf_trading_fe_password2']
+    desk = Stubs.custom_config['qf_trading_fe_user_desk']
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
@@ -57,7 +58,7 @@ def execute(report_id):
     eq_wrappers.switch_user(session_id, case_id)
     # endregion1
     # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username2, price=price)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
