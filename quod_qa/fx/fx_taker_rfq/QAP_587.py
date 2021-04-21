@@ -133,7 +133,7 @@ def execute(report_id):
     quote_sts_new = 'New'
     quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_expired = "Expired"
+
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
