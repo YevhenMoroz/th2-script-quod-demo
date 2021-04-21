@@ -254,6 +254,13 @@ def execute(report_id):
                     'PartyIDSource': 'N',
                 }
             ],
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'NoOrders': [{
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id
@@ -299,8 +306,8 @@ def execute(report_id):
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
-        #verify confirmation
-        confirmation_report_params = {
+        #verify confirmation1
+        confirmation_report_params1 = {
             'TransactTime': '*',
             'AllocAccount': 'MOClientSA1',
             'ConfirmType': '*',
@@ -308,7 +315,7 @@ def execute(report_id):
             'AllocID': '*',
             'TradeDate': today,
             'ConfirmID': '*',
-            'AllocQty': qty,
+            'AllocQty': '100',
             'MatchStatus': '0',
             'ConfirmStatus': '1',
             'Currency': 'EUR',
@@ -339,12 +346,90 @@ def execute(report_id):
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id
             }],
+            'AllocInstructionMiscBlock2': {
+                'BOMiscField5': 'BOF1A1',
+                'BOMiscField6': 'BOF2A1',
+                'BOMiscField7': 'BOF3A1',
+                'BOMiscField8': 'BOF4A1',
+                'BOMiscField9': 'BOF5A1'
+            },
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'ConfirmTransType': 2,
         }
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID']),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params1, ['OrderID', 'AllocAccount']),
+                checkpoint_id4, 'fix-ss-back-office', case_id
+            )
+        )
+
+        #verify confirmation
+        confirmation_report_params2 = {
+            'TransactTime': '*',
+            'AllocAccount': 'MOClientSA2',
+            'ConfirmType': '*',
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'ConfirmID': '*',
+            'AllocQty': '200',
+            'MatchStatus': '0',
+            'ConfirmStatus': '1',
+            'Currency': 'EUR',
+            'Side': '1',
+            'AvgPx': limit,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocInstructionMiscBlock2': {
+                'BOMiscField5': 'BOF1A2',
+                'BOMiscField6': 'BOF2A2',
+                'BOMiscField7': 'BOF3A2',
+                'BOMiscField8': 'BOF4A2',
+                'BOMiscField9': 'BOF5A2'
+            },
+            'AllocInstructionMiscBlock1': [{
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            }],
+            'ConfirmTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Confirmation Report",
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params2, ['OrderID', 'AllocAccount']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
@@ -380,6 +465,37 @@ def execute(report_id):
                     'PartyIDSource': 'N',
                 }
             ],
+            'NoAllocs': [
+                {
+                    'AllocQty': '100',
+                    'AllocAccount': 'MOClientSA1',
+                    'AllocInstructionMiscBlock2': {
+                        'BOMiscField5': 'BOF1A1',
+                        'BOMiscField6': 'BOF2A1',
+                        'BOMiscField7': 'BOF3A1',
+                        'BOMiscField8': 'BOF4A1',
+                        'BOMiscField9': 'BOF5A1'
+                    }
+                },
+                {
+                    'AllocQty': '200',
+                    'AllocAccount': 'MOClientSA2',
+                    'AllocInstructionMiscBlock2': {
+                        'BOMiscField5': 'BOF1A2',
+                        'BOMiscField6': 'BOF2A2',
+                        'BOMiscField7': 'BOF3A2',
+                        'BOMiscField8': 'BOF4A2',
+                        'BOMiscField9': 'BOF5A2'
+                    }
+                }
+            ],
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'NoOrders': [{
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id

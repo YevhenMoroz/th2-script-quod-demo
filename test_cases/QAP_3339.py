@@ -26,7 +26,7 @@ def execute(report_id):
 
     # Store case start time
     seconds, nanos = bca.timestamps()
-    case_name = "QAP-3337"
+    case_name = "QAP-3339"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -41,10 +41,13 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "150"
+        qty = "300"
+        qtyh = "150"
         limit = "10"
         lookup = "VETO"
         today = datetime.now()
+        todayp1 = today + timedelta(days=1)
+        todayp1 = todayp1.strftime('%Y%m%d')
         todayp2 = today + timedelta(days=2)
         todayp2 = todayp2.strftime('%Y%m%d')
         today = today.strftime('%Y%m%d')
@@ -132,11 +135,12 @@ def execute(report_id):
         # manual_executing_details.set_row_number(1)
 
         executions_details = manual_executing_details.add_executions_details()
-        executions_details.set_quantity(qty)
+        executions_details.set_quantity(qtyh)
         executions_details.set_price(limit)
         executions_details.set_executing_firm("ExecutingFirm")
         executions_details.set_contra_firm("Contra_Firm")
         executions_details.set_last_capacity("Agency")
+        executions_details.set_settlement_date_offset(1)
 
         call(service.manualExecution, manual_executing_details.build())
 
@@ -148,7 +152,7 @@ def execute(report_id):
             'TransactTime': '*',
             'CumQty': qty,
             'Price': limit,
-            'SettlDate': todayp2,
+            'SettlDate': todayp1,
             'OrderQtyData': {
                 'OrderQty': qty
             },
