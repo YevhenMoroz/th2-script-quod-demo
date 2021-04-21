@@ -134,7 +134,6 @@ def execute(report_id):
     quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
 
-
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
@@ -179,8 +178,7 @@ def execute(report_id):
                          quote_hsbcr, quote_sts_terminated)
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner,
                          quote_citir, quote_sts_terminated)
-        # cancel_rfq(base_rfq_details_0, ar_service)
-        # cancel_rfq(base_rfq_details_1, ar_service)
+
         time.sleep(10)
         # Step 4
         send_rfq(base_rfq_details_0, ar_service)
@@ -224,8 +222,7 @@ def execute(report_id):
         check_quote_book("QB_4", case_base_request, ar_service, case_id, quote_owner,
                          quote_citir, quote_sts_terminated)
 
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         for rule in [RFQ, TRFQ]:
