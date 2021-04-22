@@ -1,8 +1,6 @@
 import logging
-import time
 from pathlib import Path
 
-import rule_management as rm
 from custom import basic_custom_actions as bca
 
 from custom.verifier import Verifier
@@ -15,14 +13,6 @@ from win_gui_modules.wrappers import set_base
 
 def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
-
-
-def send_rfq(base_request, service):
-    call(service.sendRFQOrder, base_request.build())
-
-
-def cancel_rfq(base_request, service):
-    call(service.cancelRFQ, base_request.build())
 
 
 def check_qty(base_request, service, case_id, near_qty):
@@ -78,15 +68,6 @@ def execute(report_id):
         modify_request.set_quantity(0)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty0)
-        #
-        # modify_request.set_quantity(case_default_qty)
-        # call(ar_service.modifyRFQTile, modify_request.build())
-        # check_qty(base_rfq_details, ar_service, case_id, case_default_qty)
-        #
-        # modify_request.clear_quantity(True)
-        # call(ar_service.modifyRFQTile, modify_request.build())
-        # check_qty(base_rfq_details, ar_service, case_id, case_qty0)
-        #
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
