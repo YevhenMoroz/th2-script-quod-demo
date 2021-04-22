@@ -21,7 +21,7 @@ qty = 2000
 limit = 20
 lookup = "CH0012268360_CHF"
 ex_destination = "XPAR"
-client = "CLIENT1"
+client = "CLIENT2"
 order_type = "Limit"
 case_name = os.path.basename(__file__)
 report_id = None
@@ -130,7 +130,7 @@ def check_order_book(ex_id, base_request, case_id):
          order_analysis_algo_parameters_request(extraction_id, ["Waves"], {"Order ID": response[ob_id.name]}))
 
     call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
-                                                 [verify_ent("Aggressivity", "Aggressivity", '1')]))
+                                                 [verify_ent("Waves", "Waves", '1')]))
 
 
 def execute(reportid):

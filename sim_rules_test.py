@@ -20,6 +20,8 @@ simulator = Stubs.simulator
 #
 # NOS = simulator.createQuodNOSRule(
 #     request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
+# StoreNOS = simulator.createQuodNOSSRule(
+#     request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
 
 
 # RFQ = simulator.createQuodRFQRule(
@@ -84,12 +86,9 @@ simulator = Stubs.simulator
 # DefRule1 = simulator.createQuodDefMDRRule1(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
 # ))
-StoreNOS = simulator.createQuodNOSStoreRule(
-    request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
 
 # stop rule
 core = Stubs.core
-
 
 # core.removeRule(OCR)
 # core.removeRule(RFQ)
@@ -100,32 +99,27 @@ core = Stubs.core
 # core.removeRule(MDR_trqx)
 
 #args={"field1":"value1","field2":"value2"}
-core.touchRule(request=TouchRequest(id=StoreNOS, args={"Symbol": "", "": ""}))
-core.removeRule(StoreNOS)
+# core.touchRule(request=TouchRequest(id=StoreNOS, args={"Symbol": "", "": ""}))
+
 # get rules
 running_rules = core.getRulesInfo(request=Empty()).info
 print(running_rules, "Rules running:", len(running_rules))
 # remove rule
-# for r in running_rules:
-#     if r.id.id not in [1, 2]:
-#         core.removeRule(RuleID(id=r.id.id))
+for r in running_rules:
+    if r.id.id not in [1, 2, 3]:
+        core.removeRule(RuleID(id=r.id.id))
 
 
-MDRefID = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-    symbol="EUR/USD",
-    connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
-)).MDRefID
-
-MDRefID303 = simulator.getMDRefIDForConnection303(request=RequestMDRefID(
-    symbol="EUR/USD:FXF:YR1:HSBC",
-    connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
-)).MDRefID
-
-allMDRefID = simulator.getAllMDRefID(request=RequestMDRefID(
-    connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
-))
-
-
-for i in range(479,483):
-    core.removeRule(RuleID(id=i))
+# MDRefID = simulator.getMDRefIDForConnection(request=RequestMDRefID(
+#     symbol="EUR/USD",
+#     connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
+# )).MDRefID
+#
+# MDRefID303 = simulator.getMDRefIDForConnection303(request=RequestMDRefID(
+#     symbol="EUR/USD:FXF:YR1:HSBC",
+#     connection_id=ConnectionID(session_alias="fix-fh-fx-esp")
+# )).MDRefID
+#
+# for i in range(479,483):
+#     core.removeRule(RuleID(id=i))
 

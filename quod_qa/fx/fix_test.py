@@ -18,7 +18,7 @@ def execute(report_id):
 
     connectivity = 'fix-ss-308-mercury-standard'
     case_id = bca.create_event(os.path.basename(__file__), report_id)
-    fix_manager_qtwquod3 = FixManager(connectivity, case_id)
+    fix_manager_308 = FixManager(connectivity, case_id)
 
 
 
@@ -30,19 +30,19 @@ def execute(report_id):
         'Side': "2",
         'OrderQty': "1000000",
         'TimeInForce': "3",
-        'Price': "1.19478",
+        'Price': "1",
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
         'Currency': 'EUR',
         'Instrument': {
             'Symbol': 'EUR/USD'
         },
-        'SettlmntTyp': '0',
-        'SettDate': '20210311',
+        'SettlType': '0',
+        'SettlDate': '20210311',
         'SecurityType': 'FXSPOT'
 
     }
 
-    fix_message_sor = FixMessage(md_req_params)
-    fix_message_sor.add_random_ClOrdID()
-    fix_manager_qtwquod3.Send_NewOrderSingle_FixMessage(fix_message_sor)
+    fix_message_nos = FixMessage(md_req_params)
+    fix_message_nos.add_random_ClOrdID()
+    fix_manager_308.Send_NewOrderSingle_FixMessage(fix_message_nos)

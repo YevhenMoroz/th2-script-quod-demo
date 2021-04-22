@@ -66,7 +66,6 @@ def execute(report_id):
         'ExecType': "0",
         'OrdStatus': '0',
         'TimeInForce': multilisting_params['TimeInForce'],
-        'ExpireDate': multilisting_params['ExpireDate'],
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
 
     }
