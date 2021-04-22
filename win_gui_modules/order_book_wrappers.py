@@ -336,6 +336,9 @@ class ExecutionsDetails:
     def set_last_capacity(self, last_capacity: str):
         self.request.lastCapacity = last_capacity
 
+    def set_settlement_date_offset(self, offset: int):
+        self.request.settlementDateOffset = offset
+
 
 class ManualExecutingDetails:
     def __init__(self, base: EmptyRequest = None):
@@ -377,6 +380,36 @@ class CompleteOrdersDetails:
     def set_selected_row_count(self, selected_row_count: int):
         self._request.multipleRowSelection = True
         self._request.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self._request
+
+
+class ManualCrossDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.ManualCrossDetails(base=base)
+        else:
+            self._request = order_book_pb2.ManualCrossDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_price(self, value: str):
+        self._request.price = value
+
+    def set_quantity(self, value: str):
+        self._request.quantity = value
+
+    def set_capacity(self, value: str):
+        self._request.capacity = value
+
+    def set_last_mkt(self, value: str):
+        self._request.lastMkt = value
+
+    def set_selected_rows(self, row_numbers: list):
+        for row in row_numbers:
+            self._request.selectedRows.append(row)
 
     def build(self):
         return self._request

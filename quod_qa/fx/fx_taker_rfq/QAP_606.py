@@ -21,7 +21,7 @@ def create_or_get_rfq(base_request, service):
     call(service.createRFQTile, base_request.build())
 
 
-def modify_order_swap(base_request, service, near_qty, cur1, cur2, near_tenor, far_tenor, client):
+def modify_rfq_tile_swap(base_request, service, near_qty, cur1, cur2, near_tenor, far_tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_near_tenor(near_tenor)
     modify_request.set_far_leg_tenor(far_tenor)
@@ -114,8 +114,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order_swap(base_rfq_details, ar_service, case_qty, case_from_currency,
-                          case_to_currency, case_near_tenor, case_far_tenor, case_client)
+        modify_rfq_tile_swap(base_rfq_details, ar_service, case_qty, case_from_currency,
+                             case_to_currency, case_near_tenor, case_far_tenor, case_client)
 
         # Step 2
         check_dif("CD_0", base_rfq_details, ar_service, case_id, case_near_date, case_far_date)
@@ -127,12 +127,12 @@ def execute(report_id):
         check_tenor("CT_0", base_rfq_details, ar_service, case_id, case_far_tenor, case_blank_tenor)
 
         # Step 4
-        modify_order_swap(base_rfq_details, ar_service, case_qty, case_from_currency,
-                          case_to_currency, case_near_tenor, case_far_tenor, case_client)
+        modify_rfq_tile_swap(base_rfq_details, ar_service, case_qty, case_from_currency,
+                             case_to_currency, case_near_tenor, case_far_tenor, case_client)
         check_labels("CL_0", base_rfq_details, ar_service, case_id, case_left_eur_label, case_right_eur_label)
 
         # Step 5
-        modify_request.set_change_currency(True)
+        modify_request.set_change_currency()
         call(ar_service.modifyRFQTile, modify_request.build())
         check_labels("CL_1", base_rfq_details, ar_service, case_id, case_left_usd_label, case_right_usd_label)
 

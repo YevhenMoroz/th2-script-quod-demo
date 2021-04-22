@@ -22,7 +22,7 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -131,8 +131,8 @@ def execute(report_id):
     try:
         # Steps 1-2
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_client)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_near_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
         qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)

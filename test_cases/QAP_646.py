@@ -70,7 +70,7 @@ class TestCase:
     # Set quantity method
     def set_quantity(self, qty):
         modify_request = ModifyRFQTileRequest(details=self.base_details)
-        modify_request.set_quantity(qty)
+        modify_request.set_quantity_as_string(str(qty))
         call(self.ar_service.modifyRFQTile, modify_request.build())
 
     # Send RFQ method
@@ -150,6 +150,7 @@ class TestCase:
 
             # Step 1
             self.set_tenors('Spot', '1M')
+            self.set_quantity(11)
             self.send_rfq()
             self.check_qrb()
             self.check_qb()
@@ -157,7 +158,7 @@ class TestCase:
             self.send_order_by_venue_price()
             self.check_ob()
             self.cancel_rfq()
-            self.set_quantity(110)
+            self.set_quantity(110.50)
             # Step 3
             self.send_rfq()
             self.check_qrb()

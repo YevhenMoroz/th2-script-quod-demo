@@ -126,6 +126,9 @@ class ModifyRFQTileRequest:
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
 
+    def set_quantity_as_string(self, quantity: str):
+        self.modify_request.quantityAsString = quantity
+
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
 
@@ -209,8 +212,6 @@ class ExtractRFQTileValues:
             self.request = ar_operations_pb2.ExtractRFQTileValuesRequest(data=details.build())
         else:
             self.request = ar_operations_pb2.ExtractRFQTileValuesRequest()
-
-        self.request.tenorFilter = 'none'
 
     def set_details(self, details: BaseTileDetails):
         self.request.data.CopyFrom(details.build())

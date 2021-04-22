@@ -1,5 +1,6 @@
 from google.protobuf.empty_pb2 import Empty
 from stubs import Stubs
+from th2_grpc_sim_quod import sim_pb2
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodRFQRule
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodRFQTRADERule
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodMDRRule
@@ -32,4 +33,4 @@ core.removeRule(RFQ)
 core.removeRule(TRFQ)
 core.removeRule(MDESP)
 
-# core.removeRule(simulator_pb2.RuleID(id=i)
+core.removeRule(sim_pb2.RuleID(id=1))

@@ -26,7 +26,7 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def modify_order(base_request, service, near_qty, cur1, cur2, near_tenor, client, venues):
+def modify_rfq_tile(base_request, service, near_qty, cur1, cur2, near_tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
@@ -116,8 +116,8 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
 
         # Step 2
-        modify_order(base_rfq_details, ar_service, case_qty, case_eur_currency, case_usd_currency, case_near_tenor,
-                     case_client, case_venue)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_eur_currency, case_usd_currency, case_near_tenor,
+                        case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_0", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
