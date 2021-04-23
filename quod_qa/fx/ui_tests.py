@@ -82,6 +82,7 @@ def check_venue(base_details, ar_service):
 
 
 def extract_rfq_table_data(base_details, ar_service):
+
     """
     It is simple demonstration of hot to cell data extract.
     In example bellow created one TableActionsRequest and 4 cells extracting.
@@ -219,7 +220,6 @@ def set_order_ticket_options(option_service, base_request):
     fx_values.DMASlippage = '12678.09'
     fx_values.Client = "FIXCLIENT4"
 
-
     order_ticket_options.set_default_fx_values(fx_values)
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
@@ -238,7 +238,6 @@ def execute(report_id):
     quote_owner = "kbrit"
     case_instr_type = "Spot"
     case_venue = "HSB"
-    order_id = "MO1210310103937245001"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
