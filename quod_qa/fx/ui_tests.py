@@ -115,7 +115,7 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
 
     """
     extract_value = ExtractRFQTileValues(details=base_request)
-    extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
+    # extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
     # extract_value.extract_currency("ar_rfq.extract_currency")
     # extract_value.extract_quantity("ar_rfq.extract_quantity")
     # extract_value.extract_tenor("ar_rfq.extract_tenor")
@@ -128,14 +128,14 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     extract_value.extract_best_ask("ar_rfq.extract_best_ask")
     extract_value.extract_best_ask_large("ar_rfq.extract_best_ask_large")
     extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
-    extract_value.extract_spread("ar_rfq.extract_spread")
+    # extract_value.extract_spread("ar_rfq.extract_spread")
     # extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
     # extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
     extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
-    extract_value.set_extraction_id(exec_id)
+    extract_value.set_extraction_id(exec_id )
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
