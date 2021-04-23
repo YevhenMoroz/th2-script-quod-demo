@@ -14,6 +14,8 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
+# from test_cases.QAP_1560 import TestCase
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,13 +26,13 @@ def execute(report_id):
 
     # Store case start time
     seconds, nanos = bca.timestamps()
-    case_name = "QAP-3307"
+    case_name = "QAP-3343"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
 
     session_id = set_session_id()
-    #set_base(session_id, case_id)
+    # set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
     username = Stubs.custom_config['qf_trading_fe_user_305']
@@ -39,8 +41,8 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "150"
-        limit = "20"
+        qty = "300"
+        limit = "10"
         lookup = "VETO"
         today = datetime.now()
         todayp2 = today + timedelta(days=2)
@@ -75,12 +77,12 @@ def execute(report_id):
         order_info_extraction = "getOrderInfo"
 
         data = call(common_act.getOrderFields, fields_request(order_info_extraction,
-                                                             ["order.status", "Sts", "order.order_id", "Order ID"]))
+                                                              ["order.status", "Sts", "order.order_id", "Order ID"]))
         care_order_id = data["order.order_id"]
         call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
                                                      [verify_ent("Order Status", "order.status", "Open")]))
 
-        #verify execution report
+        # verify execution report
         execution_report1_params = {
             'ClOrdID': care_order_id,
             'OrderID': care_order_id,
@@ -122,7 +124,7 @@ def execute(report_id):
         checkpoint_response2 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id2 = checkpoint_response2.checkpoint
 
-        #create manual execution
+        # create manual execution
         service = Stubs.win_act_order_book
 
         manual_executing_details = ManualExecutingDetails(base_request)
@@ -130,8 +132,8 @@ def execute(report_id):
         # manual_executing_details.set_row_number(1)
 
         executions_details = manual_executing_details.add_executions_details()
-        #executions_details.set_quantity(qty)
-        #executions_details.set_price(limit)
+        # executions_details.set_quantity(qty)
+        # executions_details.set_price(limit)
         executions_details.set_executing_firm("ExecutingFirm")
         executions_details.set_contra_firm("Contra_Firm")
         executions_details.set_last_capacity("Agency")
@@ -176,8 +178,8 @@ def execute(report_id):
             )
         )
 
-        #complete order
-        service = Stubs.win_act_order_book
+        # complete order
+        # service = Stubs.win_act_order_book
 
         complete_orders_details = CompleteOrdersDetails(base_request)
         complete_orders_details.set_filter({"Order ID": care_order_id})
@@ -193,29 +195,12 @@ def execute(report_id):
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
-        #modify_request.set_selected_row_count(4)
+        modify_request.set_filter(["Order ID", care_order_id])
+        # modify_request.set_selected_row_count(4)
 
-        ticket_details = modify_request.add_ticket_details()
-        #ticket_details.set_client("MOClient")
-        #ticket_details.set_trade_date("3/31/2021")
-        #ticket_details.set_net_gross_ind("Gross")
-        #ticket_details.set_give_up_broker("GiveUpBroker")
-        #ticket_details.set_agreed_price("5")
-
-        #settlement_details = modify_request.add_settlement_details()
-        #settlement_details.set_settlement_type("Regular")
-        #settlement_details.set_settlement_currency("EUR")
-        #settlement_details.set_exchange_rate("1")
-        #settlement_details.set_exchange_rate_calc("Multiply")
-        #settlement_details.toggle_settlement_date()
-        #settlement_details.set_settlement_date("3/31/2021")
-        #settlement_details.toggle_recompute()
-
-        commissions_details = modify_request.add_commissions_details()
-        #commissions_details.toggle_manual()
-        commissions_details.remove_commissions()
-        commissions_details.add_commission(basis="Absolute", rate="21", amount="21")
+        settlement_details = modify_request.add_settlement_details()
+        settlement_details.set_settlement_currency("AED")
+        settlement_details.toggle_recompute()
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -226,17 +211,17 @@ def execute(report_id):
         extraction_details.extract_total_fees("book.totalFees")
         extraction_details.extract_agreed_price("book.agreedPrice")
 
-        response = call(middle_office_service.bookOrder, modify_request.build())
+        call(middle_office_service.bookOrder, modify_request.build())
 
-        #approve
-        #middle_office_service = Stubs.win_act_middle_office_service
+        # approve
+        # middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["Order ID", care_order_id])
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
-        #verify allocationinstruction1
-        allocation_instruction_report_params1 = {
+        # verify allocationinstruction 1
+        allocation_instruction_report1_params = {
             'TransactTime': '*',
             'Side': '1',
             'AvgPx': limit,
@@ -245,7 +230,8 @@ def execute(report_id):
             'SettlDate': today,
             'AllocID': '*',
             'TradeDate': today,
-            'RootOrClientCommission': '21',
+            'RootSettlCurrency': 'AED',
+            'BookingMiscFeeCurr': 'AED',
             'Instrument': {
                 'SecurityDesc': 'VETOQUINOL',
                 'Symbol': 'FR0004186856_EUR',
@@ -272,27 +258,28 @@ def execute(report_id):
                 'ClOrdID': care_order_id
             }],
             'AllocType': 5,
-            'AllocTransType': 0,
+            'AllocTransType': 2,
         }
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
-                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report_params1,
-                                       ['OrderID', 'AllocTransType']),
+                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report1_params, ['OrderID',
+                                                                                                        'AllocType']),
                 checkpoint_id3, 'fix-ss-back-office', case_id
             )
         )
 
-
-        # Checkpoint creation4
+        # Checkpoint4 creation
         checkpoint_response4 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id4 = checkpoint_response4.checkpoint
 
-        #allocate (in progress)
-        modify_request = ModifyTicketDetails(base=base_request)
+        # allocate
+        # middle_office_service = Stubs.win_act_middle_office_service
 
+        modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
+        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": "150"})
+        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": "150"})
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -305,16 +292,24 @@ def execute(report_id):
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
-        #verify confirmation
+        # verify confirmation
         confirmation_report_params = {
             'TransactTime': '*',
             'AllocAccount': 'MOClientSA1',
             'ConfirmType': '*',
             'SettlDate': today,
+            'RootSettlCurrency': 'AED',
+            'BookingMiscFeeCurr': 'AED',
+            'SettlCurrency': 'AED',
+            'MiscFeesGrp': {
+                'MiscFeeCurr': 'AED'
+            },
             'AllocID': '*',
             'TradeDate': today,
             'ConfirmID': '*',
             'AllocQty': qty,
+            'MatchStatus': '0',
+            'ConfirmStatus': '1',
             'Currency': 'EUR',
             'Side': '1',
             'AvgPx': limit,
@@ -353,7 +348,7 @@ def execute(report_id):
             )
         )
 
-        #verify allocationinstruction2
+        # verify allocationinstruction2
         allocation_instruction_report2_params = {
             'TransactTime': '*',
             'Side': '1',
@@ -361,6 +356,12 @@ def execute(report_id):
             'Currency': 'EUR',
             'Quantity': qty,
             'SettlDate': today,
+            'RootSettlCurrency': 'AED',
+            'BookingMiscFeeCurr': 'AED',
+            'SettlCurrency': 'AED',
+            'MiscFeesGrp': {
+                'MiscFeeCurr': 'AED'
+            },
             'AllocID': '*',
             'TradeDate': today,
             'Instrument': {
@@ -399,7 +400,6 @@ def execute(report_id):
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
-
     except Exception as e:
         logging.error("Error execution", exc_info=True)
     close_fe(case_id, session_id)

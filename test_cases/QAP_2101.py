@@ -25,11 +25,11 @@ def execute(case_name, report_id, case_params):
 
     mdu_params_fwd = {
         "MDReqID": simulator.getMDRefIDForConnection303(
-                request=RequestMDRefID(
-                        symbol="EUR/USD:FXF:WK1:HSBC",
-                        connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-        # "MDReqID": "EUR/USD:FXF:WK1:HSBC=EUR/USD:FXF:WK1:HSBC_6",
-        # "MDReportID": "1",
+            request=RequestMDRefID(
+                symbol="EUR/USD:FXF:WK1:HSBC", connection_id=ConnectionID(
+                    session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
+        "MDReportID": "3",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
         # "OrigMDTime": "TBU",
@@ -43,49 +43,26 @@ def execute(case_name, report_id, case_params):
         "NoMDEntries": [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 2.18192,
+                "MDEntryPx": 31.18192,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.1819,
+                "MDEntrySpotRate": 31.1819,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 2.18220,
+                "MDEntryPx": 39.18220,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.1820,
+                "MDEntrySpotRate": 39.1820,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.18191,
-                "MDEntrySize": 16000000,
-                "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.1819,
-                "MDEntryForwardPoints": 0.0002,
-                # 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.18221,
-                "MDEntrySize": 16000000,
-                "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.1820,
-                "MDEntryForwardPoints": 0.0002,
-                # 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-            },
-
+            }
         ]
     }
 
@@ -98,9 +75,12 @@ def execute(case_name, report_id, case_params):
         ))
 
     mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection303(request=RequestMDRefID(symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-        # "MDReqID": "EUR/AED=EUR/AED:SPO:REG:HSBC_38",
-        # "MDReportID": "1",
+        "MDReqID": simulator.getMDRefIDForConnection303(
+            request=RequestMDRefID(
+                symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(
+                    session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
+        "MDReportID": "3",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
         # "OrigMDTime": "TBU",
@@ -108,58 +88,26 @@ def execute(case_name, report_id, case_params):
         # "ReplyReceivedTime": "TBU",
         'Instrument': {
             'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
+            'SecurityType': 'FXFWD'
         },
         # "LastUpdateTime": "TBU",
         "NoMDEntries": [
             {
-                "MDEntryType": "1",
-                "MDEntryPx": 2.18,
-                "MDEntrySize": 1000000,
-                "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.18,
-                "MDEntryForwardPoints": 0.0002,
-                'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-                # "QuoteCondition": "A"
-            },
-            {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.17,
+                "MDEntryPx": 31.1819,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.17,
+                "MDEntrySpotRate": 31.1819,
                 "MDEntryForwardPoints": 0.0002,
-                'SettlDate': tsd.spo(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-                # "QuoteCondition": "A"
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 2.1810,
-                "MDEntrySize": 16000000,
+                "MDEntryPx": 39.1820,
+                "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.18,
+                "MDEntrySpotRate": 39.1820,
                 "MDEntryForwardPoints": 0.0002,
-                'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-                # "QuoteCondition": "A"
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.1690,
-                "MDEntrySize": 16000000,
-                "MDEntryPositionNo": 1,
-                "MDEntrySpotRate": 1.17,
-                "MDEntryForwardPoints": 0.0002,
-                'SettlDate': tsd.spo(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
-                # "QuoteCondition": "A"
-            },
+            }
         ]
     }
 
@@ -170,6 +118,7 @@ def execute(case_name, report_id, case_params):
             case_id,
             bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, 'fix-fh-fx-esp')
         ))
+
     reusable_params = {
         'Account': case_params['Account'],
         'Side': 1,
@@ -186,7 +135,7 @@ def execute(case_name, report_id, case_params):
         'NoRelatedSymbols': [
             {
                 'Instrument': reusable_params['Instrument'],
-                'OrderQty': 16000001,
+                'OrderQty': 1000000,
                 'Currency': 'EUR',
                 'Account': reusable_params['Account'],
                 'NoLegs': [
@@ -198,7 +147,7 @@ def execute(case_name, report_id, case_params):
                         'LegSide': 1,
                         'LegSettlType': 0,
                         'LegSettlDate': tsd.spo(),
-                        'LegOrderQty': 16000001
+                        'LegOrderQty': 1000000
                     },
                     {
                         'InstrumentLeg': {
@@ -208,7 +157,7 @@ def execute(case_name, report_id, case_params):
                         'LegSide': 2,
                         'LegSettlType': 7,
                         'LegSettlDate': tsd.wk1(),
-                        'LegOrderQty': 16000001
+                        'LegOrderQty': 1000000
                     },
                 ]
             }
@@ -224,28 +173,28 @@ def execute(case_name, report_id, case_params):
             bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
         ))
 
-    # quote_params = {
-    #     **reusable_params,
-    #     'QuoteReqID': rfq_params['QuoteReqID'],
-    #     'Product': 4,
-    #     'OfferPx': '35.001',
-    #     'OfferSize': 500000,
-    #     'QuoteID': '*',
-    #     'OfferSpotRate': '35.001',
-    #     'ValidUntilTime': '*',
-    #     'Currency': 'EUR'
-    # }
-    #
-    # verifier.submitCheckRule(
-    #     bca.create_check_rule(
-    #         'Receive Quote message',
-    #         bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-    #         send_rfq.checkpoint_id,
-    #         case_params['TraderConnectivity'],
-    #         case_id
-    #     )
-    # )
-    #
+    quote_params = {
+        **reusable_params,
+        'QuoteReqID': rfq_params['QuoteReqID'],
+        'Product': 4,
+        'OfferPx': '35.001',
+        'OfferSize': 500000,
+        'QuoteID': '*',
+        'OfferSpotRate': '35.001',
+        'ValidUntilTime': '*',
+        'Currency': 'EUR'
+    }
+
+    verifier.submitCheckRule(
+        bca.create_check_rule(
+            'Receive Quote message',
+            bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
+            send_rfq.checkpoint_id,
+            case_params['TraderConnectivity'],
+            case_id
+        )
+    )
+
     # order_params = {
     #     **reusable_params,
     #     'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],

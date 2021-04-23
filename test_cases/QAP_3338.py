@@ -14,6 +14,8 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
+#from test_cases.QAP_1560 import TestCase
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,7 +26,7 @@ def execute(report_id):
 
     # Store case start time
     seconds, nanos = bca.timestamps()
-    case_name = "QAP-3307"
+    case_name = "QAP-3338"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -39,8 +41,8 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
-        qty = "150"
-        limit = "20"
+        qty = "300"
+        limit = "10"
         lookup = "VETO"
         today = datetime.now()
         todayp2 = today + timedelta(days=2)
@@ -51,7 +53,7 @@ def execute(report_id):
         checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id1 = checkpoint_response1.checkpoint
 
-        # create care order
+        #create care order
         order_ticket = OrderTicketDetails()
         order_ticket.set_quantity(qty)
         order_ticket.set_limit(limit)
@@ -138,7 +140,7 @@ def execute(report_id):
 
         call(service.manualExecution, manual_executing_details.build())
 
-        # verify execution report2
+        #verify execution report2
         execution_report2_params = {
             'ClOrdID': care_order_id,
             'OrderID': care_order_id,
@@ -177,7 +179,7 @@ def execute(report_id):
         )
 
         #complete order
-        service = Stubs.win_act_order_book
+        #service = Stubs.win_act_order_book
 
         complete_orders_details = CompleteOrdersDetails(base_request)
         complete_orders_details.set_filter({"Order ID": care_order_id})
@@ -189,33 +191,19 @@ def execute(report_id):
         checkpoint_response3 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id3 = checkpoint_response3.checkpoint
 
-        # book order
+        #book order
         middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["Owner", username, "Order ID", care_order_id])
-        #modify_request.set_selected_row_count(4)
+        modify_request.set_filter(["Order ID", care_order_id])
+        # modify_request.set_selected_row_count(4)
 
-        ticket_details = modify_request.add_ticket_details()
-        #ticket_details.set_client("MOClient")
-        #ticket_details.set_trade_date("3/31/2021")
-        #ticket_details.set_net_gross_ind("Gross")
-        #ticket_details.set_give_up_broker("GiveUpBroker")
-        #ticket_details.set_agreed_price("5")
-
-        #settlement_details = modify_request.add_settlement_details()
-        #settlement_details.set_settlement_type("Regular")
-        #settlement_details.set_settlement_currency("EUR")
-        #settlement_details.set_exchange_rate("1")
-        #settlement_details.set_exchange_rate_calc("Multiply")
-        #settlement_details.toggle_settlement_date()
-        #settlement_details.set_settlement_date("3/31/2021")
-        #settlement_details.toggle_recompute()
-
-        commissions_details = modify_request.add_commissions_details()
-        #commissions_details.toggle_manual()
-        commissions_details.remove_commissions()
-        commissions_details.add_commission(basis="Absolute", rate="21", amount="21")
+        misc_details = modify_request.add_misc_details()
+        misc_details.set_bo_field_1("BOF1C")
+        misc_details.set_bo_field_2("BOF2C")
+        misc_details.set_bo_field_3("BOF3C")
+        misc_details.set_bo_field_4("BOF4C")
+        misc_details.set_bo_field_5("BOF5C")
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -226,7 +214,7 @@ def execute(report_id):
         extraction_details.extract_total_fees("book.totalFees")
         extraction_details.extract_agreed_price("book.agreedPrice")
 
-        response = call(middle_office_service.bookOrder, modify_request.build())
+        call(middle_office_service.bookOrder, modify_request.build())
 
         #approve
         #middle_office_service = Stubs.win_act_middle_office_service
@@ -235,8 +223,8 @@ def execute(report_id):
         modify_request.set_filter(["Order ID", care_order_id])
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
-        #verify allocationinstruction1
-        allocation_instruction_report_params1 = {
+        #verify allocationinstruction 1
+        allocation_instruction_report1_params = {
             'TransactTime': '*',
             'Side': '1',
             'AvgPx': limit,
@@ -245,7 +233,6 @@ def execute(report_id):
             'SettlDate': today,
             'AllocID': '*',
             'TradeDate': today,
-            'RootOrClientCommission': '21',
             'Instrument': {
                 'SecurityDesc': 'VETOQUINOL',
                 'Symbol': 'FR0004186856_EUR',
@@ -267,32 +254,46 @@ def execute(report_id):
                     'PartyIDSource': 'N',
                 }
             ],
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'NoOrders': [{
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id
             }],
             'AllocType': 5,
-            'AllocTransType': 0,
+            'AllocTransType': 2,
         }
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
-                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report_params1,
-                                       ['OrderID', 'AllocTransType']),
+                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report1_params, ['OrderID',
+                                                                                                        'AllocType']),
                 checkpoint_id3, 'fix-ss-back-office', case_id
             )
         )
 
-
-        # Checkpoint creation4
+        # Checkpoint4 creation
         checkpoint_response4 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id4 = checkpoint_response4.checkpoint
 
-        #allocate (in progress)
-        modify_request = ModifyTicketDetails(base=base_request)
+        #allocate
+        #middle_office_service = Stubs.win_act_middle_office_service
 
+        modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
+        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": '100',
+                                                  "BO Field 1": "BOF1A1", "BO Field 2": "BOF2A1",
+                                                  "BO Field 3": "BOF3A1", "BO Field 4": "BOF4A1",
+                                                  "BO Field 5": "BOF5A1"})
+        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": '200',
+                                                  "BO Field 1": "BOF1A2", "BO Field 2": "BOF2A2",
+                                                  "BO Field 3": "BOF3A2", "BO Field 4": "BOF4A2",
+                                                  "BO Field 5": "BOF5A2"})
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -305,8 +306,8 @@ def execute(report_id):
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
-        #verify confirmation
-        confirmation_report_params = {
+        #verify confirmation1
+        confirmation_report_params1 = {
             'TransactTime': '*',
             'AllocAccount': 'MOClientSA1',
             'ConfirmType': '*',
@@ -314,7 +315,9 @@ def execute(report_id):
             'AllocID': '*',
             'TradeDate': today,
             'ConfirmID': '*',
-            'AllocQty': qty,
+            'AllocQty': '100',
+            'MatchStatus': '0',
+            'ConfirmStatus': '1',
             'Currency': 'EUR',
             'Side': '1',
             'AvgPx': limit,
@@ -343,12 +346,90 @@ def execute(report_id):
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id
             }],
+            'AllocInstructionMiscBlock2': {
+                'BOMiscField5': 'BOF1A1',
+                'BOMiscField6': 'BOF2A1',
+                'BOMiscField7': 'BOF3A1',
+                'BOMiscField8': 'BOF4A1',
+                'BOMiscField9': 'BOF5A1'
+            },
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'ConfirmTransType': 2,
         }
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID']),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params1, ['OrderID', 'AllocAccount']),
+                checkpoint_id4, 'fix-ss-back-office', case_id
+            )
+        )
+
+        #verify confirmation
+        confirmation_report_params2 = {
+            'TransactTime': '*',
+            'AllocAccount': 'MOClientSA2',
+            'ConfirmType': '*',
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'ConfirmID': '*',
+            'AllocQty': '200',
+            'MatchStatus': '0',
+            'ConfirmStatus': '1',
+            'Currency': 'EUR',
+            'Side': '1',
+            'AvgPx': limit,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocInstructionMiscBlock2': {
+                'BOMiscField5': 'BOF1A2',
+                'BOMiscField6': 'BOF2A2',
+                'BOMiscField7': 'BOF3A2',
+                'BOMiscField8': 'BOF4A2',
+                'BOMiscField9': 'BOF5A2'
+            },
+            'AllocInstructionMiscBlock1': [{
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            }],
+            'ConfirmTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Confirmation Report",
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params2, ['OrderID', 'AllocAccount']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
@@ -384,6 +465,37 @@ def execute(report_id):
                     'PartyIDSource': 'N',
                 }
             ],
+            'NoAllocs': [
+                {
+                    'AllocQty': '100',
+                    'AllocAccount': 'MOClientSA1',
+                    'AllocInstructionMiscBlock2': {
+                        'BOMiscField5': 'BOF1A1',
+                        'BOMiscField6': 'BOF2A1',
+                        'BOMiscField7': 'BOF3A1',
+                        'BOMiscField8': 'BOF4A1',
+                        'BOMiscField9': 'BOF5A1'
+                    }
+                },
+                {
+                    'AllocQty': '200',
+                    'AllocAccount': 'MOClientSA2',
+                    'AllocInstructionMiscBlock2': {
+                        'BOMiscField5': 'BOF1A2',
+                        'BOMiscField6': 'BOF2A2',
+                        'BOMiscField7': 'BOF3A2',
+                        'BOMiscField8': 'BOF4A2',
+                        'BOMiscField9': 'BOF5A2'
+                    }
+                }
+            ],
+            'AllocInstructionMiscBlock1': {
+                'BOMiscField0': 'BOF1C',
+                'BOMiscField1': 'BOF2C',
+                'BOMiscField2': 'BOF3C',
+                'BOMiscField3': 'BOF4C',
+                'BOMiscField4': 'BOF5C'
+            },
             'NoOrders': [{
                 'OrderID': care_order_id,
                 'ClOrdID': care_order_id
@@ -399,7 +511,6 @@ def execute(report_id):
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
-
     except Exception as e:
         logging.error("Error execution", exc_info=True)
     close_fe(case_id, session_id)
