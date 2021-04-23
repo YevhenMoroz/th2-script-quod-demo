@@ -117,14 +117,23 @@ class ModifyRFQTileRequest:
     def set_settlement_date(self, settlement_date: date):
         self.modify_request.settlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
 
+    def set_maturity_date(self, settlement_date: date):
+        self.modify_request.maturityDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
+
     def set_far_leg_settlement_date(self, settlement_date: date):
         self.modify_request.farLegSettlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
+
+    def set_far_maturity_date(self, settlement_date: date):
+        self.modify_request.farMaturityDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
 
     def set_client(self, client: str):
         self.modify_request.client = client
 
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
+
+    def set_quantity_as_string(self, quantity: str):
+        self.modify_request.quantityAsString = quantity
 
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
@@ -135,6 +144,12 @@ class ModifyRFQTileRequest:
     def add_context_actions(self, context_actions: list):
         for action in context_actions:
             self.add_context_action(action)
+
+    def clear_quantity(self, clear_quantity: bool):
+        self.modify_request.clearQuantity = clear_quantity
+
+    def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
+        self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
 
     def build(self):
         return self.modify_request
@@ -201,6 +216,8 @@ class RFQTileValues(Enum):
     CLIENT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CLIENT
     LABEL_BUY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_BUY
     LABEL_SELL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_SELL
+    NEAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_MATURITY_DATE
+    FAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_MATURITY_DATE
 
 
 class ExtractRFQTileValues:
@@ -236,6 +253,12 @@ class ExtractRFQTileValues:
 
     def extract_near_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.NEAR_SETTLEMENT_DATE, name)
+
+    def extract_near_maturity_date(self, name: str):
+        self.extract_value(RFQTileValues.NEAR_MATURITY_DATE, name)
+
+    def extract_far_maturity_date(self, name: str):
+        self.extract_value(RFQTileValues.FAR_MATURITY_DATE, name)
 
     def extract_far_leg_settlement_date(self, name: str):
         self.extract_value(RFQTileValues.FAR_LEG_SETTLEMENT_DATE, name)
