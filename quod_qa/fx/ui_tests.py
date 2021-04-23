@@ -1,5 +1,8 @@
 import logging
 from datetime import datetime
+from pathlib import Path
+
+from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
@@ -10,6 +13,8 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues)
 from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
+                                                   DefaultFXValues)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
@@ -77,7 +82,6 @@ def check_venue(base_details, ar_service):
 
 
 def extract_rfq_table_data(base_details, ar_service):
-
     """
     It is simple demonstration of hot to cell data extract.
     In example bellow created one TableActionsRequest and 4 cells extracting.
@@ -91,17 +95,17 @@ def extract_rfq_table_data(base_details, ar_service):
 
     """
     table_actions_request = TableActionsRequest(details=base_details)
-    extract1 = TableAction.extract_cell_value(CellExtractionDetails("DistSell","Dist", "HSB", 0))
-    extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell","Pts", "HSB", 0))
-    extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy","Pts", "HSB", 1))
-    extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy","Dist", "HSB", 1))
+    extract1 = TableAction.extract_cell_value(CellExtractionDetails("DistSell1", "Dist", "HSB", 0))
+    extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell1", "Pts", "HSB", 0))
+    extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy1", "Pts", "HSB", 1))
+    extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy1", "Dist", "HSB", 1))
     table_actions_request.set_extraction_id("extrId")
     table_actions_request.add_actions([extract1, extract2, extract3, extract4])
     result = call(ar_service.processTableActions, table_actions_request.build())
     print(result)
 
 
-def extract_rfq_tile_data(exec_id, base_request, service ):
+def extract_rfq_panel(exec_id, base_request, service):
     """
     Class ExtractRFQTileValues was extended.
     Here bellow you can see all available methods.
@@ -112,12 +116,12 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
-    extract_value.extract_currency("ar_rfq.extract_currency")
-    extract_value.extract_quantity("ar_rfq.extract_quantity")
-    extract_value.extract_tenor("ar_rfq.extract_tenor")
-    extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
-    extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
-    extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
+    # extract_value.extract_currency("ar_rfq.extract_currency")
+    # extract_value.extract_quantity("ar_rfq.extract_quantity")
+    # extract_value.extract_tenor("ar_rfq.extract_tenor")
+    # extract_value.extract_far_leg_tenor("ar_rfq.extract_far_leg_tenor")
+    # extract_value.extract_near_settlement_date("ar_rfq.extract_near_settlement_date")
+    # extract_value.extract_far_leg_settlement_date("ar_rfq.extract_far_leg_settlement_date")
     extract_value.extract_best_bid("ar_rfq.extract_best_bid")
     extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
     extract_value.extract_best_bid_small("ar_rfq.extract_best_bid_small")
@@ -125,14 +129,13 @@ def extract_rfq_tile_data(exec_id, base_request, service ):
     extract_value.extract_best_ask_large("ar_rfq.extract_best_ask_large")
     extract_value.extract_best_ask_small("ar_rfq.extract_best_ask_small")
     extract_value.extract_spread("ar_rfq.extract_spread")
-    extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
-    extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
+    # extract_value.extract_swap_diff_days("ar_rfq.extract_swap_diff_days")
+    # extract_value.extract_beneficiary("ar_rfq.extract_beneficiary")
     extract_value.extract_client("ar_rfq.extract_client")
     extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
-
-    extract_value.set_extraction_id(exec_id )
+    extract_value.set_extraction_id(exec_id)
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
@@ -146,12 +149,79 @@ def extruct_popup_lists_demo(exec_id, base_request, service):
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.extract_near_tenor_list("1")
 
-
     extract_value.set_extraction_id(exec_id)
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
 
+
+def modify_order(base_request, service):
+    modify_request = ModifyRFQTileRequest(details=base_request)
+    # modify_request.set_quantity(123)
+    # modify_request.set_far_leg_qty(456)
+    # modify_request.set_from_currency("EUR")
+    # modify_request.set_to_currency("USD")
+    # modify_request.set_near_tenor("TOM")
+    # modify_request.set_far_leg_tenor("1W")
+    # modify_request.set_client('FIXCLIENT3')
+    modify_request.set_change_currency()
+    call(service.modifyRFQTile, modify_request.build())
+
+
+def export_layout(base_request, option_service):
+    modification_request = WorkspaceModificationRequest()
+    modification_request.set_default_params(base_request=base_request)
+    modification_request.set_filename("demo_export_file.xml")
+    modification_request.set_path(
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+    modification_request.do_export()
+
+    call(option_service.modifyWorkspace, modification_request.build())
+
+
+def import_layout(base_request, option_service):
+    modification_request = WorkspaceModificationRequest()
+    modification_request.set_default_params(base_request=base_request)
+    modification_request.set_filename("demo_export_file.xml")
+    modification_request.set_path(
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+    modification_request.do_import()
+
+    call(option_service.modifyWorkspace, modification_request.build())
+
+
+def set_order_ticket_options(option_service, base_request):
+    """
+    The method can be used for set Only OrderTicket>DefaultFXValues
+        (to add more elements raise a sub-task)
+    To  select Option use Panels
+    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
+
+    """
+    order_ticket_options = OptionOrderTicketRequest(base=base_request)
+    fx_values = DefaultFXValues();
+    order_type = "Market"
+    tif = "FillOrKill"
+    strategy_type = "Quod DarkPool"
+    strategy = "PeggedTaker"
+    child_strategy = "BasicTaker"
+    fx_values.AggressiveOrderType = order_type
+    # fx_values.AggressiveTIF = tif
+    # fx_values.AggressiveStrategyType = strategy_type
+    # fx_values.AggressiveStrategy = strategy
+    # fx_values.AggressiveChildStrategy = child_strategy
+    # fx_values.PassiveOrderType = order_type
+    # fx_values.PassiveTIF = tif
+    # fx_values.PassiveStrategyType = strategy_type
+    # fx_values.PassiveStrategy = strategy
+    # fx_values.PassiveChildStrategy = child_strategy
+    # fx_values.AlgoSlippage = '12367.45'
+    fx_values.DMASlippage = '12678.09'
+    fx_values.Client = "FIXCLIENT4"
+
+
+    order_ticket_options.set_default_fx_values(fx_values)
+    call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def execute(report_id):
@@ -164,10 +234,11 @@ def execute(report_id):
     # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     # print_active_rules()
-    case_name = "kbrit_ui_tests"
+    case_name = Path(__file__).name[:-3]
     quote_owner = "kbrit"
     case_instr_type = "Spot"
     case_venue = "HSB"
+    order_id = "MO1210310103937245001"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -177,9 +248,9 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     base_tile_details = BaseTileDetails(base=base_request)
-    order_id = "MO1210310103937245001"
+    option_service = Stubs.win_act_options
     # endregion
-
+    Stubs.frontend_is_open = True
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
         # ,
@@ -190,25 +261,40 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
-        #  RFQ tile
+        # region FE workspace ↓
+        # import_layout(base_request, option_service)
+        # export_layout(base_request, option_service)
+        # endregion
+
+        # region FE options ↓
+        # get_default_fx_value(base_request, option_service)
+        set_order_ticket_options(option_service, base_request)
+        # endregion
+
+        # region RFQ tile ↓
+        # modify_order(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
-        # extract_rfq_tile_data("rfq_tile_data",base_tile_details, ar_service)
-        extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details, ar_service)
+        # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
+        # temporary doesn't available because of PROC-261
+        # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
+        # endregion
 
-        # ESP tile ↓
+        # region ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
+        # endregion
 
-        # My Orders ↓
+        # region My Orders ↓
 
         # get_my_orders_details(ob_act,  base_request, order_id)
-        # close_fe_2(case_id, session_id)
+        # endregion
 
+        # close_fe_2(case_id, session_id)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    # print('end time = ' + str(datetime.now()))
-    # for rule in [RFQ, TRFQ]:
-    #     rule_manager.remove_rule(rule)
+# print('end time = ' + str(datetime.now()))
+# for rule in [RFQ, TRFQ]:
+#     rule_manager.remove_rule(rule)
