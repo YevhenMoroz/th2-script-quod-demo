@@ -43,6 +43,7 @@ class DefaultFXValues:
     DMASlippage: str = ''
     Client: str = ''
 
+
 class OptionOrderTicketRequest:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -50,7 +51,7 @@ class OptionOrderTicketRequest:
         else:
             self.request = layout_panel_pb2.OptionOrderTicketRequest()
 
-    def set_default_fx_values(self, values: DefaultFXValues ):
+    def set_default_fx_values(self, values: DefaultFXValues):
         fx_panel = layout_panel_pb2.OptionOrderTicketRequest.DefaultFXValues()
         fx_panel.AggressiveOrderType.value = values.AggressiveOrderType
         fx_panel.AggressiveTIF.value = values.AggressiveTIF
@@ -65,7 +66,7 @@ class OptionOrderTicketRequest:
         fx_panel.AlgoSlippage.value = values.AlgoSlippage
         fx_panel.DMASlippage.value = values.DMASlippage
         fx_panel.Client.value = values.Client
-        return  fx_panel
+        self.request.defaultFXValues.CopyFrom(fx_panel)
 
     def build(self):
         return self.request

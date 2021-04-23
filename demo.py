@@ -2,8 +2,10 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx import fix_demo, ui_tests
+from quod_qa.fx.fx_taker_rfq import QAP_636
 from rule_management import RuleManager
 from stubs import Stubs
+from test_cases import QAP_638
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -41,10 +43,10 @@ def test_run():
         # fix_demo.execute(report_id,test_cases)
         ui_tests.execute(report_id)
         # QAP_1520.TestCase(report_id).execute()
+        # QAP_636.execute(report_id)
         print("1 - done")
         print('duration time = ' + str(datetime.now() - start), str(report_id))
         # bca.create_event('duration time = ' + str(datetime.now() - start))
-        # QAP_638.execute(report_id)
         # QAP_638.execute(report_id)
         # QAP_590.execute(report_id)
         # print("2 - done")
