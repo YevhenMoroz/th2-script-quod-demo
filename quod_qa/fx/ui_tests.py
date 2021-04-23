@@ -105,7 +105,7 @@ def extract_rfq_table_data(base_details, ar_service):
     print(result)
 
 
-def extract_rfq_panel(exec_id, base_request, service):
+def extract_rfq_tile_data(exec_id, base_request, service ):
     """
     Class ExtractRFQTileValues was extended.
     Here bellow you can see all available methods.
