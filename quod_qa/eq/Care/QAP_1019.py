@@ -82,8 +82,10 @@ def execute(report_id):
     # region Reject CO
     eq_wrappers.reject_order(lookup, qty, price)
     # endregion
+    # region switch to user1
+    eq_wrappers.switch_user(session_id, case_id)
+    # endregion
     # region Check values in OrderBook after Accept
-    set_base(session_id, case_id)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 

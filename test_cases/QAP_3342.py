@@ -455,6 +455,57 @@ def execute(report_id):
         #verify confirmation
         confirmation_report_params = {
             'TransactTime': '*',
+            'AllocAccount': 'MOClientSA2',
+            'ConfirmType': '*',
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'ConfirmID': '*',
+            'AllocQty': qtyh,
+            'Currency': 'EUR',
+            'Side': '1',
+            'MatchStatus': '1',
+            'ConfirmStatus': '1',
+            'AvgPx': limit,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'ConfirmTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Confirmation Report",
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID',
+                                                                                    'MatchStatus', 'AllocAccount']),
+                checkpoint_id5, 'fix-ss-back-office', case_id
+            )
+        )
+
+        #verify confirmation
+        confirmation_report_params = {
+            'TransactTime': '*',
             'AllocAccount': 'MOClientSA1',
             'ConfirmType': '*',
             'SettlDate': today,
@@ -498,7 +549,7 @@ def execute(report_id):
             bca.create_check_rule(
                 "Receive Confirmation Report",
                 bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID',
-                                                                                    'MatchStatus']),
+                                                                                    'MatchStatus', 'AllocAccount']),
                 checkpoint_id5, 'fix-ss-back-office', case_id
             )
         )
@@ -570,7 +621,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params3, ['OrderID', 'AllocAccount']),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params3, ['OrderID', 'MatchStatus',
+                                                                                     'AllocAccount']),
                 checkpoint_id6, 'fix-ss-back-office', case_id
             )
         )
@@ -620,7 +672,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params4, ['OrderID', 'AllocAccount']),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params4, ['OrderID', 'MatchStatus',
+                                                                                     'AllocAccount']),
                 checkpoint_id6, 'fix-ss-back-office', case_id
             )
         )
