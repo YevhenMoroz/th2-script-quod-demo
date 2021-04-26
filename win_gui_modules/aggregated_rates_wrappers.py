@@ -217,6 +217,8 @@ class RFQTileValues(Enum):
     LABEL_SELL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_SELL
     NEAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_MATURITY_DATE
     FAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_MATURITY_DATE
+    LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
+    RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
 
 
 class ExtractRFQTileValues:
@@ -297,6 +299,12 @@ class ExtractRFQTileValues:
 
     def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
+
+    def extract_left_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.LEFT_CHECKBOX, name)
+
+    def extract_right_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.RIGHT_CHECKBOX, name)
 
     def extract_near_tenor_list(self, preFilter: str = None):
         if preFilter is not None:
