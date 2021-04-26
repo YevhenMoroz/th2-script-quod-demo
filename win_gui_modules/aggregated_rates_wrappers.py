@@ -200,6 +200,8 @@ class RFQTileValues(Enum):
     CLIENT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.CLIENT
     LABEL_BUY = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_BUY
     LABEL_SELL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_SELL
+    LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
+    RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
 
 
 class ExtractRFQTileValues:
@@ -274,6 +276,12 @@ class ExtractRFQTileValues:
 
     def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
+
+    def extract_left_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.LEFT_CHECKBOX, name)
+
+    def extract_right_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.RIGHT_CHECKBOX, name)
 
     def extract_near_tenor_list(self, preFilter: str = None):
         if preFilter is not None:
