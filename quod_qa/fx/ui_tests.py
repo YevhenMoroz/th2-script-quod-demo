@@ -137,7 +137,7 @@ def extract_rfq_panel(exec_id, base_request, service):
     # extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     # extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
-    extract_value.set_extraction_id(exec_id)
+    extract_value.set_extraction_id(exec_id )
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
@@ -192,40 +192,6 @@ def import_layout(base_request, option_service):
     modification_request.do_import()
 
     call(option_service.modifyWorkspace, modification_request.build())
-
-
-def set_order_ticket_options(option_service, base_request):
-    """
-    The method can be used for set Only OrderTicket>DefaultFXValues
-        (to add more elements raise a sub-task)
-    To  select Option use Panels
-    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
-
-    """
-    order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues();
-    order_type = "Market"
-    tif = "FillOrKill"
-    strategy_type = "Quod DarkPool"
-    strategy = "PeggedTaker"
-    child_strategy = "BasicTaker"
-    fx_values.AggressiveOrderType = order_type
-    # fx_values.AggressiveTIF = tif
-    # fx_values.AggressiveStrategyType = strategy_type
-    # fx_values.AggressiveStrategy = strategy
-    # fx_values.AggressiveChildStrategy = child_strategy
-    # fx_values.PassiveOrderType = order_type
-    # fx_values.PassiveTIF = tif
-    # fx_values.PassiveStrategyType = strategy_type
-    # fx_values.PassiveStrategy = strategy
-    # fx_values.PassiveChildStrategy = child_strategy
-    # fx_values.AlgoSlippage = '12367.45'
-    fx_values.DMASlippage = '12678.09'
-    fx_values.Client = "FIXCLIENT4"
-
-
-    order_ticket_options.set_default_fx_values(fx_values)
-    call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def execute(report_id):

@@ -1,15 +1,13 @@
 import logging
 from datetime import datetime
-
 from th2_grpc_hand import rhbatch_pb2
 
+from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.eq_wrappers import *
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, call, get_base_request
-from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.wrappers import verify_ent, verification
+from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,41 +15,35 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1036"
-    seconds, nanos = timestamps()  # Store case start time
+    case_name = "QAP-1047"
+    seconds, nanos = timestamps()
     case_id = create_event(case_name, report_id)
     # region Declarations
+    qty = "900"
+    qty_percent = "100"
+    price = "30"
+    client = "CLIENT1"
+    lookup = "VETO.[PARIS]"
+    handl_ins = 2  # Care
+    order_type = 2  # Limit
+    side = 2  # Buy
+    tif = 0  # Day
+
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT1"
-    lookup = "VETO"
-    order_type = "Limit"
-    desk = False
-    recipient = Stubs.custom_config['qf_trading_fe_user']
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    username2 = Stubs.custom_config['qf_trading_fe_user2']
-    password2 = Stubs.custom_config['qf_trading_fe_password2']
-    desk = Stubs.custom_config['qf_trading_fe_user_desk']
     session_id = set_session_id()
-    session_id2 = Stubs.win_act.register(
-        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     base_request = get_base_request(session_id, case_id)
-    base_request2 = get_base_request(session_id2, case_id)
     # endregion
     # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username, password)
-    open_fe2(session_id2, report_id, case_id, work_dir, username2, password2)
-    #  endregion
-    # region switch to user1
-    switch_user(session_id, case_id)
+    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    create_order(base_request, qty, client, lookup, order_type,is_care=True,resipient=desk,price=price)
+    eq_wrappers.create_order_via_fix(case_id, handl_ins, side, client, order_type, qty, tif, price)
     # endregion
+
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -76,32 +68,9 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Sent")
                                                   ]))
+    # endregion
 
-    # endregion
-    # region switch to user2
-    switch_user(session_id2, case_id)
-    # endregion
-    # region accept CO
-    accept_order(lookup, qty, price)
-    # endregion
-    # region manual execution
-    manual_execution(base_request2, qty, price)
-    # endregion
-    # region switch to user1
-    switch_user(session_id, case_id)
-    # endregion
-    # region complete
-    complete_order(base_request)
-    # endregion
-    # region Check values after complete
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Filled"),
-                                                  verify_ent("Order Qty", order_qty.name, qty),
-                                                  verify_ent("Order Price", order_price.name, price),
-                                                  verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
-                                                  verify_ent("DoneForDay", order_dfd.name, "Yes"),
-                                                  verify_ent("ExecSts", order_status.name, "Filled")
-                                                  ]))
+    # region Direct order
+    eq_wrappers.direct_order(lookup, price, qty, qty_percent)
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

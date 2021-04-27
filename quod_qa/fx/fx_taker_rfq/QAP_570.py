@@ -1,13 +1,12 @@
 import logging
-
+from pathlib import Path
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -45,10 +44,11 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_order_book(ex_id, base_request, instr_type, act, act_ob, qty):
+def check_order_book(base_request, instr_type, act, act_ob, qty):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
-    ob.set_extraction_id(ex_id)
+    extraction_id = bca.client_orderid(4)
+    ob.set_extraction_id(extraction_id)
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_qty = ExtractionDetail("orderBook.qty", "Qty")
@@ -58,7 +58,7 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob, qty):
                                                                                  ob_exec_sts,
                                                                                  ob_qty])))
     call(act_ob.getOrdersDetails, ob.request())
-    call(act.verifyEntities, verification(ex_id, "checking OB",
+    call(act.verifyEntities, verification(extraction_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
                                            verify_ent("OB Qty", ob_qty.name, qty)]))
@@ -71,8 +71,7 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-570"
-    quote_owner = "QA2"
+    case_name = Path(__file__).name[:-3]
     case_instr_type = "Spot"
     case_qty1 = 1000000
     case_qty2 = 11
@@ -116,7 +115,7 @@ def execute(report_id):
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, '11')
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '11')
         cancel_rfq(base_rfq_details, ar_service)
 
         # Step 3
@@ -126,9 +125,9 @@ def execute(report_id):
         #
         # # Step 4
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, '110.50')
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '110.50')
         cancel_rfq(base_rfq_details, ar_service)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
     except Exception as e:
