@@ -6,14 +6,13 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, \
-    ContextAction
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe, \
-    get_opened_fe
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, ExtractRFQTileValues
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from custom.verifier import Verifier
 
 
 class TestCase:
@@ -101,12 +100,25 @@ class TestCase:
         rfq_request.set_action(RFQTileOrderSide.BUY)
         call(self.ar_service.placeRFQOrder, rfq_request.build())
 
+    # Check TOB buttons available
+    def check_send_order_buttons(self, details, index):
+        execution_id = bca.client_orderid(4)
+        extract_values_request = ExtractRFQTileValues(details=details)
+        extract_values_request.set_extraction_id(execution_id)
+        buy_button_enabled = extract_values_request.extract_is_buy_button_enabled("buy_button_enabled")
+        sell_button_enabled = extract_values_request.extract_is_sell_button_enabled("sell_button_enabled")
+        response = call(self.ar_service.extractRFQTileValues, extract_values_request.build())
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name(f"Check TOB buttons for {index} RFQ")
+        verifier.compare_values("Buy button enabled", response[buy_button_enabled], "False")
+        verifier.compare_values("Sell button enabled", response[sell_button_enabled], "False")
+
     # Check QuoteRequestBook method
     def check_qrb(self, row_index, instrument_symbol):
         execution_id = bca.client_orderid(4)
         qrb = QuoteDetailsRequest(base=self.base_request)
-        qrb.set_row_number(row_index)
         qrb.set_extraction_id(execution_id)
+        qrb.set_row_number(row_index)
         qrb_instrument_symbol = ExtractionDetail('quoteRequestBook.instrumentsymbol', 'InstrSymbol')
         qrb_user = ExtractionDetail('quoteRequestBook.user', 'User')
         qrb_status = ExtractionDetail('quoteRequestBook.status', 'Status')
@@ -125,8 +137,8 @@ class TestCase:
     def check_qb(self, row_index, security_id):
         execution_id = bca.client_orderid(4)
         qb = QuoteDetailsRequest(base=self.base_request)
-        qb.set_row_number(row_index)
         qb.set_extraction_id(execution_id)
+        qb.set_row_number(row_index)
         qb_owner = ExtractionDetail('quoteBook.owner', 'Owner')
         qb_quote_status = ExtractionDetail('quoteBook.quotestatus', 'QuoteStatus')
         qb_id = ExtractionDetail('quoteBook.id', 'Id')
@@ -167,6 +179,10 @@ class TestCase:
 
             # Step 1
             self.maximize_ar_window()
+            # TEST
+            self.minimize_ar_window()
+            self.maximize_ar_window()
+            # TEST
 
             self.create_rfq_tile(self.rfq_1)
             self.modify_tile(self.rfq_1, 'Spot', '1W', 'EUR', 'USD')
@@ -236,16 +252,16 @@ class TestCase:
 
             self.minimize_ar_window()
 
-            quote_id_1 = self.check_qb(1, 'EUR/GBP')
+            self.check_qb(1, 'EUR/GBP')
             quote_id_2 = self.check_qb(2, 'AUD/BRL')
-            quote_id_3 = self.check_qb(3, 'EUR/USD')
+            self.check_qb(3, 'EUR/USD')
 
             # Step 7
             self.maximize_ar_window()
 
             self.cancel_rfq(self.rfq_1)
 
-            # TODO add Send button check
+            self.check_send_order_buttons(self.rfq_1, 1)
 
             # Step 8
             self.send_order_by_venue_price(self.rfq_2)
@@ -254,9 +270,11 @@ class TestCase:
 
             self.check_ob(2, quote_id_2)
 
-            # # Step 9
-            # self.minimize_ar_window()
-            # time.sleep(30)
+            # Step 9
+            self.maximize_ar_window()
+
+            time.sleep(15)
+            self.check_send_order_buttons(self.rfq_3, 3)
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
