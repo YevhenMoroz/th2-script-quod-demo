@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.fx.fx_mm_esp import common
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
@@ -26,13 +25,20 @@ timeouts = True
 connectivity = 'fix-qsesp-303'
 account = 'MMCLIENT1'
 qty = 1000000
-
+client_tier='Bronze'
+instrument='EUR/USD'
 
 
 def change_pricing(base_request, service):
     press_ex = ModifyRatesTileRequest(details=base_request)
     press_ex.press_pricing()
     call(service.modifyRatesTile, press_ex.build())
+
+def selecting_tier(base_request, service):
+    selecting = ModifyRatesTileRequest(details=base_request)
+    selecting.set_client_tier(client_tier)
+    selecting.set_instrument(instrument)
+    call(service.modifyRatesTile, selecting.build())
 
 class TestCase:
     def __init__(self, report_id):
@@ -48,7 +54,7 @@ class TestCase:
 
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP_1559', report_id)
+        self.case_id = bca.create_event('QAP_1558', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -156,7 +162,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '*',
+                    'MDEntrySize': qty,
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -171,7 +177,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '*',
+                    'MDEntrySize': qty,
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -354,7 +360,7 @@ class TestCase:
                                                                       er_filled['ClOrdID']),
                                                            verify_ent("OB Sts", ob_exec_sts.name, "Rejected"),
                                                            verify_ent("OB TIF",ob_tif.name,"FillOrKill"),
-                                                           verify_ent("OB FreeNotes", ob_free_notes.name, "not tradeable")]))
+                                                           verify_ent("OB FreeNotes", ob_free_notes.name, "not active")]))
 
 
 
@@ -365,22 +371,23 @@ class TestCase:
 
         try:
 
-            # if not Stubs.frontend_is_open:
-            #     prepare_fe_2(self.case_id, self.session_id)
-            # else:
-            #     get_opened_fe(self.case_id, self.session_id)
-            #
-            # change_pricing(BaseTileDetails(base=self.base_request), self.cpt_service)
+            if not Stubs.frontend_is_open:
+                prepare_fe_2(self.case_id, self.session_id)
+            else:
+                get_opened_fe(self.case_id, self.session_id)
+
+            selecting_tier(BaseTileDetails(base=self.base_request), self.cpt_service)
+            change_pricing(BaseTileDetails(base=self.base_request), self.cpt_service)
 
             # Step 1
             market_data_params = self.send_md_subscribe()
             self.send_order()
             # Steps 3-4
-            # self.check_rejected()
+            self.check_rejected()
 
-            # self.send_md_unsubscribe(market_data_params)
+            self.send_md_unsubscribe(market_data_params)
 
-            # change_pricing(BaseTileDetails(base=self.base_request), self.cpt_service)
+            change_pricing(BaseTileDetails(base=self.base_request), self.cpt_service)
 
 
 

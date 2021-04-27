@@ -25,12 +25,20 @@ timeouts = True
 connectivity = 'fix-qsesp-303'
 account = 'MMCLIENT1'
 qty = 1000000
+client_tier='Bronze'
+instrument='EUR/USD'
 
 
 def change_exec(base_request, service):
     press_ex = ModifyRatesTileRequest(details=base_request)
     press_ex.press_executable()
     call(service.modifyRatesTile, press_ex.build())
+
+def selecting_tier(base_request, service):
+    selecting = ModifyRatesTileRequest(details=base_request)
+    selecting.set_client_tier(client_tier)
+    selecting.set_instrument(instrument)
+    call(service.modifyRatesTile, selecting.build())
 
 class TestCase:
     def __init__(self, report_id):
@@ -366,6 +374,7 @@ class TestCase:
             else:
                 get_opened_fe(self.case_id, self.session_id)
 
+            selecting_tier(BaseTileDetails(base=self.base_request), self.cpt_service)
             change_exec(BaseTileDetails(base=self.base_request), self.cpt_service)
 
             # Step 1
@@ -385,11 +394,6 @@ class TestCase:
 
         # close_fe(self.case_id, self.session_id)
 
-
-        except Exception as e:
-            logging.error('Error execution', exc_info=True)
-
-        # close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

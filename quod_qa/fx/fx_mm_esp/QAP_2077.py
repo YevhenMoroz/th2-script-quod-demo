@@ -14,7 +14,7 @@ from pandas.tseries.offsets import BusinessDay as bd
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-
+import time
 
 
 logger = logging.getLogger(__name__)
@@ -65,8 +65,8 @@ class TestCase:
                 'SecurityIDSource': '8',
                 'SecurityID': 'EUR/USD',
                 'SecurityExchange': 'XQFX',
-            },
-            'Product': '4',
+                'Product': '4'
+            }
         }
 
         # This parameters can be used for ExecutionReport message
@@ -82,7 +82,8 @@ class TestCase:
                 'Symbol': self.case_params['Instrument']['Symbol'],
                 'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
                 'SecurityID': self.case_params['Instrument']['SecurityID'],
-                'SecurityExchange': self.case_params['Instrument']['SecurityExchange']
+                'SecurityExchange': self.case_params['Instrument']['SecurityExchange'],
+                'Product': self.case_params['Instrument']['Product']
             }
         }
 
@@ -110,13 +111,13 @@ class TestCase:
                 {
                     'Instrument': {
                         'Symbol': self.case_params['Instrument']['Symbol'],
-                        'SecurityType': self.case_params['Instrument']['SecurityType']
+                        'SecurityType': self.case_params['Instrument']['SecurityType'],
+                        'Product': self.case_params['Instrument']['Product']
                     },
                     'SettlDate': self.case_params['SettlDate'],
                     'SettlType': self.case_params['SettlType']
                 }
-            ],
-            # 'Product': self.case_params['Product']
+            ]
         }
 
         subscribe = self.fix_act.placeMarketDataRequestFIX(
@@ -126,16 +127,19 @@ class TestCase:
                 self.case_id,
                 bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
             ))
+        time.sleep(3)
 
         self.case_params['Price'] = subscribe \
             .response_messages_list[0].fields['NoMDEntries'] \
             .message_value.fields['NoMDEntries'].list_value.values[1] \
             .message_value.fields['MDEntryPx'].simple_value
 
-        Qty = subscribe \
-            .response_messages_list[0].fields['NoMDEntries'] \
-            .message_value.fields['NoMDEntries'].list_value.values[1] \
-            .message_value.fields['MDEntrySize'].simple_value
+        print(f"Price is: {self.case_params['Price']}")
+
+        # Qty = subscribe \
+        #     .response_messages_list[0].fields['NoMDEntries'] \
+        #     .message_value.fields['NoMDEntries'].list_value.values[1] \
+        #     .message_value.fields['MDEntrySize'].simple_value
 
         print(self.case_params['Price'])
         md_subscribe_response = {
@@ -170,6 +174,62 @@ class TestCase:
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
                     'MDQuoteType': 1,
                     'MDEntryPositionNo': 1,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 2,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 2,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
                     'MDEntryDate': '*',
                     'MDEntryType': 1
                 }
@@ -210,7 +270,8 @@ class TestCase:
             'Account': self.case_params['Account'],
             'HandlInst': self.case_params['HandlInst'],
             'Side': self.case_params['Side'],
-            'OrderQty': 3000000,
+            # 'OrderQty': self.case_params['OrderQty'],
+            'OrderQty': 17000000,
             'TimeInForce': self.case_params['TimeInForce'],
             'Price': self.case_params['Price'],
             'OrdType': self.case_params['OrdType'],
@@ -220,9 +281,10 @@ class TestCase:
             'SettlDate': self.case_params['SettlDate'],
             'Instrument': {
                 'Symbol': self.case_params['Instrument']['Symbol'],
+                'Product': self.case_params['Instrument']['Product']
             },
             'Currency': self.case_params['Currency'],
-            'Product': self.case_params['Product']
+
         }
 
         new_order = self.fix_act.placeOrderFIX(
@@ -253,7 +315,7 @@ class TestCase:
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'LeavesQty': order_params['OrderQty']
+            'LeavesQty': order_params['OrderQty'],
         }
 
         self.verifier.submitCheckRule(
