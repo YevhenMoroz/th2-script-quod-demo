@@ -17,7 +17,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('kbrit tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
@@ -46,37 +46,7 @@ def test_run():
         # QAP_636.execute(report_id)
         print("1 - done")
         print('duration time = ' + str(datetime.now() - start), str(report_id))
-        # bca.create_event('duration time = ' + str(datetime.now() - start))
-        # QAP_638.execute(report_id)
-        # QAP_590.execute(report_id)
-        # print("2 - done")
-        # QAP_591.execute(report_id)
-        # print("3 - done")
-        # QAP_593.execute(report_id)
-        # QAP_596.execute(report_id)
-        # QAP_597.execute(report_id)
-        # QAP_599.execute(report_id)
-        # QAP_600.execute(report_id)
-        # QAP_601.execute(report_id)
-        # QAP_602.execute(report_id)
-        # QAP_604.execute(report_id)
-        # QAP_605.execute(report_id)
-        # QAP_606.execute(report_id)
-        # QAP_610.execute(report_id)
-        # QAP_611.execute(report_id)
-        # QAP_612.execute(report_id)
-        # QAP_636.execute(report_id)
-        # QAP_646.execute(report_id)
-        # QAP_847.execute(report_id)
-        # QAP_848.execute(report_id)
-        # QAP_849.execute(report_id)
-        # QAP_850.execute(report_id)
-        # QAP_982.execute(report_id)
-        # QAP_1713.execute(report_id)
-        # QAP_2514.execute(report_id)
-        # QAP_2728.execute(report_id)
-        # QAP_2826.execute(report_id)
-        # QAP_2847.execute(report_id)
+
 
 
     except Exception:

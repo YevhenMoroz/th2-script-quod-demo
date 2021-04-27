@@ -174,8 +174,8 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
