@@ -4,7 +4,7 @@ from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
-from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
+from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
 
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -137,6 +137,12 @@ class ModifyRFQTileRequest:
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
 
+    def click_checkbox_left(self):
+        self.modify_request.clickLeftBox = True
+
+    def click_checkbox_right(self):
+        self.modify_request.clickRightBox = True
+
     def add_context_action(self, context_action: ContextAction):
         self.modify_request.contextActions.append(context_action.build())
 
@@ -150,13 +156,20 @@ class ModifyRFQTileRequest:
     def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
         self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
 
+    def add_actions(self, actions_rates: list):
+        for action in actions_rates:
+            self.add_actions(action)
+
     def build(self):
         return self.modify_request
 
 
 class ModifyRatesTileRequest:
     def __init__(self, details: BaseTileDetails = None):
-        self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
+        if details is not None:
+            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest(data=details.build())
+        else:
+            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
 
     def set_details(self, details: BaseTileDetails):
         self.modify_request.data.CopyFrom(details.build())
@@ -183,11 +196,15 @@ class ModifyRatesTileRequest:
         self.modify_request.contextActions.append(context_action.build())
 
     def add_context_actions(self, context_actions: list):
-        for action in context_actions:
-            self.add_context_action(action)
+        for context_action in context_actions:
+            self.add_context_action(context_action)
 
-    def set_click_on_one_click_button(self):
-        self.modify_request.clickOnOneClick = True
+    def add_action(self, actions_rates: ActionsRatesTile):
+        self.modify_request.actions.append(actions_rates.build())
+
+    def add_actions(self, actions_rates: list):
+        for action in actions_rates:
+            self.add_action(action)
 
     def build(self):
         return self.modify_request
@@ -393,6 +410,11 @@ class RFQTileOrderSide(Enum):
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
 
 
+class ESPTileOrderSide(Enum):
+    BUY = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
+    SELL = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
+
+
 class PlaceRFQRequest:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:
@@ -410,4 +432,44 @@ class PlaceRFQRequest:
         self.__request_details.action = action.value
 
     def build(self) -> ar_operations_pb2.RFQTileOrderDetails:
+        return self.__request_details
+
+
+class PlaceESPOrder:
+    def __init__(self, details: BaseTileDetails = None):
+        if details is not None:
+            self.__request_details = ar_operations_pb2.ESPTileOrderDetails(data=details.build())
+        else:
+            self.__request_details = ar_operations_pb2.ESPTileOrderDetails()
+
+    def set_details(self, details: BaseTileDetails):
+        self.__request_details.data.CopyFrom(details.build())
+
+    def set_venue(self, venue: str):
+        self.__request_details.venue = venue
+
+    def set_action(self, action: ESPTileOrderSide):
+        self.__request_details.action = action.value
+
+    def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
+        return self.__request_details
+
+
+class PlaceESPOrder:
+    def __init__(self, details: BaseTileDetails = None):
+        if details is not None:
+            self.__request_details = ar_operations_pb2.ESPTileOrderDetails(data=details.build())
+        else:
+            self.__request_details = ar_operations_pb2.ESPTileOrderDetails()
+
+    def set_details(self, details: BaseTileDetails):
+        self.__request_details.data.CopyFrom(details.build())
+
+    def set_venue(self, venue: str):
+        self.__request_details.venue = venue
+
+    def set_action(self, action: ESPTileOrderSide):
+        self.__request_details.action = action.value
+
+    def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
