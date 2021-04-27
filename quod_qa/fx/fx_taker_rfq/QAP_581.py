@@ -2,15 +2,15 @@ import logging
 import time
 import rule_management as rm
 from custom import basic_custom_actions as bca
-
+from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction
+    ContextAction, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -121,7 +121,6 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     venues = ["HSB", "CIT"]
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"
 
@@ -161,9 +160,7 @@ def execute(report_id):
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         # cancel_rfq(base_rfq_details, ar_service)
 
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
 
     for rule in [RFQ, TRFQ]:
