@@ -70,7 +70,7 @@
       "endpoints": {
         "act_win": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -85,7 +85,7 @@
       "endpoints": {
         "act_order_ticket": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -100,7 +100,7 @@
       "endpoints": {
         "act_order_book": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -115,7 +115,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -130,7 +130,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -145,7 +145,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -160,7 +160,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31290
+          "port": 32223
         }
       },
       "strategy": {
@@ -170,17 +170,19 @@
         ]
       }
     },
-    "SimulatorHttp": {
-      "service-class": "SimTemplateService",
+    "Win_Act_Layout_Panel": {
+      "service-class": "LayoutPanelServiceService",
       "endpoints": {
-        "simulatorHttp": {
-          "host": "10.0.22.22",
-          "port": 31123
+        "act_layout": {
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulatorHttp"]
+        "endpoints": [
+          "act_layout"
+        ]
       }
     }
   }

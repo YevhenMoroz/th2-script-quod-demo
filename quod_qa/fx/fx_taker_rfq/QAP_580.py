@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
@@ -55,7 +56,7 @@ def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts, 
     qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
     call(service.getQuoteRequestBookDetails, qrb.request())
     call(act.verifyEntities, verification(ex_id, "checking QRB",
-                                          [verify_ent("QRB Venue", qrb_venue.name, "HSBCR"),
+                                          [verify_ent("QRB Venue", qrb_venue.name, venue),
                                            verify_ent("QRB Status", qrb_status.name, status),
                                            verify_ent("QRB QuoteStatus", qrb_quote_status.name, quote_sts)]))
 
@@ -103,14 +104,14 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-580"
+    case_name = Path(__file__).name[:-3]
     quote_owner = "QA2"
     case_instr_type = "Spot"
     case_sts_new = 'New'
     case_sts_terminated = 'Terminated'
     case_quote_sts_accepted = "Accepted"
     case_quote_sts_terminated = "Terminated"
-    case_venue = "HSBC"
+    case_venue = "HSBCR"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
@@ -153,7 +154,7 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
-
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
     except Exception as e:

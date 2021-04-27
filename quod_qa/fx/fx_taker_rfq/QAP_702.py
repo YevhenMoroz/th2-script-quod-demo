@@ -3,6 +3,7 @@ from pathlib import Path
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
+
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -26,7 +27,6 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
-    modify_request.set_change_currency()
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -37,7 +37,7 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
 
 def place_order_tob(base_request, service):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_action(RFQTileOrderSide.SELL)
+    rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 
 
@@ -45,9 +45,10 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_sts, venue):
+def check_quote_request_b(base_request, service, case_id, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_extraction_id(ex_id)
+    execution_id = bca.client_orderid(4)
+    qrb.set_extraction_id(execution_id)
     qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
@@ -63,9 +64,10 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     verifier.verify()
 
 
-def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
+def check_quote_book(base_request, service, case_id, owner, quote_id):
     qb = QuoteDetailsRequest(base=base_request)
-    qb.set_extraction_id(ex_id)
+    execution_id = bca.client_orderid(4)
+    qb.set_extraction_id(execution_id)
     qb.set_filter(["Id", quote_id])
     qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
@@ -81,29 +83,54 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     verifier.verify()
 
 
-def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, currency):
+def check_order_book(base_request, instr_type, act_ob, case_id, owner, beneficiary):
     ob = OrdersDetails()
+    execution_id = bca.client_orderid(4)
     ob.set_default_params(base_request)
-    ob.set_extraction_id(ex_id)
+    ob.set_extraction_id(execution_id)
+    ob_id = ExtractionDetail("orderbook.orderid", "Order ID")
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
-    ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
-    ob_currency = ExtractionDetail("orderbook.currency", "Currency")
+    ob_quote_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
+    ob_beneficiary = ExtractionDetail("orderbook.beneficiary", "Beneficiary")
+    ob_owner = ExtractionDetail("orderbook.owner", "Owner")
 
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
                                                                                  ob_exec_sts,
-                                                                                 ob_id,
-                                                                                 ob_currency])))
+                                                                                 ob_quote_id,
+                                                                                 ob_beneficiary,
+                                                                                 ob_owner,
+                                                                                 ob_id])))
     response = call(act_ob.getOrdersDetails, ob.request())
+
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Currency", currency, response[ob_currency.name])
+    verifier.compare_values("Owner", owner, response[ob_owner.name])
+    verifier.compare_values("Beneficiary", beneficiary, response[ob_beneficiary.name])
     verifier.verify()
-    return response[ob_id.name]
+    return response
+
+
+def get_my_orders_details(ob_act, base_request, case_id, order_id, beneficiary):
+    main_order_details = OrdersDetails()
+    execution_id = bca.client_orderid(4)
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id(execution_id)
+    main_order_details.set_filter(["Order ID", order_id])
+    ob_beneficiary = ExtractionDetail("myorderbook.beneficiary", "Beneficiary")
+    main_order_details.add_single_order_info(
+        OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_beneficiary])))
+    response = call(ob_act.getMyOrdersDetails, main_order_details.request())
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check My Order book")
+    verifier.compare_values("Owner", beneficiary, response[ob_beneficiary.name])
+    verifier.verify()
 
 
 def execute(report_id):
@@ -116,12 +143,13 @@ def execute(report_id):
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
+    case_beneficiary="test"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
     case_venue = ["CIT"]
     case_filter_venue = "CITI"
-    case_qty = 2000000
+    case_qty = 10000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'Spot'
@@ -144,17 +172,20 @@ def execute(report_id):
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
                         case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
+        check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id,
-                                    case_to_currency)
-        check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, quote_id)
+        order_info = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
+                                      quote_owner, case_beneficiary)
+        check_quote_book(case_base_request, ar_service, case_id, quote_owner, order_info["orderBook.quoteid"])
+        get_my_orders_details(ob_act, case_base_request, case_id, order_info["orderbook.orderid"], case_beneficiary)
+
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        for rule in [RFQ, TRFQ]:
+            rule_manager.remove_rule(rule)

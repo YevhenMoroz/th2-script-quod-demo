@@ -25,14 +25,13 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
+def modify_rfq_tile_swap(base_request, service, near_qty, cur1, cur2, near_tenor, far_tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
-    modify_request.add_context_action(action)
-    modify_request.set_quantity(qty)
+    modify_request.set_near_tenor(near_tenor)
+    modify_request.set_far_leg_tenor(far_tenor)
+    modify_request.set_quantity(near_qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
     call(service.modifyRFQTile, modify_request.build())
 
@@ -42,36 +41,27 @@ def check_value_in_column(exec_id, base_request, service, case_id):
     table_actions_request.set_extraction_id(exec_id)
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.set_extraction_id(exec_id)
-    extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
+    extract_value.extract_best_bid_small("ar_rfq.extract_best_bid_small")
     extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
-    extract2 = TableAction.extract_cell_value(CellExtractionDetails("SP_Sell", "SP", "HSB", 0))
-    extract3 = TableAction.extract_cell_value(CellExtractionDetails("1W_Sell", "1W", "HSB", 0))
+    extract2 = TableAction.extract_cell_value(CellExtractionDetails("DistSell", "Dist", "HSB", 0))
+    extract3 = TableAction.extract_cell_value(CellExtractionDetails("2WSell", "2W", "HSB", 0))
+    extract4 = TableAction.extract_cell_value(CellExtractionDetails("SPSell", "SP", "HSB", 0))
 
-    table_actions_request.add_actions([extract1, extract2, extract3])
+    table_actions_request.add_actions([extract1, extract2, extract3, extract4])
+    extract_data = call(service.extractRFQTileValues, extract_value.build())
     response = call(service.processTableActions, table_actions_request.build())
-    best_bid = call(service.extractRFQTileValues, extract_value.build())
-
-    extracted_large = best_bid["ar_rfq.extract_best_bid_large"]
-    extracted_sp = response["SP_Sell"]
-    price = float(best_bid["ar_rfq.extract_best_bid_large"] + response["PtsSell"])
-    if len(extracted_sp) <= 3:
-        column_sp = float(extracted_large + extracted_sp)
-    else:
-        column_sp = float(extracted_sp)
-
-    extracted_1w = response["1W_Sell"]
-
-    column_1w = round(price - column_sp, 5)
-
-    def check_dif():
-        if int((float(extracted_1w) * 0.0001 - column_1w) * 10000) <= 1:
-            return str(extracted_1w)
-        else:
-            return str(column_1w)
+    extracted_best_bid = float(extract_data["ar_rfq.extract_best_bid_small"])
+    extracted_pts = float(response["PtsSell"])
+    extracted_dist = float(response["DistSell"])
+    extracted_2w = float(response["2WSell"])
+    extracted_sp = float(response["SPSell"])
+    pts = round((extracted_2w - extracted_sp) * 10000, 1)
+    dist = round(abs(extracted_best_bid - extracted_pts), 1)
 
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check calculation 1W")
-    verifier.compare_values("1W", check_dif(), str(extracted_1w))
+    verifier.set_event_name("Check calculation Of Columns")
+    verifier.compare_values("Dist", str(dist), str(extracted_dist))
+    verifier.compare_values("Pts", str(pts), str(extracted_pts))
     verifier.verify()
 
 
@@ -86,13 +76,13 @@ def execute(report_id):
     rule_manager = rm.RuleManager()
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-612"
+    case_name = "QAP-683"
     case_qty = 1000000
-    case_near_tenor = "1W"
+    case_near_tenor = "Spot"
+    case_far_tenor = "2W"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -110,16 +100,18 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
-                        case_to_currency, case_near_tenor, case_client, venues)
-        # Step 2
+        modify_rfq_tile_swap(base_rfq_details, ar_service, case_qty, case_from_currency,
+                             case_to_currency, case_near_tenor, case_far_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
         cancel_rfq(base_rfq_details, ar_service)
-        check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id)
+        # Step 2-3
+        check_value_in_column("CH_0", base_rfq_details, ar_service, case_id)
         call(ar_service.closeRFQTile, base_rfq_details.build())
+
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        for rule in [RFQ, TRFQ]:
+            rule_manager.remove_rule(rule)
