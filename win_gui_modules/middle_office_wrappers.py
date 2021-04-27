@@ -36,6 +36,7 @@ class ExtractionField(Enum):
     NET_PRICE = middle_office_pb2.ExtractionDetails.ExtractionField.NET_PRICE
     PSET_BIC = middle_office_pb2.ExtractionDetails.ExtractionField.PSET_BIC
     EXCHANGE_RATE = middle_office_pb2.ExtractionDetails.ExtractionField.EXCHANGE_RATE
+    SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.SETTLEMENT_TYPE
 
 
 class ExtractionDetails:
@@ -68,6 +69,9 @@ class ExtractionDetails:
 
     def extract_exchange_rate(self, name: str):
         self.extract_value(ExtractionField.EXCHANGE_RATE, name)
+
+    def extract_settlement_type(self, name: str):
+        self.extract_value(ExtractionField.SETTLEMENT_TYPE, name)
 
     def extract_value(self, field: ExtractionField, name: str):
         extracted_value = middle_office_pb2.ExtractionDetails.ExtractionParam()
