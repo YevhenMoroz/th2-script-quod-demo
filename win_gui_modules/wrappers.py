@@ -109,6 +109,33 @@ def compare_values(request: act_ui_win_pb2.VerificationDetails,
     var.expectedPath = expected_path
     var.verificationMethod = method
 
+def direct_loc_request(qty_type: str, qty_percentage: str, route: str):
+    request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.qtyType = qty_type
+    request.qtyPercentage = qty_percentage
+    request.route = route
+
+    return request
+
+
+def direct_moc_request(qty_type: str, qty_percentage: str, route: str):
+    request = act_ui_win_pb2.DirectMocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.qtyType = qty_type
+    request.qtyPercentage = qty_percentage
+    request.route = route
+
+    return request
+
+
+def direct_poc_request(qty_type: str, reference_price: str,  percentage: str, qty_percentage: str, route: str):
+    request = act_ui_win_pb2.DirectPocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.qtyType = qty_type
+    request.referencePrice = reference_price
+    request.percentage = percentage
+    request.qtyPercentage = qty_percentage
+    request.route = route
+
+    return request
 
 def accept_order_request(instr: str, qty: str, limit: str):
     request = act_ui_win_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
