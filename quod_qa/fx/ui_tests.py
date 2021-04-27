@@ -157,7 +157,7 @@ def extruct_popup_lists_demo(exec_id, base_request, service):
         print(f'{line} = {response[line]}')
 
 
-def modify_order(base_request, service):
+def modify_rfq_tile(base_request, service):
     modify_request = ModifyRFQTileRequest(details=base_request)
     # modify_request.set_quantity(123)
     # modify_request.set_far_leg_qty(456)
@@ -166,7 +166,9 @@ def modify_order(base_request, service):
     # modify_request.set_near_tenor("TOM")
     # modify_request.set_far_leg_tenor("1W")
     # modify_request.set_client('FIXCLIENT3')
-    modify_request.set_change_currency()
+    # modify_request.set_change_currency()
+    modify_request.click_checkbox_left()
+    modify_request.click_checkbox_right()
     call(service.modifyRFQTile, modify_request.build())
 
 
@@ -190,40 +192,6 @@ def import_layout(base_request, option_service):
     modification_request.do_import()
 
     call(option_service.modifyWorkspace, modification_request.build())
-
-
-def set_order_ticket_options(option_service, base_request):
-    """
-    The method can be used for set Only OrderTicket>DefaultFXValues
-        (to add more elements raise a sub-task)
-    To  select Option use Panels
-    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
-
-    """
-    order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues();
-    order_type = "Market"
-    tif = "FillOrKill"
-    strategy_type = "Quod DarkPool"
-    strategy = "PeggedTaker"
-    child_strategy = "BasicTaker"
-    fx_values.AggressiveOrderType = order_type
-    # fx_values.AggressiveTIF = tif
-    # fx_values.AggressiveStrategyType = strategy_type
-    # fx_values.AggressiveStrategy = strategy
-    # fx_values.AggressiveChildStrategy = child_strategy
-    # fx_values.PassiveOrderType = order_type
-    # fx_values.PassiveTIF = tif
-    # fx_values.PassiveStrategyType = strategy_type
-    # fx_values.PassiveStrategy = strategy
-    # fx_values.PassiveChildStrategy = child_strategy
-    # fx_values.AlgoSlippage = '12367.45'
-    fx_values.DMASlippage = '12678.09'
-    fx_values.Client = "FIXCLIENT4"
-
-
-    order_ticket_options.set_default_fx_values(fx_values)
-    call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def execute(report_id):
@@ -274,10 +242,10 @@ def execute(report_id):
         # endregion
 
         # region RFQ tile ↓
-        # modify_order(base_tile_details, ar_service)
+        modify_rfq_tile(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
-        extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
+        # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
         # temporary doesn't available because of PROC-261
         # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
         # endregion
