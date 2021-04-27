@@ -28,19 +28,19 @@ simulator = quod_simulator_pb2_grpc.TemplateSimulatorServiceStub(channel)
 #     md_entry_size={1000: 1000},
 #     md_entry_px={40: 30}))
 
-# SingleExecParis = simulator.createQuodSingleExecRule(request=quod_simulator_pb2.TemplateQuodSingleExecRule(
-#     connection_id=infra_pb2.ConnectionID(session_alias="fix-bs-eq-paris"),
-#     no_party_ids=[
-#             quod_simulator_pb2.TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
-#             quod_simulator_pb2.TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
-#             quod_simulator_pb2.TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
-#         ],
-#     cum_qty=1000,
-#     mask_as_connectivity="fix-fh-eq-paris",
-#     md_entry_size={0: 1000},
-#     md_entry_px={0: 30},
-#     symbol="1062"
-# ))
+SingleExecParis = simulator.createQuodSingleExecRule(request=quod_simulator_pb2.TemplateQuodSingleExecRule(
+    connection_id=infra_pb2.ConnectionID(session_alias="fix-bs-eq-paris"),
+    no_party_ids=[
+            quod_simulator_pb2.TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
+            quod_simulator_pb2.TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
+            quod_simulator_pb2.TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
+        ],
+    cum_qty=1000,
+    mask_as_connectivity="fix-fh-eq-paris",
+    md_entry_size={0: 1000},
+    md_entry_px={0: 30},
+    symbol={"XPAR", "1062"}
+))
 #
 # SingleExecTrqx = simulator.createQuodSingleExecRule(request=quod_simulator_pb2.TemplateQuodSingleExecRule(
 #     connection_id=infra_pb2.ConnectionID(session_alias="fix-bs-eq-trqx"),
