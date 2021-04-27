@@ -1,12 +1,12 @@
 import logging
 import time
 
-# from demo import timeouts
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, \
+    ExtractRFQTileValues
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -49,11 +49,6 @@ class TestCase:
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
         prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
-        # try:
-        #     get_opened_fe(self.case_id, self.session_id)
-        # except Exception as e:
-        #     logging.error('FE is not opened')
-        #     prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
 
     # Add case rules method
     def add_rules(self):
@@ -105,13 +100,16 @@ class TestCase:
         execution_id = bca.client_orderid(4)
         extract_values_request = ExtractRFQTileValues(details=details)
         extract_values_request.set_extraction_id(execution_id)
-        buy_button_enabled = extract_values_request.extract_is_buy_button_enabled("buy_button_enabled")
-        sell_button_enabled = extract_values_request.extract_is_sell_button_enabled("sell_button_enabled")
+        buy_button = "buy_button_enabled"
+        extract_values_request.extract_is_buy_button_enabled(buy_button)
+        sell_button = "sell_button_enabled"
+        extract_values_request.extract_is_sell_button_enabled(sell_button)
         response = call(self.ar_service.extractRFQTileValues, extract_values_request.build())
         verifier = Verifier(self.case_id)
         verifier.set_event_name(f"Check TOB buttons for {index} RFQ")
-        verifier.compare_values("Buy button enabled", response[buy_button_enabled], "False")
-        verifier.compare_values("Sell button enabled", response[sell_button_enabled], "False")
+        verifier.compare_values("Buy button enabled", response[buy_button], "False")
+        verifier.compare_values("Sell button enabled", response[sell_button], "False")
+        verifier.verify()
 
     # Check QuoteRequestBook method
     def check_qrb(self, row_index, instrument_symbol):
@@ -175,14 +173,10 @@ class TestCase:
     def execute(self):
         try:
             self.prepare_frontend()
-            # self.add_rules()
+            self.add_rules()
 
             # Step 1
             self.maximize_ar_window()
-            # TEST
-            self.minimize_ar_window()
-            self.maximize_ar_window()
-            # TEST
 
             self.create_rfq_tile(self.rfq_1)
             self.modify_tile(self.rfq_1, 'Spot', '1W', 'EUR', 'USD')
@@ -279,7 +273,7 @@ class TestCase:
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
-        # self.remove_rules()
+        self.remove_rules()
         close_fe(self.case_id, self.session_id)
 
 
