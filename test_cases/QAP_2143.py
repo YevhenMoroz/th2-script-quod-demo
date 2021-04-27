@@ -24,11 +24,11 @@ def execute(case_name, report_id, case_params):
     case_id = bca.create_event(case_name, report_id)
 
     mdu_params_fwd = {
-        # "MDReqID": simulator.getMDRefIDForConnection303(
-        #         request=RequestMDRefID(
-        #                 symbol="EUR/USD:FXF:WK1:HSBC",
-        #                 connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-        "MDReqID": "EUR/USD:FXF:WK1:HSBC=EUR/USD:FXF:WK1:HSBC_6",
+        "MDReqID": simulator.getMDRefIDForConnection303(
+                request=RequestMDRefID(
+                        symbol="EUR/USD:FXF:WK1:HSBC",
+                        connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/USD:FXF:WK1:HSBC=EUR/USD:FXF:WK1:HSBC_6",
         # "MDReportID": "1",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
@@ -49,7 +49,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.1819,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
             {
@@ -60,7 +60,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.1820,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
             {
@@ -71,7 +71,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.1819,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
             {
@@ -82,7 +82,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.1820,
                 "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
 
@@ -98,8 +98,8 @@ def execute(case_name, report_id, case_params):
         ))
 
     mdu_params_spo = {
-        # "MDReqID": simulator.getMDRefIDForConnection303(request=RequestMDRefID(symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-        "MDReqID": "EUR/AED=EUR/AED:SPO:REG:HSBC_38",
+        "MDReqID": simulator.getMDRefIDForConnection303(request=RequestMDRefID(symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/AED=EUR/AED:SPO:REG:HSBC_38",
         # "MDReportID": "1",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
@@ -120,8 +120,8 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.18,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },
             {
@@ -132,7 +132,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.17,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.spo(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },
@@ -144,7 +144,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.18,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },
@@ -156,7 +156,7 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.17,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.spo(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },

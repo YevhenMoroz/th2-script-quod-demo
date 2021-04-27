@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
@@ -305,6 +306,12 @@ class ModifyRFQTileRequest:
         for action in context_actions:
             self.add_context_action(action)
 
+    def clear_quantity(self, clear_quantity: bool):
+        self.modify_request.clearQuantity = clear_quantity
+
+    def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
+        self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
+
     def add_actions(self, actions_rates: list):
         for action in actions_rates:
             self.add_actions(action)
@@ -383,6 +390,8 @@ class RFQTileValues(Enum):
     LABEL_SELL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LABEL_SELL
     NEAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_MATURITY_DATE
     FAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_MATURITY_DATE
+    LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
+    RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
 
 
 class ExtractRFQTileValues:
@@ -463,6 +472,12 @@ class ExtractRFQTileValues:
 
     def extract_cur_label_left(self, name: str):
         self.extract_value(RFQTileValues.LABEL_SELL, name)
+
+    def extract_left_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.LEFT_CHECKBOX, name)
+
+    def extract_right_checkbox(self, name: str):
+        self.extract_value(RFQTileValues.RIGHT_CHECKBOX, name)
 
     def extract_near_tenor_list(self, preFilter: str = None):
         if preFilter is not None:

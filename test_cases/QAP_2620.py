@@ -245,7 +245,7 @@ def execute(report_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
-        # main_order_details.set_filter(["Misc3", "test tag 5005"])
+        main_order_details.set_filter(["FO field 4", "test tag 5005"])
 
         main_order_qty = ExtractionDetail("order.Qty", "Qty")
         main_order_field4 = ExtractionDetail("order.FOfield4", "FO field 4")

@@ -115,7 +115,7 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Execution Report",
-                bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID']),
+                bca.filter_to_grpc_nfu("ExecutionReport", execution_report1_params, ['OrderID']),
                 checkpoint_id1, 'fix-ss-back-office', case_id
             )
         )
@@ -173,7 +173,7 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Execution Report",
-                bca.filter_to_grpc("ExecutionReport", execution_report2_params, ['ClOrdID']),
+                bca.filter_to_grpc_nfu("ExecutionReport", execution_report2_params, ['OrderID']),
                 checkpoint_id2, 'fix-ss-back-office', case_id
             )
         )
@@ -257,7 +257,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
-                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report1_params, ['AllocType']),
+                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report1_params, ['OrderID',
+                                                                                                        'AllocType']),
                 checkpoint_id3, 'fix-ss-back-office', case_id
             )
         )
@@ -294,7 +295,7 @@ def execute(report_id):
             'TradeDate': today,
             'ConfirmID': '*',
             'AllocQty': qty,
-            'MatchStatus': '1',
+            'MatchStatus': '0',
             'ConfirmStatus': '1',
             'Currency': 'EUR',
             'Side': '1',
@@ -329,7 +330,7 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc("Confirmation", confirmation_report_params),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
@@ -375,7 +376,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
-                bca.filter_to_grpc("AllocationInstruction", allocation_instruction_report2_params, ['AllocType']),
+                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report2_params, ['OrderID',
+                                                                                                        'AllocType']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
@@ -433,7 +435,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Confirmation Report",
-                bca.filter_to_grpc("Confirmation", confirmation_report_params, ['MatchStatus']),
+                bca.filter_to_grpc_nfu("Confirmation", confirmation_report_params, ['OrderID',
+                                                                                    'MatchStatus']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
