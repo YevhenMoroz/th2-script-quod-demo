@@ -31,8 +31,8 @@ def check_check_boxes(base_request, service, case_id):
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Checkboxes")
-    verifier.compare_values("Left checkbox", "Enabled", response["ar_rfq.extract_left_checkbox"])
-    verifier.compare_values("Right checkbox", "Enabled", response["ar_rfq.extract_right_checkbox"])
+    verifier.compare_values("Left checkbox", "checked", response["ar_rfq.extract_left_checkbox"])
+    verifier.compare_values("Right checkbox", "checked", response["ar_rfq.extract_right_checkbox"])
     verifier.verify()
 
 
@@ -57,6 +57,8 @@ def execute(report_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         check_check_boxes(base_rfq_details, ar_service, case_id)
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
 
     except Exception:
