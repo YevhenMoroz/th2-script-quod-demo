@@ -12,7 +12,7 @@ from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request
+from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -33,14 +33,14 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, resipient=None, price=None,
+def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
                  sell_side=False):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(resipient)
+        order_ticket.set_care_order(recipient)
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
@@ -100,6 +100,10 @@ def switch_user(session_id, case_id):
 
 def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
+
+
+def reject_order(lookup, qty, price):
+    call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
 
 
 def direct_order(lookup, qty, price, qty_percent):

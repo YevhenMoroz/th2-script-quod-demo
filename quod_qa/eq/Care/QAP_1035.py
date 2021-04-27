@@ -47,7 +47,7 @@ def execute(report_id):
     switch_user(session_id, case_id)
     # endregion
     # region create CO
-    create_order(base_request, qty, client, lookup, order_type,is_care=True,resipient=desk,price=price)
+    create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
