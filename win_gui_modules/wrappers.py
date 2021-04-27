@@ -115,9 +115,13 @@ def accept_order_request(instr: str, qty: str, limit: str):
     request.instrLookupSymbol = instr
     request.limitPrice = limit
     request.quantity = qty
-
     return request
-
+def reject_order_request(instr: str, qty: str, limit: str):
+    request = act_ui_win_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.instrLookupSymbol = instr
+    request.limitPrice = limit
+    request.quantity = qty
+    return request
 
 def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
     request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
