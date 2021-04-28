@@ -1,12 +1,22 @@
 import logging
+import os
 from datetime import datetime
-from quod_qa.wrapper import eq_wrappers
+
 from win_gui_modules.order_book_wrappers import OrdersDetails
+
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
+
+from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper.fix_message import FixMessage
+from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, call
-from win_gui_modules.wrappers import verification, verify_ent, reject_order_request
+from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
+from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, fields_request
+import pyautogui
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -14,7 +24,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1013"
+    case_name = "QAP-1014"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
@@ -24,31 +34,66 @@ def execute(report_id):
     client = "CLIENT1"
     time = datetime.utcnow().isoformat()
     lookup = "PROL"
-    order_type = "Limit"
+    # endregion
+    # region Open FE
+
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
+    set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    desk = Stubs.custom_config['qf_trading_fe_user_desk']
-    # endregion
-    # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+
+    if not Stubs.frontend_is_open:
+        prepare_fe(case_id, session_id, work_dir, username, password)
+    else:
+        get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
+                                                                             "XPAR_" + client, "XPAR", 20)
+        connectivity = 'gtwquod5'
+        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+
+        fix_params = {
+            'Account': client,
+            'HandlInst': "3",
+            'Side': "2",
+            'OrderQty': qty,
+            'TimeInForce': "0",
+            'OrdType': 2,
+            'Price': price,
+            'TransactTime': time,
+            'Instrument': {
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityID': 'FR0004186856',
+                'SecurityIDSource': '4',
+                'SecurityExchange': 'XPAR'
+            },
+            'Currency': 'EUR',
+            'SecurityExchange': 'XPAR',
+        }
+        fix_message = FixMessage(fix_params)
+        fix_message.add_random_ClOrdID()
+        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    finally:
+        rule_manager.remove_rule(nos_rule)
+
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
+
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
     order_details.set_extraction_id(before_order_details_id)
 
     order_status = ExtractionDetail("order_status", "Sts")
     order_qty = ExtractionDetail("order_qty", "Qty")
-    order_tif = ExtractionDetail("order_tif", "TIF")
-    order_ordType = ExtractionDetail("oder_ordType", "OrdType")
     order_price = ExtractionDetail("order_price", "LmtPrice")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_qty,
@@ -63,13 +108,15 @@ def execute(report_id):
                                                   verify_ent("LmtPrice", order_price.name, price)
                                                   ]))
     # endregion
-    # region Reject CO
-    call(common_act.rejectOrder, reject_order_request(lookup, qty, price))
+    # region Accept CO
+    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
-    # region Check values in OrderBook
+    # region Check values in OrderBook after Accept
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Rejected")
-                                                  ]))
+                                                 [verify_ent("Order Status", order_status.name, "Open")]))
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

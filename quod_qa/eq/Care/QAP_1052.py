@@ -17,13 +17,14 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1035"
+    case_name = "QAP-1052"
     seconds, nanos = timestamps()  # Store case start time
     case_id = create_event(case_name, report_id)
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
+    new_qty="950"
     price = "20"
     client = "CLIENT1"
     lookup = "VETO"
@@ -33,22 +34,29 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     username2 = Stubs.custom_config['qf_trading_fe_user2']
     password2 = Stubs.custom_config['qf_trading_fe_password2']
+    username3 = Stubs.custom_config['qf_trading_fe_user3']
+    password3 = Stubs.custom_config['qf_trading_fe_password3']
     desk = Stubs.custom_config['qf_trading_fe_user_desk']
     session_id = set_session_id()
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     base_request = get_base_request(session_id, case_id)
+    base_request2 = get_base_request(session_id2, case_id)
+    base_request3 = get_base_request(session_id2, case_id)
     # endregion
+
     # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username, password)
-    open_fe2(session_id2, report_id, work_dir, username2, password2)
+    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    #eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
     #  endregion
+    '''
     # region switch to user1
-    switch_user(session_id, case_id)
+    eq_wrappers.switch_user(session_id, case_id)
     # endregion
     # region create CO
-    create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type,is_care=True,resipient=desk,price=price)
     # endregion
+    '''
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -75,30 +83,26 @@ def execute(report_id):
                                                   ]))
 
     # endregion
+    '''
     # region switch to user2
-    switch_user(session_id2, case_id)
+    eq_wrappers.switch_user(session_id2, case_id)
     # endregion
     # region accept CO
-    accept_order(lookup, qty, price)
+    eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-    # region switch to user1
-    switch_user(session_id, case_id)
+    '''
+    # region transfer CO
+    eq_wrappers.transfer_order(base_request,username3)
     # endregion
-    # region manual execution
-    manual_execution(base_request, qty, price)
+    # region open FE
+    session_id3 = Stubs.win_act.register(
+        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+    eq_wrappers.open_fe2(session_id3, report_id, work_dir, username3, password3)
     # endregion
-    # region complete
-    complete_order(base_request)
+    # region switch user
+    eq_wrappers.switch_user(session_id3,case_id)
     # endregion
-    # region Check values after complete
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Filled"),
-                                                  verify_ent("Order Qty", order_qty.name, qty),
-                                                  verify_ent("Order Price", order_price.name, price),
-                                                  verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
-                                                  verify_ent("DoneForDay", order_dfd.name, "Yes"),
-                                                  verify_ent("ExecSts", order_status.name, "Filled")
-                                                  ]))
+    # region Accept order
+    eq_wrappers.accept_order(lookup,qty,price)
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

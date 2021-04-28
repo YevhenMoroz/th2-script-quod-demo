@@ -12,7 +12,7 @@ from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request
+from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request,direct_moc_request,direct_poc_request,direct_loc_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -89,6 +89,8 @@ def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, q
     finally:
         rule_manager.remove_rule(nos_rule)
 
+order_book_act = Stubs.win_act_order_book
+common_act = Stubs.win_act
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -101,13 +103,15 @@ def switch_user(session_id, case_id):
 def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
 
-
+def direct_loc_order(qty,route):
+    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+def direct_moc_order(qty,route):
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_loc_request("UnmatchedQty", qty, route))
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
 
-
 def direct_order(lookup, qty, price, qty_percent):
-    call(Stubs.win_act.directOrder, direct_order_request(lookup, qty, price, qty_percent))
+    call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
 
 
 def amend_order(request, qty=None, price=None):

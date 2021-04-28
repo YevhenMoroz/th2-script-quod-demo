@@ -17,7 +17,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1035"
+    case_name = "QAP-1036"
     seconds, nanos = timestamps()  # Store case start time
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -28,6 +28,8 @@ def execute(report_id):
     client = "CLIENT1"
     lookup = "VETO"
     order_type = "Limit"
+    desk = False
+    recipient = Stubs.custom_config['qf_trading_fe_user']
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -38,16 +40,17 @@ def execute(report_id):
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     base_request = get_base_request(session_id, case_id)
+    base_request2 = get_base_request(session_id2, case_id)
     # endregion
     # region Open FE
     open_fe(session_id, report_id, case_id, work_dir, username, password)
-    open_fe2(session_id2, report_id, work_dir, username2, password2)
+    open_fe2(session_id2, report_id, case_id, work_dir, username2, password2)
     #  endregion
     # region switch to user1
     switch_user(session_id, case_id)
     # endregion
     # region create CO
-    create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
+    create_order(base_request, qty, client, lookup, order_type,is_care=True,resipient=desk,price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
@@ -81,11 +84,11 @@ def execute(report_id):
     # region accept CO
     accept_order(lookup, qty, price)
     # endregion
+    # region manual execution
+    manual_execution(base_request2, qty, price)
+    # endregion
     # region switch to user1
     switch_user(session_id, case_id)
-    # endregion
-    # region manual execution
-    manual_execution(base_request, qty, price)
     # endregion
     # region complete
     complete_order(base_request)
