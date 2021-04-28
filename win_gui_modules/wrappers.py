@@ -43,7 +43,7 @@ def child_fields_request(extraction_id, data, direct):
 
 def order_analysis_algo_parameters_request(extraction_id: str, param_names: list, filters: dict):
     request = act_ui_win_pb2.GetOrderAnalysisAlgoParametersRequest(sessionID=BaseParams.session_id,
-                                                                parentEventId=BaseParams.event_id)
+                                                                   parentEventId=BaseParams.event_id)
     request.id = extraction_id
     request.paramNames.extend(param_names)
 
@@ -55,7 +55,7 @@ def order_analysis_algo_parameters_request(extraction_id: str, param_names: list
 
 def create_order_analysis_events_request(extraction_id: str, filters: dict):
     request = act_ui_win_pb2.GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
-                                                        parentEventId=BaseParams.event_id)
+                                                           parentEventId=BaseParams.event_id)
     request.id = extraction_id
 
     for key, value in filters.items():
@@ -64,7 +64,7 @@ def create_order_analysis_events_request(extraction_id: str, filters: dict):
     return request
 
 
-def verify_ent(report_name:str, saved_path:str, actual_value:str):
+def verify_ent(report_name: str, saved_path: str, actual_value: str):
     return [report_name, saved_path, actual_value]
 
 
@@ -150,6 +150,15 @@ def reject_order_request(instr: str, qty: str, limit: str):
     request.quantity = qty
     return request
 
+def reject_order_request(instr: str, qty: str, limit: str):
+    request = act_ui_win_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.instrLookupSymbol = instr
+    request.limitPrice = limit
+    request.quantity = qty
+
+    return request
+
+
 def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
     request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.orderDetails.instrLookupSymbol = instr
@@ -158,4 +167,3 @@ def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
     request.qtyPercentage = qty_percent
 
     return request
-

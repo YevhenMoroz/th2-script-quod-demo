@@ -10,8 +10,9 @@ from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.sim_service import TemplateSimulatorServiceService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
-# from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
+
+# from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
 
 class Stubs:

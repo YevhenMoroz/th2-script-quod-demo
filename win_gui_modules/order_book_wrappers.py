@@ -336,6 +336,9 @@ class ExecutionsDetails:
     def set_last_capacity(self, last_capacity: str):
         self.request.lastCapacity = last_capacity
 
+    def set_settlement_date_offset(self, offset: int):
+        self.request.settlementDateOffset = offset
+
 
 class ManualExecutingDetails:
     def __init__(self, base: EmptyRequest = None):

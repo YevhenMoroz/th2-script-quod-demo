@@ -4,7 +4,7 @@ from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
-from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
+from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
 
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -49,17 +49,6 @@ class ContextAction:
         return self.request
 
 
-class ContextActionType(Enum):
-    CHECK_EMPTY_TOP_OF_BOOK_MARGINS = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_EMPTY_TOP_OF_BOOK_MARGINS
-    CHECK_CUMULATIVE_TOP_OF_BOOK_MARGINS = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_CUMULATIVE_TOP_OF_BOOK_MARGINS
-    CHECK_VWAP = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_VWAP
-    CHECK_STRATEGIES = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_STRATEGIES
-    CHECK_FULL_AMOUNT = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_FULL_AMOUNT
-    CHECK_AGGREGATED_RATES = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_AGGREGATED_RATES
-    CHECK_AGGREGATED_TOP_OF_BOOK = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_AGGREGATED_TOP_OF_BOOK
-    CHECK_EXCLUDE_UNHEALTHY_VENUES = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType.ContextActionType.CHECK_EXCLUDE_UNHEALTHY_VENUES
-
-
 class ContextActionRatesTile:
     def __init__(self):
         self.request = ar_operations_pb2.ContextActionRatesTile()
@@ -82,51 +71,9 @@ class ContextActionRatesTile:
         return context_action
 
     @staticmethod
-    def open_direct_venue_panel():
-        action = ar_operations_pb2.ContextActionRatesTile.OpenDirectVenuePanel()
-        context_action = ContextActionRatesTile()
-        context_action.add_action(action)
-        return context_action
-
-    @staticmethod
     def create_button_click(button_name: str):
         action = ar_operations_pb2.ContextActionRatesTile.ClickToButton()
         action.buttonName = button_name
-        context_action = ContextActionRatesTile()
-        context_action.add_action(action)
-        return context_action
-
-    @staticmethod
-    def filter_full_amount_venues(venues: list):
-        action = ar_operations_pb2.ContextActionRatesTile.FilterFullAmountVenues()
-        for venue in venues:
-            action.venues.append(venue)
-        context_action = ContextActionRatesTile()
-        context_action.add_action(action)
-        return context_action
-
-    @staticmethod
-    def add_full_amount_qty(qty: str):
-        action = ar_operations_pb2.ContextActionRatesTile.AddFullAmountQty()
-        action.quantity = qty
-        context_action = ContextActionRatesTile()
-        context_action.add_action(action)
-        return context_action
-
-    @staticmethod
-    def filter_top_of_book_venue(venue: str):
-        action = ar_operations_pb2.ContextActionRatesTile.FilterTopOfBooksVenue()
-        action.venue = venue
-        context_action = ContextActionRatesTile()
-        context_action.add_action(action)
-        return context_action
-
-    @staticmethod
-    def add_context_action_type(context_action_types: list, details: BaseTileDetails = None):
-        action = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType()
-        action.data.CopyFrom(details.build())
-        for act in context_action_types:
-            action.actionType.append(act)
         context_action = ContextActionRatesTile()
         context_action.add_action(action)
         return context_action
@@ -136,97 +83,6 @@ class ContextActionRatesTile:
             self.request.filterVenues.CopyFrom(action)
         elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.ClickToButton):
             self.request.buttonClick.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.OpenDirectVenuePanel):
-            self.request.openDirectVenuePanel.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterFullAmountVenues):
-            self.request.filterFullAmountVenues.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.AddFullAmountQty):
-            self.request.addFullAmountQty.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterTopOfBooksVenue):
-            self.request.filterTopOfBooksVenue.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.ClickContextActionType):
-            self.request.clickContextActionType.CopyFrom(action)
-
-    def build(self):
-        return self.request
-
-
-class ActionsRatesTile:
-    def __init__(self):
-        self.request = ar_operations_pb2.ActionsRatesTile()
-
-    @staticmethod
-    def click_to_ask_esp_order(venue: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToAskESPOrder()
-        action.venue = venue
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_bid_esp_order(venue: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToBidESPOrder()
-        action.venue = venue
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_ask_esp_order_by_quantity(venue: str, quantity: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToAskESPOrderByQuantity()
-        action.venue = venue
-        action.quantity = quantity
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_bid_esp_order_by_quantity(venue: str, quantity: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToBidESPOrderByQuantity()
-        action.venue = venue
-        action.quantity = quantity
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_direct_venue_add_raw(venue: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToDirectVenueAddRaw()
-        action.venue = venue
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_direct_venue_remove_raw(venue: str):
-        action = ar_operations_pb2.ActionsRatesTile.ClickToDirectVenueRemoveRawCorrect()
-        action.venue = venue
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    @staticmethod
-    def click_to_resting_orders_checkbox():
-        action = ar_operations_pb2.ActionsRatesTile.ClickToRestingOrdersCheckBox()
-        action_rates = ActionsRatesTile()
-        action_rates.add_action(action)
-        return action_rates
-
-    def add_action(self, action):
-        if isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToAskESPOrder):
-            self.request.clickToAskESPOrder.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToBidESPOrder):
-            self.request.clickToBidESPOrder.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToAskESPOrderByQuantity):
-            self.request.clickToAskESPOrderByQuantity.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToBidESPOrderByQuantity):
-            self.request.clickToBidESPOrderByQuantity.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToDirectVenueAddRaw):
-            self.request.clickToDirectVenueAddRaw.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToDirectVenueRemoveRawCorrect):
-            self.request.clickToDirectVenueRemoveRawCorrect2.CopyFrom(action)
-        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToRestingOrdersCheckBox):
-            self.request.clickToRestingOrdersCheckBox.CopyFrom(action)
 
     def build(self):
         return self.request
@@ -254,23 +110,8 @@ class ModifyRFQTileRequest:
     def set_far_leg_tenor(self, tenor: str):
         self.modify_request.farLegTenor = tenor
 
-    def set_change_currency(self, change_currency: bool):
-        self.modify_request.changeCurrency = change_currency
-
-    def clear_near_date(self, clear_near_date: bool):
-        self.modify_request.clearNearDate = clear_near_date
-
-    def clear_far_leg_date(self, clear_far_leg_date: bool):
-        self.modify_request.clearFarLegDate = clear_far_leg_date
-
-    def clear_quantity(self, clear_quantity: bool):
-        self.modify_request.clearQuantity = clear_quantity
-
-    def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
-        self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
-
-    def clear_far_leg_tenor(self, clear_far_leg_tenor: bool):
-        self.modify_request.clearFarTenor = clear_far_leg_tenor
+    def set_change_currency(self, value: bool = False):
+        self.modify_request.changeCurrency = value
 
     def set_settlement_date(self, settlement_date: date):
         self.modify_request.settlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
@@ -289,6 +130,9 @@ class ModifyRFQTileRequest:
 
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
+
+    def set_quantity_as_string(self, quantity: str):
+        self.modify_request.quantityAsString = quantity
 
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity

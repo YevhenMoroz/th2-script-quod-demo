@@ -137,7 +137,7 @@ def extract_rfq_panel(exec_id, base_request, service):
     # extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     # extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
-    extract_value.set_extraction_id(exec_id)
+    extract_value.set_extraction_id(exec_id )
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
