@@ -131,4 +131,48 @@ def y1_front_end():
 def y2_front_end():
     return (tm(datetime.utcnow().isoformat()) + bd(n=523)).date().strftime('%Y-%m-%d %H:%M:%S')
 
+
+def ndf_spo_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_sn_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_wk1_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_wk2_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=11)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_wk3_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=16)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_m1_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_m2_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=44)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_m3_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=66)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_m4_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=88)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_y1_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=262)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ndf_y2_front_end():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=522)).date().strftime('%Y-%m-%d %H:%M:%S')
+
 # TODO need to add another tenors
