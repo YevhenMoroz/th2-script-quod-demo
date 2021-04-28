@@ -7,7 +7,8 @@ from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, \
     ExtractRFQTileValues
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe, \
+    get_opened_fe, prepare_fe303, load_instr
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
@@ -48,7 +49,16 @@ class TestCase:
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
+        # try:
+        #     get_opened_fe(self.case_id, self.session_id)
+        # except Exception as e:
+        # logging.error('FE is not opened')
+        prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
+
+    # Load dictionaries
+    def load_instruments(self):
+        list_instr = ['HSBC', 'HSBCF', 'HSBCR']
+        load_instr(self.base_request, list_instr)
 
     # Add case rules method
     def add_rules(self):
@@ -173,6 +183,7 @@ class TestCase:
     def execute(self):
         try:
             self.prepare_frontend()
+            self.load_instruments()
             self.add_rules()
 
             # Step 1
