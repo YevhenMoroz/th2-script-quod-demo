@@ -24,11 +24,13 @@ logger.setLevel(logging.INFO)
 
 def execute(report_id):
     fix_act = Stubs.fix_act
-    rule_manager = RuleManager()
+
 
     # Store case start time
     seconds, nanos = bca.timestamps()
     case_name = "QAP-3306"
+
+    common_act = Stubs.win_act
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -45,6 +47,8 @@ def execute(report_id):
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "MOClient")
         qty1 = "100"
         qty2 = "70"
         qty3 = "30"
@@ -56,7 +60,8 @@ def execute(report_id):
             'HandlInst': '3',
             'Side': '1',
             'OrderQty': qty1,
-            'OrdType': '1',
+            'OrdType': '2',
+            'Price': '20',
             'SettlType': '0',
             'TimeInForce': '0',
             'ClOrdID': bca.client_orderid(9),
@@ -76,14 +81,15 @@ def execute(report_id):
                 bca.message_to_grpc('NewOrderSingle', cmo1_params, "gtwquod5")
             ))
 
+        call(common_act.acceptOrder, accept_order_request(session_id, case_id, "VETO", qty1, ""))
+
         # create care market order
         cmo2_params = {
             'Account': 'MOClient',
             'HandlInst': '3',
             'Side': '2',
             'OrderQty': qty2,
-            'OrdType': '2',
-            'Price': limit,
+            'OrdType': '1',
             'TimeInForce': '0',
             'ClOrdID': bca.client_orderid(9),
             'TransactTime': datetime.utcnow().isoformat(),
@@ -108,8 +114,7 @@ def execute(report_id):
             'HandlInst': '3',
             'Side': '2',
             'OrderQty': qty3,
-            'OrdType': '2',
-            'Price': limit,
+            'OrdType': '1',
             'TimeInForce': '0',
             'ClOrdID': bca.client_orderid(9),
             'TransactTime': datetime.utcnow().isoformat(),
@@ -157,6 +162,7 @@ def execute(report_id):
         call(service.manualCross, manual_cross_details.build())
 
         #rule_manager.remove_rule(nos_rule2)
+        rule_manager.remove_rule(nos_rule)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
