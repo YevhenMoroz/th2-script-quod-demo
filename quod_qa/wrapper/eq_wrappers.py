@@ -20,7 +20,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5
+connectivity = 'gtwquod5'  # gtwquod5
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -112,14 +112,12 @@ order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
 
-def cancel_order_via_fix(order_id, client_order_id, client, case_id):
+def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
-    order_id = request[order_id.name]
-    client_order_id = request[client_order_id.name]
     cancel_parms = {
         "ClOrdID": order_id,
         "Account": client,
-        "Side": "2",
+        "Side": side,
         "TransactTime": datetime.utcnow().isoformat(),
         "OrigClOrdID": client_order_id,
     }
@@ -213,8 +211,19 @@ def complete_order(request):
 def get_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
-    order_details.set_extraction_id("Order id")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    ExtractionAction.create_extraction_action(extraction_details=[main_order_id])
-    request = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    return request[main_order_id.name]
+    order_details.set_extraction_id("orderID")
+    order_id = ExtractionDetail("order_id", "Order ID")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_id])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return result[order_id.name]
+
+def get_cl_order_id(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("ClOrdID")
+    cl_order_id = ExtractionDetail("cl_order_id", "ClOrdID")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[cl_order_id])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return result[cl_order_id.name]
