@@ -71,6 +71,38 @@ def get_my_orders_details(ob_act, base_request, order_id):
     print(result[ob_instr_type.name])
 
 
+def get_trade_book_details(ob_act, base_request, order_id):
+    """
+    Demonstration of work with Trade book window
+    """
+
+    main_order_details = OrdersDetails()
+    # to set filter use list with string pairs like ['ColumnName', 'ColumnValue']
+    main_order_details.set_filter(["Side", 'Buy',
+                                   'Venue', 'QUODFX'])
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id( "trade.1")
+    # to extruct values from first row user str pairs 'UniqID','ColumnNanme'
+    ob_instr_type = ExtractionDetail("tradeBook.instrtype", "ExecID")
+    ob_exec_sts = ExtractionDetail("tradeBook.orderid", "Venue")
+    ob_lookup = ExtractionDetail("tradeBook.lookup", "Qty")
+    ob_creat_time = ExtractionDetail("tradeBook.creattime", "CreationTime")
+    # use next expression to add extraction  settings before  run grpc call
+    main_order_details.add_single_order_info(
+            OrderInfo.create(
+                    action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
+                                                                                         ob_exec_sts,
+                                                                                         ob_lookup,
+                                                                                         ob_creat_time])))
+    # to extract values to a dict use next statement
+    result = call(ob_act.getTradeBookDetails, main_order_details.request())
+    # you may use loop to check values
+    for key,value in result.items():
+        print(f'\t {key} = {value}')
+    # or single value extraction
+    print(result[ob_instr_type.name])
+
+
 def check_venue(base_details, ar_service):
     table_actions_request = TableActionsRequest(details=base_details)
     check1 = TableAction.create_check_table_venue(ExtractionDetail("aggrRfqTile.hsbVenue", "HSB"))
@@ -242,7 +274,7 @@ def execute(report_id):
         # endregion
 
         # region RFQ tile ↓
-        modify_rfq_tile(base_tile_details, ar_service)
+        # modify_rfq_tile(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
         # extract_rfq_table_data(base_tile_details, ar_service)
         # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
@@ -258,6 +290,8 @@ def execute(report_id):
         # region My Orders ↓
 
         # get_my_orders_details(ob_act,  base_request, order_id)
+        get_trade_book_details(ob_act,  base_request, order_id)
+
         # endregion
 
         # close_fe_2(case_id, session_id)
