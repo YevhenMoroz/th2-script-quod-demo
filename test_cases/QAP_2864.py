@@ -10,7 +10,8 @@ from custom.basic_custom_actions import timestamps, create_event
 from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, \
     OrderInfo, OrdersDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2, prepare_fe, close_fe
+from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, close_fe_2, prepare_fe, \
+    close_fe, get_opened_fe
 from win_gui_modules.wrappers import verification, verify_ent, set_base, order_analysis_algo_parameters_request
 import time
 
@@ -43,7 +44,7 @@ def execute(report_id):
     session_alias2 = 'fix-bs-eq-trqx'
 
     NOS1 = rule_man.add_NOS(session_alias)
-    NOS2 = rule_man.add_NOS(session_alias2)
+    NOS2 = rule_man.add_NOS(session_alias2, "TRQX_CLIENT1")
     OCR1 = rule_man.add_OCR(session_alias)
     OCR2 = rule_man.add_OCR(session_alias2)
     logger.info(f"Start rules with id's: \n {NOS1}, {OCR1},{NOS2}, {OCR2}")
@@ -53,6 +54,8 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password_305']
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
+    else:
+        get_opened_fe(case_id, session_id)
 
     try:
         qty = "200"

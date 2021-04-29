@@ -267,7 +267,6 @@ def execute(report_id):
 
             main_order_details.add_single_order_info(
                 OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_det_both))
-
             request = call(act2.getOrdersDetails, main_order_details.request())
 
             venue = request[sub_lvl1_1_venue_OA.name]

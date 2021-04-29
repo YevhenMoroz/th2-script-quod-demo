@@ -23,20 +23,21 @@ def execute(case_name, report_id, case_params):
     instrument = {
         'Symbol': 'EUR/USD',
         'Product': '4',
-        'SettlDate': tsd.spo(),
+        # 'SettlDate': tsd.spo(),
         'SecurityType': 'FXSPOT'
     }
 
     subscribe_params = {
         'SenderSubID': 'MMCLIENT1',
-        'MDReqID': '1111222001',
+        'MDReqID': bca.client_orderid(7),
         'SubscriptionRequestType': '1',
         'MarketDepth': '0',
         'MDUpdateType': '0',
         'NoMDEntryTypes': [{'MDEntryType': '0'}, {'MDEntryType': '1'}],
         'NoRelatedSymbols': [
             {
-                'Instrument': instrument
+                'Instrument': instrument,
+                'SettlDate': tsd.spo()
             }
         ]
     }
@@ -50,14 +51,10 @@ def execute(case_name, report_id, case_params):
         ))
 
     market_data_response = {
-        'MDReqID': '1111222001',
+        'MDReqID': subscribe_params['MDReqID'],
         'Instrument': {
             'Symbol': instrument['Symbol']
         },
-        'LastUpdateTime': '*',
-        'OrigMDArrivalTime': '*',
-        'OrigMDTime': '*',
-        'MDTime': '*',
         'NoMDEntries': [
             {
                 'SettlType': 0,
@@ -67,7 +64,7 @@ def execute(case_name, report_id, case_params):
                 'MDEntrySize': 1000000,
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate': tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 1,
                 'MDEntryDate': '*',
@@ -81,7 +78,7 @@ def execute(case_name, report_id, case_params):
                 'MDEntrySize': 1000000,
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate':  tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 1,
                 'MDEntryDate': '*',
@@ -93,7 +90,7 @@ def execute(case_name, report_id, case_params):
                 'MDEntryID': '*',
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate':  tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 2,
                 'MDEntryDate': '*',
@@ -105,7 +102,7 @@ def execute(case_name, report_id, case_params):
                 'MDEntryID': '*',
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate':  tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 2,
                 'MDEntryDate': '*',
@@ -117,7 +114,7 @@ def execute(case_name, report_id, case_params):
                 'MDEntryID': '*',
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate':  tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 3,
                 'MDEntryDate': '*',
@@ -129,13 +126,14 @@ def execute(case_name, report_id, case_params):
                 'MDEntryID': '*',
                 'QuoteEntryID': '*',
                 'MDOriginType': 1,
-                'SettlDate': instrument['SettlDate'],
+                'SettlDate':  tsd.spo(),
                 'MDQuoteType': 1,
                 'MDEntryPositionNo': 3,
                 'MDEntryDate': '*',
                 'MDEntryType': 1
             }
-        ]
+        ],
+        'LastUpdateTime': '*'
     }
 
     verifier.submitCheckRule(
@@ -150,7 +148,7 @@ def execute(case_name, report_id, case_params):
 
     subscribe_params['SubscriptionRequestType'] = '2'
 
-    unsubscribe = act.placeMarketDataRequestFIX(
+    unsubscribe = act.sendMessage(
         bca.convert_to_request(
             'MarketDataRequest (subscribe)',
             case_params['Connectivity'],

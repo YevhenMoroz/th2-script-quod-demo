@@ -5,7 +5,7 @@ import timestring
 
 import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, tom
+from custom.tenor_settlement_date import spo, tom, tom_front_end
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -37,7 +37,7 @@ def check_date(exec_id, base_request, service, case_id, date):
     verifier.verify()
 
 
-def modify_order(base_request, service, cur1, cur2, client, tenor):
+def modify_rfq_tile(base_request, service, cur1, cur2, client, tenor):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -61,7 +61,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "TOM"
-    date = tom()
+    date = tom_front_end()
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -78,8 +78,8 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_order(base_rfq_details, ar_service, case_from_currency,
-                     case_to_currency, case_client, case_tenor)
+        modify_rfq_tile(base_rfq_details, ar_service, case_from_currency,
+                        case_to_currency, case_client, case_tenor)
         check_date("RFQ", base_rfq_details, ar_service, case_id, date)
 
     except Exception as e:

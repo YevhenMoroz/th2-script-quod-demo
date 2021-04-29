@@ -28,6 +28,7 @@ def execute(case_name, report_id, case_params):
                 request=RequestMDRefID(
                         symbol="EUR/USD:FXF:WK1:HSBC",
                         connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/USD:FXF:WK1:HSBC=EUR/USD:FXF:WK1:HSBC_6",
         # "MDReportID": "1",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
@@ -42,24 +43,46 @@ def execute(case_name, report_id, case_params):
         "NoMDEntries": [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.18192,
+                "MDEntryPx": 2.18192,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
                 "MDEntrySpotRate": 1.1819,
-                # "MDEntryForwardPoints": 0.0002,
+                "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18220,
+                "MDEntryPx": 2.18220,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
                 "MDEntrySpotRate": 1.1820,
-                # "MDEntryForwardPoints": 0.0002,
+                "MDEntryForwardPoints": 0.0002,
                 # 'SettlDate': tsd.wk1(),
-                # "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18191,
+                "MDEntrySize": 16000000,
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.1819,
+                "MDEntryForwardPoints": 0.0002,
+                # 'SettlDate': tsd.wk1(),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18221,
+                "MDEntrySize": 16000000,
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.1820,
+                "MDEntryForwardPoints": 0.0002,
+                # 'SettlDate': tsd.wk1(),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
             },
 
@@ -76,6 +99,7 @@ def execute(case_name, report_id, case_params):
 
     mdu_params_spo = {
         "MDReqID": simulator.getMDRefIDForConnection303(request=RequestMDRefID(symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+        # "MDReqID": "EUR/AED=EUR/AED:SPO:REG:HSBC_38",
         # "MDReportID": "1",
         # "MDTime": "TBU",
         # "MDArrivalTime": "TBU",
@@ -90,14 +114,14 @@ def execute(case_name, report_id, case_params):
         "NoMDEntries": [
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18,
+                "MDEntryPx": 2.18,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
                 "MDEntrySpotRate": 1.18,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.wk1(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                # "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },
             {
@@ -108,11 +132,34 @@ def execute(case_name, report_id, case_params):
                 "MDEntrySpotRate": 1.17,
                 "MDEntryForwardPoints": 0.0002,
                 'SettlDate': tsd.spo(),
-                "MDEntryDate": datetime.utcnow().strftime('%Y-%m-%d'),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                 "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
                 # "QuoteCondition": "A"
             },
-
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 2.1810,
+                "MDEntrySize": 16000000,
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.18,
+                "MDEntryForwardPoints": 0.0002,
+                'SettlDate': tsd.wk1(),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+                # "QuoteCondition": "A"
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1690,
+                "MDEntrySize": 16000000,
+                "MDEntryPositionNo": 1,
+                "MDEntrySpotRate": 1.17,
+                "MDEntryForwardPoints": 0.0002,
+                'SettlDate': tsd.spo(),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
+                # "QuoteCondition": "A"
+            },
         ]
     }
 
@@ -139,7 +186,7 @@ def execute(case_name, report_id, case_params):
         'NoRelatedSymbols': [
             {
                 'Instrument': reusable_params['Instrument'],
-                'OrderQty': 999999,
+                'OrderQty': 16000001,
                 'Currency': 'EUR',
                 'Account': reusable_params['Account'],
                 'NoLegs': [
@@ -151,7 +198,7 @@ def execute(case_name, report_id, case_params):
                         'LegSide': 1,
                         'LegSettlType': 0,
                         'LegSettlDate': tsd.spo(),
-                        'LegOrderQty': 999999
+                        'LegOrderQty': 16000001
                     },
                     {
                         'InstrumentLeg': {
@@ -161,7 +208,7 @@ def execute(case_name, report_id, case_params):
                         'LegSide': 2,
                         'LegSettlType': 7,
                         'LegSettlDate': tsd.wk1(),
-                        'LegOrderQty': 999999
+                        'LegOrderQty': 16000001
                     },
                 ]
             }

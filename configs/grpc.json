@@ -5,7 +5,7 @@
       "endpoints": {
         "act_fix": {
           "host": "10.0.22.22",
-          "port": 32130
+          "port": 31632
         }
       },
       "strategy": {
@@ -31,7 +31,7 @@
       "endpoints": {
         "check1": {
           "host": "10.0.22.22",
-          "port": 32132
+          "port": 31631
         }
       },
       "strategy": {
@@ -44,7 +44,7 @@
       "endpoints": {
         "simulator": {
           "host": "10.0.22.22",
-          "port": 32133
+          "port": 32313
         }
       },
       "strategy": {
@@ -57,7 +57,7 @@
       "endpoints": {
         "simulator": {
           "host": "10.0.22.22",
-          "port": 32133
+          "port": 32313
         }
       },
       "strategy": {
@@ -70,7 +70,7 @@
       "endpoints": {
         "act_win": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -85,7 +85,7 @@
       "endpoints": {
         "act_order_ticket": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -100,7 +100,7 @@
       "endpoints": {
         "act_order_book": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -115,7 +115,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -130,7 +130,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -145,7 +145,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -160,7 +160,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 31283
+          "port": 31290
         }
       },
       "strategy": {
@@ -168,6 +168,19 @@
         "endpoints": [
           "act_rfq"
         ]
+      }
+    },
+    "SimulatorHttp": {
+      "service-class": "SimTemplateService",
+      "endpoints": {
+        "simulatorHttp": {
+          "host": "10.0.22.22",
+          "port": 31123
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulatorHttp"]
       }
     }
   }

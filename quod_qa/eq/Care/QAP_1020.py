@@ -134,6 +134,12 @@ def execute(report_id):
     amend_order_details.set_filter(["Order ID", order_id])
     call(act.amendOrder, amend_order_details.build())
     # endregion
+    # region Check values after Amend
+    call(act.getOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
+                                                 [verify_ent("Order Status", order_status.name, "Open")
+                                                  ]))
+    # endregion
     # region Cancelling order
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(base_request)
@@ -146,9 +152,7 @@ def execute(report_id):
     # region Check values after Cancel
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Cancelled"),
-                                                  verify_ent("Qty", order_qty.name, qty2),
-                                                  verify_ent("LmtPrice", order_price.name, price2)
+                                                 [verify_ent("Order Status", order_status.name, "Cancelled")
                                                   ]))
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
