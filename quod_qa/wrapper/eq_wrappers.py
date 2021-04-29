@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
-
+from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from demo import logger
 from quod_qa.wrapper.fix_manager import FixManager
@@ -32,6 +32,18 @@ def open_fe2(session_id, report_id, folder, user, password):
     init_event = create_event("Initialization", parent_id=report_id)
     prepare_fe(init_event, session_id, folder, user, password)
 
+def cancel_order_via_fix(request, order_id, fix_manager_qtwquod, client_order_id, client, side):
+    order_id = request[order_id.name]
+    client_order_id = request[client_order_id.name]
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": side,
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    responce_cancel = fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
                  sell_side=False):
@@ -78,8 +90,7 @@ def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, q
                 'SecurityIDSource': '4',
                 'SecurityExchange': 'XPAR'
             },
-            'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
+            'Currency': 'EUR'
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
@@ -103,15 +114,17 @@ def switch_user(session_id, case_id):
 def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
 
-def direct_loc_order(qty,route):
+def direct_loc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
-def direct_moc_order(qty,route):
+
+def direct_moc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectMoc, direct_loc_request("UnmatchedQty", qty, route))
+
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
 
 def direct_order(lookup, qty, price, qty_percent):
-    call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
+    call(Stubs.win_act.directOrder, direct_order_request(lookup, qty, price, qty_percent))
 
 
 def amend_order(request, qty=None, price=None):
