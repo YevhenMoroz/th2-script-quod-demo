@@ -18,7 +18,6 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, fields_request
-import pyautogui
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
