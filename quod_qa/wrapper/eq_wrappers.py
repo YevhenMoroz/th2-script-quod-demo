@@ -1,4 +1,5 @@
 from datetime import datetime
+from urllib import request
 
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
 from copy import deepcopy
@@ -12,7 +13,8 @@ from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request,direct_moc_request,direct_poc_request,direct_loc_request
+from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
+    direct_moc_request, direct_poc_request, direct_loc_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -32,7 +34,9 @@ def open_fe2(session_id, report_id, folder, user, password):
     init_event = create_event("Initialization", parent_id=report_id)
     prepare_fe(init_event, session_id, folder, user, password)
 
-def cancel_order_via_fix(request, order_id, fix_manager_qtwquod, client_order_id, client, side):
+
+def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, side):
+    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
     order_id = request[order_id.name]
     client_order_id = request[client_order_id.name]
     cancel_parms = {
@@ -43,7 +47,8 @@ def cancel_order_via_fix(request, order_id, fix_manager_qtwquod, client_order_id
         "OrigClOrdID": client_order_id,
     }
     fix_cancel = FixMessage(cancel_parms)
-    responce_cancel = fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
                  sell_side=False):
@@ -67,13 +72,12 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     call(order_ticket_service.placeOrder, new_order_details.build())
 
 
-def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, qty, tif: int, price=None):
+def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
                                                                              "XPAR_" + client, "XPAR", int(price))
-        connectivity = 'gtwquod5'
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+        fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
 
         fix_params = {
             'Account': client,
@@ -90,18 +94,44 @@ def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, q
                 'SecurityIDSource': '4',
                 'SecurityExchange': 'XPAR'
             },
-            'Currency': 'EUR'
+            'Currency': 'EUR',
+            'SecurityExchange': 'XPAR',
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(nos_rule)
 
+
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
+
+
+def cancel_order_via_fix(order_id, client_order_id, client, fix_manager_qtwquod):
+    order_id = request[order_id.name]
+    client_order_id = request[client_order_id.name]
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": "2",
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+
+
+def amend_order_via_fix(fix_message, parametr_list, case_id):
+    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters(parametr_list)
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -114,17 +144,21 @@ def switch_user(session_id, case_id):
 def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
 
+
 def direct_loc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+
 
 def direct_moc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectMoc, direct_loc_request("UnmatchedQty", qty, route))
 
+
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
 
+
 def direct_order(lookup, qty, price, qty_percent):
-    call(Stubs.win_act.directOrder, direct_order_request(lookup, qty, price, qty_percent))
+    call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
 
 
 def amend_order(request, qty=None, price=None):
