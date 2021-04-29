@@ -34,6 +34,7 @@ def execute(report_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     # endregion
+
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
@@ -43,6 +44,7 @@ def execute(report_id):
     # endregion
     # region Accept CO
     eq_wrappers.accept_order(lookup, qty, price)
+    # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -67,6 +69,7 @@ def execute(report_id):
     # region Execute  CO
     eq_wrappers.manual_execution(base_request, qty, price)
     # endregion
+    # region Check values in OrderBook
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open"),
@@ -74,17 +77,22 @@ def execute(report_id):
                                                   verify_ent("LmtPrice", order_price.name, price),
                                                   verify_ent("ExecSts",order_es.name, "Filled")
                                                   ]))
-    # region Extract
+    # endregion
 
+    # region Extract
     order_id = eq_wrappers.get_order_id(base_request)
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
-
-    # cancel CO
+    # region cancel CO
     eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id,1)
     # endregion
+    # region Accept Cancel
+    eq_wrappers.accept_order(lookup, qty, price)
+    # endregion
 
+    # region Check values in OrderBook
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Cancelled")
                                                   ]))
+    # endregion
