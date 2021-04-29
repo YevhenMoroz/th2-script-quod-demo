@@ -207,3 +207,13 @@ def complete_order(request):
     complete_order_details = ModifyOrderDetails()
     complete_order_details.set_default_params(request)
     call(Stubs.win_act_order_book.completeOrders, complete_order_details.build())
+
+
+def get_order_id(base_request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(base_request)
+    order_details.set_extraction_id("Order id")
+    main_order_id = ExtractionDetail("order_id", "Order ID")
+    ExtractionAction.create_extraction_action(extraction_details=[main_order_id])
+    request = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return request[main_order_id.name]
