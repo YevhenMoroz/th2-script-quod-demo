@@ -95,7 +95,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
                 'SecurityExchange': 'XPAR'
             },
             'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
@@ -151,7 +150,7 @@ def direct_loc_order(qty, route):
 
 
 def direct_moc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_loc_request("UnmatchedQty", qty, route))
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
 
 
 def reject_order(lookup, qty, price):
