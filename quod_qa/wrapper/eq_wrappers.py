@@ -20,6 +20,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
+connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5
+
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
     init_event = create_event("Initialization", parent_id=report_id)
@@ -36,7 +38,7 @@ def open_fe2(session_id, report_id, folder, user, password):
 
 
 def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, side):
-    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
     order_id = request[order_id.name]
     client_order_id = request[client_order_id.name]
     cancel_parms = {
@@ -77,7 +79,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
                                                                              "XPAR_" + client, "XPAR", int(price))
-        fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
+        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
         fix_params = {
             'Account': client,
@@ -111,7 +113,7 @@ common_act = Stubs.win_act
 
 
 def cancel_order_via_fix(order_id, client_order_id, client, case_id):
-    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
     order_id = request[order_id.name]
     client_order_id = request[client_order_id.name]
     cancel_parms = {
@@ -126,7 +128,7 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id):
 
 
 def amend_order_via_fix(fix_message, parametr_list, case_id):
-    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
     fix_modify_message = deepcopy(fix_message)
     fix_modify_message.change_parameters(parametr_list)
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
@@ -208,9 +210,9 @@ def complete_order(request):
     call(Stubs.win_act_order_book.completeOrders, complete_order_details.build())
 
 
-def get_order_id(base_request):
+def get_order_id(request):
     order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
+    order_details.set_default_params(request)
     order_details.set_extraction_id("Order id")
     main_order_id = ExtractionDetail("order_id", "Order ID")
     ExtractionAction.create_extraction_action(extraction_details=[main_order_id])
