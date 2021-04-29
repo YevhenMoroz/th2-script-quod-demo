@@ -111,7 +111,8 @@ order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
 
-def cancel_order_via_fix(order_id, client_order_id, client, fix_manager_qtwquod):
+def cancel_order_via_fix(order_id, client_order_id, client, case_id):
+    fix_manager_qtwquod = FixManager('gtwquod5', case_id)
     order_id = request[order_id.name]
     client_order_id = request[client_order_id.name]
     cancel_parms = {
