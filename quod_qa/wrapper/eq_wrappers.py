@@ -20,7 +20,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'gtwquod5'
+connectivity = 'gtwquod5' #gtwquod5
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -77,8 +77,9 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                             "XPAR_" + client, "XPAR", int(price))
+        if price != None:
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
+                                                                                 "XPAR_" + client, "XPAR", int(price))
         fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
         fix_params = {
@@ -88,7 +89,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             'OrderQty': qty,
             'TimeInForce': tif,
             'OrdType': ord_type,
-            'Price': price,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': {
                 'Symbol': 'FR0004186856_EUR',
@@ -98,21 +98,25 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             },
             'Currency': 'EUR',
         }
+        if price != None:
+            fix_modify_message = FixMessage(fix_params)
+            fix_modify_message.change_parameter( 'Price', price)
+
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
+    #finally:
+        #rule_manager.remove_rule(nos_rule)
 
 
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
 
-def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
+def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
     cancel_parms = {
         "ClOrdID": order_id,
@@ -131,8 +135,6 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
     fix_modify_message.change_parameters(parametr_list)
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
-
-
 
 
 def switch_user(session_id, case_id):
@@ -181,17 +183,30 @@ def cancelle_order(request):
     cancel_order_details.set_cancel_children(True)
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
-def split_limit_order(request,order_id,qty,type):
+
+def split_limit_order(request, qty, type,price=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    #if not price in None:
-    #    order_split_limit.set_limit(price)
+    if price!=None:
+        order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
-    amend_order_details = ModifyOrderDetails()
-    amend_order_details.set_default_params(request)
-    amend_order_details.set_order_details(order_split_limit)
-    amend_order_details.set_filter(["Order ID", order_id])
-    call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
+    order_details = ModifyOrderDetails()
+    order_details.set_default_params(request)
+    order_details.set_order_details(order_split_limit)
+    call(Stubs.win_act_order_book.splitLimit, order_details.build())
+
+def split_order(request, qty, type,price=None):
+    order_split_limit = OrderTicketDetails()
+    order_split_limit.set_quantity(qty)
+    if price!=None:
+        order_split_limit.set_limit(price)
+    order_split_limit.set_order_type(type)
+    order_details = ModifyOrderDetails()
+    order_details.set_default_params(request)
+    order_details.set_order_details(order_split_limit)
+    call(Stubs.win_act_order_book.splitOrder, order_details.build())
+
+
 def transfer_order(request, user):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -229,6 +244,7 @@ def get_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
+
 
 def get_cl_order_id(request):
     order_details = OrdersDetails()
