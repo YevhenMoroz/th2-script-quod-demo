@@ -164,9 +164,9 @@ def direct_order(lookup, qty, price, qty_percent):
 def amend_order(request, qty=None, price=None):
     order_amend = OrderTicketDetails()
     if not qty in None:
-        order_amend.set_limit(qty)
+        order_amend.set_quantity(qty)
     if not price in None:
-        order_amend.set_quantity(price)
+        order_amend.set_limit(price)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
@@ -179,7 +179,17 @@ def cancelle_order(request):
     cancel_order_details.set_cancel_children(True)
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
-
+def split_limit_order(request,order_id,qty,type):
+    order_split_limit = OrderTicketDetails()
+    order_split_limit.set_quantity(qty)
+    #if not price in None:
+    #    order_split_limit.set_limit(price)
+    order_split_limit.set_order_type(type)
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(request)
+    amend_order_details.set_order_details(order_split_limit)
+    amend_order_details.set_filter(["Order ID", order_id])
+    call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
 def transfer_order(request, user):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
