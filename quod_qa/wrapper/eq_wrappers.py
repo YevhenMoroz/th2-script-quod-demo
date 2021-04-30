@@ -93,7 +93,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             },
             'Currency': 'EUR',
         }
-        if price != None:
+        if price is not None:
             fix_modify_message = FixMessage(fix_params)
             fix_modify_message.change_parameter('Price', price)
 
@@ -165,7 +165,7 @@ def cancel_order(request):
 def split_limit_order(request, qty, type, price=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    if price != None:
+    if price is not None:
         order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
     order_details = ModifyOrderDetails()
@@ -177,7 +177,7 @@ def split_limit_order(request, qty, type, price=None):
 def split_order(request, qty, type, price=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    if price != None:
+    if price is not None:
         order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
     order_details = ModifyOrderDetails()
