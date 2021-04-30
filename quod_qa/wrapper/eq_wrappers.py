@@ -20,7 +20,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'gtwquod5'  # gtwquod5
+connectivity = 'gtwquod5'
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -125,12 +125,16 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
     fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
 
-def amend_order_via_fix(fix_message, parametr_list, case_id):
+def amend_order_via_fix(fix_message, case_id, parametr_list):
+    for key in parametr_list:
+        print(parametr_list[key]+" "+key)
     fix_manager_qtwquod = FixManager(connectivity, case_id)
-    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message = FixMessage(fix_message)
     fix_modify_message.change_parameters(parametr_list)
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+
+
 
 
 def switch_user(session_id, case_id):
