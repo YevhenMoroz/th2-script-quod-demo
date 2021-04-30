@@ -5,7 +5,7 @@ from th2_grpc_hand import rhbatch_pb2
 from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo,ModifyOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
@@ -37,12 +37,6 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
-    # region create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, desk, price, False)
-    # endregions
-    # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -50,45 +44,56 @@ def execute(report_id):
     order_details.set_extraction_id(before_order_details_id)
     order_status = ExtractionDetail("order_status", "Sts")
     order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
 
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
+                                                                                            order_id
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     request = call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open")
                                                   ]))
+    print(order_status.name)
     # endregion
+
     # region DirectLOC split
     eq_wrappers.direct_loc_order('50', 'ChiX direct access')
     # endregion
-    order_id=request[order_id.name]
-    # check sub Order status
 
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getChildOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking Child order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent('Qty', order_qty.name, str(int(int(qty)/2))),
+    # check sub Order status
+    ob = OrdersDetails()
+    ob.set_default_params(base_request)
+    order_id = request[order_id.name]
+    ob.set_extraction_id(order_id)
+    ob_qty = ExtractionDetail("orderbook.qty", "Qty")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
+    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
+    sub_order_qty = ExtractionDetail("subOrder_lvl_2.id", "Qty")
+    sub_order_price = ExtractionDetail("subOrder_lvl_2.lmtprice", "LmtPrice")
+    sub_order_status = ExtractionDetail("subOrder_lvl_2.status", "Sts")
+    sub_order_order_id = ExtractionDetail("subOrder_lvl_2.orderid", "Order ID")
+    lvl2_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_status,
+                                                                                                      sub_order_qty,
+                                                                                                      sub_order_price,
+                                                                                                      sub_order_order_id]))
+    lvl2_details = OrdersDetails.create(info=lvl2_info)
+
+    ob.add_single_order_info(
+        OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty,
+                                                                                 ob_id,
+                                                                                 ob_limit_price,
+                                                                                 ob_sts]),
+            sub_order_details=lvl2_details))
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
+                                                 [verify_ent("Order Status", sub_order_status.name, "Open"),
+                                                  verify_ent("Qty", sub_order_qty.name, '450'),
                                                   ]))
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+
+    call(act.getOrdersDetails, ob.request())
+
     # endregion
     # region Close FE
     # close_fe(case_id, session_id)
