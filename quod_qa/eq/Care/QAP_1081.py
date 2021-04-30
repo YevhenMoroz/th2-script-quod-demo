@@ -86,7 +86,7 @@ def execute(report_id):
     # region cancel CO
     eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
     # endregion
-    # region Accept Cancel
+    # region Reject Cancel
     eq_wrappers.reject_order(lookup, qty, price)
     # endregion
     # region Check values in OrderBook
