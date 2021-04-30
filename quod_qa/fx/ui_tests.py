@@ -131,10 +131,17 @@ def extract_rfq_table_data(base_details, ar_service):
     extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell1", "Pts", "HSB", 0))
     extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy1", "Pts", "HSB", 1))
     extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy1", "Dist", "HSB", 1))
+    # There is two way of headers extraction
+    # 1 is use list of colIndexes to extruct custom header(if you know what you want) !!!warning indexes start from 1!!!
+    extract5 = TableAction.extract_headers(colIndexes=(3,4,9,10))
+    # 2 you may use empty list to extract all available headers
+    # extract5 = TableAction.extract_headers(colIndexes=())
     table_actions_request.set_extraction_id("extrId")
-    table_actions_request.add_actions([extract1, extract2, extract3, extract4])
+    table_actions_request.add_actions([extract5])
     result = call(ar_service.processTableActions, table_actions_request.build())
     print(result)
+    for s in result['Headers'].split(';'):
+        print(s)
 
 
 def extract_rfq_panel(exec_id, base_request, service):
@@ -148,8 +155,9 @@ def extract_rfq_panel(exec_id, base_request, service):
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     # extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
-    extract_value.extract_left_checkbox("ar_rfq.extract_left_checkbox")
-    extract_value.extract_right_checkbox("ar_rfq.extract_right_checkbox")
+    extract_value.extract_send_button_text("ar_rfq.extract_send_button_text")
+    # extract_value.extract_left_checkbox("ar_rfq.extract_left_checkbox")
+    # extract_value.extract_right_checkbox("ar_rfq.extract_right_checkbox")
     # extract_value.extract_currency("ar_rfq.extract_currency")
     # extract_value.extract_quantity("ar_rfq.extract_quantity")
     # extract_value.extract_tenor("ar_rfq.extract_tenor")
@@ -276,7 +284,7 @@ def execute(report_id):
         # region RFQ tile ↓
         # modify_rfq_tile(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
-        # extract_rfq_table_data(base_tile_details, ar_service)
+        extract_rfq_table_data(base_tile_details, ar_service)
         # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
         # temporary doesn't available because of PROC-261
         # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
@@ -290,7 +298,7 @@ def execute(report_id):
         # region My Orders ↓
 
         # get_my_orders_details(ob_act,  base_request, order_id)
-        get_trade_book_details(ob_act,  base_request, order_id)
+        # get_trade_book_details(ob_act,  base_request, order_id)
 
         # endregion
 

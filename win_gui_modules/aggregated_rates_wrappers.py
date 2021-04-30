@@ -392,6 +392,7 @@ class RFQTileValues(Enum):
     FAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_MATURITY_DATE
     LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
     RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
+    SEND_BUTTON_TEXT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SEND_BUTTON_TEXT
 
 
 class ExtractRFQTileValues:
@@ -479,6 +480,9 @@ class ExtractRFQTileValues:
     def extract_right_checkbox(self, name: str):
         self.extract_value(RFQTileValues.RIGHT_CHECKBOX, name)
 
+    def extract_send_button_text(self, name: str):
+        self.extract_value(RFQTileValues.SEND_BUTTON_TEXT, name)
+
     def extract_near_tenor_list(self, preFilter: str = None):
         if preFilter is not None:
             self.request.tenorFilter = preFilter
@@ -493,6 +497,10 @@ class ExtractRFQTileValues:
 
     def build(self):
         return self.request
+
+
+class ExtractHeaders(object):
+    rowNumber: int
 
 
 class TableAction:
@@ -519,11 +527,25 @@ class TableAction:
         action.set_action(extract_cell)
         return action
 
+    @staticmethod
+    def extract_headers(colIndexes: list):
+        extract_headers = ar_operations_pb2.TableAction.ExtractHeaders()
+        for colIndex in colIndexes:
+            extract_headers.cols.append(colIndex)
+
+        action = TableAction()
+        action.set_action(extract_headers)
+        return action
+
+
+
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
         if isinstance(action, ar_operations_pb2.TableAction.ExtractCellValue):
             self.request.extractCellValue.CopyFrom(action)
+        if isinstance(action, ar_operations_pb2.TableAction.ExtractHeaders):
+            self.request.extractHeaders.CopyFrom(action)
 
     def build(self):
         return self.request
