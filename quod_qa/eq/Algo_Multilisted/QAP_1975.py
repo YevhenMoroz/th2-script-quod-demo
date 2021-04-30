@@ -22,9 +22,6 @@ qty = 2000
 display_qty = 100
 limit = 20
 side = 1
-lookup = "FR0000125460_EUR"
-ex_destination_1 = "QL1"
-ex_destination_2 = "TRQX"
 client = "KEPLER"
 order_type = "Limit"
 case_name = os.path.basename(__file__)
@@ -33,18 +30,25 @@ connectivity_bs = "fix-bs-310-columbia"
 connectivity_ss = "fix-ss-310-columbia-standart"
 listing_id1 = "9400000038"
 
+instrument = {
+            'Symbol': "FR0000125460_EUR",
+            'SecurityID': "FR0000125460",
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+
 def rule_creation():
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-" + ex_destination_1.lower(), ex_destination_1 + "_" + client, ex_destination_1, limit)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia-standard", "XPAR_" + client, "XPAR", limit)
     # ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-' + ex_destination_1.lower(), ex_destination_1 + '_' + client, ex_destination_1, True)
-    # ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
-    # return [nos_rule, ocr_rule, ocrr_rule]
-    return [nos_rule]
+    ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
+    return [nos_rule, ocrr_rule]
 
 def rule_destroyer(list_rules):
-    rule_manager = RuleManager()
-    for rule in list_rules:
-        rule_manager.remove_rule(rule)
+    if list_rules != None:
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
 
 def send_MD(symbol: str, case_id :str):
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
@@ -79,8 +83,8 @@ def send_MD(symbol: str, case_id :str):
 def execute(report_id):
     case_id = bca.create_event(os.path.basename(__file__), report_id)
     rule_list = rule_creation()
-    send_MD(listing_id1, case_id)
-    fix_manager_qtwquod5 = FixManager(connectivity_ss, case_id)
+
+    fix_manager_ss = FixManager(connectivity_ss, case_id)
     fix_verifier_ss = FixVerifier(connectivity_ss, case_id)
     fix_verifier_bs = FixVerifier(connectivity_bs, case_id)
 
@@ -95,43 +99,50 @@ def execute(report_id):
         'Price': "20",
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
-        'Instrument': {
-            'Symbol': lookup,
-            'SecurityID': lookup[:-4],
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        },
+        'Instrument': instrument,
         'OrderCapacity': 'A',
         'Currency': 'EUR',
-        'TargetStrategy': "1011",
-        # 'ClientAlgoPolicyID': 'QA_SORPING'
+        'TargetStrategy': "1008",
+        'NoStrategyParameters': [
+            {
+                'StrategyParameterName': 'AvailableVenues',
+                'StrategyParameterType': '13',
+                'StrategyParameterValue': 'true'
+            },
+            {
+                'StrategyParameterName': 'AllowMissingPrimary',
+                'StrategyParameterType': '13',
+                'StrategyParameterValue': 'true'
+            }
+        ]
     }
+
     fix_message_new_order_single = FixMessage(new_order_single_params)
     fix_message_new_order_single.add_random_ClOrdID()
-    responce_new_order_single = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_new_order_single)
+    responce_new_order_single = fix_manager_ss.Send_NewOrderSingle_FixMessage(fix_message_new_order_single)
 
-    #Check on ss
-    er_params_pending ={
-        'ExecType': "A",
-        'OrdStatus': 'A',
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-    }
-    fix_verifier_ss.CheckExecutionReport(er_params_pending, responce_new_order_single)
-
-    #Check on ss
-    er_params_new ={
-        'ExecType': "0",
-        'OrdStatus': '0',
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-    }
-    fix_verifier_ss.CheckExecutionReport(er_params_new, responce_new_order_single)
-
-    #Check on bs
-    new_order_single_bs = {
-        'Side': new_order_single_params['Side'],
-        'Price': new_order_single_params['Price']
-    }
-    fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single)
+    # #Check on ss
+    # er_params_pending ={
+    #     'ExecType': "A",
+    #     'OrdStatus': 'A',
+    #     'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+    # }
+    # fix_verifier_ss.CheckExecutionReport(er_params_pending, responce_new_order_single)
+    #
+    # #Check on ss
+    # er_params_new ={
+    #     'ExecType': "0",
+    #     'OrdStatus': '0',
+    #     'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+    # }
+    # fix_verifier_ss.CheckExecutionReport(er_params_new, responce_new_order_single)
+    #
+    # #Check on bs
+    # new_order_single_bs = {
+    #     'Side': new_order_single_params['Side'],
+    #     'Price': new_order_single_params['Price']
+    # }
+    # fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single)
 
 
 
