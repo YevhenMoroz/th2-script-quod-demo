@@ -20,7 +20,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'gtwquod5' #gtwquod5
+connectivity = 'gtwquod5'  # gtwquod5
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -37,10 +37,8 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, side):
+def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
-    order_id = request[order_id.name]
-    client_order_id = request[client_order_id.name]
     cancel_parms = {
         "ClOrdID": order_id,
         "Account": client,
@@ -100,7 +98,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         }
         if price != None:
             fix_modify_message = FixMessage(fix_params)
-            fix_modify_message.change_parameter( 'Price', price)
+            fix_modify_message.change_parameter('Price', price)
 
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
@@ -108,25 +106,8 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
-    #finally:
-        #rule_manager.remove_rule(nos_rule)
-
-
-order_book_act = Stubs.win_act_order_book
-common_act = Stubs.win_act
-
-
-def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
-    fix_manager_qtwquod = FixManager(connectivity, case_id)
-    cancel_parms = {
-        "ClOrdID": order_id,
-        "Account": client,
-        "Side": side,
-        "TransactTime": datetime.utcnow().isoformat(),
-        "OrigClOrdID": client_order_id,
-    }
-    fix_cancel = FixMessage(cancel_parms)
-    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+    finally:
+        rule_manager.remove_rule(nos_rule)
 
 
 def amend_order_via_fix(fix_message, case_id, parametr_list):
@@ -184,10 +165,10 @@ def cancel_order(request):
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
 
-def split_limit_order(request, qty, type,price=None):
+def split_limit_order(request, qty, type, price=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    if price!=None:
+    if price != None:
         order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
     order_details = ModifyOrderDetails()
@@ -195,10 +176,11 @@ def split_limit_order(request, qty, type,price=None):
     order_details.set_order_details(order_split_limit)
     call(Stubs.win_act_order_book.splitLimit, order_details.build())
 
-def split_order(request, qty, type,price=None):
+
+def split_order(request, qty, type, price=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    if price!=None:
+    if price != None:
         order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
     order_details = ModifyOrderDetails()
