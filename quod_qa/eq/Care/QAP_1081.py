@@ -18,7 +18,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1080"
+    case_name = "QAP-1081"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
@@ -75,7 +75,7 @@ def execute(report_id):
                                                  [verify_ent("Order Status", order_status.name, "Open"),
                                                   verify_ent("Qty", order_qty.name, qty),
                                                   verify_ent("LmtPrice", order_price.name, price),
-                                                  verify_ent("ExecSts",order_es.name, "Filled")
+                                                  verify_ent("ExecSts", order_es.name, "Filled")
                                                   ]))
     # endregion
 
@@ -84,12 +84,11 @@ def execute(report_id):
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
     # region cancel CO
-    eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id,1)
+    eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
     # endregion
     # region Accept Cancel
-    eq_wrappers.accept_order(lookup, qty, price)
+    eq_wrappers.reject_order(lookup, qty, price)
     # endregion
-
     # region Check values in OrderBook
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
