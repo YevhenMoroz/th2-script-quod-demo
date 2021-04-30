@@ -126,8 +126,6 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
 
 
 def amend_order_via_fix(fix_message, case_id, parametr_list):
-    for key in parametr_list:
-        print(parametr_list[key]+" "+key)
     fix_manager_qtwquod = FixManager(connectivity, case_id)
     fix_modify_message = FixMessage(fix_message)
     fix_modify_message.change_parameters(parametr_list)
