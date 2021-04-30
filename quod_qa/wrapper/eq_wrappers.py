@@ -15,12 +15,13 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
     direct_moc_request, direct_poc_request, direct_loc_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails,ManualCrossDetails,ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'gtwquod5'
+connectivity = 'gtwquod5'  # gtwquod5 fix-ss-310-columbia-standart
+order_book_act = Stubs.win_act_order_book
+common_act = Stubs.win_act
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -108,8 +109,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         rule_manager.remove_rule(nos_rule)
 
 
-order_book_act = Stubs.win_act_order_book
-common_act = Stubs.win_act
 
 
 def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
@@ -132,8 +131,13 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
 
-
-
+def manual_cross_orders(request,qty,price,list,last_mkt):
+    manual_cross_details = ManualCrossDetails(request)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_last_mkt(last_mkt)
+    call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
