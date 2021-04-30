@@ -1,8 +1,5 @@
 from datetime import datetime
-from urllib import request
-
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
-from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from demo import logger
 from quod_qa.wrapper.fix_manager import FixManager
@@ -12,15 +9,15 @@ from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_poc_request, direct_loc_request
+from win_gui_modules.utils import prepare_fe, get_opened_fe, call
+from win_gui_modules.wrappers import direct_order_request, reject_order_request, \
+    direct_moc_request, direct_loc_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.wrappers import set_base, accept_order_request
 
-connectivity = 'gtwquod5'  # gtwquod5
+connectivity = 'gtwquod5'
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
