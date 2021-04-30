@@ -177,7 +177,7 @@ def amend_order(request, qty=None, price=None):
     call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
 
 
-def cancelle_order(request):
+def cancel_order(request):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
     cancel_order_details.set_cancel_children(True)
