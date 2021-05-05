@@ -1,3 +1,5 @@
+""" This module contains functions which are used in web test cases """
+
 import logging
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Event, EventBatch, EventID
@@ -7,6 +9,14 @@ from stubs import Stubs
 
 
 def get_report(name, status, parent_id, timestamp):
+    """ Creates TH2 event
+        Parameters:
+            name (str): the name of event;
+            status (int): the status of event (0 - passed, 1 - failed);
+            parent_id (EventID): ID of the parent event;
+            timestamp (Timestamp): finish timestamp.
+        Returns:
+            TH2 event """
     estore = Stubs.factory.event_batch_router
     event = Event(
         id=EventID(id=str(uuid1())),
@@ -20,6 +30,12 @@ def get_report(name, status, parent_id, timestamp):
 
 
 def call(method, case_id):
+    """ Executes method and create report depends on this method
+            Parameters:
+                method (function): function for execute;
+                case_id (EventID): ID of the root event.
+            Returns:
+                TH2 event """
     method_name = method.__name__
     logging.info(f'Executing [{method_name}] method ... ')
     start_timestamp = bca.get_timestamp()
