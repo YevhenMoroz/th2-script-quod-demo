@@ -11,13 +11,12 @@ from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo,ModifyOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
-
+import time
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-import time
 def execute(report_id):
-    case_name = "QAP-1078"
+    case_name = "QAP-3434"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
@@ -26,7 +25,7 @@ def execute(report_id):
     price = "20"
     client = "CLIENT1"
     lookup = "PROL"
-    last_mkt='DASI'
+    last_mkt= 'DASI'
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
@@ -58,9 +57,9 @@ def execute(report_id):
     order_details.set_extraction_id(before_order_details_id)
 
     order_status = ExtractionDetail("order_status", "Sts")
-    order_exec_sts=ExtractionDetail('order_exec_sts','ExecSts')
+    order_exec_sts = ExtractionDetail('order_exec_sts', 'ExecSts')
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                           order_exec_sts
+                                                                                            order_exec_sts
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     call(act.getOrdersDetails, order_details.request())
@@ -75,11 +74,11 @@ def execute(report_id):
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(order_info_extraction_cancel)
     main_order_details.set_filter(["Order ID", order_id2])
-    order_exec_sts=ExtractionDetail('order_exec_sts','ExecSts')
+    order_exec_sts = ExtractionDetail('order_exec_sts','ExecSts')
     main_order_details.add_single_order_info(OrderInfo.create(
     action=ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                        order_exec_sts
-                                                                                            ])))
+                                                                         order_exec_sts
+                                                                                     ])))
 
     call(act.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(order_info_extraction_cancel, "checking order2",
