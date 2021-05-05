@@ -18,7 +18,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1081"
+    case_name = "QAP-1364"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
@@ -34,64 +34,55 @@ def execute(report_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     # endregion
-
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
     # endregion
-    # region Accept CO
-    eq_wrappers.accept_order(lookup, qty, price)
+    # region AcceptOrder
+    eq_wrappers.accept_order(lookup, qty, "")
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
     order_details.set_extraction_id(before_order_details_id)
-
     order_status = ExtractionDetail("order_status", "Sts")
     order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_es = ExtractionDetail("order_es", "ExecSts")
+
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_es
+                                                                                            order_qty
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open")
-                                                  ]))
-    # endregion
-    # region Execute  CO
-    eq_wrappers.manual_execution(base_request, qty, price)
-    # endregion
-    # region Check values in OrderBook
-    call(act.getOrdersDetails, order_details.request())
+    request = call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Qty", order_qty.name, qty),
-                                                  verify_ent("LmtPrice", order_price.name, price),
-                                                  verify_ent("ExecSts", order_es.name, "Filled")
+                                                  verify_ent("Order Qty", order_qty.name, qty),
                                                   ]))
     # endregion
-
-    # region Extract
-    order_id = eq_wrappers.get_order_id(base_request)
-    cl_order_id = eq_wrappers.get_cl_order_id(base_request)
+    # region Split Limit
+    eq_wrappers.split_limit_order(base_request, qty, "Limit", price)
     # endregion
-    # region cancel CO
-    eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
-    # endregion
-    # region Reject Cancel
-    eq_wrappers.reject_order(lookup, qty, price)
-    # endregion
-    # region Check values in OrderBook
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Cancelled")
+    # region check sub Order status
+    before_order_details_id = "before_order_details"
+    order_details = OrdersDetails()
+    order_details.set_default_params(base_request)
+    order_details.set_extraction_id(before_order_details_id)
+    order_status = ExtractionDetail("order_status", "Sts")
+    order_id = ExtractionDetail("order_id", "Order ID")
+    order_qty = ExtractionDetail("order_qty", "Qty")
+    order_price = ExtractionDetail("order_price", "LmtPrice")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
+                                                                                            order_id,
+                                                                                            order_qty,
+                                                                                            order_price
+                                                                                            ])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    call(act.getChildOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking Child order",
+                                                 [verify_ent("Order Status", order_status.name, "Open"),
+                                                  verify_ent('Qty', order_qty.name, qty),
+                                                  verify_ent('Price', order_price.name, price)
                                                   ]))
     # endregion
