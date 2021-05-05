@@ -306,11 +306,6 @@ class ModifyRFQTileRequest:
         for action in context_actions:
             self.add_context_action(action)
 
-    def clear_quantity(self, clear_quantity: bool):
-        self.modify_request.clearQuantity = clear_quantity
-
-    def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
-        self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
 
     def add_actions(self, actions_rates: list):
         for action in actions_rates:
