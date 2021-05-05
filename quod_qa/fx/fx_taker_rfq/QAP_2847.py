@@ -94,7 +94,7 @@ def execute(report_id):
     case_filter_venue = "CITI"
     case_filter_venue_1 = "HSBC"
     case_qty = 10000000
-    case_quote_owner = "QA2"
+    case_quote_owner = "ostronov"
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
     quote_quote_sts_accepted = "Accepted"
