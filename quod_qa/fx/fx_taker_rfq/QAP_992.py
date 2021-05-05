@@ -58,7 +58,7 @@ def check_fixing_date(base_request, service, case_id, date):
     extract_date = response["aggrRfqTile.nearFixingDate"]
     extract_date = timestring.Date(extract_date)
     verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Tenor date on RFQ tile")
+    verifier.set_event_name("Verify Fixing date on RFQ tile")
     verifier.compare_values("Date", date, str(extract_date))
     verifier.verify()
 
