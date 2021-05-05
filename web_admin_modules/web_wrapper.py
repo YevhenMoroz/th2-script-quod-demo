@@ -35,7 +35,7 @@ def call(method, case_id):
                 method (function): function for execute;
                 case_id (EventID): ID of the root event.
             Returns:
-                TH2 event """
+                TH2 report """
     method_name = method.__name__
     logging.info(f'Executing [{method_name}] method ... ')
     start_timestamp = bca.get_timestamp()
