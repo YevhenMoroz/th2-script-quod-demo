@@ -13,7 +13,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6]
 
     # Console output list of IDs active rules
     @staticmethod
