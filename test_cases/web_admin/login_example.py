@@ -1,7 +1,7 @@
-from time import sleep
+# pip install --user -i https://kos-pip-proxy01.exactpro.com/root/pypi/+simple/ webdriver-manager
 
-# TODO: fix Stubs import
-# from stubs import Stubs
+from stubs import Stubs
+from custom import basic_custom_actions as bca
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,41 +11,42 @@ from selenium.webdriver.common.keys import Keys
 
 from webdriver_manager.chrome import ChromeDriverManager
 
+from web_admin_modules.web_wrapper import call
+
 
 class TestCase:
-    def __init__(self):
+    def __init__(self, report_id):
+        # Case parameters setup
+        self.case_id = bca.create_event('[WEB ADMIN] Login Example', report_id)
 
         # ChromeDriver
         self.driver = webdriver.Chrome(ChromeDriverManager().install())
         # WaitDriver
         self.wait = WebDriverWait(self.driver, 10)
 
-        # preconditions
-        # self.start_url = Stubs.custom_config['web_admin_url']
-        # self.user = Stubs.custom_config['web_admin_login']
-        # self.password = Stubs.custom_config['web_admin_password']
+        # Reference data
+        self.start_url = Stubs.custom_config['web_admin_url']
+        self.user = Stubs.custom_config['web_admin_login']
+        self.password = Stubs.custom_config['web_admin_password']
 
-        # TODO: fix Stubs import
-        self.start_url = 'http://10.0.22.40:3180/quodadmin/qakharkiv3/'
-        self.user = 'adm03'
-        self.password = 'adm03'
-
-    # login method
+    # Login method
     def login(self):
-        # open start url
         self.driver.get(self.start_url)
-        # wait until find login and password inputs
+        # Wait until find login and password inputs
         login_input = self.wait.until(EC.presence_of_element_located((By.ID, 'mat-input-0')))
         password_input = self.wait.until(EC.presence_of_element_located((By.ID, 'mat-input-1')))
-        # send login and password into inputs
+        # Send login and password into inputs
         login_input.send_keys(self.user)
         password_input.send_keys(self.password, Keys.ENTER)
-        sleep(60)
 
+        # Wait until find navigation menu
+        self.wait.until(EC.presence_of_element_located((By.ID, 'app-sidenav-menu')))
+
+    # Main method. Must call in demo.py by 'login_example.TestCase(report_id).execute()' command
     def execute(self):
-        self.login()
+        call(self.login, self.case_id)
         self.driver.close()
 
 
 if __name__ == '__main__':
-    TestCase().execute()
+    pass
