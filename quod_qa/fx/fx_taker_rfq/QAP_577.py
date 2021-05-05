@@ -132,9 +132,6 @@ def check_value_in_header(base_request, service, case_id, value):
     extract_header = TableAction.extract_headers(colIndexes=[3])
     table_actions_request.add_action(extract_header)
     response = call(service.processTableActions, table_actions_request.build())
-    print(response)
-    for s in response['Headers'].split(';'):
-        print(s)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value in header column")
