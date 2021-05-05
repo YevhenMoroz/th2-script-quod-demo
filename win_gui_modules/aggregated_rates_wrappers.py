@@ -309,12 +309,6 @@ class ModifyRFQTileRequest:
         for action in context_actions:
             self.add_context_action(action)
 
-    def clear_quantity(self, clear_quantity: bool):
-        self.modify_request.clearQuantity = clear_quantity
-
-    def clear_far_leg_quantity(self, clear_far_leg_quantity: bool):
-        self.modify_request.clearFarLegQuantity = clear_far_leg_quantity
-
     def add_actions(self, actions_rates: list):
         for action in actions_rates:
             self.add_actions(action)
@@ -389,6 +383,7 @@ class RFQTileValues(Enum):
     FAR_MATURITY_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_MATURITY_DATE
     LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
     RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
+    SEND_BUTTON_TEXT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SEND_BUTTON_TEXT
 
 
 class ExtractRFQTileValues:
@@ -476,6 +471,9 @@ class ExtractRFQTileValues:
     def extract_right_checkbox(self, name: str):
         self.extract_value(RFQTileValues.RIGHT_CHECKBOX, name)
 
+    def extract_send_button_text(self, name: str):
+        self.extract_value(RFQTileValues.SEND_BUTTON_TEXT, name)
+
     def extract_near_tenor_list(self, preFilter: str = None):
         if preFilter is not None:
             self.request.tenorFilter = preFilter
@@ -490,6 +488,10 @@ class ExtractRFQTileValues:
 
     def build(self):
         return self.request
+
+
+class ExtractHeaders(object):
+    rowNumber: int
 
 
 class TableAction:
@@ -516,11 +518,23 @@ class TableAction:
         action.set_action(extract_cell)
         return action
 
+    @staticmethod
+    def extract_headers(colIndexes: list):
+        extract_headers = ar_operations_pb2.TableAction.ExtractHeaders()
+        for colIndex in colIndexes:
+            extract_headers.cols.append(colIndex)
+
+        action = TableAction()
+        action.set_action(extract_headers)
+        return action
+
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
         if isinstance(action, ar_operations_pb2.TableAction.ExtractCellValue):
             self.request.extractCellValue.CopyFrom(action)
+        if isinstance(action, ar_operations_pb2.TableAction.ExtractHeaders):
+            self.request.extractHeaders.CopyFrom(action)
 
     def build(self):
         return self.request
@@ -608,21 +622,4 @@ class PlaceESPOrder:
         return self.__request_details
 
 
-class PlaceESPOrder:
-    def __init__(self, details: BaseTileDetails = None):
-        if details is not None:
-            self.__request_details = ar_operations_pb2.ESPTileOrderDetails(data=details.build())
-        else:
-            self.__request_details = ar_operations_pb2.ESPTileOrderDetails()
 
-    def set_details(self, details: BaseTileDetails):
-        self.__request_details.data.CopyFrom(details.build())
-
-    def set_venue(self, venue: str):
-        self.__request_details.venue = venue
-
-    def set_action(self, action: ESPTileOrderSide):
-        self.__request_details.action = action.value
-
-    def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
-        return self.__request_details
