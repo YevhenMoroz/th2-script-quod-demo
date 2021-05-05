@@ -306,7 +306,6 @@ class ModifyRFQTileRequest:
         for action in context_actions:
             self.add_context_action(action)
 
-
     def add_actions(self, actions_rates: list):
         for action in actions_rates:
             self.add_actions(action)
@@ -532,8 +531,6 @@ class TableAction:
         action.set_action(extract_headers)
         return action
 
-
-
     def set_action(self, action):
         if isinstance(action, ar_operations_pb2.TableAction.CheckTableVenuesRequest):
             self.request.checkTableVenues.CopyFrom(action)
@@ -605,26 +602,6 @@ class PlaceRFQRequest:
         self.__request_details.action = action.value
 
     def build(self) -> ar_operations_pb2.RFQTileOrderDetails:
-        return self.__request_details
-
-
-class PlaceESPOrder:
-    def __init__(self, details: BaseTileDetails = None):
-        if details is not None:
-            self.__request_details = ar_operations_pb2.ESPTileOrderDetails(data=details.build())
-        else:
-            self.__request_details = ar_operations_pb2.ESPTileOrderDetails()
-
-    def set_details(self, details: BaseTileDetails):
-        self.__request_details.data.CopyFrom(details.build())
-
-    def set_venue(self, venue: str):
-        self.__request_details.venue = venue
-
-    def set_action(self, action: ESPTileOrderSide):
-        self.__request_details.action = action.value
-
-    def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
 
 
