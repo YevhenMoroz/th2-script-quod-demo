@@ -1,5 +1,3 @@
-# pip install --user -i https://kos-pip-proxy01.exactpro.com/root/pypi/+simple/ webdriver-manager
-
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
