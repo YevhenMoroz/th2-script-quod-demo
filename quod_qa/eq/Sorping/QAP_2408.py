@@ -40,11 +40,10 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-" + ex_destination_1.lower(), ex_destination_1 + "_" + client, ex_destination_1, limit)
-    # ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-' + ex_destination_1.lower(), ex_destination_1 + '_' + client, ex_destination_1, True)
-    # ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
-    # return [nos_rule, ocr_rule, ocrr_rule]
-    # return [nos_rule]
+    ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_bs, "KEPLER", "QDL1", False, 2000, 33)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_bs, ex_destination_1 + "_" + client, ex_destination_1, limit)
+    ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-' + ex_destination_1.lower(), ex_destination_1 + '_' + client, ex_destination_1, True)
+    return [nos_rule, ocr_rule, ioc_rule]
 
 def rule_destroyer(list_rules):
     if list_rules != None:

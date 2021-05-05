@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.eq.Sorping import QAP_2408
 from rule_management import RuleManager
 from schemas import rfq_tile_example
 from stubs import Stubs
@@ -16,33 +17,17 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('Ziuban tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
-    test_cases = {
-        'RFQ_example': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod5-fx',
-            'Account': 'MMCLIENT1',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD5',
-            }
-        }
     try:
-        QAP_1012.execute(report_id)
+        # QAP_1012.execute(report_id)
+        QAP_2408.execute(report_id)
+        # rm = RuleManager()
+        # rm.add_NewOrdSingle_IOC("fix-bs-310-columbia","KEPLER","QDL1",False,2000,33)
     except Exception:
         logging.error("Error execution",exc_info=True)
-   # try:
-#
-    #    rm = RuleManager()
-#
-   #     rm.print_active_rules()
-#
-    #   ui_tests.execute(report_id)
 
-    #except Exception:
-        #logging.error("Error execution", exc_info=True)
 
 if __name__ == '__main__':
     logging.basicConfig()
