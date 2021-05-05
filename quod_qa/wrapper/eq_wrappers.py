@@ -7,6 +7,7 @@ from custom.basic_custom_actions import create_event
 from demo import logger
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
@@ -15,11 +16,11 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
     direct_moc_request, direct_poc_request, direct_loc_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails,ManualCrossDetails,ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
-connectivity = 'gtwquod5'  # gtwquod5 fix-ss-310-columbia-standart
+connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5 fix-ss-310-columbia-standart
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -101,7 +102,8 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        fix_params['responce'] = responce
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -233,6 +235,11 @@ def get_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
+def check_value_via_fix(list_param,case_id,responce):
+    fix_verifier_ss = FixVerifier(connectivity, case_id)
+    list_param['OrderID'] = responce.response_messages_list[0].fields['OrderID'].simple_value
+    fix_verifier_ss.CheckExecutionReport(list_param, responce)
+
 
 def get_cl_order_id(request):
     order_details = OrdersDetails()

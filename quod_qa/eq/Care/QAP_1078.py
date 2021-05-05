@@ -36,11 +36,9 @@ def execute(report_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-
     # region Create CO
     eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
-    time.sleep(100)
     # region Accept CO
     eq_wrappers.accept_order(lookup,qty,price)
     # endregion
@@ -70,7 +68,7 @@ def execute(report_id):
                                                        ]))
     # endregion
     # region partially fill
-    eq_wrappers.manual_execution(base_request,str(int(int(qty)/2)),price)
+    eq_wrappers.manual_execution(base_request, str(int(int(qty)/2)),price)
     # endregion
 
     # region Extract
@@ -85,7 +83,7 @@ def execute(report_id):
     # Check order
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
+                                                 [verify_ent("Order Status", order_status.name, "Cancel"),
                                                   verify_ent('Order LeavesQty', order_leaves_qty.name, str(int(int(qty)/2)))
                                                   ]))
     # endregion

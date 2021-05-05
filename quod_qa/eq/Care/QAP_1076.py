@@ -74,6 +74,10 @@ def execute(report_id):
     eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id,1)
     # endregion
 
+    # region Accept CO
+    eq_wrappers.accept_order(lookup, qty, price)
+    # region Check values in OrderBook
+
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Cancelled")

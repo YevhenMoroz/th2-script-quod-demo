@@ -23,16 +23,19 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
 def execute(report_id):
     case_name = "QAP-1070"
+
+    seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "800"
+    newQty = "100"
     price = "10"
     newPrice = "1"
+    time = datetime.utcnow().isoformat()
     lookup = "PROL"
     client = "CLIENT1"
     # endregion
@@ -45,24 +48,20 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    eq_wrappers.open_fe(session_id,report_id,case_id, work_dir,username,password)
     # endregionA
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    change_parameters = {'Price': newPrice}
-    # Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id,change_parameters)
-    # region
+    param_list={'Price': newPrice}
+    #Amend fix order
+    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    #region
 
     # region AcceptOrder
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
 
-
-    # region CheckOrder
+    #region CheckOrder
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
@@ -82,4 +81,4 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Price", order_price.name, newPrice)
                                                   ]))
-    # endregion
+    #endregion
