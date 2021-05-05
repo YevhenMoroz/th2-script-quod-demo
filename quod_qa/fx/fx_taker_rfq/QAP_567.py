@@ -107,6 +107,23 @@ def check_column_spot(base_request, service, case_id, venue):
     verifier.verify()
 
 
+def check_value_in_header(base_request, service, case_id, value):
+    table_actions_request = TableActionsRequest(details=base_request)
+    extraction_id = bca.client_orderid(4)
+    table_actions_request.set_extraction_id(extraction_id)
+    extract_header = TableAction.extract_headers(colIndexes=[3])
+    table_actions_request.add_action(extract_header)
+    response = call(service.processTableActions, table_actions_request.build())
+    print(response)
+    for s in response['Headers'].split(';'):
+        print(s)
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check value in header column")
+    verifier.compare_values("Tenor value", value, response['Headers'].split(';')[0])
+    verifier.verify()
+
+
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
@@ -118,7 +135,7 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_near_tenor = "1M"
+    case_tenor = "1M"
     case_venue = ["HSB"]
     case_filter_venue = "HSBC"
     case_qty = 2000000
@@ -140,7 +157,7 @@ def execute(report_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
-                        case_to_currency, case_near_tenor, case_client, case_venue)
+                        case_to_currency, case_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
@@ -151,7 +168,7 @@ def execute(report_id):
         # Step 4
         check_value_dist(base_rfq_details, ar_service, case_id, case_venue)
         # Step 5
-        # TODO Check header of column with tenor
+        check_value_in_header(base_rfq_details, ar_service, case_id, case_tenor)
         # Step 6
         check_column_spot(base_rfq_details, ar_service, case_id, case_venue)
 
