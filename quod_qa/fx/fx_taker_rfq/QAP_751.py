@@ -119,7 +119,6 @@ def check_order_book(base_request, instr_type, act_ob, case_id):
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
     verifier.verify()
-    print(response)
     return response
 
 
@@ -148,7 +147,6 @@ def check_trades_book(base_request, ob_act, exec_id):
                                                                                  far_tenor, far_qty, far_fwd_pts,
                                                                                  far_px, far_settle_date])))
     response = call(ob_act.getTradeBookDetails, execution_details.request())
-    print(response)
     return response
 
 
