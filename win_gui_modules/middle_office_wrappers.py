@@ -302,6 +302,9 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def set_extraction_id(self, extraction_id: str):
         self._request.extractionId = extraction_id
 
+    def set_row_number(self, row_number: int):
+        self._request.rowNumber = row_number
+
     def add_extraction_detail(self, detail: ExtractionDetail):
         var = self._request.extractionDetails.add()
         var.name = detail.name
