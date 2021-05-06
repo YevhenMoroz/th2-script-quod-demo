@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-import pyautogui
 def accept():
     pyautogui.press("c")
     # Holds down the alt key

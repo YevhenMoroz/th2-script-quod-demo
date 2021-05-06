@@ -35,7 +35,7 @@ class Stubs:
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
     win_act_middle_office_service = factory.grpc_router.get_service(MiddleOfficeOperationsService)
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
-    win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
+    #win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None

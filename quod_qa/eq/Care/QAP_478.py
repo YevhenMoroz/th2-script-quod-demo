@@ -64,6 +64,28 @@ def execute(report_id):
     eq_wrappers.direct_moc_order('50', 'ChiX direct access')
     # endregion
 
+    # check sub Order status
+
+    before_order_details_id = "before_order_details"
+    order_details = OrdersDetails()
+    order_details.set_default_params(base_request)
+    order_details.set_extraction_id(before_order_details_id)
+    order_status = ExtractionDetail("order_status", "Sts")
+    order_id = ExtractionDetail("order_id", "Order ID")
+    order_qty = ExtractionDetail("order_qty", "Qty")
+    order_price = ExtractionDetail("order_price", "LmtPrice")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
+                                                                                            order_id,
+                                                                                            order_qty,
+                                                                                            order_price
+                                                                                            ])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    call(act.getChildOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking Child order",
+                                                 [verify_ent("Order Status", order_status.name, "Open"),
+                                                  verify_ent('Qty', order_qty.name, str(int(int(qty)/2))),
+                                                  ]))
+    # endregion
     # region Close FE
     close_fe(case_id, session_id)
     # endregion
