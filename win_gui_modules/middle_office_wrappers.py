@@ -3,7 +3,7 @@ from enum import Enum
 from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
-from win_gui_modules.common_wrappers import CommissionsDetails
+from win_gui_modules.common_wrappers import CommissionsDetails, ContainedRow, TableCheckDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -302,6 +302,9 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def set_extraction_id(self, extraction_id: str):
         self._request.extractionId = extraction_id
 
+    def set_row_number(self, row_number: int):
+        self._request.rowNumber = row_number
+
     def add_extraction_detail(self, detail: ExtractionDetail):
         var = self._request.extractionDetails.add()
         var.name = detail.name
@@ -336,4 +339,29 @@ class AllocationsExtractionDetails:
         return OrderDetails(var)
 
     def build(self):
+        return self._request
+
+
+class AllocationsTableCheckDetails:
+    def __init__(self, base: EmptyRequest = None):
+        self._request = middle_office_pb2.AllocationsTableCheckDetails()
+        if base is not None:
+            self.table_check_details = TableCheckDetails(base=base)
+        else:
+            self.table_check_details = TableCheckDetails()
+
+    def set_default_params(self, base_request):
+        self.table_check_details.set_default_params(base_request)
+
+    def set_block_filter(self, filters: dict):
+        self._request.blockFilter.update(filters)
+
+    def set_allocations_filter(self, filters: dict):
+        self.table_check_details.set_filter(filters)
+
+    def add_contained_rows(self) -> ContainedRow:
+        return self.table_check_details.add_contained_rows()
+
+    def build(self):
+        self._request.tableCheckDetails.CopyFrom(self.table_check_details.build())
         return self._request

@@ -56,3 +56,38 @@ class SpreadAction(Enum):
     DECREASE_BID = common_pb2.DECREASE_BID
     SKEW_TOWARDS_BID = common_pb2.SKEW_TOWARDS_BID
     SKEW_TOWARDS_ASK = common_pb2.SKEW_TOWARDS_ASK
+
+
+class ContainedRow:
+    def __init__(self, message: common_pb2.TableCheckDetails.ContainedRow()):
+        self.message = message
+
+    def set_row_id(self, row_id: str):
+        self.message.rowId = row_id
+
+    def set_row_number(self, row_number: int):
+        self.message.rowNumber = row_number
+
+    def set_params(self, row_params: dict):
+        self.message.params.update(row_params)
+
+
+class TableCheckDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = common_pb2.TableCheckDetails(base=base)
+        else:
+            self._request = common_pb2.TableCheckDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, filters: dict):
+        self._request.filter.update(filters)
+
+    def add_contained_rows(self):
+        var = self._request.containedRows.add()
+        return ContainedRow(message=var)
+
+    def build(self):
+        return self._request

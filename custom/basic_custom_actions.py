@@ -45,6 +45,11 @@ def timestamps():
     return seconds, nanos
 
 
+def get_timestamp():
+    seconds, nanos = timestamps()
+    return Timestamp(seconds=seconds, nanos=nanos)
+
+
 def client_orderid(length: int) -> str:
     """ Generates unique id in the string format of specified length
         Parameters:
@@ -95,6 +100,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         ),
         fields=content
     )
+
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter without fail unexpected
@@ -153,6 +159,7 @@ def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fiel
                 )
             )
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
+
 
 def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter

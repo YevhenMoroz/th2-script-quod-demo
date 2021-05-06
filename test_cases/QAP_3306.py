@@ -107,6 +107,7 @@ def execute(report_id):
                 "Send new dma order", "gtwquod5", case_id,
                 bca.message_to_grpc('NewOrderSingle', cmo2_params, "gtwquod5")
             ))
+        #call(common_act.acceptOrder, accept_order_request(session_id, case_id, "VETO", qty2, ""))
 
         # create care market order
         cmo3_params = {
@@ -132,12 +133,12 @@ def execute(report_id):
                 "Send new dma order", "gtwquod5", case_id,
                 bca.message_to_grpc('NewOrderSingle', cmo3_params, "gtwquod5")
             ))
+        #call(common_act.acceptOrder, accept_order_request(session_id, case_id, "VETO", qty3, ""))
 
         # create manual cross1
         service = Stubs.win_act_order_book
 
         manual_cross_details = ManualCrossDetails(base_request)
-        # manual_cross_details.set_filter()
         manual_cross_details.set_selected_rows([3, 2])
 
         manual_cross_details.set_quantity("70")
