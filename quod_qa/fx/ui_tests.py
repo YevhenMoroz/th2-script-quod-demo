@@ -133,9 +133,9 @@ def extract_rfq_table_data(base_details, ar_service):
     extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy1", "Dist", "HSB", 1))
     # There is two way of headers extraction
     # 1 is use list of colIndexes to extruct custom header(if you know what you want) !!!warning indexes start from 1!!!
-    extract5 = TableAction.extract_headers(colIndexes=(3,4,9,10))
+    # extract5 = TableAction.extract_headers(colIndexes=(3,4,9,10))
     # 2 you may use empty list to extract all available headers
-    # extract5 = TableAction.extract_headers(colIndexes=())
+    extract5 = TableAction.extract_headers(colIndexes=())
     table_actions_request.set_extraction_id("extrId")
     table_actions_request.add_actions([extract5])
     result = call(ar_service.processTableActions, table_actions_request.build())

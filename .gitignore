@@ -3,5 +3,5 @@
 /DRAFT.py
 /EnterOrderExample_ref.py
 /etc/ref
-/configs/*.json
+/configs/grpc.json
 demo.py
