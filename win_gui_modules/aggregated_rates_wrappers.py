@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
@@ -292,6 +291,9 @@ class ModifyRFQTileRequest:
 
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
+
+    def set_far_leg_quantity_as_string(self, quantity: str):
+        self.modify_request.farLegQuantityAsString = quantity
 
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
