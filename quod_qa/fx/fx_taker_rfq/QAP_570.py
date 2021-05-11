@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
@@ -26,7 +25,7 @@ def send_rfq(base_request, service):
 
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_quantity(qty)
+    modify_request.set_quantity_as_string(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
@@ -67,13 +66,9 @@ def check_order_book(base_request, instr_type, act, act_ob, qty):
 def execute(report_id):
     common_act = Stubs.win_act
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_instr_type = "Spot"
-    case_qty1 = 1000000
+    case_qty1 = "1000000"
     case_qty2 = 11
     case_qty3 = 110.50
     case_tenor = "Spot"
@@ -129,9 +124,5 @@ def execute(report_id):
         cancel_rfq(base_rfq_details, ar_service)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)

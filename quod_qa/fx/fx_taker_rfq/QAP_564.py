@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 import timestring
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1_front_end, spo_front_end
 from custom.verifier import Verifier
@@ -83,10 +82,6 @@ def check_currency_pair(base_request, service, case_id, currency_pair):
 
 
 def execute(report_id):
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
@@ -148,8 +143,5 @@ def execute(report_id):
         check_date(base_rfq_details, ar_service, case_id, wk1_front_end())
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
