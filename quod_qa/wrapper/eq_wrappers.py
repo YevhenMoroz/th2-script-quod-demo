@@ -149,7 +149,8 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
     fix_modify_message = FixMessage(fix_message)
     fix_modify_message.change_parameters(parametr_list)
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-    fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    return response
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -187,7 +188,6 @@ def direct_moc_order(qty, route):
 
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
-
 
 def direct_order(lookup, qty, price, qty_percent):
     call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
