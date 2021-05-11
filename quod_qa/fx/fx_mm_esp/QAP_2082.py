@@ -14,14 +14,15 @@ from pandas.tseries.offsets import BusinessDay as bd
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-
+import time
 
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-connectivity = 'fix-ss-308-mercury-standard'
-account = 'Palladium1'
+# connectivity = 'fix-ss-308-mercury-standard'
+connectivity = 'fix-qsesp-303'
+account = 'MMCLIENT1'
 qty = 1000000
 
 class TestCase:
@@ -38,7 +39,7 @@ class TestCase:
 
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP_1518', report_id)
+        self.case_id = bca.create_event('QAP_2079', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -52,20 +53,20 @@ class TestCase:
             'Side': '1',
             'OrderQty': qty,
             'OrdType': '2',
-            'TimeInForce': '4',
-            'Currency': 'GBP',
+            # 'Price': 35.002,
+            'TimeInForce': '3',
+            'Currency': 'EUR',
             'SettlCurrency': 'USD',
             'SettlType': 0,
             'SettlDate': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S'),
             'Instrument': {
-                'Symbol': 'GBP/USD',
+                'Symbol': 'EUR/USD',
                 'SecurityType': 'FXSPOT',
                 'SecurityIDSource': '8',
-                'SecurityID': 'GBP/USD',
+                'SecurityID': 'EUR/USD',
                 'SecurityExchange': 'XQFX',
                 'Product': '4'
-            },
-
+            }
         }
 
         # This parameters can be used for ExecutionReport message
@@ -79,15 +80,17 @@ class TestCase:
             'Currency': self.case_params['Currency'],
             'Instrument': {
                 'Symbol': self.case_params['Instrument']['Symbol'],
-                # 'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
-                # 'SecurityID': self.case_params['Instrument']['SecurityID'],
-                # 'SecurityExchange': self.case_params['Instrument']['SecurityExchange'],
-                # 'Product': self.case_params['Instrument']['Product']
+                'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
+                'SecurityID': self.case_params['Instrument']['SecurityID'],
+                'SecurityExchange': self.case_params['Instrument']['SecurityExchange'],
+                'Product': self.case_params['Instrument']['Product']
             }
         }
 
         # Last checkpoint. Need in the future for check ExecutionReport via FIX
         self.last_checkpoint = None
+
+
 
     # Send MarketDataRequest subscribe method
     def send_md_subscribe(self):
@@ -118,13 +121,17 @@ class TestCase:
                 self.case_id,
                 bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
             ))
+        time.sleep(3)
 
-        self.case_params['Price'] = subscribe \
+        price = subscribe \
             .response_messages_list[0].fields['NoMDEntries'] \
             .message_value.fields['NoMDEntries'].list_value.values[1] \
             .message_value.fields['MDEntryPx'].simple_value
+        self.case_params['Price'] = price-0.1;
 
-        print(self.case_params['Price'])
+        print(f"Price is: {self.case_params['Price']}")
+
+
         md_subscribe_response = {
             'MDReqID': md_params['MDReqID'],
             'Instrument': {
@@ -137,7 +144,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '1000000',
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -151,7 +158,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '1000000',
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -165,7 +172,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '2000000',
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -179,7 +186,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '2000000',
+                    'MDEntrySize': '*',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -188,6 +195,34 @@ class TestCase:
                     'MDEntryDate': '*',
                     'MDEntryType': 1
                 },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '*',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                }
             ]
         }
 
@@ -225,7 +260,8 @@ class TestCase:
             'Account': self.case_params['Account'],
             'HandlInst': self.case_params['HandlInst'],
             'Side': self.case_params['Side'],
-            'OrderQty': self.case_params['OrderQty'],
+            # 'OrderQty': self.case_params['OrderQty'],
+            'OrderQty': 17000000,
             'TimeInForce': self.case_params['TimeInForce'],
             'Price': self.case_params['Price'],
             'OrdType': self.case_params['OrdType'],
@@ -237,13 +273,13 @@ class TestCase:
                 'Symbol': self.case_params['Instrument']['Symbol'],
                 'Product': self.case_params['Instrument']['Product']
             },
-            'Currency': self.case_params['Currency']
+            'Currency': self.case_params['Currency'],
 
         }
 
         new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new FOK order', self.case_params['Connectivity'], self.case_id,
+                'Send new IOC order', self.case_params['Connectivity'], self.case_id,
                 bca.message_to_grpc('NewOrderSingle', order_params, self.case_params['Connectivity'])
             ))
 
@@ -265,11 +301,11 @@ class TestCase:
             'OrdStatus': 'A',
             'ExecType': 'A',
             'NoParty': [{
-                'PartyID': 'gtwquod7',
+                'PartyID': 'gtwquod3',
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'LeavesQty': order_params['OrderQty']
+            'LeavesQty': order_params['OrderQty'],
         }
 
         self.verifier.submitCheckRule(
@@ -286,7 +322,7 @@ class TestCase:
         new_er_params['SettlDate'] = self.case_params['SettlDate'].split(' ')[0]
         new_er_params['SettlType'] = self.case_params['SettlType']
         new_er_params['ExecRestatementReason'] = '4'
-        new_er_params.pop('Account',None)
+
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
@@ -326,15 +362,12 @@ class TestCase:
             'ExDestination': 'XQFX',
             'GrossTradeAmt': '*',
             'NoParty': [{
-                'PartyID': 'gtwquod7',
+                'PartyID': 'gtwquod3',
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }]
         }
-        # er_filled['Instrument']['SecurityType'] = self.case_params['Instrument']['SecurityType']
-        er_filled['Account'] = 'Palladium1_1'
-        # er_filled.pop('SecurityType',None)
-
+        er_filled['Instrument']['SecurityType'] = self.case_params['Instrument']['SecurityType']
 
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -345,6 +378,23 @@ class TestCase:
             timeout=3000
         )
 
+        # execution_id = bca.client_orderid(4)
+        # ob = OrdersDetails()
+        # ob.set_default_params(self.base_request)
+        # ob.set_extraction_id(execution_id)
+        # ob_cl_ord_id = ExtractionDetail("orderBook.clordid", "ClOrdID")
+        # ob_tif = ExtractionDetail("orderBook.timeinforce", "TIF")
+        # ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
+        # ob.add_single_order_info(
+        #     OrderInfo.create(
+        #         action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_cl_ord_id, ob_tif])))
+        # call(self.ob_act.getOrdersDetails, ob.request())
+        # call(self.common_act.verifyEntities, verification(execution_id, "checking OB",
+        #                                                   [verify_ent("OB ClOrdID vs FIX ClOrdID", ob_cl_ord_id.name,
+        #                                                               er_filled['ClOrdID']),
+        #                                                    verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
+        #                                                    verify_ent("OB TIF",ob_tif.name,"FillOrKill")]))
+
 
 
 
@@ -353,6 +403,11 @@ class TestCase:
     def execute(self):
 
         try:
+
+            # if not Stubs.frontend_is_open:
+            #     prepare_fe_2(self.case_id, self.session_id)
+            # else:
+            #     get_opened_fe(self.case_id, self.session_id)
 
             # Step 1
             market_data_params = self.send_md_subscribe()
@@ -366,6 +421,7 @@ class TestCase:
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
+        # close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
