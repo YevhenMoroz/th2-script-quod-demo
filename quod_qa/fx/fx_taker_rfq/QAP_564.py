@@ -123,22 +123,25 @@ def execute(report_id):
         check_date(base_rfq_details, ar_service, case_id, spo_front_end())
 
         # Step 4
-        modify_request.set_change_currency()
+        modify_request.set_change_currency(True)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_currency(base_rfq_details, ar_service, case_id, case_to_currency)
 
         # Step 5
         modify_request.set_quantity(case_qty2)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty2)
 
         # Step 6
         modify_request.set_quantity(case_qty3)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty3)
 
         # Step 7
         modify_request.set_near_tenor(case_tenor2)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date(base_rfq_details, ar_service, case_id, wk1_front_end())
         call(ar_service.closeRFQTile, base_rfq_details.build())

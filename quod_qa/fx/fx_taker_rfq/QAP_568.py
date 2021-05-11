@@ -113,7 +113,7 @@ def execute(report_id):
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "ASPECT_CITI"
+    case_client = "MMCLIENT2"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -150,9 +150,7 @@ def execute(report_id):
         place_order_venue(base_rfq_details, ar_service, case_venue)
         ob_quote_id = check_order_book(case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book(case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)

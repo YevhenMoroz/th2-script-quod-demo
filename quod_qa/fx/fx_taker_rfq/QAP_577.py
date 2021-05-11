@@ -43,7 +43,7 @@ def check_value_in_tob(base_request, service, case_id):
     tob_len = len(response["ar_rfq.extract_best_bid"][3:])
     verifier = Verifier(case_id)
     verifier.set_event_name("Check digits in TOB")
-    verifier.compare_values("Number of digits in TOB", "7", str(tob_len))
+    verifier.compare_values("Number of digits in TOB", "5", str(tob_len))
     verifier.verify()
 
 

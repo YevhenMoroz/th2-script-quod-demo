@@ -118,7 +118,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB", "CIT"]
+    venues = ["HSB"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"
@@ -146,7 +146,7 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 3
-        time.sleep(35)
+        time.sleep(120)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
         # Step 4
@@ -154,7 +154,6 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
-
         cancel_rfq(base_rfq_details, ar_service)
         # Step 6
         send_rfq(base_rfq_details, ar_service)

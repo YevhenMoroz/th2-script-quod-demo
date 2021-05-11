@@ -152,7 +152,7 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
-        time.sleep(35)
+        time.sleep(120)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
 

@@ -64,8 +64,8 @@ def execute(report_id):
     case_ndf_currency = "PHP"
     case_near_tenor = "Spot"
     case_far_tenor = "1W"
-    case_venue = ["JPM"]
-    case_filter_venue = "JPM"
+    case_venue = ["CIT"]
+    case_filter_venue = "CITI"
 
     case_qty = 2000000
 

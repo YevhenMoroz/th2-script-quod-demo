@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
@@ -10,9 +11,6 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-# TODO Add another type for setQty instead Int64Value
 
 
 def create_or_get_rfq(base_request, service):
@@ -26,6 +24,8 @@ def send_rfq(base_request, service):
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity_as_string(qty)
+    action = ContextAction.create_venue_filters(["HSB"])
+    modify_request.add_context_action(action)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
@@ -60,7 +60,7 @@ def check_order_book(base_request, instr_type, act, act_ob, qty):
     call(act.verifyEntities, verification(extraction_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB Qty", ob_qty.name, qty)]))
+                                           verify_ent("OB Qty", ob_qty.name, str(qty))]))
 
 
 def execute(report_id):
@@ -70,11 +70,11 @@ def execute(report_id):
     case_instr_type = "Spot"
     case_qty1 = "1000000"
     case_qty2 = 11
-    case_qty3 = 110.50
+    case_qty3 = "110.50"
     case_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "ASPECT_CITI"
+    case_client = "MMCLIENT2"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -110,8 +110,7 @@ def execute(report_id):
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '11')
-        cancel_rfq(base_rfq_details, ar_service)
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, case_qty2)
 
         # Step 3
         modify_rfq_tile(base_rfq_details, ar_service, case_qty3, case_from_currency,
@@ -120,8 +119,8 @@ def execute(report_id):
         #
         # # Step 4
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '110.50')
-        cancel_rfq(base_rfq_details, ar_service)
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, case_qty3)
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:

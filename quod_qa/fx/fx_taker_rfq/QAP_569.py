@@ -152,19 +152,18 @@ def execute(report_id):
                         case_to_currency, case_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         # Step 2
-        place_order_tob(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
+        place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
         # Step 3
         send_rfq(base_rfq_details, ar_service)
         # Step 4
-        place_order_venue(base_rfq_details, ar_service, case_venue)
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
+        place_order_venue(base_rfq_details, ar_service, case_venue)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)

@@ -41,10 +41,6 @@ def place_order_tob(base_request, service):
     call(service.placeRFQOrder, rfq_request.build())
 
 
-def cancel_rfq(base_request, service):
-    call(service.cancelRFQ, base_request.build())
-
-
 def check_quote_request_b(ex_id, base_request, service, act, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
@@ -75,10 +71,11 @@ def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
                                            verify_ent("QB Id vs OB Id", qb_id.name, quote_id)]))
 
 
-def check_order_book(ex_id, base_request, instr_type, act_ob, case_id):
+def check_order_book(base_request, instr_type, act_ob, case_id, qty):
     ob = OrdersDetails()
+    extraction_id = bca.client_orderid(4)
     ob.set_default_params(base_request)
-    ob.set_extraction_id(ex_id)
+    ob.set_extraction_id(extraction_id)
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
@@ -94,7 +91,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id):
     verifier.set_event_name("Check Order book")
     verifier.compare_values('InstrType', instr_type, response[ob_instr_type.name])
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
-    verifier.compare_values("Qty", '1,000,000', response[ob_qty.name])
+    verifier.compare_values("Qty", str(qty), response[ob_qty.name].replace(',', ''))
     verifier.verify()
     return response[ob_id.name]
 
@@ -113,7 +110,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB", "CIT"]
+    venues = ["HSB"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"
@@ -150,7 +147,7 @@ def execute(report_id):
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
         place_order_tob(base_rfq_details, ar_service)
-        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
+        ob_quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id, case_qty)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())

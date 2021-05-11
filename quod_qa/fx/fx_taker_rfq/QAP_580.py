@@ -111,7 +111,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB", "CIT"]
+    venues = ["HSB"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -147,7 +147,6 @@ def execute(report_id):
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
 
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
