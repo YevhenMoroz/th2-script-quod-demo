@@ -1,13 +1,14 @@
 import logging
 from pathlib import Path
+
 import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, ExtractRFQTileValues, \
+    TableActionsRequest, TableAction, CellExtractionDetails
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
@@ -33,17 +34,17 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
     call(service.modifyRFQTile, modify_request.build())
 
 
-def place_order_tob(base_request, service, side):
-    rfq_request = PlaceRFQRequest(details=base_request)
-    if side == "Sell":
-        rfq_request.set_action(RFQTileOrderSide.SELL)
-    elif side == "Buy":
-        rfq_request.set_action(RFQTileOrderSide.BUY)
-    call(service.placeRFQOrder, rfq_request.build())
+def check_button_send(base_request, service, case_id):
+    extract_value = ExtractRFQTileValues(details=base_request)
+    extraction_id = bca.client_orderid(4)
+    extract_value.set_extraction_id(extraction_id)
+    extract_value.extract_send_button_text("ar_rfq.extract_send_button_text")
+    response = call(service.extractRFQTileValues, extract_value.build())
 
-
-def cancel_rfq(base_request, service):
-    call(service.cancelRFQ, base_request.build())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check button after send RFQ")
+    verifier.compare_values("Button Stop", "Stop", response["ar_rfq.extract_send_button_text"])
+    verifier.verify()
 
 
 def check_quote_request_b(base_request, service, case_id, status, quote_sts, venue):
@@ -65,48 +66,8 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
     verifier.verify()
 
 
-def click_checkboxes(base_request, service, side):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    if side == "Left":
-        modify_request.click_checkbox_left()
-    if side == "Right":
-        modify_request.click_checkbox_right()
-    call(service.modifyRFQTile, modify_request.build())
-
-
-def check_order_book(base_request, act_ob):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(extraction_id)
-    ob_id = ExtractionDetail("orderBook.quoteid", "Order ID")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-    return response[ob_id.name]
-
-
-def compare_order(base_request, act_ob, case_id, order_id):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(extraction_id)
-    ob_id = ExtractionDetail("orderBook.quoteid", "Order ID")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare Order ID")
-    verifier.compare_values("ID", order_id, response[ob_id.name])
-    verifier.verify()
-
-
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
-    ob_act = Stubs.win_act_order_book
 
     # Rules
     rule_manager = rm.RuleManager()
@@ -116,16 +77,12 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_near_tenor = "Spot"
-    case_venue = ["CIT"]
-    case_filter_venue = "CITI"
-    case_qty = 2000000
+    case_tenor = "Spot"
+    case_venue = ["HSB"]
+    case_filter_venue = "HSBC"
+    case_qty = 10000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
-    case_left_checkbox = "Left"
-    case_right_checkbox = "Right"
-    case_side_sell = "Sell"
-    case_side_buy = "Buy"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -141,20 +98,15 @@ def execute(report_id):
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
-                        case_near_tenor, case_client, case_venue)
+        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
+                        case_to_currency, case_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
-        order_id = check_order_book(case_base_request, ob_act)
+        check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
+                              quote_quote_sts_accepted, case_filter_venue)
         # Step 2
-        click_checkboxes(base_rfq_details, ar_service, case_left_checkbox)
-        place_order_tob(base_rfq_details, ar_service, case_side_buy)
-        compare_order(case_base_request, ob_act, case_id, order_id)
-        # Step 3
-        click_checkboxes(base_rfq_details, ar_service, case_right_checkbox)
-        place_order_tob(base_rfq_details, ar_service, case_side_sell)
-        compare_order(case_base_request, ob_act, case_id, order_id)
+        check_button_send(base_rfq_details, ar_service, case_id)
+
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:

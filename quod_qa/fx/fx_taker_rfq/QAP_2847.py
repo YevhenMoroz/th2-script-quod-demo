@@ -38,9 +38,10 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_sts, venue):
+def check_quote_request_b(base_request, service, case_id, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_extraction_id(ex_id)
+    extraction_id = bca.client_orderid(4)
+    qrb.set_extraction_id(extraction_id)
     qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
@@ -56,9 +57,10 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     verifier.verify()
 
 
-def check_quote_book(ex_id, base_request, service, case_id, owner, quote_sts, venue):
+def check_quote_book(base_request, service, case_id, owner, quote_sts, venue):
     qb = QuoteDetailsRequest(base=base_request)
-    qb.set_extraction_id(ex_id)
+    extraction_id = bca.client_orderid(4)
+    qb.set_extraction_id(extraction_id)
     qb.set_filter(["Venue", venue])
     qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
@@ -92,7 +94,7 @@ def execute(report_id):
     case_filter_venue = "CITI"
     case_filter_venue_1 = "HSBC"
     case_qty = 10000000
-    case_quote_owner = "QA2"
+    case_quote_owner = "ostronov"
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
     quote_quote_sts_accepted = "Accepted"
@@ -115,27 +117,29 @@ def execute(report_id):
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
                         case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_HSB", case_base_request, ar_service, case_id,
+        check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue_1)
-        check_quote_request_b("QRB_CIT", case_base_request, ar_service, case_id,
+        check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
 
-        # check_quote_book("QB_HSB", case_base_request, ar_service, case_id, case_quote_owner, quote_quote_sts_accepted,
-        #                  case_filter_venue_1)
-        # check_quote_book("QB_CITI", case_base_request, ar_service, case_id, case_quote_owner, quote_quote_sts_accepted,
-        #                  case_filter_venue)
+        check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
+                         quote_quote_sts_accepted, case_filter_venue_1)
+        check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
+                         quote_quote_sts_accepted, case_filter_venue)
 
         # Step 2
         cancel_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_HSB", case_base_request, ar_service, case_id,
+        check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_terminated, quote_sts_terminated, case_filter_venue_1)
-        check_quote_request_b("QRB_CIT", case_base_request, ar_service, case_id,
+        check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_terminated, quote_quote_sts_accepted, case_filter_venue)
 
-        # check_quote_book("QB_HSB", case_base_request, ar_service, case_id, case_quote_owner, quote_sts_terminated,
-        #                  case_filter_venue_1)
-        # check_quote_book("QB_CITI", case_base_request, ar_service, case_id, case_quote_owner, quote_quote_sts_accepted,
-        #                  case_filter_venue)
+        check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
+                         quote_sts_terminated, case_filter_venue_1)
+        check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
+                         quote_quote_sts_accepted, case_filter_venue)
+        # Close Tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
     except Exception:
         logging.error("Error execution", exc_info=True)
 
