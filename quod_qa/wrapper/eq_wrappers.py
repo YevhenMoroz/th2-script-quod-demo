@@ -10,6 +10,7 @@ from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
@@ -54,15 +55,15 @@ def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, si
     fix_cancel = FixMessage(cancel_parms)
     fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
-
-def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
-                 sell_side=False):
+def create_order(base_request, qty, client, lookup, order_type, tif = "Day", is_care=False, recipient = None,
+                 price = None,
+                 sell_side = False, disclose_flag = DiscloseFlagEnum.DEFAULT_VALUE):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(recipient)
+        order_ticket.set_care_order(recipient, False, disclose_flag)
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
@@ -75,7 +76,25 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 
     order_ticket_service = Stubs.win_act_order_ticket
     call(order_ticket_service.placeOrder, new_order_details.build())
-
+# def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
+#                  sell_side=False):
+#     order_ticket = OrderTicketDetails()
+#     order_ticket.set_quantity(qty)
+#     order_ticket.set_client(client)
+#     order_ticket.set_order_type(order_type)
+#     if is_care:
+#         order_ticket.set_care_order(recipient)
+#     order_ticket.set_tif(tif)
+#     if sell_side:
+#         order_ticket.sell()
+#     if price is not None:
+#         order_ticket.set_limit(price)
+#     new_order_details = NewOrderDetails()
+#     new_order_details.set_lookup_instr(lookup)
+#     new_order_details.set_order_details(order_ticket)
+#     new_order_details.set_default_params(base_request)
+#     order_ticket_service = Stubs.win_act_order_ticket
+#     call(order_ticket_service.placeOrder, new_order_details.build())
 
 def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
@@ -103,8 +122,8 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
-        responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
-        fix_params['responce'] = responce
+        response = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        fix_params['response'] = response
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -155,7 +174,7 @@ def accept_order(lookup, qty, price):
 
 
 def accept_modify(lookup, qty, price):
-    call(Stubs.win_act.acceptModifyPlusChild, reject_order_request(lookup, qty, price))
+    call(Stubs.win_act.acceptModifyPlusChild, accept_order_request(lookup, qty, price))
 
 
 def direct_loc_order(qty, route):
@@ -247,12 +266,6 @@ def get_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
-
-
-def check_value_via_fix(list_param, case_id, responce):
-    fix_verifier_ss = FixVerifier(connectivity, case_id)
-    list_param['OrderID'] = responce.response_messages_list[0].fields['OrderID'].simple_value
-    fix_verifier_ss.CheckExecutionReport(list_param, responce)
 
 
 def get_cl_order_id(request):

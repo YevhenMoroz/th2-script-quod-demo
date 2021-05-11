@@ -148,5 +148,9 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia",
+                                                                              "CLIENTSKYLPTOR_PARIS", "XPAR", 40)
+    nos_rule1 = rule_manager.add_OCRR("fix-bs-310-columbia")
+    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade("fix-bs-310-columbia", "CLIENTSKYLPTOR_PARIS", "XPAR",
+                                                                     2, 2000, 2)
     rule_manager.print_active_rules()
-    # rule_manager.remove_all_rules()
