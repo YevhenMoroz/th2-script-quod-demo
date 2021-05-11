@@ -16,7 +16,8 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
     direct_moc_request, direct_poc_request, direct_loc_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
+    ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
@@ -111,9 +112,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         rule_manager.remove_rule(nos_rule)
 
 
-
-
-def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
+def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
     cancel_parms = {
         "ClOrdID": order_id,
@@ -133,13 +132,15 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
 
-def manual_cross_orders(request,qty,price,list,last_mkt):
+
+def manual_cross_orders(request, qty, price, list, last_mkt):
     manual_cross_details = ManualCrossDetails(request)
     manual_cross_details.set_quantity(qty)
     manual_cross_details.set_price(price)
     manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
     call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -187,10 +188,11 @@ def cancelle_order(request):
     cancel_order_details.set_cancel_children(True)
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
-def split_limit_order(request,order_id,qty,type):
+
+def split_limit_order(request, order_id, qty, type):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
-    #if not price in None:
+    # if not price in None:
     #    order_split_limit.set_limit(price)
     order_split_limit.set_order_type(type)
     amend_order_details = ModifyOrderDetails()
@@ -198,6 +200,8 @@ def split_limit_order(request,order_id,qty,type):
     amend_order_details.set_order_details(order_split_limit)
     amend_order_details.set_filter(["Order ID", order_id])
     call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
+
+
 def transfer_order(request, user):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -219,11 +223,14 @@ def manual_execution(request, qty, price):
 
 
 def complete_order(request):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
     complete_order_details = ModifyOrderDetails()
     complete_order_details.set_default_params(request)
-    call(Stubs.win_act_order_book.completeOrders, complete_order_details.build())
+    call(Stubs.win_act_order_book.completeOrder, complete_order_details.build())
+
+def un_complete_order(request):
+    un_complete_order_details = ModifyOrderDetails()
+    un_complete_order_details.set_default_params(request)
+    call(Stubs.win_act_order_book.unCompleteOrder, un_complete_order_details.build())
 
 
 def get_order_id(request):
@@ -235,7 +242,9 @@ def get_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
-def check_value_via_fix(list_param,case_id,responce):
+
+
+def check_value_via_fix(list_param, case_id, responce):
     fix_verifier_ss = FixVerifier(connectivity, case_id)
     list_param['OrderID'] = responce.response_messages_list[0].fields['OrderID'].simple_value
     fix_verifier_ss.CheckExecutionReport(list_param, responce)
