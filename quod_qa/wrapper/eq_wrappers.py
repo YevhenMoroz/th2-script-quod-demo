@@ -154,6 +154,10 @@ def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
 
 
+def accept_modify(lookup, qty, price):
+    call(Stubs.win_act.acceptModifyPlusChild, reject_order_request(lookup, qty, price))
+
+
 def direct_loc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
 
@@ -226,6 +230,7 @@ def complete_order(request):
     complete_order_details = ModifyOrderDetails()
     complete_order_details.set_default_params(request)
     call(Stubs.win_act_order_book.completeOrder, complete_order_details.build())
+
 
 def un_complete_order(request):
     un_complete_order_details = ModifyOrderDetails()
