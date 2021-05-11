@@ -106,7 +106,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty):
 def execute(report_id):
     case_name = "QAP-646"
 
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type = "FXSwap"
     case_qty1 = 1000000
     case_qty2 = 11

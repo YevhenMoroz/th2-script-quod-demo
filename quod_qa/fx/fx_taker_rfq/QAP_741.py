@@ -122,7 +122,7 @@ def execute(report_id):
     quote_sts_new = "New"
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = "Spot"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_side_buy = "Buy"
 
     # Create sub-report for case

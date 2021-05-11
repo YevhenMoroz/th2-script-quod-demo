@@ -65,7 +65,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_sts):
 
 def execute(report_id):
     case_name = "QAP-599"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "Spot"

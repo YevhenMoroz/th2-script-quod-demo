@@ -112,7 +112,7 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type_ndf = "NDF"
     case_instr_type_fwd = "FXForward"
     case_venue_hsbcr = "HSBCR"

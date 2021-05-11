@@ -108,7 +108,7 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     case_name = "QAP-610"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000

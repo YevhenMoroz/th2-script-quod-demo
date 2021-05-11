@@ -110,7 +110,7 @@ def execute(report_id):
     RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
     TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000

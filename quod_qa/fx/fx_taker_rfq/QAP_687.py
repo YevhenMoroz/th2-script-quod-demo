@@ -144,7 +144,7 @@ def execute(report_id):
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'FXSwap'
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

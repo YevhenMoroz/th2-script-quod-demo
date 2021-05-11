@@ -106,7 +106,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, currency)
 
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type = "Spot"
     case_venue = "HSB"
     case_qty = 1000000

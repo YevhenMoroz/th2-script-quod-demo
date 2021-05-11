@@ -98,7 +98,7 @@ def execute(report_id):
     common_act = Stubs.win_act
 
     case_name = "QAP-585"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000

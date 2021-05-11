@@ -101,7 +101,7 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = "QAP-593"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "1W"

@@ -72,7 +72,7 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_venue_hsbcr = "HSBCR"
     case_qty = 1000000
     case_near_date = 2
