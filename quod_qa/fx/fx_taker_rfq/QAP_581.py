@@ -121,7 +121,6 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     venues = ["HSB", "CIT"]
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"
 
@@ -161,9 +160,7 @@ def execute(report_id):
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
         # cancel_rfq(base_rfq_details, ar_service)
 
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
 
     for rule in [RFQ, TRFQ]:

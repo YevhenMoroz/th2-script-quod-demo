@@ -10,8 +10,9 @@ from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.sim_service import TemplateSimulatorServiceService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
-# from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
+
+# from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
 
 class Stubs:
@@ -20,7 +21,7 @@ class Stubs:
         rabbit_mq_config_filepath="./configs/rabbit.json",
         mq_router_config_filepath="./configs/mq.json",
         custom_config_filepath="./configs/script-params.json",
-        prometheus_config_filepath='./configs/prometheus.json'
+        prometheus_config_filepath="./configs/prometheus.json"
     )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
@@ -34,7 +35,7 @@ class Stubs:
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
     win_act_middle_office_service = factory.grpc_router.get_service(MiddleOfficeOperationsService)
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
-    win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
+    #win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None

@@ -1,18 +1,18 @@
 {
-  "target_server_win": "quod_05q",
+  "target_server_win": "quod_11q",
   "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder_303": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210226_5.1.125.138_rev170176_303",
-  "qf_trading_fe_folder_308": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210226_5.1.125.138_rev170176 - Copy",
+  "qf_trading_fe_folder_305": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210222_5.1.125.138_rev169816(quod301saturn)EQ",
+  "qf_trading_fe_folder_309": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210420_5.1.129.142_rev196384(quod309@kratos)",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user_303": "kbrit2",
-  "qf_trading_fe_password_303": "kbrit2",
-  "qf_trading_fe_user_308": "QA2",
-  "qf_trading_fe_password_308": "QA2",
+  "qf_trading_fe_user_305": "HD3",
+  "qf_trading_fe_password_305": "HD3",
+  "qf_trading_fe_user_309": "ostronov",
+  "qf_trading_fe_password_309": "ostronov",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
   "qf_trading_fe_main_win_name": "Quod Financial - Quod site",
   "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "

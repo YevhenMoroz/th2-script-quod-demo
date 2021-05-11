@@ -1,22 +1,28 @@
 from datetime import datetime
+from urllib import request
 
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
-
+from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from demo import logger
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualExecutingDetails
+from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
+    direct_moc_request, direct_poc_request, direct_loc_request
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+
+connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5 fix-ss-310-columbia-standart
+order_book_act = Stubs.win_act_order_book
+common_act = Stubs.win_act
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -33,14 +39,29 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, resipient=None, price=None,
+def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, side):
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
+    order_id = request[order_id.name]
+    client_order_id = request[client_order_id.name]
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": side,
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+
+
+def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
                  sell_side=False):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(resipient)
+        order_ticket.set_care_order(recipient)
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
@@ -55,12 +76,11 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     call(order_ticket_service.placeOrder, new_order_details.build())
 
 
-def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, qty, tif: int, price=None):
+def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
                                                                              "XPAR_" + client, "XPAR", int(price))
-        connectivity = 'gtwquod5'
         fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
         fix_params = {
@@ -79,16 +99,47 @@ def create_order_via_fix(case_id, HandlInst: int, side: int, client, ord_type, q
                 'SecurityExchange': 'XPAR'
             },
             'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        fix_params['responce'] = responce
+        return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(nos_rule)
 
+
+
+
+def cancel_order_via_fix(order_id, client_order_id, client, case_id,side):
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": side,
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+
+
+def amend_order_via_fix(fix_message, case_id, parametr_list):
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
+    fix_modify_message = FixMessage(fix_message)
+    fix_modify_message.change_parameters(parametr_list)
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+
+def manual_cross_orders(request,qty,price,list,last_mkt):
+    manual_cross_details = ManualCrossDetails(request)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_last_mkt(last_mkt)
+    call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -102,16 +153,28 @@ def accept_order(lookup, qty, price):
     call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
 
 
+def direct_loc_order(qty, route):
+    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+
+
+def direct_moc_order(qty, route):
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
+
+
+def reject_order(lookup, qty, price):
+    call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
+
+
 def direct_order(lookup, qty, price, qty_percent):
-    call(Stubs.win_act.directOrder, direct_order_request(lookup, qty, price, qty_percent))
+    call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
 
 
 def amend_order(request, qty=None, price=None):
     order_amend = OrderTicketDetails()
     if not qty in None:
-        order_amend.set_limit(qty)
+        order_amend.set_quantity(qty)
     if not price in None:
-        order_amend.set_quantity(price)
+        order_amend.set_limit(price)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
@@ -124,7 +187,17 @@ def cancelle_order(request):
     cancel_order_details.set_cancel_children(True)
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
-
+def split_limit_order(request,order_id,qty,type):
+    order_split_limit = OrderTicketDetails()
+    order_split_limit.set_quantity(qty)
+    #if not price in None:
+    #    order_split_limit.set_limit(price)
+    order_split_limit.set_order_type(type)
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(request)
+    amend_order_details.set_order_details(order_split_limit)
+    amend_order_details.set_filter(["Order ID", order_id])
+    call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
 def transfer_order(request, user):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -151,3 +224,29 @@ def complete_order(request):
     complete_order_details = ModifyOrderDetails()
     complete_order_details.set_default_params(request)
     call(Stubs.win_act_order_book.completeOrders, complete_order_details.build())
+
+
+def get_order_id(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("orderID")
+    order_id = ExtractionDetail("order_id", "Order ID")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_id])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return result[order_id.name]
+def check_value_via_fix(list_param,case_id,responce):
+    fix_verifier_ss = FixVerifier(connectivity, case_id)
+    list_param['OrderID'] = responce.response_messages_list[0].fields['OrderID'].simple_value
+    fix_verifier_ss.CheckExecutionReport(list_param, responce)
+
+
+def get_cl_order_id(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("ClOrdID")
+    cl_order_id = ExtractionDetail("cl_order_id", "ClOrdID")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[cl_order_id])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return result[cl_order_id.name]

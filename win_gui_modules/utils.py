@@ -52,7 +52,7 @@ def close_fe(main_event, session):
     disposing_event = create_event("Disposing", main_event)
     try:
         stub.closeApplication(CloseApplicationRequest(
-            base=EmptyRequest(sessionID=session, parentEventId=disposing_event)))
+            base=EmptyRequest(sessionID=session, parentEventId=disposing_event), saveWorkspace=True))
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
@@ -60,9 +60,9 @@ def close_fe(main_event, session):
 
 
 def prepare_fe_2(main_event, session,
-                 fe_dir: str = 'qf_trading_fe_folder_303',
-                 fe_user: str = 'qf_trading_fe_user_303',
-                 fe_pass: str = 'qf_trading_fe_password_303'):
+                 fe_dir: str = 'qf_trading_fe_folder_309',
+                 fe_user: str = 'qf_trading_fe_user_309',
+                 fe_pass: str = 'qf_trading_fe_password_309'):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
 

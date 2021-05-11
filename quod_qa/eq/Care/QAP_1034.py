@@ -3,7 +3,6 @@ import os
 from copy import deepcopy
 from datetime import datetime
 
-import pyautogui
 from th2_grpc_act_gui_quod import order_ticket_service
 
 from quod_qa.wrapper.fix_verifier import FixVerifier

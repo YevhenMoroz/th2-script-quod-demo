@@ -22,7 +22,6 @@ def check_qty(base_request, service, case_id, near_qty):
     extract_value.extract_quantity("aggrRfqTile.nearqty")
     response = call(service.extractRFQTileValues, extract_value.build())
     extract_near_qty = response["aggrRfqTile.nearqty"].replace(',', '')
-    print(response)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Qty in RFQ tile")
