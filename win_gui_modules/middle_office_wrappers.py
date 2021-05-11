@@ -246,6 +246,9 @@ class ModifyTicketDetails:
         self._request.multipleRowSelection = True
         self._request.selectedRowCount = selected_row_count
 
+    def set_partial_error_message(self, error_message: str):
+        self._request.partialErrorMessage = error_message
+
     def add_commissions_details(self) -> CommissionsDetails:
         self._request.commissionsDetails.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self._request.commissionsDetails)
