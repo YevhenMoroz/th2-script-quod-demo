@@ -51,7 +51,7 @@ def execute(report_id):
     # region notify DFD
     eq_wrappers.notify_dfd(base_request)
     # endregion
-    # Check on bs
+    # Check on ss
     params = {
         'OrderQty': qty,
         'ExecType': '3',
