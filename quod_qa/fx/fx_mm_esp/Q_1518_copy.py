@@ -1,8 +1,8 @@
-from quod_qa.fx.fx_mm_esp.methods.CaseParams import CaseParams
-from quod_qa.fx.fx_mm_esp.methods.MarketDataRequst import MarketDataRequst
+from quod_qa.fx.fx_mm_esp.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_mm_esp.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
-from quod_qa.fx.fx_mm_esp.methods.NewOrderSingle import NewOrderSingle
+from quod_qa.fx.fx_mm_esp.fx_wrapper.NewOrderSingle import NewOrderSingle
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_mm_esp.methods.CaseParams import CaseParams
+from quod_qa.fx.fx_mm_esp.fx_wrapper.CaseParams import CaseParams
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
