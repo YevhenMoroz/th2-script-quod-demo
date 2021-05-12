@@ -17,24 +17,29 @@ class FixManager:
         return self.case_id
 
 
-    def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle'):
+    def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle', case = None):
+        if case == None:
+            case = self.case_id
 
         response = self.act.placeOrderFIX(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
-                self.case_id,
+                case,
                 bca.message_to_grpc('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
             ))
 
         return response
 
-    def Send_OrderCancelRequest_FixMessage(self, fix_message, message_name='Cancel order'):
+    def Send_OrderCancelRequest_FixMessage(self, fix_message, message_name='Cancel order', case=None):
+        if case == None:
+            case = self.case_id
+
         response = self.act.sendMessage(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
-                self.case_id,
+                case,
                 bca.message_to_grpc('OrderCancelRequest', fix_message.get_parameters(), self.TraderConnectivity)
             ))
         return response
@@ -51,11 +56,11 @@ class FixManager:
 
     def Send_MarketDataFullSnapshotRefresh_FixMessage(self, fix_message, symbol, message_name='Send MarketData'):
         MDReqID = self.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
+            symbol=str(symbol),
             connection_id=ConnectionID(session_alias=self.TraderConnectivity)
         )).MDRefID
 
-        fix_message.add_tag({'Instrument': {'Symbol': symbol}})
+        # fix_message.add_tag({'Instrument': {'Symbol': symbol}})
         fix_message.add_tag({'MDReqID': MDReqID})
 
         response = self.act.sendMessage(

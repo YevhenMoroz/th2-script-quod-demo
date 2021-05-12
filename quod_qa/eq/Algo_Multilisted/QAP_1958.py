@@ -76,8 +76,7 @@ def execute(report_id):
         'OrderQty': multilisting_params['OrderQty'],
         'Side': multilisting_params['Side'],
         'Price': multilisting_params['Price'],
-        'TimeInForce': multilisting_params['TimeInForce'],
-        'OrderQty': multilisting_params['DisplayInstruction']['DisplayQty']
+        'TimeInForce': multilisting_params['TimeInForce']
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce)
 

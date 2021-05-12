@@ -54,38 +54,6 @@ def execute(report_id):
                 ]
         }
     }
-    mdfr_params_1 = {
-        'MDReportID': "1",
-        'MDReqID': MDRefID_1,
-        'Instrument': {
-            'Symbol': symbol
-        },
-        # 'LastUpdateTime': "",
-        'NoMDEntries': [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '650'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '600'
-            }
-        ]
-    }
-
-
-    #
-    # act.sendMessage(
-    #     request=bca.convert_to_request(
-    #         'Send MarketDataSnapshotFullRefresh',
-    #         "fix-fh-eq-paris",
-    #         case_id,
-    #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-paris")
-    #     )
-    # )
-    #
 
     mdir_params_trade = Message()
     mdir_params_trade.metadata.message_type = "MarketDataIncrementalRefresh"
