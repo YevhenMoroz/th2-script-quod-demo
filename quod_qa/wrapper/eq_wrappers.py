@@ -59,7 +59,7 @@ def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, si
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None,
-                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE):
+                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,expire_date=None):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -71,6 +71,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         order_ticket.sell()
     if price is not None:
         order_ticket.set_limit(price)
+    if expire_date is not None:
+        order_ticket.set_expire_date(expire_date)
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
     new_order_details.set_order_details(order_ticket)
@@ -274,7 +276,6 @@ def verify_value(request,case_id,column_name,expected_value):
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    print(result[value.name])
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 

@@ -27,6 +27,9 @@ class OrderTicketDetails:
     def set_quantity(self, qty: str):
         self.order.qty = qty
 
+    def set_expire_date(self, expire_date: str):
+        self.order.expireDate = expire_date
+
     def set_order_type(self, order_type: str):
         self.order.orderType = order_type
 
@@ -34,7 +37,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-         self.order.account = account
+        self.order.account = account
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
