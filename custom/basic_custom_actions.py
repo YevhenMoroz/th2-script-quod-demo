@@ -45,6 +45,11 @@ def timestamps():
     return seconds, nanos
 
 
+def get_timestamp():
+    seconds, nanos = timestamps()
+    return Timestamp(seconds=seconds, nanos=nanos)
+
+
 def client_orderid(length: int) -> str:
     """ Generates unique id in the string format of specified length
         Parameters:
@@ -73,21 +78,38 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
 
         elif isinstance(content[tag], list):
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        tag: Value(
-                            list_value=ListValue(
-                                values=content[tag]
+            if tag == 'NoMDEntriesIR':
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            'NoMDEntries': Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
                             )
-                        )
-                    }
+                        }
+                    )
                 )
-            )
+            else:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            tag: Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
+                            )
+                        }
+                    )
+                )
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
@@ -95,6 +117,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         ),
         fields=content
     )
+
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter without fail unexpected
@@ -153,6 +176,7 @@ def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fiel
                 )
             )
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
+
 
 def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter
