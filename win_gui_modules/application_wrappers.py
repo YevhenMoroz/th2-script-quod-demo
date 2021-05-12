@@ -1,4 +1,5 @@
 from th2_grpc_act_gui_quod import act_ui_win_pb2
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
 
 class OpenApplicationRequest:
@@ -75,3 +76,24 @@ class CloseApplicationRequest:
 
     def build(self):
         return self.close_application_request
+
+
+class LoadableInstrumentsRequest:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = act_ui_win_pb2.LoadableInstrumentsRequest(base=base)
+        else:
+            self._request = act_ui_win_pb2.LoadableInstrumentsRequest()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def load_all_instruments(self):
+        self._request.loadAllInstruments = True
+
+    def load_selected_instruments(self, instruments: list):
+        for instrument in instruments:
+            self._request.instruments.append(instrument)
+
+    def build(self):
+        return self._request
