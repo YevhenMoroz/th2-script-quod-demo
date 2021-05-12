@@ -36,8 +36,8 @@ def execute(report_id):
 
 
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris", ex_destination +"_"+ client, ex_destination, limit)
-    ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-paris','XPAR_CLIENT2','XPAR', True)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-trqx", ex_destination +"_"+ client, ex_destination, limit)
+    ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-trqx','TRQX_CLIENT2','TRQX', True)
 
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -69,15 +69,52 @@ def execute(report_id):
         new_order_details.set_default_params(base_request)
 
 
-
-
         set_base(session_id, case_id)
-
         order_ticket_service = Stubs.win_act_order_ticket
-
-
         call(order_ticket_service.placeOrder, new_order_details.build())
 
+        time.sleep(10)
+
+        order_info_extraction = "getOrderInfo"
+
+        common_act = Stubs.win_act
+        act2 = Stubs.win_act_order_book
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(order_info_extraction)
+        # main_order_details.set_filter(["Misc3", "test tag 5005"])
+
+        main_order_qty = ExtractionDetail("order.Qty", "Qty")
+        # main_order_field4 = ExtractionDetail("order.FOfield4", "FO field 4")
+        main_order_price = ExtractionDetail("order.Price", "LmtPrice")
+        main_order_exec_pcy = ExtractionDetail("order.ExecPcy", "ExecPcy")
+        # main_order_display_qty = ExtractionDetail("order.DisplayQty", "DisplQty")
+        main_order_order_id = ExtractionDetail("order.Id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_qty,
+                                                                                                     main_order_price,
+                                                                                                     # main_order_field4,
+                                                                                                     main_order_exec_pcy,
+                                                                                                     # main_order_display_qty,
+                                                                                                     main_order_order_id])
+
+        sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+
+        lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(sub_order_id_dt))
+        lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+        main_order_details.add_single_order_info(
+            OrderInfo.create(action=main_order_extraction_action, sub_order_details=lvl1_details))
+
+        request = call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(order_info_extraction, "checking order",
+                                                     [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
+                                                                 "Synth (Quod TWAP)"),
+                                                      verify_ent("Order Price", main_order_price.name, str(limit)),
+                                                      verify_ent("Order Qty", main_order_qty.name, qty)
+
+                                                      ]))
+
+        # sub_order_id = request[sub_order_id_dt.name]
 
     except Exception:
         logger.error("Error execution", exc_info=True)
