@@ -1,7 +1,7 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
-    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -114,6 +114,7 @@ class RuleManager:
         return Stubs.simulator.createQuodOCRRule(request=
                                                  TemplateQuodOCRRule(connection_id=ConnectionID(session_alias=session)))
 
+    
     @staticmethod
     def add_OCRR(session: str):
         return Stubs.simulator.createQuodOCRRRule(request=
@@ -142,6 +143,39 @@ class RuleManager:
                 md_entry_size= md_entry_size,
                 md_entry_px= md_entry_px,
                 symbol=symbol))
+    
+    
+    @staticmethod
+    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : int ):
+        return Stubs.simulator.createNewOrdSingleIOC(
+            request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     price= price
+                                            ))
+    
+    @staticmethod
+    def add_NewOrdSingle_FOK(session: str, account: str, venue: str, trade: bool, price : float ):
+        return Stubs.simulator.createNewOrdSingleFOK(
+            request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     price= price))
+
+    
+    @staticmethod
+    def add_OrderCancelRequest(session: str, account: str, venue: str, cancel: bool):
+        return Stubs.simulator.createOrderCancelRequest(
+            request=TemplateOrderCancelRequest(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             cancel=cancel))
+
+
+
 
     # ------------------------
 

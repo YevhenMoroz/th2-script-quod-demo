@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.eq.Algo_Iceberg import QAP_3055, QAP_3054
+from quod_qa.eq.Algo_Multilisted import QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027,QAP_1951, QAP_1990, QAP_3028
+from quod_qa.eq.Algo_TWAP import QAP_1318, QAP_3121, QAP_3120
 from rule_management import RuleManager
 from schemas import rfq_tile_example
 from stubs import Stubs
@@ -16,33 +19,13 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('FiLL tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-
-    test_cases = {
-        'RFQ_example': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod5-fx',
-            'Account': 'MMCLIENT1',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD5',
-            }
-        }
     try:
-        QAP_1012.execute(report_id)
+
+        QAP_1810.execute(report_id)
     except Exception:
         logging.error("Error execution",exc_info=True)
-   # try:
-#
-    #    rm = RuleManager()
-#
-   #     rm.print_active_rules()
-#
-    #   ui_tests.execute(report_id)
-
-    #except Exception:
-        #logging.error("Error execution", exc_info=True)
 
 if __name__ == '__main__':
     logging.basicConfig()
