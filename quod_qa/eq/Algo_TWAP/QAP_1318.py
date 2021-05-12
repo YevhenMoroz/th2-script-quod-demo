@@ -21,7 +21,7 @@ qty = 2000
 limit = 20
 lookup = "CH0012268360_CHF"
 ex_destination = "XPAR"
-client = "CLIENT2"
+client = "CLIENT1"
 order_type = "Limit"
 case_name = os.path.basename(__file__)
 report_id = None
@@ -29,7 +29,7 @@ report_id = None
 
 def create_order(base_request):
     order_ticket = OrderTicketDetails()
-    order_ticket.set_quantity(qty)
+    order_ticket.set_quantity(str(qty))
     order_ticket.set_limit(str(limit))
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)

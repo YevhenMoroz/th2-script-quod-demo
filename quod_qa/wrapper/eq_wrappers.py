@@ -169,6 +169,8 @@ def direct_loc_order(qty, route):
 def direct_moc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
 
+def direct_child_care_order(qty, route,recipient):
+    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route , recipient))
 
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))

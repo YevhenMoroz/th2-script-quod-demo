@@ -1,9 +1,6 @@
 import logging
 from pathlib import Path
-
 import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import ndf_m1_front_end
 from custom.verifier import Verifier
@@ -46,7 +43,7 @@ def check_value_in_tob(base_request, service, case_id):
     tob_len = len(response["ar_rfq.extract_best_bid"][3:])
     verifier = Verifier(case_id)
     verifier.set_event_name("Check digits in TOB")
-    verifier.compare_values("Number of digits in TOB", "7", str(tob_len))
+    verifier.compare_values("Number of digits in TOB", "5", str(tob_len))
     verifier.verify()
 
 
@@ -142,10 +139,6 @@ def check_value_in_header(base_request, service, case_id, value):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "USD"
@@ -194,6 +187,3 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
