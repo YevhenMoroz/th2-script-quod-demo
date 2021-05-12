@@ -1,7 +1,7 @@
 from datetime import datetime
 from urllib import request
 
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -252,6 +252,16 @@ def get_order_id(request):
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
 
+def get_cl_order_id(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("ClOrdID")
+    cl_order_id = ExtractionDetail("cl_order_id", "ClOrdID")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[cl_order_id])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    return result[cl_order_id.name]
+
 def verify_value(request,case_id,column_name,expected_value):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -266,14 +276,11 @@ def verify_value(request,case_id,column_name,expected_value):
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 
+def notify_dfd(request):
+    notify_dfd_request = ModifyOrderDetails()
+    notify_dfd_request.set_default_params(request)
+    call(Stubs.win_act_order_book.notifyDFD, notify_dfd_request.build())
 
 
-def get_cl_order_id(request):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
-    order_details.set_extraction_id("ClOrdID")
-    cl_order_id = ExtractionDetail("cl_order_id", "ClOrdID")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[cl_order_id])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    return result[cl_order_id.name]
+
+
