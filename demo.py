@@ -11,10 +11,10 @@ from quod_qa.eq.Care import QAP_1072
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
 timeouts = False
 
 channels = dict()
+
 
 def test_run():
     # Generation id and time for test run

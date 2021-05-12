@@ -1,7 +1,7 @@
 from quod_qa.fx.fx_mm_esp.methods.CaseParams import CaseParams
 from datetime import datetime
 from custom import basic_custom_actions as bca
-
+from stubs import Stubs
 
 
 
@@ -11,6 +11,11 @@ class NewOrderSingle():
     new_order=None
     price=0
     checkpoint=None
+    case_params = None
+    fix_act = Stubs.fix_act
+    verifier = Stubs.verifier
+    # check_order_status=None
+
     def __init__(self, case_params=CaseParams):
         self.case_params=case_params
 
@@ -35,12 +40,13 @@ class NewOrderSingle():
             },
             'Currency': self.case_params.currency
         }
-
+        tif = self.prepeare_tif()
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new FOK order', self.case_params.connectivity, self.case_params.case_id,
+                'Send new order' + tif, self.case_params.connectivity, self.case_params.case_id,
                 bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivity)
             ))
+        return self
 
 
     # Check Execution Repors for order
@@ -52,7 +58,6 @@ class NewOrderSingle():
     def verify_order_pending(self,):
         self.checkpoint = self.new_order.checkpoint_id
         ex_rep_pending = {
-            'Account': self.case_params.account,
             'HandlInst': self.case_params.handlinstr,
             'Side': self.case_params.side,
             'TimeInForce': self.case_params.timeinforce,
@@ -111,7 +116,7 @@ class NewOrderSingle():
             'CumQty': '0',
             'LastPx': '0',
             'LastQty': '0',
-            'SettlDate': self.case_params.settldate,
+            'SettlDate': self.case_params.settldate.split(' ')[0],
             'SettlType': self.case_params.settltype,
             'QtyType': '0',
             'OrderQty': self.case_params.orderqty,
@@ -138,8 +143,8 @@ class NewOrderSingle():
         )
 
     def verify_last_ex_report(self,ord_status,account):
-        order_status=self.check_order_status(ord_status)
-        last_ex_report = {
+        ord_sts = self.check_order_status(ord_status)
+        final_ex_report = {
             'Account': account,
             'HandlInst': self.case_params.handlinstr,
             'Side': self.case_params.side,
@@ -162,7 +167,7 @@ class NewOrderSingle():
             'OrderQty': self.case_params.orderqty,
             'LastPx': self.price,
             'AvgPx': self.price,
-            'OrdStatus': '2',
+            'OrdStatus': ord_sts,
             'ExecType': 'F',
             'LeavesQty': '0',
             'SettlType': self.case_params.settltype,
@@ -179,17 +184,28 @@ class NewOrderSingle():
         }
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
-                'Execution Report with OrdStatus = Filled',
-                bca.filter_to_grpc('ExecutionReport', last_ex_report, ['ClOrdID', 'OrdStatus']),
+                'Execution Report with OrdStatus = ' + ord_status,
+                bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params.connectivity, self.case_params.case_id
             ),
             timeout=3000
         )
 
-    def check_order_status(ord_status):
+    def check_order_status(self, ord_status):
         if ord_status=='Filled':
             return '2'
         elif ord_status=='Rejected':
             return '8'
         else:
             return '0'
+
+    def prepeare_tif(self):
+        if self.case_params.timeinforce == '4':
+            return 'Fill or Kill'
+        elif self.case_params.timeinforce == '3':
+            return 'Immediate or Cancel'
+        elif self.case_params.timeinforce == '0':
+            return 'Day'
+        elif self.case_params.timeinforce == '1':
+            return 'Good till Cancel'
+        pass
