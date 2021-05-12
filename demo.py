@@ -57,3 +57,4 @@ if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
+
