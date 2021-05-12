@@ -17,7 +17,8 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_poc_request, direct_loc_request
+    direct_loc_request, direct_child_care, direct_moc_request_correct, \
+    direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -116,7 +117,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
     finally:
         rule_manager.remove_rule(nos_rule)
 
-
 def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
     cancel_parms = {
@@ -135,8 +135,6 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
     fix_modify_message = FixMessage(fix_message)
     fix_modify_message.change_parameters(parametr_list)
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-    response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
-    return response
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -165,14 +163,24 @@ def accept_modify(lookup, qty, price):
 
 
 def direct_loc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
 
 
 def direct_moc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route))
 
-def direct_child_care_order(qty, route,recipient):
-    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route , recipient))
+# def direct_child_care_order(qty, route,recipient):
+#     order_blotter_details = ModifyOrderDetails()
+#     order_blotter_details.set_selected_row_count(3)
+#     call(Stubs.win_act_order_book.orderBookDirectChildCare, order_blotter_details.build())
+#     call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_child_care("UnmatchedQty", qty, route, recipient))
+#
+# def direct_child_care_order(qty, route, recipient):
+#         order_blotter_details = ModifyOrderDetails()
+#         order_blotter_details.set_selected_row_count(3)
+#         call(Stubs.win_act_order_book.orderBookDirectChildCare, order_blotter_details.build())
+#         call(Stubs.win_act_order_book.orderBookDirectChildCare,
+#              direct_child_care("UnmatchedQty", qty, route, recipient,))
 
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))

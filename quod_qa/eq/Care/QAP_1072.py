@@ -28,9 +28,9 @@ def execute(report_id):
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "900"
+    qty = "800"
     newQty = "100"
-    price = "10"
+    price = "40"
     newPrice = "1"
     time = datetime.utcnow().isoformat()
     lookup = "PROL"
@@ -38,7 +38,6 @@ def execute(report_id):
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE
-
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
@@ -50,16 +49,16 @@ def execute(report_id):
     # endregionA
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     param_list = {'LmtPrice': newPrice}
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, str(int((int(qty)/2))), price)
-    fix_message.pop('response')
+    response = fix_message.pop('response')
     # Amend fix order
-    response = eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
     # endregion
     # region accept amend
-    response = eq_wrappers.accept_modify(lookup, qty, price)
+    eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
     eq_wrappers.check_value_via_fix(list_param, case_id, response)
 
