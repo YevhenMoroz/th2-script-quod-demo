@@ -4,6 +4,7 @@ from urllib import request
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
+from custom.verifier import Verifier
 from demo import logger
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -55,9 +56,10 @@ def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, si
     fix_cancel = FixMessage(cancel_parms)
     fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
-def create_order(base_request, qty, client, lookup, order_type, tif = "Day", is_care=False, recipient = None,
-                 price = None,
-                 sell_side = False, disclose_flag = DiscloseFlagEnum.DEFAULT_VALUE):
+
+def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
+                 price=None,
+                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -76,25 +78,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif = "Day", is_
 
     order_ticket_service = Stubs.win_act_order_ticket
     call(order_ticket_service.placeOrder, new_order_details.build())
-# def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None, price=None,
-#                  sell_side=False):
-#     order_ticket = OrderTicketDetails()
-#     order_ticket.set_quantity(qty)
-#     order_ticket.set_client(client)
-#     order_ticket.set_order_type(order_type)
-#     if is_care:
-#         order_ticket.set_care_order(recipient)
-#     order_ticket.set_tif(tif)
-#     if sell_side:
-#         order_ticket.sell()
-#     if price is not None:
-#         order_ticket.set_limit(price)
-#     new_order_details = NewOrderDetails()
-#     new_order_details.set_lookup_instr(lookup)
-#     new_order_details.set_order_details(order_ticket)
-#     new_order_details.set_default_params(base_request)
-#     order_ticket_service = Stubs.win_act_order_ticket
-#     call(order_ticket_service.placeOrder, new_order_details.build())
+
 
 def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
@@ -189,6 +173,7 @@ def direct_moc_order(qty, route):
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
 
+
 def direct_order(lookup, qty, price, qty_percent):
     call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
 
@@ -266,6 +251,21 @@ def get_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
+
+def verify_value(request,case_id,column_name,expected_value):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id(column_name)
+    value = ExtractionDetail(column_name,column_name)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check value")
+    print(result[value.name])
+    verifier.compare_values(column_name, expected_value, result[value.name])
+    verifier.verify()
+
 
 
 def get_cl_order_id(request):
