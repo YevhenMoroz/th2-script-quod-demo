@@ -145,10 +145,10 @@ def execute(report_id):
     case_symbol = case_from_currency + "/" + case_to_currency
 
     case_qty = 20000000
-    quote_sts_new = 'New'
+    quote_sts_new = "New"
     quote_quote_sts_accepted = "Accepted"
 
-    case_instr_type = 'FXSpot'
+    case_instr_type = "Spot"
     quote_owner = "ostronov"
 
     # Create sub-report for case
