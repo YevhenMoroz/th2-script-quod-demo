@@ -1,6 +1,5 @@
 from datetime import datetime
 from urllib import request
-
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
@@ -155,20 +154,21 @@ def manual_cross_orders(request, qty, price, list, last_mkt):
     call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
 
 def manual_cross_orders_error(request, qty, price, list, last_mkt):
+    manual_cross_details = ManualCrossDetails(request)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_last_mkt(last_mkt)
     error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
     error_message.name = "ErrorMessage"
     error_message.type = ExtractManualCrossValuesRequest.ManualCrossExtractedType.ERROR_MESSAGE
     request1 = ExtractManualCrossValuesRequest()
     request1.extractionId = "ManualCrossErrorMessageExtractionID"
     request1.extractedValues.append(error_message)
-    manual_cross_details = ManualCrossDetails(request)
-    manual_cross_details.set_quantity(qty)
-    manual_cross_details.set_price(price)
-    manual_cross_details.set_selected_rows(list)
-    manual_cross_details.set_last_mkt(last_mkt)
-    manual_cross_details.manualCrossValues.CopyFrom(request1)
+    manual_cross_details.set_manualCrossValues(manual_cross_details.CopyFrom(request1))
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
+
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
     search_fe_req.set_session_id(session_id)
