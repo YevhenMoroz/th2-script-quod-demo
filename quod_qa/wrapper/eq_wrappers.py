@@ -17,8 +17,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_loc_request, direct_child_care, direct_moc_request_correct, \
-    direct_loc_request_correct
+    direct_moc_request, direct_loc_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -60,7 +59,7 @@ def cancel_order_via_fix(request, order_id, case_id, client_order_id, client, si
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None,
-                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,expire_date=None):
+                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -117,6 +116,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
     finally:
         rule_manager.remove_rule(nos_rule)
 
+
 def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_manager_qtwquod = FixManager(connectivity, case_id)
     cancel_parms = {
@@ -131,10 +131,19 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
 
 
 def amend_order_via_fix(fix_message, case_id, parametr_list):
-    fix_manager_qtwquod = FixManager(connectivity, case_id)
-    fix_modify_message = FixMessage(fix_message)
-    fix_modify_message.change_parameters(parametr_list)
-    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    try:
+        rule_manager = RuleManager()
+        rule = rule_manager.add_OCRR("fix-bs-eq-paris")
+        fix_modify_message = FixMessage(fix_message)
+        fix_manager_qtwquod = FixManager(connectivity, case_id)
+        fix_modify_message.change_parameters(parametr_list)
+        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+        response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    finally:
+        rule_manager.remove_rule(rule)
+    return response
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -178,24 +187,16 @@ def accept_modify(lookup, qty, price):
 
 
 def direct_loc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
+    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
 
 
 def direct_moc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route))
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
 
-# def direct_child_care_order(qty, route,recipient):
-#     order_blotter_details = ModifyOrderDetails()
-#     order_blotter_details.set_selected_row_count(3)
-#     call(Stubs.win_act_order_book.orderBookDirectChildCare, order_blotter_details.build())
-#     call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_child_care("UnmatchedQty", qty, route, recipient))
-#
-# def direct_child_care_order(qty, route, recipient):
-#         order_blotter_details = ModifyOrderDetails()
-#         order_blotter_details.set_selected_row_count(3)
-#         call(Stubs.win_act_order_book.orderBookDirectChildCare, order_blotter_details.build())
-#         call(Stubs.win_act_order_book.orderBookDirectChildCare,
-#              direct_child_care("UnmatchedQty", qty, route, recipient,))
+
+def direct_child_care_order(qty, route, recipient):
+    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route, recipient))
+
 
 def reject_order(lookup, qty, price):
     call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
@@ -279,6 +280,7 @@ def get_order_id(request):
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[order_id.name]
 
+
 def get_cl_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -289,11 +291,12 @@ def get_cl_order_id(request):
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[cl_order_id.name]
 
-def verify_value(request,case_id,column_name,expected_value):
+
+def verify_value(request, case_id, column_name, expected_value):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
-    value = ExtractionDetail(column_name,column_name)
+    value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
@@ -302,11 +305,8 @@ def verify_value(request,case_id,column_name,expected_value):
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 
+
 def notify_dfd(request):
     notify_dfd_request = ModifyOrderDetails()
     notify_dfd_request.set_default_params(request)
     call(Stubs.win_act_order_book.notifyDFD, notify_dfd_request.build())
-
-
-
-
