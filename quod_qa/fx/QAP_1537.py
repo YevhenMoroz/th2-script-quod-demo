@@ -20,7 +20,7 @@ def execute(report_id, case_params):
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    ttl = 120
+    ttl = 15
     wait_step = 5
     seconds, nanos = bca.timestamps()  # Store case start time
 
