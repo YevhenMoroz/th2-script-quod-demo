@@ -41,7 +41,6 @@ def execute(report_id):
     # endregion
     # region create order via fix
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    order_id2 = eq_wrappers.get_order_id(base_request)
     # endregion
     eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
 
