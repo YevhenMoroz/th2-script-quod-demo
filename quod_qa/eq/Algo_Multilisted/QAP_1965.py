@@ -209,7 +209,7 @@ def execute(report_id):
     }
     fix_verifier_buy_side.CheckNewOrderSingle(nos_2, responce,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_3, message_name='Stop algo sent child to venue')
 
-    er_4 = {
+    er_3 = {
         'ExDestination': 'XPAR',
         'ExecType': 'A',
         'OrdStatus': 'A',
@@ -228,17 +228,17 @@ def execute(report_id):
         'TimeInForce': 0,
         'LeavesQty': 0
     }
-    fix_verifier_buy_side.CheckExecutionReport(er_4, responce,
+    fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus','OrderQty'],
                                                direction='SECOND', case=case_id_3,
                                                message_name='ExecutionReport pending new')
 
-    er_5 = dict(
-        er_4,
+    er_4 = dict(
+        er_3,
         ExecType='A',
         OrdStatus='A',
     )
-    fix_verifier_buy_side.CheckExecutionReport(er_5, responce,
+    fix_verifier_buy_side.CheckExecutionReport(er_4, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty'],
                                                direction='SECOND', case=case_id_3, message_name='ExecutionReport new')
 

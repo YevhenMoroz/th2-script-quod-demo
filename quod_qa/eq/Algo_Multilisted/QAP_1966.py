@@ -55,8 +55,8 @@ def execute(report_id):
 
 
 
-    case_id_1 = bca.create_event("Algo creation", case_id)
-    case_id_2 = bca.create_event("MarketData send", case_id)
+    case_id_1 = bca.create_event("Create algo order", case_id)
+    case_id_2 = bca.create_event("Send MarketData", case_id)
     case_id_3 = bca.create_event("Check buy-side", case_id)
     case_id_4 = bca.create_event("Cancel order", case_id)
 
