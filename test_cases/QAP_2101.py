@@ -26,7 +26,7 @@ def execute(case_name, report_id, case_params):
     mdu_params_fwd = {
         "MDReqID": simulator.getMDRefIDForConnection303(
             request=RequestMDRefID(
-                symbol="EUR/USD:FXF:WK1:HSBC", connection_id=ConnectionID(
+                symbol="EUR/USD:FXF:WK1:CITI", connection_id=ConnectionID(
                     session_alias="fix-fh-fx-esp"))).MDRefID,
         # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
         "MDReportID": "3",
@@ -88,7 +88,7 @@ def execute(case_name, report_id, case_params):
         # "ReplyReceivedTime": "TBU",
         'Instrument': {
             'Symbol': 'EUR/USD',
-            'SecurityType': 'FXFWD'
+            'SecurityType': 'FXSPOT'
         },
         # "LastUpdateTime": "TBU",
         "NoMDEntries": [
@@ -124,7 +124,8 @@ def execute(case_name, report_id, case_params):
         'Side': 1,
         'Instrument': {
             'Symbol': instrument,
-            'SecurityType': 'FXSWAP'
+            'SecurityType': 'FXSWAP',
+            # 'Product': 4
         },
         'SettlDate': tsd.spo(),
         'SettlType': '0'
@@ -155,7 +156,7 @@ def execute(case_name, report_id, case_params):
                             'LegSecurityType': 'FXFWD'
                         },
                         'LegSide': 2,
-                        'LegSettlType': 7,
+                        'LegSettlType': '1W',
                         'LegSettlDate': tsd.wk1(),
                         'LegOrderQty': 1000000
                     },
@@ -174,15 +175,35 @@ def execute(case_name, report_id, case_params):
         ))
 
     quote_params = {
-        **reusable_params,
+        'Account': case_params['Account'],
+        'Instrument': {
+            'Symbol': instrument,
+            'SecurityType': 'FXSWAP',
+            'Product': 4,
+        },
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'Product': 4,
-        'OfferPx': '35.001',
-        'OfferSize': 500000,
+        'OfferSize': 1000000,
+        'BidSize': 1000000,
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
         'ValidUntilTime': '*',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'BidSpotRate':  35.18195,
+        'OfferSpotRate': 35.18195,
+        'OfferSwapPoints': 0,
+        'BidSwapPoints': 0,
+        'OfferPx': 0,
+        'BidPx': 0,
+        'QuoteType': 1,
+        'NoLegs': [
+            {
+                'LegSide': 1,
+                'InstrumentLeg': {}
+            },
+            {
+                'LegSide': 1,
+                'InstrumentLeg': {}
+            }
+        ]
     }
 
     verifier.submitCheckRule(
@@ -195,25 +216,33 @@ def execute(case_name, report_id, case_params):
         )
     )
 
-    # order_params = {
-    #     **reusable_params,
-    #     'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
-    #     'ClOrdID': bca.client_orderid(9),
-    #     'OrdType': 'D',
-    #     'TransactTime': (datetime.utcnow().isoformat()),
-    #     'OrderQty': '1000000',
-    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-    #     'Product': 4,
-    #     'TimeInForce': 4
-    # }
-    #
-    # send_order = act.placeOrderFIX(
-    #     bca.convert_to_request(
-    #         'Send NewOrderSingle',
-    #         case_params['TraderConnectivity'],
-    #         case_id,
-    #         bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
-    #     ))
+    order_params = {
+        'Account': case_params['Account'],
+        'Side': 1,
+        'Instrument': {
+            'Symbol': instrument,
+            'SecurityType': 'FXSWAP',
+            'Product': 4
+        },
+        'SettlDate': tsd.spo(),
+        'SettlType': '0',
+        'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
+        'ClOrdID': bca.client_orderid(9),
+        'OrdType': 'D',
+        'TransactTime': (datetime.utcnow().isoformat()),
+        'OrderQty': '1000000',
+        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        # 'Product': 4,
+        'TimeInForce': 4
+    }
+
+    send_order = act.placeOrderFIX(
+        bca.convert_to_request(
+            'Send NewOrderSingle',
+            case_params['TraderConnectivity'],
+            case_id,
+            bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
+        ))
     #
     # er_pending_params = {
     #     'Side': reusable_params['Side'],
