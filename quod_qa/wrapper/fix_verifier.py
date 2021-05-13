@@ -9,14 +9,17 @@ class FixVerifier:
         self.TraderConnectivity = TraderConnectivity
         self.case_id = case_id
 
-    def CheckExecutionReport(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction='FIRST'):
+    def CheckExecutionReport(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_id
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("ExecutionReport", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
-                self.case_id,
+                case,
                 Direction.Value(direction)
             )
         )
@@ -32,24 +35,48 @@ class FixVerifier:
             )
         )
 
-    def CheckNewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check NewOrderSingle to buy-side'):
+    def CheckNewOrderSingle(self, parameters, response, key_parameters = ['ClOrdID'], message_name='Check NewOrderSingle', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_id
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("NewOrderSingle", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
-                self.case_id
+                case,
+                Direction.Value(direction)
             )
         )
 
-    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest to buy-side'):
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelReplaceRequest', case = None):
+        if case == None:
+                case = self.case_id
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("OrderCancelReplaceRequest", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
-                self.case_id
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    
+    def CheckOrderCancelRequest(self, parameters, response, key_parameters = ['ClOrdID', 'OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelRequest', case = None):
+        if case == None:
+                case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
             )
         )
