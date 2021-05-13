@@ -5,6 +5,9 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
+from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe303, close_fe, call
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -187,7 +190,7 @@ def execute(case_name, report_id, case_params):
         'QuoteID': '*',
         'ValidUntilTime': '*',
         'Currency': 'EUR',
-        'BidSpotRate':  35.18195,
+        'BidSpotRate': 35.18195,
         'OfferSpotRate': 35.18195,
         'OfferSwapPoints': 0,
         'BidSwapPoints': 0,
@@ -379,6 +382,35 @@ def execute(case_name, report_id, case_params):
     #         case_id
     #     )
     # )
+
+    # GUI block
+    common_act = Stubs.win_act
+    ob_act = Stubs.win_act_order_book
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+
+    prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
+                  Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
+
+    execution_id = bca.client_orderid(4)
+    ob = OrdersDetails()
+    ob.set_default_params(base_request)
+    ob.set_extraction_id(execution_id)
+    ob_exec_sts = ExtractionDetail('orderBook.execsts', 'ExecSts')
+    ob_id = ExtractionDetail('orderBook.quoteid', 'QuoteID')
+    order_info = OrderInfo.create(
+        action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_id]))
+    ob.add_single_order_info(
+        order_info)
+    call(ob_act.getOrdersDetails, ob.request())
+
+    call(common_act.verifyEntities, verification(execution_id, 'checking OB',
+                                                 [verify_ent('OB ExecSts', ob_exec_sts.name, 'Filled'),
+                                                  verify_ent('OB ID vs QB ID', ob_id.name,
+                                                             send_rfq.response_messages_list[0].fields['QuoteID'])]))
+
+    close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
