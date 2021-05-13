@@ -5,6 +5,9 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
+from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe303, close_fe, call
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -26,7 +29,7 @@ def execute(case_name, report_id, case_params):
     mdu_params_fwd = {
         "MDReqID": simulator.getMDRefIDForConnection303(
             request=RequestMDRefID(
-                symbol="EUR/USD:FXF:WK1:HSBC", connection_id=ConnectionID(
+                symbol="EUR/USD:FXF:WK1:CITI", connection_id=ConnectionID(
                     session_alias="fix-fh-fx-esp"))).MDRefID,
         # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
         "MDReportID": "3",
@@ -88,7 +91,7 @@ def execute(case_name, report_id, case_params):
         # "ReplyReceivedTime": "TBU",
         'Instrument': {
             'Symbol': 'EUR/USD',
-            'SecurityType': 'FXFWD'
+            'SecurityType': 'FXSPOT'
         },
         # "LastUpdateTime": "TBU",
         "NoMDEntries": [
@@ -124,7 +127,8 @@ def execute(case_name, report_id, case_params):
         'Side': 1,
         'Instrument': {
             'Symbol': instrument,
-            'SecurityType': 'FXSWAP'
+            'SecurityType': 'FXSWAP',
+            # 'Product': 4
         },
         'SettlDate': tsd.spo(),
         'SettlType': '0'
@@ -155,7 +159,7 @@ def execute(case_name, report_id, case_params):
                             'LegSecurityType': 'FXFWD'
                         },
                         'LegSide': 2,
-                        'LegSettlType': 7,
+                        'LegSettlType': '1W',
                         'LegSettlDate': tsd.wk1(),
                         'LegOrderQty': 1000000
                     },
@@ -174,15 +178,35 @@ def execute(case_name, report_id, case_params):
         ))
 
     quote_params = {
-        **reusable_params,
+        'Account': case_params['Account'],
+        'Instrument': {
+            'Symbol': instrument,
+            'SecurityType': 'FXSWAP',
+            'Product': 4,
+        },
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'Product': 4,
-        'OfferPx': '35.001',
-        'OfferSize': 500000,
+        'OfferSize': 1000000,
+        'BidSize': 1000000,
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
         'ValidUntilTime': '*',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'BidSpotRate': 35.18195,
+        'OfferSpotRate': 35.18195,
+        'OfferSwapPoints': 0,
+        'BidSwapPoints': 0,
+        'OfferPx': 0,
+        'BidPx': 0,
+        'QuoteType': 1,
+        'NoLegs': [
+            {
+                'LegSide': 1,
+                'InstrumentLeg': {}
+            },
+            {
+                'LegSide': 1,
+                'InstrumentLeg': {}
+            }
+        ]
     }
 
     verifier.submitCheckRule(
@@ -195,25 +219,33 @@ def execute(case_name, report_id, case_params):
         )
     )
 
-    # order_params = {
-    #     **reusable_params,
-    #     'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
-    #     'ClOrdID': bca.client_orderid(9),
-    #     'OrdType': 'D',
-    #     'TransactTime': (datetime.utcnow().isoformat()),
-    #     'OrderQty': '1000000',
-    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-    #     'Product': 4,
-    #     'TimeInForce': 4
-    # }
-    #
-    # send_order = act.placeOrderFIX(
-    #     bca.convert_to_request(
-    #         'Send NewOrderSingle',
-    #         case_params['TraderConnectivity'],
-    #         case_id,
-    #         bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
-    #     ))
+    order_params = {
+        'Account': case_params['Account'],
+        'Side': 1,
+        'Instrument': {
+            'Symbol': instrument,
+            'SecurityType': 'FXSWAP',
+            'Product': 4
+        },
+        'SettlDate': tsd.spo(),
+        'SettlType': '0',
+        'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
+        'ClOrdID': bca.client_orderid(9),
+        'OrdType': 'D',
+        'TransactTime': (datetime.utcnow().isoformat()),
+        'OrderQty': '1000000',
+        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+        # 'Product': 4,
+        'TimeInForce': 4
+    }
+
+    send_order = act.placeOrderFIX(
+        bca.convert_to_request(
+            'Send NewOrderSingle',
+            case_params['TraderConnectivity'],
+            case_id,
+            bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
+        ))
     #
     # er_pending_params = {
     #     'Side': reusable_params['Side'],
@@ -350,6 +382,35 @@ def execute(case_name, report_id, case_params):
     #         case_id
     #     )
     # )
+
+    # GUI block
+    common_act = Stubs.win_act
+    ob_act = Stubs.win_act_order_book
+    session_id = set_session_id()
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+
+    prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
+                  Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
+
+    execution_id = bca.client_orderid(4)
+    ob = OrdersDetails()
+    ob.set_default_params(base_request)
+    ob.set_extraction_id(execution_id)
+    ob_exec_sts = ExtractionDetail('orderBook.execsts', 'ExecSts')
+    ob_id = ExtractionDetail('orderBook.quoteid', 'QuoteID')
+    order_info = OrderInfo.create(
+        action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_id]))
+    ob.add_single_order_info(
+        order_info)
+    call(ob_act.getOrdersDetails, ob.request())
+
+    call(common_act.verifyEntities, verification(execution_id, 'checking OB',
+                                                 [verify_ent('OB ExecSts', ob_exec_sts.name, 'Filled'),
+                                                  verify_ent('OB ID vs QB ID', ob_id.name,
+                                                             send_rfq.response_messages_list[0].fields['QuoteID'])]))
+
+    close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
