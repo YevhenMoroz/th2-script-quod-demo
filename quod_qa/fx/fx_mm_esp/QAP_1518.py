@@ -20,9 +20,8 @@ from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-# connectivity = 'fix-ss-308-mercury-standard'
-connectivity = 'fix-qsesp-303'
-account = 'MMCLIENT1'
+connectivity = 'fix-ss-308-mercury-standard'
+account = 'Palladium1'
 qty = 1000000
 
 class TestCase:
@@ -53,20 +52,20 @@ class TestCase:
             'Side': '1',
             'OrderQty': qty,
             'OrdType': '2',
-            # 'Price': 35.002,
             'TimeInForce': '4',
-            'Currency': 'EUR',
+            'Currency': 'GBP',
             'SettlCurrency': 'USD',
             'SettlType': 0,
             'SettlDate': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S'),
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': 'GBP/USD',
                 'SecurityType': 'FXSPOT',
                 'SecurityIDSource': '8',
-                'SecurityID': 'EUR/USD',
+                'SecurityID': 'GBP/USD',
                 'SecurityExchange': 'XQFX',
+                'Product': '4'
             },
-            'Product': '4',
+
         }
 
         # This parameters can be used for ExecutionReport message
@@ -80,22 +79,15 @@ class TestCase:
             'Currency': self.case_params['Currency'],
             'Instrument': {
                 'Symbol': self.case_params['Instrument']['Symbol'],
-                'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
-                'SecurityID': self.case_params['Instrument']['SecurityID'],
-                'SecurityExchange': self.case_params['Instrument']['SecurityExchange']
+                # 'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
+                # 'SecurityID': self.case_params['Instrument']['SecurityID'],
+                # 'SecurityExchange': self.case_params['Instrument']['SecurityExchange'],
+                # 'Product': self.case_params['Instrument']['Product']
             }
         }
 
         # Last checkpoint. Need in the future for check ExecutionReport via FIX
         self.last_checkpoint = None
-
-    # FE open method
-    # def prepare_frontend(self):
-    #         user = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         work_dir = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         password = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         if not Stubs.frontend_is_open:
-    #             prepare_fe(self.case_id, self.session_id, work_dir, user, password)
 
     # Send MarketDataRequest subscribe method
     def send_md_subscribe(self):
@@ -110,13 +102,13 @@ class TestCase:
                 {
                     'Instrument': {
                         'Symbol': self.case_params['Instrument']['Symbol'],
-                        'SecurityType': self.case_params['Instrument']['SecurityType']
+                        'SecurityType': self.case_params['Instrument']['SecurityType'],
+                        'Product': self.case_params['Instrument']['Product']
                     },
                     'SettlDate': self.case_params['SettlDate'],
                     'SettlType': self.case_params['SettlType']
                 }
-            ],
-            'Product': self.case_params['Product']
+            ]
         }
 
         subscribe = self.fix_act.placeMarketDataRequestFIX(
@@ -145,7 +137,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '*',
+                    'MDEntrySize': '1000000',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -159,7 +151,7 @@ class TestCase:
                     'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
-                    'MDEntrySize': '*',
+                    'MDEntrySize': '1000000',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -170,8 +162,10 @@ class TestCase:
                 },
                 {
                     'SettlType': 0,
+                    'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
+                    'MDEntrySize': '2000000',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -182,8 +176,10 @@ class TestCase:
                 },
                 {
                     'SettlType': 0,
+                    'MDEntryPx': '*',
                     'MDEntryTime': '*',
                     'MDEntryID': '*',
+                    'MDEntrySize': '2000000',
                     'QuoteEntryID': '*',
                     'MDOriginType': 1,
                     'SettlDate': self.case_params['SettlDate'].split(' ')[0],
@@ -192,30 +188,6 @@ class TestCase:
                     'MDEntryDate': '*',
                     'MDEntryType': 1
                 },
-                {
-                    'SettlType': 0,
-                    'MDEntryTime': '*',
-                    'MDEntryID': '*',
-                    'QuoteEntryID': '*',
-                    'MDOriginType': 1,
-                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
-                    'MDQuoteType': 1,
-                    'MDEntryPositionNo': 3,
-                    'MDEntryDate': '*',
-                    'MDEntryType': 0
-                },
-                {
-                    'SettlType': 0,
-                    'MDEntryTime': '*',
-                    'MDEntryID': '*',
-                    'QuoteEntryID': '*',
-                    'MDOriginType': 1,
-                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
-                    'MDQuoteType': 1,
-                    'MDEntryPositionNo': 3,
-                    'MDEntryDate': '*',
-                    'MDEntryType': 1
-                }
             ]
         }
 
@@ -263,9 +235,10 @@ class TestCase:
             'SettlDate': self.case_params['SettlDate'],
             'Instrument': {
                 'Symbol': self.case_params['Instrument']['Symbol'],
+                'Product': self.case_params['Instrument']['Product']
             },
-            'Currency': self.case_params['Currency'],
-            'Product': self.case_params['Product']
+            'Currency': self.case_params['Currency']
+
         }
 
         new_order = self.fix_act.placeOrderFIX(
@@ -292,7 +265,7 @@ class TestCase:
             'OrdStatus': 'A',
             'ExecType': 'A',
             'NoParty': [{
-                'PartyID': 'gtwquod3',
+                'PartyID': 'gtwquod7',
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
@@ -313,7 +286,7 @@ class TestCase:
         new_er_params['SettlDate'] = self.case_params['SettlDate'].split(' ')[0]
         new_er_params['SettlType'] = self.case_params['SettlType']
         new_er_params['ExecRestatementReason'] = '4'
-
+        new_er_params.pop('Account',None)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
@@ -353,12 +326,15 @@ class TestCase:
             'ExDestination': 'XQFX',
             'GrossTradeAmt': '*',
             'NoParty': [{
-                'PartyID': 'gtwquod3',
+                'PartyID': 'gtwquod7',
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }]
         }
-        er_filled['Instrument']['SecurityType'] = self.case_params['Instrument']['SecurityType']
+        # er_filled['Instrument']['SecurityType'] = self.case_params['Instrument']['SecurityType']
+        er_filled['Account'] = 'Palladium1_1'
+        # er_filled.pop('SecurityType',None)
+
 
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -369,23 +345,6 @@ class TestCase:
             timeout=3000
         )
 
-        execution_id = bca.client_orderid(4)
-        ob = OrdersDetails()
-        ob.set_default_params(self.base_request)
-        ob.set_extraction_id(execution_id)
-        ob_cl_ord_id = ExtractionDetail("orderBook.clordid", "ClOrdID")
-        ob_tif = ExtractionDetail("orderBook.timeinforce", "TIF")
-        ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
-        ob.add_single_order_info(
-            OrderInfo.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_cl_ord_id, ob_tif])))
-        call(self.ob_act.getOrdersDetails, ob.request())
-        call(self.common_act.verifyEntities, verification(execution_id, "checking OB",
-                                                          [verify_ent("OB ClOrdID vs FIX ClOrdID", ob_cl_ord_id.name,
-                                                                      er_filled['ClOrdID']),
-                                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                                           verify_ent("OB TIF",ob_tif.name,"FillOrKill")]))
-
 
 
 
@@ -395,24 +354,18 @@ class TestCase:
 
         try:
 
-            # if not Stubs.frontend_is_open:
-            #     prepare_fe_2(self.case_id, self.session_id)
-            # else:
-            #     get_opened_fe(self.case_id, self.session_id)
-
             # Step 1
             market_data_params = self.send_md_subscribe()
             self.send_order()
             # # Steps 3-4
-            # self.check_filled()
+            self.check_filled()
             #
-            # self.send_md_unsubscribe(market_data_params)
+            self.send_md_unsubscribe(market_data_params)
 
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
 
-        # close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':

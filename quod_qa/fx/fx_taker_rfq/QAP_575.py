@@ -1,10 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-
 import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import next_working_day_after_25dec_front_end, next_monday_front_end
 from custom.verifier import Verifier
@@ -43,11 +40,6 @@ def check_date(exec_id, base_request, service, case_id, date):
 
 
 def execute(report_id):
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
     case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_from_currency = "EUR"
@@ -83,9 +75,8 @@ def execute(report_id):
         modify_request.set_settlement_date(bca.get_t_plus_date(click_to_25dec, is_weekend_holiday=False))
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date("RFQ", base_rfq_details, ar_service, case_id, next_working_day_after_25dec_front_end())
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-    except Exception as e:
-        logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
+    except Exception:
+        logging.error("Error execution", exc_info=True)

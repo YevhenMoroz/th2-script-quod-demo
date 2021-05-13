@@ -123,6 +123,8 @@ class RatesTileValues(Enum):
     SPREAD = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.SPREAD
     ASK_LARGE_VALUE = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_LARGE_VALUE
     PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.PIPS
+    ASK_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_PIPS
+    BID_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BID_PIPS
 
 
 class ExtractRatesTileValues:
@@ -158,6 +160,12 @@ class ExtractRatesTileValues:
 
     def extract_pips(self, name: str):
         self.extract_value(RatesTileValues.PIPS, name)
+
+    def extract_ask_pips(self, name: str):
+        self.extract_value(RatesTileValues.ASK_PIPS, name)
+
+    def extract_bid_pips(self, name: str):
+        self.extract_value(RatesTileValues.BID_PIPS, name)
 
     def extract_value(self, field: RatesTileValues, name: str):
         extracted_value = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()

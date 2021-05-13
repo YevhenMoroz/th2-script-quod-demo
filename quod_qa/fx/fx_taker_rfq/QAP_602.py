@@ -1,17 +1,14 @@
 import logging
-import time
-import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -112,13 +109,8 @@ def cancel_rfq(base_request, service):
 
 
 def execute(report_id):
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    # print_active_rules()
     case_name = "QAP-602"
-    quote_owner = "QA2"
+    quote_owner = "ostronov"
     case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "MAR IMM"
@@ -129,7 +121,6 @@ def execute(report_id):
     quote_sts_new = 'New'
     case_instr_type = 'FXForward'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_terminated = "Terminated"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -172,14 +163,8 @@ def execute(report_id):
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
         cancel_rfq(base_rfq_details, ar_service)
 
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
-
-
-
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)

@@ -150,6 +150,65 @@ def execute(report_id):
             'OrderID': care_order_id,
             'ExecID': '*',
             'TransactTime': '*',
+            'CumQty': qtyh,
+            'Price': limit,
+            'SettlDate': todayp1,
+            'OrderQtyData': {
+                'OrderQty': qty
+            },
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'OrdType': '2',
+            'Side': '1',
+            'AvgPx': limit,
+            'OrdStatus': '1',
+            'ExecType': 'F',
+            'LeavesQty': '150',
+            'TimeInForce': '0',
+            'TradeDate': today
+        }
+
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Execution Report",
+                bca.filter_to_grpc_nfu("ExecutionReport", execution_report2_params, ['OrderID', 'OrdStatus']),
+                checkpoint_id2, 'fix-ss-back-office', case_id
+            )
+        )
+
+        # Checkpoint2 creation
+        checkpoint_response3 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id3 = checkpoint_response3.checkpoint
+
+        #create manual execution
+        service = Stubs.win_act_order_book
+
+        manual_executing_details = ManualExecutingDetails(base_request)
+        manual_executing_details.set_filter({"Order ID": care_order_id})
+        # manual_executing_details.set_row_number(1)
+
+        executions_details = manual_executing_details.add_executions_details()
+        executions_details.set_quantity(qtyh)
+        executions_details.set_price(limit)
+        executions_details.set_executing_firm("ExecutingFirm")
+        executions_details.set_contra_firm("Contra_Firm")
+        executions_details.set_last_capacity("Agency")
+        executions_details.set_settlement_date_offset(1)
+
+        call(service.manualExecution, manual_executing_details.build())
+
+        #verify execution report2
+        execution_report3_params = {
+            'ClOrdID': care_order_id,
+            'OrderID': care_order_id,
+            'ExecID': '*',
+            'TransactTime': '*',
             'CumQty': qty,
             'Price': limit,
             'SettlDate': todayp1,
@@ -177,8 +236,8 @@ def execute(report_id):
         Stubs.verifier.submitCheckRule(
             bca.create_check_rule(
                 "Receive Execution Report",
-                bca.filter_to_grpc_nfu("ExecutionReport", execution_report2_params, ['OrderID']),
-                checkpoint_id2, 'fix-ss-back-office', case_id
+                bca.filter_to_grpc_nfu("ExecutionReport", execution_report3_params, ['OrderID', 'OrdStatus']),
+                checkpoint_id3, 'fix-ss-back-office', case_id
             )
         )
 

@@ -1,11 +1,13 @@
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import OrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams
+# from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
 from .common_wrappers import CommissionsDetails
+from enum import Enum
 
 
 class OrderTicketDetails:
@@ -25,6 +27,9 @@ class OrderTicketDetails:
     def set_quantity(self, qty: str):
         self.order.qty = qty
 
+    def set_expire_date(self, expire_date: str):
+        self.order.expireDate = expire_date
+
     def set_order_type(self, order_type: str):
         self.order.orderType = order_type
 
@@ -32,7 +37,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-         self.order.account = account
+        self.order.account = account
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
@@ -65,6 +70,12 @@ class OrderTicketDetails:
         self.order.algoOrderParams.quodParticipationStrategyParams.CopyFrom(
             order_ticket_pb2.QuodParticipationStrategyParams())
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
+
+    def set_care_order(self, desk: str, partial_desk: bool = False,
+                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
+        self.order.careOrderParams.desk = desk
+        self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
 
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())

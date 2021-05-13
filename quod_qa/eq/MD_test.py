@@ -1,7 +1,10 @@
+from datetime import datetime
 
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
+
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from stubs import Stubs
 
 timeouts = True
@@ -12,48 +15,58 @@ def execute(report_id):
     verifier = Stubs.verifier
     simulator = Stubs.simulator
 
-    case_name = "QAP-2409"
-
-    symbol = "2320"
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-    MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="734",
+        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
     )).MDRefID
-
-
-    mdfr_params_1 = {
-        'MDReportID': "1",
-        'MDReqID': MDRefID_1,
-        'Instrument': {
-            'Symbol': symbol
-        },
-        # 'LastUpdateTime': "",
+    mdir_params_bid = {
+        'MDReqID': MDRefID,
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '10.7',
-                'MDEntrySize': '650'
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '11',
-                'MDEntrySize': '500'
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    }
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataSnapshotFullRefresh',
+        "fix-fh-310-columbia",
+        report_id,
+        message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-fh-310-columbia")
+    ))
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="3416",
+        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
+    )).MDRefID
+    mdir_params_bid = {
+        'MDReqID': MDRefID,
+        'NoMDEntries': [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '12',
-                'MDEntrySize': '600'
+                'MDEntryPx': '40',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1'
             }
         ]
     }
 
-    act.sendMessage(
-        request=bca.convert_to_request(
-            'Send MarketDataSnapshotFullRefresh',
-            "fix-fh-eq-trqx",
-            case_id,
-            bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdfr_params_1, "fix-fh-eq-trqx")
-        )
-    )
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataSnapshotFullRefresh',
+        "fix-fh-310-columbia",
+        report_id,
+        message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-fh-310-columbia")
+    ))

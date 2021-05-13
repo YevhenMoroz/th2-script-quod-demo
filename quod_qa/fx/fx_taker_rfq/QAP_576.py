@@ -1,9 +1,6 @@
 import logging
 from pathlib import Path
-
 import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import y2_front_end
 from custom.verifier import Verifier
@@ -46,10 +43,6 @@ def modify_rfq_tile(base_request, service, cur1, cur2, client, tenor):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -77,8 +70,5 @@ def execute(report_id):
         check_date("RFQ", base_rfq_details, ar_service, case_id, date)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)

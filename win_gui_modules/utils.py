@@ -52,7 +52,7 @@ def close_fe(main_event, session):
     disposing_event = create_event("Disposing", main_event)
     try:
         stub.closeApplication(CloseApplicationRequest(
-            base=EmptyRequest(sessionID=session, parentEventId=disposing_event), saveWorkspace=True))
+            base=EmptyRequest(sessionID=session, parentEventId=disposing_event)))
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)

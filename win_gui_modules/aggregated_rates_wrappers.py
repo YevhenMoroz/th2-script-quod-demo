@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
@@ -290,6 +289,12 @@ class ModifyRFQTileRequest:
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
 
+    def set_quantity_as_string(self, quantity: str):
+        self.modify_request.quantityAsString = quantity
+
+    def set_far_leg_quantity_as_string(self, quantity: str):
+        self.modify_request.farLegQuantityAsString = quantity
+
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
 
@@ -369,6 +374,8 @@ class RFQTileValues(Enum):
     FAR_LEG_TENOR = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_TENOR
     NEAR_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.NEAR_SETTLEMENT_DATE
     FAR_LEG_SETTLEMENT_DATE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.FAR_LEG_SETTLEMENT_DATE
+    IS_BUY_BUTTON_ENABLED = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BUY_BUTTON_ENABLED
+    IS_SELL_BUTTON_ENABLED = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SELL_BUTTON_ENABLED
 
     BEST_BID_LARGE = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_BID_LARGE
     BEST_BID_SMALL = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.BEST_BID_SMALL
@@ -482,6 +489,12 @@ class ExtractRFQTileValues:
             self.request.tenorFilter = preFilter
         else:
             self.request.tenorFilter = ''
+
+    def extract_is_buy_button_enabled(self, name: str):
+        self.extract_value(RFQTileValues.IS_BUY_BUTTON_ENABLED, name)
+
+    def extract_is_sell_button_enabled(self, name: str):
+        self.extract_value(RFQTileValues.IS_SELL_BUTTON_ENABLED, name)
 
     def extract_value(self, field: RFQTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedValue()

@@ -95,6 +95,21 @@
         ]
       }
     },
+    "Win_Act_Fx_Dealing_Positions": {
+      "service-class": "FxDealingPositionsServiceService",
+      "endpoints": {
+        "act_fx_dealing_positions": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_fx_dealing_positions"
+        ]
+      }
+    },
 	"Win_Act_Order_Book": {
       "service-class": "OrderBookServiceService",
       "endpoints": {
