@@ -157,6 +157,7 @@ def execute(report_id):
         'NoParty': '*',
         'Account': account,        
         'OrderQty': qty,
+        'ExpireDate': expire_date,
         'OrdType': new_order_single_params['OrdType'],
         'ClOrdID': '*',
         'OrderCapacity': new_order_single_params['OrderCapacity'],
