@@ -85,7 +85,7 @@ def execute(report_id):
         place_order(base_details, cp_service, client, slippage, qty)
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
                          qty, owner, client)
-
+    # TODO place order by double click on row
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
