@@ -6,11 +6,13 @@
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder": "C:\\QA\\FE2\\",
+  "qf_trading_fe_folder": "C:\\Users\\irovchak\\QA\\FETrading_138\\",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user": "vskulinec",
-  "qf_trading_fe_password": "vskulinec",
+  "qf_trading_fe_user": "dea01",
+  "qf_trading_fe_user2": "vskulinec",
+  "qf_trading_fe_password": "dea01",
+  "qf_trading_fe_password2": "vskulinec",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - 310 COLUMBIA",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (310 COLUMBIA) "
+  "qf_trading_fe_main_win_name": "Quod Financial - 305 Galileo",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (305 Galileo) "
 }
