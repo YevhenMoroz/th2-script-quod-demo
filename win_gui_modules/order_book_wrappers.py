@@ -387,9 +387,9 @@ class CompleteOrdersDetails:
 
 class ManualCrossDetails:
 
-    def __init__(self, base: EmptyRequest = None, manualCrossValues : ExtractManualCrossValuesRequest = None):
+    def __init__(self, base: EmptyRequest = None):
         self.base = None
-        self.manualCrossValues = manualCrossValues
+        self.manualCrossValues = ExtractManualCrossValuesRequest()
         if base is not None :
             self._request = order_book_pb2.ManualCrossDetails(base=base)
         else:
