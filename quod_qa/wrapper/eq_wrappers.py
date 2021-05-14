@@ -169,6 +169,7 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     manual_cross_details.manualCrossValues.CopyFrom(request1)
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
+
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
     search_fe_req.set_session_id(session_id)
