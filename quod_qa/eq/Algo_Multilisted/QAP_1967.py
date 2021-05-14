@@ -108,18 +108,9 @@ def execute(report_id):
 
 
 
-    case_id_1 = bca.create_event("Algo creation", case_id)
-    case_id_2 = bca.create_event("MarketData send", case_id)
-    case_id_3 = bca.create_event("Check buy-side", case_id)
-    case_id_4 = bca.create_event("First modification", case_id)
-    case_id_5 = bca.create_event("MarketData send", case_id)
-    case_id_6 = bca.create_event("Check buy-side", case_id)
-    case_id_7 = bca.create_event("Second modification", case_id)
-    case_id_8 = bca.create_event("MarketData send", case_id)
-    case_id_9 = bca.create_event("Check buy-side", case_id)
-    case_id_10 = bca.create_event("Cancel order", case_id)
 
     # Send NewOrderSingle
+    case_id_1 = bca.create_event("Create algo order", case_id)
     multilisting_params = {
         'Account': account,
         'HandlInst': "2",
@@ -153,12 +144,57 @@ def execute(report_id):
     responce = fix_manager.Send_NewOrderSingle_FixMessage(fix_message_multilisting, case=case_id_1)
     time.sleep(1)
 
+    # Check that FIXQUODSELL5 receive 35=8 pending new
+    er_1 = dict(
+        ExecID='*',
+        OrderQty=qty,
+        LastQty=0,
+        TransactTime='*',
+        Side=side,
+        AvgPx=0,
+        Currency='EUR',
+        TimeInForce=0,
+        HandlInst=2,
+        LeavesQty=qty,
+        CumQty=0,
+        LastPx=0,
+        OrdType=ord_type,
+        ClOrdID=fix_message_multilisting.get_parameter('ClOrdID'),
+        OrderCapacity='A',
+        QtyType=0,
+        Price=price_1,
+        TargetStrategy=1008,
+        ExecType="A",
+        OrdStatus='A',
+        OrderID=responce.response_messages_list[0].fields['OrderID'].simple_value,
+        Instrument='*',
+        NoParty='*',
+        StopPx=stop_price_1,
+        NoStrategyParameters='*'
+    )
+
+    fix_verifier_sell_side.CheckExecutionReport(er_1, responce, case=case_id_1,
+                                                message_name='FIXQUODSELL5 sent 35=8 pending new')
+
+    # Check that FIXQUODSELL5 receive 35=8 new
+    er_2 = dict(
+        er_1,
+        ExecType="0",
+        OrdStatus='0',
+        SettlDate='*',
+        ExecRestatementReason='*',
+        SettlType='*',
+    )
+    fix_verifier_sell_side.CheckExecutionReport(er_2, responce, case=case_id_1,
+                                                message_name='FIXQUODSELL5 sent 35=8 new')
 
     time.sleep(5)
     # Send MD
+    case_id_2 = bca.create_event("MarketData send", case_id)
     send_md(case_id_2)
 
     # Check buy-side
+    case_id_3 = bca.create_event("Check buy-side", case_id)
     nos_2 = {
         'Side': side,
         'Price': stop_price_1,
@@ -214,16 +250,20 @@ def execute(report_id):
                                                direction='SECOND', case=case_id_3, message_name='ExecutionReport new')
 
     # Send OrderCancelReplaceRequest `First modification`
+    case_id_4 = bca.create_event("First modification", case_id)
     fix_modify_message = deepcopy(fix_message_multilisting)
     fix_modify_message.change_parameters({'Price': price_2, 'StopPx': stop_price_2})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_4)
 
     time.sleep(5)
-
+    # Send MD
+    case_id_5 = bca.create_event("MarketData send", case_id)
     send_md(case_id_5)
 
+
     # Check buy-side
+    case_id_6 = bca.create_event("Check buy-side", case_id)
     nos_2 = {
         'Side': side,
         'Price': stop_price_2,
@@ -278,13 +318,21 @@ def execute(report_id):
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
                                                direction='SECOND', case=case_id_6, message_name='ExecutionReport new')
 
+    # Send OrderCancelReplaceRequest `Second modification`
+    case_id_7 = bca.create_event("Second modification", case_id)
     fix_modify_message = deepcopy(fix_message_multilisting)
     fix_modify_message.change_parameters({'Price': price_3, 'StopPx': stop_price_3})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_7)
+    time.sleep(2)
+
+    # Send MarketData
+    case_id_8 = bca.create_event("MarketData send", case_id)
+    send_md(case_id_8)
 
     time.sleep(2)
     # Check buy-side
+    case_id_9 = bca.create_event("Check buy-side", case_id)
     nos_2 = {
         'Side': side,
         'Price': stop_price_3,
@@ -339,6 +387,7 @@ def execute(report_id):
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
                                                direction='SECOND', case=case_id_9, message_name='ExecutionReport new')
     # Cancel order
+    case_id_10 = bca.create_event("Cancel order", case_id)
     cancel_parms = {
         "ClOrdID": fix_message_multilisting.get_ClOrdID(),
         "Account": fix_message_multilisting.get_parameter('Account'),
