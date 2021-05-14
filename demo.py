@@ -5,17 +5,17 @@ from quod_qa.eq.Algo_Iceberg import QAP_3055, QAP_3054
 from quod_qa.eq.Algo_Multilisted import QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027,QAP_1951, QAP_1990, QAP_3028
 from quod_qa.eq.Algo_TWAP import QAP_1318, QAP_3121, QAP_3120
 from rule_management import RuleManager
-from schemas import rfq_tile_example
 from stubs import Stubs
-from quod_qa.fx import ui_tests
-from quod_qa.eq.Care import QAP_1012
+from test_cases import QAP_638
+from quod_qa.eq.Care import QAP_1072
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 timeouts = False
 
 channels = dict()
-
 
 def test_run():
     # Generation id and time for test run
@@ -31,4 +31,3 @@ if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
-
