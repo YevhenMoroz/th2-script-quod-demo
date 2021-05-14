@@ -246,6 +246,7 @@ def execute(case_name, report_id, case_params):
             case_id,
             bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
         ))
+
     #
     # er_pending_params = {
     #     'Side': reusable_params['Side'],
@@ -397,18 +398,23 @@ def execute(case_name, report_id, case_params):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(execution_id)
-    ob_exec_sts = ExtractionDetail('orderBook.execsts', 'ExecSts')
-    ob_id = ExtractionDetail('orderBook.quoteid', 'QuoteID')
+    ob_qty = ExtractionDetail('orderBook.qty', 'Qty')
+    ob_ord_type = ExtractionDetail('orderBook.ordtype', 'OrdType')
+    ob_currency = ExtractionDetail('orderBook.currency', 'Currency')
+    ob_side = ExtractionDetail('orderBook.side', 'Side')
     order_info = OrderInfo.create(
-        action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_id]))
+        action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty, ob_ord_type,
+                                                                             ob_currency, ob_side]))
     ob.add_single_order_info(
         order_info)
     call(ob_act.getOrdersDetails, ob.request())
 
-    call(common_act.verifyEntities, verification(execution_id, 'checking OB',
-                                                 [verify_ent('OB ExecSts', ob_exec_sts.name, 'Filled'),
-                                                  verify_ent('OB ID vs QB ID', ob_id.name,
-                                                             send_rfq.response_messages_list[0].fields['QuoteID'])]))
+    call(common_act.verifyEntities,
+         verification(execution_id, 'checking OB',
+                      [verify_ent('OB Qty', ob_qty.name, '1,000,000'),
+                       verify_ent('OB OrdType', ob_ord_type.name, 'PreviouslyQuoted'),
+                       verify_ent('OB Currency', ob_currency.name, 'EUR'),
+                       verify_ent('OB Side', ob_side.name, 'Buy')]))
 
     close_fe(case_id, session_id)
 
