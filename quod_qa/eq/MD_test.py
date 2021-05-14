@@ -25,17 +25,40 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '30',
-                'MDEntrySize': '1000',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
                 'MDEntryPx': '40',
-                'MDEntrySize': '1000',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
     }
+
+    mdir_params_bid = {
+        'MDReqID': MDRefID,
+        'NoMDEntries':{
+            'NoMDEntries':
+                [
+                    {
+                        'MDEntryType': '0',
+                        'MDEntryPx': '30',
+                        'MDEntrySize': '100000',
+                        'MDEntryPositionNo': '1'
+                    },
+                    {
+                        'MDEntryType': '1',
+                        'MDEntryPx': '40',
+                        'MDEntrySize': '100000',
+                        'MDEntryPositionNo': '1'
+                    }
+                ]
+        }
+
+    }
+
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
         "fix-fh-310-columbia",
@@ -52,13 +75,13 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '30',
-                'MDEntrySize': '1000',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
                 'MDEntryPx': '40',
-                'MDEntrySize': '1000',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]

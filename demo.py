@@ -1,12 +1,11 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import fix_demo, ui_tests
-from quod_qa.fx.fx_taker_rfq import QAP_636
+from quod_qa.eq import MD_test_3, MD_test
+from quod_qa.eq.Algo_Multilisted import QAP_1962, QAP_1965, QAP_1966, QAP_1963, QAP_1983, QAP_1984, QAP_1967
+from quod_qa.eq.Sorping import QAP_2409
 from rule_management import RuleManager
 from stubs import Stubs
-from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_1072
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -18,36 +17,28 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' vskulinec  tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('Ziuban  tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        QAP_1072.execute(report_id)
-        test_cases =  {
-                'case_id': bca.create_event_id(),
-                'TraderConnectivity': 'gtwquod5-fx',
-                'Account': 'MMCLIENT1',
-                'SenderCompID': 'QUODFX_UAT',
-                'TargetCompID': 'QUOD5',
-                }
+        # QAP_1072.execute(report_id)
+        # QAP_1965.execute(report_id)
+        # QAP_1966.execute(report_id)
+        # QAP_1962.execute(report_id)
+        QAP_1967.execute(report_id)
+        # QAP_1983.execute(report_id)
+        # QAP_1984.execute(report_id)
+        # QAP_1963.execute(report_id)
+        # QAP_2409.execute(report_id)
+
+        # MD_test_3.execute(report_id)
+        # MD_test.execute(report_id)
 
         # rm = RuleManager()
-        # # rm.remove_rules_by_id_range(5,150)
-        # # rm.add_RFQ('fix-fh-fx-rfq')
-        # # rm.add_TRFQ('fix-fh-fx-rfq')
-        # # rm.print_active_rules()
-        # # ui_tests.execute(report_i)
-        # start = datetime.now()
-        # print(f'start time = {start}')
-        #
-        # # fix_demo.execute(report_id,test_cases)
-        # ui_tests.execute(report_id)
-        # # QAP_1520.TestCase(report_id).execute()
-        # # QAP_636.execute(report_id)
-        # print("1 - done")
-        # print('duration time = ' + str(datetime.now() - start), str(report_id))inec
-
-
+        # rm.remove_all_rules()
+        # rm.print_active_rules()
+        # rm.add_NewOrdSingle_Market("fix-bs-310-columbia", "XPAR_CLIENT2", "XPAR", True, 100, 20.5)
+        # rm.remove_all_rules()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
