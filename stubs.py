@@ -25,7 +25,7 @@ class Stubs:
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
     simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
-    simulator_http = factory.grpc_router.get_service(SimTemplateService)
+    # simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)

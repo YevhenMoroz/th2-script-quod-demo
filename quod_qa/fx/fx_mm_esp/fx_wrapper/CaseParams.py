@@ -12,7 +12,7 @@ class CaseParams:
 
     def __init__(self,connectivity, account, case_id, handlinstr='1',
                  side='1', orderqty=1, ordtype='2',timeinforce='4',currency='EUR',settlcurrency='USD',
-                 settltype=0, symbol='EUR/USD', securitytype='FXSPOT', securityidsource='8',
+                 settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT', securityidsource='8',
                  securityid='EUR/USD', securityexchange='XQFX', product=4):
         self.connectivity = connectivity
         self.account=account
@@ -25,7 +25,7 @@ class CaseParams:
         self.currency=currency
         self.settlcurrency=settlcurrency
         self.settltype=settltype
-        # self.settldate=settldate
+        self.settldate=settldate
         self.symbol=symbol
         self.securitytype=securitytype
         self.securityidsource=securityidsource
