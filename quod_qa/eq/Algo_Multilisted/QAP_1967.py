@@ -256,6 +256,31 @@ def execute(report_id):
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_4)
 
+    # Check on  (FIXSELLQUOD5 35=G)
+    replace_ss_param = {
+        'Account': account,
+        'OrderQty': qty,
+        'OrdType': ord_type,
+        'NoStrategyParameters': '*',
+        'TransactTime': '*',
+        'Side': side,
+        'Currency': "EUR",
+        'TimeInForce': time_in_force,
+        'Instrument': instrument,
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'Price': price_2,
+        'StopPx': stop_price_2,
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'OrigClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'HandlInst': 2
+    }
+    fix_verifier_sell_side.CheckOrderCancelReplaceRequest(replace_ss_param, responce, direction='SECOND',
+                                                   case=case_id_4, message_name='TH2 send 35=G Replace',
+                                                   key_parameters=['TimeInForce', 'OrderQty', 'Price', 'ClOrdID',
+                                                                   'OrigClOrdID'])
+
+
     time.sleep(5)
     # Send MD
     case_id_5 = bca.create_event("MarketData send", case_id)
