@@ -70,7 +70,9 @@ def login(web_driver: WebDriver, wait_driver: WebDriverWait):
     web_driver.get(Stubs.custom_config['web_admin_url'])
     login_input = wait_driver.until(EC.presence_of_element_located((By.NAME, 'userID')))
     password_input = wait_driver.until(EC.presence_of_element_located((By.NAME, 'password')))
+    login_input.click()
     login_input.send_keys(Stubs.custom_config['web_admin_login'])
+    password_input.click()
     password_input.send_keys(Stubs.custom_config['web_admin_password'], Keys.ENTER)
     wait_driver.until(EC.presence_of_element_located((By.ID, 'app-sidenav-menu')))
 
@@ -83,6 +85,7 @@ def logout(wait_driver: WebDriverWait):
             Logout action """
     logout_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, '//mat-toolbar/button')))
     logout_btn.click()
-    confirm_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, '//mat-dialog-container//button[2]')))
+    confirm_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH,
+                                                                    '//*[text()="OK"]')))
     confirm_btn.click()
     wait_driver.until(EC.presence_of_element_located((By.ID, 'login')))
