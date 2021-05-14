@@ -1,7 +1,7 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
-    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -13,7 +13,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6]
 
     # Console output list of IDs active rules
     @staticmethod
@@ -176,6 +176,17 @@ class RuleManager:
 
 
 
+
+    @staticmethod
+    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
+        return Stubs.simulator.createNewOrdSingleMarket(
+            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     avgPrice=avgPrice
+                                            ))
 
     # ------------------------
 
