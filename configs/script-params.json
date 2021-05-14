@@ -1,16 +1,18 @@
 {
-  "target_server_win": "quod_01q",
+  "target_server_win": "quod_13q",
   "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder": "C:\\QA\\FE2\\",
+  "qf_trading_fe_folder": "C:\\Users\\ikobyliatskyi\\QA\\FETrading\\Quod_Financial_Trader_Front-end_64bits_20210426_5.1.125.138_rev1619297311_1871734\\",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user": "vskulinec",
-  "qf_trading_fe_password": "vskulinec",
+  "qf_trading_fe_user": "dea_02",
+  "qf_trading_fe_user2": "vskulinec",
+  "qf_trading_fe_password": "dea_02",
+  "qf_trading_fe_password2": "vskulinec",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - 310 COLUMBIA",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (310 COLUMBIA) "
+  "qf_trading_fe_main_win_name": "Quod Financial - 305 GALILEO",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (305 GALILEO) "
 }
