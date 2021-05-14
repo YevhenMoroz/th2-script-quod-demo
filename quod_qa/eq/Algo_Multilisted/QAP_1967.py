@@ -1,5 +1,6 @@
 import os
 import time
+from copy import deepcopy
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
@@ -15,8 +16,12 @@ from stubs import Stubs
 qty = 1300
 account = "CLIENT1"
 time_in_force = 0
-price = 35
-stop_price = 35
+price_1 = 35
+stop_price_1 = 35
+price_2 = 34
+stop_price_2 = 34
+price_3 = 36
+stop_price_3 = 36
 side = 1
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_feed_handler = "fix-fh-310-columbia"
@@ -31,12 +36,15 @@ instrument = {
             'SecurityExchange': 'XPAR'
         }
 
+
 def rule_creation():
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price)
+    nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price_1)
+    nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price_2)
+    nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price_3)
     occr_rule = rule_manager.add_OCRR(connectivity_buy_side)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", True)
-    return [nos_rule, occr_rule, ocr_rule]
+    return [nos_rule_1, nos_rule_2, nos_rule_3, occr_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -44,6 +52,50 @@ def rule_destroyer(list_rules):
         rule_manager = RuleManager()
         for rule in list_rules:
             rule_manager.remove_rule(rule)
+
+
+def send_md(case_id):
+    MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="734",
+        connection_id=ConnectionID(session_alias=connectivity_feed_handler)
+    )).MDRefID
+
+    mdir_params_trade = {
+        'MDReqID': MDRefID_1,
+        'NoMDEntriesIR': [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '38.5',
+                'MDEntrySize': '3000',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+    }
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh', connectivity_feed_handler, case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_feed_handler)
+    ))
+    time.sleep(10)
+    mdir_params_trade = {
+        'MDReqID': MDRefID_1,
+        'NoMDEntriesIR': [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '38.5',
+                'MDEntrySize': '3000',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+    }
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh', connectivity_feed_handler, case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_feed_handler)
+    ))
+
 
 
 def execute(report_id):
@@ -59,7 +111,13 @@ def execute(report_id):
     case_id_1 = bca.create_event("Algo creation", case_id)
     case_id_2 = bca.create_event("MarketData send", case_id)
     case_id_3 = bca.create_event("Check buy-side", case_id)
-    case_id_4 = bca.create_event("Cancel order", case_id)
+    case_id_4 = bca.create_event("First modification", case_id)
+    case_id_5 = bca.create_event("MarketData send", case_id)
+    case_id_6 = bca.create_event("Check buy-side", case_id)
+    case_id_7 = bca.create_event("Second modification", case_id)
+    case_id_8 = bca.create_event("MarketData send", case_id)
+    case_id_9 = bca.create_event("Check buy-side", case_id)
+    case_id_10 = bca.create_event("Cancel order", case_id)
 
     # Send NewOrderSingle
     multilisting_params = {
@@ -68,8 +126,8 @@ def execute(report_id):
         'Side': side,
         'OrderQty': qty,
         'TimeInForce': time_in_force,
-        'StopPx': stop_price,
-        'Price': price,
+        'StopPx': stop_price_1,
+        'Price': price_1,
         'OrdType': ord_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
@@ -98,53 +156,231 @@ def execute(report_id):
 
     time.sleep(5)
     # Send MD
+    send_md(case_id_2)
 
-    MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="734",
-        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
-    )).MDRefID
-
-    mdir_params_trade = {
-        'MDReqID': MDRefID_1,
-        'NoMDEntriesIR': [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': '38.5',
-                'MDEntrySize': '3000',
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
+    # Check buy-side
+    nos_2 = {
+        'Side': side,
+        'Price': stop_price_1,
+        'ExDestination': 'XPAR',
+        'Account': "XPAR_CLIENT1",
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'OrderCapacity': 'A',
+        'TransactTime': '*',
+        'ChildOrderID': '*',
+        'SettlDate': '*',
+        'Currency': 'EUR',
+        'TimeInForce': 0,
+        'Instrument': '*',
+        'HandlInst': 1,
+        'NoParty': '*'
     }
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_2,
-        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-    ))
-    time.sleep(10)
-    mdir_params_trade = {
-        'MDReqID': MDRefID_1,
-        'NoMDEntriesIR': [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': '38.5',
-                'MDEntrySize': '3000',
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
+    fix_verifier_buy_side.CheckNewOrderSingle(nos_2, responce, key_parameters=['ExDestination', 'Side', 'Price'],
+                                              case=case_id_3, message_name='Stop algo sent child to venue')
+
+    er_3 = {
+        'ExDestination': 'XPAR',
+        'ExecType': 'A',
+        'OrdStatus': 'A',
+        'Account': "XPAR_CLIENT1",
+        'CumQty': 0,
+        'ExecID': '*',
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'Text': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': 0,
+        'Price': stop_price_1,
+        'TimeInForce': 0,
+        'LeavesQty': 0
     }
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_2,
-        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-    ))
+    fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_3,
+                                               message_name='ExecutionReport pending new')
 
+    er_4 = dict(
+        er_3,
+        ExecType='A',
+        OrdStatus='A',
+    )
+    fix_verifier_buy_side.CheckExecutionReport(er_4, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_3, message_name='ExecutionReport new')
 
-
-
-
-
+    # Send OrderCancelReplaceRequest `First modification`
+    fix_modify_message = deepcopy(fix_message_multilisting)
+    fix_modify_message.change_parameters({'Price': price_2, 'StopPx': stop_price_2})
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_4)
 
     time.sleep(5)
+
+    send_md(case_id_5)
+
+    # Check buy-side
+    nos_2 = {
+        'Side': side,
+        'Price': stop_price_2,
+        'ExDestination': 'XPAR',
+        'Account': "XPAR_CLIENT1",
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'OrderCapacity': 'A',
+        'TransactTime': '*',
+        'ChildOrderID': '*',
+        'SettlDate': '*',
+        'Currency': 'EUR',
+        'TimeInForce': 0,
+        'Instrument': '*',
+        'HandlInst': 1,
+        'NoParty': '*'
+    }
+    fix_verifier_buy_side.CheckNewOrderSingle(nos_2, responce, key_parameters=['ExDestination', 'Side', 'Price'],
+                                              case=case_id_6, message_name='Stop algo sent child to venue')
+
+    er_3 = {
+        'ExDestination': 'XPAR',
+        'ExecType': 'A',
+        'OrdStatus': 'A',
+        'Account': "XPAR_CLIENT1",
+        'CumQty': 0,
+        'ExecID': '*',
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'Text': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': 0,
+        'Price': stop_price_2,
+        'TimeInForce': 0,
+        'LeavesQty': 0
+    }
+    fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_6,
+                                               message_name='ExecutionReport pending new')
+
+    er_4 = dict(
+        er_3,
+        ExecType='A',
+        OrdStatus='A',
+    )
+    fix_verifier_buy_side.CheckExecutionReport(er_4, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_6, message_name='ExecutionReport new')
+
+    fix_modify_message = deepcopy(fix_message_multilisting)
+    fix_modify_message.change_parameters({'Price': price_3, 'StopPx': stop_price_3})
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_7)
+
+    time.sleep(2)
+    # Check buy-side
+    nos_2 = {
+        'Side': side,
+        'Price': stop_price_3,
+        'ExDestination': 'XPAR',
+        'Account': "XPAR_CLIENT1",
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'OrderCapacity': 'A',
+        'TransactTime': '*',
+        'ChildOrderID': '*',
+        'SettlDate': '*',
+        'Currency': 'EUR',
+        'TimeInForce': 0,
+        'Instrument': '*',
+        'HandlInst': 1,
+        'NoParty': '*'
+    }
+    fix_verifier_buy_side.CheckNewOrderSingle(nos_2, responce, key_parameters=['ExDestination', 'Side', 'Price'],
+                                              case=case_id_9, message_name='Stop algo sent child to venue')
+
+    er_3 = {
+        'ExDestination': 'XPAR',
+        'ExecType': 'A',
+        'OrdStatus': 'A',
+        'Account': "XPAR_CLIENT1",
+        'CumQty': 0,
+        'ExecID': '*',
+        'OrderQty': qty,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'Text': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': 0,
+        'Price': stop_price_3,
+        'TimeInForce': 0,
+        'LeavesQty': 0
+    }
+    fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_9,
+                                               message_name='ExecutionReport pending new')
+
+    er_4 = dict(
+        er_3,
+        ExecType='A',
+        OrdStatus='A',
+    )
+    fix_verifier_buy_side.CheckExecutionReport(er_4, responce,
+                                               key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
+                                               direction='SECOND', case=case_id_9, message_name='ExecutionReport new')
+    # Cancel order
+    cancel_parms = {
+        "ClOrdID": fix_message_multilisting.get_ClOrdID(),
+        "Account": fix_message_multilisting.get_parameter('Account'),
+        "Side": fix_message_multilisting.get_parameter('Side'),
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": fix_message_multilisting.get_ClOrdID()
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    time.sleep(2)
+    responce_cancel = fix_manager.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_10)
+    cancel_er_params = {
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'OrdStatus': '4',
+        'ExecID': '*',
+        'OrderQty': qty,
+        'LastQty': 0,
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': 0,
+        'SettlDate': '*',
+        'Currency': 'EUR',
+        'TimeInForce': time_in_force,
+        'ExecType': 4,
+        'HandlInst': 2,
+        'LeavesQty': 0,
+        'NoParty': '*',
+        'CumQty': 0,
+        'LastPx': 0,
+        'OrdType': ord_type,
+        'OrderCapacity': 'A',
+        'QtyType': 0,
+        'ExecRestatementReason': 4,
+        'SettlType': 0,
+        'Price': price_3,
+        'TargetStrategy': 1008,
+        'Instrument': '*',
+        'OrigClOrdID': '*',
+        'StopPx': stop_price_3,
+        'NoStrategyParameters': '*'
+    }
+    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_10,key_parameters = ['ClOrdID', 'OrdStatus','StopPx', 'Price'])
+
+    time.sleep(2)
     rule_destroyer(list_rules)
