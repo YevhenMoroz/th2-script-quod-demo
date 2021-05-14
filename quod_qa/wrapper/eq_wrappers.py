@@ -161,14 +161,12 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     request1 = ExtractManualCrossValuesRequest()
     request1.extractionId = "ManualCrossErrorMessageExtractionID"
     request1.extractedValues.append(error_message)
-    req = ExtractManualCrossValuesRequest()
-    req.CopyFrom(request1)
     manual_cross_details = ManualCrossDetails(request)
     manual_cross_details.set_quantity(qty)
     manual_cross_details.set_price(price)
     manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
-    manual_cross_details.manualCrossValues = req
+    manual_cross_details.manualCrossValues.CopyFrom(request1)
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
 def switch_user(session_id, case_id):
