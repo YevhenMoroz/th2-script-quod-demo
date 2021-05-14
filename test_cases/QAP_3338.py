@@ -286,11 +286,11 @@ def execute(report_id):
 
         modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": '100',
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": '100',
                                                   "BO Field 1": "BOF1A1", "BO Field 2": "BOF2A1",
                                                   "BO Field 3": "BOF3A1", "BO Field 4": "BOF4A1",
                                                   "BO Field 5": "BOF5A1"})
-        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": '200',
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA2", "Alloc Qty": '200',
                                                   "BO Field 1": "BOF1A2", "BO Field 2": "BOF2A2",
                                                   "BO Field 3": "BOF3A2", "BO Field 4": "BOF4A2",
                                                   "BO Field 5": "BOF5A2"})
