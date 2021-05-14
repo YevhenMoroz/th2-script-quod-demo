@@ -44,12 +44,15 @@ class FixManager:
             ))
         return response
 
-    def Send_OrderCancelReplaceRequest_FixMessage(self, fix_message, message_name='Replace order'):
+    def Send_OrderCancelReplaceRequest_FixMessage(self, fix_message, message_name='Replace order', case=None):
+        if case == None:
+            case = self.case_id
+
         response = self.act.sendMessage(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
-                self.case_id,
+                case,
                 bca.message_to_grpc('OrderCancelReplaceRequest', fix_message.get_parameters(), self.TraderConnectivity)
             ))
         return response
