@@ -66,19 +66,21 @@ def check_currency(base_request, service, case_id, currency):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check currency on RFQ tile")
     verifier.compare_values("Currency", currency, extract_currency)
+    verifier.verify()
 
 
 def check_currency_pair(base_request, service, case_id, currency_pair):
     extract_value = ExtractRFQTileValues(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_currency_pair("aggrRfqTile.currency")
+    extract_value.extract_currency_pair("aggrRfqTile.currencypair")
     response = call(service.extractRFQTileValues, extract_value.build())
     extract_currency_pair = response["aggrRfqTile.currencypair"]
 
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check currency on RFQ tile")
+    verifier.set_event_name("Check currency pair on RFQ tile")
     verifier.compare_values("Currency", currency_pair, extract_currency_pair)
+    verifier.verify()
 
 
 def execute(report_id):
@@ -98,8 +100,8 @@ def execute(report_id):
     case_pair = case_from_currency + "/" + case_to_currency
     case_qty = 10000000
     # TODO Wait to change type for qty field
-    case_qty2 = 1000000
-    case_qty3 = 100000
+    case_qty2 = "1m"
+    case_qty3 = "100k"
     case_tenor1 = "Spot"
     case_tenor2 = "1W"
     spo_front_end()
@@ -128,13 +130,13 @@ def execute(report_id):
         check_currency(base_rfq_details, ar_service, case_id, case_to_currency)
 
         # Step 5
-        modify_request.set_quantity(case_qty2)
+        modify_request.set_quantity_as_string(case_qty2)
         modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty2)
 
         # Step 6
-        modify_request.set_quantity(case_qty3)
+        modify_request.set_quantity_as_string(case_qty3)
         modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty3)
