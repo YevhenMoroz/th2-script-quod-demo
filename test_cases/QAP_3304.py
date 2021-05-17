@@ -110,10 +110,10 @@ def execute(report_id):
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
-        #settlement_details.set_settlement_currency("AED")
+        settlement_details.set_settlement_currency("AED")
         settlement_details.set_exchange_rate("10")
         settlement_details.set_exchange_rate_calc("Multiply")
-        #settlement_details.set_settlement_date("3/27/2021")
+        settlement_details.set_settlement_date("3/27/2021")
         settlement_details.set_pset("EURO_CLEAR")
 
         call(middle_office_service.bookOrder, modify_request.build())
