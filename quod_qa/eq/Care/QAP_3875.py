@@ -43,21 +43,17 @@ def execute(report_id):
     # endregion
     # region create 1 CO order
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    order_id2 = eq_wrappers.get_order_id(base_request)
+
     # endregion
     # region create 2 CO order
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+
     # endregion
     # region create 3 CO order
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+
     # endregion
-    # region select 3 order
-    request_select = DirectChildCareDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request_select.selectedRows.append(1)
-    request_select.selectedRows.append(2)
-    request_select.selectedRows.append(3)
-    call(Stubs.win_act_order_book.orderBookDirectChildCare, request_select)
-    # endregion
+
     # region DirectChildCare these orders
-    eq_wrappers.direct_child_care_order('100', 'ChiX direct access', recipient='vskulinec')
+    eq_wrappers.direct_child_care_order('100', 'ChiX direct access', recipient='vskulinec', count=3)
     # endregion

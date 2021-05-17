@@ -11,17 +11,18 @@ from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
+import time
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_loc_request
+    direct_moc_request, direct_loc_request, direct_child_care
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, direct_child_care_сorrect
 
 connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5 fix-ss-310-columbia-standart
 order_book_act = Stubs.win_act_order_book
@@ -154,6 +155,7 @@ def manual_cross_orders(request, qty, price, list, last_mkt):
     manual_cross_details.set_last_mkt(last_mkt)
     call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
 
+
 def manual_cross_orders_error(request, qty, price, list, last_mkt):
     error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
     error_message.name = "ErrorMessage"
@@ -169,6 +171,7 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     manual_cross_details.manualCrossValues.CopyFrom(request1)
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
+
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -194,8 +197,9 @@ def direct_moc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
 
 
-def direct_child_care_order(qty, route, recipient):
-    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route, recipient))
+def direct_child_care_order(qty, route, recipient,count):
+    call(Stubs.win_act_order_book.orderBookDirectChildCare,
+         direct_child_care_сorrect('UnmatchedQty', qty, recipient, route, count))
 
 
 def reject_order(lookup, qty, price):
@@ -305,6 +309,13 @@ def verify_value(request, case_id, column_name, expected_value):
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 
+
+def check_time_sleep_fix_order(request, fix_message, time1):
+    for i in range(1, 4):
+        if(get_cl_order_id(request) == fix_message['ClOrdID']):
+            time.sleep(time1)
+        else:
+            break
 
 def notify_dfd(request):
     notify_dfd_request = ModifyOrderDetails()
