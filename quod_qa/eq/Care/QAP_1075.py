@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 def execute(report_id):
-    case_name = "QAP-1072"
+    case_name = "QAP-1074"
 
     seconds, nanos = timestamps()  # Store case start time
 
@@ -34,7 +34,6 @@ def execute(report_id):
     newQty = "100"
     price = "40"
     newPrice = "1"
-    time = datetime.utcnow().isoformat()
     lookup = "PROL"
     client = "CLIENTSKYLPTOR"
     # endregion
@@ -48,24 +47,42 @@ def execute(report_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # endregionA
+    # endregion
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     param_list = {'Price': newPrice}
     # region ManualExecute
-    eq_wrappers.manual_execution(base_request, str(int((int(qty)/2))), price)
+    eq_wrappers.manual_execution(base_request, str(int(qty)), price)
     response = fix_message.pop('response')
+    # print(fix_message['Price'])
     # Amend fix order
-    response = eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
     # endregion
+    print(fix_message['Price'])
     # region accept amend
-    eq_wrappers.accept_modify(lookup, qty, price)
+    eq_wrappers.reject_order(lookup, qty, price)
     # endregion
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('LmtPrice', '1',
-                            response)
-    verifier.verify()
-
-
+    time.sleep(1)
+    # Check on ss
+    # print(eq_wrappers.get_order_id(base_request))
+    # print(fix_message['ClOrdID'])
+    # fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    # er_params_new = {
+    #     'ExecType': "F",
+    #     'OrdStatus': '2',
+    #     'TimeInForce': 0,
+    #     'ClOrdID': fix_message['ClOrdID']
+    # }
+    # fix_verifier_ss.CheckNewOrderSingle(er_params_new, response, key_parameters=['ClOrdID'])
+    params = {
+        'ExecType': 'F',
+        'OrdStatus': '1',
+        'Side': 2,
+        'Price': price,
+        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+    }
+    print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
+    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
+                                         key_parameters=['ClOrdID', 'ExecType'])
