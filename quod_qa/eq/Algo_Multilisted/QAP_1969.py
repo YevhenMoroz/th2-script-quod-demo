@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-qty = 1000
+qty = 1300
 text_f='Fill'
 text_pn='Pending New status'
 text_n='New status'
@@ -226,12 +226,12 @@ def execute(report_id):
         'ExDestination': ex_destination_1,
         'LeavesQty': '0'
     }
-    time.sleep(10)
+    time.sleep(2)
     fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 Filled', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus', 'TimeInForce'])
     #endregion
 
     #region Filled Order
-    case_id_3 = bca.create_event("Check Sell Side", case_id)
+    case_id_3 = bca.create_event("Check Filled Order", case_id)
     # Check SS (FIXSELLQUOD5 35=8 on Filled Order)
     er_6 = {
         'OrdStatus': '2',
@@ -241,7 +241,7 @@ def execute(report_id):
         'TimeInForce': tif_ioc,
         'Text': text_f
     }
-    fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['TimeInForce','ExecType'])
+    fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['TimeInForce','Text'])
     #endregion
 
     time.sleep(1)
