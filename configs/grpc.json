@@ -189,7 +189,7 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32288
         }
       },
