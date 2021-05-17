@@ -110,7 +110,7 @@ class TestCase:
         verifier.compare_values('Count', '2', edited_values_count)
         verifier.verify()
 
-    # Main method. Must call in demo.py by 'QAP_758.TestCase(report_id).execute()' command
+    # Main method. Must call in demo.py by 'QAP_760.TestCase(report_id).execute()' command
     def execute(self):
         call(login, self.case_id, self.driver, self.wait)
         call(self.get_precondition, self.case_id)
