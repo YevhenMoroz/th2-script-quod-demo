@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_mm_esp.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -203,7 +203,7 @@ class NewOrderSingle():
         )
         return self
 
-    def verify_order_rejected(self,text):
+    def verify_order_rejected(self,text, type=''):
         final_ex_report = {
             'HandlInst': self.case_params.handlinstr,
             'Side': self.case_params.side,
@@ -243,6 +243,17 @@ class NewOrderSingle():
                 'PartyRole': '36'
             }]
         }
+        if type == 'algo':
+            final_ex_report.pop('SettlDate')
+            final_ex_report['HandlInst'] = '2'
+            final_ex_report['OrdRejReason'] = '99'
+            final_ex_report['TargetStrategy'] = '*'
+            final_ex_report.pop('ExecRestatementReason')
+            final_ex_report['Instrument'].pop('SecurityIDSource')
+            final_ex_report['Instrument'].pop('SecurityID')
+            final_ex_report.pop('SettlType')
+
+
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',

@@ -1,9 +1,8 @@
 
 
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from stubs import Stubs
-import time
 
 
 class MarketDataRequst:
@@ -24,6 +23,7 @@ class MarketDataRequst:
         self.case_params=case_params
         self.mdreqid=case_params.mdreqid
         self.set_md_subscribe_response()
+        self.set_md_params()
 
 
     def set_md_params(self):
@@ -108,11 +108,6 @@ class MarketDataRequst:
     def extruct_filed(self, field, band_number=0):
         price = 0
         if field.lower()=='price':
-            price1= self.subscribe.response_messages_list[band_number].fields['NoMDEntries']
-            price2= self.subscribe.response_messages_list[band_number].fields['NoMDEntries'].message_value.fields['NoMDEntries']
-            price3= self.subscribe.response_messages_list[band_number].fields['NoMDEntries'].message_value.fields['NoMDEntries'].list_value.values[1]
-            price4= self.subscribe.response_messages_list[band_number].fields['NoMDEntries'].message_value.fields['NoMDEntries'].list_value.values[1].message_value.fields['MDEntryPx']
-
             price = self.subscribe.response_messages_list[band_number].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[1] \
                 .message_value.fields['MDEntryPx'].simple_value

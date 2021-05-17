@@ -1,8 +1,11 @@
-from quod_qa.fx.fx_mm_esp.fx_wrapper.CaseParams import CaseParams
-from quod_qa.fx.fx_mm_esp.fx_wrapper.MarketDataRequst import MarketDataRequst
+from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
-from quod_qa.fx.fx_mm_esp.fx_wrapper.NewOrderSingle import NewOrderSingle
+from quod_qa.fx.fx_wrapper.NewOrderSingle import NewOrderSingle
+from pandas import Timestamp as tm
+from pandas.tseries.offsets import BusinessDay as bd
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,6 +26,7 @@ securityidsource='8'
 securityid='EUR/USD'
 bands=[1000000,2000000,3000000]
 ord_status='Rejected'
+settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
 md=None
 
 
@@ -34,8 +38,8 @@ def execute(report_id):
     try:
         case_id = bca.create_event('QAP_2084', report_id)
         params = CaseParams(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                            currency=currency, settlcurrency=settlcurrency, settltype=settltype, symbol=symbol, securitytype=securitytype,
-                            securityidsource=securityidsource, securityid=securityid)
+                            currency=currency, settlcurrency=settlcurrency, settltype=settltype,settldate=settldate, symbol=symbol,
+                            securitytype=securitytype,securityidsource=securityidsource, securityid=securityid)
         md = MarketDataRequst(params)
         md.set_md_params().send_md_request().\
             verify_md_pending(bands)
