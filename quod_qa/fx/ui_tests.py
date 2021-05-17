@@ -16,6 +16,8 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_ticket import FXOrderDetails
+from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
@@ -234,6 +236,35 @@ def import_layout(base_request, option_service):
     call(option_service.modifyWorkspace, modification_request.build())
 
 
+
+
+def set_fx_order_ticket_value(base_request):
+    """
+    Method demonstrate how work settign valuese to FX Order ticket.
+    And then set the details to NewFxOrderDetails object with base_request object.
+
+    You should use FXOrderDetails object to define valused that should be set.
+    You may set from 1 to all available fields.
+    You should use only dot for separation of numbers with floating point
+    """
+    order_ticket = FXOrderDetails()
+    order_ticket.set_price_large('1.23')
+    order_ticket.set_price_pips('456')
+    order_ticket.set_qty('1150000')
+    order_ticket.set_client('FIXCLIENT3')
+    order_ticket.set_tif('Day')
+    order_ticket.set_slippage('2.5')
+    order_ticket.set_order_type('Limit')
+    order_ticket.set_stop_price('1.3')
+
+    new_order_details = NewFxOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+    # new servise was added 
+    order_ticket_service = Stubs.win_act_order_ticket_fx
+    call(order_ticket_service.placeFxOrder, new_order_details.build())
+
+
 def execute(report_id):
     # region Preparation
     # print('start time = ' + str(datetime.now()))
@@ -284,7 +315,7 @@ def execute(report_id):
         # region RFQ tile ↓
         # modify_rfq_tile(base_tile_details, ar_service)
         # check_venue(base_tile_details, ar_service)
-        extract_rfq_table_data(base_tile_details, ar_service)
+        # extract_rfq_table_data(base_tile_details, ar_service)
         # extract_rfq_panel("rfq_tile_data", base_tile_details, ar_service)
         # temporary doesn't available because of PROC-261
         # extruct_popup_lists_demo("rfq_tenor_popup",base_tile_details,ar_service)
@@ -300,6 +331,10 @@ def execute(report_id):
         # get_my_orders_details(ob_act,  base_request, order_id)
         # get_trade_book_details(ob_act,  base_request, order_id)
 
+        # endregion
+
+        # region OrderTicket
+        set_fx_order_ticket_value(base_request)
         # endregion
 
         # close_fe_2(case_id, session_id)
