@@ -51,7 +51,6 @@ def check_tile_value(base_request, service, case_id, row):
     verifier.compare_values("Ask Pub", "", response["rateTile.askPub"])
     verifier.compare_values("Bid Pub", "", response["rateTile.bidPub"])
     verifier.verify()
-    print(response)
 
 
 def execute(report_id):
