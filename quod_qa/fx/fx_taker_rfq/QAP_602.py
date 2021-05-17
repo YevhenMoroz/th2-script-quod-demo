@@ -152,7 +152,7 @@ def execute(report_id):
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
 
         # Step 3
-        cancel_rfq(base_rfq_details, ar_service)
+
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
@@ -161,7 +161,7 @@ def execute(report_id):
         place_order_venue(base_rfq_details, ar_service, case_venue)
         ob_quote_id = check_order_book("OB_1", case_base_request, case_instr_type, ob_act, case_id, case_qty)
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
+
 
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())

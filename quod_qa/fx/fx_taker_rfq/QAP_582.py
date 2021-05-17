@@ -154,7 +154,6 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
-        cancel_rfq(base_rfq_details, ar_service)
         # Step 6
         send_rfq(base_rfq_details, ar_service)
         place_order_tob(base_rfq_details, ar_service)

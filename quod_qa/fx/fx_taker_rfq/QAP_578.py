@@ -140,7 +140,6 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act,
                                        case_to_currency)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
 

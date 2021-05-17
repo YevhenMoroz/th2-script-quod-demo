@@ -120,7 +120,6 @@ def execute(report_id):
                          quote_quote_sts_accepted, case_filter_venue)
 
         # Step 2
-        cancel_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_terminated, quote_sts_terminated, case_filter_venue_1)
         check_quote_request_b(case_base_request, ar_service, case_id,

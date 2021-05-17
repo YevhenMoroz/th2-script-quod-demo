@@ -107,7 +107,7 @@ def check_order_book(base_request, instr_type, act_ob, case_id, qty):
 def import_layout(base_request, option_service):
     modification_request = WorkspaceModificationRequest()
     modification_request.set_default_params(base_request=base_request)
-    modification_request.set_filename("empty_workspace.xml")
+    modification_request.set_filename("rfq_workspace.xml")
     modification_request.set_path('C:\\QA')
     modification_request.do_import()
 

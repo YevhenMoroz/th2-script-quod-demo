@@ -31,7 +31,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue)
+    rfq_request.set_venue(venue[0])
     rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 

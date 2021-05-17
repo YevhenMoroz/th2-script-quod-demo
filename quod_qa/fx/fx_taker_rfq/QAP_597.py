@@ -107,7 +107,7 @@ def execute(report_id):
 
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, quote_quote_sts_accepted)
         # Step 3
-        cancel_rfq(base_rfq_details, ar_service)
+
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_terminated, quote_quote_sts_terminated, case_venue)
 
