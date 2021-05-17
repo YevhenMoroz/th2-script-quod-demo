@@ -36,10 +36,10 @@ def execute(report_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-
     # region create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, desk, price, False)
     # endregions
+
     # region AcceptOrder
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion

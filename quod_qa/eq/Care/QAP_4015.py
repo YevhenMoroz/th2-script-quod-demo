@@ -21,11 +21,11 @@ def execute(report_id):
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT1"
+    qty = "800"
+    price = "40"
+    client = "CLIENTSKYLPTOR"
     lookup = "PROL"
-    last_mkt= 'DASI'
+    last_mkt = 'DASI'
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
@@ -40,47 +40,23 @@ def execute(report_id):
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id2 = eq_wrappers.get_order_id(base_request)
     # endregion
-    # region accept 1 order
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
+
     eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    # region accept 2 order
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
+
     # region manual_cross
-    eq_wrappers.manual_cross_orders(base_request, qty, price, (1, 2), last_mkt)
+    eq_wrappers.manual_cross_orders(base_request, '100000', price, (1, 2), last_mkt)
     # endregion
     # region check order1
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_exec_sts = ExtractionDetail('order_exec_sts', 'ExecSts')
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_exec_sts
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order ExecSts", order_exec_sts.name, "Filled")
-                                                  ]))
+    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled')
+    eq_wrappers.verify_value(base_request, case_id, 'Qty', '800')
     # endregion
-    # region filter and check 2 order
     order_info_extraction_cancel = "getOrderInfo_cancelled"
-
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(order_info_extraction_cancel)
     main_order_details.set_filter(["Order ID", order_id2])
-    order_exec_sts = ExtractionDetail('order_exec_sts', 'ExecSts')
-    main_order_details.add_single_order_info(OrderInfo.create(
-    action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                         order_exec_sts
-                                                                                     ])))
-
     call(act.getOrdersDetails, main_order_details.request())
-    call(common_act.verifyEntities, verification(order_info_extraction_cancel, "checking order2",
-                                                 [verify_ent("Order ExecSts", order_exec_sts.name, "Filled")]))
-
+    # region check order2
+    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled')
+    eq_wrappers.verify_value(base_request, case_id, 'Qty', '800')
+    # endregion
