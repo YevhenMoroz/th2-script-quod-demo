@@ -23,6 +23,7 @@ def execute(report_id, case_params):
 
     reusable_params = defauot_quote_params
     reusable_params['Account'] = case_params['Account']
+    reusable_params['Instrument']['Product'] = 4
     ttl = 100
 
     rfq_params = {
@@ -48,13 +49,19 @@ def execute(report_id, case_params):
 
     quote_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'Product': 4,
-        'OfferPx': '35.001',
+        'OfferPx': '*',
         'OfferSize': reusable_params['OrderQty'],
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
+        'OfferSpotRate': '*',
         'ValidUntilTime': '*',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'QuoteType': rfq_params['NoRelatedSymbols'][0]['QuoteType'],
+        'Instrument': reusable_params['Instrument'],
+        'Side': reusable_params['Side'],
+        'SettlDate': reusable_params['SettlDate'],
+        'SettlType': reusable_params['SettlType'],
+        'Account': reusable_params['Account']
+
         }
 
     verifier.submitCheckRule(

@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+from pathlib import Path
+
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -11,7 +13,8 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(case_name, report_id, case_params):
+def execute(report_id, case_params):
+    case_name = Path(__file__).name[:-3]
     act = Stubs.fix_act
     event_store = Stubs.event_store
     verifier = Stubs.verifier
@@ -186,7 +189,7 @@ def execute(case_name, report_id, case_params):
         'NoRelatedSymbols': [
             {
                 'Instrument': reusable_params['Instrument'],
-                'OrderQty': 16000001,
+                'OrderQty': 26000001,
                 'Currency': 'EUR',
                 'Account': reusable_params['Account'],
                 'NoLegs': [

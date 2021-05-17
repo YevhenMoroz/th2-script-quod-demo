@@ -1,5 +1,6 @@
 from th2_grpc_act_gui_quod.order_ticket_pb2 import NewOrderDetails as _NewOrderDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
+from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import NewFxOrderDetails as _NewFXOrderDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
 
 class NewOrderDetails:
@@ -18,3 +19,19 @@ class NewOrderDetails:
 
     def build(self):
         return self.new_order_details
+
+
+class NewFxOrderDetails:
+
+    def __init__(self):
+        self.new_fx_roder_details = _NewFXOrderDetails()
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.new_fx_roder_details.fxOrderDetails.CopyFrom(order_details.build())
+
+
+    def set_default_params(self, base_request):
+        self.new_fx_roder_details.base.CopyFrom(base_request)
+
+    def build(self):
+        return self.new_fx_roder_details

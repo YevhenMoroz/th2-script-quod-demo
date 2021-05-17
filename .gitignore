@@ -3,5 +3,5 @@
 /DRAFT.py
 /EnterOrderExample_ref.py
 /etc/ref
-/configs/*.json
-demo.py
+/configs/grpc.json
+/quod_qa/fx/fx_taker_rfq/demo_export_file.xml
