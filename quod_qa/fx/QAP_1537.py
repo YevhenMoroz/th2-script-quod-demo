@@ -1,6 +1,6 @@
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -13,16 +13,20 @@ timeouts = True
 
 
 def execute(report_id, case_params):
+    # FIXME: multiple issue appears because of dictionary fields differ
+    #       check pod="gtwquod5-fx-..."
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    ttl = 30
+    ttl = 90
+    wait_step = 5
     seconds, nanos = bca.timestamps()  # Store case start time
 
     reusable_params = defauot_quote_params
     reusable_params['Account'] = case_params['Account']
+    reusable_params['Instrument']['Product'] = 4
 
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
@@ -32,7 +36,7 @@ def execute(report_id, case_params):
             'QuoteType': '1',
             'OrderQty': reusable_params['OrderQty'],
             'OrdType': 'D',
-            'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
+            'ExpireTime': (datetime.now() + timedelta(seconds=ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
             'TransactTime': (datetime.utcnow().isoformat())}]
         }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
@@ -47,13 +51,19 @@ def execute(report_id, case_params):
 
     quote_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'Product': 4,
-        'OfferPx': '35.001',
+        'OfferPx': '*',
         'OfferSize': reusable_params['OrderQty'],
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
+        'OfferSpotRate': '*',
         'ValidUntilTime': '*',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'QuoteType': rfq_params['NoRelatedSymbols'][0]['QuoteType'],
+        'Instrument': reusable_params['Instrument'],
+        'Side': reusable_params['Side'],
+        'SettlDate': reusable_params['SettlDate'],
+        'SettlType': reusable_params['SettlType'],
+        'Account': reusable_params['Account']
+
         }
 
     verifier.submitCheckRule(
@@ -66,7 +76,11 @@ def execute(report_id, case_params):
                     )
             )
 
-    time.sleep(ttl)
+    print(f'Waiting while quote expire for {ttl} time')
+    for i in range(0, int(ttl / wait_step + 1)):
+        print(f'{ttl - i * wait_step}sec left')
+        time.sleep(wait_step)
+
     quote_cancel_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
         'SenderCompID': 'QUODFX_UAT',
@@ -76,7 +90,7 @@ def execute(report_id, case_params):
 
     verifier.submitCheckRule(
             bca.create_check_rule(
-                    "test",
+                    "Checking QuoteCancell",
                     bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
                     send_rfq.checkpoint_id,
                     case_params['TraderConnectivity'],

@@ -95,6 +95,21 @@
         ]
       }
     },
+    "Win_Act_Order_Ticket_FX": {
+      "service-class": "OrderTicketFxServiceService",
+      "endpoints": {
+        "act_order_ticket_fx": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_ticket_fx"
+        ]
+      }
+    },
     "Win_Act_Fx_Dealing_Positions": {
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {

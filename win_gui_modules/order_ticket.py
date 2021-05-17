@@ -2,7 +2,7 @@
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
-from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
+from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
@@ -83,3 +83,41 @@ class OrderTicketDetails:
 
     def build(self):
         return self.order
+
+
+class FXOrderDetails:
+
+    def __init__(self):
+        self.order = order_ticket_fx_pb2.FxOrderDetails()
+
+    def set_price_large(self, priceLarge: str):
+        self.order.priceLarge = priceLarge
+
+    def set_price_pips(self, pricePips: str):
+        self.order.pricePips = pricePips
+
+    def set_limit(self, limit: str):
+        self.order.limit = limit
+
+    def set_qty(self, qty: str):
+        self.order.qty = qty
+
+    def set_client(self, client: str):
+        self.order.client = client
+
+    def set_tif(self, timeInForce: str):
+        self.order.timeInForce = timeInForce
+
+    def set_slippage(self, slippage: str):
+        self.order.slippage = slippage
+
+    def set_stop_price(self, stopPrice: str):
+        self.order.stopPrice = stopPrice
+
+    def set_order_type(self, order_type: str):
+        self.order.orderType = order_type
+
+    def build(self):
+        return self.order
+
+

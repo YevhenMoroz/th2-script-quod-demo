@@ -1,7 +1,8 @@
 from datetime import datetime
 from urllib import request
 
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
+from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, \
+    ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -66,7 +67,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(recipient, False, disclose_flag)
+        order_ticket.set_care_order(recipient, True, disclose_flag)
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
@@ -139,12 +140,12 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
         fix_manager_qtwquod = FixManager(connectivity, case_id)
         fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-        fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+        response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
-    return fix_modify_message.get_parameter('Price')
+    return response
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -163,12 +164,14 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     request1 = ExtractManualCrossValuesRequest()
     request1.extractionId = "ManualCrossErrorMessageExtractionID"
     request1.extractedValues.append(error_message)
+    req = ExtractManualCrossValuesRequest()
+    req.CopyFrom(request1)
     manual_cross_details = ManualCrossDetails(request)
     manual_cross_details.set_quantity(qty)
     manual_cross_details.set_price(price)
     manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
-    manual_cross_details.manualCrossValues.CopyFrom(request1)
+    # manual_cross_details.manualCrossValues.CopyFrom(request)
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
 
@@ -321,3 +324,22 @@ def notify_dfd(request):
     notify_dfd_request = ModifyOrderDetails()
     notify_dfd_request.set_default_params(request)
     call(Stubs.win_act_order_book.notifyDFD, notify_dfd_request.build())
+
+
+def group_modify(request, client, security_account=None, routes=None, free_notes=None):
+    group_modify_details = GroupModifyDetails()
+    group_modify_details.base.CopyFrom(request)
+    group_modify_details.client = client
+    if security_account is not None:
+        group_modify_details.securityAccount = security_account
+    if routes is not None:
+        group_modify_details.routes = routes
+    if free_notes is not None:
+        group_modify_details.freeNotes = free_notes
+    call(Stubs.win_act_order_book.groupModify, group_modify_details)
+
+def reassign_order(request,recipient):
+    reassign_order_details = ReassignOrderDetails()
+    reassign_order_details.base.CopyFrom(request)
+    reassign_order_details.desk = recipient
+    call(Stubs.win_act_order_book.reassignOrder, reassign_order_details)
