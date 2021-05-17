@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from custom.verifier import Verifier
-from web_admin_modules.web_wrapper import call, login, logout
+from web_admin_modules.web_wrapper import call, login, logout, check_exists_by_xpath
 
 
 class TestCase:
@@ -97,6 +97,11 @@ class TestCase:
         submit_button.click()
 
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[text()="Sub Venue modified with success"]')))
+
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name('Check displayed of wizard')
+        verifier.compare_values('Wizard displayed', 'False', str(check_exists_by_xpath(self.driver, '//wizard')))
+        verifier.verify()
 
         row = self.driver.find_element_by_xpath('//*[text()="TEST"]')
         row.click()
