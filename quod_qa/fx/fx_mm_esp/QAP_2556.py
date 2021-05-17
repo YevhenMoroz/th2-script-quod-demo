@@ -3,8 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, \
-    ExtractRatesTileTableValuesRequest, PlaceRatesTileOrderRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
@@ -71,7 +70,7 @@ def execute(report_id):
     slippage = "1"
     instrument_type = "Spot"
     qty = "1000000"
-    owner="ostronov"
+    owner = "ostronov"
 
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
