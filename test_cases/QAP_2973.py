@@ -30,7 +30,7 @@ def execute(report_id):
     bs_trqx = 'fix-bs-eq-trqx'
 
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "QAP-2614"
+    case_name = "QAP-2973"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
@@ -132,7 +132,11 @@ def execute(report_id):
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
         settlement_details = modify_request.add_settlement_details()
+        settlement_details.toggle_recompute()
         settlement_details.set_settlement_type("Regular")
+        settlement_details.set_settlement_currency("UAH")
+        settlement_details.set_exchange_rate_calc("Multiple")
+        settlement_details.set_exchange_rate("2")
 
         call(middle_office_service.bookOrder, modify_request.build())
 
@@ -163,8 +167,7 @@ def execute(report_id):
         extract_request.set_filter(["Order ID", block_order_id])
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_settl_type = ExtractionDetail("middleOffice.settlType", "SettlType")
-        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_settl_type])
+        extract_request.add_extraction_details([block_order_status, block_order_match_status])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
@@ -172,7 +175,6 @@ def execute(report_id):
         verifier.set_event_name("Checking block order")
         verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
         verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
-        verifier.compare_values("Order Settl Type", "Regular", request[block_order_settl_type.name])
         verifier.verify()
 
         # Step 2 Approve Order
@@ -186,7 +188,8 @@ def execute(report_id):
         extract_request_approve.set_extraction_id(ext_id_approve)
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status])
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
@@ -194,6 +197,7 @@ def execute(report_id):
         verifier.set_event_name("Checking block order")
         verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
         verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request_approve[block_order_summary_status.name])
         verifier.verify()
 
         # Step 3 Allocate Order
@@ -229,44 +233,19 @@ def execute(report_id):
 
         extract_request = AllocationsExtractionDetails(base=base_request)
         extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
-        allocate_qty = ExtractionDetail("middleOffice.qty", "Alloc Qty")
-        allocate_price = ExtractionDetail("middleOffice.price", "Avg Px")
         allocate_status = ExtractionDetail("middleOffice.status", "Status")
         allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
         allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
         order_details = extract_request.add_order_details()
-        order_details.add_extraction_details([allocate_price, allocate_qty, allocate_status, allocate_account_id, allocate_status_match_status])
+        order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
         request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
 
         verifier = Verifier(case_id)
 
         verifier.set_event_name("Checking allocate blotter")
-        verifier.compare_values("Allocation Qty", "100", request_allocate_blotter[allocate_qty.name])
-        verifier.compare_values("Allocation Avg Px", "10", request_allocate_blotter[allocate_price.name])
         verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
         verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
         verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
-        verifier.verify()
-
-        # Step 5 Amend allocation
-
-        middle_office_service = Stubs.win_act_middle_office_service
-        modify_request = ModifyTicketDetails(base=base_request)
-        amend_allocations_details = modify_request.add_amend_allocations_details()
-        amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
-        settl_type_block = "book.settl_type_block"
-        settl_type_alloc = "book.settl_type_alloc"
-        extraction_details = modify_request.add_extraction_details()
-        extraction_details.extract_block_settlement_type(settl_type_block)
-        extraction_details.extract_settlement_type(settl_type_alloc)
-
-        request_amend = call(middle_office_service.amendAllocations, modify_request.build())
-
-        verifier = Verifier(case_id)
-
-        verifier.set_event_name("Checking order ticket window after click amend allocation")
-        verifier.compare_values("Block Settl Type", "Regular", request_amend[settl_type_block])
-        verifier.compare_values("Alloc Settl Type", "Regular", request_amend[settl_type_alloc])
         verifier.verify()
 
     except Exception as e:

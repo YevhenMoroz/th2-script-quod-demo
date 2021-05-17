@@ -1,4 +1,5 @@
 from custom.verifier import Verifier
+from win_gui_modules.common_wrappers import TableCheckDetails
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, \
     CancelOrderDetails, ExtractionAction
 from stubs import Stubs
@@ -13,10 +14,14 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
-    AllocationsExtractionDetails
+    AllocationsExtractionDetails, AllocationsTableCheckDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+class AllocationTableCheckDetails(object):
+    pass
 
 
 def execute(report_id):
@@ -30,7 +35,7 @@ def execute(report_id):
     bs_trqx = 'fix-bs-eq-trqx'
 
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "QAP-2614"
+    case_name = "QAP-3220"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
@@ -163,8 +168,7 @@ def execute(report_id):
         extract_request.set_filter(["Order ID", block_order_id])
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_settl_type = ExtractionDetail("middleOffice.settlType", "SettlType")
-        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_settl_type])
+        extract_request.add_extraction_details([block_order_status, block_order_match_status])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
@@ -172,7 +176,6 @@ def execute(report_id):
         verifier.set_event_name("Checking block order")
         verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
         verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
-        verifier.compare_values("Order Settl Type", "Regular", request[block_order_settl_type.name])
         verifier.verify()
 
         # Step 2 Approve Order
@@ -186,7 +189,8 @@ def execute(report_id):
         extract_request_approve.set_extraction_id(ext_id_approve)
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status])
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
         request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
@@ -194,79 +198,22 @@ def execute(report_id):
         verifier.set_event_name("Checking block order")
         verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
         verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
-        verifier.verify()
-
-        # Step 3 Allocate Order
-
-        middle_office_service = Stubs.win_act_middle_office_service
-
-        modify_request = ModifyTicketDetails(base=base_request)
-
-        allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": "100"})
-
-        call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
-
-        ext_id_allocate = "MiddleOfficeExtractionId3"
-        middle_office_service_allocate = Stubs.win_act_middle_office_service
-        extract_request_allocate = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request_allocate.set_extraction_id(ext_id_allocate)
-        block_order_status = ExtractionDetail("middleOffice.status", "Status")
-        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request_allocate.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
-        request_allocate = call(middle_office_service_allocate.extractMiddleOfficeBlotterValues, extract_request_allocate.build())
-
-        verifier = Verifier(case_id)
-
-        verifier.set_event_name("Checking block order after allocate")
-        verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
-        verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
-        verifier.compare_values("Order Summary Status", "MatchedAgreed", request_allocate[block_order_summary_status.name])
+        verifier.compare_values("Order Summary Status", "", request_approve[block_order_summary_status.name])
         verifier.verify()
 
         # Check allocations blotter
 
-        extract_request = AllocationsExtractionDetails(base=base_request)
-        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
-        allocate_qty = ExtractionDetail("middleOffice.qty", "Alloc Qty")
-        allocate_price = ExtractionDetail("middleOffice.price", "Avg Px")
-        allocate_status = ExtractionDetail("middleOffice.status", "Status")
-        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
-        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
-        order_details = extract_request.add_order_details()
-        order_details.add_extraction_details([allocate_price, allocate_qty, allocate_status, allocate_account_id, allocate_status_match_status])
-        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+        details = AllocationsTableCheckDetails(base=base_request)
+        details.set_block_filter({"Order ID": block_order_id})
+        contained_row = details.add_contained_rows()
+        contained_row.set_row_id("test_row_id")
+        contained_row.set_params({"Account ID": "MOClientSA1"})
+        request = call(middle_office_service.checkAllocationsTable, details.build())
 
         verifier = Verifier(case_id)
 
-        verifier.set_event_name("Checking allocate blotter")
-        verifier.compare_values("Allocation Qty", "100", request_allocate_blotter[allocate_qty.name])
-        verifier.compare_values("Allocation Avg Px", "10", request_allocate_blotter[allocate_price.name])
-        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
-        verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
-        verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
-        verifier.verify()
-
-        # Step 5 Amend allocation
-
-        middle_office_service = Stubs.win_act_middle_office_service
-        modify_request = ModifyTicketDetails(base=base_request)
-        amend_allocations_details = modify_request.add_amend_allocations_details()
-        amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
-        settl_type_block = "book.settl_type_block"
-        settl_type_alloc = "book.settl_type_alloc"
-        extraction_details = modify_request.add_extraction_details()
-        extraction_details.extract_block_settlement_type(settl_type_block)
-        extraction_details.extract_settlement_type(settl_type_alloc)
-
-        request_amend = call(middle_office_service.amendAllocations, modify_request.build())
-
-        verifier = Verifier(case_id)
-
-        verifier.set_event_name("Checking order ticket window after click amend allocation")
-        verifier.compare_values("Block Settl Type", "Regular", request_amend[settl_type_block])
-        verifier.compare_values("Alloc Settl Type", "Regular", request_amend[settl_type_alloc])
+        verifier.set_event_name("Checking block row")
+        verifier.compare_values("Allocation row exist", "false", request["test_row_id"])
         verifier.verify()
 
     except Exception as e:
