@@ -237,7 +237,7 @@ def execute(report_id):
         modify_request = ModifyTicketDetails(base=base_request)
 
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": "100"})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": "100"})
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
         ext_id_allocate = "MiddleOfficeExtractionId2"
@@ -252,7 +252,7 @@ def execute(report_id):
 
         verifier = Verifier(case_id)
 
-        verifier.set_event_name("Checking block order after approve")
+        verifier.set_event_name("Checking block order after allocate")
         verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
         verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
         verifier.compare_values("Order Summary Status", "MatchedAgreed", request_allocate[block_order_summary_status.name])
