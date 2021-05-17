@@ -78,21 +78,38 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
             content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
 
         elif isinstance(content[tag], list):
-            for group in content[tag]:
-                content[tag][content[tag].index(group)] = Value(
-                    message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
-            content[tag] = Value(
-                message_value=Message(
-                    metadata=MessageMetadata(message_type=tag),
-                    fields={
-                        tag: Value(
-                            list_value=ListValue(
-                                values=content[tag]
+            if tag == 'NoMDEntriesIR':
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            'NoMDEntries': Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
                             )
-                        )
-                    }
+                        }
+                    )
                 )
-            )
+            else:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            tag: Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
+                            )
+                        }
+                    )
+                )
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,

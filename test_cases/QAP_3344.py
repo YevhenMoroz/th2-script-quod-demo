@@ -276,7 +276,7 @@ def execute(report_id):
 
         modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": qty})
 
 
         extraction_details = modify_request.add_extraction_details()

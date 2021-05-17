@@ -273,8 +273,8 @@ def execute(report_id):
 
         modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qtyh})
-        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": qtyh})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": qtyh})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA2", "Alloc Qty": qtyh})
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -562,8 +562,8 @@ def execute(report_id):
 
         modify_request = ModifyTicketDetails(base=base_request)
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qtyh})
-        allocations_details.add_allocation_param({"Account": "MOClientSA2", "Alloc Qty": qtyh})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": qtyh})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA2", "Alloc Qty": qtyh})
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
