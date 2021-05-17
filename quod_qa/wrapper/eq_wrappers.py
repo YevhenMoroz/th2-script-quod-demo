@@ -24,7 +24,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, direct_child_care_сorrect
 
-connectivity = 'fix-ss-310-columbia-standart'  # gtwquod5 fix-ss-310-columbia-standart
+connectivity = "fix-bs-310-columbia" #'fix-ss-310-columbia-standart' # gtwquod5 fix-ss-310-columbia-standart
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -197,7 +197,7 @@ def direct_moc_order(qty, route):
     call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
 
 
-def direct_child_care_order(qty, route, recipient,count):
+def direct_child_care_order(qty, route, recipient, count):
     call(Stubs.win_act_order_book.orderBookDirectChildCare,
          direct_child_care_сorrect('UnmatchedQty', qty, recipient, route, count))
 
