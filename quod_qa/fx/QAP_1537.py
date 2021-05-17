@@ -20,7 +20,7 @@ def execute(report_id, case_params):
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    ttl = 15
+    ttl = 90
     wait_step = 5
     seconds, nanos = bca.timestamps()  # Store case start time
 
@@ -77,7 +77,7 @@ def execute(report_id, case_params):
             )
 
     print(f'Waiting while quote expire for {ttl} time')
-    for i in range(0, int(ttl / wait_step + 2)):
+    for i in range(0, int(ttl / wait_step + 1)):
         print(f'{ttl - i * wait_step}sec left')
         time.sleep(wait_step)
 
