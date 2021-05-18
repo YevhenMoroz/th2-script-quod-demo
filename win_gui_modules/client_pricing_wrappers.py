@@ -81,11 +81,12 @@ class PlaceRatesTileOrderRequest:
     def set_details(self, details: BaseTileDetails):
         self.place_order_request.data.CopyFrom(details.build())
 
+# SWAP buy and sell side
     def buy(self):
-        self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.BUY
+        self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.SELL
 
     def sell(self):
-        self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.SELL
+        self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.BUY
 
     def set_quantity(self, quantity: str):
         self.place_order_request.quantity = quantity
