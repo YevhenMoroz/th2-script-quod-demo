@@ -19,24 +19,28 @@ class TestCase:
     def create_listing_group(self):
         data = 'TEST'
 
+        # Navigate to listing groups tab
         reference_data_tab = self.driver.find_element_by_xpath('//*[text()="Reference Data"]')
         reference_data_tab.click()
-
         listing_groups_tab = reference_data_tab.find_element_by_xpath('//*[text()="ListingGroups"]')
         listing_groups_tab.click()
 
+        # Press New button
         new_button = self.wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="actions-header"]//*[text()="New"]')))
         new_button.click()
 
+        # Wait wizard
         wizard_xpath = '//wizard'
         wizard = self.wait.until(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
 
+        # Find buttons
         clean_btn = wizard.find_element_by_xpath('//*[text()="Clean"]/parent::button')
         summary_btn = wizard.find_element_by_xpath('//*[text()="Go to Summary"]/parent::button')
         previous_btn = wizard.find_element_by_xpath('//*[text()="Previous"]/parent::button')
         next_btn = wizard.find_element_by_xpath('//*[text()="Next"]/parent::button')
 
+        # Check buttons status
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check available buttons on wizard tab')
         verifier.compare_values('Clean button', 'True', str(check_is_clickable(clean_btn)))
@@ -45,6 +49,7 @@ class TestCase:
         verifier.compare_values('Next button', 'True', str(check_is_clickable(next_btn)))
         verifier.verify()
 
+        # Find required fields
         name_input = wizard.find_element_by_xpath('//input[@placeholder="Name"]')
         name_input.click()
         name_input.send_keys(data)
@@ -52,30 +57,44 @@ class TestCase:
         sub_venue_input.click()
         sub_venue_input.send_keys(data, Keys.ARROW_DOWN, Keys.ENTER)
 
+        # Go to Summary tab
         summary_btn.click()
 
+        # Check fields on Summary tab
         symbol = self.wait.until(EC.presence_of_element_located((By.XPATH,
                                                                  '//*[text()="Symbol"]/following-sibling::span'))).text
         sub_venue = self.wait.until(EC.presence_of_element_located((By.XPATH,
                                                                     '//*[text()="SubVenue"]' +
                                                                     '/following-sibling::span'))).text
-
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check required fields on Summary tab')
         verifier.compare_values('Name', data, symbol)
         verifier.compare_values('SubVenue', data, sub_venue)
         verifier.verify()
 
+        # Submit
         submit_button = wizard.find_element_by_xpath('//*[text()="Submit"]')
         submit_button.click()
-
         self.wait.until(EC.presence_of_element_located((By.XPATH,
                                                         '//*[text()="Listing Group created with success"]')))
         self.wait.until_not(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
 
+        # Check wizard status
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check displayed of wizard')
         verifier.compare_values('Wizard displayed', 'False', str(check_exists_by_xpath(self.driver, wizard_xpath)))
+        verifier.verify()
+
+        # Filter grid by Name
+        name_column = self.driver.find_element_by_xpath('//*[text()="Name"]')
+        name_column.click()
+        name_column.click()
+
+        # Check that TEST row was added to grid
+        added_values_count = len(self.driver.find_elements_by_xpath(f'//span[text()="{data}"]'))
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name('Check TEST rows count on grid')
+        verifier.compare_values('Count', '1', str(added_values_count // 2))
         verifier.verify()
 
     # Main method. Must call in demo.py by 'QAP_761.TestCase(report_id).execute()' command
