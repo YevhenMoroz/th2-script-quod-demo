@@ -8,8 +8,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from custom.verifier import Verifier
 from web_admin_modules.web_wrapper import call, login, logout, check_exists_by_xpath, check_is_clickable
 
-from time import sleep
-
 
 class TestCase:
     def __init__(self, report_id):
