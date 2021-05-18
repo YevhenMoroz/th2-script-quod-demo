@@ -103,7 +103,6 @@ def execute(report_id):
         ask_1w = extract_ask_value(base_details_1w, cp_service)
         check_pts_column(base_details_1w, cp_service, case_id, ask_1w, column_spot)
 
-
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
