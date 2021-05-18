@@ -3,8 +3,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest, \
-    ExtractRatesTileValues, PlaceRatesTileOrderRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, \
+    PlaceRatesTileOrderRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
@@ -29,7 +29,7 @@ def check_ask_price(base_request, service):
     extract_value_request.extract_ask_large_value("rates_tile.ask_large")
     extract_value_request.extract_ask_pips("rates_tile.ask_pips")
     response = call(service.extractRateTileValues, extract_value_request.build())
-    ask = response["rates_tile.ask_large"] + response["rates_tile.ask_pips"]
+    ask = response["rates_tile.ask_large"]
     return ask
 
 
