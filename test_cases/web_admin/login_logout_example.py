@@ -1,10 +1,7 @@
 from custom import basic_custom_actions as bca
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-
 from webdriver_manager.chrome import ChromeDriverManager
-
 from web_admin_modules.web_wrapper import call, login, logout
 
 
