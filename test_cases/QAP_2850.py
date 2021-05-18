@@ -1,4 +1,5 @@
 from custom.verifier import Verifier
+from win_gui_modules.common_wrappers import TableCheckDetails
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, \
     CancelOrderDetails, ExtractionAction
 from stubs import Stubs
@@ -12,7 +13,8 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,7 +31,7 @@ def execute(report_id):
     bs_trqx = 'fix-bs-eq-trqx'
 
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "QAP-3304"
+    case_name = "QAP-2850"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
@@ -57,7 +59,7 @@ def execute(report_id):
             'Side': '2',
             'OrderQty': '100',
             'OrdType': '2',
-            'Price': '100',
+            'Price': '10',
             'TimeInForce': '0',
             'DeliverToCompID': 'PARIS',
             'Instrument': {
@@ -105,98 +107,40 @@ def execute(report_id):
 
         middle_office_service = Stubs.win_act_middle_office_service
 
-        modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-
-        settlement_details = modify_request.add_settlement_details()
-        settlement_details.set_settlement_type("Regular")
-        settlement_details.set_settlement_currency("AED")
-        settlement_details.set_exchange_rate("10")
-        settlement_details.set_exchange_rate_calc("Multiply")
-        settlement_details.set_settlement_date("3/27/2021")
-        settlement_details.set_pset("EURO_CLEAR")
-
-        call(middle_office_service.bookOrder, modify_request.build())
-
         extraction_id = "main_order"
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(extraction_id)
         main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
-        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
-        main_order_id = ExtractionDetail("main_order_id", "Order ID")
-        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[main_order_post_trade_status, main_order_id])
-        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
-
-        request = call(act2.getOrdersDetails, main_order_details.request())
-        call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                     [verify_ent("Order PostTradeStatus", main_order_post_trade_status.name, "Booked")]))
-
-        block_order_id = request[main_order_id.name]
-        if not block_order_id:
-            raise Exception("Block order id is not returned")
-        print("Block order id " + block_order_id)
-
-        ext_id = "MiddleOfficeExtractionId"
-        middle_office_service = Stubs.win_act_middle_office_service
-        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request.set_extraction_id(ext_id)
-        extract_request.set_filter(["Order ID", block_order_id])
-        block_order_status = ExtractionDetail("middleOffice.status", "Status")
-        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
-        request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
-
-        verifier = Verifier(case_id)
-
-        verifier.set_event_name("Checking block order")
-        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
-        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
-        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
-        verifier.verify()
-
-        # Step 2 UnBook Order
-
-        modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-        call(middle_office_service.unBookOrder, modify_request.build())
-
-        extraction_id = "main_order"
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
         main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
         main_order_id = ExtractionDetail("main_order_id", "Order ID")
         main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_post_trade_status, main_order_id])
+            extraction_details=[main_order_exec_status, main_order_post_trade_status, main_order_id])
         main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
         call(act2.getOrdersDetails, main_order_details.request())
         call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                     [verify_ent("Order PostTradeStatus",
-                                                                 main_order_post_trade_status.name, "ReadyToBook")]))
+                                                     [verify_ent("Order Exec Status",
+                                                                 main_order_exec_status.name, "Filled"),
+                                                      verify_ent("Order Post Trade Status",
+                                                                 main_order_post_trade_status.name, "ReadyToBook")
+                                                      ]))
 
-        ext_id_unbook = "MiddleOfficeExtractionId2"
-        middle_office_service_unbook = Stubs.win_act_middle_office_service
-        extract_request_unbook = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request_unbook.set_extraction_id(ext_id_unbook)
-        block_order_status = ExtractionDetail("middleOffice.status", "Status")
-        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request_unbook.add_extraction_details(
-            [block_order_status, block_order_match_status, block_order_summary_status])
-        request_unbook = call(middle_office_service_unbook.extractMiddleOfficeBlotterValues, extract_request_unbook.build())
+        # book order
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
+        modify_request.set_partial_error_message("Invallid AccountGroupID")
+        settlement_details = modify_request.add_settlement_details()
+        settlement_details.set_settlement_type("Regular")
+        request = call(middle_office_service.bookOrder, modify_request.build())
 
         verifier = Verifier(case_id)
 
-        verifier.set_event_name("Checking block order")
-        verifier.compare_values("Order Status", "Canceled", request_unbook[block_order_status.name])
-        verifier.compare_values("Order Match Status", "Unmatched", request_unbook[block_order_match_status.name])
-        verifier.compare_values("Order Summary Status", "", request_unbook[block_order_summary_status.name])
+        verifier.set_event_name("Checking error")
+        verifier.compare_values("Error", "true", request['hasErrorMessage'])
         verifier.verify()
 
     except Exception as e:
