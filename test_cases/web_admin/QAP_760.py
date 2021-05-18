@@ -69,12 +69,14 @@ class TestCase:
                                                      '//*[@mattooltip="Edit"]')
         edit_btn.click()
 
-        name_input = self.wait.until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="Name"]')))
+        wizard_xpath = '//wizard'
+        wizard = self.wait.until(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
+
+        name_input = wizard.find_element_by_xpath('//input[@placeholder="Name"]')
         name_input.clear()
         name_input.click()
         name_input.send_keys(data)
-        news_symbol_input = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                                            '//input[@placeholder="News Symbol"]')))
+        news_symbol_input = wizard.find_element_by_xpath('//input[@placeholder="News Symbol"]')
         news_symbol_input.click()
         news_symbol_input.send_keys(data)
 
@@ -97,6 +99,7 @@ class TestCase:
         submit_button.click()
 
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[text()="Sub Venue modified with success"]')))
+        self.wait.until_not(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
 
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check displayed of wizard')
