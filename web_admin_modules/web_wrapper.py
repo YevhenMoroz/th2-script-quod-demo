@@ -11,7 +11,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebDriver, WebElement
+from selenium.common.exceptions import NoSuchElementException
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from typing import Callable, Any
@@ -89,3 +90,26 @@ def logout(wait_driver: WebDriverWait):
                                                                     '//*[text()="OK"]')))
     confirm_btn.click()
     wait_driver.until(EC.presence_of_element_located((By.ID, 'login')))
+
+
+def check_exists_by_xpath(web_driver: WebDriver, xpath: str) -> bool:
+    """ Returns True if element exists or False if is not
+        Parameters:
+            web_driver (WebDriver): browser web-driver;
+            xpath (str): xpath for element.
+        Returns:
+            Bool """
+    try:
+        web_driver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        return False
+    return True
+
+
+def check_is_clickable(web_element: WebElement) -> bool:
+    """ Returns True if element clickable
+        Parameters:
+            web_element (WebElement): web element.
+        Returns:
+            Bool """
+    return web_element.is_displayed() and web_element.is_enabled()
