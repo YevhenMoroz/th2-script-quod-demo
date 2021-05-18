@@ -5,7 +5,8 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe, get_opened_fe, \
+    prepare_fe303, get_opened_fe_303
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
@@ -43,13 +44,20 @@ class TestCase:
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        if not Stubs.frontend_is_open:
-            prepare_fe(self.case_id, self.session_id, work_dir, self.user, password)
+        # get_opened_fe_303(self.case_id, self.session_id, work_dir, self.user, password)
+        prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
+
+        # try:
+        #     get_opened_fe_303(self.case_id, self.session_id, work_dir, self.user, password)
+        # except Exception as e:
+        #     logging.error('FE is not opened')
+        #     prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
     # Add case rules method
     def add_rules(self):
         self.RFQ = self.rule_manager.add_RFQ('fix-fh-fx-rfq')
         self.TRFQ = self.rule_manager.add_TRFQ('fix-fh-fx-rfq')
+        # self.logger(f"Start rules with id's: \n  {self.RFQ}, {self.TRFQ}")
 
     # Remove case rules method
     def remove_rules(self):
@@ -60,6 +68,9 @@ class TestCase:
     # Create or get RFQ method
     def create_or_get_rfq(self):
         call(self.ar_service.createRFQTile, self.base_details.build())
+
+    def maximize_ar_window(self):
+        call(self.ar_service.maximizeWindow, self.base_request)
 
     # Set near date method
     def set_near_date(self, date):
@@ -141,7 +152,7 @@ class TestCase:
             self.prepare_frontend()
             self.add_rules()
             self.create_or_get_rfq()
-
+            self.maximize_ar_window()
             # Step 1
             date = 3
             self.set_near_date(date)
@@ -165,7 +176,7 @@ class TestCase:
             logging.error('Error execution', exc_info=True)
 
         self.remove_rules()
-        close_fe(self.case_id, self.session_id)
+        # close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
