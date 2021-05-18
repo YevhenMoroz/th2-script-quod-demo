@@ -12,6 +12,7 @@ from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.sim_service import TemplateSimulatorServiceService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
+from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
 
 
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
@@ -40,6 +41,7 @@ class Stubs:
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
     win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
     act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
+    win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None
