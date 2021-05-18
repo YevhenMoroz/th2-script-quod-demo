@@ -52,10 +52,9 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
     username = Stubs.custom_config['qf_trading_fe_user_305']
     password = Stubs.custom_config['qf_trading_fe_password_305']
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
+
+    prepare_fe(case_id, session_id, work_dir, username, password)
+
 
     try:
         qty = "200"
