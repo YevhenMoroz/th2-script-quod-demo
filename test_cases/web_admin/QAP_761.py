@@ -32,10 +32,10 @@ class TestCase:
         wizard_xpath = '//wizard'
         wizard = self.wait.until(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
 
-        clean_btn = wizard.find_element_by_xpath('//*[text()="Clean"]')
-        summary_btn = wizard.find_element_by_xpath('//*[text()="Go to Summary"]')
-        previous_btn = wizard.find_element_by_xpath('//*[text()="Previous"]')
-        next_btn = wizard.find_element_by_xpath('//*[text()="Next"]')
+        clean_btn = wizard.find_element_by_xpath('//*[text()="Clean"]/parent::button')
+        summary_btn = wizard.find_element_by_xpath('//*[text()="Go to Summary"]/parent::button')
+        previous_btn = wizard.find_element_by_xpath('//*[text()="Previous"]/parent::button')
+        next_btn = wizard.find_element_by_xpath('//*[text()="Next"]/parent::button')
 
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check available buttons on wizard tab')
@@ -71,6 +71,7 @@ class TestCase:
 
         self.wait.until(EC.presence_of_element_located((By.XPATH,
                                                         '//*[text()="Listing Group created with success"]')))
+        self.wait.until_not(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
 
         verifier = Verifier(self.case_id)
         verifier.set_event_name('Check displayed of wizard')
