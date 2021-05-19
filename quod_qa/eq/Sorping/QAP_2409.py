@@ -78,6 +78,9 @@ def send_MD(symbol: str, case_id :str, market_data ):
 def execute(report_id):
     case_id = bca.create_event(os.path.basename(__file__), report_id)
     rule_list = rule_creation()
+
+    case_id_1 = bca.create_event("Send MarketData", case_id)
+
     market_data1 = [
             {
                 'MDEntryType': '0',
@@ -92,7 +95,7 @@ def execute(report_id):
                 'MDEntryPositionNo': '1'
             }
         ]
-    send_MD(QDL1_id, case_id, market_data1)
+    send_MD(QDL1_id, case_id_1, market_data1)
     market_data2 = [
         {
             'MDEntryType': '0',
@@ -107,7 +110,7 @@ def execute(report_id):
             'MDEntryPositionNo': '1'
         }
     ]
-    send_MD(QDL2_id, case_id, market_data2)
+    send_MD(QDL2_id, case_id_1, market_data2)
     fix_manager_310 = FixManager(connectivity_sell_side, case_id)
     verifier_310_sell_side = FixVerifier(connectivity_sell_side, case_id)
     verifier_310_buy_side = FixVerifier(connectivity_buy_side, case_id)
@@ -115,7 +118,7 @@ def execute(report_id):
 
 
     # Send NewOrderSingle
-    case_id_1 = bca.create_event("Algo order creation", case_id)
+    case_id_2 = bca.create_event("Algo order creation", case_id)
     new_order_single_params = {
         'Account': client,
         'HandlInst': 2,
@@ -133,56 +136,56 @@ def execute(report_id):
     }
     fix_message_new_order_single = FixMessage(new_order_single_params)
     fix_message_new_order_single.add_random_ClOrdID()
-    responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
-#
-#
-#     #Check that FIXQUODSELL5 receive 35=D
-#     nos_1 = dict(
-#         fix_message_new_order_single.get_parameters(),
-#         TransactTime='*',
-#         ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
-#
-#     verifier_310_sell_side.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
-#
-#     #Check that FIXQUODSELL5 sent 35=8 pending new
-#     er_1 = dict(
-#         ExecID='*',
-#         OrderQty=qty,
-#         LastQty=0,
-#         TransactTime='*',
-#         Side=side,
-#         AvgPx=0,
-#         Currency='EUR',
-#         TimeInForce=0,
-#         HandlInst =2,
-#         LeavesQty=qty,
-#         CumQty=0,
-#         LastPx=0,
-#         OrdType=2,
-#         ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'),
-#         OrderCapacity='A',
-#         QtyType=0,
-#         Price=price,
-#         TargetStrategy=1011,
-#         ExecType="A",
-#         OrdStatus='A',
-#         OrderID=responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-#         Instrument='*',
-#         NoParty='*'
-#     )
-#
-#     verifier_310_sell_side.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 pending new')
-#
-#     #Check that FIXQUODSELL5 sent 35=8 new
-#     er_2 = dict(
-#         er_1,
-#         ExecType="0",
-#         OrdStatus='0',
-#         SettlDate='*',
-#         ExecRestatementReason='*',
-#         SettlType='*',
-#     )
-#     verifier_310_sell_side.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 new')
+    responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_2)
+
+
+    #Check that FIXQUODSELL5 receive 35=D
+    nos_1 = dict(
+        fix_message_new_order_single.get_parameters(),
+        TransactTime='*',
+        ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
+
+    verifier_310_sell_side.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 receive 35=D')
+
+    #Check that FIXQUODSELL5 sent 35=8 pending new
+    er_1 = dict(
+        ExecID='*',
+        OrderQty=qty,
+        LastQty=0,
+        TransactTime='*',
+        Side=side,
+        AvgPx=0,
+        Currency='EUR',
+        TimeInForce=0,
+        HandlInst =2,
+        LeavesQty=qty,
+        CumQty=0,
+        LastPx=0,
+        OrdType=2,
+        ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'),
+        OrderCapacity='A',
+        QtyType=0,
+        Price=price,
+        TargetStrategy=1011,
+        ExecType="A",
+        OrdStatus='A',
+        OrderID=responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+        Instrument='*',
+        NoParty='*'
+    )
+
+    verifier_310_sell_side.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 pending new')
+
+    #Check that FIXQUODSELL5 sent 35=8 new
+    er_2 = dict(
+        er_1,
+        ExecType="0",
+        OrdStatus='0',
+        SettlDate='*',
+        ExecRestatementReason='*',
+        SettlType='*',
+    )
+    verifier_310_sell_side.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 new')
 #
 #
 #     # Check that algo ping QDD1
