@@ -1,14 +1,13 @@
 """ This module contains functions which are used in web test cases """
 
 import logging
+import time
 
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Event, EventBatch, EventID
 from uuid import uuid1
 from stubs import Stubs
 
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -17,7 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver, WebElement
 from selenium.common.exceptions import NoSuchElementException
 
 from google.protobuf.timestamp_pb2 import Timestamp
-from typing import Callable, Any, Tuple
+from typing import Callable, Any
 
 
 def get_report(name: str, status: int, parent_id: EventID, timestamp: Timestamp) -> None:
@@ -114,3 +113,20 @@ def check_is_clickable(web_element: WebElement) -> bool:
         Returns:
             Bool """
     return web_element.is_displayed() and web_element.is_enabled()
+
+
+def filter_grid_by_field(row_container: WebElement, search_field: WebElement, query: str) -> None:
+    """ Waits until data refresh in table
+        Parameters:
+            row_container (WebElement): container;
+            search_field (WebElement): field for filter;
+            query (str): query.
+        Returns:
+            None """
+    timeout = time.time() + 5
+    row_count = len(row_container.find_elements_by_xpath('//*[@role="row"]'))
+    result_row_count = row_count
+    search_field.send_keys(query)
+    while result_row_count == row_count:
+        if time.time() <= timeout:
+            result_row_count = len(row_container.find_elements_by_xpath('//*[@role="row"]'))
