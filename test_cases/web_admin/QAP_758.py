@@ -70,7 +70,8 @@ class TestCase:
         confirm_btn.click()
         self.wait.until(EC.presence_of_element_located((By.XPATH, self.test_data['sub_venue_deleted_event_xpath'])))
 
-    # Main method. Must call in demo.py by 'QAP_758.TestCase(report_id).execute()' command
+    # Main method
+    # Must call in web_demo.py by QAP_758.TestCase(report_id, chrome_driver, wait_driver).execute() command
     def execute(self):
         call(self.add_sub_venue, self.case_id, 'Add SubVenue')
         call(self.delete_sub_venue, self.case_id, 'Delete SubVenue')
