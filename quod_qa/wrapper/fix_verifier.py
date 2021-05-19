@@ -64,3 +64,18 @@ class FixVerifier:
                 Direction.Value(direction)
             )
         )
+
+    def CheckBusinessMessageReject(self, parameters, response, key_parameters = ['Text', 'RefMsgType'], message_name='Check BusinessMessageReject', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("BusinessMessageReject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
