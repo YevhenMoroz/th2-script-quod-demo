@@ -6,7 +6,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_636
 from rule_management import RuleManager
 from stubs import Stubs
 from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_1035
+from quod_qa.eq.DMA import QAP_2547
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        QAP_1035.execute(report_id)
+        QAP_2547.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',
