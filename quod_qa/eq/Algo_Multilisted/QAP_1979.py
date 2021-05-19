@@ -67,10 +67,6 @@ def rule_destroyer(list_rules):
 
 def execute(report_id):
 
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
-    simulator = Stubs.simulator
-
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="734",
         connection_id=ConnectionID(session_alias=connectivity_fh)

@@ -10,6 +10,8 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
+from stubs import Stubs
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -22,18 +24,20 @@ text_ocrr='OCRRRule'
 text_c='order canceled'
 tif_gtc = 1
 expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
-price = 20
-stop_price = 20
+price = 35
+stop_price = 30
 side = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 4
+order_type_stop = 4
+order_type_limit = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
+connectivity_fh = 'fix-fh-310-columbia'
 
 instrument = {
             'Symbol': 'FR0000121121_EUR',
@@ -75,7 +79,7 @@ def execute(report_id):
         'TimeInForce': tif_gtc,
         'Price': price,
         'StopPx': stop_price,
-        'OrdType': order_type,
+        'OrdType': order_type_stop,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
@@ -125,7 +129,7 @@ def execute(report_id):
         'NoParty': '*',
         'CumQty': '0',
         'LastPx': '0',
-        'OrdType': order_type,
+        'OrdType': order_type_stop,
         'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',
@@ -147,6 +151,50 @@ def execute(report_id):
         SettlType='*'
     )
     fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+    
+
+    # Send MarketData
+    MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol="734",
+        connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+
+    mdir_params_trade = {
+        'MDReqID': MDRefID_1,
+        'NoMDEntriesIR': [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '35',
+                'MDEntrySize': '2000',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+    }
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh', connectivity_fh, case_id_1,
+        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_fh)
+    ))
+    time.sleep(10)
+    mdir_params_trade = {
+        'MDReqID': MDRefID_1,
+        'NoMDEntriesIR': [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '35',
+                'MDEntrySize': '2000',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+    }
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh', connectivity_fh, case_id_1,
+        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_fh)
+    ))
+    time.sleep(2)
     #endregion
 
     #region Check Buy Side
@@ -156,13 +204,12 @@ def execute(report_id):
         'NoParty': '*',
         'Account': account,        
         'OrderQty': qty,
-        'OrdType': new_order_single_params['OrdType'],
+        'OrdType': order_type_limit,
         'ClOrdID': '*',
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'TransactTime': '*',
         'ChildOrderID': '*',
         'Side': side,
-        'StopPx': stop_price,
         'Price': price,
         'SettlDate': '*',
         'Currency': currency,
@@ -270,7 +317,7 @@ def execute(report_id):
         'NoParty': '*',
         'CumQty': '0',
         'LastPx': '0',
-        'OrdType': order_type,
+        'OrdType': order_type_stop,
         'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',

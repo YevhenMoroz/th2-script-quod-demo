@@ -13,27 +13,17 @@ from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulat
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 
 
-<<<<<<< HEAD
-=======
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
 
->>>>>>> origin/mziuban_c3
 class Stubs:
     configs_dir = join(dirname(abspath(__file__)), 'configs')
     factory = CommonFactory(
-<<<<<<< HEAD
-        grpc_router_config_filepath=join(configs_dir, "grpc.json"),
-        rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
-        mq_router_config_filepath=join(configs_dir, "mq.json"),
-        custom_config_filepath=join(configs_dir, "script-params.json")
-=======
         grpc_router_config_filepath="./configs/grpc.json",
         rabbit_mq_config_filepath="./configs/rabbit.json",
         mq_router_config_filepath="./configs/mq.json",
         custom_config_filepath="./configs/script-params.json",
         prometheus_config_filepath="./configs/prometheus.json"
->>>>>>> origin/mziuban_c3
     )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
