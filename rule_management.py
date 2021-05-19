@@ -85,7 +85,7 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int, delay: int, ):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                                account=account,
@@ -101,6 +101,14 @@ class RuleManager:
                                                              account=account,
                                                              venue=venue,
                                                              price=price))
+
+    @staticmethod
+    def add_OrderCancelRequest(session: str, account: str, venue: str, cancel: bool):
+        return Stubs.simulator.createOrderCancelRequest(
+            request=TemplateOrderCancelRequest(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             cancel=cancel))
 
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
@@ -188,11 +196,50 @@ class RuleManager:
                                                                      avgPrice=avgPrice
                                             ))
 
+    @staticmethod
+    def add_NewOrdSingle_FOK(session: str, account: str, venue: str, trade: bool, price : float ):
+        return Stubs.simulator.createNewOrdSingleFOK(
+            request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     price= price))
+    @staticmethod
+    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : int ):
+        return Stubs.simulator.createNewOrdSingleIOC(
+            request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     price= price
+                                            ))
+
+    @staticmethod
+    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
+        return Stubs.simulator.createNewOrdSingleMarket(
+            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     avgPrice=avgPrice
+                                            ))
+
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
+<<<<<<< HEAD
     #rule_manager.remove_rule_by_id()
     rule_manager.print_active_rules()
     #rule_manager.remove_all_rules()
+=======
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia",
+                                                                              "CLIENTSKYLPTOR_PARIS", "XPAR", 40)
+    nos_rule1 = rule_manager.add_OCRR("fix-bs-310-columbia")
+    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade("fix-bs-310-columbia", "CLIENTSKYLPTOR_PARIS", "XPAR",
+                                                                     2, 2000, 2)
+    rule_manager.print_active_rules()
+>>>>>>> origin/mziuban_c3

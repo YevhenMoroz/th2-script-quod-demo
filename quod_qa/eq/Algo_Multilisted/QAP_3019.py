@@ -164,6 +164,6 @@ def execute(report_id):
         'TargetStrategy': multilisting_params['TargetStrategy'],
         'Instrument': multilisting_params['Instrument'],
     }
-    fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel )
+    fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel)
     rule_manager.remove_rule(nos_rule)
     rule_manager.remove_rule(ocr_rule)

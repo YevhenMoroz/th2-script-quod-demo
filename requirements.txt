@@ -15,3 +15,8 @@ google-api-core
 pandas~=1.2.1
 
 utils~=1.0.1
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/mziuban_c3

@@ -51,14 +51,10 @@ def execute(case_name, report_id, case_params):
         ))
 
     market_data_response = {
-        'MDReqID': '1111222001',
+        'MDReqID': subscribe_params['MDReqID'],
         'Instrument': {
             'Symbol': instrument['Symbol']
         },
-        'LastUpdateTime': '*',
-        'OrigMDArrivalTime': '*',
-        'OrigMDTime': '*',
-        'MDTime': '*',
         'NoMDEntries': [
             {
                 'SettlType': 0,
@@ -136,7 +132,8 @@ def execute(case_name, report_id, case_params):
                 'MDEntryDate': '*',
                 'MDEntryType': 1
             }
-        ]
+        ],
+        'LastUpdateTime': '*'
     }
 
     verifier.submitCheckRule(
@@ -151,7 +148,7 @@ def execute(case_name, report_id, case_params):
 
     subscribe_params['SubscriptionRequestType'] = '2'
 
-    unsubscribe = act.placeMarketDataRequestFIX(
+    unsubscribe = act.sendMessage(
         bca.convert_to_request(
             'MarketDataRequest (subscribe)',
             case_params['Connectivity'],

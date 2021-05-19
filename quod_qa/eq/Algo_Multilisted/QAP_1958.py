@@ -106,12 +106,16 @@ def execute(report_id):
         'ChildOrderID': '*',
         'Side': multilisting_params['Side'],
         'Price': multilisting_params['Price'],
+<<<<<<< HEAD
         'SettlDate': '*',
         'Currency': multilisting_params['Currency'],
         'TimeInForce': multilisting_params['TimeInForce'],
         'Instrument': '*',
         'HandlInst': '1',
         'ExDestination': multilisting_params['Instrument']['SecurityExchange']
+=======
+        'TimeInForce': multilisting_params['TimeInForce']
+>>>>>>> origin/mziuban_c3
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce)
 

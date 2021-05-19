@@ -50,10 +50,14 @@ class FixVerifier:
             )
         )
 
+<<<<<<< HEAD
     def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelReplaceRequest', case = None):
         if case == None:
                 case = self.case_id
 
+=======
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest'):
+>>>>>>> origin/mziuban_c3
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,

@@ -12,9 +12,9 @@ class FixMessage:
     def change_parameter(self, parametr_name, new_parametr_value):
         self.parameters[parametr_name] = new_parametr_value
 
-    def change_parameters(self, parametr_list):
-        for key in parametr_list:
-            self.parameters[key] = parametr_list[key]
+    def change_parameters(self, parameter_list):
+        for key in parameter_list:
+            self.parameters[key] = parameter_list[key]
 
     def get_parameter(self, parametr_name):
         return self.parameters[parametr_name]

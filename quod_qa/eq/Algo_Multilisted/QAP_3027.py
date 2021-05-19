@@ -77,6 +77,7 @@ def execute(report_id):
         'SettlDate': '*',
         'Currency': multilisting_params['Currency'],
         'TimeInForce': multilisting_params['TimeInForce'],
+<<<<<<< HEAD
         'ExecType': "0",
         'HandlInst': multilisting_params['HandlInst'],
         'LeavesQty': multilisting_params['OrderQty'],
@@ -92,6 +93,9 @@ def execute(report_id):
         'Price': multilisting_params['Price'],
         'TargetStrategy': multilisting_params['TargetStrategy'],
         'Instrument': multilisting_params['Instrument']
+=======
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+>>>>>>> origin/mziuban_c3
 
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce)
