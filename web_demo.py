@@ -20,7 +20,8 @@ channels = dict()
 
 def test_run():
     # Generation ID and time for test run
-    report_id = bca.create_event('dshepelev tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(f'{Stubs.custom_config["web_admin_login"]} tests '
+                                 + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     # Drivers
