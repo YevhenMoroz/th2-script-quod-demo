@@ -80,11 +80,11 @@ def execute(report_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
 
@@ -111,7 +111,12 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_2", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

@@ -113,7 +113,7 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_venue_hsbcr = "HSBCR"
     case_venue_citir = "CITIR"
@@ -138,12 +138,11 @@ def execute(report_id):
     base_rfq_details_0 = BaseTileDetails(base=case_base_request, window_index=0)
     base_rfq_details_1 = BaseTileDetails(base=case_base_request, window_index=1)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details_0, ar_service)
         create_or_get_rfq(base_rfq_details_1, ar_service)
@@ -206,16 +205,21 @@ def execute(report_id):
         check_quote_request_b("QRB_5", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue_citir)
         # Step 7
-
+        cancel_rfq(base_rfq_details_0, ar_service)
         # Step 8
         place_order_tob(base_rfq_details_1, ar_service)
         quote_citir = check_order_book("OB_4", case_base_request, case_instr_type, ob_act, case_id,
                                        case_qty, case_venue_citir)
         check_quote_book("QB_4", case_base_request, ar_service, case_id, quote_owner,
                          quote_citir, quote_sts_terminated)
-        call(ar_service.closeRFQTile, base_rfq_details_0.build())
-        call(ar_service.closeRFQTile, base_rfq_details_1.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
 
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details_0.build())
+            call(ar_service.closeRFQTile, base_rfq_details_1.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

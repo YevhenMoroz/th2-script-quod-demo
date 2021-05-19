@@ -101,18 +101,19 @@ def execute(report_id):
     case_qty = 10000000
     # TODO Wait to change type for qty field
     case_qty2 = "1m"
+    case_qty_1m = "1000000"
     case_qty3 = "100k"
+    case_qty_100kk = "100000"
     case_tenor1 = "Spot"
     case_tenor2 = "1W"
     spo_front_end()
     wk1_front_end()
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
 
@@ -133,13 +134,13 @@ def execute(report_id):
         modify_request.set_quantity_as_string(case_qty2)
         modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty2)
+        check_qty(base_rfq_details, ar_service, case_id, case_qty_1m)
 
         # Step 6
         modify_request.set_quantity_as_string(case_qty3)
         modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty3)
+        check_qty(base_rfq_details, ar_service, case_id, case_qty_100kk)
 
         # Step 7
         modify_request.set_near_tenor(case_tenor2)
@@ -150,3 +151,9 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

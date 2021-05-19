@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -97,15 +98,15 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id):
 def execute(report_id):
     common_act = Stubs.win_act
 
-    case_name = "QAP-585"
-    quote_owner = "ostronov"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
-    case_venue = "HSBC"
+    case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "ASPECT_CITI"
+    case_client = "MMCLIENT2"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -116,12 +117,11 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Steps 1-2
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -129,15 +129,10 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
         qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner)
-
         # Step 3
         place_order(base_rfq_details, ar_service, case_venue)
 
         check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
-        #
-        # call(ar_service.cancelRFQ, base_rfq_details.build())
-
-
         # Step 4
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, common_act)
@@ -157,9 +152,12 @@ def execute(report_id):
         place_order(base_rfq_details, ar_service, case_venue)
 
         check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)
