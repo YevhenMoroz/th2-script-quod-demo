@@ -23,7 +23,7 @@ class FixMessage:
         self.parameters.update(parameter)
 
     def remove_tag(self, parameter_name):
-        self.parameters.popitem(parameter_name)
+        self.parameters.pop(parameter_name)
 
     def get_ClOrdID(self):
         return self.parameters['ClOrdID']
