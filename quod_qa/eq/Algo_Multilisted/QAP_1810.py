@@ -26,7 +26,7 @@ text_c='order canceled'
 currency = 'EUR'
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = "Limit"
+order_type = 2
 account = 'XPAR_CLIENT2'
 
 case_name = os.path.basename(__file__)
@@ -71,7 +71,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': 0,
         'Price': price,
-        'OrdType': 2,
+        'OrdType': order_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
@@ -238,7 +238,7 @@ def execute(report_id):
     fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['OrderQty', 'Price', 'OrigClOrdID'])
 
     # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
-    cansel_raplace_ord = {
+    er_5 = {
         'CumQty': '0',
         'ExecID': '*',
         'OrderQty': display_qty,
@@ -254,7 +254,7 @@ def execute(report_id):
         'OrigClOrdID': '*'
     }
 
-    fix_verifier_bs.CheckExecutionReport(cansel_raplace_ord, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+    fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
 
     # Check ss replace order 35=8 on 35=G
     er_6 = {

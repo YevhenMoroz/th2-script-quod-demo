@@ -31,7 +31,7 @@ tif_ioc = 3
 ex_destination_1 = "XPAR"
 ex_destination_2 = 'TRQX'
 client = "CLIENT2"
-order_type = "Limit"
+order_type = 2
 account = 'XPAR_CLIENT2'
 account2 = 'TRQX_CLIENT2'
 currency = 'EUR'
@@ -141,7 +141,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': 0,
         'Price': price,
-        'OrdType': 2,
+        'OrdType': order_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',

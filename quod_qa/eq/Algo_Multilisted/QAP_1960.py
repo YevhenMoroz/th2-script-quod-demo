@@ -25,7 +25,7 @@ price = 20
 side = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = "Limit"
+order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 
@@ -73,7 +73,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': 0,
         'Price': price,
-        'OrdType': 2,
+        'OrdType': order_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',

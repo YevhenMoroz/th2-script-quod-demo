@@ -20,13 +20,13 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
-tif_cgt = 6
+tif_gtd = 6
 expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
 price = 20
 side = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = "Limit"
+order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 
@@ -74,7 +74,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': 0,
         'Price': price,
-        'OrdType': 2,
+        'OrdType': order_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
@@ -208,7 +208,7 @@ def execute(report_id):
     case_id_3 = bca.create_event("Modify Order", case_id)
     # Send OrderCancelReplaceRequest  
     fix_modify_message = deepcopy(fix_message_new_order_single)
-    fix_modify_message.change_parameters({'TimeInForce': tif_cgt, 'ExpireDate': expire_date})
+    fix_modify_message.change_parameters({'TimeInForce': tif_gtd, 'ExpireDate': expire_date})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_3)
 
@@ -224,7 +224,7 @@ def execute(report_id):
         'TransactTime': '*',
         'Side': side,
         'Currency': currency,
-        'TimeInForce': tif_cgt,
+        'TimeInForce': tif_gtd,
         'Instrument': instrument,
         'HandlInst': new_order_single_params['HandlInst'],
         'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
@@ -246,7 +246,7 @@ def execute(report_id):
         'Side': side,
         'AvgPx': '0',
         'OrdStatus': '0',
-        'TimeInForce': tif_cgt,
+        'TimeInForce': tif_gtd,
         'ExecType': '5',
         'LeavesQty': qty,
         'ClOrdID': '*',
@@ -270,7 +270,7 @@ def execute(report_id):
         'OrdStatus': '0',
         'SettlDate': '*',
         'Currency': currency,
-        'TimeInForce': tif_cgt,
+        'TimeInForce': tif_gtd,
         'ExecType': '5',
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': qty,
@@ -351,7 +351,7 @@ def execute(report_id):
         "OrdStatus": "4",
         'SettlDate': '*',
         'Currency': currency,
-        'TimeInForce': tif_cgt,
+        'TimeInForce': tif_gtd,
         'ExecType': '4',
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': '0',

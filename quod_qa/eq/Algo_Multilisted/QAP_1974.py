@@ -23,7 +23,7 @@ text_ocrr='OCRRRule'
 text_c='order canceled'
 price = 35
 trade_qty = 1000
-delay = 0
+delay = 1000
 side = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
@@ -45,8 +45,9 @@ instrument = {
 def rule_creation():
     rule_manager = RuleManager()
     nost_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, account, ex_destination_1, price, trade_qty, delay)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nost_rule, ocr_rule]
+    return [nost_rule, nos_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -169,6 +170,40 @@ def execute(report_id):
         'ExDestination': instrument['SecurityExchange']
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order', key_parameters=['Price', 'OrderQty'])
+
+    # Check that FIXBUYQUOD5 sent 35=8 pending new
+    er_3 = {
+        'Account': account,
+        'CumQty': '0',
+        'ExecID': '*',
+        'OrderQty': qty,
+        'Text': text_pn,
+        'OrdType': '2',
+        'ClOrdID': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': '0',
+        'OrdStatus': 'A',
+        'Price': price,
+        'TimeInForce': new_order_single_params['TimeInForce'],
+        'ExecType': "A",
+        'ExDestination': ex_destination_1,
+        'LeavesQty': '0'
+    }
+
+    fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+
+    # Check that FIXBUYQUOD5 sent 35=8 new
+    er_4 = dict(
+        er_3,
+        OrdStatus='0',
+        ExecType="0",
+        OrderQty=qty,
+        Text=text_n,
+    )
+    fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
+   
     
     # Check Particular Filled
     er_5 = {

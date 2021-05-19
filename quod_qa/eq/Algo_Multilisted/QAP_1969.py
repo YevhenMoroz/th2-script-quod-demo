@@ -27,7 +27,7 @@ lastpx = 40
 side = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = "Limit"
+order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 
@@ -73,7 +73,7 @@ def execute(report_id):
         'OrderQty': qty,
         'TimeInForce': tif_ioc,
         'Price': price,
-        'OrdType': 2,
+        'OrdType': order_type,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
@@ -202,6 +202,7 @@ def execute(report_id):
     )
     fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
 
+    #Check BS (FIXBUYTH2 35=8 Filled)
     er_5 = {
         'Account': account,
         'CumQty': qty,
