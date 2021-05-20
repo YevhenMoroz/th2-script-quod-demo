@@ -70,7 +70,7 @@
       "endpoints": {
         "act_win": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -85,7 +85,7 @@
       "endpoints": {
         "act_order_ticket": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -130,7 +130,7 @@
       "endpoints": {
         "act_order_book": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -145,7 +145,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -160,7 +160,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -175,7 +175,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -205,7 +205,7 @@
       "endpoints": {
         "act_layout": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
