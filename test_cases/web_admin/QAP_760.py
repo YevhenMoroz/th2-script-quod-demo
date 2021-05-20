@@ -1,124 +1,97 @@
 from custom import basic_custom_actions as bca
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 from custom.verifier import Verifier
-from web_admin_modules.web_wrapper import call, login, logout, check_exists_by_xpath
+from web_admin_modules.web_wrapper import call, filter_grid_by_field
 
 
 class TestCase:
-    def __init__(self, report_id):
+    def __init__(self, report_id, web_driver, wait_driver):
         self.case_id = bca.create_event('QAP-760', report_id)
 
-        self.driver = webdriver.Chrome(ChromeDriverManager().install())
-        self.wait = WebDriverWait(self.driver, 5)
+        self.driver = web_driver
+        self.wait = wait_driver
 
-    def get_precondition(self):
-        data = 'TEST'
+        self.test_input = 'TestVenues'
+        self.test_data = {
+            'reference_data_tab_xpath': '//*[@title="Reference Data"]',
+            'sub_venues_tab_xpath': '//*[@href="#/pages/sub-venues/view"]',
+            'new_btn_xpath': '//nb-card-header//*[contains(text(),"SubVenues")]/following-sibling::button',
+            'name_input_id': 'subVenueName',
+            'venue_input_id': 'venue',
+            'save_btn_xpath': '//*[text()="Save Changes"]',
+            'sub_venue_created_event_xpath': '//*[text()="SubVenue changes saved"]',
+            'row_container_xpath': '//*[@ref="eCenterContainer"]',
+            'name_filter_input_xpath': '//*[@ref="eFloatingFilterText"]',
+            'actions_btn_xpath': '//*[@data-name="more-vertical"]',
+            'edit_btn_xpath': '//*[@nbtooltip="Edit"]/*'
+        }
 
+    # Precondition
+    def add_sub_venue(self):
         # Navigate to SubVenues tab
-        reference_data_tab = self.driver.find_element_by_xpath('//*[text()="Reference Data"]')
+        reference_data_tab = self.driver.find_element_by_xpath(self.test_data['reference_data_tab_xpath'])
         reference_data_tab.click()
-        sub_venues_tab = reference_data_tab.find_element_by_xpath('//*[text()="SubVenues"]')
+        sub_venues_tab = self.driver.find_element_by_xpath(self.test_data['sub_venues_tab_xpath'])
         sub_venues_tab.click()
 
         # Press New button
-        new_button = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="actions-header"]//*[text()="New"]')))
-        new_button.click()
+        new_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.test_data['new_btn_xpath'])))
+        new_btn.click()
 
         # Fill required fields
-        name_input = self.wait.until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="Name"]')))
-        name_input.click()
-        name_input.send_keys(data)
-        venue_input = self.wait.until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="Venue"]')))
-        venue_input.click()
-        venue_input.send_keys(data, Keys.ARROW_DOWN, Keys.ENTER)
-
-        # Go to Summary tab
-        summary_tab = self.driver.find_element_by_xpath('//*[@id="header-wizard-tab-3"]')
-        summary_tab.click()
+        name_input = self.wait.until(EC.presence_of_element_located((By.ID, self.test_data['name_input_id'])))
+        name_input.send_keys(self.test_input)
+        venue_input = self.wait.until(EC.presence_of_element_located((By.ID, self.test_data['venue_input_id'])))
+        venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
         # Submit
-        submit_button = self.driver.find_element_by_xpath('//*[text()="Submit"]')
-        submit_button.click()
-        self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                        '//*[text()="Sub Venue created with success"]')))
+        save_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.test_data['save_btn_xpath'])))
+        save_btn.click()
+        self.wait.until(EC.presence_of_element_located((By.XPATH, self.test_data['sub_venue_created_event_xpath'])))
 
     def edit_sub_venue(self):
-        data = 'edited test text'
+        new_test_input = self.test_input + '_NEW'
 
-        # Find TEST row
-        row = self.driver.find_element_by_xpath('//*[text()="TEST"]')
-        row.click()
-        edit_btn = self.driver.find_element_by_xpath('//datatable-body-row[contains(@class, "active")]' +
-                                                     '//*[@mattooltip="Edit"]')
+        # Filter rows
+        row_container = self.driver.find_element_by_xpath(self.test_data['row_container_xpath'])
+        name_filter_input = self.driver.find_element_by_xpath(self.test_data['name_filter_input_xpath'])
+        filter_grid_by_field(row_container, name_filter_input, self.test_input)
+
+        # Edit row
+        actions_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, self.test_data['actions_btn_xpath'])))
+        actions_btn.click()
+        edit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, self.test_data['edit_btn_xpath'])))
         edit_btn.click()
 
-        # Wait wizard
-        wizard_xpath = '//wizard'
-        wizard = self.wait.until(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
-
-        # Edit some fields
-        name_input = wizard.find_element_by_xpath('//input[@placeholder="Name"]')
-        name_input.clear()
-        name_input.click()
-        name_input.send_keys(data)
-        news_symbol_input = wizard.find_element_by_xpath('//input[@placeholder="News Symbol"]')
-        news_symbol_input.click()
-        news_symbol_input.send_keys(data)
-
-        # Go to Summary tab
-        summary_tab = self.driver.find_element_by_xpath('//*[@id="header-wizard-tab-3"]')
-        summary_tab.click()
-
-        # Check edited fields
-        name = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                               '//*[text()="Name"]/following-sibling::span'))).text
-        news_symbol = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                                      '//*[text()="News Symbol"]' +
-                                                                      '/following-sibling::span'))).text
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check fields on Summary tab')
-        verifier.compare_values('Name', data, name)
-        verifier.compare_values('News Symbol', data, news_symbol)
-        verifier.verify()
+        # Change required fields
+        name_input = self.wait.until(EC.presence_of_element_located((By.ID, self.test_data['name_input_id'])))
+        name_input.send_keys(Keys.CONTROL + 'a', Keys.DELETE)
+        name_input.send_keys(new_test_input)
+        venue_input = self.wait.until(EC.presence_of_element_located((By.ID, self.test_data['venue_input_id'])))
+        venue_input.send_keys(Keys.CONTROL + 'a', Keys.DELETE)
+        venue_input.send_keys(new_test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
         # Submit
-        submit_button = self.driver.find_element_by_xpath('//*[text()="Submit"]')
-        submit_button.click()
-        self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[text()="Sub Venue modified with success"]')))
+        save_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.test_data['save_btn_xpath'])))
+        save_btn.click()
+        self.wait.until(EC.presence_of_element_located((By.XPATH, self.test_data['sub_venue_created_event_xpath'])))
 
-        # Check wizard
-        self.wait.until_not(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
+        # Check changes in grid
+        row_container = self.wait.until(EC.presence_of_element_located((By.XPATH,
+                                                                        self.test_data['row_container_xpath'])))
+        name_filter_input = self.driver.find_element_by_xpath(self.test_data['name_filter_input_xpath'])
+        edit_row_count = filter_grid_by_field(row_container, name_filter_input, new_test_input)
         verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check displayed of wizard')
-        verifier.compare_values('Wizard displayed', 'False', str(check_exists_by_xpath(self.driver, '//wizard')))
-        verifier.verify()
-
-        # Find edited row
-        row = self.driver.find_element_by_xpath('//*[text()="TEST"]')
-        row.click()
-
-        # Check edited fields on grid
-        edited_values_count = len(self.driver
-                                  .find_elements_by_xpath('//datatable-body-row[contains(@class, "active")]' +
-                                                          f'//span[text()="{data}"]'))
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check edited fields count on grid')
-        verifier.compare_values('Count', '2', str(edited_values_count))
+        verifier.set_event_name('Check edit row count on grid')
+        verifier.compare_values('Count', '1', str(edit_row_count))
         verifier.verify()
 
     # Main method. Must call in demo.py by 'QAP_760.TestCase(report_id).execute()' command
     def execute(self):
-        call(login, self.case_id, self.driver, self.wait)
-        call(self.get_precondition, self.case_id)
-        call(self.edit_sub_venue, self.case_id)
-        call(logout, self.case_id, self.wait)
-        self.driver.close()
+        call(self.add_sub_venue, self.case_id, 'Add SubVenue (Precondition)')
+        call(self.edit_sub_venue, self.case_id, 'Edit SubVenue')
 
 
 if __name__ == '__main__':
