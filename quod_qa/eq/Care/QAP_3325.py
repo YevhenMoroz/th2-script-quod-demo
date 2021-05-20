@@ -29,13 +29,12 @@ def execute(report_id):
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "800"
+    newQty = "100"
     price = "40"
     newPrice = "1"
+    time = datetime.utcnow().isoformat()
     lookup = "PROL"
-    newClient = "CLIENTYMOROZ"
     client = "CLIENTSKYLPTOR"
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
@@ -48,35 +47,12 @@ def execute(report_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # endregion
+    # endregionA
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0, price)
-    param_list = {'Account': newClient}
-    # endregion
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    response = fix_message.pop('response')
     # Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    eq_wrappers.amend_order(base_request, 'CLIENTYMOROZ')
     # endregion
-    # region accept amend
-    eq_wrappers.accept_modify(lookup, qty, price)
-    # endregion
-    time.sleep(1)
-    # Check on ss
-    response = fix_message['response']
-    # fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    # er_params_new = {
-    #     'ExecType': "0",
-    #     'OrdStatus': '0',
-    #     'TimeInForce': 0,
-    #     'ClOrdID': fix_message['ClOrdID']
-    # }
-    # fix_verifier_ss.CheckNewOrderSingle(er_params_new, response,key_parameters=['ClOrdID'], direction='SECOND')
-    params = {
-        'Side': 1,
-        'Account': newClient,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-    }
-    print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
-    fix_verifier_ss = FixVerifier('fix-bs-310-columbia', case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'Side', 'Account'])
+    eq_wrappers.verify_value(base_request, case_id, 'Client ID', 'CLIENTYMOROZ')

@@ -3,7 +3,6 @@ from datetime import datetime
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 
-
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -66,7 +65,6 @@ def cancel_order_via_fix(case_id, session, cl_order_id, client_order_id, client,
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None,
                  sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None):
-
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -89,7 +87,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity,
-                                                                                 "XPAR_" + client, "XPAR", int(price))
+                                                                             "XPAR_" + client, "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -144,13 +142,15 @@ def amend_order_via_fix(fix_message, parametr_list):
     finally:
         rule_manager.remove_rule(rule)
 
-def amend_order(request, qty=None, price=None):
 
+def amend_order(request, client=None, qty=None, price=None ):
     order_amend = OrderTicketDetails()
-    if not qty in None:
+    if not qty is None:
         order_amend.set_quantity(qty)
-    if not price in None:
+    if not price is None:
         order_amend.set_limit(price)
+    if not client is None:
+        order_amend.set_client(client)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
@@ -162,6 +162,7 @@ def amend_order(request, qty=None, price=None):
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
+
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
     manual_cross_details = ManualCrossDetails(request)
@@ -289,13 +290,14 @@ def transfer_order(request, user):
         logger.error("Error execution", exc_info=True)
 
 
-def manual_execution(request, qty, price):
+def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
     manual_executing_details = ManualExecutingDetails(request)
     executions_details = manual_executing_details.add_executions_details()
     executions_details.set_quantity(qty)
     executions_details.set_price(price)
-    executions_details.set_executing_firm("ExecutingFirm")
-    executions_details.set_contra_firm("Contra_Firm")
+    executions_details.set_executing_firm(execution_firm)
+    executions_details.set_contra_firm(contra_firm)
+    executions_details.set_settlement_date_offset(1)
     executions_details.set_last_capacity("Agency")
     try:
         call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
