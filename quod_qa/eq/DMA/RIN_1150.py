@@ -19,19 +19,17 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "RIN_1151"
+    case_name = "RIN_1150"
 
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-
     order_ticket_service = Stubs.win_act_order_ticket
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "0"
     client = "HAKKIM"
     lookup = "TCS"
-
     # endregion
 
     # region Open FE
@@ -47,10 +45,9 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id)
-    # endregion
+    # end region
 
     # region Create order via FE
-
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -64,6 +61,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
 
     call(order_ticket_service.placeOrder, new_order_details.build())
+    # end region
 
     # region for handle errors
 
