@@ -115,18 +115,19 @@ def check_is_clickable(web_element: WebElement) -> bool:
     return web_element.is_displayed() and web_element.is_enabled()
 
 
-def filter_grid_by_field(row_container: WebElement, search_field: WebElement, query: str) -> None:
-    """ Waits until data refresh in table
+def filter_grid_by_field(row_container: WebElement, search_field: WebElement, query: str) -> int:
+    """ Waits until data refresh in table and after that returns data count
         Parameters:
             row_container (WebElement): container;
             search_field (WebElement): field for filter;
             query (str): query.
         Returns:
-            None """
-    timeout = time.time() + 5
-    row_count = len(row_container.find_elements_by_xpath('//*[@role="row"]'))
+            int """
+    row_xpath = './*[@role="row"]'
+    row_count = len(row_container.find_elements_by_xpath(row_xpath))
     result_row_count = row_count
     search_field.send_keys(query)
-    while result_row_count == row_count:
-        if time.time() <= timeout:
-            result_row_count = len(row_container.find_elements_by_xpath('//*[@role="row"]'))
+    timeout = time.time() + 5
+    while result_row_count == row_count and time.time() <= timeout:
+        result_row_count = len(row_container.find_elements_by_xpath(row_xpath))
+    return result_row_count

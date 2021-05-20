@@ -34,12 +34,12 @@ class TestCase:
         # Navigate to SubVenues tab
         reference_data_tab = self.driver.find_element_by_xpath(self.test_data['reference_data_tab_xpath'])
         reference_data_tab.click()
-        sub_venues_tab = reference_data_tab.find_element_by_xpath(self.test_data['sub_venues_tab_xpath'])
+        sub_venues_tab = self.driver.find_element_by_xpath(self.test_data['sub_venues_tab_xpath'])
         sub_venues_tab.click()
 
         # Press New button
-        new_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.test_data['new_btn_xpath'])))
-        new_button.click()
+        new_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.test_data['new_btn_xpath'])))
+        new_btn.click()
 
         # Fill required fields
         name_input = self.wait.until(EC.presence_of_element_located((By.ID, self.test_data['name_input_id'])))
@@ -73,7 +73,7 @@ class TestCase:
     # Main method
     # Must call in web_demo.py by QAP_758.TestCase(report_id, chrome_driver, wait_driver).execute() command
     def execute(self):
-        call(self.add_sub_venue, self.case_id, 'Add SubVenue')
+        call(self.add_sub_venue, self.case_id, 'Add SubVenue (Precondition)')
         call(self.delete_sub_venue, self.case_id, 'Delete SubVenue')
 
 
