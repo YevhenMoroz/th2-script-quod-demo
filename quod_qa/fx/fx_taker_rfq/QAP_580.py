@@ -99,7 +99,7 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_sts_new = 'New'
     case_sts_terminated = 'Terminated'
@@ -121,21 +121,20 @@ def execute(report_id):
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
-        # # Step 1
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
+        # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
                         case_to_currency, case_near_tenor, case_client, venues)
-        # # Step 2
+        # Step 2
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
                               case_sts_new, case_quote_sts_accepted, case_venue)
-        # # Step 3
+        # Step 3
         cancel_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act,
                               case_sts_terminated, case_quote_sts_terminated, case_venue)
@@ -153,4 +152,3 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-

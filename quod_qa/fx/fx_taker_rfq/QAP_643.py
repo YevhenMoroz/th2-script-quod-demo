@@ -156,7 +156,7 @@ def execute(report_id):
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
+
         # Step 3
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,

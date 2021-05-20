@@ -59,12 +59,11 @@ def execute(report_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -76,7 +75,11 @@ def execute(report_id):
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date("RFQ", base_rfq_details, ar_service, case_id, next_working_day_after_25dec_front_end())
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

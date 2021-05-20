@@ -149,9 +149,9 @@ def extract_rfq_table_data(base_details, ar_service):
 def extract_rfq_panel(exec_id, base_request, service):
     """
     Class ExtractRFQTileValues was extended.
-    Here bellow you can see all available methods.
+    Here bellow you can see all available fx_wrapper.
 
-    param name is common for all extract.. methods.
+    param name is common for all extract.. fx_wrapper.
     name it's unique str. It need to extract value from result dict
 
     """

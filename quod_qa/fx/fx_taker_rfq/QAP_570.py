@@ -86,26 +86,18 @@ def execute(report_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(details=base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty1, case_from_currency,
                         case_to_currency, case_tenor, case_client)
 
-        # TODO Which variant is best?
-        # First
         modify_request.set_quantity(case_qty2)
         call(ar_service.modifyRFQTile, modify_request.build())
-
-        # TODO Second
-        # modify_rfq_tile(base_rfq_details, ar_service, case_qty2, case_from_currency,
-        #              case_to_currency, case_tenor, case_client)
-
         send_rfq(base_rfq_details, ar_service)
 
         # Step 2
@@ -116,12 +108,15 @@ def execute(report_id):
         modify_rfq_tile(base_rfq_details, ar_service, case_qty3, case_from_currency,
                         case_to_currency, case_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
-        #
-        # # Step 4
+        # Step 4
         place_order_tob(base_rfq_details, ar_service)
         check_order_book(case_base_request, case_instr_type, common_act, ob_act, case_qty3)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

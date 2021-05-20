@@ -1,20 +1,19 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import fix_demo, ui_tests
-from quod_qa.fx.fx_taker_rfq import QAP_636
-from rule_management import RuleManager
+from quod_qa.fx.fx_mm_esp.quickFix_tests import QAP_2079, QAP_2797
+
 from stubs import Stubs
 from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_1072
+from quod_qa.eq.Care import QAP_4015
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
 timeouts = False
 
 channels = dict()
+
 
 def test_run():
     # Generation id and time for test run
@@ -22,7 +21,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        QAP_1072.execute(report_id)
+        QAP_4015.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',

@@ -74,9 +74,9 @@ def execute(report_id):
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(order_info_extraction_cancel)
     main_order_details.set_filter(["Order ID", order_id2])
-    order_exec_sts = ExtractionDetail('order_exec_sts','ExecSts')
+    order_exec_sts = ExtractionDetail('order_exec_sts', 'ExecSts')
     main_order_details.add_single_order_info(OrderInfo.create(
-    action=ExtractionAction.create_extraction_action(extraction_details=[order_status,
+    action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                          order_exec_sts
                                                                                      ])))
 

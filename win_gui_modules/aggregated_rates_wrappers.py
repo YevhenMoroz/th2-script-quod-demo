@@ -338,14 +338,18 @@ class ModifyRatesTileRequest:
     def set_tenor(self, tenor: str):
         self.modify_request.tenor = tenor
 
-    def set_change_instrument(self, change_instrument: bool):
-        self.modify_request.changeInstrument = change_instrument
+    def set_instrument(self, from_currency: str, to_currency: str, set_tenor: str):
+        self.modify_request.changeInstrument = True
+        self.modify_request.fromCurrency = from_currency
+        self.modify_request.toCurrency = to_currency
+        self.modify_request.tenor = set_tenor
 
-    def set_quantity(self, quantity: int):
-        self.modify_request.quantity.value = quantity
+    def set_quantity(self,  quantity: str):
+        self.modify_request.changeQty = True
+        self.modify_request.quantityAsString = quantity
 
-    def set_change_qty(self, qty: bool):
-        self.modify_request.changeQty = qty
+    # def set_quantity(self, quantity: int):
+    #     self.modify_request.quantity.value = quantity
 
     def add_context_action(self, context_action: ContextActionRatesTile):
         self.modify_request.contextActions.append(context_action.build())

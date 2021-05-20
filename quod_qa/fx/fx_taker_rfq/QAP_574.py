@@ -121,7 +121,7 @@ def execute(report_id):
 
     case_name = Path(__file__).name[:-3]
     # case params
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "FXForward"
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -140,12 +140,11 @@ def execute(report_id):
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Steps 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -167,8 +166,12 @@ def execute(report_id):
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

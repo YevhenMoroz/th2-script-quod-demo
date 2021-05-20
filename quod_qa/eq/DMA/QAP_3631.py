@@ -64,5 +64,5 @@ def execute(report_id):
     print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID','ExecType'])
+                                         key_parameters=['ClOrdID', 'ExecType'])
 

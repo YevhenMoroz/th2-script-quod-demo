@@ -107,7 +107,7 @@ def check_order_book(base_request, instr_type, act_ob, case_id, qty):
 def import_layout(base_request, option_service):
     modification_request = WorkspaceModificationRequest()
     modification_request.set_default_params(base_request=base_request)
-    modification_request.set_filename("empty_workspace.xml")
+    modification_request.set_filename("rfq_workspace.xml")
     modification_request.set_path('C:\\QA')
     modification_request.do_import()
 
@@ -130,7 +130,7 @@ def execute(report_id):
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'Spot'
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -139,11 +139,11 @@ def execute(report_id):
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         import_layout(case_base_request, option_service)
         # Step 2-3
@@ -160,8 +160,12 @@ def execute(report_id):
         check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                          case_qty)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

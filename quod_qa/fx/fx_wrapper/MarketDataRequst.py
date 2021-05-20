@@ -1,6 +1,7 @@
 
-from CaseParams import CaseParams
+
 from custom import basic_custom_actions as bca
+from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from stubs import Stubs
 
 
@@ -9,52 +10,23 @@ class MarketDataRequst:
     fix_act = Stubs.fix_act
     verifier = Stubs.verifier
     subscribe = None
+    mdreqid=None
+    case_params = None
+    md_subscribe_response=None
 
-    # Defaulf band with qty=1M
-    md_subscribe_response = {
-        'MDReqID': md_params['MDReqID'],
-        'Instrument': {
-            'Symbol': ''
-        },
-        'LastUpdateTime': '*',
-        'NoMDEntries': [
-            {
-                'SettlType': 0,
-                'MDEntryPx': '*',
-                'MDEntryTime': '*',
-                'MDEntryID': '*',
-                'MDEntrySize': '1000000',
-                'QuoteEntryID': '*',
-                'MDOriginType': 1,
-                'SettlDate': '',
-                'MDQuoteType': 1,
-                'MDEntryPositionNo': 1,
-                'MDEntryDate': '*',
-                'MDEntryType': 0
-            },
-            {
-                'SettlType': 0,
-                'MDEntryPx': '*',
-                'MDEntryTime': '*',
-                'MDEntryID': '*',
-                'MDEntrySize': '1000000',
-                'QuoteEntryID': '*',
-                'MDOriginType': 1,
-                'SettlDate': '',
-                'MDQuoteType': 1,
-                'MDEntryPositionNo': 1,
-                'MDEntryDate': '*',
-                'MDEntryType': 1
-            }
 
-        ]
-    }
 
-    def __init__(self, market_depth='0', md_update_type='0',case_params=CaseParams):
+
+    def __init__(self, case_params=CaseParams, market_depth='0', md_update_type='0'):
         self.market_depth=market_depth
         self.md_update_type=md_update_type
         self.case_params=case_params
+        self.mdreqid=case_params.mdreqid
+        self.set_md_subscribe_response()
+        self.set_md_params()
 
+
+    def set_md_params(self):
         self.md_params={
             'SenderSubID': self.case_params.account,
             'MDReqID': self.case_params.mdreqid,
@@ -73,8 +45,9 @@ class MarketDataRequst:
                 }
             ]
         }
+        return self
 
-    # Send MarketDataRequest subscribe method
+    #Send MarketDataRequest subscribe method
     def send_md_request(self):
         self.md_params['SubscriptionRequestType'] = '1'
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(
@@ -84,18 +57,82 @@ class MarketDataRequst:
                 self.case_params.case_id,
                 bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
             ))
+        return self
+
+    def set_md_subscribe_response(self):
+        # Defaulf band with qty=1M
+        self.md_subscribe_response = {
+            'MDReqID': self.mdreqid,
+            'Instrument': {
+                'Symbol': self.case_params.symbol
+            },
+            'LastUpdateTime': '*',
+            'NoMDEntries': [
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '1000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': '',
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 1,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '*',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '1000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': '',
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 1,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                }
+
+            ]
+        }
+
+
+
 
 
     # Extract filed by name
     def extruct_filed(self, field, band_number=0):
-        if field=='price':
-            self.subscribe.response_messages_list[band_number].fields['NoMDEntries'] \
+        price = 0
+        if field.lower()=='price':
+            price = self.subscribe.response_messages_list[band_number].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[1] \
                 .message_value.fields['MDEntryPx'].simple_value
+        return price
 
 
     # Check respons was received
     def verify_md_pending(self, *args, published=True, priced=True):
+        if self.case_params.securitytype == 'FXFWD':
+            self.prepare_md_for_verification_fwrd(*args, published=True, priced=True)
+        elif self.case_params.securitytype == 'FXSPOT':
+            self.prepare_md_for_verification_spo(*args, published=True, priced=True)
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Receive MarketDataSnapshotFullRefresh (pending)',
+                bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
+                self.subscribe.checkpoint_id,
+                self.case_params.connectivity,
+                self.case_params.case_id
+            )
+        )
+        return self
+
+    # Check respons was received
+    def verify_md_pending_forward(self, *args, published=True, priced=True):
         self.prepare_md_for_verification(*args, published=True, priced=True)
         self.verifier.submitCheckRule(
             bca.create_check_rule(
@@ -106,14 +143,16 @@ class MarketDataRequst:
                 self.case_params.case_id
             )
         )
+        return self
 
-
-    def prepare_md_for_verification(self,*args, published=True, priced=True):
-        if len(args) > 0:
+    def prepare_md_for_verification_spo(self,qty_count, published=True, priced=True):
+        if len(qty_count) > 0:
+            a = len(qty_count)
             band = 0
             self.md_subscribe_response['NoMDEntries'].clear()
             md_entry_position=1
-            for qty in args:
+            for qty in qty_count:
+                b=qty
                 md_entry_type = 0
                 while md_entry_type < 2:
                     # self.md_subscribe_response['NoMDEntries'].append(one_band)
@@ -134,7 +173,43 @@ class MarketDataRequst:
                     self.md_subscribe_response['NoMDEntries'][band]['MDEntrySize'] = qty
                     self.md_subscribe_response['NoMDEntries'][band]['MDEntryType'] = md_entry_type
                     self.md_subscribe_response['NoMDEntries'][band]['MDEntryPositionNo'] = md_entry_position
-                    self.md_subscribe_response['NoMDEntries'][band]['SettlDate'] = '2021/05/08'
+                    self.md_subscribe_response['NoMDEntries'][band]['SettlDate'] = self.case_params.settldate.split(' ')[0]
+                    md_entry_type +=1
+                    band +=1
+                md_entry_position +=1
+
+    def prepare_md_for_verification_fwrd(self,qty_count, published=True, priced=True):
+        if len(qty_count) > 0:
+            a = len(qty_count)
+            band = 0
+            self.md_subscribe_response['NoMDEntries'].clear()
+            md_entry_position=1
+            for qty in qty_count:
+                b=qty
+                md_entry_type = 0
+                while md_entry_type < 2:
+                    # self.md_subscribe_response['NoMDEntries'].append(one_band)
+                    self.md_subscribe_response['NoMDEntries'].append({
+                        'SettlType': 0,
+                        'MDEntryPx': '*',
+                        'MDEntryTime': '*',
+                        'MDEntryID': '*',
+                        'MDEntryForwardPoints':'*',
+                        'MDEntrySize': '1000000',
+                        'MDEntrySpotRate':'*',
+                        'QuoteEntryID': '*',
+                        'MDOriginType': 1,
+                        'SettlDate': '',
+                        'MDQuoteType': 1,
+                        'MDEntryPositionNo': 1,
+                        'MDEntryDate': '*',
+                        'MDEntryType': 0
+                    })
+                    self.md_subscribe_response['NoMDEntries'][band]['SettlType'] = self.case_params.settltype
+                    self.md_subscribe_response['NoMDEntries'][band]['MDEntrySize'] = qty
+                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryType'] = md_entry_type
+                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryPositionNo'] = md_entry_position
+                    self.md_subscribe_response['NoMDEntries'][band]['SettlDate'] = self.case_params.settldate.split(' ')[0]
                     md_entry_type +=1
                     band +=1
                 md_entry_position +=1
@@ -147,7 +222,7 @@ class MarketDataRequst:
             bca.convert_to_request(
                 'Send MDR (unsubscribe)',
                 self.case_params.connectivity,
-                self.case_id,
+                self.case_params.case_id,
                 bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
             ))
 

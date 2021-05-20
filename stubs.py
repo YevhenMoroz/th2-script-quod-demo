@@ -1,3 +1,4 @@
+from os.path import abspath, dirname, join
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
@@ -19,6 +20,7 @@ from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerI
 
 
 class Stubs:
+    configs_dir = join(dirname(abspath(__file__)), 'configs')
     factory = CommonFactory(
         grpc_router_config_filepath="./configs/grpc.json",
         rabbit_mq_config_filepath="./configs/rabbit.json",
