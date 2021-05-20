@@ -568,7 +568,7 @@ def execute(report_id):
 
         #region Cancel Algo Order
         case_id_6 = bca.create_event("Cansel Algo Order", case_id)
-        # Check bs (FIXQUODSELL5 sent 35=D Slice 4)
+        # Check SS (on FIXQUODSELL5 sent 35=8 Slice 4)
         cancel_param = {
         'ExecID': '*',
         'OrderQty': qty,
@@ -601,7 +601,7 @@ def execute(report_id):
         'Instrument': instrument,
         }
 
-        fix_verifier_ss.CheckExecutionReport(cancel_param, responce_new_order_single, case=case_id_6, message_name='SS FIXBUYTH2 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
+        fix_verifier_ss.CheckExecutionReport(cancel_param, responce_new_order_single, case=case_id_6, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
         #endregion
 
         rule_destroyer(rule_list)
