@@ -2,7 +2,7 @@ import logging
 
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
@@ -20,7 +20,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "RIN_1145"
+    case_name = "RIN_1146"
 
     seconds, nanos = timestamps()  # Store case start time
 
@@ -28,8 +28,8 @@ def execute(report_id):
     order_ticket_service = Stubs.win_act_order_ticket
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "1000"
-    price = "30"
+    qty = "3000"
+    price = "50"
     order_type = "Limit"
     tif = "Day"
     client = "HAKKIM"
@@ -80,22 +80,31 @@ def execute(report_id):
 
     # region Check values in OrderBook
     order_status = ExtractionDetail("order_status", "Sts")
-    order_client = ExtractionDetail("order_client", "Client")
     order_tif = ExtractionDetail("order_tif", "TIF")
 
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_client,
-                                                                                            order_tif
-                                                                                            ])
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
+
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
     call(order_book_service.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Open"),
-                                                  verify_ent("Client", order_client.name, client),
-                                                  verify_ent("TIF", order_tif.name, tif)
-                                                  ]))
+                                                 [verify_ent("Status", order_status.name, "Open")]))
     # end region
+
+    # region Cancel order
+    cancel_order_details = CancelOrderDetails()
+    cancel_order_details.set_default_params(base_request)
+    cancel_order_details.set_filter(["Order ID", order_id])
+    cancel_order_details.set_comment("Order cancelled by script")
+
+    call(order_book_service.cancelOrder, cancel_order_details.build())
+    # end region
+
+    # region Check values after Cancel
+    call(order_book_service.getOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                 [verify_ent("Order Status", order_status.name, "Cancelled")]))
+    # endregion
 
     # region Amend order
     order_amend = OrderTicketDetails()
@@ -104,15 +113,16 @@ def execute(report_id):
     amend_order_details.set_default_params(base_request)
     amend_order_details.set_order_details(order_amend)
     amend_order_details.set_filter(["Order ID", order_id])
+
+    # The system shouldn't find Amend function, this is negative case
     call(order_book_service.amendOrder, amend_order_details.build())
     # endregion
 
     # region Check values after Amend
     call(order_book_service.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("TIF", order_tif.name, "GoodTillDate")]))
+                                                 [verify_ent("Order Status", order_status.name, "Cancelled"),
+                                                  verify_ent("TIF", order_tif.name, "Day")]))
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-
