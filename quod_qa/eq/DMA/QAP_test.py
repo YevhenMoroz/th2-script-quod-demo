@@ -26,7 +26,7 @@ def execute(report_id):
     order_ticket_service = Stubs.win_act_order_ticket
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "50"
+    qty = "0"
     price = "3"
     client = "HAKKIM"
     lookup = "TCS"
