@@ -14,8 +14,6 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
-#from test_cases.QAP_1560 import TestCase
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -358,6 +356,13 @@ def execute(report_id):
                 'SecurityExchange': 'XPAR',
 
             },
+            'NoAllocs': [{
+                'AllocQty': qty,
+                'AllocAccount': 'MOClientSA1',
+                'AllocPrice': limit,
+                'SettlCurrency': 'GEL'
+            },
+            ],
             'NoParty': [
                 {
                     'PartyRole': '17',
