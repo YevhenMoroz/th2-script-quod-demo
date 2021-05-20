@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues)
-from win_gui_modules.client_pricing_wrappers import SelectRowsRequest
+from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues)
@@ -301,10 +302,22 @@ def set_fx_order_ticket_value(base_request):
     call(order_ticket_service.placeFxOrder, new_order_details.build())
 
 
-def select_rows(base_request, row_numbers):
-    request = SelectRowsRequest()
+def select_rows(base_tile_details, row_numbers,cp_service):
+    """
+    To select several rows send tuple or list with numbers [1,2,3].
+    WARNING!
+    when you send numbers more than 4 test case will scroll up after it select all rows you asked
+    """
+    request = SelectRowsRequest(base_tile_details)
     request.set_row_numbers(row_numbers)
-    call(Stubs.win_act_cp_service.selectRows, request.build())
+    call(cp_service.selectRows, request.build())
+
+def deselect_rows(base_tile_details,cp_service):
+    """
+    The method will deselect all selected rows like Esk button
+    """
+    request = DeselectRowsRequest(base_tile_details)
+    call(cp_service.deselectRows, request.build())
 
 def execute(report_id):
     # region Preparation
@@ -325,11 +338,14 @@ def execute(report_id):
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
+
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
+    base_tile_details = BaseTileDetails(base=base_request)
+
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
-    base_tile_details = BaseTileDetails(base=base_request)
+    cp_service = Stubs.win_act_cp_service
     option_service = Stubs.win_act_options
     # endregion
     Stubs.frontend_is_open = True
@@ -380,7 +396,11 @@ def execute(report_id):
         # endregion
 
         # region ClientPricing
-        select_rows(base_request, [1,2])
+        select_rows(base_tile_details, [1, 2, 4], cp_service)
+        print('Sleeping')
+        time.sleep(5)
+        print('Deselecting')
+        deselect_rows(base_tile_details,cp_service)
         # endregion
 
         # close_fe_2(case_id, session_id)
