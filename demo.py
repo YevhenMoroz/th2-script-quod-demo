@@ -1,9 +1,11 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.eq import MD_test_3, MD_test
-from quod_qa.eq.Algo_Multilisted import QAP_1962, QAP_1965, QAP_1966, QAP_1963, QAP_1983, QAP_1984, QAP_1967
-from quod_qa.eq.Sorping import QAP_2409
+from quod_qa.eq import MD_test_3, MD_test, TradingSession_test
+from quod_qa.eq.Algo_Multilisted import QAP_1962, QAP_1965, QAP_1966, QAP_1963, QAP_1983, QAP_1984, QAP_1967, QAP_2068, \
+    QAP_3134
+from quod_qa.eq.Algo_TWAP import QAP_3119
+from quod_qa.eq.Sorping import QAP_2409, QAP_2408
 from rule_management import RuleManager
 from stubs import Stubs
 
@@ -25,15 +27,19 @@ def test_run():
         # QAP_1965.execute(report_id)
         # QAP_1966.execute(report_id)
         # QAP_1962.execute(report_id)
-        QAP_1967.execute(report_id)
+        # QAP_1967.execute(report_id)
         # QAP_1983.execute(report_id)
         # QAP_1984.execute(report_id)
         # QAP_1963.execute(report_id)
         # QAP_2409.execute(report_id)
+        # QAP_2068.execute(report_id)
+        QAP_3134.execute(report_id)
+        # QAP_3119.execute(report_id)
+        # TradingSession_test.execute(report_id)
 
         # MD_test_3.execute(report_id)
         # MD_test.execute(report_id)
-
+        # MD_test.execute(report_id)
         # rm = RuleManager()
         # rm.remove_all_rules()
         # rm.print_active_rules()
