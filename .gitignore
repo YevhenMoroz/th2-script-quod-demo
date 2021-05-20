@@ -5,3 +5,5 @@
 /etc/ref
 /configs/*.json
 demo.py
+stubs.py
+/configs/script-params.json
