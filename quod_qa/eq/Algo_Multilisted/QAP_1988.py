@@ -10,6 +10,8 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
+from stubs import Stubs
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -33,6 +35,7 @@ currency = 'EUR'
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
+connectivity_fh = 'fix-fh-310-columbia'
 
 instrument = {
             'Symbol': 'FR0000121121_EUR',
@@ -235,9 +238,10 @@ def execute(report_id):
         'ExecType': "F",
         'OrdStatus': '2',
         'TimeInForce': '0',
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value 
+        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
     } 
-    fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])    
+    fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'OrderID'])    
     #endregion
 
 
