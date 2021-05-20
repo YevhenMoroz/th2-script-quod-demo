@@ -22,7 +22,7 @@ def execute(report_id):
     case_name = "QAP_test"
     seconds, nanos = timestamps()  # Store case start tim
     # region Declarations
-    act = Stubs.win_act_order_book
+
     order_ticket_service = Stubs.win_act_order_ticket
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
@@ -74,8 +74,6 @@ def execute(report_id):
     # endregion
     # region Check values in OrderBook
 
-    main_order_details.set_default_params(base_request)
-
     main_order_status = ExtractionDetail("order_status", "Sts")
     main_order_client = ExtractionDetail("order_client", "Client")
 
@@ -84,7 +82,7 @@ def execute(report_id):
                                                                                                  ])
     main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
-    call(act.getOrdersDetails, main_order_details.request())
+    call(order_book_service.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(extraction_id, "checking order",
                                                  [verify_ent("Status", main_order_status.name, "Open"),
                                                   verify_ent("Client", main_order_client.name, client),
