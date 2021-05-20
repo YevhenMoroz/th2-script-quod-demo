@@ -9,7 +9,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-3991"
+    case_name = "QAP-1406"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
@@ -33,7 +33,7 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    responce=eq_wrappers.create_order_via_fix(case_id, 3, 1, dummy_client, 2, qty, 0, price)
+    responce=eq_wrappers.create_order_via_fix(case_id, 2, 1, dummy_client, 2, qty, 0, price)
     # endregion
     # region verify values
     eq_wrappers.verify_value(base_request,case_id,"Sts","Held")
