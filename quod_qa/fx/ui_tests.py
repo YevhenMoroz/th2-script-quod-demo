@@ -12,6 +12,7 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues)
+from win_gui_modules.client_pricing_wrappers import SelectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues)
@@ -235,6 +236,41 @@ def import_layout(base_request, option_service):
 
     call(option_service.modifyWorkspace, modification_request.build())
 
+def set_order_ticket_options(option_service, base_request):
+    """
+    The method can be used for set Only OrderTicket>DefaultFXValues
+        (to add more elements raise a sub-task)
+    To  select Option use Panels
+    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
+
+    """
+    order_ticket_options = OptionOrderTicketRequest(base=base_request)
+    fx_values = DefaultFXValues();
+    fx_values.AggressiveTIF = "Pegger"
+    order_type = "Market"
+    tif = "FillOrKill"
+    strategy_type = "Quod DarkPool"
+    strategy = "PeggedTaker"
+    child_strategy = "BasicTaker"
+    fx_values.AggressiveOrderType = order_type
+    # fx_values.AggressiveTIF = tif
+    # fx_values.AggressiveStrategyType = strategy_type
+    # fx_values.AggressiveStrategy = strategy
+    # fx_values.AggressiveChildStrategy = child_strategy
+    # fx_values.PassiveOrderType = order_type
+    # fx_values.PassiveTIF = tif
+    # fx_values.PassiveStrategyType = strategy_type
+    # fx_values.PassiveStrategy = strategy
+    # fx_values.PassiveChildStrategy = child_strategy
+    # fx_values.AlgoSlippage = '12367.45'
+    fx_values.DMASlippage = '12678.09'
+    fx_values.Client = "FIXCLIENT4"
+
+
+    order_ticket_options.set_default_fx_values(fx_values)
+    call(option_service.setOptionOrderTicket, order_ticket_options.build())
+
+
 
 
 
@@ -264,6 +300,11 @@ def set_fx_order_ticket_value(base_request):
     order_ticket_service = Stubs.win_act_order_ticket_fx
     call(order_ticket_service.placeFxOrder, new_order_details.build())
 
+
+def select_rows(base_request, row_numbers):
+    request = SelectRowsRequest()
+    request.set_row_numbers(row_numbers)
+    call(Stubs.win_act_cp_service.selectRows, request.build())
 
 def execute(report_id):
     # region Preparation
@@ -310,6 +351,7 @@ def execute(report_id):
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
         # set_order_ticket_options(option_service, base_request)
+        # set_order_ticket_options(option_service, base_request)
         # endregion
 
         # region RFQ tile ↓
@@ -334,7 +376,11 @@ def execute(report_id):
         # endregion
 
         # region OrderTicket
-        set_fx_order_ticket_value(base_request)
+        # set_fx_order_ticket_value(base_request)
+        # endregion
+
+        # region ClientPricing
+        select_rows(base_request, [1,2])
         # endregion
 
         # close_fe_2(case_id, session_id)
