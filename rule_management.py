@@ -1,4 +1,4 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+from th2_grpc_sim_quod.sim_pb2 import TemplateOrderCancelReplaceExecutionReport, TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
     TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket
@@ -130,6 +130,12 @@ class RuleManager:
                                                                        ConnectionID(session_alias=session)))
 
     @staticmethod
+    def add_OrderCancelReplace_ExecutionReport(session: str):
+        return Stubs.simulator.createOrderCancelReplaceExecutionReport(request=
+                                                  TemplateOrderCancelReplaceExecutionReport(connection_id=
+                                                                       ConnectionID(session_alias=session)))
+
+    @staticmethod
     def add_RFQ(session: str):
         return Stubs.simulator.createQuodRFQRule(request=
                                                  TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
@@ -196,35 +202,6 @@ class RuleManager:
                                                                      avgPrice=avgPrice
                                             ))
 
-    @staticmethod
-    def add_NewOrdSingle_FOK(session: str, account: str, venue: str, trade: bool, price : float ):
-        return Stubs.simulator.createNewOrdSingleFOK(
-            request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
-                                                                     account=account,
-                                                                     venue=venue,
-                                                                     trade=trade,
-                                                                     price= price))
-    @staticmethod
-    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : int ):
-        return Stubs.simulator.createNewOrdSingleIOC(
-            request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
-                                                                     account=account,
-                                                                     venue=venue,
-                                                                     trade=trade,
-                                                                     tradedQty=tradedQty,
-                                                                     price= price
-                                            ))
-
-    @staticmethod
-    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
-        return Stubs.simulator.createNewOrdSingleMarket(
-            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
-                                                                     account=account,
-                                                                     venue=venue,
-                                                                     trade=trade,
-                                                                     tradedQty=tradedQty,
-                                                                     avgPrice=avgPrice
-                                            ))
 
     # ------------------------
 

@@ -19,14 +19,14 @@ def md(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '10000000',
+                'MDEntryPx': '5',
+                'MDEntrySize': '5',
                 'MDEntryPositionNo': '1'
             },
             {
-                'MDEntryType': '0',
-                'MDEntryPx': '40',
-                'MDEntrySize': '10000000',
+                'MDEntryType': '1',
+                'MDEntryPx': '5',
+                'MDEntrySize': '5',
                 'MDEntryPositionNo': '1'
             }
         ]
