@@ -20,7 +20,7 @@ def test_run():
     report_id = bca.create_event('FiLL tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        QAP_1979.execute(report_id)
+        QAP_3123.execute(report_id)
     except Exception:
         logging.error("Error execution",exc_info=True)
 

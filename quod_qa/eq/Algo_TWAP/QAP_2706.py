@@ -10,7 +10,8 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from MD_SOR import md
+from stubs import Stubs
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
     
 
 logger = logging.getLogger(__name__)
@@ -34,12 +35,15 @@ client = "CLIENT2"
 order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
+s_par = '734'
+s_trqx = '3416'
 
 now = datetime.today() - timedelta(hours=3)
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
+connectivity_fh = 'fix-fh-310-columbia'
 
 instrument = {
             'Symbol': 'FR0010263202_EUR',
@@ -63,6 +67,24 @@ def rule_destroyer(list_rules):
             rule_manager.remove_rule(rule)
 
 
+def send_market_data(symbol: str, case_id :str, market_data ):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol=symbol,
+        connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntries': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataSnapshotFullRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
+    ))
+
+
 def execute(report_id):
     try:
         rule_list = rule_creation();
@@ -73,7 +95,36 @@ def execute(report_id):
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        md(case_id_0)
+        market_data1 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data1)
+        market_data2 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_trqx, case_id_0, market_data2)    
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
