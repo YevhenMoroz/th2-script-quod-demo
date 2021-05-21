@@ -60,8 +60,26 @@ def container_event_by_text(event_text: str) -> str:
 
 # todo: rename?
 def table_filter_name_by_text(filter_text: str) -> str:
+    """ Returns filter xpath by text inside
+        Parameters:
+            filter_text (str): filter text.
+        Returns:
+            str """
     return f'//*[text()="{filter_text}"]/ancestor::*[@col-id]'
 
+
+def action_by_tooltip(tooltip: str) -> str:
+    """ Returns table action xpath by text inside
+        Parameters:
+            tooltip (str): action tooltip.
+        Returns:
+            str """
+    return f'//*[@nbtooltip="{tooltip}"]/*'
+
+
+login_logo = '//*[@class="login-logo"]'
+person_btn = '//*[@data-name="person"]'
+logout_btn = '//*[@href="#/auth/logout"]'
 
 table_headers = '//*[@ref="eHeaderContainer"]/*[@class="ag-header-row"]'
 table_filter_names = f'{table_headers}[1]/*'
@@ -71,8 +89,3 @@ table_row = './*[@role="row"]'
 filter_input = '//input[@ref="eFloatingFilterText"]'
 
 actions_btn = '//*[@data-name="more-vertical"]'
-edit_action_btn = '//*[@nbtooltip="Edit"]/*'
-
-login_logo = '//*[@class="login-logo"]'
-person_btn = '//*[@data-name="person"]'
-logout_btn = '//*[@href="#/auth/logout"]'

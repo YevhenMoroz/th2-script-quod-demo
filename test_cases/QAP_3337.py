@@ -705,7 +705,54 @@ def execute(report_id):
             bca.create_check_rule(
                 "Receive Allocation Instruction Report",
                 bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report_params2,
-                                       ['OrderID', 'AllocTransType']),
+                                       ['OrderID', 'AllocTransType', 'AllocType']),
+                checkpoint_id4, 'fix-ss-back-office', case_id
+            )
+        )
+
+        #verify allocationinstruction3
+        allocation_instruction_report_params3 = {
+            'TransactTime': '*',
+            'Side': '1',
+            'AvgPx': limit,
+            'Currency': 'EUR',
+            'Quantity': qty,
+            'SettlDate': today,
+            'AllocID': '*',
+            'TradeDate': today,
+            'Instrument': {
+                'SecurityDesc': 'VETOQUINOL',
+                'Symbol': 'FR0004186856_EUR',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'NoParty': [
+                {
+                    'PartyRole': '17',
+                    'PartyID': 'Contra_Firm',
+                    'PartyIDSource': 'N',
+
+                },
+                {
+                    'PartyRole': '1',
+                    'PartyID': 'ExecutingFirm',
+                    'PartyIDSource': 'N',
+                }
+            ],
+            'NoOrders': [{
+                'OrderID': care_order_id,
+                'ClOrdID': care_order_id
+            }],
+            'AllocType': 2,
+            'AllocTransType': 2,
+        }
+        Stubs.verifier.submitCheckRule(
+            bca.create_check_rule(
+                "Receive Allocation Instruction Report",
+                bca.filter_to_grpc_nfu("AllocationInstruction", allocation_instruction_report_params3,
+                                       ['OrderID', 'AllocTransType', 'AllocType']),
                 checkpoint_id4, 'fix-ss-back-office', case_id
             )
         )
