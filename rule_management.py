@@ -183,7 +183,7 @@ class RuleManager:
                                             ))
 
     @staticmethod
-    def add_OrderCancelRequest_ExecutionReport(session: str, trade: bool):
+    def add_OrderCancelReplaceRequest_ExecutionReport(session: str, trade: bool):
         return Stubs.simulator.createOrderCancelReplaceExecutionReport(
             request=TemplateOrderCancelReplaceExecutionReport(connection_id=ConnectionID(session_alias=session),
                                                                      trade=trade
