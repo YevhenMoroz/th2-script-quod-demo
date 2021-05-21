@@ -3,7 +3,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
+    SelectRowsRequest, DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
@@ -19,6 +20,17 @@ def modify_rates_tile(base_request, service, instrument, client):
     modify_request.set_instrument(instrument)
     modify_request.set_client_tier(client)
     call(service.modifyRatesTile, modify_request.build())
+
+
+def select_rows(base_request, cp_service, row_numbers):
+    request = SelectRowsRequest(base_request)
+    request.set_row_numbers(row_numbers)
+    call(cp_service.selectRows, request.build())
+
+
+def deselect_rows(base_request, cp_service):
+    request = DeselectRowsRequest(base_request)
+    call(cp_service.deselectRows, request.build())
 
 
 def press_pricing(base_request, service):
@@ -82,7 +94,7 @@ def execute(report_id):
     instrument = "EUR/USD-SPOT"
     client_tier = "Silver"
     client = "Silver1"
-    slippage = "2"
+    slippage = "10"
     instrument_type = "Spot"
     qty_1m = "1000000"
     qty_2m = "2000000"
@@ -90,15 +102,16 @@ def execute(report_id):
     empty_free_notes = ""
     pricing_off = "not active"
     executable_off = "not tradeable"
+    notes="not enough quantity in book"
     sts_rej = "Rejected"
     sts_term = "Terminated"
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
+
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
@@ -116,8 +129,8 @@ def execute(report_id):
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
                          qty_1m, owner, client, pricing_off, sts_rej)
         # Step 6
-        # TODO Need to select row
         press_pricing(base_details, cp_service)
+        select_rows(base_details, cp_service, [1, 2])
         press_executable(base_details, cp_service)
         # Step 7
         place_order(base_details, cp_service, client, slippage, qty_1m)
@@ -125,7 +138,7 @@ def execute(report_id):
                          qty_1m, owner, client, empty_free_notes, sts_term)
         place_order(base_details, cp_service, client, slippage, qty_2m)
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_2m, owner, client, executable_off, sts_rej)
+                         qty_2m, owner, client, notes, sts_rej)
         # Step 8
         press_pricing(base_details, cp_service)
         press_executable(base_details, cp_service)
@@ -135,7 +148,7 @@ def execute(report_id):
                          qty_1m, owner, client, empty_free_notes, sts_term)
         place_order(base_details, cp_service, client, slippage, qty_2m)
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_2m, owner, client, pricing_off, sts_rej)
+                         qty_2m, owner, client, notes, sts_rej)
         # Step 10
         press_pricing(base_details, cp_service)
         place_order(base_details, cp_service, client, slippage, qty_2m)
