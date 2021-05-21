@@ -18,6 +18,8 @@ from selenium.common.exceptions import NoSuchElementException
 from google.protobuf.timestamp_pb2 import Timestamp
 from typing import Callable, Any
 
+import web_admin_modules.locator_constants as get_xpath
+
 
 def get_report(name: str, status: int, parent_id: EventID, timestamp: Timestamp) -> None:
     """ Creates TH2 event
@@ -72,11 +74,11 @@ def login(web_driver: WebDriver, wait_driver: WebDriverWait) -> None:
             None """
 
     web_driver.get(Stubs.custom_config['web_admin_url'])
-    login_input = wait_driver.until(EC.presence_of_element_located((By.ID, 'input-email')))
-    password_input = wait_driver.until(EC.presence_of_element_located((By.ID, 'input-password')))
+    login_input = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text('User Name'))))
+    password_input = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text('Password'))))
     login_input.send_keys(Stubs.custom_config['web_admin_login'])
     password_input.send_keys(Stubs.custom_config['web_admin_password'], Keys.ENTER)
-    wait_driver.until(EC.presence_of_element_located((By.XPATH, '//*[@tag="menu-sidebar"]')))
+    wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.sidebar_menu_tab_by_title('General'))))
 
 
 def logout(wait_driver: WebDriverWait) -> None:
@@ -85,11 +87,11 @@ def logout(wait_driver: WebDriverWait) -> None:
             wait_driver (WebDriverWait): wait-driver for web-driver.
         Returns:
             None """
-    person_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, '//*[@data-name="person"]')))
+    person_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.person_btn)))
     person_btn.click()
-    logout_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, '//*[@href="#/auth/logout"]')))
+    logout_btn = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.logout_btn)))
     logout_btn.click()
-    wait_driver.until(EC.presence_of_element_located((By.CLASS_NAME, 'login-logo')))
+    wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.login_logo)))
 
 
 def check_exists_by_xpath(web_driver: WebDriver, xpath: str) -> bool:
@@ -115,18 +117,25 @@ def check_is_clickable(web_element: WebElement) -> bool:
     return web_element.is_displayed() and web_element.is_enabled()
 
 
-def filter_grid_by_field(row_container: WebElement, search_field: WebElement, query: str) -> int:
-    """ Waits until data refresh in table and after that returns data count
+def filter_grid_by_field(web_driver: WebDriver, filter_name: str, query: str) -> int:
+    """ Filters data in table by filter name and waits until data refresh in table, returns data count
         Parameters:
-            row_container (WebElement): container;
-            search_field (WebElement): field for filter;
+            web_driver (WebDriver): browser web-driver;
+            filter_name (WebElement): name of filter field;
             query (str): query.
         Returns:
             int """
-    row_xpath = './*[@role="row"]'
+    filter_list = web_driver.find_elements_by_xpath(get_xpath.table_filter_names)
+    desired_filter = web_driver.find_element_by_xpath(get_xpath.table_filter_name_by_text(filter_name))
+    desired_filter_index = filter_list.index(desired_filter)
+    filter_input = web_driver.find_element_by_xpath(get_xpath.table_filter_inputs +
+                                                    f'[{desired_filter_index + 1}]' +
+                                                    f'{get_xpath.filter_input}')
+    row_container = web_driver.find_element_by_xpath(get_xpath.table_row_container)
+    row_xpath = get_xpath.table_row
     row_count = len(row_container.find_elements_by_xpath(row_xpath))
     result_row_count = row_count
-    search_field.send_keys(query)
+    filter_input.send_keys(query)
     timeout = time.time() + 5
     while result_row_count == row_count and time.time() <= timeout:
         result_row_count = len(row_container.find_elements_by_xpath(row_xpath))
