@@ -66,6 +66,14 @@ def rule_destroyer(list_rules):
 
 
 def execute(report_id):
+    rule_list = rule_creation();
+    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    # Send_MarkerData
+    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+
+    case_id_0 = bca.create_event("Send Market Data", case_id)
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
@@ -90,7 +98,7 @@ def execute(report_id):
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
         connectivity_fh,
-        report_id,
+        case_id_0,
         message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, connectivity_fh)
     ))
 
@@ -119,17 +127,10 @@ def execute(report_id):
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
         connectivity_fh,
-        report_id,
+        case_id_0,
         message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, connectivity_fh)
     ))
 
-
-    rule_list = rule_creation();
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
-    # Send_MarkerData
-    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
-    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
     
 
     #region Send NewOrderSingle (35=D)

@@ -250,7 +250,7 @@ def execute(report_id):
             'ExDestination': instrument['SecurityExchange'],
             'OrigClOrdID': '*'
         }
-        fix_verifier_bs.CheckOrderCancelReplaceRequest(replace_param_slice1, responce_new_order_single, case=case_id_2, message_name='S1 FIXBUYTH2 sent 35=G TIF0 P5', key_parameters=['Price', 'TimeInForce', 'OrderQty'])
+        fix_verifier_bs.CheckOrderCancelReplaceRequest(replace_param_slice1, responce_new_order_single, case=case_id_3, message_name='S1 FIXBUYTH2 sent 35=G TIF0 P5', key_parameters=['Price', 'TimeInForce', 'OrderQty'])
 
         # Check BS (FIXBUYTH2 35=8 on 35=G)
         er_5 = {
@@ -272,7 +272,7 @@ def execute(report_id):
             'OrigClOrdID': '*',
             'Text': text_ocrr
         }
-        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace TIF0 P5',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace TIF0 P5',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
 
         # Check BS (FIXBUYTH2 send 35=G TIF IOC Price 5)
         replace_param_slice2 = {
@@ -292,10 +292,9 @@ def execute(report_id):
             'Instrument': '*',
             'HandlInst': '1',
             'ExDestination': instrument['SecurityExchange'],
-            'OrigClOrdID': '*',
-            'Text': text_r
+            'OrigClOrdID': '*'
         }
-        fix_verifier_bs.CheckOrderCancelReplaceRequest(replace_param_slice2, responce_new_order_single, case=case_id_2, message_name='S1 FIXBUYTH2 sent 35=G TIF3 P5', key_parameters=['Price', 'TimeInForce', 'OrderQty'])
+        fix_verifier_bs.CheckOrderCancelReplaceRequest(replace_param_slice2, responce_new_order_single, case=case_id_3, message_name='S1 FIXBUYTH2 sent 35=G TIF3 P5', key_parameters=['Price', 'TimeInForce', 'OrderQty'])
 
         # Check BS (FIXBUYTH2 35=8 on 35=G)
         er_6 = {
@@ -316,7 +315,7 @@ def execute(report_id):
             'LeavesQty': '0',
             'OrigClOrdID': '*',
         }
-        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace TIF3 P5',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace TIF3 P5',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
         #endregion
 
         #region Slice 2
