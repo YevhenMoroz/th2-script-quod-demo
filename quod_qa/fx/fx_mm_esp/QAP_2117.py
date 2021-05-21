@@ -158,5 +158,8 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        # Close tile
-        call(cp_service.closeWindow, case_base_request)
+        try:
+            # Close tile
+            call(cp_service.closeWindow, case_base_request)
+        except Exception:
+            logging.error("Error execution", exc_info=True)
