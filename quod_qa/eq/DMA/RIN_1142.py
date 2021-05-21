@@ -53,6 +53,7 @@ def execute(report_id):
     # end region
 
     # region Create buy order
+    #eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif, price)
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -115,19 +116,16 @@ def execute(report_id):
 
     # end region
 
-    # region Cancel order
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    cancel_order_details.set_filter(["Order ID", order_id])
+    # region Amend order
+    order_amend = OrderTicketDetails()
+    order_amend.set_tif("GoodTillDate")
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(base_request)
+    amend_order_details.set_order_details(order_amend)
+    amend_order_details.set_filter(["Order ID", order_id])
 
-    # The system shouldn't find Cancel function, this is negative case
-    call(order_book_service.cancelOrder, cancel_order_details.build())
+    # The system shouldn't find Amend function, this is negative case
+    call(order_book_service.amendOrder, amend_order_details.build())
     # end region
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-
-
-
-
-
-
