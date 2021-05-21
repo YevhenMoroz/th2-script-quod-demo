@@ -53,7 +53,6 @@ def execute(report_id):
     # end region
 
     # region Create buy order
-    #eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif, price)
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
