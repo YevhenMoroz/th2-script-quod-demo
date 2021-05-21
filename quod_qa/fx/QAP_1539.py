@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.default_params_fx import defauot_quote_params, text_messages
 from stubs import Stubs
 
@@ -23,6 +24,7 @@ def execute(report_id, case_params):
 
     reusable_params = defauot_quote_params
     reusable_params['Account'] = case_params['Account']
+    reusable_params['Instrument']['Product'] = 4
     ttl = 100
 
     rfq_params = {
@@ -33,7 +35,7 @@ def execute(report_id, case_params):
             'QuoteType': '1',
             'OrderQty': reusable_params['OrderQty'],
             'OrdType': 'D',
-            'ExpireTime': (datetime.now() + timedelta(seconds=ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
+            'ExpireTime': get_expire_time(ttl),
             'TransactTime': (datetime.utcnow().isoformat())}]
         }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
@@ -48,13 +50,19 @@ def execute(report_id, case_params):
 
     quote_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'Product': 4,
-        'OfferPx': '35.001',
+        'OfferPx': '*',
         'OfferSize': reusable_params['OrderQty'],
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
+        'OfferSpotRate': '*',
         'ValidUntilTime': '*',
-        'Currency': 'EUR'
+        'Currency': 'EUR',
+        'QuoteType': rfq_params['NoRelatedSymbols'][0]['QuoteType'],
+        'Instrument': reusable_params['Instrument'],
+        'Side': reusable_params['Side'],
+        'SettlDate': reusable_params['SettlDate'],
+        'SettlType': reusable_params['SettlType'],
+        'Account': reusable_params['Account']
+
         }
 
     verifier.submitCheckRule(

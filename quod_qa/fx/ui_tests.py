@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -11,11 +12,14 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
-                                                       ExtractRFQTileValues)
+                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest)
+from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_ticket import FXOrderDetails
+from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
@@ -131,10 +135,17 @@ def extract_rfq_table_data(base_details, ar_service):
     extract2 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell1", "Pts", "HSB", 0))
     extract3 = TableAction.extract_cell_value(CellExtractionDetails("PtsBuy1", "Pts", "HSB", 1))
     extract4 = TableAction.extract_cell_value(CellExtractionDetails("DistBuy1", "Dist", "HSB", 1))
+    # There is two way of headers extraction
+    # 1 is use list of colIndexes to extruct custom header(if you know what you want) !!!warning indexes start from 1!!!
+    # extract5 = TableAction.extract_headers(colIndexes=(3,4,9,10))
+    # 2 you may use empty list to extract all available headers
+    extract5 = TableAction.extract_headers(colIndexes=())
     table_actions_request.set_extraction_id("extrId")
-    table_actions_request.add_actions([extract1, extract2, extract3, extract4])
+    table_actions_request.add_actions([extract5])
     result = call(ar_service.processTableActions, table_actions_request.build())
     print(result)
+    for s in result['Headers'].split(';'):
+        print(s)
 
 
 def extract_rfq_panel(exec_id, base_request, service):
@@ -148,8 +159,9 @@ def extract_rfq_panel(exec_id, base_request, service):
     """
     extract_value = ExtractRFQTileValues(details=base_request)
     # extract_value.extract_currency_pair("ar_rfq.extract_currency_pair")
-    extract_value.extract_left_checkbox("ar_rfq.extract_left_checkbox")
-    extract_value.extract_right_checkbox("ar_rfq.extract_right_checkbox")
+    extract_value.extract_send_button_text("ar_rfq.extract_send_button_text")
+    # extract_value.extract_left_checkbox("ar_rfq.extract_left_checkbox")
+    # extract_value.extract_right_checkbox("ar_rfq.extract_right_checkbox")
     # extract_value.extract_currency("ar_rfq.extract_currency")
     # extract_value.extract_quantity("ar_rfq.extract_quantity")
     # extract_value.extract_tenor("ar_rfq.extract_tenor")
@@ -225,6 +237,111 @@ def import_layout(base_request, option_service):
 
     call(option_service.modifyWorkspace, modification_request.build())
 
+def set_order_ticket_options(option_service, base_request):
+    """
+    The method can be used for set Only OrderTicket>DefaultFXValues
+        (to add more elements raise a sub-task)
+    To  select Option use Panels
+    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
+
+    """
+    order_ticket_options = OptionOrderTicketRequest(base=base_request)
+    fx_values = DefaultFXValues();
+    fx_values.AggressiveTIF = "Pegger"
+    order_type = "Market"
+    tif = "FillOrKill"
+    strategy_type = "Quod DarkPool"
+    strategy = "PeggedTaker"
+    child_strategy = "BasicTaker"
+    fx_values.AggressiveOrderType = order_type
+    # fx_values.AggressiveTIF = tif
+    # fx_values.AggressiveStrategyType = strategy_type
+    # fx_values.AggressiveStrategy = strategy
+    # fx_values.AggressiveChildStrategy = child_strategy
+    # fx_values.PassiveOrderType = order_type
+    # fx_values.PassiveTIF = tif
+    # fx_values.PassiveStrategyType = strategy_type
+    # fx_values.PassiveStrategy = strategy
+    # fx_values.PassiveChildStrategy = child_strategy
+    # fx_values.AlgoSlippage = '12367.45'
+    fx_values.DMASlippage = '12678.09'
+    fx_values.Client = "FIXCLIENT4"
+
+
+    order_ticket_options.set_default_fx_values(fx_values)
+    call(option_service.setOptionOrderTicket, order_ticket_options.build())
+
+
+
+
+
+def set_fx_order_ticket_value(base_request):
+    """
+    Method demonstrate how work settign valuese to FX Order ticket.
+    And then set the details to NewFxOrderDetails object with base_request object.
+
+    You should use FXOrderDetails object to define valused that should be set.
+    You may set from 1 to all available fields.
+    You should use only dot for separation of numbers with floating point
+    """
+    order_ticket = FXOrderDetails()
+    order_ticket.set_price_large('1.23')
+    order_ticket.set_price_pips('456')
+    order_ticket.set_qty('1150000')
+    order_ticket.set_client('FIXCLIENT3')
+    order_ticket.set_tif('Day')
+    order_ticket.set_slippage('2.5')
+    order_ticket.set_order_type('Limit')
+    order_ticket.set_stop_price('1.3')
+
+    new_order_details = NewFxOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+    # new servise was added
+    order_ticket_service = Stubs.win_act_order_ticket_fx
+    call(order_ticket_service.placeFxOrder, new_order_details.build())
+
+
+def select_rows(base_tile_details, row_numbers,cp_service):
+    """
+    To select several rows send tuple or list with numbers [1,2,3].
+    WARNING!
+    when you send numbers more than 4 test case will scroll up after it select all rows you asked
+    """
+    request = SelectRowsRequest(base_tile_details)
+    request.set_row_numbers(row_numbers)
+    call(cp_service.selectRows, request.build())
+
+def deselect_rows(base_tile_details,cp_service):
+    """
+    The method will deselect all selected rows like Esk button
+    """
+    request = DeselectRowsRequest(base_tile_details)
+    call(cp_service.deselectRows, request.build())
+
+
+def extract_rates_panel(base_tile_details, ar_service):
+
+
+    s = 'RatesTile0'
+    request = ExtractRatesTileDataRequest(base_tile_details)
+    request.set_extraction_id(f'{s}.extraction_id')
+    request.extract_instrument(f'{s}.instrument')
+    request.extract_quantity(f'{s}.quantity')
+    request.extract_tenor(f'{s}.tenor')
+    request.extract_best_bid(f'{s}.best_bid')
+    request.extract_best_bid_large(f'{s}.best_bid_large')
+    request.extract_best_bid_small(f'{s}.best_bid_small')
+    request.extract_best_ask(f'{s}.best_ask')
+    request.extract_best_ask_large(f'{s}.best_ask_large')
+    request.extract_best_ask_small(f'{s}.best_ask_small')
+    request.extract_spread(f'{s}.spread')
+
+    result  = call(ar_service.extractRatesTileValues, request.build())
+    print(result)
+    for k in result:
+        print(f'{k} = {result[k]}')
+
 
 def execute(report_id):
     # region Preparation
@@ -245,11 +362,14 @@ def execute(report_id):
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
+
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
+    base_tile_details = BaseTileDetails(base=base_request)
+
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
-    base_tile_details = BaseTileDetails(base=base_request)
+    cp_service = Stubs.win_act_cp_service
     option_service = Stubs.win_act_options
     # endregion
     Stubs.frontend_is_open = True
@@ -271,6 +391,7 @@ def execute(report_id):
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
         # set_order_ticket_options(option_service, base_request)
+        # set_order_ticket_options(option_service, base_request)
         # endregion
 
         # region RFQ tile ↓
@@ -285,13 +406,28 @@ def execute(report_id):
         # region ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
+        # extract_rfq_panel()
+        # extract_rfq_table_data()
+        extract_rates_panel(base_tile_details, ar_service)
         # endregion
 
         # region My Orders ↓
 
         # get_my_orders_details(ob_act,  base_request, order_id)
-        get_trade_book_details(ob_act,  base_request, order_id)
+        # get_trade_book_details(ob_act,  base_request, order_id)
 
+        # endregion
+
+        # region OrderTicket
+        # set_fx_order_ticket_value(base_request)
+        # endregion
+
+        # region ClientPricing
+        # select_rows(base_tile_details, [1, 2, 4], cp_service)
+        # print('Sleeping')
+        # time.sleep(5)
+        # print('Deselecting')
+        # deselect_rows(base_tile_details,cp_service)
         # endregion
 
         # close_fe_2(case_id, session_id)
