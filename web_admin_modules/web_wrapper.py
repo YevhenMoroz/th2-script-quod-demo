@@ -65,15 +65,15 @@ def call(method: Callable, case_id: EventID, event_name: str, *args: Any) -> Any
         logging.info('done\n')
 
 
-def login(web_driver: WebDriver, wait_driver: WebDriverWait) -> None:
+def login(web_driver: WebDriver, wait_driver: WebDriverWait, environment: str) -> None:
     """ Login method
         Parameters:
             web_driver (WebDriver): browser driver;
-            wait_driver (WebDriverWait): wait driver for browser driver.
+            wait_driver (WebDriverWait): wait driver for browser driver;
+            environment (str): web environment (303/305)
         Returns:
             None """
-
-    web_driver.get(Stubs.custom_config['web_admin_url'])
+    web_driver.get(Stubs.custom_config[f'web_admin_url_{environment}'])
     login_input = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text('User Name'))))
     password_input = wait_driver.until(EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text('Password'))))
     login_input.send_keys(Stubs.custom_config['web_admin_login'])

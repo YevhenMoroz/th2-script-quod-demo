@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from web_admin_modules.web_wrapper import call, login, logout
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-from test_cases.web_admin import login_logout_example, QAP_758
+from test_cases.web_admin import login_logout_example, QAP_760
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -29,12 +29,13 @@ def test_run():
     wait_driver = WebDriverWait(chrome_driver, 10)
 
     # Start session
-    call(login, report_id, 'Start session (Login)', chrome_driver, wait_driver)
+    call(login, report_id, 'Start session (Login, 303 env)', chrome_driver, wait_driver, '303')
+    # call(login, report_id, 'Start session (Login, 305 env)', chrome_driver, wait_driver, '305')
     chrome_driver.maximize_window()
 
     try:
         # login_logout_example.TestCase(report_id, chrome_driver, wait_driver).execute()
-        QAP_758.TestCase(report_id, chrome_driver, wait_driver).execute()
+        QAP_760.TestCase(report_id, chrome_driver, wait_driver).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
