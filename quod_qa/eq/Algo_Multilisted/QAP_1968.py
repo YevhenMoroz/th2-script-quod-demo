@@ -30,6 +30,7 @@ order_type = 1
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 
+
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"

@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 qty = 1300
 text_p='Partial fill'
 text_pn='Pending New status'

@@ -258,7 +258,7 @@ def execute(report_id):
             'OrderQty': int(qty / 2),
             'OrdType': order_type,
             'ClOrdID': '*',
-            'Text': text_s,
+            'Text': text_ocrr,
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
@@ -270,7 +270,28 @@ def execute(report_id):
             'LeavesQty': '0',
             'OrigClOrdID': '*',
         }
-        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace',key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
+
+        # Check BS (FIXBUYTH2 35=8 on 35=G)
+        er_6 = {
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': int(qty / 2),
+            'OrdType': order_type,
+            'ClOrdID': '*',
+            'Text': text_c,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': '4',
+            'Price': inc_price,
+            'TimeInForce': tif_ioc,
+            'ExecType': '4',
+            'LeavesQty': '0',
+            'OrigClOrdID': '*',
+        }
+        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace',key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
         #endregion
 
         #region Slice 2
@@ -296,7 +317,7 @@ def execute(report_id):
         }
         fix_verifier_bs.CheckNewOrderSingle(new_slice_2, responce_new_order_single, case=case_id_4, message_name='BS FIXBUYTH2 sent 35=D New order Slice 2', key_parameters=['OrderQty', 'Price'])
         # Check that FIXBUYQUOD5 sent 35=8 pending new 
-        er_6 = {
+        er_7 = {
             'Account': account,
             'CumQty': '0',
             'ExecID': '*',
@@ -316,18 +337,18 @@ def execute(report_id):
             'LeavesQty': '0'
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_4, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 2', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_4, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 2', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
-        er_7 = dict(
-            er_6,
+        er_8 = dict(
+            er_7,
             OrdStatus='0',
             ExecType="0",
             OrderQty=qty,
             Text=text_n,
             Price=inc_price
         )
-        fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_4,  message_name='FIXQUODSELL5 sent 35=8 New Slice 3', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_8, responce_new_order_single, direction='SECOND', case=case_id_4,  message_name='FIXQUODSELL5 sent 35=8 New Slice 3', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
         
         time.sleep(5)
@@ -409,6 +430,7 @@ def execute(report_id):
         fix_verifier_ss.CheckExecutionReport(er_10, responce_cancel, case=case_id_5, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
         #endregion
 
+        time.sleep(20)
         rule_destroyer(rule_list)
     
     except:

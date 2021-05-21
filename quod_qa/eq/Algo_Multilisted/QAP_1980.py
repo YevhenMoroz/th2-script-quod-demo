@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 qty = 1300
 display_qty = 1000
 inc_qty = 1100
