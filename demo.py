@@ -4,7 +4,10 @@ from custom import basic_custom_actions as bca
 
 from stubs import Stubs
 
-from quod_qa.eq.DMA import QAP_test
+from quod_qa.eq.DMA import RIN_1142
+from quod_qa.eq.DMA import RIN_1143
+from quod_qa.eq.DMA import RIN_1145
+from quod_qa.eq.DMA import RIN_1146
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -20,7 +23,10 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        QAP_test.execute(report_id)
+        #RIN_1142.execute(report_id)
+        #RIN_1143.execute(report_id)
+        #RIN_1145.execute(report_id)
+        RIN_1146.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',
@@ -28,25 +34,6 @@ def test_run():
                 'SenderCompID': 'QUODFX_UAT',
                 'TargetCompID': 'QUOD5',
                 }
-
-        # rm = RuleManager()
-        # # rm.remove_rules_by_id_range(5,150)
-        # # rm.add_RFQ('fix-fh-fx-rfq')
-        # # rm.add_TRFQ('fix-fh-fx-rfq')
-        # # rm.print_active_rules()
-        # # ui_tests.execute(report_i)
-        # start = datetime.now()
-        # print(f'start time = {start}')
-        #
-        # # fix_demo.execute(report_id,test_cases)
-        # ui_tests.execute(report_id)
-        # # QAP_1520.TestCase(report_id).execute()
-        # # QAP_636.execute(report_id)
-        # print("1 - done")
-        # print('duration time = ' + str(datetime.now() - start), str(report_id))inec
-
-
-
     except Exception:
         logging.error("Error execution", exc_info=True)
 
