@@ -12,6 +12,8 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from MD_SOR import md
+    
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -65,6 +67,9 @@ def execute(report_id):
     fix_manager_310 = FixManager(connectivity_sell_side, case_id)
     fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
     fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+    
+    case_id_0 = bca.create_event("Send Market Data", case_id)
+    md(case_id_0)
     
 
     #region Send NewOrderSingle (35=D)

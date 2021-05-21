@@ -6,7 +6,6 @@ from quod_qa.eq.Algo_TWAP import QAP_3124, QAP_2706, QAP_3122
 from quod_qa.eq.Algo_TWAP import QAP_3123, QAP_2706, QAP_3122, QAP_3124
 from rule_management import RuleManager
 from stubs import Stubs
-from MD_SOR import md
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -21,8 +20,7 @@ def test_run():
     report_id = bca.create_event('FiLL tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        #md(report_id)
-        QAP_3123.execute(report_id)
+        QAP_1979.execute(report_id)
     except Exception:
         logging.error("Error execution",exc_info=True)
 

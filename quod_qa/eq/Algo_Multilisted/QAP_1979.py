@@ -13,6 +13,7 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -67,6 +68,14 @@ def rule_destroyer(list_rules):
 
 
 def execute(report_id):
+    rule_list = rule_creation();
+    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    # Send_MarkerData
+    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+
+    case_id_0 = bca.create_event("Send Market Data", case_id)
 
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol="734",
@@ -87,7 +96,7 @@ def execute(report_id):
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
         connectivity_fh,
-        report_id,
+        case_id_0,
         message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, connectivity_fh)
     ))
 
@@ -116,17 +125,9 @@ def execute(report_id):
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
         connectivity_fh,
-        report_id,
+        case_id_0,
         message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, connectivity_fh)
     ))
-
-
-    rule_list = rule_creation();
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
-    # Send_MarkerData
-    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
-    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
     
 
     #region Send NewOrderSingle (35=D)
