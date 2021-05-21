@@ -1,9 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_4094
-from quod_qa.fx.fx_mm_esp.quickFix_tests import QAP_2079, QAP_2797, QAP_1518, QAP_1558, test, QAP_1554, QAP_1559, \
-    QAP_1597
+from quod_qa.fx.fx_mm_esp.quickFix_tests import QAP_1597, QAP_4094
 
 from stubs import Stubs
 from test_cases import QAP_638
