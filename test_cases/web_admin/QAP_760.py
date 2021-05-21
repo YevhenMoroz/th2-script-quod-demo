@@ -50,7 +50,7 @@ class TestCase:
         # Edit row
         actions_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, get_xpath.actions_btn)))
         actions_btn.click()
-        edit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, get_xpath.edit_action_btn)))
+        edit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, get_xpath.action_by_tooltip('Edit'))))
         edit_btn.click()
 
         # Change required fields
