@@ -12,7 +12,7 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
-                                                       ExtractRFQTileValues)
+                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest)
 from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
@@ -297,7 +297,7 @@ def set_fx_order_ticket_value(base_request):
     new_order_details = NewFxOrderDetails()
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(base_request)
-    # new servise was added 
+    # new servise was added
     order_ticket_service = Stubs.win_act_order_ticket_fx
     call(order_ticket_service.placeFxOrder, new_order_details.build())
 
@@ -318,6 +318,30 @@ def deselect_rows(base_tile_details,cp_service):
     """
     request = DeselectRowsRequest(base_tile_details)
     call(cp_service.deselectRows, request.build())
+
+
+def extract_rates_panel(base_tile_details, ar_service):
+
+
+    s = 'RatesTile0'
+    request = ExtractRatesTileDataRequest(base_tile_details)
+    request.set_extraction_id(f'{s}.extraction_id')
+    request.extract_instrument(f'{s}.instrument')
+    request.extract_quantity(f'{s}.quantity')
+    request.extract_tenor(f'{s}.tenor')
+    request.extract_best_bid(f'{s}.best_bid')
+    request.extract_best_bid_large(f'{s}.best_bid_large')
+    request.extract_best_bid_small(f'{s}.best_bid_small')
+    request.extract_best_ask(f'{s}.best_ask')
+    request.extract_best_ask_large(f'{s}.best_ask_large')
+    request.extract_best_ask_small(f'{s}.best_ask_small')
+    request.extract_spread(f'{s}.spread')
+
+    result  = call(ar_service.extractRatesTileValues, request.build())
+    print(result)
+    for k in result:
+        print(f'{k} = {result[k]}')
+
 
 def execute(report_id):
     # region Preparation
@@ -382,6 +406,9 @@ def execute(report_id):
         # region ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
+        # extract_rfq_panel()
+        # extract_rfq_table_data()
+        extract_rates_panel(base_tile_details, ar_service)
         # endregion
 
         # region My Orders ↓
@@ -396,11 +423,11 @@ def execute(report_id):
         # endregion
 
         # region ClientPricing
-        select_rows(base_tile_details, [1, 2, 4], cp_service)
-        print('Sleeping')
-        time.sleep(5)
-        print('Deselecting')
-        deselect_rows(base_tile_details,cp_service)
+        # select_rows(base_tile_details, [1, 2, 4], cp_service)
+        # print('Sleeping')
+        # time.sleep(5)
+        # print('Deselecting')
+        # deselect_rows(base_tile_details,cp_service)
         # endregion
 
         # close_fe_2(case_id, session_id)
