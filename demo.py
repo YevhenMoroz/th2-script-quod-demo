@@ -6,15 +6,9 @@ from quod_qa.eq.Algo_TWAP import QAP_3124, QAP_2706, QAP_3122
 from quod_qa.eq.Algo_TWAP import QAP_3123, QAP_2706, QAP_3122, QAP_3124
 from rule_management import RuleManager
 from stubs import Stubs
-<<<<<<< HEAD
-<<<<<<< HEAD
 from MD_SOR import md
-=======
 from test_cases import QAP_638
 from quod_qa.eq.Care import QAP_4015
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
-=======
->>>>>>> rublyov_schema
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -29,11 +23,6 @@ def test_run():
     report_id = bca.create_event('FiLL tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        #md(report_id)
-        QAP_3123.execute(report_id)
-=======
         QAP_4015.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
@@ -59,12 +48,6 @@ def test_run():
         # print("1 - done")
         # print('duration time = ' + str(datetime.now() - start), str(report_id))inec
 
-
-
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
-=======
-        QAP_1979.execute(report_id)
->>>>>>> rublyov_schema
     except Exception:
         logging.error("Error execution",exc_info=True)
 
