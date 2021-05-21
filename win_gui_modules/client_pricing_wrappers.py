@@ -81,7 +81,7 @@ class PlaceRatesTileOrderRequest:
     def set_details(self, details: BaseTileDetails):
         self.place_order_request.data.CopyFrom(details.build())
 
-# SWAP buy and sell side
+# The buy and sell side have been reversed because act confused them
     def buy(self):
         self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.SELL
 
