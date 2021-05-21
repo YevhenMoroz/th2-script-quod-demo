@@ -2,14 +2,14 @@ import logging
 
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 
 from custom.basic_custom_actions import create_event, timestamps
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+
 
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_ticket import OrderTicketDetails
+
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from quod_qa.wrapper import eq_wrappers
