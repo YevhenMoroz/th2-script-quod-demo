@@ -3,7 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.eq import MD_test_3, MD_test, TradingSession_test
 from quod_qa.eq.Algo_Multilisted import QAP_1962, QAP_1965, QAP_1966, QAP_1963, QAP_1983, QAP_1984, QAP_1967, QAP_2068, \
-    QAP_3134
+    QAP_3134, QAP_2476
 from quod_qa.eq.Algo_TWAP import QAP_3119
 from quod_qa.eq.Sorping import QAP_2409, QAP_2408
 from rule_management import RuleManager
@@ -33,10 +33,11 @@ def test_run():
         # QAP_1963.execute(report_id)
         # QAP_2409.execute(report_id)
         # QAP_2068.execute(report_id)
-        QAP_3134.execute(report_id)
+        # QAP_3134.execute(report_id)
         # QAP_3119.execute(report_id)
         # TradingSession_test.execute(report_id)
 
+        QAP_2476.execute(report_id)
         # MD_test_3.execute(report_id)
         # MD_test.execute(report_id)
         # MD_test.execute(report_id)
