@@ -109,7 +109,6 @@ def execute(report_id):
         ]
         send_market_data(symbol_trqx, case_id_1, market_data2)
         # endregion
-
         # region Send NewOrderSingle
         case_id_2 = bca.create_event("Send NewOrderSingle", case_id)
         timenow = datetime.utcnow()
@@ -203,7 +202,6 @@ def execute(report_id):
         verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2,
                                                     message_name='FIXQUODSELL5 sent 35=8 new')
         # endregion
-
         # region Check buy-side
         time.sleep(2)
         case_id_3 = bca.create_event("Check buy-side", case_id)
@@ -257,8 +255,8 @@ def execute(report_id):
 
         er_4 = dict(
             er_3,
-            ExecType='A',
-            OrdStatus='A',
+            ExecType='0',
+            OrdStatus='0',
         )
         verifier_310_buy_side.CheckExecutionReport(er_4, responce,
                                                    key_parameters=['ExDestination', 'ExecType', 'OrdStatus',
@@ -266,8 +264,6 @@ def execute(report_id):
                                                    direction='SECOND', case=case_id_3,
                                                    message_name='ExecutionReport new')
         # endregion
-
-
         # region Modification message
         case_id_4 = bca.create_event("Modify algo order", case_id)
         fix_modify_message = deepcopy(fix_message_multilisting)
@@ -318,13 +314,72 @@ def execute(report_id):
         }
         verifier_310_buy_side.CheckOrderCancelReplaceRequest(ocrr_2, responce, key_parameters=['Account', 'ExDestination', 'OrdType', 'TimeInForce'],
                                                   case=case_id_4, message_name='Check that Quod send 35=G')
-        # endregion
+
+        time.sleep(2)
+
+
+        er_5 = {
+            # 'ExDestination': 'XPAR',
+            'ExecType': '5',
+            'OrdStatus': '0',
+            # 'Account': "XPAR_CLIENT1",
+            'CumQty': 0,
+            'ExecID': '*',
+            'OrderQty': qty,
+            'OrdType': ord_type,
+            'ClOrdID': '*',
+            'Text': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': 0,
+            'TimeInForce': time_in_force_new,
+            'LeavesQty': 1000,
+            'Price': price,
+            'OrigClOrdID': '*'
+        }
+        verifier_310_buy_side.CheckExecutionReport(er_5, responce,
+                                                   key_parameters=['ExecType', 'OrdStatus',
+                                                                   'OrderQty'],
+                                                   direction='SECOND', case=case_id_4,
+                                                   message_name='ExecutionReport replaced')
         time.sleep(1)
 
+        # Check that FIXQUODSELL5 sent 35=8 pending new
+        er_6 = dict(
+            ExecID='*',
+            OrderQty=qty,
+            LastQty=0,
+            TransactTime='*',
+            Side=side,
+            AvgPx=0,
+            Currency='EUR',
+            TimeInForce=time_in_force_new,
+            HandlInst=2,
+            LeavesQty=qty,
+            CumQty=0,
+            LastPx=0,
+            OrdType=ord_type,
+            ClOrdID=fix_message_multilisting.get_parameter('ClOrdID'),
+            OrderCapacity='A',
+            QtyType=0,
+            Price=price,
+            TargetStrategy=fix_message_multilisting.get_parameter('TargetStrategy'),
+            ExecType="5",
+            OrdStatus='0',
+            OrderID=responce.response_messages_list[0].fields['OrderID'].simple_value,
+            Instrument='*',
+            NoParty='*',
+            NoStrategyParameters='*',
+            SettlDate='*'
+        )
 
-        case_id_4 = bca.create_event("Cancel order", case_id)
+        verifier_310_sell_side.CheckExecutionReport(er_6, responce, case=case_id_4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'],
+                                                    message_name='FIXQUODSELL5 sent 35=8 replaced')
 
+        # endregion
         # region Cancel order
+        case_id_4 = bca.create_event("Cancel order", case_id)
         cancel_parms = {
             "ClOrdID": fix_message_multilisting.get_ClOrdID(),
             "Account": fix_message_multilisting.get_parameter('Account'),
