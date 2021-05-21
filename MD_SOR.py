@@ -19,14 +19,14 @@ def md(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '100000',
-                'MDEntrySize': '30',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '100000',
-                'MDEntrySize': '40',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -48,14 +48,14 @@ def md(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '100000',
-                'MDEntrySize': '30',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '100000',
-                'MDEntrySize': '40',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
