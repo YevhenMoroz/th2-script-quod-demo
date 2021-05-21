@@ -18,6 +18,7 @@ from stubs import Stubs
 qty = 1000
 account = "CLIENT1"
 time_in_force = 6
+time_in_force_new = 0
 price = 35
 side = 1
 connectivity_buy_side = "fix-bs-310-columbia"
@@ -38,8 +39,9 @@ logger = logging.getLogger(__name__)
 def rule_creation():
     rule_manager = RuleManager()
     nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price)
+    ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
     ocr_rule_1 = rule_manager.add_OrderCancelRequest(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", True)
-    return [nos_rule_1, ocr_rule_1]
+    return [nos_rule_1, ocrr_rule, ocr_rule_1]
 
 
 def rule_destroyer(list_rules):
@@ -48,7 +50,8 @@ def rule_destroyer(list_rules):
         for rule in list_rules:
             rule_manager.remove_rule(rule)
 
-def send_market_data(symbol: str, case_id :str, market_data ):
+
+def send_market_data(symbol: str, case_id: str, market_data):
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
         symbol=symbol,
         connection_id=ConnectionID(session_alias=connectivity_feed_handler)
@@ -64,6 +67,8 @@ def send_market_data(symbol: str, case_id :str, market_data ):
         case_id,
         message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_feed_handler)
     ))
+
+
 def execute(report_id):
     try:
         case_id = bca.create_event(os.path.basename(__file__), report_id)
@@ -138,8 +143,6 @@ def execute(report_id):
                     'StrategyParameterType': '13',
                     'StrategyParameterValue': 'false'
                 }
-
-
             ]
         }
 
@@ -262,6 +265,106 @@ def execute(report_id):
                                                                    'OrderQty'],
                                                    direction='SECOND', case=case_id_3,
                                                    message_name='ExecutionReport new')
+        # endregion
+
+
+        # region Modification message
+        case_id_4 = bca.create_event("Modify algo order", case_id)
+        fix_modify_message = deepcopy(fix_message_multilisting)
+        fix_modify_message.change_parameters({'TimeInForce': time_in_force_new})
+        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+        fix_modify_message.remove_tag('ExpireDate')
+        fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_4)
+
+        ocrr_1 = {
+            'Side': side,
+            'Account': account,
+            'OrderQty': qty,
+            'OrdType': ord_type,
+            'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+            'OrigClOrdID': fix_message_multilisting.get_ClOrdID(),
+            'OrderCapacity': 'A',
+            'TransactTime': '*',
+            'Currency': 'EUR',
+            'TimeInForce': time_in_force_new,
+            'Instrument': '*',
+            'HandlInst': multilisting_params['HandlInst'],
+            'Price': price,
+            'TargetStrategy': multilisting_params['TargetStrategy'],
+            'NoStrategyParameters': '*',
+        }
+        verifier_310_sell_side.CheckOrderCancelReplaceRequest(ocrr_1, responce, key_parameters=['OrigClOrdID', 'OrdType', 'TimeInForce'],
+                                                  case=case_id_4, message_name='Check that sell-side receive 35=G', direction='SECOND')
+
+        ocrr_2 = {
+            'Side': side,
+            'ExDestination': 'XPAR',
+            'Account': "XPAR_CLIENT1",
+            'OrderQty': qty,
+            'OrdType': ord_type,
+            'ClOrdID': '*',
+            'OrigClOrdID': '*',
+            'OrderCapacity': 'A',
+            'TransactTime': '*',
+            'Currency': 'EUR',
+            'TimeInForce': time_in_force_new,
+            'Instrument': '*',
+            'HandlInst': 1,
+            'Price': price,
+            'ChildOrderID': '*',
+            'OrderID': '*',
+            'NoParty': '*'
+
+        }
+        verifier_310_buy_side.CheckOrderCancelReplaceRequest(ocrr_2, responce, key_parameters=['Account', 'ExDestination', 'OrdType', 'TimeInForce'],
+                                                  case=case_id_4, message_name='Check that Quod send 35=G')
+        # endregion
+        time.sleep(1)
+
+
+        case_id_4 = bca.create_event("Cancel order", case_id)
+
+        # region Cancel order
+        cancel_parms = {
+            "ClOrdID": fix_message_multilisting.get_ClOrdID(),
+            "Account": fix_message_multilisting.get_parameter('Account'),
+            "Side": fix_message_multilisting.get_parameter('Side'),
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrigClOrdID": fix_message_multilisting.get_ClOrdID()
+        }
+        fix_cancel = FixMessage(cancel_parms)
+        responce_cancel = fix_manager.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
+        cancel_er_params = {
+            'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+            'OrdStatus': '4',
+            'ExecID': '*',
+            'OrderQty': qty,
+            'LastQty': 0,
+            'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': 0,
+            'SettlDate': '*',
+            'Currency': 'EUR',
+            'TimeInForce': 0,
+            'ExecType': 4,
+            'HandlInst': 2,
+            'LeavesQty': 0,
+            'NoParty': '*',
+            'CumQty': 0,
+            'LastPx': 0,
+            'OrdType': ord_type,
+            'OrderCapacity': 'A',
+            'QtyType': 0,
+            'ExecRestatementReason': 4,
+            'SettlType': 0,
+            'Price': price,
+            'TargetStrategy': 1008,
+            'Instrument': '*',
+            'OrigClOrdID': '*',
+            'NoStrategyParameters': '*'
+        }
+        verifier_310_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4)
         # endregion
         rule_destroyer(rule_list)
     except Exception:
