@@ -122,7 +122,7 @@ def execute(report_id):
     quote_sts_new = "New"
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = "Spot"
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_side_sel = "Sell"
 
     # Create sub-report for case

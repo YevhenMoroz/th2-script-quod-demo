@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
@@ -113,7 +114,7 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    case_name = "QAP-2728"
+    case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"
@@ -128,7 +129,7 @@ def execute(report_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = 'Spot'
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

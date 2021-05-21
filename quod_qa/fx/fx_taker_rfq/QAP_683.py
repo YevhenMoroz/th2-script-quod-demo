@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
@@ -68,7 +69,7 @@ def cancel_rfq(base_request, service):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    case_name = "QAP-683"
+    case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_far_tenor = "2W"
