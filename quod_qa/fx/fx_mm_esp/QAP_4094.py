@@ -20,30 +20,31 @@ timeinforce = '4'
 currency= 'EUR'
 settlcurrency = 'USD'
 settltype=0
-symbol='EUR/XXX'
+symbol='EUR/USD'
 securitytype='FXSPOT'
 securityidsource='8'
 securityid='EUR/USD'
 bands=[1000000,2000000,3000000]
 ord_status='Filled'
 md=None
-settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
-text='unknown instrument'
+settldate = (tm(datetime.utcnow().isoformat()) - bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
+text='incorrect settlement date'
 
 
 
 
 def execute(report_id):
     try:
-        case_id = bca.create_event('QAP_1597', report_id)
+        case_id = bca.create_event('QAP_4094', report_id)
         params = CaseParams(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
                             currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
                             securityidsource=securityidsource, securityid=securityid)
+        params.mdreqid = bca.client_orderid(10)
+        params.clordid= bca.client_orderid(9)
         md = MarketDataRequst(params)
         md.set_md_params()\
             .send_md_request()\
-            .verify_md_reject(text)
-
+            .verify_md_reject(text,'date')
 
 
 

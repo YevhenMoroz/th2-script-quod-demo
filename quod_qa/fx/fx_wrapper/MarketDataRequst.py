@@ -13,6 +13,7 @@ class MarketDataRequst:
     mdreqid=None
     case_params = None
     md_subscribe_response=None
+    md_reject_response=None
 
 
 
@@ -100,6 +101,14 @@ class MarketDataRequst:
             ]
         }
 
+    def set_md_reject_response(self,text):
+        self.md_reject_response = {
+            'MDReqID': self.mdreqid,
+            'MDReqRejReason': '0',
+            'Text': text
+        }
+        return self
+
 
 
 
@@ -144,6 +153,21 @@ class MarketDataRequst:
             )
         )
         return self
+
+    def verify_md_reject(self,text,reason=''):
+        self.set_md_reject_response(text)
+        time.sleep(5)
+        if reason=='date':
+            self.md_reject_response.pop('MDReqRejReason')
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Market Data Request Reject',
+                bca.filter_to_grpc('MarketDataRequestReject', self.md_reject_response, ['MDReqID']),
+                self.subscribe.checkpoint_id,
+                self.case_params.connectivity,
+                self.case_params.case_id
+            )
+        )
 
     def prepare_md_for_verification_spo(self,qty_count, published, which_bands_not_pb, priced, which_bands_not_pr):
         if len(qty_count) > 0:
@@ -255,8 +279,6 @@ class MarketDataRequst:
                     row_pub +=1
                 if check_price != 0:
                     row_prc += 1
-
-
 
     # Send MarketDataRequest unsubscribe method
     def send_md_unsubscribe(self):
