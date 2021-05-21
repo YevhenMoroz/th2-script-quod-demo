@@ -52,20 +52,7 @@ def execute(report_id):
     # end region
 
     # region Create order via FE
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_quantity(qty)
-    order_ticket.set_client(client)
-    order_ticket.set_order_type(order_type)
-    order_ticket.set_limit(price)
-    order_ticket.set_tif(tif)
-    order_ticket.buy()
-
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-
-    call(order_ticket_service.placeOrder, new_order_details.build())
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif, False, False, price, False, False, None)
 
     order_id = eq_wrappers.get_order_id(base_request)
 

@@ -12,6 +12,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
+from quod_qa.wrapper import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -55,12 +56,7 @@ def execute(report_id):
     order_ticket.set_tif("Day")
     order_ticket.buy()
 
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-
-    call(order_ticket_service.placeOrder, new_order_details.build())
+    order_id = eq_wrappers.get_order_id(base_request)
     # end region
 
     # region for handle errors
