@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from web_admin_modules.web_wrapper import call, login, logout
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-from test_cases.web_admin import login_logout_example, QAP_758, QAP_760, test
+from test_cases.web_admin import login_logout_example, QAP_760
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -35,9 +35,7 @@ def test_run():
 
     try:
         # login_logout_example.TestCase(report_id, chrome_driver, wait_driver).execute()
-        # QAP_758.TestCase(report_id, chrome_driver, wait_driver).execute()
         QAP_760.TestCase(report_id, chrome_driver, wait_driver).execute()
-        # test.TestCase(report_id, chrome_driver, wait_driver).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
