@@ -1,5 +1,7 @@
 import logging
 import time
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -109,8 +111,8 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    case_name = "QAP-584"
-    quote_owner = "ostronov"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
@@ -131,12 +133,11 @@ def execute(report_id):
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -152,7 +153,7 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
-        time.sleep(35)
+        time.sleep(120)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
 
@@ -161,9 +162,13 @@ def execute(report_id):
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
 
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

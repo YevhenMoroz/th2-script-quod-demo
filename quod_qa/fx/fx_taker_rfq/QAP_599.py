@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -64,8 +66,8 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_sts):
 
 
 def execute(report_id):
-    case_name = "QAP-599"
-    quote_owner = "ostronov"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "Spot"
@@ -85,12 +87,11 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -112,8 +113,11 @@ def execute(report_id):
 
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, quote_quote_sts_terminated)
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

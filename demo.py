@@ -5,7 +5,7 @@ from quod_qa.fx.fx_mm_esp.quickFix_tests import QAP_1597, QAP_4094
 
 from stubs import Stubs
 from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_1072
+from quod_qa.eq.Care import QAP_4015
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        QAP_1072.execute(report_id)
+        QAP_4015.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',
@@ -56,3 +56,4 @@ if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
+
