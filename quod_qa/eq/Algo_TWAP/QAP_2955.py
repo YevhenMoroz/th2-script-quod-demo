@@ -127,6 +127,7 @@ def execute(report_id):
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
+        # Send NewOrderSingle
         new_order_single_params = {
             'Account': client,
             'HandlInst': 2,
@@ -143,13 +144,13 @@ def execute(report_id):
                     'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'StartDate',
-                    'StrategyParameterType': '14',
-                    'StrategyParameterValue': now.strftime("%H:%M:%S")
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'EndDate',
-                    'StrategyParameterType': '14',
-                    'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%H:%M:%S")
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -283,7 +284,7 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='SS FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
