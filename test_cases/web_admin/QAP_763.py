@@ -9,7 +9,7 @@ from web_admin_modules.web_wrapper import call, login, logout, filter_grid_by_fi
 import web_admin_modules.locator_xpath as get_xpath
 import web_admin_modules.locator_constants as LC
 
-#inconsistancy on sidebar its
+#inconsistency on sidebar its "LinstingGroups" and header "Linsting Groups"
 
 class TestCase:
     def __init__(self, report_id, web_driver, wait_driver):
