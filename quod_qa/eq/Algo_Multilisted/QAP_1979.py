@@ -294,6 +294,13 @@ def execute(report_id):
         }
         fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['OrderQty', 'Price', 'ClOrdID',  'OrigClOrdID'])
 
+        # Check BS (FIXBUYTH2 35=F)
+        er_f = {
+            'OrderQty': qty,
+            
+        }
+        fix_verifier_bs.CheckOrderCancelRequest(er_f, responce_new_order_single, case=case_id_3, message_name='BS 35=F', key_parameters=['OrderQty'])
+        
         # Check BS (FIXBUYTH2 35=8 on 35=F)
         er_5 = {
             'CumQty': '0',
@@ -482,17 +489,17 @@ def execute(report_id):
         time.sleep(2)
         fix_verifier_bs.CheckExecutionReport(er_12, responce_new_order_single, direction='SECOND', case=case_id_5,  message_name='BS FIXBUYTH2 sent 35=8 Filled Paris', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus', 'TimeInForce'])
         
-        # Check SS (FIXSELLQUOD5 35=8 on Filled Order)
-        # er_13= {
-        #     'Text': text_f,
-        #     'TimeInForce': 0,
-        #     'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-        #     'CumQty': qty,
-        #     'ExecType': 'F',
-        #     'OrdStatus': 2
+        #Check SS (FIXSELLQUOD5 35=8 on Filled Order)
+        er_13= {
+            'Text': text_f,
+            'TimeInForce': 0,
+            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'CumQty': qty,
+            'ExecType': 'F',
+            'OrdStatus': 2
 
-        # }
-        # fix_verifier_ss.CheckExecutionReport(er_13, responce_new_order_single, case=case_id_5, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['OrdStatus', 'ExecType', 'ClOrdID', 'TimeInForce', 'Text']) 
+        }
+        fix_verifier_ss.CheckExecutionReport(er_13, responce_new_order_single, case=case_id_5, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['OrdStatus', 'ExecType', 'ClOrdID', 'TimeInForce', 'Text']) 
         #endregion
 
         time.sleep(1)
