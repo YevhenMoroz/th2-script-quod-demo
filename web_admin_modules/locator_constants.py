@@ -1,4 +1,4 @@
-class SidebarTabsTitle(str):
+class SidebarTabTitle(str):
     GENERAL = 'General'
     SETTINGS = 'Settings'
     MD_ENTITLEMENTS = 'MDEntitlements'
@@ -69,3 +69,40 @@ class SidebarTabsTitle(str):
     MARKET_DATA_SOURCE = 'Market Data Source'
     ROUTES = 'Routes'
     USER_INSTR_SYMB_BLACK_OUT = 'User Instr Symb Black Out'
+
+
+class InputText(str):
+    NAME_REQ = 'Name *'
+    VENUE_REQ = 'Venue *'
+
+
+class ButtonText(str):
+    NEW = 'New'
+    OK = 'Ok'
+    SAVE_CHANGES = 'Save Changes'
+    CLEAR_CHANGES = 'Clear Changes'
+
+
+class EventText(str):
+    SUBVENUE_CHANGES_SUCCESS = 'SubVenue changes saved'
+
+    @staticmethod
+    def sub_venue_deleted(sub_venue_name: str):
+        return f'SubVenue {sub_venue_name} Deleted'
+
+
+class FilterFieldName(str):
+    NAME = 'Name'
+    EXT_ID_VENUE = 'Ext ID Venue'
+    VENUE = 'Venue'
+    MARKET_DATA_SOURCE = 'Market Data Source'
+    DEFAULT_SYMBOL = 'Default Symbol'
+    NEWS = 'News'
+    NEWS_SYMBOL = 'News Symbol'
+
+
+class TooltipAction(str):
+    EDIT = 'Edit'
+    CLONE = 'Clone'
+    DELETE = 'Delete'
+    DOWNLOAD_PDF = 'Download PDF'
