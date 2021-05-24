@@ -357,6 +357,7 @@ def execute(report_id):
 
         # Check that FIXQUODBUYTH2 receive 35=D
         replace_bs_params = {
+            'NoParty': '*',
             'Account': account,
             'OrderQty': dec_qty,
             'OrdType': order_type,
@@ -365,10 +366,11 @@ def execute(report_id):
             'TransactTime': '*',
             'ChildOrderID': '*',
             'Side': side,
-            'Price': dec_qty,
+            'Price': dec_price,
             'SettlDate': '*',
             'Currency': currency,
             'TimeInForce': new_order_single_params['TimeInForce'],
+            'Instrument': '*',
             'HandlInst': '1',
             'ExDestination': ex_destination_1,
         }
