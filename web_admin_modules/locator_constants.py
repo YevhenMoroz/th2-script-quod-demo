@@ -75,7 +75,13 @@ class InputText(str):
     NAME_REQ = 'Name *'
     VENUE_REQ = 'Venue *'
     SUB_VENUE_REQ = 'SubVenue *'
-
+    PARTY_ID_REQ = 'Party ID *'
+    EXT_ID_CLIENT_REQ = 'Ext ID Client *'
+    PARTY_SUB_ID_TYPE_REQ = 'Party Sub ID Type *'
+    PARTY_ID_SOURCE_REQ = 'Party ID Source *'
+    VENUE_COUNTERPART_ID_REQ = 'Venue Counterpart ID *'
+    PARTY_ROLE_REQ = 'Party Role *'
+    PARTY_ROLE_QUALIFIER_REQ = 'Party Role Qualifier *'
 
 class ButtonText(str):
     NEW = 'New'

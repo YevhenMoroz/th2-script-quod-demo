@@ -9,7 +9,7 @@ import web_admin_modules.locator_constants as LC
 
 class TestCase:
     def __init__(self, report_id, web_driver, wait_driver):
-        self.case_id = bca.create_event('QAP-763', report_id)
+        self.case_id = bca.create_event('QAP-761', report_id)
         self.driver = web_driver
         self.wait = wait_driver
         self.test_input = 'TEST'
@@ -25,9 +25,7 @@ class TestCase:
 
         # Press New button
         new_btn = self.wait.until(EC.element_to_be_clickable(
-            (By.XPATH,
-             get_xpath.card_header_by_text('Listing Groups')
-             + get_xpath.button_by_text(LC.ButtonText.NEW))))
+            (By.XPATH, get_xpath.card_header_by_text('Listing Groups') + get_xpath.button_by_text(LC.ButtonText.NEW))))
         new_btn.click()
 
         # Fill required fields

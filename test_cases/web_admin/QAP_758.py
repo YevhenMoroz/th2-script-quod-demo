@@ -26,9 +26,8 @@ class TestCase:
 
         # Press New button
         new_btn = self.wait.until(EC.element_to_be_clickable(
-            (By.XPATH,
-             get_xpath.card_header_by_text(LC.SidebarTabTitle.SUB_VENUES)
-             + get_xpath.button_by_text(LC.ButtonText.NEW))))
+            (By.XPATH, get_xpath.card_header_by_text(LC.SidebarTabTitle.SUB_VENUES) + get_xpath.button_by_text(
+                LC.ButtonText.NEW))))
         new_btn.click()
 
         # Fill required fields

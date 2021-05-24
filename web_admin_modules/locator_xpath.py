@@ -82,6 +82,15 @@ def action_by_tooltip(tooltip: str) -> str:
     return f'//*[@nbtooltip="{tooltip}"]/*'
 
 
+def plus_button_by_header_text(header_text: str) -> str:
+    """ Returns plus button by header text
+        Parameters:
+            header_text(str): text of header which contains plus button.
+        Returns:
+            str """
+    return f'//*[contains(text(), "{header_text}")]//following-sibling::nb-accordion-item-body//*[@class="nb-plus"]'
+
+
 login_logo = '//*[@class="login-logo"]'
 person_btn = '//*[@data-name="person"]'
 logout_btn = '//*[@href="#/auth/logout"]'
@@ -94,5 +103,3 @@ table_row = './*[@role="row"]'
 filter_input = '//input[@ref="eFloatingFilterText"]'
 
 actions_btn = '//*[@data-name="more-vertical"]'
-
-plus_btn = '//*[@class="nb-plus"]'
