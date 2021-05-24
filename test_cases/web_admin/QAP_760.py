@@ -44,7 +44,7 @@ class TestCase:
             EC.element_to_be_clickable((By.XPATH, get_xpath.button_by_text(LC.ButtonText.SAVE_CHANGES))))
         save_btn.click()
         self.wait.until(EC.presence_of_element_located(
-            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.SUBVENUE_CHANGES_SUCCESS))))
+            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.SUB_VENUE_CHANGES_SUCCESS))))
 
         # Check changes in grid
         added_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, self.test_input)
@@ -75,7 +75,7 @@ class TestCase:
             EC.element_to_be_clickable((By.XPATH, get_xpath.button_by_text(LC.ButtonText.SAVE_CHANGES))))
         save_btn.click()
         self.wait.until(EC.presence_of_element_located(
-            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.SUBVENUE_CHANGES_SUCCESS))))
+            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.SUB_VENUE_CHANGES_SUCCESS))))
 
         # Check changes in grid
         edited_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, new_test_input)

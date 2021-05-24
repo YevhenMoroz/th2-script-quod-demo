@@ -31,13 +31,18 @@ def card_header_by_text(header_text: str) -> str:
 
 # TODO: add Download and Refresh buttons xpath inside card header
 
-def input_by_text(label_text: str) -> str:
-    """ Returns input field xpath by label text inside
+def input_by_text(label_text: str, by_header_text=None) -> str:
+    """ Returns input field xpath by label text inside or by header with placeholder tag
         Parameters:
-            label_text (str): label text.
+            label_text (str): label text;
+            by_header_text(str, default=None): text of header which contains input.
         Returns:
             str """
-    return f'//label[text()="{label_text}"]/preceding-sibling::input'
+    if by_header_text:
+        return f'//*[contains(text(), "{by_header_text}")]//following-sibling::nb-accordion-item-body' \
+               f'//input[@placeholder="{label_text}"]'
+    else:
+        return f'//label[text()="{label_text}"]/preceding-sibling::input'
 
 
 def button_by_text(btn_text: str) -> str:
@@ -89,3 +94,5 @@ table_row = './*[@role="row"]'
 filter_input = '//input[@ref="eFloatingFilterText"]'
 
 actions_btn = '//*[@data-name="more-vertical"]'
+
+plus_btn = '//*[@class="nb-plus"]'

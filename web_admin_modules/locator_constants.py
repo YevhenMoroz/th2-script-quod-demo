@@ -74,7 +74,7 @@ class SidebarTabTitle(str):
 class InputText(str):
     NAME_REQ = 'Name *'
     VENUE_REQ = 'Venue *'
-    SUBVENUE_REQ = 'SubVenue *'
+    SUB_VENUE_REQ = 'SubVenue *'
 
 
 class ButtonText(str):
@@ -85,7 +85,7 @@ class ButtonText(str):
 
 
 class EventText(str):
-    SUBVENUE_CHANGES_SUCCESS = 'SubVenue changes saved'
+    SUB_VENUE_CHANGES_SUCCESS = 'SubVenue changes saved'
     LISTING_GROUP_CHANGES_SUCCESS = 'ListingGroup changes saved'
 
     @staticmethod
@@ -112,3 +112,8 @@ class TooltipAction(str):
     CLONE = 'Clone'
     DELETE = 'Delete'
     DOWNLOAD_PDF = 'Download PDF'
+
+
+class CreationEntityHeaderText(str):
+    SUB_COUNTERPARTS = 'Sub counterparts'
+    PARTY_ROLES = 'Party roles'

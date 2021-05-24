@@ -1,15 +1,13 @@
 from custom import basic_custom_actions as bca
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-from web_admin_modules.web_wrapper import call, login, logout, filter_grid_by_field, verify_row_count
+from web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
 import web_admin_modules.locator_xpath as get_xpath
 import web_admin_modules.locator_constants as LC
 
-#inconsistency on sidebar its "LinstingGroups" and header "Linsting Groups"
+
+# inconsistency on sidebar its "LinstingGroups" and header "Linsting Groups"
 
 class TestCase:
     def __init__(self, report_id, web_driver, wait_driver):
@@ -39,7 +37,7 @@ class TestCase:
             EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.NAME_REQ))))
         name_input.send_keys(self.test_input)
         venue_input = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText. SUBVENUE_REQ))))
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.SUB_VENUE_REQ))))
         venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
         # Submit

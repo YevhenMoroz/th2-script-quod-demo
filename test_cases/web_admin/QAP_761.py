@@ -35,7 +35,7 @@ class TestCase:
             EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.NAME_REQ))))
         name_input.send_keys(self.test_input)
         venue_input = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText. SUBVENUE_REQ))))
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText. SUB_VENUE_REQ))))
         venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
 
