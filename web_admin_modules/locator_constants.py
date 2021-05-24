@@ -74,6 +74,7 @@ class SidebarTabTitle(str):
 class InputText(str):
     NAME_REQ = 'Name *'
     VENUE_REQ = 'Venue *'
+    SUBVENUE_REQ = 'SubVenue *'
 
 
 class ButtonText(str):
@@ -85,10 +86,15 @@ class ButtonText(str):
 
 class EventText(str):
     SUBVENUE_CHANGES_SUCCESS = 'SubVenue changes saved'
+    LISTING_GROUP_CHANGES_SUCCESS = 'ListingGroup changes saved'
 
     @staticmethod
     def sub_venue_deleted(sub_venue_name: str):
         return f'SubVenue {sub_venue_name} Deleted'
+
+    @staticmethod
+    def listing_group_deleted(listing_group_name: str):
+        return f'Listing Group {listing_group_name} Deleted'
 
 
 class FilterFieldName(str):
