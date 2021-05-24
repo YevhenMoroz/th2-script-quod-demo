@@ -35,9 +35,8 @@ class TestCase:
             EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.NAME_REQ))))
         name_input.send_keys(self.test_input)
         venue_input = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText. SUB_VENUE_REQ))))
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.SUB_VENUE_REQ))))
         venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
-
 
         # #pdf download
         # dwn_pdf_btn = self.wait.until(
@@ -55,8 +54,10 @@ class TestCase:
         added_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, self.test_input)
         verify_row_count(self.case_id, 'Check add, row count on grid', 1, added_row_count)
 
+    # Main method. Must call in demo.py by 'QAP_761.TestCase(report_id).execute()' command
     def execute(self):
-        call(self.add_listing_group, self.case_id, 'Add listing group (Precondition)')
+        call(self.add_listing_group, self.case_id, 'Add listing group')
+
 
 if __name__ == '__main__':
     pass
