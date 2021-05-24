@@ -24,6 +24,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_child_care_сorrect
 
 connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
+rule_connectivity= "fix-ss-310-columbia"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -95,16 +96,15 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         rule_manager.remove_rule(nos_rule)
 
 
-def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity,
-                                                                             "XPAR_" + client, "XPAR", int(price))
+        nos_rule = rule_manager.add_NOS(rule_connectivity, "XPAR_" + client)
         fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
         fix_params = {
             'Account': client,
-            'HandlInst': HandlInst,
+            'HandlInst': handl_inst,
             'Side': side,
             'OrderQty': qty,
             'TimeInForce': tif,
@@ -119,6 +119,7 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             },
             'Currency': 'EUR',
         }
+        if price == None: fix_params.pop('Price')
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         response = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
