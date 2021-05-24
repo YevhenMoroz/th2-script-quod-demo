@@ -1,7 +1,7 @@
 import logging
 import os
 from copy import deepcopy
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from th2_grpc_act_gui_quod import order_ticket_service
 
 from custom.verifier import Verifier
@@ -57,11 +57,13 @@ def execute(report_id):
     eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
     eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
     # endregion
-
+    str1 = str(datetime.now().date() + timedelta(days=1)).replace('-', '')
     params = {
         'OrderQty': qty,
         'ExecType': 'F',
-        'OrdStatus': '1',
+        'Account': '*',
+        'OrdStatus': 1,
+        'TradeDate': '*',
         'Side': 1,
         'Price': price,
         'TimeInForce': 0,
@@ -81,10 +83,14 @@ def execute(report_id):
         'LastMkt': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
-        'SettlType': datetime.now().date()+timedelta(days=1),
-        'SecondaryOrderID': '*',
+        'SettlDate': str1,
+        'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
+        'header': '*',
+        'LastCapacity': '*',
+        'ExDestination': '*',
+        'GrossTradeAmt': '*'
     }
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
@@ -93,4 +99,3 @@ def execute(report_id):
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
-

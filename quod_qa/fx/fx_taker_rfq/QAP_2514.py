@@ -1,11 +1,20 @@
 import logging
+import time
+
+import timestring
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import spo, tom, wk1
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 
 def create_or_get_rfq(base_request, service):
@@ -50,6 +59,10 @@ def check_qty(exec_id, base_request, service, case_id, near_qty, far_qty):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = "QAP-2514"
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -103,8 +116,8 @@ def execute(report_id):
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty("RFQ", base_rfq_details, ar_service, case_id, case_qty4, case_qty4)
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

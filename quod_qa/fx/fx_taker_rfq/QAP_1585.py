@@ -1,8 +1,11 @@
 import logging
 import time
 from pathlib import Path
+
 from th2_grpc_hand import rhbatch_pb2
+
 from custom import basic_custom_actions as bca
+
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, \
@@ -81,8 +84,6 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details_2, ar_service)
         check_venue(base_rfq_details_2, ar_service, case_id, venue_hsb, venue_cit, venue_ms)
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)

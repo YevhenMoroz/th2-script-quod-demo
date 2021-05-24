@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
@@ -292,9 +293,6 @@ class ModifyRFQTileRequest:
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
 
-    def set_far_leg_quantity_as_string(self, quantity: str):
-        self.modify_request.farLegQuantityAsString = quantity
-
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
 
@@ -338,14 +336,8 @@ class ModifyRatesTileRequest:
     def set_tenor(self, tenor: str):
         self.modify_request.tenor = tenor
 
-    def set_change_instrument(self, change_instrument: bool):
-        self.modify_request.changeInstrument = change_instrument
-
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
-
-    def set_change_qty(self, qty: bool):
-        self.modify_request.changeQty = qty
 
     def add_context_action(self, context_action: ContextActionRatesTile):
         self.modify_request.contextActions.append(context_action.build())
@@ -636,3 +628,6 @@ class PlaceESPOrder:
 
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
+
+
+

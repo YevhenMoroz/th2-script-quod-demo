@@ -69,8 +69,12 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -84,8 +88,12 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -95,6 +103,8 @@
         ]
       }
     },
+<<<<<<< HEAD
+=======
     "Win_Act_Order_Ticket_FX": {
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
@@ -125,12 +135,17 @@
         ]
       }
     },
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 	"Win_Act_Order_Book": {
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -144,8 +159,12 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -159,8 +178,12 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_rfq": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -174,8 +197,12 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_rfq": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {
@@ -189,8 +216,8 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "10.0.22.24",
+          "port": 32288
         }
       },
       "strategy": {
@@ -204,8 +231,12 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
+<<<<<<< HEAD
+          "host": "10.0.22.24",
+=======
           "host": "10.0.22.22",
-          "port": 32223
+>>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+          "port": 32288
         }
       },
       "strategy": {

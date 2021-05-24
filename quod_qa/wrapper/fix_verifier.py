@@ -50,13 +50,34 @@ class FixVerifier:
             )
         )
 
-    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest'):
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelReplaceRequest', case = None):
+        if case == None:
+                case = self.case_id
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
                 bca.filter_to_grpc("OrderCancelReplaceRequest", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
-                self.case_id
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+
+    
+    def CheckOrderCancelRequest(self, parameters, response, key_parameters = ['ClOrdID', 'OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelRequest', case = None):
+        if case == None:
+                case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
             )
         )

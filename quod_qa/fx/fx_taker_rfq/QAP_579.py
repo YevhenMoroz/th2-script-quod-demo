@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -8,7 +10,7 @@ from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQ
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -50,6 +52,10 @@ def check_qty(exec_id, base_request, service, case_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Qty on RFQ tile")
     verifier.compare_values("Qty", '10,000,000.00', extract_qty)
+
+
+def cancel_rfq(base_request, service):
+    call(service.cancelRFQ, base_request.build())
 
 
 def check_quote_request_b(ex_id, base_request, service, act, venue):
@@ -111,8 +117,12 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = "QA2"
     case_instr_type = "Spot"
     case_venue = "HSBCR"
     case_qty = 10000000
@@ -120,7 +130,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venues = ["HSB"]
+    venues = ["HSB", "CIT"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -148,10 +158,14 @@ def execute(report_id):
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
-
-        # Close tile
+        cancel_rfq(base_rfq_details, ar_service)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception:
+
+
+
+    except Exception as e:
         logging.error("Error execution", exc_info=True)
 
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

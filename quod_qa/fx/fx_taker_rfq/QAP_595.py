@@ -1,10 +1,12 @@
 import logging
 from pathlib import Path
 
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, ExtractRFQTileValues, \
+    TableActionsRequest, TableAction, CellExtractionDetails
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -67,6 +69,10 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -106,3 +112,5 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
 
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)
