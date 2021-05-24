@@ -6,6 +6,8 @@ import time
 from custom import basic_custom_actions as bca
 from th2_grpc_common.common_pb2 import Event, EventBatch, EventID
 from uuid import uuid1
+
+from custom.verifier import Verifier
 from stubs import Stubs
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -18,7 +20,7 @@ from selenium.common.exceptions import NoSuchElementException
 from google.protobuf.timestamp_pb2 import Timestamp
 from typing import Callable, Any
 
-import web_admin_modules.locator_constants as get_xpath
+import web_admin_modules.locator_xpath as get_xpath
 
 
 def get_report(name: str, status: int, parent_id: EventID, timestamp: Timestamp) -> None:
@@ -117,6 +119,21 @@ def check_is_clickable(web_element: WebElement) -> bool:
     return web_element.is_displayed() and web_element.is_enabled()
 
 
+def verify_row_count(case_id: EventID, event_name: str, expected_count: int, actual_count: int) -> None:
+    """ Verify row count and returns TH2-verify event
+        Parameters:
+            case_id (EventID): ID of the root event;
+            event_name (str): name of verify event;
+            expected_count (int): expected result row count;
+            actual_count (int): actual result row count.
+        Returns:
+            None """
+    verifier = Verifier(case_id)
+    verifier.set_event_name(event_name)
+    verifier.compare_values('Count', str(expected_count), str(actual_count))
+    verifier.verify()
+
+
 def filter_grid_by_field(web_driver: WebDriver, filter_name: str, query: str) -> int:
     """ Filters data in table by filter name and waits until data refresh in table, returns data count
         Parameters:
@@ -135,6 +152,7 @@ def filter_grid_by_field(web_driver: WebDriver, filter_name: str, query: str) ->
     row_xpath = get_xpath.table_row
     row_count = len(row_container.find_elements_by_xpath(row_xpath))
     result_row_count = row_count
+    filter_input.clear()
     filter_input.send_keys(query)
     timeout = time.time() + 5
     while result_row_count == row_count and time.time() <= timeout:
