@@ -371,7 +371,10 @@ def execute(report_id):
             Instrument='*',
             NoParty='*',
             NoStrategyParameters='*',
-            SettlDate='*'
+            SettlDate='*',
+            ExecRestatementReason='4',
+            SettlType='0',
+            OrigClOrdID='*'
         )
 
         verifier_310_sell_side.CheckExecutionReport(er_6, responce, case=case_id_4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'],
