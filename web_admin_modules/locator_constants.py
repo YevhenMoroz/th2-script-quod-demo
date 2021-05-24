@@ -1,91 +1,71 @@
-""" This modules contains constants for locators which are used in web test cases
-    For more usability must import as get_xpath """
+class SidebarTabsTitle(str):
+    GENERAL = 'General'
+    SETTINGS = 'Settings'
+    MD_ENTITLEMENTS = 'MDEntitlements'
+    ADMIN_COMMAND = 'AdminCommand'
 
+    USERS = 'Users'
+    USER_SESSIONS = 'User Sessions'
+    DESKS = 'User Desks'
 
-def sidebar_menu_tab_by_title(tab_title: str) -> str:
-    """ Returns sidebar menu tab xpath by tab title
-        Parameters:
-            tab_title (str): tab title.
-        Returns:
-            str """
-    return f'//*[@tag="menu-sidebar"]//a[@title="{tab_title}"]'
+    REFERENCE_DATA = 'Reference Data'
+    VENUES = 'Venues'
+    SUB_VENUES = 'SubVenues'
+    LISTING_GROUPS = 'ListingGroups'
+    LISTINGS = 'Listings'
+    RECOVER_HISTORICAL_VOLUME = 'Recover Historical Volume'
+    INSTR_SYMBOL_INFO = 'InstrSymbolInfo'
+    INSTRUMENT_GROUP = 'Instrument Group'
+    INSTRUMENT_LIST = 'Instrument List'
 
+    CLIENT_AND_ACCOUNTS = 'Client/Accounts'
+    ACCOUNTS = 'Accounts'
+    WASH_BOOK = 'WashBook'
+    WASH_BOOK_RULES = 'WashBook Rules'
+    CLIENTS = 'Clients'
+    CLIENT_GROUPS = 'ClientGroups'
+    CLIENT_LIST = 'Client List'
+    CASH_ACCOUNTS = 'CashAccounts'
+    CLIENT_CLIENT_GROUPS = 'ClientClientGroups'
 
-def sidebar_menu_sub_tab_by_title(sub_tab_title: str) -> str:
-    """ Returns sidebar menu sub tab xpath by sub tab title. Uses WebElement for search
-        Parameters:
-            sub_tab_title (str): sub tab title.
-        Returns:
-            str """
-    return f'./..//a[@title="{sub_tab_title}"]'
+    ORDER_MANAGEMENT = 'Order Management'
+    EXECUTION_STRATEGIES = 'Execution Strategies'
+    ORDER_MANAGEMENT_RULES = 'Order Management Rules'
 
+    MIDDLE_OFFICE = 'Middle Office'
+    FEES = 'Fees'
+    COMMISSIONS = 'Commissions'
+    SETTLEMENT_MODEL = 'Settlement Model'
+    FIX_MATCHING_PROFILE = 'FIX Matching Profile'
 
-def card_header_by_text(header_text: str) -> str:
-    """ Returns card header xpath by header text
-        Parameters:
-            header_text (str): header text.
-        Returns:
-            str """
-    return f'//nb-card-header/*[contains(text(), "{header_text}")]/..'
+    FX_MARKET_MAKING = 'FX Market Making'
+    QUOTING_SESSIONS = 'Quoting Sessions'
+    CLIENT_TIER = 'Client Tier'
+    AUTO_HEDGER = 'Auto Hedger'
 
+    PRICE_CLEANSING = 'Price Cleansing'
+    CROSSED_VENUE_RATES = 'Crossed Venue Rates'
+    STALE_RATES = 'Stale Rates'
+    RATES_FOLLOWING_TRADES = 'Rates Following Trades'
+    UNBALANCED_RATES = 'Unbalanced Rates'
 
-# TODO: add Download and Refresh buttons xpath inside card header
+    RISK_LIMITS = 'Risk Limits'
+    TRADING_LIMITS = 'TradingLimits'
+    CUM_TRADING_LIMITS = 'CumTradingLimits'
+    LISTING_CUM_TRD_LMT_COUNTER = 'Listing CumTrdLmt Counter'
+    CUM_TRD_LMT_COUNTER = 'CumTrdLmt Counter'
+    POSITION_LIMITS = 'PositionLimits'
+    FX_POSITION_LIMITS = 'FX PositionLimits'
+    PRICE_TOLERANCE_CONTROL = 'Price Tolerance Control'
+    EXTERNAL_CHECK = 'External Check'
 
-def input_by_text(label_text: str) -> str:
-    """ Returns input field xpath by label text inside
-        Parameters:
-            label_text (str): label text.
-        Returns:
-            str """
-    return f'//label[text()="{label_text}"]/preceding-sibling::input'
+    POSITIONS = 'Positions'
+    SECURITY_POSITIONS = 'Security Positions'
+    FX_POSITIONS = 'FX Positions'
 
-
-def button_by_text(btn_text: str) -> str:
-    """ Returns button xpath by text inside
-        Parameters:
-            btn_text (str): text inside button.
-        Returns:
-            str """
-    return f'//button[text()="{btn_text}"]'
-
-
-def container_event_by_text(event_text: str) -> str:
-    """ Returns event xpath by text inside
-        Parameters:
-            event_text (str): text inside event.
-        Returns:
-            str """
-    return f'//nb-toast//*[text()="{event_text}"]'
-
-
-# todo: rename?
-def table_filter_name_by_text(filter_text: str) -> str:
-    """ Returns filter xpath by text inside
-        Parameters:
-            filter_text (str): filter text.
-        Returns:
-            str """
-    return f'//*[text()="{filter_text}"]/ancestor::*[@col-id]'
-
-
-def action_by_tooltip(tooltip: str) -> str:
-    """ Returns table action xpath by text inside
-        Parameters:
-            tooltip (str): action tooltip.
-        Returns:
-            str """
-    return f'//*[@nbtooltip="{tooltip}"]/*'
-
-
-login_logo = '//*[@class="login-logo"]'
-person_btn = '//*[@data-name="person"]'
-logout_btn = '//*[@href="#/auth/logout"]'
-
-table_headers = '//*[@ref="eHeaderContainer"]/*[@class="ag-header-row"]'
-table_filter_names = f'{table_headers}[1]/*'
-table_filter_inputs = f'{table_headers}[2]/*'
-table_row_container = '//*[@ref="eCenterContainer"]'
-table_row = './*[@role="row"]'
-filter_input = '//input[@ref="eFloatingFilterText"]'
-
-actions_btn = '//*[@data-name="more-vertical"]'
+    OTHERS = 'Others'
+    COUNTERPARTS = 'Counterparts'
+    INSTITUTIONS = 'Institutions'
+    MARKET_DATA_SOURCE = 'Market Data Source'
+    ROUTES = 'Routes'
+    USER_INSTR_SYMB_BLACK_OUT = 'User Instr Symb Black Out'

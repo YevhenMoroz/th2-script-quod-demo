@@ -2,9 +2,8 @@ from custom import basic_custom_actions as bca
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from custom.verifier import Verifier
-from web_admin_modules.web_wrapper import call, filter_grid_by_field
-import web_admin_modules.locator_constants as get_xpath
+from web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
+import web_admin_modules.locator_xpath as get_xpath
 
 
 class TestCase:
@@ -41,6 +40,10 @@ class TestCase:
         self.wait.until(EC.presence_of_element_located((By.XPATH,
                                                         get_xpath.container_event_by_text('SubVenue changes saved'))))
 
+        # Check changes in grid
+        added_row_count = filter_grid_by_field(self.driver, 'Name', self.test_input)
+        verify_row_count(self.case_id, 'Check add, row count on grid', 1, added_row_count)
+
     def edit_sub_venue(self):
         new_test_input = self.test_input + '_NEW'
 
@@ -69,10 +72,7 @@ class TestCase:
 
         # Check changes in grid
         edited_row_count = filter_grid_by_field(self.driver, 'Name', new_test_input)
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check edit row count on grid')
-        verifier.compare_values('Count', '1', str(edited_row_count))
-        verifier.verify()
+        verify_row_count(self.case_id, 'Check edit, row count on grid', 1, edited_row_count)
 
     # Main method. Must call in demo.py by 'QAP_760.TestCase(report_id).execute()' command
     def execute(self):
