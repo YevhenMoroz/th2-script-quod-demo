@@ -108,14 +108,6 @@ def execute(report_id):
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
 
-        settlement_details = modify_request.add_settlement_details()
-        settlement_details.set_settlement_type("Regular")
-        settlement_details.set_settlement_currency("AED")
-        settlement_details.set_exchange_rate("10")
-        settlement_details.set_exchange_rate_calc("Multiply")
-        settlement_details.set_settlement_date("3/27/2021")
-        settlement_details.set_pset("EURO_CLEAR")
-
         call(middle_office_service.bookOrder, modify_request.build())
 
         extraction_id = "main_order"
@@ -190,6 +182,23 @@ def execute(report_id):
         extract_request_unbook.add_extraction_details(
             [block_order_status, block_order_match_status, block_order_summary_status])
         request_unbook = call(middle_office_service_unbook.extractMiddleOfficeBlotterValues, extract_request_unbook.build())
+
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
+
+        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_post_trade_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order PostTradeStatus",
+                                                                 main_order_post_trade_status.name, "ReadyToBook")]))
 
         verifier = Verifier(case_id)
 
