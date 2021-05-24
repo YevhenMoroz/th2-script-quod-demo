@@ -26,7 +26,6 @@ def execute(report_id):
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "100"
@@ -36,7 +35,6 @@ def execute(report_id):
     tif = "Day"
     price = "30"
     recipient = "RIN-DESK (CL)"
-
     # endregion
 
     # region Open FE
@@ -59,37 +57,27 @@ def execute(report_id):
                              DiscloseFlagEnum.DEFAULT_VALUE)
     # end region
 
+    order_id = eq_wrappers.get_order_id(base_request)
+
     # region accept order
     eq_wrappers.accept_order(lookup, qty, price)
+    # end region
+
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
     order_details.set_extraction_id(before_order_details_id)
+    order_details.set_filter(["Order ID", order_id])
 
     order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_pts = ExtractionDetail("order_pts", "PostTradeStatus")
-    order_dfd = ExtractionDetail("order_dfd", "DoneForDay")
-    order_es = ExtractionDetail("order_es", "ExecSts")
-    order_ds = ExtractionDetail("order_ds", "DiscloseExec")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_pts,
-                                                                                            order_dfd,
-                                                                                            order_es,
-                                                                                            order_ds
-                                                                                            ])
+
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
+
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     call(order_book_service.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("DiscloseFlag", order_ds.name, "M")
-                                                  ]))
-    # endregion
-    # region for handle errors
+                                                 [verify_ent("Order Status", order_status.name, "Open")]))
 
     # endregion
 
