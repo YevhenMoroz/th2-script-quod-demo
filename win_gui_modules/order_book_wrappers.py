@@ -395,6 +395,9 @@ class ManualCrossDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
     def set_price(self, value: str):
         self._request.price = value
 
