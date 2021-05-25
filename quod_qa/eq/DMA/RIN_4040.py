@@ -32,10 +32,6 @@ def execute(report_id):
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
 
     login_details_req.set_session_id(session_id)
     login_details_req.set_parent_event_id(case_id)
