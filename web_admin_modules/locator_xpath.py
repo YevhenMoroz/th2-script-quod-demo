@@ -63,7 +63,6 @@ def container_event_by_text(event_text: str) -> str:
     return f'//nb-toast//*[text()="{event_text}"]'
 
 
-# todo: rename?
 def table_filter_name_by_text(filter_text: str) -> str:
     """ Returns filter xpath by text inside
         Parameters:
@@ -85,10 +84,21 @@ def action_by_tooltip(tooltip: str) -> str:
 def plus_button_by_header_text(header_text: str) -> str:
     """ Returns plus button by header text
         Parameters:
-            header_text(str): text of header which contains plus button.
+            header_text (str): text of header which contains plus button.
         Returns:
             str """
     return f'//*[contains(text(), "{header_text}")]//following-sibling::nb-accordion-item-body//*[@class="nb-plus"]'
+
+
+def creation_action_by_header_text(header_text: str, action_class: str) -> str:
+    """ Returns plus button by header text
+        Parameters:
+            header_text (str): text of header which contains action;
+            action_class (str): text which contains action class.
+        Returns:
+            str """
+    return f'//*[contains(text(), "{header_text}")]//following-sibling::nb-accordion-item-body' \
+           f'//*[@class="{action_class}"]'
 
 
 login_logo = '//*[@class="login-logo"]'

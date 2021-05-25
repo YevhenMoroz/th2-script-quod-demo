@@ -83,6 +83,7 @@ class InputText(str):
     PARTY_ROLE_REQ = 'Party Role *'
     PARTY_ROLE_QUALIFIER_REQ = 'Party Role Qualifier *'
 
+
 class ButtonText(str):
     NEW = 'New'
     OK = 'Ok'
@@ -93,14 +94,19 @@ class ButtonText(str):
 class EventText(str):
     SUB_VENUE_CHANGES_SUCCESS = 'SubVenue changes saved'
     LISTING_GROUP_CHANGES_SUCCESS = 'ListingGroup changes saved'
+    COUNTERPART_CHANGES_SUCCESS = 'Counterpart changes saved'
 
     @staticmethod
-    def sub_venue_deleted(sub_venue_name: str):
+    def sub_venue_deleted(sub_venue_name: str) -> str:
         return f'SubVenue {sub_venue_name} Deleted'
 
     @staticmethod
-    def listing_group_deleted(listing_group_name: str):
+    def listing_group_deleted(listing_group_name: str) -> str:
         return f'Listing Group {listing_group_name} Deleted'
+
+    @staticmethod
+    def counterpart_deleted(counterpart_name: str) -> str:
+        return f'Counterpart {counterpart_name} Deleted'
 
 
 class FilterFieldName(str):
@@ -123,3 +129,10 @@ class TooltipAction(str):
 class CreationEntityHeaderText(str):
     SUB_COUNTERPARTS = 'Sub counterparts'
     PARTY_ROLES = 'Party roles'
+
+
+class CreationEntityActionClass(str):
+    APPLY = 'nb-checkmark'
+    CANCEL = 'nb-close'
+    EDIT = 'nb-edit'
+    DELETE = 'nb-trash'
