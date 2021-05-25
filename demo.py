@@ -6,11 +6,11 @@ from stubs import Stubs
 
 #from quod_qa.eq.DMA import RIN_244
 from quod_qa.eq.DMA import RIN_258
-
 from quod_qa.eq.DMA import RIN_1142
 from quod_qa.eq.DMA import RIN_1143
 from quod_qa.eq.DMA import RIN_1145
-#from quod_qa.eq.DMA import RIN_1146
+from quod_qa.eq.DMA import RIN_1146
+from quod_qa.eq.DMA import RIN_4040
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -27,11 +27,12 @@ def test_run():
 
     try:
         #RIN_244.execute(report_id)
-        RIN_258.execute(report_id)
+        #RIN_258.execute(report_id)
         #RIN_1142.execute(report_id)
         #RIN_1143.execute(report_id)
         #RIN_1145.execute(report_id)
         #RIN_1146.execute(report_id)
+        RIN_4040.execute(report_id)
         test_cases =  {
                 'case_id': bca.create_event_id(),
                 'TraderConnectivity': 'gtwquod5-fx',
