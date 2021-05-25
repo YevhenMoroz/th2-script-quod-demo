@@ -99,7 +99,6 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     case_pair = case_from_currency + "/" + case_to_currency
     case_qty = 10000000
-    # TODO Wait to change type for qty field
     case_qty2 = "1m"
     case_qty_1m = "1000000"
     case_qty3 = "100k"
