@@ -6,7 +6,6 @@ from quod_qa.eq.Algo_TWAP import QAP_3124, QAP_2706, QAP_3122
 from quod_qa.eq.Algo_TWAP import QAP_3123, QAP_2706, QAP_3122, QAP_3124
 from rule_management import RuleManager
 from stubs import Stubs
-from MD_SOR import md
 from test_cases import QAP_638
 from quod_qa.eq.Care import QAP_4015
 

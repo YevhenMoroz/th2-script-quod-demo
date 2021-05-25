@@ -14,7 +14,7 @@ from stubs import Stubs
 
 qty = 2000
 account = "CLIENT1"
-time_in_force = 1
+time_in_force = 2
 stop_price = 40
 side = 1
 connectivity_buy_side = "fix-bs-310-columbia"
