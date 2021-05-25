@@ -1,7 +1,6 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
-    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
-    TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
-    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNewOrdSingleExecutionReportTrade, \
+    TemplateNewOrdSingleExecutionReportPendingAndNew
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -12,8 +11,12 @@ from google.protobuf.empty_pb2 import Empty
 class RuleManager:
 
     def __init__(self):
-        # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4]
+        # Default rules IDs
+        self.default_rules_id = []
+        for rule in Stubs.core.getRulesInfo(request=Empty()).info:
+            rule_id = rule.id.id
+            if rule_id in [3, 4] or rule.class_name.count('Quod_Def_MDR_Rule') > 0:
+                self.default_rules_id.append(rule_id)
 
     # Console output list of IDs active rules
     @staticmethod
@@ -85,29 +88,28 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int, delay: int, ):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int,
+                                             delay: int, ):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
-                                                               account=account,
-                                                               venue=venue,
-                                                               price=price,
-                                                               tradedQty=traded_qty,
-                                                               delay= delay))
+                                                             account=account,
+                                                             venue=venue,
+                                                             price=price,
+                                                             tradedQty=traded_qty,
+                                                             delay=delay))
 
     @staticmethod
     def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
-                                                             account=account,
-                                                             venue=venue,
-                                                             price=price))
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     price=price))
 
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
         return Stubs.simulator.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
-
-
 
     @staticmethod
     def add_OCR(session: str):
@@ -139,8 +141,8 @@ class RuleManager:
                 no_party_ids=party_id,
                 cum_qty=cum_qty,
                 mask_as_connectivity=mask_as_connectivity,
-                md_entry_size= md_entry_size,
-                md_entry_px= md_entry_px,
+                md_entry_size=md_entry_size,
+                md_entry_px=md_entry_px,
                 symbol=symbol))
 
     # ------------------------
@@ -148,5 +150,6 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
+    rule_manager.print_active_rules()
+    Stubs.factory.close()
