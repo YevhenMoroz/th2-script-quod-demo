@@ -176,9 +176,6 @@ def execute(report_id):
             NoStrategyParameters='*'
         )
 
-        verifier_310_sell_side.CheckExecutionReport(er_1, responce, case=case_id_2,
-                                                    message_name='FIXQUODSELL5 sent 35=8 pending new')
-
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
             er_1,
@@ -188,10 +185,8 @@ def execute(report_id):
             ExecRestatementReason='*',
             SettlType='*',
         )
-        verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2,
-                                                    message_name='FIXQUODSELL5 sent 35=8 new')
 
-        verifier_310_sell_side.CheckExecutionReportSequence([er_1, er_2], responce, case=case_id)
+        verifier_310_sell_side.CheckExecutionReportSequence([er_1, er_2], responce, case=case_id_2, message_name="Check PendingNew and New")
 
 
         rule_destroyer(rule_list)
