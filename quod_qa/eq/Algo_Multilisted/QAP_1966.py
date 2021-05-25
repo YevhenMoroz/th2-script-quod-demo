@@ -141,6 +141,7 @@ def execute(report_id):
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Currency': currency,
+            'ExpireDate': expire_date,
             'TargetStrategy': 1008,
                     'NoStrategyParameters': [
                 {
@@ -173,6 +174,7 @@ def execute(report_id):
             'OrderQty': qty,
             'NoStrategyParameters': '*',
             'LastQty': '0',
+            'ExpireDate': expire_date,
             'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'Side': side,
@@ -257,10 +259,11 @@ def execute(report_id):
 
         #region Check Buy Side
         case_id_3 = bca.create_event("Check Buy Side", case_id)
-        # Check bs (FIXQUODSELL5 sent 35=D pending new)
+        # Check bs (FIXQUODSELL5 sent 35=D)
         new_order_single_bs = {
             'NoParty': '*',
-            'Account': account,        
+            'Account': account, 
+            'ExpireDate': expire_date,       
             'OrderQty': qty,
             'OrdType': order_type_limit,
             'ClOrdID': '*',
@@ -276,7 +279,7 @@ def execute(report_id):
             'HandlInst': '1',
             'ExDestination': instrument['SecurityExchange']
         }
-        fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single, case=case_id_3, message_name='BS FIXBUYTH2 sent 35=D New order')
+        fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single, case=case_id_3, message_name='BS FIXBUYTH2 sent 35=D New order', key_parameters=['TimeInForce', 'OrderQty', 'Price'])
 
         # Check that FIXBUYQUOD5 sent 35=8 pending new
         er_3 = {
@@ -284,6 +287,7 @@ def execute(report_id):
             'CumQty': '0',
             'ExecID': '*',
             'OrderQty': qty,
+            'ExpireDate': expire_date,
             'Text': text_pn,
             'OrdType': '2',
             'ClOrdID': '*',
@@ -299,7 +303,7 @@ def execute(report_id):
             'LeavesQty': '0'
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['TimeInForce', 'ExecType', 'OrdStatus'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
@@ -359,6 +363,7 @@ def execute(report_id):
         er_8 = {
             'ExecID': '*',
             'OrderQty': qty,
+            'ExpireDate': expire_date,
             'NoStrategyParameters': '*',
             'LastQty': '0',
             'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
