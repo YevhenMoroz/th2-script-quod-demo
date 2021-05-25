@@ -25,7 +25,7 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
-tig_day = 0
+tif_day = 0
 expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
 price = 35
 stop_price = 30
@@ -133,7 +133,7 @@ def execute(report_id):
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
-            'TimeInForce': tig_day,
+            'TimeInForce': tif_day,
             'Price': price,
             'StopPx': stop_price,
             'OrdType': order_type_stop,
@@ -179,7 +179,7 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'Currency': currency,
-            'TimeInForce': tig_day,
+            'TimeInForce': tif_day,
             'ExecType': "A",
             'HandlInst': new_order_single_params['HandlInst'],
             'LeavesQty': qty,
@@ -368,7 +368,7 @@ def execute(report_id):
             "OrdStatus": "4",
             'SettlDate': '*',
             'Currency': currency,
-            'TimeInForce': tig_day,
+            'TimeInForce': tif_day,
             'ExecType': '4',
             'HandlInst': new_order_single_params['HandlInst'],
             'LeavesQty': '0',
