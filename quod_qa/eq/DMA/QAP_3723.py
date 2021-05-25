@@ -1,7 +1,7 @@
 import logging
 import os
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from th2_grpc_act_gui_quod import order_ticket_service
 
 from custom.verifier import Verifier
@@ -22,18 +22,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 def execute(report_id):
-    case_name = "QAP-1073"
+    case_name = "QAP-3723"
 
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "800"
-    newQty = "100"
-    price = "40"
-    newPrice = "1"
+    price = "50"
     lookup = "PROL"
     client = "CLIENTSKYLPTOR"
     # endregion
@@ -46,36 +43,25 @@ def execute(report_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # endregion
+    # endregionA
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    param_list = {'Price': newPrice}
-    # region ManualExecute
-    eq_wrappers.manual_execution(base_request, str(int((int(qty)/2))), price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+    eq_wrappers.complete_order(base_request)
+    eq_wrappers.notify_dfd(base_request)
     response = fix_message.pop('response')
-    # print(fix_message['Price'])
-    # Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
     # endregion
-    print(fix_message['Price'])
-    # region accept amend
-    eq_wrappers.reject_order(lookup, qty, price)
-    # endregion
-    time.sleep(1)
-    # Check on ss
-    print(eq_wrappers.get_order_id(base_request))
-    print(fix_message['ClOrdID'])
+
     params = {
         'OrderQty': qty,
-        'ExecType': 'F',
-        'Account': '*',
-        'OrdStatus': 1,
-        'TradeDate': '*',
+        'ExecType': '0',
+        # 'Account': '*',
+        'OrdStatus': '0',
+        # 'TradeDate': '*',
         'Side': 1,
         'Price': price,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'TimeInForce': 1,
+        'ClOrdID': eq_wrappers.get_cl_order_id(base_request),
         'ExecID': '*',
         'LastQty': '*',
         'OrderID': '*',
@@ -95,11 +81,46 @@ def execute(report_id):
         'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
+        'SecondaryOrderID': '*',
         'header': '*',
-        'LastCapacity': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
+
+        'Text': '*'
     }
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
+    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
+                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
+    params1 = {
+        'OrderQty': qty,
+        'ExecType': '3',
+        'OrdStatus': '1',
+        'Side': 1,
+        'Price': price,
+        'TimeInForce': 1,
+        'ClOrdID': eq_wrappers.get_cl_order_id(base_request),
+        'ExecID': '*',
+        'LastQty': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'SettlDate': '*',
+        'Currency': '*',
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'OrdType': '*',
+        'LastMkt': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'SettlDate': '*',
+        'SettlType': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'SecondaryOrderID': '*',
+        'header': '*',
+    }
+
+
+    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss.CheckExecutionReport(params1, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

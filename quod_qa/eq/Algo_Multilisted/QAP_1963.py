@@ -14,7 +14,7 @@ from stubs import Stubs
 
 qty = 2000
 account = "CLIENT1"
-time_in_force = 1
+time_in_force = 6
 stop_price = 40
 side = 1
 connectivity_buy_side = "fix-bs-310-columbia"
@@ -64,6 +64,7 @@ def execute(report_id):
         'Side': side,
         'OrderQty': qty,
         'TimeInForce': time_in_force,
+        'ExpireDate': (datetime.today() + timedelta(days=2)).strftime("%Y%m%d"),
         'StopPx': stop_price,
         'OrdType': ord_type,
         'TransactTime': datetime.utcnow().isoformat(),
@@ -114,6 +115,8 @@ def execute(report_id):
         NoParty='*',
         StopPx=stop_price,
         NoStrategyParameters='*',
+        ExpireDate=(datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
+
     )
 
     fix_verifier_sell_side.CheckExecutionReport(er_1, responce, case=case_id_1,
@@ -192,7 +195,8 @@ def execute(report_id):
         'TimeInForce': time_in_force,
         'Instrument': '*',
         'HandlInst': 1,
-        'NoParty': '*'
+        'NoParty': '*',
+        'ExpireDate': (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
     }
     fix_verifier_buy_side.CheckNewOrderSingle(nos_2, responce, key_parameters=['ExDestination', 'Side', 'OrdType'],
                                               case=case_id_3, message_name='Stop algo sent child to venue')
@@ -214,7 +218,7 @@ def execute(report_id):
         'AvgPx': 0,
         'TimeInForce': time_in_force,
         'LeavesQty': qty,
-
+        'ExpireDate': (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
     }
     fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty'],
@@ -270,7 +274,8 @@ def execute(report_id):
         'Instrument': '*',
         'OrigClOrdID': '*',
         'StopPx': stop_price,
-        'NoStrategyParameters': '*'
+        'NoStrategyParameters': '*',
+        'ExpireDate': (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
     }
 
     fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4)

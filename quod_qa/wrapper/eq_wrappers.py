@@ -1,13 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-<<<<<<< HEAD
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
-from copy import deepcopy
-=======
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -20,21 +15,15 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-<<<<<<< HEAD
-from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_poc_request, direct_loc_request
-=======
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import direct_order_request, reject_order_request, \
-    direct_moc_request, direct_loc_request
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+from win_gui_modules.wrappers import direct_order_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_child_care_сorrect
+from win_gui_modules.wrappers import set_base, accept_order_request
 
 connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
+rule_connectivity = "fix-ss-310-columbia-standart"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -53,7 +42,7 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def cancel_order_via_fix(case_id, session, cl_order_id, client_order_id, client, side):
+def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
     try:
         fix_manager_qtwquod = FixManager(connectivity, case_id)
         rule_manager = RuleManager(session)
@@ -63,7 +52,7 @@ def cancel_order_via_fix(case_id, session, cl_order_id, client_order_id, client,
             "Account": client,
             "Side": side,
             "TransactTime": datetime.utcnow().isoformat(),
-            "OrigClOrdID": client_order_id,
+            "OrigClOrdID": org_cl_order_id,
         }
         fix_cancel = FixMessage(cancel_parms)
         fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
@@ -75,7 +64,7 @@ def cancel_order_via_fix(case_id, session, cl_order_id, client_order_id, client,
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None,
-                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE):
+                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
@@ -87,6 +76,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         order_ticket.sell()
     if price is not None:
         order_ticket.set_limit(price)
+    if expire_date is not None:
+        order_ticket.set_expire_date(expire_date)
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
     new_order_details.set_order_details(order_ticket)
@@ -95,7 +86,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     order_ticket_service = Stubs.win_act_order_ticket
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity,
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(rule_connectivity,
                                                                              "XPAR_" + client, "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
@@ -104,21 +95,19 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         rule_manager.remove_rule(nos_rule)
 
 
-def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity,
-                                                                             "XPAR_" + client, "XPAR", int(price))
         fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
         fix_params = {
             'Account': client,
-            'HandlInst': HandlInst,
+            'HandlInst': handl_inst,
             'Side': side,
             'OrderQty': qty,
             'TimeInForce': tif,
             'OrdType': ord_type,
             'Price': price,
+            'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': {
                 'Symbol': 'FR0004186856_EUR',
@@ -128,6 +117,11 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             },
             'Currency': 'EUR',
         }
+        if price == None:
+            fix_params.pop('Price')
+            price = 0
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(rule_connectivity,
+                                                                             "XPAR_" + client, "XPAR", int(price))
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         response = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
@@ -139,28 +133,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
         rule_manager.remove_rule(nos_rule)
 
 
-<<<<<<< HEAD
-def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
-    fix_manager_qtwquod = FixManager(connectivity, case_id)
-    cancel_parms = {
-        "ClOrdID": order_id,
-        "Account": client,
-        "Side": side,
-        "TransactTime": datetime.utcnow().isoformat(),
-        "OrigClOrdID": client_order_id,
-    }
-    fix_cancel = FixMessage(cancel_parms)
-    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
-
-
-def amend_order_via_fix(fix_message, case_id, parametr_list):
-    fix_manager_qtwquod = FixManager(connectivity, case_id)
-    fix_modify_message = FixMessage(fix_message)
-    fix_modify_message.change_parameters(parametr_list)
-    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-    response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
-    return response
-=======
 def amend_order_via_fix(fix_message, parametr_list):
     try:
         rule_manager = RuleManager()
@@ -174,7 +146,7 @@ def amend_order_via_fix(fix_message, parametr_list):
         rule_manager.remove_rule(rule)
 
 
-def amend_order(request, client=None, qty=None, price=None ):
+def amend_order(request, client=None, qty=None, price=None):
     order_amend = OrderTicketDetails()
     if not qty is None:
         order_amend.set_quantity(qty)
@@ -193,7 +165,6 @@ def amend_order(request, client=None, qty=None, price=None ):
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -208,8 +179,6 @@ def manual_cross_orders(request, qty, price, list, last_mkt):
         logger.error("Error execution", exc_info=True)
 
 
-<<<<<<< HEAD
-=======
 def manual_cross_orders_error(request, qty, price, list, last_mkt):
     error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
     error_message.name = "ErrorMessage"
@@ -229,7 +198,6 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
@@ -266,10 +234,6 @@ def direct_moc_order(qty, route):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-<<<<<<< HEAD
-def direct_child_care_order(qty, route,recipient):
-    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route , recipient))
-=======
 
 def direct_child_care_order(qty, route, recipient, count):
     try:
@@ -278,7 +242,6 @@ def direct_child_care_order(qty, route, recipient, count):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 
 def reject_order(lookup, qty, price):
     try:
@@ -376,22 +339,6 @@ def get_order_id(request):
         logger.error("Error execution", exc_info=True)
     return result[order_id.name]
 
-def verify_value(request,case_id,column_name,expected_value):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
-    order_details.set_extraction_id(column_name)
-    value = ExtractionDetail(column_name,column_name)
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    print(result[value.name])
-    verifier.compare_values(column_name, expected_value, result[value.name])
-    verifier.verify()
-
-
-<<<<<<< HEAD
 
 def get_cl_order_id(request):
     order_details = OrdersDetails()
@@ -402,7 +349,22 @@ def get_cl_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[cl_order_id.name]
-=======
+
+
+def verify_value(request, case_id, column_name, expected_value):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id(column_name)
+    value = ExtractionDetail(column_name, column_name)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check value")
+    verifier.compare_values(column_name, expected_value, result[value.name])
+    verifier.verify()
+
+
 def check_time_sleep_fix_order(request, fix_message, time1):
     for i in range(1, 4):
         if (get_cl_order_id(request) == fix_message['ClOrdID']):
@@ -444,4 +406,3 @@ def reassign_order(request, recipient):
         call(Stubs.win_act_order_book.reassignOrder, reassign_order_details)
     except Exception:
         logger.error("Error execution", exc_info=True)
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
