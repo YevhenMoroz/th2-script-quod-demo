@@ -1,7 +1,9 @@
 import logging
 from pathlib import Path
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
     ContextAction
@@ -129,6 +131,10 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -172,3 +178,7 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    finally:
+        for rule in [RFQ, TRFQ]:
+            rule_manager.remove_rule(rule)

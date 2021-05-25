@@ -98,5 +98,30 @@ def execute(report_id, case_params):
                     )
             )
 
+
+    print(f'Waiting while quote expire for {ttl} time')
+    for i in range(0, int(ttl / wait_step + 1)):
+        print(f'{ttl - i * wait_step}sec left')
+        time.sleep(wait_step)
+
+    quote_cancel_params = {
+        'QuoteReqID': rfq_params['QuoteReqID'],
+        'SenderCompID': 'QUODFX_UAT',
+        'TargetCompID': 'QUOD5',
+        'QuoteCancelType': '5',
+        'QuoteID':'0',
+
+        }
+
+    verifier.submitCheckRule(
+            bca.create_check_rule(
+                    "Checking QuoteCancell",
+                    bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
+                    send_rfq.checkpoint_id,
+                    case_params['TraderConnectivity'],
+                    case_id
+                    )
+            )
+
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))

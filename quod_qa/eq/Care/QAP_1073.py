@@ -37,7 +37,6 @@ def execute(report_id):
     lookup = "PROL"
     client = "CLIENTSKYLPTOR"
     # endregion
-    list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
@@ -50,7 +49,7 @@ def execute(report_id):
     # endregion
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     param_list = {'Price': newPrice}
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, str(int((int(qty)/2))), price)
@@ -67,22 +66,40 @@ def execute(report_id):
     # Check on ss
     print(eq_wrappers.get_order_id(base_request))
     print(fix_message['ClOrdID'])
-    # fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    # er_params_new = {
-    #     'ExecType': "0",
-    #     'OrdStatus': '0',
-    #     'TimeInForce': 0,
-    #     'ClOrdID': fix_message['ClOrdID']
-    # }
-    # fix_verifier_ss.CheckNewOrderSingle(er_params_new, response,key_parameters=['ClOrdID'], direction='SECOND')
     params = {
+        'OrderQty': qty,
         'ExecType': 'F',
-        'OrdStatus': '1',
-        'Side': 2,
+        'Account': '*',
+        'OrdStatus': 1,
+        'TradeDate': '*',
+        'Side': 1,
         'Price': price,
+        'TimeInForce': 0,
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ExecID': '*',
+        'LastQty': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'SettlDate': '*',
+        'Currency': '*',
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'OrdType': '*',
+        'LastMkt': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'SettlDate': '*',
+        'SettlType': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'header': '*',
+        'LastCapacity': '*',
+        'ExDestination': '*',
+        'GrossTradeAmt': '*'
     }
-    print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrderStatus'])
+                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

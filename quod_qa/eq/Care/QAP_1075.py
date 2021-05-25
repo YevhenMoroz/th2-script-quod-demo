@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 def execute(report_id):
-    case_name = "QAP-1074"
+    case_name = "QAP-1075"
 
     seconds, nanos = timestamps()  # Store case start time
 
