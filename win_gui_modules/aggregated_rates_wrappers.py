@@ -352,6 +352,9 @@ class ModifyRatesTileRequest:
     # def set_quantity(self, quantity: int):
     #     self.modify_request.quantity.value = quantity
 
+    def set_click_on_one_click_button(self):
+        self.modify_request.clickOnOneClick = True
+
     def add_context_action(self, context_action: ContextActionRatesTile):
         self.modify_request.contextActions.append(context_action.build())
 
