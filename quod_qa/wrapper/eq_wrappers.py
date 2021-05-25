@@ -127,20 +127,25 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(5)
         rule_manager.remove_rule(nos_rule)
 
 
-def amend_order_via_fix(fix_message, parametr_list):
+def amend_order_via_fix(fix_message, case_id, parametr_list):
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(connectivity)
+        rule = rule_manager.add_OCRR("fix-bs-eq-paris")
         fix_modify_message = FixMessage(fix_message)
+        fix_manager_qtwquod = FixManager(connectivity, case_id)
         fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+        response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
+    return response
+
 
 
 def amend_order(request, client=None, qty=None, price=None ):
