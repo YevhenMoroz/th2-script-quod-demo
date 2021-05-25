@@ -127,7 +127,6 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        time.sleep(5)
         rule_manager.remove_rule(nos_rule)
 
 
@@ -341,6 +340,22 @@ def get_order_id(request):
         logger.error("Error execution", exc_info=True)
     return result[order_id.name]
 
+def verify_value(request,case_id,column_name,expected_value):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id(column_name)
+    value = ExtractionDetail(column_name,column_name)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check value")
+    print(result[value.name])
+    verifier.compare_values(column_name, expected_value, result[value.name])
+    verifier.verify()
+
+
+
 
 def get_cl_order_id(request):
     order_details = OrdersDetails()
@@ -351,22 +366,6 @@ def get_cl_order_id(request):
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[cl_order_id.name]
-
-
-def verify_value(request, case_id, column_name, expected_value):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
-    order_details.set_extraction_id(column_name)
-    value = ExtractionDetail(column_name, column_name)
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values(column_name, expected_value, result[value.name])
-    verifier.verify()
-
-
 def check_time_sleep_fix_order(request, fix_message, time1):
     for i in range(1, 4):
         if (get_cl_order_id(request) == fix_message['ClOrdID']):

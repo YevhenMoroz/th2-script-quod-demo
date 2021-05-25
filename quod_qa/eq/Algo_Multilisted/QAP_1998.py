@@ -26,7 +26,7 @@ def execute(report_id):
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
-        sor_params = {
+        multilisting_params = {
             'Account': client,
             'HandlInst': 2,
             'Side': 1,
@@ -53,28 +53,28 @@ def execute(report_id):
         # endregion
         # region Rules
         rule_manager = RuleManager()
-        ioc_rule = rule_manager.add_NewOrdSingle_IOC('fix-bs-eq-paris', 'XPAR_CLIENT2', 'XPAR', True, qty, 40)
+        ioc_rule = rule_manager.add_NewOrdSingle_IOC('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', True, qty, 40)
         # endregion
         # region Connectivity
         case_id = bca.create_event(os.path.basename(__file__), report_id)
-        fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-        fix_verifier_ss = FixVerifier('gtwquod5', case_id)
-        fix_verifier_paris = FixVerifier('fix-bs-eq-paris', case_id)
+        fix_manager_qtwquod5 = FixManager('fix-ss-310-columbia-standart', case_id)
+        fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+        fix_verifier_paris = FixVerifier('fix-bs-310-columbia', case_id)
         # endregion
 
-        fix_message = FixMessage(sor_params)
-        fix_message.add_random_ClOrdID()
-        sor_responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        fix_message_multilisting = FixMessage(multilisting_params)
+        fix_message_multilisting.add_random_ClOrdID()
+        responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_multilisting)
 
         time.sleep(1)
         # Check on ss
         er_params_new = {
             'ExecType': "0",
             'OrdStatus': '0',
-            'TimeInForce': sor_params['TimeInForce'],
-            'OrderID': sor_responce.response_messages_list[0].fields['OrderID'].simple_value
+            'TimeInForce': multilisting_params['TimeInForce'],
+            'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value
         }
-        fix_verifier_ss.CheckExecutionReport(er_params_new, sor_responce, message_name='Check ER to SS',
+        fix_verifier_ss.CheckExecutionReport(er_params_new, responce, message_name='Check ER to SS',
                                              key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # Check on bs
         NOS_BS_params = {
@@ -83,7 +83,7 @@ def execute(report_id):
             'ChildOrderID': '*',
             'TimeInForce': 3
         }
-        fix_verifier_paris.CheckNewOrderSingle(NOS_BS_params, sor_responce, key_parameters=['Price', 'OrderQty'],
+        fix_verifier_paris.CheckNewOrderSingle(NOS_BS_params, responce, key_parameters=['Price', 'OrderQty'],
                                              message_name="Check 3rd child qty")
 
         ERTrade_BS_params = {
@@ -93,16 +93,16 @@ def execute(report_id):
             'TimeInForce': NOS_BS_params['TimeInForce'],
             'ClOrdID': '*'
         }
-        fix_verifier_paris.CheckExecutionReport(ERTrade_BS_params, sor_responce, key_parameters=['Price', 'OrderQty', 'ExecType'],
+        fix_verifier_paris.CheckExecutionReport(ERTrade_BS_params, responce, key_parameters=['Price', 'OrderQty', 'ExecType'],
                                                message_name="Check 3rd child qty", direction="SECOND")
         # Check on ss
         er_params_trade = {
             'ExecType': "F",
             'OrdStatus': '2',
-            'TimeInForce': sor_params['TimeInForce'],
-            'OrderID': sor_responce.response_messages_list[0].fields['OrderID'].simple_value
+            'TimeInForce': multilisting_params['TimeInForce'],
+            'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value
         }
-        fix_verifier_ss.CheckExecutionReport(er_params_trade, sor_responce, message_name='Check ER to SS',
+        fix_verifier_ss.CheckExecutionReport(er_params_trade, responce, message_name='Check ER to SS',
                                              key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
 

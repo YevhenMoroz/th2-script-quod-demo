@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 import timestring
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import ndf_m1_front_end, ndf_spo_front_end, fixing_ndf_m1_front_end, \
     ndf_m2_front_end, fixing_ndf_m2_front_end
@@ -65,6 +66,10 @@ def check_fixing_date(base_request, service, case_id, date):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_from_currency = "USD"
     case_to_currency = "PHP"
@@ -102,9 +107,11 @@ def execute(report_id):
         change_tenor(base_rfq_details, ar_service, case_tenor_2m)
         check_date(base_rfq_details, ar_service, case_id, ndf_date_2m)
         check_fixing_date(base_rfq_details, ar_service, case_id, fixing_ndf_date_2m)
-
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

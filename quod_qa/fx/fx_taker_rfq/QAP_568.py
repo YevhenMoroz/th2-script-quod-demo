@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
@@ -105,15 +106,19 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = "QA2"
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -150,7 +155,12 @@ def execute(report_id):
         place_order_venue(base_rfq_details, ar_service, case_venue)
         ob_quote_id = check_order_book(case_base_request, case_instr_type, common_act, ob_act)
         check_quote_book(case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
+        cancel_rfq(base_rfq_details, ar_service)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception:
+
+    except Exception as e:
         logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

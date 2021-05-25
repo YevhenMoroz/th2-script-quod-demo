@@ -1,7 +1,9 @@
 import logging
 import time
 from pathlib import Path
+
 from th2_grpc_hand import rhbatch_pb2
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs

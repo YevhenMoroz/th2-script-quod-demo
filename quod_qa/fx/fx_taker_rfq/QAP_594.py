@@ -1,6 +1,8 @@
 import logging
 
 from pathlib import Path
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -71,8 +73,12 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = "QA2"
     case_venue_hsbcr = "HSBCR"
     case_qty = 1000000
     case_near_date = 2
@@ -118,4 +124,6 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
+    finally:
+        for rule in [RFQ, TRFQ]:
+            rule_manager.remove_rule(rule)

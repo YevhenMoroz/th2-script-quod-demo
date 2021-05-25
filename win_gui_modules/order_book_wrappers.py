@@ -1,5 +1,5 @@
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
+
 from .order_ticket import OrderTicketDetails
 from th2_grpc_act_gui_quod import order_book_pb2
 from dataclasses import dataclass
@@ -386,11 +386,8 @@ class CompleteOrdersDetails:
 
 
 class ManualCrossDetails:
-
     def __init__(self, base: EmptyRequest = None):
-        self.base = None
-        self.manualCrossValues = ExtractManualCrossValuesRequest()
-        if base is not None :
+        if base is not None:
             self._request = order_book_pb2.ManualCrossDetails(base=base)
         else:
             self._request = order_book_pb2.ManualCrossDetails()
@@ -398,10 +395,8 @@ class ManualCrossDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-
     def set_price(self, value: str):
         self._request.price = value
-
 
     def set_quantity(self, value: str):
         self._request.quantity = value
@@ -418,36 +413,3 @@ class ManualCrossDetails:
 
     def build(self):
         return self._request
-
-
-# class ManualCrossDetails:
-#     def __init__(self, base: EmptyRequest = None,manualCrossValues : ExtractManualCrossValuesRequest=None):
-#         if base is not None:
-#             self._request = order_book_pb2.ManualCrossDetails(base=base)
-#         else:
-#             self._request = order_book_pb2.ManualCrossDetails()
-#
-#     def set_default_params(self, base_request):
-#         self._request.base.CopyFrom(base_request)
-#
-#     def set_price(self, value: str):
-#         self._request.price = value
-#
-#     def set_manualCrossValues(self, value : ExtractManualCrossValuesRequest):
-#         self._request.manualCrossValues = value
-#
-#     def set_quantity(self, value: str):
-#         self._request.quantity = value
-#
-#     def set_capacity(self, value: str):
-#         self._request.capacity = value
-#
-#     def set_last_mkt(self, value: str):
-#         self._request.lastMkt = value
-#
-#     def set_selected_rows(self, row_numbers: list):
-#         for row in row_numbers:
-#             self._request.selectedRows.append(row)
-#
-#     def build(self):
-#         return self._request
