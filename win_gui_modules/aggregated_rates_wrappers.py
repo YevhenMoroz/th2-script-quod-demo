@@ -286,9 +286,8 @@ class ModifyRFQTileRequest:
     def set_client(self, client: str):
         self.modify_request.client = client
 
-    def set_quantity(self, quantity: str):
-        self.modify_request.changeQty = True
-        self.modify_request.quantityAsString = quantity
+    def set_quantity(self, quantity: int):
+        self.modify_request.quantity = quantity
 
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
@@ -348,9 +347,6 @@ class ModifyRatesTileRequest:
     def set_quantity(self, quantity: str):
         self.modify_request.changeQty = True
         self.modify_request.quantityAsString = quantity
-
-    # def set_quantity(self, quantity: int):
-    #     self.modify_request.quantity.value = quantity
 
     def set_click_on_one_click_button(self):
         self.modify_request.clickOnOneClick = True
