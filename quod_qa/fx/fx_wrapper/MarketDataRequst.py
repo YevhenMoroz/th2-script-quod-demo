@@ -14,6 +14,7 @@ class MarketDataRequst:
     case_params = None
     md_subscribe_response=None
     md_reject_response=None
+    message_verification=None
 
 
 
@@ -114,22 +115,30 @@ class MarketDataRequst:
 
 
     # Extract filed by name
-    def extruct_filed(self, field, band_number=0):
+    def extruct_filed(self, field, band_number=1):
         price = 0
         if field.lower()=='price':
-            price = self.subscribe.response_messages_list[band_number].fields['NoMDEntries'] \
-                .message_value.fields['NoMDEntries'].list_value.values[1] \
+            price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
+                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryPx'].simple_value
-        return price
+            return price
+        elif field.lower()=='mdentryid':
+            mdEntryId = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
+                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
+                .message_value.fields['MDEntryID'].simple_value
+            return mdEntryId
 
-
-    # Check respons was received
-    def verify_md_pending(self, *args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
+    def prepare_md_response(self,*args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
         if self.case_params.securitytype == 'FXFWD':
             self.prepare_md_for_verification_fwrd(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
-        elif self.case_params.securitytype == 'FXSPOT':
+        if self.case_params.securitytype == 'FXSPOT':
             self.prepare_md_for_verification_spo(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
-        self.verifier.submitCheckRule(
+        return self
+
+    # Check respons was received
+    def verify_md_pending(self):
+        time.sleep(3)
+        msg = self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
@@ -138,6 +147,7 @@ class MarketDataRequst:
                 self.case_params.case_id
             )
         )
+        self.message_verification=msg
         return self
 
     # Check respons was received
