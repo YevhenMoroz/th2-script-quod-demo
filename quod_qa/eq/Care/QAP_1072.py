@@ -3,8 +3,6 @@ import os
 from copy import deepcopy
 from datetime import datetime
 from th2_grpc_act_gui_quod import order_ticket_service
-
-from custom.verifier import Verifier
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
@@ -52,20 +50,16 @@ def execute(report_id):
 
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    param_list = {'Price': newPrice}
+    param_list = {'LmtPrice': newPrice}
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, str(int((int(qty)/2))), price)
     response = fix_message.pop('response')
     # Amend fix order
-    response = eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
     # endregion
     # region accept amend
     eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('LmtPrice', '1',
-                            response)
-    verifier.verify()
+    eq_wrappers.check_value_via_fix(list_param, case_id, response)
 
 
