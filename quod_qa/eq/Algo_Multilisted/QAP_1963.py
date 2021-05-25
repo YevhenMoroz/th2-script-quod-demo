@@ -25,7 +25,7 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
-tig_gtd = 6
+tif_gtd = 6
 expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
 stop_price = 30
 side = 1
@@ -133,7 +133,7 @@ def execute(report_id):
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
-            'TimeInForce': tig_gtd,
+            'TimeInForce': tif_gtd,
             'StopPx': stop_price,
             'OrdType': order_type_stop,
             'TransactTime': datetime.utcnow().isoformat(),
@@ -180,7 +180,7 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'Currency': currency,
-            'TimeInForce': tig_gtd,
+            'TimeInForce': tif_gtd,
             'ExecType': "A",
             'HandlInst': new_order_single_params['HandlInst'],
             'LeavesQty': qty,
@@ -338,7 +338,7 @@ def execute(report_id):
             'Side': side,
             'AvgPx': '0',
             'OrdStatus': '4',
-            'TimeInForce': tig_gtd,
+            'TimeInForce': tif_gtd,
             'ExecType': '4',
             'ExDestination': ex_destination_1,
             'LeavesQty': '0',
@@ -360,7 +360,7 @@ def execute(report_id):
             'AvgPx': 0,
             'SettlDate': '*',
             'Currency': 'EUR',
-            'TimeInForce': tig_gtd,
+            'TimeInForce': tif_gtd,
             'ExecType': 4,
             'HandlInst': 2,
             'LeavesQty': 0,
