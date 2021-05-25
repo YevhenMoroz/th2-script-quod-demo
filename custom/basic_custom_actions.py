@@ -377,6 +377,22 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
             )
+        elif isinstance(content[tag], list):
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=prefilter_to_grpc(content[tag][content[tag].index(group)], _nesting_level + 1)
+                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
+                            )
+                        )
+                    }
+                )
+            )
         elif isinstance(content[tag], ValueFilter):
             pass
     return PreFilter(fields=content) if _nesting_level == 0 else MessageFilter(fields=content)
