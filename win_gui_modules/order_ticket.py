@@ -2,14 +2,11 @@
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
-<<<<<<< HEAD
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
 
 #from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-=======
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
 
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
 from .common_wrappers import CommissionsDetails
@@ -79,6 +76,9 @@ class OrderTicketDetails:
         self.order.careOrderParams.desk = desk
         self.order.careOrderParams.partialDesk = partial_desk
         self.order.careOrderParams.discloseFlag = disclose_flag
+
+    def set_washbook(self, washbook: str):
+        self.order.advOrdParams.washbook = washbook
 
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
