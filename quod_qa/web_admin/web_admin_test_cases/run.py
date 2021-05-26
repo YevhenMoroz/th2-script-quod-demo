@@ -25,7 +25,7 @@ test_cases = {
             ]
 }
 
-
+# NOTE: for now the following code is using only to check implementation of pages. It will be updated in the future
 def test_run():
     # Generation ID and time for test run
     report_id = bca.create_event(f'{Stubs.custom_config["web_admin_login"]} tests '
@@ -37,11 +37,14 @@ def test_run():
     # Start session
     chrome_driver.maximize_window()
 
+    chrome_driver.get("http://10.0.22.40:3480/quodadmin/saturn/#/auth/login")
+
     login_page = LoginPage(chrome_driver, wait_driver)
     login_page.set_login("adm04")
     login_page.set_password("adm04")
     login_page.click_login_button()
-    login_page.check_is_login_successful()
+
+    chrome_driver.close()
 
 
 if __name__ == '__main__':
