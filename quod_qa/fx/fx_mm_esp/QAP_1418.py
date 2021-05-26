@@ -129,8 +129,8 @@ def execute(report_id):
 
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
-    instrument = "NOK/SEK-SPOT"
-    client_tier = "Gold_Night"
+    instrument = "EUR/USD-Spot"
+    client_tier = "Silver"
     pips = "2"
 
     if not Stubs.frontend_is_open:
