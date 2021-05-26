@@ -1,21 +1,17 @@
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
+from pathlib import Path
 
 import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, next_monday, next_monday_front_end
-from custom.verifier import Verifier, VerificationMethod
+from custom.tenor_settlement_date import next_monday_front_end
+from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -46,12 +42,7 @@ def check_date(exec_id, base_request, service, case_id, date):
 
 
 def execute(report_id):
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
-    case_name = "QAP-600"
+    case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_from_currency = "EUR"
     case_to_currency = "USD"
@@ -67,12 +58,11 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -80,10 +70,11 @@ def execute(report_id):
         time.sleep(10)
         check_date("RFQ", base_rfq_details, ar_service, case_id, case_date)
 
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

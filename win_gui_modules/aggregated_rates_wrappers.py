@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
@@ -293,6 +292,9 @@ class ModifyRFQTileRequest:
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
 
+    def set_far_leg_quantity_as_string(self, quantity: str):
+        self.modify_request.farLegQuantityAsString = quantity
+
     def set_far_leg_qty(self, quantity: int):
         self.modify_request.farLegQuantity.value = quantity
 
@@ -336,8 +338,18 @@ class ModifyRatesTileRequest:
     def set_tenor(self, tenor: str):
         self.modify_request.tenor = tenor
 
-    def set_quantity(self, quantity: int):
-        self.modify_request.quantity.value = quantity
+    def set_instrument(self, from_currency: str, to_currency: str, set_tenor: str):
+        self.modify_request.changeInstrument = True
+        self.modify_request.fromCurrency = from_currency
+        self.modify_request.toCurrency = to_currency
+        self.modify_request.tenor = set_tenor
+
+    def set_quantity(self, quantity: str):
+        self.modify_request.changeQty = True
+        self.modify_request.quantityAsString = quantity
+
+    def set_click_on_one_click_button(self):
+        self.modify_request.clickOnOneClick = True
 
     def add_context_action(self, context_action: ContextActionRatesTile):
         self.modify_request.contextActions.append(context_action.build())
@@ -386,6 +398,19 @@ class RFQTileValues(Enum):
     LEFT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.LEFT_CHECKBOX
     RIGHT_CHECKBOX = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.RIGHT_CHECKBOX
     SEND_BUTTON_TEXT = ar_operations_pb2.ExtractRFQTileValuesRequest.ExtractedType.SEND_BUTTON_TEXT
+
+
+class RatesTileValues(Enum):
+    INSTRUMENT = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.INSTRUMENT
+    TENOR_DATE = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.TENOR_DATE
+    QUANTITY = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.QUANTITY
+    BEST_BID_LARGE = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_BID_LARGE
+    BEST_BID_SMALL = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_BID_SMALL
+    BEST_ASK_LARGE = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_ASK_LARGE
+    BEST_ASK_SMALL = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_ASK_SMALL
+    SPREAD = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.SPREAD
+    BEST_BID = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_BID
+    BEST_ASK = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_ASK
 
 
 class ExtractRFQTileValues:
@@ -548,6 +573,54 @@ class TableAction:
         return self.request
 
 
+class ExtractRatesTileDataRequest:
+
+    def __init__(self, details: BaseTileDetails):
+        self.request = ar_operations_pb2.ExtractRatesTileValuesRequest(data=details.build())
+
+    def set_extraction_id(self, extraction_id: str):
+        self.request.extractionId = extraction_id
+
+    def extract_instrument(self, name: str):
+        self.extract_value(RatesTileValues.INSTRUMENT, name)
+
+    def extract_tenor(self, name: str):
+        self.extract_value(RatesTileValues.TENOR_DATE, name)
+
+    def extract_quantity(self, name: str):
+        self.extract_value(RatesTileValues.QUANTITY, name)
+
+    def extract_best_bid_large(self, name: str):
+        self.extract_value(RatesTileValues.BEST_BID_LARGE, name)
+
+    def extract_best_bid_small(self, name: str):
+        self.extract_value(RatesTileValues.BEST_BID_SMALL, name)
+
+    def extract_best_ask_large(self, name: str):
+        self.extract_value(RatesTileValues.BEST_ASK_LARGE, name)
+
+    def extract_best_ask_small(self, name: str):
+        self.extract_value(RatesTileValues.BEST_ASK_SMALL, name)
+
+    def extract_spread(self, name: str):
+        self.extract_value(RatesTileValues.SPREAD, name)
+
+    def extract_best_bid(self, name: str):
+        self.extract_value(RatesTileValues.BEST_BID, name)
+
+    def extract_best_ask(self, name: str):
+        self.extract_value(RatesTileValues.BEST_ASK, name)
+
+    def extract_value(self, field: RFQTileValues, name: str):
+        extracted_value = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+
+
 @dataclass
 class CellExtractionDetails:
     name: str
@@ -585,9 +658,10 @@ class RFQTileOrderSide(Enum):
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
 
 
+# The buy and sell side have been reversed because act confused them
 class ESPTileOrderSide(Enum):
-    BUY = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
-    SELL = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
+    BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
+    SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
 
 
 class PlaceRFQRequest:
@@ -628,6 +702,3 @@ class PlaceESPOrder:
 
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
-
-
-

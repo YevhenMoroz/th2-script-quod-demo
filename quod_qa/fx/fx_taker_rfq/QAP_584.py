@@ -1,17 +1,17 @@
 import logging
 import time
-import rule_management as rm
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -108,16 +108,11 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id):
 
 
 def execute(report_id):
-    common_act = Stubs.win_act
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-584"
-    quote_owner = "QA2"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
@@ -127,7 +122,6 @@ def execute(report_id):
     case_client = "MMCLIENT2"
     venues = ["HSB", "CIT"]
     quote_sts_new = 'New'
-    quote_sts_terminated = 'Terminated'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"
 
@@ -139,12 +133,11 @@ def execute(report_id):
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -160,7 +153,7 @@ def execute(report_id):
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
-        time.sleep(35)
+        time.sleep(120)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_quote_sts_expired, quote_quote_sts_expired, case_venue)
 
@@ -170,11 +163,12 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
 
-
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)
