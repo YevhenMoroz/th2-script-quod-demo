@@ -185,7 +185,7 @@ def execute(report_id, case_params):
     }
 
     rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
+        'QuoteReqID': bca.client_orderid(12),
         'NoRelatedSymbols': [
             {
                 'Instrument': reusable_params['Instrument'],

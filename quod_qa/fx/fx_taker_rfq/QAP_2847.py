@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -77,7 +79,7 @@ def check_quote_book(base_request, service, case_id, owner, quote_sts, venue):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    case_name = "QAP-2847"
+    case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"
@@ -86,7 +88,7 @@ def execute(report_id):
     case_filter_venue = "CITI"
     case_filter_venue_1 = "HSBC"
     case_qty = 10000000
-    case_quote_owner = "ostronov"
+    case_quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
     quote_quote_sts_accepted = "Accepted"

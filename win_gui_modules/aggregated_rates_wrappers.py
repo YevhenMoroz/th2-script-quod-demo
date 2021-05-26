@@ -287,7 +287,7 @@ class ModifyRFQTileRequest:
         self.modify_request.client = client
 
     def set_quantity(self, quantity: int):
-        self.modify_request.quantity = quantity
+        self.modify_request.quantity.value = quantity
 
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
@@ -658,9 +658,10 @@ class RFQTileOrderSide(Enum):
     SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
 
 
+# The buy and sell side have been reversed because act confused them
 class ESPTileOrderSide(Enum):
-    BUY = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
-    SELL = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
+    BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
+    SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
 
 
 class PlaceRFQRequest:

@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo_front_end, wk1_front_end
 from custom.verifier import Verifier
@@ -69,7 +71,7 @@ def check_tenor(exec_id, base_request, service, case_id, near_tenor, far_tenor):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    case_name = "QAP-606"
+    case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_far_tenor = "1W"

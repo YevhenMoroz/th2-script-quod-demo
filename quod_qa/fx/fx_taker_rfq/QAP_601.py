@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 import timestring
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import today_front_end, tom_front_end, sn_front_end
@@ -29,7 +31,7 @@ def check_date(exec_id, base_request, service, case_id, date):
 
 
 def execute(report_id):
-    case_name = "QAP-600"
+    case_name = Path(__file__).name[:-3]
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"

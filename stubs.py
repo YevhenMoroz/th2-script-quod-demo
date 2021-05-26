@@ -10,7 +10,7 @@ from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
 from th2_grpc_act_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
-from th2_grpc_sim_quod.sim_service import TemplateSimulatorServiceService
+from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
@@ -22,11 +22,11 @@ from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerI
 class Stubs:
     configs_dir = join(dirname(abspath(__file__)), 'configs')
     factory = CommonFactory(
-        grpc_router_config_filepath="./configs/grpc.json",
-        rabbit_mq_config_filepath="./configs/rabbit.json",
-        mq_router_config_filepath="./configs/mq.json",
-        custom_config_filepath="./configs/script-params.json",
-        prometheus_config_filepath="./configs/prometheus.json"
+        grpc_router_config_filepath=join(configs_dir, "grpc.json"),
+        rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
+        mq_router_config_filepath=join(configs_dir, "mq.json"),
+        custom_config_filepath=join(configs_dir, "script-params.json"),
+        prometheus_config_filepath=join(configs_dir, "prometheus.json")
     )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
