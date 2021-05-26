@@ -23,9 +23,11 @@ text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
 text_f='Fill'
+text_s = 'sim work'
+text_nlf = 'no liquidity found'
 side = 1
 price = 40
-tif_ato = 2
+tif_fok = 4
 tif_gtc = 1
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
@@ -126,7 +128,7 @@ def execute(report_id):
             'HandlInst': "2",
             'Side': side,
             'OrderQty': qty,
-            'TimeInForce': tif_ato,
+            'TimeInForce': tif_fok,
             'Price': price,
             'OrdType': order_type,
             'TransactTime': datetime.utcnow().isoformat(),
@@ -224,7 +226,7 @@ def execute(report_id):
             'SettlDate': '*',
             'Price': price,
             'Currency': currency,
-            'TimeInForce': tif_ato,
+            'TimeInForce': tif_fok,
             'Instrument': '*',
             'HandlInst': '1',
             'ExDestination': instrument['SecurityExchange']
@@ -246,7 +248,7 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'Price': price,
-            'TimeInForce': tif_ato,
+            'TimeInForce': tif_fok,
             'ExecType': "A",
             'ExDestination': ex_destination_1,
             'LeavesQty': '0'
@@ -254,7 +256,7 @@ def execute(report_id):
 
         fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
 
-        # Check that FIXBUYQUOD5 sent 35=8 new
+        # Check that FIXBUYTH2 sent 35=8 new
         er_4 = dict(
             er_3,
             OrdStatus='0',
@@ -263,6 +265,62 @@ def execute(report_id):
             Text=text_n,
         )
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        #endregion
+
+        #region Check Eliminated order
+        case_id_3 = bca.create_event("Check Eliminated Order", case_id)
+        # Check that FUXBUYTH2 sent 35=8 Eliminated
+        er_5 = {
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': qty,
+            'OrdType': order_type,
+            'ClOrdID': '*',
+            'Text': text_s,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': '4',
+            'TimeInForce': tif_fok,
+            'ExecType': '4',
+            'LeavesQty': '0'
+        }
+        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Eliminated', key_parameters=['TimeInForce', 'OrdStatus', 'ExecType'])
+
+        # Check that FIXSELLQUOD5 sent 35=8 Eliminated
+        er_6 = {
+            'ExecID': '*',
+            'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': '0',
+            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': '4',
+            'SettlDate': '*',
+            'Currency': currency,
+            'TimeInForce': tif_fok,
+            'ExecType': '4',
+            'HandlInst': new_order_single_params['HandlInst'],
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'OrdType': order_type,
+            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'LastMkt': ex_destination_1,
+            'Text': text_nlf,
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'QtyType': '0',
+            'ExecRestatementReason': '*',
+            'SettlType': '*',
+            'Price': price,
+            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'Instrument': instrument,
+        }
+        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'ClOrdID', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
         #endregion
 
         time.sleep(1)
