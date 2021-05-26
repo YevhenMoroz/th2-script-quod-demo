@@ -24,14 +24,13 @@ class NewOrderDetails:
 class NewFxOrderDetails:
 
     def __init__(self):
-        self.new_fx_roder_details = _NewFXOrderDetails()
+        self.new_fx_order_details = _NewFXOrderDetails()
 
     def set_order_details(self, order_details: FXOrderDetails):
-        self.new_fx_roder_details.fxOrderDetails.CopyFrom(order_details.build())
-
+        self.new_fx_order_details.fxOrderDetails.CopyFrom(order_details.build())
 
     def set_default_params(self, base_request):
-        self.new_fx_roder_details.base.CopyFrom(base_request)
+        self.new_fx_order_details.base.CopyFrom(base_request)
 
     def build(self):
-        return self.new_fx_roder_details
+        return self.new_fx_order_details
