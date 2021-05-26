@@ -1,4 +1,8 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+
 from quod_qa.web_admin.web_admin_core.pages.login.login_constants import LoginConstants
+from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_utils import find_by_css_selector, find_by_xpath
 
 
@@ -18,3 +22,6 @@ class LoginPage:
     def click_login_button(self):
         login_button = find_by_xpath(self.wait_driver, LoginConstants.LOGIN_BUTTON_XPATH)
         login_button.click()
+
+    def check_is_login_successful(self):
+        find_by_css_selector(self.wait_driver, RootConstants.HEADER_CONTAINER_CSS_SELECTOR)

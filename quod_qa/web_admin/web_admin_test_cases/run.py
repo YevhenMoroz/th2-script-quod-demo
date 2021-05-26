@@ -6,6 +6,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
+from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from quod_qa.web_admin.web_admin_core.utils.toggle_state_enum import ToggleStateEnum
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from quod_qa.web_admin import QAP_758, login_logout_example
@@ -43,6 +46,12 @@ def test_run():
     login_page.set_login("adm04")
     login_page.set_password("adm04")
     login_page.click_login_button()
+    login_page.check_is_login_successful()
+
+    side_menu = SideMenu(chrome_driver, wait_driver)
+    side_menu.open_accounts_page()
+    side_menu.open_execution_strategies_page(ToggleStateEnum.OPENED)
+    side_menu.open_admin_command_page()
 
     chrome_driver.close()
 
