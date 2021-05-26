@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -50,7 +52,7 @@ def check_qty(exec_id, base_request, service, case_id, near_qty, far_qty):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    case_name = "QAP-2514"
+    case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"

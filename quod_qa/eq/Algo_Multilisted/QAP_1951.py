@@ -10,15 +10,17 @@ from rule_management import RuleManager
 
 
 def execute(report_id):
+    Account = 'XPAR_CLIENT2'
+
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris", "XPAR_CLIENT2", "XPAR", 20)
-    ocr_rule = rule_manager.add_OCR("fix-bs-eq-paris")
-    ocrr_rule = rule_manager.add_OCRR("fix-bs-eq-paris")
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia", "XPAR_CLIENT2", "XPAR", 20)
+    ocr_rule = rule_manager.add_OCR("fix-bs-310-columbia")
+    ocrr_rule = rule_manager.add_OCRR("fix-bs-310-columbia")
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
-    fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-    fix_verifier_ss = FixVerifier('gtwquod5', case_id)
-    fix_verifier_bs = FixVerifier('fix-bs-eq-paris', case_id)
+    fix_manager_qtwquod5 = FixManager('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_bs = FixVerifier('fix-bs-310-columbia', case_id)
 
     # Send NewOrderSingle
     multilisting_params = {
@@ -31,8 +33,8 @@ def execute(report_id):
         'OrdType': "2",
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': {
-            'Symbol': 'FR0010542647_EUR',
-            'SecurityID': 'FR0010542647',
+            'Symbol': 'FR0000125007_EUR',
+            'SecurityID': 'FR0000125007',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         },
@@ -59,32 +61,82 @@ def execute(report_id):
 
     #Check on ss
     er_params_new ={
-        'ExecType': "0",
-        'OrdStatus': '0',
-        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecID': '*',
+        'OrderQty': multilisting_params['OrderQty'],
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecType': "0",
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': multilisting_params['OrderQty'],
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(), 
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '0',
+        'Price': multilisting_params['Price'],
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument']
 
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce, message_name='Check ER to SS', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
     #Check on bs
     new_order_single_bs = {
+        'NoParty': '*',
+        'Account': Account,        
         'OrderQty': multilisting_params['OrderQty'],
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': '*',
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'TransactTime': '*',
+        'ChildOrderID': '*',
         'Side': multilisting_params['Side'],
         'Price': multilisting_params['Price'],
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
         'TimeInForce': multilisting_params['TimeInForce'],
+        'Instrument': '*',
+        'HandlInst': '1',
+        'ExDestination': multilisting_params['Instrument']['SecurityExchange']
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce, message_name='Check NewOrderSingle To BS')
 
     #Check answer from sim
     er_bs_params = {
-        'OrdStatus': "0",
-        'Text': 'New status'
+        'Account': Account,
+        'CumQty': '0',
+        'ExecID': '*',
+        'OrderQty': multilisting_params['OrderQty'],
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'Text': 'New status',
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'Price': multilisting_params['Price'],
+        'TimeInForce': '*',
+        'ExecType': '0',
+        'ExDestination': multilisting_params['Instrument']['SecurityExchange'],
+        'LeavesQty': '0'
     }
     fix_verifier_bs.CheckExecutionReport(er_bs_params, responce, message_name='Check ER from BS', direction="SECOND")
 
     # Update Nos rule
     rule_manager.remove_rule(nos_rule)
-    nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris", "XPAR_CLIENT2", "XPAR", 19)
+    nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia", "XPAR_CLIENT2", "XPAR", 19)
 
 
     # Send OrderCancelReplaceRequest
@@ -94,10 +146,34 @@ def execute(report_id):
     fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
 
     replace_ss_params = {
-        'ExecType': '5',
-        'Price': '19',
+        'ExecID': '*',
         'OrderQty': '900',
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'SettlDate': '0',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': '0',
+        'ExecType': '5',
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': fix_message_multilisting.get_parameter('OrderQty'),#check
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '*',
+        'Price': fix_message_multilisting.get_parameter('Price'),
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument'],
+        'OrigClOrdID': fix_message_multilisting.get_ClOrdID()
     }
     time.sleep(1)
 
@@ -108,9 +184,33 @@ def execute(report_id):
 
     # Check new order on bs
     new_order_single_bs = {
+        'ExecID': '*',
         'OrderQty': replace_ss_params['OrderQty'],
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
         'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecType': "0",
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': multilisting_params['OrderQty'],
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(), 
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '0',
         'Price': replace_ss_params['Price'],
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument']
     }
     fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce, key_parameters = ['Side', 'OrderQty', 'Price'], message_name= 'Check NewOrderSingle To BS')
 
@@ -126,8 +226,34 @@ def execute(report_id):
     fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     cancel_er_params = {
-        "ClOrdID": fix_message_multilisting.get_ClOrdID(),
-        "OrdStatus": "4"
+        'ExecID': '*',
+        'OrderQty': multilisting_params['OrderQty'],
+        'NoStrategyParameters': '*',
+        'LastQty': multilisting_params['OrderQty'],
+        'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        "OrdStatus": "4",
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecType': '4',
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': '0',
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '*',
+        'Price': multilisting_params['Price'],
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument'],
+        'OrigClOrdID': fix_message_multilisting.get_ClOrdID()
     }
     fix_verifier_ss.CheckExecutionReport(cancel_er_params, responce_cancel, message_name="Check cancel ER to SS")
 

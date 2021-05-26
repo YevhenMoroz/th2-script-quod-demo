@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -109,8 +111,8 @@ def cancel_rfq(base_request, service):
 
 
 def execute(report_id):
-    case_name = "QAP-602"
-    quote_owner = "ostronov"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "MAR IMM"

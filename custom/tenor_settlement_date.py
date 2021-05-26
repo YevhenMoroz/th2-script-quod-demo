@@ -129,7 +129,7 @@ def y1_front_end():
 
 
 def y2_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=524)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=523)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def ndf_spo_front_end():
@@ -153,7 +153,7 @@ def ndf_wk3_front_end():
 
 
 def ndf_m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def ndf_m2_front_end():
@@ -207,5 +207,12 @@ def fixing_ndf_m4_front_end():
 def fixing_ndf_y1_front_end():
     return (tm(datetime.utcnow().isoformat()) + bd(n=261)).date().strftime('%Y-%m-%d %H:%M:%S')
 
+
+def get_expire_time(ttl: int = 120):
+    """
+    Method can be used to get timestamp of quote expire time.
+    it just return current time + quote time to live in FIX timestamp format
+    """
+    return (datetime.now() + timedelta(seconds=ttl)).strftime("%Y%m%d-%H:%M:%S.000")
 
 # TODO need to add another tenors

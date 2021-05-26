@@ -11,12 +11,12 @@ from rule_management import RuleManager
 
 def execute(report_id):
     rule_manager = RuleManager()
-    ocr_rule = rule_manager.add_OCR("fix-bs-eq-paris")
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",'XPAR_CLIENT2', 'XPAR', 20)
+    ocr_rule = rule_manager.add_OCR("fix-bs-310-columbia")
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia",'XPAR_CLIENT2', 'XPAR', 20)
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
-    fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-    fix_verifier_ss = FixVerifier('gtwquod5', case_id)
+    fix_manager_qtwquod5 = FixManager('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
 
     # Send NewOrderSingle
 

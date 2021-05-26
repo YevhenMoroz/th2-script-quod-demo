@@ -24,7 +24,7 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
-    modify_request.set_change_currency()
+    modify_request.set_change_currency(True)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -119,7 +119,7 @@ def execute(report_id):
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'FXForward'
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

@@ -1,7 +1,8 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
-    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
+    TemplateOrderCancelReplaceExecutionReport
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -169,6 +170,25 @@ class RuleManager:
                                                                      tradedQty=tradedQty,
                                                                      price= price
                                             ))
+
+    @staticmethod
+    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
+        return Stubs.simulator.createNewOrdSingleMarket(
+            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     avgPrice=avgPrice
+                                            ))
+
+    @staticmethod
+    def add_OrderCancelReplaceRequest_ExecutionReport(session: str, trade: bool):
+        return Stubs.simulator.createOrderCancelReplaceExecutionReport(
+            request=TemplateOrderCancelReplaceExecutionReport(connection_id=ConnectionID(session_alias=session),
+                                                                     trade=trade
+                                            ))
+
     # ------------------------
 
 

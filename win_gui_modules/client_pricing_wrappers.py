@@ -81,7 +81,7 @@ class PlaceRatesTileOrderRequest:
     def set_details(self, details: BaseTileDetails):
         self.place_order_request.data.CopyFrom(details.build())
 
-# SWAP buy and sell side
+# The buy and sell side have been reversed because act confused them
     def buy(self):
         self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.SELL
 
@@ -211,6 +211,27 @@ class ExtractRatesTileTableValuesRequest:
         var = self.request.askExtractionFields.add()
         var.name = detail.name
         var.colName = detail.column_name
+
+    def build(self):
+        return self.request
+
+class SelectRowsRequest:
+    def __init__(self, details: BaseTileDetails):
+        if details is not None:
+            self.request = cp_operations_pb2.SelectRequest(data=details.build())
+
+    def set_row_numbers(self, row_numbers: list):
+        self.extractionId = "rows"
+        for row_number in row_numbers:
+            self.request.rowNumbers.append( row_number)
+
+    def build(self):
+        return self.request
+
+class DeselectRowsRequest:
+    def __init__(self, details: BaseTileDetails):
+        if details is not None:
+            self.request = cp_operations_pb2.SelectRequest(data=details.build())
 
     def build(self):
         return self.request
