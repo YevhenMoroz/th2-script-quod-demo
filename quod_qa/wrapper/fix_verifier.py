@@ -1,3 +1,5 @@
+from th2_grpc_check1.check1_pb2 import PreFilter
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import Direction, ValueFilter, MessageFilter, FilterOperation
@@ -83,7 +85,7 @@ class FixVerifier:
             )
         )
 
-    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest', direction='FIRST', case = None):
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelReplaceRequest', case = None):
         if case == None:
             case = self.case_id
 

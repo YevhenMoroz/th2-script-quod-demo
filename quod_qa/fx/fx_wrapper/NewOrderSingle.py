@@ -1,7 +1,7 @@
-from quod_qa.fx.fx_mm_esp.methods.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from datetime import datetime
 from custom import basic_custom_actions as bca
-
+from stubs import Stubs
 
 
 
@@ -11,6 +11,11 @@ class NewOrderSingle():
     new_order=None
     price=0
     checkpoint=None
+    case_params = None
+    fix_act = Stubs.fix_act
+    verifier = Stubs.verifier
+    # check_order_status=None
+
     def __init__(self, case_params=CaseParams):
         self.case_params=case_params
 
@@ -31,28 +36,25 @@ class NewOrderSingle():
             'SettlDate': self.case_params.settldate,
             'Instrument': {
                 'Symbol': self.case_params.symbol,
+                'SecurityType': self.case_params.securitytype,
                 'Product': self.case_params.product,
             },
             'Currency': self.case_params.currency
         }
-
+        tif = self.prepeare_tif()
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new FOK order', self.case_params.connectivity, self.case_params.case_id,
+                'Send new order ' + tif, self.case_params.connectivity, self.case_params.case_id,
                 bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivity)
             ))
+        return self
 
 
-    # Check Execution Repors for order
-    def verify_order(self,ord_status,account):
-        self.verify_order_pending()
-        self.verify_order_new()
-        self.verify_last_ex_report(ord_status,account)
+
 
     def verify_order_pending(self,):
         self.checkpoint = self.new_order.checkpoint_id
         ex_rep_pending = {
-            'Account': self.case_params.account,
             'HandlInst': self.case_params.handlinstr,
             'Side': self.case_params.side,
             'TimeInForce': self.case_params.timeinforce,
@@ -61,6 +63,10 @@ class NewOrderSingle():
             'Currency': self.case_params.currency,
             'Instrument': {
                 'Symbol': self.case_params.symbol,
+                'SecurityIDSource': self.case_params.securityidsource,
+                'SecurityID': self.case_params.securityid,
+                'Product': self.case_params.product,
+                'SecurityExchange': self.case_params.securityexchange
             },
             'ExecID': '*',
             'ClOrdID': self.case_params.clordid,
@@ -91,6 +97,7 @@ class NewOrderSingle():
             ),
             timeout=3000
         )
+        return self
 
     def verify_order_new(self):
         ex_rep_new = {
@@ -103,6 +110,10 @@ class NewOrderSingle():
             'Currency': self.case_params.currency,
             'Instrument': {
                 'Symbol': self.case_params.symbol,
+                'SecurityIDSource': self.case_params.securityidsource,
+                'SecurityID': self.case_params.securityid,
+                'Product': self.case_params.product,
+                'SecurityExchange': self.case_params.securityexchange
             },
             'ExecID': '*',
             'ClOrdID': self.case_params.clordid,
@@ -111,7 +122,7 @@ class NewOrderSingle():
             'CumQty': '0',
             'LastPx': '0',
             'LastQty': '0',
-            'SettlDate': self.case_params.settldate,
+            'SettlDate': self.case_params.settldate.split(' ')[0],
             'SettlType': self.case_params.settltype,
             'QtyType': '0',
             'OrderQty': self.case_params.orderqty,
@@ -136,10 +147,10 @@ class NewOrderSingle():
             ),
             timeout=3000
         )
+        return self
 
-    def verify_last_ex_report(self,ord_status,account):
-        order_status=self.check_order_status(ord_status)
-        last_ex_report = {
+    def verify_order_filled(self, account):
+        final_ex_report = {
             'Account': account,
             'HandlInst': self.case_params.handlinstr,
             'Side': self.case_params.side,
@@ -149,6 +160,11 @@ class NewOrderSingle():
             'Currency': self.case_params.currency,
             'Instrument': {
                 'Symbol': self.case_params.symbol,
+                'SecurityType':self.case_params.securitytype,
+                'SecurityIDSource': self.case_params.securityidsource,
+                'SecurityID':self.case_params.securityid,
+                'Product': self.case_params.product,
+                'SecurityExchange': self.case_params.securityexchange
             },
             'ClOrdID': self.case_params.clordid,
             'OrderID': '*',
@@ -179,17 +195,90 @@ class NewOrderSingle():
         }
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
-                'Execution Report with OrdStatus = Filled',
-                bca.filter_to_grpc('ExecutionReport', last_ex_report, ['ClOrdID', 'OrdStatus']),
+                'Execution Report with OrdStatus = Filled' ,
+                bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params.connectivity, self.case_params.case_id
             ),
             timeout=3000
         )
+        return self
 
-    def check_order_status(ord_status):
+    def verify_order_rejected(self,text, type=''):
+        final_ex_report = {
+            'HandlInst': self.case_params.handlinstr,
+            'Side': self.case_params.side,
+            'TimeInForce': self.case_params.timeinforce,
+            'OrdType': self.case_params.ordtype,
+            'OrderCapacity': 'A',
+            'Currency': self.case_params.currency,
+            'Instrument': {
+                'Symbol': self.case_params.symbol,
+                'SecurityIDSource': self.case_params.securityidsource,
+                'SecurityID': self.case_params.securityid,
+                'Product': self.case_params.product,
+                'SecurityExchange': self.case_params.securityexchange
+            },
+            'ClOrdID': self.case_params.clordid,
+            'OrderID': '*',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'LastQty': '*',
+            'CumQty': '0',
+            'QtyType': '0',
+            'Price': self.price,
+            'OrderQty': self.case_params.orderqty,
+            'LastPx': '0',
+            'Text':text,
+            'AvgPx': '0',
+            'OrdStatus': '8',
+            'ExecType': '8',
+            'ExecRestatementReason':'4',
+            'LeavesQty': '0',
+            'SettlType': self.case_params.settltype,
+            'SettlDate': self.case_params.settldate.split(' ')[0],
+            'SettlCurrency': self.case_params.settlcurrency,
+            'NoParty': [{
+                'PartyID': '*',
+                'PartyIDSource': 'D',
+                'PartyRole': '36'
+            }]
+        }
+        if type == 'algo':
+            final_ex_report.pop('SettlDate')
+            final_ex_report['HandlInst'] = '2'
+            final_ex_report['OrdRejReason'] = '99'
+            final_ex_report['TargetStrategy'] = '*'
+            final_ex_report.pop('ExecRestatementReason')
+            final_ex_report['Instrument'].pop('SecurityIDSource')
+            final_ex_report['Instrument'].pop('SecurityID')
+            final_ex_report.pop('SettlType')
+
+
+        self.verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                'Execution Report with OrdStatus = Rejected',
+                bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
+                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+            ),
+            timeout=3000
+        )
+        return self
+
+    def check_order_status(self, ord_status):
         if ord_status=='Filled':
             return '2'
         elif ord_status=='Rejected':
             return '8'
         else:
             return '0'
+
+    def prepeare_tif(self):
+        if self.case_params.timeinforce == '4':
+            return 'Fill or Kill'
+        elif self.case_params.timeinforce == '3':
+            return 'Immediate or Cancel'
+        elif self.case_params.timeinforce == '0':
+            return 'Day'
+        elif self.case_params.timeinforce == '1':
+            return 'Good till Cancel'
+        pass

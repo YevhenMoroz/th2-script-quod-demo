@@ -1,17 +1,15 @@
 import logging
+from pathlib import Path
 
-import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -81,11 +79,7 @@ def check_quote_book(base_request, service, case_id, owner, quote_sts, venue):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-2847"
+    case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
     case_to_currency = "USD"
@@ -94,7 +88,7 @@ def execute(report_id):
     case_filter_venue = "CITI"
     case_filter_venue_1 = "HSBC"
     case_qty = 10000000
-    case_quote_owner = "ostronov"
+    case_quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
     quote_quote_sts_accepted = "Accepted"
@@ -128,7 +122,6 @@ def execute(report_id):
                          quote_quote_sts_accepted, case_filter_venue)
 
         # Step 2
-        cancel_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_terminated, quote_sts_terminated, case_filter_venue_1)
         check_quote_request_b(case_base_request, ar_service, case_id,
@@ -142,6 +135,3 @@ def execute(report_id):
         call(ar_service.closeRFQTile, base_rfq_details.build())
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
