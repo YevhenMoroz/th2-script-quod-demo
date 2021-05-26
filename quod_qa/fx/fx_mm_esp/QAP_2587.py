@@ -84,12 +84,11 @@ def execute(report_id):
     base_details_spo = BaseTileDetails(base=case_base_request, window_index=0)
     base_details_1w = BaseTileDetails(base=case_base_request, window_index=1)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_details_spo, cp_service)
         create_or_get_rates_tile(base_details_1w, cp_service)
@@ -106,5 +105,10 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        # Close tile
-        call(cp_service.closeWindow, case_base_request)
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details_spo.build())
+            call(cp_service.closeRatesTile, base_details_1w.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)

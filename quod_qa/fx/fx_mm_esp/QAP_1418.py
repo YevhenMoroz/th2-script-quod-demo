@@ -133,12 +133,12 @@ def execute(report_id):
     client_tier = "Silver"
     pips = "2"
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier, pips)
@@ -181,5 +181,9 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        # Close tile
-        call(cp_service.closeWindow, case_base_request)
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)

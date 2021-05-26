@@ -102,7 +102,7 @@ def execute(report_id):
     empty_free_notes = ""
     pricing_off = "not active"
     executable_off = "not tradeable"
-    notes="not enough quantity in book"
+    notes = "not enough quantity in book"
     sts_rej = "Rejected"
     sts_term = "Terminated"
 
@@ -160,6 +160,7 @@ def execute(report_id):
     finally:
         try:
             # Close tile
-            call(cp_service.closeWindow, case_base_request)
+            call(cp_service.closeRatesTile, base_details.build())
+
         except Exception:
             logging.error("Error execution", exc_info=True)
