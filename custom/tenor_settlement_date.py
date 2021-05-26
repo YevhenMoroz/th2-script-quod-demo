@@ -15,6 +15,10 @@ def broken_2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=4)).date().strftime('%Y%m%d')
 
 
+def broken_w1w2():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
+
+
 def today():
     return (tm(datetime.utcnow().isoformat()) + bd(n=0)).date().strftime('%Y%m%d')
 
