@@ -78,6 +78,9 @@ class OrderTicketDetails:
         self.order.careOrderParams.partialDesk = partial_desk
         self.order.careOrderParams.discloseFlag = disclose_flag
 
+    def set_washbook(self, washbook: str):
+        self.order.advOrdParams.washbook = washbook
+
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)
@@ -156,6 +159,7 @@ class OrderTicketValues(Enum):
     SLIPPAGE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.SLIPPAGE
     STOPPRICE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.STOPPRICE
 
+
 class ExtractFxOrderTicketValuesRequest:
 
     def __init__(self, data: BaseTileDetails, extractionId: str = 'extractFXOrderTicketValues'):
@@ -198,4 +202,3 @@ class ExtractFxOrderTicketValuesRequest:
 
     def build(self):
         return self.request
-
