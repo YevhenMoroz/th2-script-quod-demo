@@ -158,7 +158,7 @@
     "Win_Act_Client_Pricing": {
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_client_pricing": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -166,14 +166,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_client_pricing"
         ]
       }
     },
     "Win_Act_Middle_Office": {
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_middle_office": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -181,14 +181,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_middle_office"
         ]
       }
     },
     "Win_Act_Dealer_Intervention": {
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_dealer_interventions": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -196,7 +196,7 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_dealer_interventions"
         ]
       }
     },
