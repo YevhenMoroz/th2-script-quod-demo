@@ -1,8 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp.quickFix_tests import QAP_1597, QAP_4094, QAP_3555_bloked, SendMD, QAP_3390, QAP_2750_Blocked
-from rule_management import RuleManager
+from quod_qa.fx.fx_mm_esp import QAP_2750, test
 
 from stubs import Stubs
 from test_cases import QAP_638

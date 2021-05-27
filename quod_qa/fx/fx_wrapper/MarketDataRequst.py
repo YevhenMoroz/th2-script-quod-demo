@@ -129,6 +129,7 @@ class MarketDataRequst:
             return mdEntryId
 
     def prepare_md_response(self,*args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
+        self.parse_settl_type()
         if self.case_params.securitytype == 'FXFWD':
             self.prepare_md_for_verification_fwrd(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
         if self.case_params.securitytype == 'FXSPOT':
@@ -302,7 +303,9 @@ class MarketDataRequst:
             ))
 
 
-
+    def parse_settl_type(self):
+        if self.case_params.settltype == 'MO1':
+            self.case_params.settltype = 'M1'
 
 
 
