@@ -47,7 +47,7 @@ def extract_column_spot(base_request, service):
 def check_spot(case_id, spot, spot_1w):
     verifier = Verifier(case_id)
     verifier.set_event_name("Compare spot")
-    verifier.compare_values("Value of spot", spot, spot_1w)
+    verifier.compare_values("Value of spot", str(spot), spot_1w)
     verifier.verify()
 
 
@@ -60,11 +60,11 @@ def check_pts_column(base_request, service, case_id, px, spot):
     extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidPts", "Pts"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
     extracted_pts = response["rateTile.askPts"]
-    calculated_pts = round((float(px) - float(spot) * 10000), 3)
+    calculated_pts = round(((float(px) - float(spot)) * 10000), 3)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check calculation of pts")
-    verifier.compare_values("Pts", str(calculated_pts), extracted_pts)
+    verifier.compare_values("Pts", str(calculated_pts), extracted_pts[:-2])
     verifier.verify()
 
 
