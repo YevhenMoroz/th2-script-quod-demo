@@ -2,8 +2,10 @@ import logging
 from pathlib import Path
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest, \
+    ExtractRatesTileTableValuesRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
@@ -70,7 +72,32 @@ def check_ask(base_request, service):
     return float(ask)
 
 
+def check_price_from_row(base_request, service, row):
+    extract_value_request = ExtractRatesTileValues(details=base_request)
+    extraction_id = bca.client_orderid(4)
+    extract_value_request.set_extraction_id(extraction_id)
+    extract_value_request.extract_ask_large_value("rates_tile.ask_large")
+    response = call(service.extractRateTileValues, extract_value_request.build())
+    ask_large = response["rates_tile.ask_large"]
+
+    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
+    extract_table_request.set_extraction_id(extraction_id)
+    extract_table_request.set_row_number(row)
+    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askPx", "Px"))
+    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidPx", "Px"))
+    response_px = call(service.extractRatesTileTableValues, extract_table_request.build())
+    ask_px = response_px["rateTile.askPx"]
+    return ask_large + ask_px
+
+
 def compare_prices(case_id, ask_before, ask_after):
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Compare prices not equal")
+    verifier.compare_values("Price ask", str(ask_before), str(ask_after))
+    verifier.verify()
+
+
+def compare_prices_not_equal(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
     verifier.set_event_name("Compare prices not equal")
     verifier.compare_values("Price ask", str(ask_before), str(ask_after), VerificationMethod.NOT_EQUALS)
@@ -79,14 +106,14 @@ def compare_prices(case_id, ask_before, ask_after):
 
 def compare_prices_from_fix_not_eq(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices not equal ")
+    verifier.set_event_name("Compare prices not equal Fix ")
     verifier.compare_values("Price", str(ask_before), str(ask_after), VerificationMethod.NOT_EQUALS)
     verifier.verify()
 
 
 def compare_prices_from_fix_eq(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices equal")
+    verifier.set_event_name("Compare prices equal Fix")
     verifier.compare_values("Price", str(ask_before), str(ask_after))
     verifier.verify()
 
@@ -194,12 +221,15 @@ def execute(report_id):
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         ask_before = check_ask(base_details, cp_service)
+        line_2_before = check_price_from_row(base_details, cp_service, 2)
         compare_prices_from_fix_eq(case_id, price1, ask_before)
         # Step 3
         select_row(base_details, cp_service, [1])
         modify_spread(base_details, cp_service, pips)
         ask_after = check_ask(base_details, cp_service)
-        compare_prices(case_id, ask_before, ask_after)
+        line_2_after = check_price_from_row(base_details, cp_service, 2)
+        compare_prices_not_equal(case_id, ask_before, ask_after)
+        compare_prices(case_id, line_2_before, line_2_after)
         # Step 3
         md = MarketDataRequst(params). \
             set_md_params() \
