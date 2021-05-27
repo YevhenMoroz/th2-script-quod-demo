@@ -77,14 +77,14 @@ def compare_prices(case_id, ask_before, ask_after, pips):
 
 def compare_prices_from_fix_not_eq(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices")
+    verifier.set_event_name("Compare prices not equal ")
     verifier.compare_values("Price", str(ask_before), str(ask_after), VerificationMethod.NOT_EQUALS)
     verifier.verify()
 
 
 def compare_prices_from_fix_eq(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices")
+    verifier.set_event_name("Compare prices equal")
     verifier.compare_values("Price", str(ask_before), str(ask_after))
     verifier.verify()
 
@@ -192,7 +192,7 @@ def execute(report_id):
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         ask_before = check_ask(base_details, cp_service)
-        compare_prices_from_fix_not_eq(case_id, price1, ask_before)
+        compare_prices_from_fix_eq(case_id, price1, ask_before)
         modify_spread(base_details, cp_service, pips)
         ask_after = check_ask(base_details, cp_service)
         compare_prices(case_id, ask_before, ask_after, pips)
