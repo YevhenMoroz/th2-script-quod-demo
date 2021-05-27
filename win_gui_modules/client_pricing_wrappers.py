@@ -126,6 +126,8 @@ class RatesTileValues(Enum):
     PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.PIPS
     ASK_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_PIPS
     BID_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BID_PIPS
+    INSTRUMENT = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.INSTRUMENT
+    CLIENT_TIER = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.CLIENT_TIER
 
 
 class ExtractRatesTileValues:
@@ -167,6 +169,12 @@ class ExtractRatesTileValues:
 
     def extract_bid_pips(self, name: str):
         self.extract_value(RatesTileValues.BID_PIPS, name)
+
+    def extract_instrument(self, name: str):
+        self.extract_value(RatesTileValues.INSTRUMENT, name)
+
+    def extract_client_tier(self, name: str):
+        self.extract_value(RatesTileValues.CLIENT_TIER, name)
 
     def extract_value(self, field: RatesTileValues, name: str):
         extracted_value = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
