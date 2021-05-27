@@ -1,7 +1,7 @@
 from datetime import datetime
 from urllib import request
 
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 from copy import deepcopy
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -16,10 +16,8 @@ from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_poc_request, direct_loc_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails
+from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, direct_moc_request, direct_poc_request,  direct_loc_request
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails,ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
