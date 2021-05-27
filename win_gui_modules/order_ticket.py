@@ -1,10 +1,10 @@
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import OrderDetails
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
+from th2_grpc_act_gui_quod.order_ticket_pb2 import OrderDetails
+from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
+from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
+from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
 
-#from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
 from .common_wrappers import CommissionsDetails
