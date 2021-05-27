@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -58,10 +57,6 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_eur_currency = "EUR"
@@ -69,8 +64,8 @@ def execute(report_id):
     case_ndf_currency = "PHP"
     case_near_tenor = "Spot"
     case_far_tenor = "1W"
-    case_venue = ["JPM"]
-    case_filter_venue = "JPM"
+    case_venue = ["CIT"]
+    case_filter_venue = "CITI"
 
     case_qty = 2000000
 
@@ -85,11 +80,11 @@ def execute(report_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
 
@@ -99,7 +94,6 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_0", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
-        cancel_rfq(base_rfq_details, ar_service)
 
         # Step 3
         modify_request.set_from_currency(case_usd_currency)
@@ -117,10 +111,12 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_2", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

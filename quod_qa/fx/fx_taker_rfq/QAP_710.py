@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -108,10 +107,6 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -155,10 +150,10 @@ def execute(report_id):
         click_checkboxes(base_rfq_details, ar_service, case_right_checkbox)
         place_order_tob(base_rfq_details, ar_service, case_side_sell)
         compare_order(case_base_request, ob_act, case_id, order_id)
+
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
