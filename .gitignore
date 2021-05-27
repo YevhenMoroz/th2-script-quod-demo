@@ -3,7 +3,6 @@
 /DRAFT.py
 /EnterOrderExample_ref.py
 /etc/ref
-<<<<<<< HEAD
 /configs/*.json
 demo.py
 
@@ -56,7 +55,5 @@ debugpy*.log
 pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
-=======
-/configs/grpc.json
-/quod_qa/fx/fx_taker_rfq/demo_export_file.xml
->>>>>>> ecd4b66ac58b9df6049d87f4cd506ce2c9a3c5ea
+
+
