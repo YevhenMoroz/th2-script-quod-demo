@@ -333,6 +333,7 @@ def execute(report_id):
 
 
         time.sleep(1)
-        rule_destroyer(rule_list)
     except:
         logging.error("Error execution",exc_info=True)
+    finally:
+        rule_destroyer(rule_list)
