@@ -1,7 +1,7 @@
-from th2_grpc_check1.check1_pb2 import PreFilter
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import Direction, ValueFilter, MessageFilter, FilterOperation
+
 
 class FixVerifier:
 
@@ -24,7 +24,6 @@ class FixVerifier:
                 Direction.Value(direction)
             )
         )
-    
 
     def CheckExecutionReportSequence(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction='FIRST', case = None):
         if case == None:
@@ -58,7 +57,6 @@ class FixVerifier:
             )
         )
 
-
     def CheckReject(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check Reject'):
         self.verifier.submitCheckRule(
             bca.create_check_rule(
@@ -85,9 +83,9 @@ class FixVerifier:
             )
         )
 
-    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelReplaceRequest', case = None):
+    def CheckOrderCancelReplaceRequest(self, parameters, response, key_parameters = ['OrigClOrdID'], message_name='Check OrderCancelReplaceRequest', direction='FIRST', case = None):
         if case == None:
-                case = self.case_id
+            case = self.case_id
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(
@@ -100,8 +98,23 @@ class FixVerifier:
             )
         )
 
+    def CheckBusinessMessageReject(self, parameters, response, key_parameters = ['Text', 'RefMsgType'], message_name='Check BusinessMessageReject', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_id
 
-    
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("BusinessMessageReject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+
+
     def CheckOrderCancelRequest(self, parameters, response, key_parameters = ['ClOrdID', 'OrigClOrdID'], direction='FIRST', message_name='Check OrderCancelRequest', case = None):
         if case == None:
                 case = self.case_id

@@ -13,13 +13,14 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1025"
+    case_name = "QAP-1028"
 
     # region Declarations
     qty = "900"
     price = "40"
     lookup = "VETO"
     client = "CLIENTYMOROZ"
+    desk = "Desk of Dealers 3 (CL)"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -31,6 +32,7 @@ def execute(report_id):
     case_id = create_event(case_name, report_id)
     base_request = get_base_request(session_id, case_id)
     base_request2 = get_base_request(session_id2, case_id)
+
     # endregion
     # region open FE
     eq_wrappers.open_fe(session_id,report_id,case_id,work_dir,username,password)
@@ -47,14 +49,14 @@ def execute(report_id):
     eq_wrappers.switch_user(session_id2, case_id)
     # endregion
     # region Reassign order
-    eq_wrappers.reassign_order(base_request2, username)
+    eq_wrappers.reassign_order(base_request2, desk)
     # endregion
     eq_wrappers.verify_value(base_request2, case_id, "Sts", "Sent")
     # region switch user 1
     eq_wrappers.switch_user(session_id, case_id)
     # endregion
-    # region Accept order
-    eq_wrappers.accept_order(lookup, qty, price)
+    # region Reject order
+    eq_wrappers.reject_order(lookup, qty, price)
     # endregion
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
 
