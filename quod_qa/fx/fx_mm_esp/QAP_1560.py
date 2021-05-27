@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
@@ -11,8 +10,6 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
 from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
