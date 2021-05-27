@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
@@ -43,8 +43,14 @@ def modify_rates_tile(base_request, service, instrument, client_tier):
 def modify_spread(base_request, service, pips):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_pips(pips)
-    modify_request.skew_towards_ask()
+    modify_request.widen_spread()
     call(service.modifyRatesTile, modify_request.build())
+
+
+def select_row(base_request, service, rows):
+    modify_request = SelectRowsRequest(details=base_request)
+    modify_request.set_row_numbers(rows)
+    call(service.selectRows, modify_request.build())
 
 
 def use_default(base_request, service):
@@ -64,11 +70,10 @@ def check_ask(base_request, service):
     return float(ask)
 
 
-def compare_prices(case_id, ask_before, ask_after, pips):
-    pips = float(pips) / 10000
+def compare_prices(case_id, ask_before, ask_after):
     verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices")
-    verifier.compare_values("Price ask", str(ask_before + pips), str(ask_after))
+    verifier.set_event_name("Compare prices not equal")
+    verifier.compare_values("Price ask", str(ask_before), str(ask_after), VerificationMethod.NOT_EQUALS)
     verifier.verify()
 
 
@@ -190,9 +195,11 @@ def execute(report_id):
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         ask_before = check_ask(base_details, cp_service)
         compare_prices_from_fix_eq(case_id, price1, ask_before)
+        # Step 3
+        select_row(base_details, cp_service, [1])
         modify_spread(base_details, cp_service, pips)
         ask_after = check_ask(base_details, cp_service)
-        compare_prices(case_id, ask_before, ask_after, pips)
+        compare_prices(case_id, ask_before, ask_after)
         # Step 3
         md = MarketDataRequst(params). \
             set_md_params() \
@@ -201,12 +208,11 @@ def execute(report_id):
             .verify_md_pending()
         price2 = md.extruct_filed('price')
         # Step 4
-        use_default(base_details, cp_service)
-        ask_after_default = check_ask(base_details, cp_service)
-        compare_prices(case_id, ask_before, ask_after_default, "0")
-        # Step 5
         compare_prices_from_fix_not_eq(case_id, price1, price2)
         compare_prices_from_fix_eq(case_id, ask_after, price2)
+        # Step 5
+        # Use default
+        use_default(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

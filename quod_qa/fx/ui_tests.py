@@ -14,10 +14,10 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues, ExtractRatesTileDataRequest)
-from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest
+from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
-                                                   DefaultFXValues)
+                                                   DefaultFXValues, FXConfigsRequest)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
@@ -273,6 +273,21 @@ def set_order_ticket_options(option_service, base_request):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
+def set_one_click_mod(option_service, base_request):
+    """
+
+
+    """
+    fx_configs = FXConfigsRequest(base=base_request)
+
+    fx_configs.set_cumulative_qty('5')
+    fx_configs.set_one_click_mode('DoubleClick')
+    fx_configs.set_algo_default_qty('5.1')
+    fx_configs.set_headers_prices_format('VWAP of Default Quantity')
+
+    call(option_service.setOptionForexConfigs, fx_configs.build())
+
+
 def set_fx_order_ticket_value(base_request, order_ticket_service):
     """
     Method just set values( don't close the window)
@@ -366,6 +381,8 @@ def extract_rates_panel(base_tile_details, ar_service):
     request.extract_best_ask_large(f'{s}.best_ask_large')
     request.extract_best_ask_small(f'{s}.best_ask_small')
     request.extract_spread(f'{s}.spread')
+    request.extract_instrument(f'{s}.spread')
+    request.extract_client_tier(f'{s}.spread')
 
     result = call(ar_service.extractRatesTileValues, request.build())
     print(result)
@@ -395,6 +412,18 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
         print(f'{k} = {result[k]}')
 
 
+def extract_cp_rates_panel(base_tile_details, cp_service):
+    values = ExtractRatesTileValues(details= base_tile_details)
+
+    s = 'RatesTile0'
+    values.extract_instrument(f'{s}.instrument')
+    values.extract_client_tier(f'{s}.client_tier')
+
+    result =  call(cp_service.extractRateTileValues, values.build())
+    print(result)
+
+
+
 def execute(report_id):
     # region Preparation
 
@@ -413,6 +442,7 @@ def execute(report_id):
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     base_tile_details = BaseTileData(base=base_request)
+    base_details = BaseTileDetails(base= base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
@@ -442,6 +472,7 @@ def execute(report_id):
         # get_default_fx_value(base_request, option_service)
         # set_order_ticket_options(option_service, base_request)
         # set_order_ticket_options(option_service, base_request)
+        # set_one_click_mod(option_service, base_request)
         # endregion
 
         # region RFQ tile ↓
@@ -471,11 +502,12 @@ def execute(report_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-        extract_order_ticket_values(base_tile_details, order_ticket_service)
+        # extract_order_ticket_values(base_tile_details, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
         # region ClientPricing
+        extract_cp_rates_panel(base_details,cp_service)
         # select_rows(base_tile_details, [1, 2, 4], cp_service)
         # print('Sleeping')
         # time.sleep(5)
