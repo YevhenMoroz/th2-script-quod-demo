@@ -1,4 +1,4 @@
-
+import time
 
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
@@ -13,6 +13,8 @@ class MarketDataRequst:
     mdreqid=None
     case_params = None
     md_subscribe_response=None
+    md_reject_response=None
+    message_verification=None
 
 
 
@@ -100,27 +102,44 @@ class MarketDataRequst:
             ]
         }
 
+    def set_md_reject_response(self,text):
+        self.md_reject_response = {
+            'MDReqID': self.mdreqid,
+            'MDReqRejReason': '0',
+            'Text': text
+        }
+        return self
+
 
 
 
 
     # Extract filed by name
-    def extruct_filed(self, field, band_number=0):
+    def extruct_filed(self, field, band_number=1):
         price = 0
         if field.lower()=='price':
-            price = self.subscribe.response_messages_list[band_number].fields['NoMDEntries'] \
-                .message_value.fields['NoMDEntries'].list_value.values[1] \
+            price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
+                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryPx'].simple_value
-        return price
+            return price
+        elif field.lower()=='mdentryid':
+            mdEntryId = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
+                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
+                .message_value.fields['MDEntryID'].simple_value
+            return mdEntryId
 
+    def prepare_md_response(self,*args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
+        self.parse_settl_type()
+        if self.case_params.securitytype == 'FXFWD':
+            self.prepare_md_for_verification_fwrd(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
+        if self.case_params.securitytype == 'FXSPOT':
+            self.prepare_md_for_verification_spo(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
+        return self
 
     # Check respons was received
-    def verify_md_pending(self, *args, published=True, priced=True):
-        if self.case_params.securitytype == 'FXFWD':
-            self.prepare_md_for_verification_fwrd(*args, published=True, priced=True)
-        elif self.case_params.securitytype == 'FXSPOT':
-            self.prepare_md_for_verification_spo(*args, published=True, priced=True)
-        self.verifier.submitCheckRule(
+    def verify_md_pending(self):
+        time.sleep(3)
+        msg = self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
@@ -129,6 +148,7 @@ class MarketDataRequst:
                 self.case_params.case_id
             )
         )
+        self.message_verification=msg
         return self
 
     # Check respons was received
@@ -145,10 +165,29 @@ class MarketDataRequst:
         )
         return self
 
-    def prepare_md_for_verification_spo(self,qty_count, published=True, priced=True):
+    def verify_md_reject(self,text,reason=''):
+        self.set_md_reject_response(text)
+        time.sleep(5)
+        if reason=='date':
+            self.md_reject_response.pop('MDReqRejReason')
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Market Data Request Reject',
+                bca.filter_to_grpc('MarketDataRequestReject', self.md_reject_response, ['MDReqID']),
+                self.subscribe.checkpoint_id,
+                self.case_params.connectivity,
+                self.case_params.case_id
+            )
+        )
+
+    def prepare_md_for_verification_spo(self,qty_count, published, which_bands_not_pb, priced, which_bands_not_pr):
         if len(qty_count) > 0:
             a = len(qty_count)
             band = 0
+            row_pub = 0
+            row_prc = 0
+            check_pub=0
+            check_price=0
             self.md_subscribe_response['NoMDEntries'].clear()
             md_entry_position=1
             for qty in qty_count:
@@ -161,59 +200,96 @@ class MarketDataRequst:
                         'MDEntryPx': '*',
                         'MDEntryTime': '*',
                         'MDEntryID': '*',
-                        'MDEntrySize': '1000000',
+                        'MDEntrySize': qty,
                         'QuoteEntryID': '*',
                         'MDOriginType': 1,
-                        'SettlDate': '',
+                        'SettlDate': self.case_params.settldate.split(' ')[0],
                         'MDQuoteType': 1,
-                        'MDEntryPositionNo': 1,
+                        'MDEntryPositionNo': md_entry_position,
                         'MDEntryDate': '*',
-                        'MDEntryType': 0
+                        'MDEntryType': md_entry_type
                     })
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntrySize'] = qty
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryType'] = md_entry_type
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryPositionNo'] = md_entry_position
-                    self.md_subscribe_response['NoMDEntries'][band]['SettlDate'] = self.case_params.settldate.split(' ')[0]
+
+                    if published == False:
+                        if which_bands_not_pb == None:
+                            self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
+                        else:
+                            if qty!=which_bands_not_pb[row_pub]:
+                                self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '1'
+                            if qty==which_bands_not_pb[row_pub]:
+                                self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
+                                check_pub += 1
+
+                    if priced == False:
+                        if which_bands_not_pr == None:
+                            self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
+                        elif qty==which_bands_not_pr[row_prc]:
+                                self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
+                                check_price += 1
+
                     md_entry_type +=1
                     band +=1
                 md_entry_position +=1
+                if check_pub!=0:
+                    row_pub +=1
+                if check_price != 0:
+                    row_prc += 1
 
-    def prepare_md_for_verification_fwrd(self,qty_count, published=True, priced=True):
+    def prepare_md_for_verification_fwrd(self,qty_count, published, which_bands_not_pb, priced, which_bands_not_pr):
         if len(qty_count) > 0:
             a = len(qty_count)
             band = 0
+            row_pub = 0
+            row_prc = 0
+            check_pub=0
+            check_price=0
             self.md_subscribe_response['NoMDEntries'].clear()
             md_entry_position=1
             for qty in qty_count:
-                b=qty
                 md_entry_type = 0
                 while md_entry_type < 2:
                     # self.md_subscribe_response['NoMDEntries'].append(one_band)
                     self.md_subscribe_response['NoMDEntries'].append({
-                        'SettlType': 0,
+                        'SettlType': self.case_params.settltype,
                         'MDEntryPx': '*',
                         'MDEntryTime': '*',
                         'MDEntryID': '*',
                         'MDEntryForwardPoints':'*',
-                        'MDEntrySize': '1000000',
+                        'MDEntrySize': qty,
                         'MDEntrySpotRate':'*',
                         'QuoteEntryID': '*',
                         'MDOriginType': 1,
-                        'SettlDate': '',
+                        'SettlDate': self.case_params.settldate.split(' ')[0],
                         'MDQuoteType': 1,
-                        'MDEntryPositionNo': 1,
+                        'MDEntryPositionNo': md_entry_position,
                         'MDEntryDate': '*',
-                        'MDEntryType': 0
+                        'MDEntryType': md_entry_type
                     })
-                    self.md_subscribe_response['NoMDEntries'][band]['SettlType'] = self.case_params.settltype
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntrySize'] = qty
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryType'] = md_entry_type
-                    self.md_subscribe_response['NoMDEntries'][band]['MDEntryPositionNo'] = md_entry_position
-                    self.md_subscribe_response['NoMDEntries'][band]['SettlDate'] = self.case_params.settldate.split(' ')[0]
+
+                    if published == False:
+                        if which_bands_not_pb == None:
+                            self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
+                        else:
+                            if qty!=which_bands_not_pb[row_pub]:
+                                self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '1'
+                            if qty==which_bands_not_pb[row_pub]:
+                                self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
+                                check_pub += 1
+
+                    if priced == False:
+                        if which_bands_not_pr == None:
+                            self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
+                        elif qty==which_bands_not_pr[row_prc]:
+                                self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
+                                check_price += 1
+
                     md_entry_type +=1
                     band +=1
                 md_entry_position +=1
-
+                if check_pub!=0:
+                    row_pub +=1
+                if check_price != 0:
+                    row_prc += 1
 
     # Send MarketDataRequest unsubscribe method
     def send_md_unsubscribe(self):
@@ -227,7 +303,9 @@ class MarketDataRequst:
             ))
 
 
-
+    def parse_settl_type(self):
+        if self.case_params.settltype == 'MO1':
+            self.case_params.settltype = 'M1'
 
 
 
