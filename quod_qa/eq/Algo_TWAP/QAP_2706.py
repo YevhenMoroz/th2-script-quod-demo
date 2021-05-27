@@ -745,8 +745,6 @@ def execute(report_id):
 
         fix_verifier_ss.CheckExecutionReport(cancel_param, responce_new_order_single, case=case_id_6, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
         #endregion
-
-        rule_destroyer(rule_list)
     
     except:
         logging.error("Error execution",exc_info=True)
