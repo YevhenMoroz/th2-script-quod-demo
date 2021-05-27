@@ -13,7 +13,7 @@ from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulat
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 
 
-# from th2_grpc_sim_http.sim_template_service import SimTemplateService
+from th2_grpc_sim_http.sim_template_service import SimTemplateService
 
 
 class Stubs:
@@ -41,4 +41,4 @@ class Stubs:
 
     custom_config = factory.create_custom_configuration()
     session_id = None
-    frontend_is_open = True
+    frontend_is_open = False
