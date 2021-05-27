@@ -40,6 +40,10 @@ class ExtractionDetailsRequest:
             self.request = dealer_intervention_operations_pb2.ExtractionDetails(data=data.build())
         else:
             self.request = dealer_intervention_operations_pb2.ExtractionDetails()
+        self.request.clearFilterBefore = False
+
+    def set_clear_flag(self, flag: bool = True):
+        self.request.clearFilterBefore = flag
 
     def set_data(self, data: BaseTableDataRequest):
         self.request.data.CopyFrom(data.build())
@@ -174,4 +178,3 @@ class RFQExtractionDetailsRequest:
 
     def build(self):
         return self.request
-
