@@ -1,6 +1,7 @@
 import os
 
-from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, \
+    ExtractionDetail, ExtractionAction
 from win_gui_modules.wrappers import *
 from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 import time
@@ -18,7 +19,7 @@ logger = getLogger(__name__)
 logger.setLevel(INFO)
 qty = 2000
 limit = 20
-lookup = "VETO"
+lookup = "CH0012268360_CHF"
 ex_destination = "XPAR"
 client = "CLIENT1"
 order_type = "Limit"
@@ -62,9 +63,9 @@ def prepared_fe(case_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
+    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
+    username = Stubs.custom_config['qf_trading_fe_user_305']
+    password = Stubs.custom_config['qf_trading_fe_password_305']
     if not Stubs.frontend_is_open:
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
