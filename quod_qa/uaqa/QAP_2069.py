@@ -129,12 +129,11 @@ def execute(report_id):
 
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
-    instrument = "EUR/USD-Spot"
+    instrument = "EUR/USD-1W"
     client_tier = "Silver"
     pips = "2"
 
     try:
-
         if not Stubs.frontend_is_open:
             prepare_fe_2(case_id, session_id)
         else:
