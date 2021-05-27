@@ -1,17 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.fx.fx_mm_esp import QAP_2750, test
+from quod_qa.uaqa import QAP_1536
 
-from quod_qa.fx.fx_mm_esp import pricing_tile_test, QAP_2117, QAP_2523, QAP_2587, QAP_2855, QAP_3563, QAP_1560
-from quod_qa.fx.fx_taker_esp import QAP_833, QAP_1115, QAP_110
-from quod_qa.fx.fx_taker_rfq import QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, QAP_573, \
-    QAP_574, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, QAP_590, \
-    QAP_591, QAP_592, QAP_593, QAP_594, QAP_595, QAP_597, QAP_598, QAP_599, QAP_600, QAP_601, QAP_602, QAP_604, QAP_605, \
-    QAP_606, QAP_609, QAP_610, QAP_611, QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, \
-    QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, QAP_850, QAP_982, \
-    QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, \
-    QAP_3589, QAP_6
-from quod_qa.uaqa import QAP_2069, QAP_2646, QAP_2796, QAP_1536
 from stubs import Stubs
 from test_cases import QAP_638
 from quod_qa.eq.Care import QAP_4015
@@ -19,7 +11,6 @@ from quod_qa.eq.Care import QAP_4015
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
 timeouts = False
 
 channels = dict()
@@ -169,3 +160,4 @@ if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
+
