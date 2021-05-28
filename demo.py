@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import test, QAP_1560
+from quod_qa.fx.fx_mm_esp import test, QAP_2825
+from quod_qa.fx.fx_mm_rfq import QAP_1746
 
 from stubs import Stubs
 
@@ -32,114 +33,6 @@ def test_run():
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
             },
-        'QAP_1558': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_1520': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_1518': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_2086': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_2084': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_2085': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_3841': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_1559': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_2797': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            # 'Connectivity': 'fix-ss-308-mercury-standard'
-            'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_2079': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'test': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_1554': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_1597': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'QAP_4094': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-ss-308-mercury-standard'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'SendMD': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'qap_3390': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'qap_2750': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
-        'qap_1560': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        },
         }
     try:
 
@@ -160,7 +53,8 @@ def test_run():
         # SendMD.execute(report_id)
         # QAP_3390.execute(report_id)
         # QAP_2750.execute(report_id)
-        QAP_1560.execute(report_id)
+        # QAP_1560.execute(report_id)
+        QAP_2825.execute(report_id)
 
         # QAP_1012.execute(report_id)
         # not_ready_QAP_1597.TestCase(report_id).execute()

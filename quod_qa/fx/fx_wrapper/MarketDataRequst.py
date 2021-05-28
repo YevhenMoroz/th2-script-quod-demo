@@ -1,5 +1,8 @@
 import time
 
+from th2_grpc_check1.check1_pb2 import PreFilter
+from th2_grpc_common.common_pb2 import ValueFilter, MessageFilter, FilterOperation, Direction
+
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from stubs import Stubs
@@ -59,6 +62,17 @@ class MarketDataRequst:
                 self.case_params.case_id,
                 bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
             ))
+        return self
+
+    #Send MarketDataRequest subscribe method
+    def send_md_request_timeout(self):
+        self.md_params['SubscriptionRequestType'] = '1'
+        self.subscribe = self.fix_act.placeMarketDataRequestFIX(bca.convert_to_request(
+                'Send MDR (subscribe)',
+                self.case_params.connectivity,
+                self.case_params.case_id,
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+            ), 10000)
         return self
 
     def set_md_subscribe_response(self):
@@ -128,7 +142,7 @@ class MarketDataRequst:
                 .message_value.fields['MDEntryID'].simple_value
             return mdEntryId
 
-    def prepare_md_response(self,*args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
+    def prepare_md_response(self, *args, published=True, which_bands_not_pb=None, priced=True, which_bands_not_pr=None):
         self.parse_settl_type()
         if self.case_params.securitytype == 'FXFWD':
             self.prepare_md_for_verification_fwrd(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
@@ -308,7 +322,37 @@ class MarketDataRequst:
             self.case_params.settltype = 'M1'
 
 
+    def CheckMarketDataSequence(self, parameters, response, key_parameters = ['MDReqID'], message_name='Check MarketDataSnapshotFullRefresh', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_params.case_id
 
+        pre_filter = PreFilter(
+            fields={
+                'header': ValueFilter(
+                    message_filter=MessageFilter(
+                        fields={
+                            'MsgType': ValueFilter(simple_filter='W', operation=FilterOperation.EQUAL)
+                        }
+                    )
+                )
+            }
+        )
+
+        message_sequence = list()
+        for param in parameters:
+            message_sequence.append(bca.filter_to_grpc("MarketDataSnapshotFullRefresh", param, key_parameters))
+
+        self.verifier.submitCheckSequenceRule(
+            bca.create_check_sequence_rule(
+                message_name,
+                pre_filter,
+                message_sequence,
+                response.checkpoint_id,
+                'fix-ss-esp-314-luna-standard',
+                case,
+                Direction.Value(direction)
+            )
+        )
 
 
 

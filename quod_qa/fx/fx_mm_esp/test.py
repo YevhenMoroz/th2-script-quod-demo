@@ -15,16 +15,15 @@ logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium2'
 connectivity = 'fix-ss-esp-314-luna-standard'
-settltype = 'MO1'
+settltype = '0'
 symbol = 'EUR/USD'
-securitytype = 'FXFWD'
+securitytype = 'FXSPOT'
 securityidsource = '8'
 securityid = 'EUR/USD'
-bands = [1000000,5000000,10000000]
+bands = [1000000, 5000000, 10000000]
 md = None
 settldate = (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y%m%d %H:%M:%S')
-fwd_pts_offer = '-0.099'
-fwd_pts_bid = '0.101'
+
 
 
 def execute(report_id):
@@ -34,117 +33,34 @@ def execute(report_id):
         simulator = Stubs.simulator
         act = Stubs.fix_act
 
-        mdu_params_spo = {
-            "MDReqID": simulator.getMDRefIDForConnection303(
-                request=RequestMDRefID(
-                    symbol="USD/NOK:SPO:REG:HSBC",
-                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-            },
-            "NoMDEntries": [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19597,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19609,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19594,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19612,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19591,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
-        }
+        params = CaseParams(connectivity, client, case_id, settltype=settltype, settldate=settldate,
+                            symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
+                            securityid=securityid)
+        # md = MarketDataRequst(params). \
+        #     set_md_params() \
+        #     .send_md_request() \
+        #     .prepare_md_response(bands)
+        # md.verify_md_pending()
 
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data SPOT',
-                'fix-fh-314-luna',
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, 'fix-fh-314-luna')
-            ))
+        md = MarketDataRequst(params)
+        md.set_md_params()
+        md.send_md_request_timeout()
+        md.prepare_md_response()
+        md.verify_md_pending()
 
-        mdu_params_fwd = {
-            "MDReqID": simulator.getMDRefIDForConnection303(
-                request=RequestMDRefID(
-                    symbol="EUR/USD:FXF:MO1:HSBC",
-                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXFWD'
-            },
-            "NoMDEntries": [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19585,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDEntryForwardPoints": '0.0000001',
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDEntryForwardPoints": '0.0000001',
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
-        }
+        md.CheckMarketDataSequence()
+        price1 = md.extruct_filed('price')
+        md.send_md_unsubscribe()
 
-        # act.sendMessage(
-        #     bca.convert_to_request(
-        #         'Send Market Data MO1',
-        #         'fix-fh-314-luna',
-        #         case_id,
-        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
-        #     ))
+
+
 
 
 
 
     except Exception as e:
         logging.error('Error execution', exc_info=True)
+
     finally:
-        # md.send_md_unsubscribe()
-        pass
+        md.send_md_unsubscribe()
+    pass
