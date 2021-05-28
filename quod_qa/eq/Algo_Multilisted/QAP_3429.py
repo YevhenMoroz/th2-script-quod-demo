@@ -44,6 +44,7 @@ def rule_creation():
     rule_manager = RuleManager()
     ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD1", False, qty, price)
     ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD2", False, qty, price)
+
     ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDL2", True, 1000, 40)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "KEPLER", "QDL1", 45)
     trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, "KEPLER", "QDL1", 45, 100, 0)
@@ -85,13 +86,13 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '30',
-                'MDEntrySize': '1000',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '44',
-                'MDEntrySize': '1000',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -99,14 +100,14 @@ def execute(report_id):
     market_data2 = [
         {
             'MDEntryType': '0',
-            'MDEntryPx': '28',
-            'MDEntrySize': '1000',
+            'MDEntryPx': '30',
+            'MDEntrySize': '100000',
             'MDEntryPositionNo': '1'
         },
         {
             'MDEntryType': '1',
             'MDEntryPx': '40',
-            'MDEntrySize': '1000',
+            'MDEntrySize': '100000',
             'MDEntryPositionNo': '1'
         }
     ]
