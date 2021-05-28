@@ -122,8 +122,6 @@ def execute(report_id):
         }],
     }
 
-    # print(bca.message_to_grpc('NewOrderSingle', sor_order_params))
-
     new_twap_order = act.placeOrderFIX(
         bca.convert_to_request(
             'Send NewOrderSingle',
@@ -135,7 +133,6 @@ def execute(report_id):
     NOS = rule_man.add_NOS(session_alias, "TRQX_CLIENT1")
 
     checkpoint_1 = new_twap_order.checkpoint_id
-    # logger.info(new_ib_order)
     pending_er_params = {
         **reusable_order_params,
         'Account': '*',
@@ -168,7 +165,6 @@ def execute(report_id):
         'NoStrategyParameters': new_order_params['NoStrategyParameters']
     }
     pending_er_params['Instrument']['SecurityExchange'] = 'TRQX'
-    # print(bca.filter_to_grpc("ExecutionReport", execution_report1_params, ['ClOrdID', 'OrdStatus']))
     verifier.submitCheckRule(
         bca.create_check_rule(
             "ER Pending NewOrderSingle Received",
@@ -200,25 +196,6 @@ def execute(report_id):
         'SettlDate': '*'
     }
 
-    # verifier.submitCheckRule(
-    #     bca.create_check_rule(
-    #         "ER New NewOrderSingle Received",
-    #         bca.filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
-    #         checkpoint_1, case_params['TraderConnectivity'], case_id
-    #     )
-    # )
-    # new_er_params2 = deepcopy(new_er_params)
-    # new_er_params2['BookID'] = 'WashBookClientAccountID'
-    # verifier.submitCheckRule(
-    #     bca.create_check_rule(
-    #         "ER New WashBook Received",
-    #         bca.filter_to_grpc('ExecutionReport', new_er_params2, ['ClOrdID', 'OrdStatus']),
-    #         checkpoint_1,
-    #         case_params['TraderConnectivity'],
-    #         case_id,
-    #         Direction.Value("SECOND")
-    #     )
-    # )
     time.sleep(60)
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
@@ -261,22 +238,6 @@ def execute(report_id):
             OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
         request = call(act2.getOrdersDetails, main_order_details.request())
 
-        # child_id_ext_action = "order.sublvl1"
-        # child1_id = ExtractionDetail("Order_lvl_1.id", "Order ID")
-        # child2_id = ExtractionDetail("Order_lvl_2.id", "Order ID")
-        # child3_id = ExtractionDetail("Order_lvl_3.id", "Order ID")
-        #
-        # child_details = OrdersDetails()
-        # child_details.set_default_params(base_request)
-        # child_details.set_extraction_id(child_id_ext_action)
-        # child_details.set_filter(["ParentOrdID", new_er_params['OrderID']])
-        # child_details.add_single_order_info(OrderInfo.create(
-        #     action=ExtractionAction.create_extraction_action(extraction_details=[child1_id,
-        #                                                                          child2_id,
-        #                                                                          child3_id])))
-        #
-        # request = call(act2.getChildOrdersDetails, child_details.request())
-
         child_id_list = ['child1: ' + request[child1_id.name], 'child2: ' + request[child2_id.name], 'child3: '
                          + request[child3_id.name]]
         child_ord_id1 = request[child3_id.name]
@@ -285,6 +246,9 @@ def execute(report_id):
         print("\n".join(child_id_list))
     except Exception:
         logger.error("Error execution in GUI part", exc_info=True)
+        for rule in [NOS, OCRR, OCR]:
+            rule_man.remove_rule(rule)
+        rule_man.print_active_rules()
 
     close_fe(case_id, session_id)
 
@@ -596,10 +560,6 @@ def execute(report_id):
             timeout=3000,
             direction=Direction.Value("SECOND"))
     )
-
-    # stop all rules
-    # for rule in sim_rules:
-    #     rules_killer.removeRule(rule)
 
     for rule in [NOS, OCRR, OCR]:
         rule_man.remove_rule(rule)
