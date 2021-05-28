@@ -146,7 +146,7 @@ def execute(report_id):
             {
                 "MDEntryType": "0",
                 "MDEntryPx": 1.19597,
-                "MDEntrySize": 2000000,
+                "MDEntrySize": 22000000,
                 "MDEntryPositionNo": 1,
                 'SettlDate': tsd.spo(),
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -154,40 +154,8 @@ def execute(report_id):
             {
                 "MDEntryType": "1",
                 "MDEntryPx": 1.19609,
-                "MDEntrySize": 2000000,
+                "MDEntrySize": 22000000,
                 "MDEntryPositionNo": 1,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.19594,
-                "MDEntrySize": 6000000,
-                "MDEntryPositionNo": 2,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.19612,
-                "MDEntrySize": 6000000,
-                "MDEntryPositionNo": 2,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.19591,
-                "MDEntrySize": 12000000,
-                "MDEntryPositionNo": 3,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.19615,
-                "MDEntrySize": 12000000,
-                "MDEntryPositionNo": 3,
                 'SettlDate': tsd.spo(),
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             },
@@ -213,9 +181,12 @@ def execute(report_id):
         md = MarketDataRequst(params). \
             set_md_params() \
             .send_md_request() \
-            .prepare_md_response(bands) \
-            .verify_md_pending()
+            .prepare_md_response(bands)
+        md.md_subscribe_response['NoMDEntries'][0]['MDEntryPx'] = '1.19596'
+        md.md_subscribe_response['NoMDEntries'][1]['MDEntryPx'] = '1.1961'
+        md.verify_md_pending()
         price1 = md.extruct_filed('price')
+        md.send_md_unsubscribe()
 
         # Step 2
         create_or_get_rates_tile(base_details, cp_service)
@@ -231,12 +202,18 @@ def execute(report_id):
         compare_prices_not_equal(case_id, ask_before, ask_after)
         compare_prices(case_id, line_2_before, line_2_after)
         # Step 3
-        md = MarketDataRequst(params). \
+        params = CaseParams(connectivity, client, case_id, settltype=settltype, settldate=settldate,
+                            symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
+                            securityid=securityid)
+        md2 = MarketDataRequst(params). \
             set_md_params() \
-            .send_md_request() \
-            .prepare_md_response(bands) \
-            .verify_md_pending()
-        price2 = md.extruct_filed('price')
+            .send_md_request()
+        bands2 = [2000000, 3000000, 1000000]
+        md2.prepare_md_response(bands2)
+        md2.md_subscribe_response['NoMDEntries'][4]['MDEntryPx'] = '1.19396'
+        md2.md_subscribe_response['NoMDEntries'][5]['MDEntryPx'] = '1.1981'
+        md2.verify_md_pending()
+        price2 = md2.extruct_filed('price',5)
         # Step 4
         compare_prices_from_fix_not_eq(case_id, price1, price2)
         compare_prices_from_fix_eq(case_id, ask_after, price2)
@@ -247,7 +224,7 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        md.send_md_unsubscribe()
+        md2.send_md_unsubscribe()
         try:
             # Close tile
             call(cp_service.closeRatesTile, base_details.build())

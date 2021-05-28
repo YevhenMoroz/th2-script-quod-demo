@@ -19,9 +19,8 @@ def create_or_get_rates_tile(base_request, service):
 
 def modify_order_ticket(base_request, service):
     order_ticket = FXOrderDetails()
-    new_order_details = NewFxOrderDetails()
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
+    order_ticket.set_place()
+    new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())
 
 
