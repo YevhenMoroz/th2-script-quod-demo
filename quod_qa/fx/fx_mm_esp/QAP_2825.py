@@ -163,10 +163,10 @@ def execute(report_id):
     }
     try:
 
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(case_id, session_id)
-        # else:
-        #     get_opened_fe(case_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         act.sendMessage(
             bca.convert_to_request(
@@ -189,18 +189,18 @@ def execute(report_id):
         md.send_md_unsubscribe()
 
         # Step 2
-        # create_or_get_rates_tile(base_details, cp_service)
-        # modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        # ask_before = check_ask(base_details, cp_service)
-        # line_2_before = check_price_from_row(base_details, cp_service, 2)
-        # compare_prices_from_fix_eq(case_id, price1, ask_before)
-        # # Step 3
-        # select_row(base_details, cp_service, [1])
-        # modify_spread(base_details, cp_service, pips)
-        # ask_after = check_ask(base_details, cp_service)
-        # line_2_after = check_price_from_row(base_details, cp_service, 2)
-        # compare_prices_not_equal(case_id, ask_before, ask_after)
-        # compare_prices(case_id, line_2_before, line_2_after)
+        create_or_get_rates_tile(base_details, cp_service)
+        modify_rates_tile(base_details, cp_service, instrument, client_tier)
+        ask_before = check_ask(base_details, cp_service)
+        line_2_before = check_price_from_row(base_details, cp_service, 2)
+        compare_prices_from_fix_eq(case_id, price1, ask_before)
+        # Step 3
+        select_row(base_details, cp_service, [1])
+        modify_spread(base_details, cp_service, pips)
+        ask_after = check_ask(base_details, cp_service)
+        line_2_after = check_price_from_row(base_details, cp_service, 2)
+        compare_prices_not_equal(case_id, ask_before, ask_after)
+        compare_prices(case_id, line_2_before, line_2_after)
         # Step 3
         params = CaseParams(connectivity, client, case_id, settltype=settltype, settldate=settldate,
                             symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
@@ -216,18 +216,18 @@ def execute(report_id):
         price2 = md2.extruct_filed('price',5)
         # Step 4
         compare_prices_from_fix_not_eq(case_id, price1, price2)
-        # compare_prices_from_fix_eq(case_id, ask_after, price2)
+        compare_prices_from_fix_eq(case_id, ask_after, price2)
         # Step 5
         # Use default
-        # use_default(base_details, cp_service)
+        use_default(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         md2.send_md_unsubscribe()
-        # try:
-        #     # Close tile
-        #     call(cp_service.closeRatesTile, base_details.build())
-        #
-        # except Exception:
-        #     logging.error("Error execution", exc_info=True)
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
