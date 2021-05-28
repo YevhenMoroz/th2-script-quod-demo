@@ -1,12 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_2750, test
-from quod_qa.uaqa import QAP_1536
+from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555
 
 from stubs import Stubs
-from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_4015
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -20,16 +17,17 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-
+    test_cases = {
+        'qap_1560': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'Connectivity': 'fix-fh-314-luna'
+            # 'Connectivity': 'fix-qsesp-303'
+        }
+    }
     try:
 
-        test_cases =  {
-                'case_id': bca.create_event_id(),
-                'TraderConnectivity': 'gtwquod5-fx',
-                'Account': 'MMCLIENT1',
-                'SenderCompID': 'QUODFX_UAT',
-                'TargetCompID': 'QUOD5',
-                }
+
 
         start = datetime.now()
         print(f'start time = {start}')
@@ -120,7 +118,6 @@ def test_run():
         # QAP_3589.execute(report_id)
         # endregion
 
-
         # QAP_595.execute(report_id)
         # QAP_751.execute(report_id)
         # QAP_2774.execute(report_id)
@@ -147,8 +144,9 @@ def test_run():
         # QAP_2796.execute(report_id)
         # QAP_992.execute(report_id)
         # QAP_1560.execute(report_id)
-        QAP_1536.execute(report_id)
-
+        # QAP_1536.execute(report_id)
+        # QAP_2825.execute(report_id)
+        QAP_2555.execute(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
@@ -160,4 +158,3 @@ if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
-
