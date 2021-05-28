@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
-from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
 from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails
 
 from win_gui_modules.common_wrappers import BaseTileDetails
