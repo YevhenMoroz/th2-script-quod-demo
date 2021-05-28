@@ -12,7 +12,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs
-        self.default_rules_id = []
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7]
         for rule in Stubs.core.getRulesInfo(request=Empty()).info:
             rule_id = rule.id.id
             if rule_id in [3, 4] or rule.class_name.count('Quod_Def_MDR_Rule') > 0:
