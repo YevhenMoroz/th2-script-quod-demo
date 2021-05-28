@@ -47,7 +47,7 @@ def extract_column_spot(base_request, service):
 def check_spot(case_id, spot, spot_1w):
     verifier = Verifier(case_id)
     verifier.set_event_name("Compare spot")
-    verifier.compare_values("Value of spot", spot, spot_1w)
+    verifier.compare_values("Value of spot", str(spot), spot_1w)
     verifier.verify()
 
 
@@ -60,11 +60,11 @@ def check_pts_column(base_request, service, case_id, px, spot):
     extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidPts", "Pts"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
     extracted_pts = response["rateTile.askPts"]
-    calculated_pts = round((float(px) - float(spot) * 10000), 3)
+    calculated_pts = round(((float(px) - float(spot)) * 10000), 3)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check calculation of pts")
-    verifier.compare_values("Pts", str(calculated_pts), extracted_pts)
+    verifier.compare_values("Pts", str(calculated_pts), extracted_pts[:-2])
     verifier.verify()
 
 
@@ -84,12 +84,11 @@ def execute(report_id):
     base_details_spo = BaseTileDetails(base=case_base_request, window_index=0)
     base_details_1w = BaseTileDetails(base=case_base_request, window_index=1)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_details_spo, cp_service)
         create_or_get_rates_tile(base_details_1w, cp_service)
@@ -106,5 +105,10 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        # Close tile
-        call(cp_service.closeWindow, case_base_request)
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details_spo.build())
+            call(cp_service.closeRatesTile, base_details_1w.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)

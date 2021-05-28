@@ -1,3 +1,4 @@
+
 from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
@@ -19,16 +20,15 @@ timeinforce = '4'
 currency= 'EUR'
 settlcurrency = 'USD'
 settltype=0
-symbol='EUR/USD'
+symbol='EUR/XXX'
 securitytype='FXSPOT'
 securityidsource='8'
 securityid='EUR/USD'
 bands=[1000000,2000000,3000000]
 ord_status='Filled'
 md=None
-
-
-test_date = (tm(datetime.utcnow().isoformat()) - bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
+settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
+text='unknown instrument'
 
 
 
@@ -37,13 +37,12 @@ def execute(report_id):
     try:
         case_id = bca.create_event('QAP_1597', report_id)
         params = CaseParams(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                            currency=currency, settlcurrency=settlcurrency, settltype=settltype, symbol=symbol, securitytype=securitytype,
+                            currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
                             securityidsource=securityidsource, securityid=securityid)
-        params.settldate =test_date
         md = MarketDataRequst(params)
-        md.set_md_params()
-        md.md_params['NoRelatedSymbols'][0].pop('SettlType')
-        md.send_md_request()
+        md.set_md_params()\
+            .send_md_request()\
+            .verify_md_reject(text)
 
 
 
