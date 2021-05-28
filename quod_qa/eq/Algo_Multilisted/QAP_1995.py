@@ -187,7 +187,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '0',
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
@@ -199,7 +198,6 @@ def execute(report_id):
             er_1,
             ExecType="0",
             OrdStatus='0',
-            SettlDate='*',
             ExecRestatementReason='*',
             SettlType='*'
         )
@@ -272,9 +270,9 @@ def execute(report_id):
             'CumQty': '0',
             'ExecID': '*',
             'OrderQty': qty,
-            'OrdType': order_type,
+            'OrdType': '2',
             'ClOrdID': '*',
-            'Text': text_s,
+            'Text': 'Canceled',
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
@@ -314,11 +312,10 @@ def execute(report_id):
             'QtyType': '0',
             'ExecRestatementReason': '*',
             'SettlType': '*',
-            'Price': price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument,
         }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'ClOrdID', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
         #endregion
 
         time.sleep(1)
