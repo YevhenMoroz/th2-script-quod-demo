@@ -63,7 +63,7 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False,  recipient=None,
-                 price=None, washbook = False,account=False,
+                 price=None, washbook=None, account=False,
                  sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
                  ):
     order_ticket = OrderTicketDetails()
@@ -79,10 +79,10 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         order_ticket.set_limit(price)
     if expire_date is not None:
         order_ticket.set_expire_date(expire_date)
-    if washbook is True:
-        order_ticket.set_washbook('CareWB')
-    if account is True:
-        order_ticket.set_account('TestAccount')
+    if washbook is not None:
+        order_ticket.set_washbook(washbook)
+    if account is not None:
+        order_ticket.set_account(account)
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
     new_order_details.set_order_details(order_ticket)
