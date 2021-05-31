@@ -34,10 +34,11 @@ class TestCase:
         self.base_request = get_base_request(self.session_id, self.case_id)
 
         self.case_params = {
-            'Connectivity': 'fix-qsesp-303',
+            # 'Connectivity': 'fix-qsesp-303',
+            'Connectivity': 'fix-ss-308-mercury-standard',
             'MDReqID': bca.client_orderid(10),
             'ClOrdID': bca.client_orderid(9),
-            'Account': 'MMCLIENT1',
+            'Account': 'CLIENT1',
             'HandlInst': '1',
             'Side': '1',
             'OrderQty': 1000000,

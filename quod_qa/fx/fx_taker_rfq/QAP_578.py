@@ -1,9 +1,9 @@
 import logging
-
-import rule_management as rm
+from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -22,14 +22,16 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
+    action = ContextAction.create_venue_filters(venues)
+    modify_request.set_change_currency(True)
+    modify_request.add_context_action(action)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
-    modify_request.set_change_currency()
     call(service.modifyRFQTile, modify_request.build())
 
 
@@ -43,17 +45,17 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(ex_id, base_request, service, act):
+def check_quote_request_b(ex_id, base_request, service, act, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
-    qrb.set_filter(["Venue", "HSBC"])
+    qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
     qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
     call(service.getQuoteRequestBookDetails, qrb.request())
     call(act.verifyEntities, verification(ex_id, "checking QRB",
-                                          [verify_ent("QRB Venue", qrb_venue.name, "HSBC"),
+                                          [verify_ent("QRB Venue", qrb_venue.name, venue + "R"),
                                            verify_ent("QRB Status", qrb_status.name, "New"),
                                            verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Accepted")]))
 
@@ -73,7 +75,7 @@ def check_quote_book(ex_id, base_request, service, act, owner, quote_id):
                                            verify_ent("QB Id vs OB Id", qb_id.name, quote_id)]))
 
 
-def check_order_book(ex_id, base_request, instr_type, act, act_ob):
+def check_order_book(ex_id, base_request, instr_type, act, act_ob, currency):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
@@ -91,7 +93,7 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob):
     call(act.verifyEntities, verification(ex_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB Currency", ob_currency.name, "USD")]))
+                                           verify_ent("OB Currency", ob_currency.name, currency)]))
     return data[ob_id.name]
 
 
@@ -100,19 +102,15 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-578"
-    quote_owner = "QA2"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "ASPECT_CITI"
+    case_client = "MMCLIENT2"
     venues = ["HSB", "CIT", "BAR"]
 
     # Create sub-report for case
@@ -123,31 +121,29 @@ def execute(report_id):
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
-        # # Step 1
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
+        # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
-                        case_to_currency, case_near_tenor, case_client)
+                        case_to_currency, case_near_tenor, case_client, venues)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act)
+        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act, case_venue)
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act)
+        ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act,
+                                       case_to_currency)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
 
-
-
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

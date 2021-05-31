@@ -71,15 +71,13 @@ def execute(report_id):
         'OrdType': 2,
         'Price': price,
         'TransactTime': timeStart,
-        'ExDestination': 'CHIX',
         'Instrument': {
-            'Symbol': 'FR0000125007_EUR',
-            'SecurityID': 'FR0000125007',
+            'Symbol': 'FR0004186856_EUR',
+            'SecurityID': 'FR0004186856',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         },
-        'Currency': 'EUR',
-        'SecurityExchange': 'TRERROR',
+        'Currency': 'EUR'
     }
 
     fix_message = FixMessage(fix_params)
@@ -87,6 +85,7 @@ def execute(report_id):
     fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
     rule_manager.remove_rule(nos_rule)
     # endregion
+
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -111,6 +110,7 @@ def execute(report_id):
                                                   verify_ent("Qty", order_qty.name, qty),
                                                   verify_ent("LmtPrice", order_price.name, price)]))
     # endregion
+
     # region Accept CO
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion

@@ -12,12 +12,12 @@ from rule_management import RuleManager
 def execute(report_id):
     rule_manager = RuleManager()
 
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT2")
+    nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT2")
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
-    fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-    fix_verifier_ss = FixVerifier('gtwquod5', case_id)
-    fix_verifier_bs = FixVerifier('fix-bs-eq-paris', case_id)
+    fix_manager_qtwquod5 = FixManager('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_bs = FixVerifier('fix-bs-310-columbia', case_id)
 
     # Send NewOrderSingle
     multilisting_params = {
@@ -63,19 +63,66 @@ def execute(report_id):
 
     #Check on ss
     er_params_new ={
-        'ExecType': "0",
-        'OrdStatus': '0',
-        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecID': '*',
+        'OrderQty': multilisting_params['OrderQty'],
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecType': "0",
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': multilisting_params['OrderQty'],
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(), 
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '0',
+        'Price': multilisting_params['Price'],
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument']
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce)
 
     er_params_new ={
-        'ExecType': "4",
-        'OrdStatus': '4',
-        'TimeInForce': multilisting_params['TimeInForce'],
+        
+        'ExecID': '*',
+        'OrderQty': multilisting_params['OrderQty'],
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
-        'Text': 'no liquidity found'
+        'TransactTime': '*',
+        'Side': multilisting_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '4',
+        'SettlDate': '*',
+        'Currency': multilisting_params['Currency'],
+        'TimeInForce': multilisting_params['TimeInForce'],
+        'ExecType': "4",
+        'HandlInst': multilisting_params['HandlInst'],
+        'LeavesQty': '0',
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': multilisting_params['OrdType'],
+        'ClOrdID': fix_message_multilisting.get_ClOrdID(), 
+        'Text': 'no liquidity found',
+        'OrderCapacity': multilisting_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'SettlType': '0',
+        'Price': multilisting_params['Price'],
+        'TargetStrategy': multilisting_params['TargetStrategy'],
+        'Instrument': multilisting_params['Instrument']
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce)
 
