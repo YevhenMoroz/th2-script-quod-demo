@@ -241,7 +241,7 @@ def execute(report_id):
     fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
 
-    time.sleep(3)
+    time.sleep(5)
     cancel_er_params = {
         'ClOrdID': fix_message_multilisting.get_ClOrdID(),
         'OrdStatus': '4',
