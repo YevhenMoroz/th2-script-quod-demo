@@ -1,10 +1,16 @@
 import logging
+import time
 from datetime import datetime
 
 from selenium import webdriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
+from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_dimensions_subwizard import \
+    AccountsDimensionsSubWizard
+from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_page import AccountsPage
+from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_wizard import AccountsWizard
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
@@ -42,16 +48,7 @@ def test_run():
 
     chrome_driver.get("http://10.0.22.40:3480/quodadmin/saturn/#/auth/login")
 
-    login_page = LoginPage(chrome_driver, wait_driver)
-    login_page.set_login("adm04")
-    login_page.set_password("adm04")
-    login_page.click_login_button()
-    login_page.check_is_login_successful()
-
-    side_menu = SideMenu(chrome_driver, wait_driver)
-    side_menu.open_accounts_page()
-    side_menu.open_execution_strategies_page(ToggleStateEnum.OPENED)
-    side_menu.open_admin_command_page()
+    # content
 
     chrome_driver.close()
 
