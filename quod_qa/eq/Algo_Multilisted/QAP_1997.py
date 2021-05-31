@@ -22,7 +22,7 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
-text_f='Fill'
+text_f='Filled'
 text_nlf = 'no liquidity found'
 side = 1
 price = 40
@@ -186,11 +186,11 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '0',
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
         }
+        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -199,9 +199,8 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*'
         )
-        fix_verifier_ss.CheckExecutionReportSequence([er_1, er_2], responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
 
@@ -260,9 +259,8 @@ def execute(report_id):
             OrderQty=qty,
             Text=text_n,
         )
-        fix_verifier_ss.CheckExecutionReportSequence([er_3, er_4], responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
-
 
         #region Cansel order
         case_id_3 = bca.create_event("Cansel Order", case_id)
@@ -271,7 +269,7 @@ def execute(report_id):
             'CumQty': '0',
             'ExecID': '*',
             'OrderQty': qty,
-            'OrdType': order_type,
+            'OrdType': '2',
             'ClOrdID': '*',
             'Text': text_c,
             'OrderID': '*',
@@ -313,16 +311,12 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '*',
-            'Price': price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument,
         }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'ClOrdID', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'ClOrdID', 'OrderQry', 'OrdStatus', 'ExecType'])
         #endregion
 
-
-        time.sleep(1)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
