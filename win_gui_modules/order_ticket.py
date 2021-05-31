@@ -108,6 +108,9 @@ class FXOrderDetails:
     def set_qty(self, qty: str):
         self.order.qty = qty
 
+    def set_display_qty(self, qty: str):
+        self.order.displayQty = qty
+
     def set_client(self, client: str):
         self.order.client = client
 
