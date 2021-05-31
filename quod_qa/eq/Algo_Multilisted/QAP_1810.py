@@ -486,3 +486,4 @@ def execute(report_id):
         rule_destroyer(rule_list)
     except:
         logging.error("Error execution",exc_info=True)
+
