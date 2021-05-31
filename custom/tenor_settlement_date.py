@@ -40,7 +40,7 @@ def wk3():
 
 
 def m1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d')
 
 
 def m2():
@@ -48,11 +48,11 @@ def m2():
 
 
 def m3():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=67)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=68)).date().strftime('%Y%m%d')
 
 
 def m4():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=88)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=90)).date().strftime('%Y%m%d')
 
 
 def y1():
@@ -60,7 +60,7 @@ def y1():
 
 
 def y2():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=523)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=524)).date().strftime('%Y%m%d')
 
 
 def tom_front_end():
@@ -105,7 +105,7 @@ def wk3_front_end():
 
 
 def m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def m2_front_end():
@@ -113,11 +113,11 @@ def m2_front_end():
 
 
 def m3_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=67)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=68)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def m4_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=88)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=90)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def next_working_day_after_25dec_front_end():
@@ -129,7 +129,7 @@ def y1_front_end():
 
 
 def y2_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=523)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=524)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def ndf_spo_front_end():
