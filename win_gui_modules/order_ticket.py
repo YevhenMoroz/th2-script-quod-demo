@@ -5,7 +5,7 @@
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
 
 #from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
+from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
@@ -86,9 +86,6 @@ class OrderTicketDetails:
 
 
 class FXOrderDetails:
-
-    def __init__(self):
-        self.order = order_ticket_fx_pb2.FxOrderDetails()
 
     def set_price_large(self, priceLarge: str):
         self.order.priceLarge = priceLarge
