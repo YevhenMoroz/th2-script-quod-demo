@@ -16,7 +16,8 @@ from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import direct_order_request
+from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
+    direct_loc_request
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -138,13 +139,15 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         rule_manager.remove_rule(nos_rule)
 
 
-def amend_order_via_fix(fix_message, parametr_list):
+def amend_order_via_fix(case_id, fix_message, parametr_list):
+    fix_manager = FixManager(connectivity, case_id)
     try:
         rule_manager = RuleManager()
         rule = rule_manager.add_OCRR(connectivity)
         fix_modify_message = FixMessage(fix_message)
         fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+        fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
