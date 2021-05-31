@@ -35,8 +35,7 @@ def test_run():
             },
         }
     try:
-        QAP_2874.execute(report_id)
-
+        test.execute(report_id)
         # clone.execute(report_id)
         # QAP_2086.execute(report_id)
         # QAP_2084.execute(report_id)
@@ -112,4 +111,5 @@ def fx_mm_esp_fix(report_id):
     QAP_2823.execute(report_id)
     QAP_2874.execute(report_id)
     QAP_2876.execute(report_id)
+
 

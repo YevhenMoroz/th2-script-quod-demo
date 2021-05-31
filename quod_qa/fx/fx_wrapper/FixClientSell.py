@@ -31,14 +31,14 @@ class FixClientSell():
         return self
 
     #Send MarketDataRequest subscribe method timeout
-    def send_md_request_timeout(self):
+    def send_md_request_timeout(self, timeout):
         self.case_params_sell.md_params['SubscriptionRequestType'] = '1'
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(bca.convert_to_request(
                 'Send MDR (subscribe)',
                 self.case_params_sell.connectivity,
                 self.case_params_sell.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params_sell.connectivity)
-            ), 10000)
+                bca.message_to_grpc('MarketDataRequest', self.case_params_sell.md_params, self.case_params_sell.connectivity)
+            ), timeout)
 
     #Send MarketDataRequest unsubscribe method
     def send_md_unsubscribe(self):

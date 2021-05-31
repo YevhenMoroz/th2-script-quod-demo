@@ -37,14 +37,10 @@ def execute(report_id):
         params.prepare_md_for_verification(bands)
 
         md = FixClientSell(params)
-        price = md.send_md_request().\
-            verify_md_pending().\
-            extruct_filed('Price')
+        md.send_md_request_timeout(10000)
 
-        md.send_new_order_single(price)\
-            .verify_order_pending()\
-            .verify_order_new()\
-            .verify_order_filled()
+
+
 
 
 
