@@ -50,7 +50,7 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, qty, 40)
+    nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, qty, price)
     return [nos_ioc_rule]
 
 
@@ -219,7 +219,6 @@ def execute(report_id):
             'Side': side,
             'Price': price,
             'SettlDate': '*',
-            'Price': price,
             'Currency': currency,
             'TimeInForce': tif_ioc,
             'Instrument': '*',
