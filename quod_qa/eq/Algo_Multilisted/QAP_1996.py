@@ -22,7 +22,7 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
-text_f='Fill'
+text_f='Filled'
 text_s = 'sim work'
 text_nlf = 'no liquidity found'
 side = 1
@@ -187,7 +187,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '0',
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
@@ -200,8 +199,6 @@ def execute(report_id):
             ExecType="0",
             OrdStatus='0',
             SettlDate='*',
-            ExecRestatementReason='*',
-            SettlType='*'
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
@@ -274,7 +271,7 @@ def execute(report_id):
             'LastPx': price,
             'ExecID': '*',
             'OrderQty': qty,
-            'OrdType': order_type,
+            'OrdType': '2',
             'ClOrdID': '*',
             'LastQty': qty,
             'OrderCapacity': new_order_single_params['OrderCapacity'],
@@ -288,7 +285,8 @@ def execute(report_id):
             'TimeInForce': tif_fok,
             'Instrument': '*',
             'ExecType': 'F',
-            'LeavesQty': '0'
+            'LeavesQty': '0',
+            'Text': 'Filled'
         }
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Fill', key_parameters=['OrderQty', 'Price', 'TimeInForce', 'OrdStatus', 'ExecType'])
 
@@ -321,15 +319,15 @@ def execute(report_id):
             'LastMkt': ex_destination_1,
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'SettlType': '*',
-            'Price': price,
+            'ChildOrderID': fix_message_new_order_single.get_ClOrdID(),
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': '*',
             'SecondaryExecID': '*',
             'ExDestination': '*',
-            'GrossTradeAmt': '*'
+            'GrossTradeAmt': '*',
+            'Text': text_f
         }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Fill', key_parameters=['ClOrdID', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Fill', key_parameters=['ClOrdID', 'OrderQty', 'OrdStatus', 'ExecType', 'TimeInforce', 'Text'])
         #endregion
 
     except:
