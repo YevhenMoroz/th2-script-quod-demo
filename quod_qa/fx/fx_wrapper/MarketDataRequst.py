@@ -4,7 +4,7 @@ from th2_grpc_check1.check1_pb2 import PreFilter
 from th2_grpc_common.common_pb2 import ValueFilter, MessageFilter, FilterOperation, Direction
 
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from stubs import Stubs
 
 
@@ -22,7 +22,7 @@ class MarketDataRequst:
 
 
 
-    def __init__(self, case_params=CaseParams, market_depth='0', md_update_type='0'):
+    def __init__(self, case_params=CaseParamsSell, market_depth='0', md_update_type='0'):
         self.market_depth=market_depth
         self.md_update_type=md_update_type
         self.case_params=case_params
@@ -357,51 +357,3 @@ class MarketDataRequst:
 
 
 
-
-    # one_band={
-    #     {
-    #         'SettlType': 0,
-    #         'MDEntryPx': '*',
-    #         'MDEntryTime': '*',
-    #         'MDEntryID': '*',
-    #         'MDEntrySize': '1000000',
-    #         'QuoteEntryID': '*',
-    #         'MDOriginType': 1,
-    #         'SettlDate': '',
-    #         'MDQuoteType': 1,
-    #         'MDEntryPositionNo': 1,
-    #         'MDEntryDate': '*',
-    #         'MDEntryType': 0
-    #     }
-    # }
-    # Send MarketDataRequest subscribe method
-    # def send_md_request(self,case_id):
-    #     self.md_params['SubscriptionRequestType'] = '1'
-    #     subscribe = self.fix_act.placeMarketDataRequestFIX(
-    #         bca.convert_to_request(
-    #             'Send MDR (subscribe)',
-    #             self.case_params.connectivity,
-    #             case_id,
-    #             bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
-    #         ))
-    #     price =  subscribe \
-    #         .response_messages_list[0].fields['NoMDEntries'] \
-    #         .message_value.fields['NoMDEntries'].list_value.values[1] \
-    #         .message_value.fields['MDEntryPx'].simple_value
-    #
-    #     self.md_subscribe_response['MDReqID']=self.md_params['MDReqID']
-    #     self.md_subscribe_response['MDReqID']['Symbol']=self.case_params.symbol
-    #     self.md_subscribe_response['NoMDEntries']['Symbol']=self.case_params.symbol
-    #
-    #     self.verifier.submitCheckRule(
-    #         bca.create_check_rule(
-    #             'Receive MarketDataSnapshotFullRefresh (pending)',
-    #             bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
-    #             subscribe.checkpoint_id,
-    #             self.case_params['Connectivity'],
-    #             self.case_id
-    #         )
-    #     )
-    #
-    #     #return price for Sending Order in future
-    #     return price

@@ -7,7 +7,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 logger = logging.getLogger(__name__)
@@ -142,8 +142,8 @@ def execute(report_id):
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
             ))
 
-        params = CaseParams(connectivity, client, case_id,  settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
-                            securityidsource=securityidsource, securityid=securityid)
+        params = CaseParamsSell(connectivity, client, case_id, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
+                                securityidsource=securityidsource, securityid=securityid)
         md = MarketDataRequst(params)
         md.set_md_params()
         md.send_md_request()

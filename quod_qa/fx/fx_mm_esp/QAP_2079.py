@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -37,9 +37,9 @@ md=None
 def execute(report_id):
     try:
         case_id = bca.create_event('QAP_2079', report_id)
-        params = CaseParams(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                            currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
-                            securityidsource=securityidsource, securityid=securityid)
+        params = CaseParamsSell(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+                                currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
+                                securityidsource=securityidsource, securityid=securityid)
         md = MarketDataRequst(params)\
             .set_md_params()\
             .send_md_request()\

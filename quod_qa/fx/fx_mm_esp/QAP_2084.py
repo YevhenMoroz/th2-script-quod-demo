@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -37,16 +37,16 @@ md=None
 def execute(report_id):
     try:
         case_id = bca.create_event('QAP_2084', report_id)
-        params = CaseParams(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                            currency=currency, settlcurrency=settlcurrency, settltype=settltype,settldate=settldate, symbol=symbol,
-                            securitytype=securitytype,securityidsource=securityidsource, securityid=securityid)
+        params = CaseParamsSell(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+                                currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
+                                securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
         md = MarketDataRequst(params)
         md.set_md_params().send_md_request().\
             verify_md_pending(bands)
         price=md.extruct_filed('Price')
 
         text='not enough quantity in book'
-        md.case_params.orderqty = new_orderqty
+        md.case_params.orderqty1 = new_orderqty
         NewOrderSingle(params).send_new_order_single(price).\
             verify_order_pending(). \
             verify_order_rejected(text)

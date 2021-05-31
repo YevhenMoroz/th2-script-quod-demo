@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -16,7 +16,7 @@ class NewOrderSingle():
     verifier = Stubs.verifier
     # check_order_status=None
 
-    def __init__(self, case_params=CaseParams):
+    def __init__(self, case_params=CaseParamsSell):
         self.case_params=case_params
 
     # Send New Order Single
@@ -122,9 +122,9 @@ class NewOrderSingle():
             'CumQty': '0',
             'LastPx': '0',
             'LastQty': '0',
+            'QtyType': '0',
             'SettlDate': self.case_params.settldate.split(' ')[0],
             'SettlType': self.case_params.settltype,
-            'QtyType': '0',
             'OrderQty': self.case_params.orderqty,
             'Price': self.price,
             'SettlCurrency': self.case_params.settlcurrency,

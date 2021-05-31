@@ -7,7 +7,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 logger = logging.getLogger(__name__)
@@ -25,6 +25,8 @@ md = None
 settldate = (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y%m%d %H:%M:%S')
 fwd_pts_offer = '-0.099'
 fwd_pts_bid = '0.101'
+symbol_md1="EUR/CAD:SPO:REG:HSBC"
+symbol_md2="USD/CAD:SPO:REG:HSBC"
 
 
 def execute(report_id):
@@ -37,10 +39,10 @@ def execute(report_id):
         mdu_params_spo = {
             "MDReqID": simulator.getMDRefIDForConnection303(
                 request=RequestMDRefID(
-                    symbol="USD/NOK:SPO:REG:HSBC",
+                    symbol="EUR/CAD:SPO:REG:HSBC",
                     connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': 'EUR/CAD',
                 'SecurityType': 'FXSPOT'
             },
             "NoMDEntries": [
@@ -106,17 +108,17 @@ def execute(report_id):
         mdu_params_fwd = {
             "MDReqID": simulator.getMDRefIDForConnection303(
                 request=RequestMDRefID(
-                    symbol="EUR/USD:FXF:MO1:HSBC",
+                    symbol="EUR/CAD:FXF:WK1:HSBC",
                     connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': 'EUR/CAD',
                 'SecurityType': 'FXFWD'
             },
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.19585,
-                    "MDEntrySize": 1000000,
+                    "MDEntrySize": 10000000,
                     "MDEntryPositionNo": 1,
                     "MDEntryForwardPoints": '0.0000001',
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -124,7 +126,7 @@ def execute(report_id):
                 {
                     "MDEntryType": "1",
                     "MDEntryPx": 1.19615,
-                    "MDEntrySize": 1000000,
+                    "MDEntrySize": 10000000,
                     "MDEntryPositionNo": 1,
                     "MDEntryForwardPoints": '0.0000001',
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -132,13 +134,13 @@ def execute(report_id):
             ]
         }
 
-        # act.sendMessage(
-        #     bca.convert_to_request(
-        #         'Send Market Data MO1',
-        #         'fix-fh-314-luna',
-        #         case_id,
-        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
-        #     ))
+        act.sendMessage(
+            bca.convert_to_request(
+                'Send Market Data MO1',
+                'fix-fh-314-luna',
+                case_id,
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
+            ))
 
 
 
