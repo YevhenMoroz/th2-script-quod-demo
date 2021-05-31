@@ -24,9 +24,9 @@ def modify_order_ticket(base_request, service):
 
 
 def place_order(base_request, service):
-    rfq_request = PlaceESPOrder(details=base_request)
-    rfq_request.set_action(ESPTileOrderSide.BUY)
-    call(service.placeESPOrder, rfq_request.build())
+    esp_request = PlaceESPOrder(details=base_request)
+    esp_request.set_action(ESPTileOrderSide.BUY)
+    call(service.placeESPOrder, esp_request.build())
 
 
 def modify_rates_tile(base_request, service, from_c, to_c, tenor):
