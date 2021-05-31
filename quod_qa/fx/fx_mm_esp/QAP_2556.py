@@ -70,7 +70,7 @@ def execute(report_id):
     slippage = "1"
     instrument_type = "Spot"
     qty = "1000000"
-    owner = "ostronov"
+    owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     try:
         if not Stubs.frontend_is_open:

@@ -98,7 +98,7 @@ def execute(report_id):
     instrument_type = "Spot"
     qty_1m = "1000000"
     qty_2m = "2000000"
-    owner = "ostronov"
+    owner = Stubs.custom_config['qf_trading_fe_user_309']
     empty_free_notes = ""
     pricing_off = "not active"
     executable_off = "not tradeable"
