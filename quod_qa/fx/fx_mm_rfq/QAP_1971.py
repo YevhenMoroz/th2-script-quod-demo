@@ -19,6 +19,68 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+def prepare_fe(case_id, session_id):
+    Stubs.frontend_is_open = True
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+        # ,
+        #          fe_dir='qf_trading_fe_folder_308',
+        #          fe_user='qf_trading_fe_user_308',
+        #          fe_pass='qf_trading_fe_password_308')
+    else:
+        get_opened_fe(case_id, session_id)
+
+
+def extract_unassigned_grid(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    base_data.set_filter_dict({"Status": "New"})
+    base_data.set_row_number(1)
+
+    extraction_request = ExtractionDetailsRequest(base_data)
+    extraction_request.set_extraction_id("ExtractionId")
+    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Id", "Id")])
+
+    return call(service.getUnassignedRFQDetails, extraction_request.build())
+
+
+def assign_firs_request(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    base_data.set_row_number(1)
+
+    call(service.assignToMe, base_data.build())
+
+
+def estimate_first_request(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    call(service.estimate, base_data.build())
+
+
+def reject_rfq(base_request, service):
+    modify_request = ModificationRequest(base=base_request)
+    modify_request.reject()
+    call(service.modifyAssignedRFQ, modify_request.build())
+
+
+def verify_assigned_grid_row(base_request, service, case_id, rfq_id):
+    base_data = BaseTableDataRequest(base=base_request)
+
+    base_data.set_row_number(1)
+    base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
+
+    extraction_request = ExtractionDetailsRequest(base_data)
+    extraction_request.set_extraction_id("ExtractionId")
+    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
+                                               ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
+
+    response = call(service.getAssignedRFQDetails, extraction_request.build())
+    print(response)
+    ver = Ver(case_id)
+    ver.set_event_name("Check Assigned Grid")
+    ver.compare_values('Status', "Rejected", response["dealerIntervention.Status"])
+    ver.compare_values('QuoteStatus', "", response["dealerIntervention.QuoteStatus"])
+    ver.verify()
+
+
 def execute(report_id, case_params):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -45,7 +107,6 @@ def execute(report_id, case_params):
         }
 
     try:
-
         # region send rfq
         rfq_params = {
             'QuoteReqID': bca.client_orderid(9),
@@ -69,90 +130,35 @@ def execute(report_id, case_params):
                         ))
         # endregion
 
-        # region  prepare fe
-        Stubs.frontend_is_open = True
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-            # ,
-            #          fe_dir='qf_trading_fe_folder_308',
-            #          fe_user='qf_trading_fe_user_308',
-            #          fe_pass='qf_trading_fe_password_308')
-        else:
-            get_opened_fe(case_id, session_id)
-        # #endregion
+        prepare_fe(case_id, session_id)
 
-        # region Extract RFQ ID
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_filter_dict({"Status": "New"})
-        base_data.set_row_number(1)
+        rfq_id = extract_unassigned_grid(base_request, service)
 
-        extraction_request = ExtractionDetailsRequest(base_data)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Id", "Id")])
+        assign_firs_request(base_request, service)
 
-        rfq_id = call(service.getUnassignedRFQDetails, extraction_request.build())
-        # clear filter for next tests
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_filter_dict({"Status": ""})
-        call(service.getUnassignedRFQDetails, extraction_request.build())
-        # endregion
+        estimate_first_request(base_request, service)
 
-        # region Assign to me rfq
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_row_number(1)
+        reject_rfq(base_request, service)
 
-        call(service.assignToMe, base_data.build())
-        # endregion
-
-        # region  estimate
-        base_data = BaseTableDataRequest(base=base_request)
-        call(service.estimate, base_data.build())
-        # endregion
-
-        # region  reject quote
-        modify_request = ModificationRequest(base=base_request)
-        modify_request.reject()
-        call(service.modifyAssignedRFQ, modify_request.build())
-        # #endregion
-
-        # region Check Quote in Assigned Grid
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_row_number(1)
-        base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
-
-        extraction_request = ExtractionDetailsRequest(base_data)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
-                                                   ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
-
-        response = call(service.getAssignedRFQDetails, extraction_request.build())
-        print(response)
-        ver = Ver(case_id)
-        ver.set_event_name("Check Assigned Grid")
-        ver.compare_values('Status', "Rejected", response["dealerIntervention.Status"])
-        ver.compare_values('QuoteStatus', "", response["dealerIntervention.QuoteStatus"])
-        ver.verify()
-        # endregion
-
-
+        verify_assigned_grid_row(base_request, service, case_id, rfq_id)
 
 
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
+
     finally:
         try:
             # region Clear Filters
             base_data = BaseTableDataRequest(base=base_request)
             base_data.set_row_number(1)
-
             extraction_request = ExtractionDetailsRequest(base_data)
             extraction_request.set_clear_flag()
-
-            response = call(service.getAssignedRFQDetails, extraction_request.build())
-            response = call(service.getUnassignedRFQDetails, extraction_request.build())
+            call(service.getAssignedRFQDetails, extraction_request.build())
+            call(service.getUnassignedRFQDetails, extraction_request.build())
             # endregion
         except Exception:
             logging.error("Error execution", exc_info=True)
+
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))
