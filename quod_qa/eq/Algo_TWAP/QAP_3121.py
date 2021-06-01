@@ -36,8 +36,7 @@ client = "CLIENT2"
 order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
-s_par = '734'
-s_trqx = '3416'
+s_par = '1015'
 
 now = datetime.today() - timedelta(hours=3)
 
@@ -111,22 +110,6 @@ def execute(report_id):
             }
         ]
         send_market_data(s_par, case_id_0, market_data1)
-        market_data2 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_trqx, case_id_0, market_data2)
-
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
