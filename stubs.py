@@ -41,4 +41,4 @@ class Stubs:
 
     custom_config = factory.create_custom_configuration()
     session_id = None
-    frontend_is_open = True
+    frontend_is_open = False
