@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
-
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
-
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -13,6 +11,7 @@ from stubs import Stubs
 import time
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -63,9 +62,9 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
         rule_manager.remove_rule(rule)
 
 
-def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False,  recipient=None,
+def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=False,
-                 sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
+                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
                  ):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
@@ -74,7 +73,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     if is_care:
         order_ticket.set_care_order(recipient, True, disclose_flag)
     order_ticket.set_tif(tif)
-    if sell_side:
+    if is_sell:
         order_ticket.sell()
     if price is not None:
         order_ticket.set_limit(price)
@@ -412,5 +411,119 @@ def reassign_order(request, recipient):
     reassign_order_details.desk = recipient
     try:
         call(Stubs.win_act_order_book.reassignOrder, reassign_order_details)
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def approve_block(request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
+               settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
+               settlement_date=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
+               fees_rate=None,  misc_arr:[]= None):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    ticket_details = modify_request.add_ticket_details()
+    ticket_details.set_client(client)
+    ticket_details.set_net_gross_ind(net_gross_ind)
+    ticket_details.set_agreed_price(agreed_price)
+    if trade_date is not None:
+        ticket_details.set_trade_date(trade_date)
+    if give_up_broker is not None:
+        ticket_details.set_give_up_broker(give_up_broker)
+
+    settlement_details = modify_request.add_settlement_details()
+    if settlement_type is not None:
+        settlement_details.set_settlement_type(settlement_type)
+    if settlement_currency is not None:
+        settlement_details.set_settlement_currency(settlement_currency)
+    if exchange_rate is not None:
+        settlement_details.set_exchange_rate(exchange_rate)
+    if exchange_rate_calc is not None:
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    if settlement_date is not None:
+        settlement_details.toggle_settlement_date()
+        settlement_details.set_settlement_date(settlement_date)
+    if toggle_recompute is not False:
+        settlement_details.toggle_recompute()
+
+    if comm_basis and comm_rate is not None:
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.toggle_manual()
+        commissions_details.add_commission(basis=comm_basis, rate=comm_rate)
+
+    if fees_basis and fees_rate is not None:
+        fees_details = modify_request.add_fees_details()
+        fees_details.add_fees(basis=fees_basis, rate=fees_rate)
+
+    if misc_arr is not None:
+        misc_details = modify_request.add_misc_details()
+        misc_details.set_bo_field_1(misc_arr[0])
+        misc_details.set_bo_field_2(misc_arr[1])
+        misc_details.set_bo_field_3(misc_arr[2])
+        misc_details.set_bo_field_4(misc_arr[3])
+        misc_details.set_bo_field_5(misc_arr[4])
+
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    try:
+        response = call(middle_office_service.bookOrder, modify_request.build())
+        return response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+def unbook_order (request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(middle_office_service.unBookOrder, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+def allocate_order (request,arr_allocation_param:[]):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+
+    allocations_details = modify_request.add_allocations_details()
+    '''
+    example of arr_allocation_param:
+   param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
+           {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
+    '''
+    for i in arr_allocation_param:
+        allocations_details.add_allocation_param(i)
+
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    try:
+        response = call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
+        return response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+def unallocate_order (request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
