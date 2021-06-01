@@ -1,11 +1,15 @@
 import logging
+import time
+from datetime import datetime
 from pathlib import Path
 
 import timestring
 
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import m1_front_end
+from custom.tenor_settlement_date import m1_front_end, spo
 from custom.verifier import Verifier, VerificationMethod
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, \
     ContextActionType, ExtractRatesTileDataRequest
@@ -54,6 +58,58 @@ def check_qty_band(base_request, service, case_id, qty, row):
     verifier.verify()
 
 
+no_md_entries = [
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 1.19597,
+        "MDEntrySize": 200000,
+        "MDEntryPositionNo": 1,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 1.19609,
+        "MDEntrySize": 200000,
+        "MDEntryPositionNo": 1,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 1.19594,
+        "MDEntrySize": 6000000,
+        "MDEntryPositionNo": 2,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 1.19612,
+        "MDEntrySize": 6000000,
+        "MDEntryPositionNo": 2,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 1.19591,
+        "MDEntrySize": 1200000000,
+        "MDEntryPositionNo": 3,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 1.19615,
+        "MDEntrySize": 1200000000,
+        "MDEntryPositionNo": 3,
+        "SettlDate": spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+]
+
+
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
 
@@ -65,7 +121,9 @@ def execute(report_id):
 
     case_base_request = get_base_request(session_id, case_id)
     base_esp_details = BaseTileDetails(base=case_base_request)
-
+    default_md_symbol_spo = 'GBP/USD:SPO:REG:HSBC'
+    symbol = "GBP/USD"
+    security_type_spo = "FXSPOT"
     from_curr = "GBP"
     to_curr = "USD"
     tenor = "Spot"
@@ -80,6 +138,11 @@ def execute(report_id):
         create_or_get_rates_tile(base_esp_details, ar_service)
         modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor, venue)
         open_aggregated_rates(base_esp_details, ar_service)
+        params = CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type_spo)
+        params.prepare_custom_md_spot(no_md_entries)
+        FixClientBuy(params).send_market_data_spot()
+
+        time.sleep(5)
         check_qty_band(base_esp_details, ar_service, case_id, "200K", 1)
         check_qty_band(base_esp_details, ar_service, case_id, "6M", 2)
         check_qty_band(base_esp_details, ar_service, case_id, "1.2B", 3)
