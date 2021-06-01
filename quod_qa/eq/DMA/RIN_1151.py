@@ -40,21 +40,65 @@ def execute(report_id):
         stub.openApplication(open_app_req.build())
         # end region
 
-        # region input login details 1st step
+        # region input login credentials 1st step
         login_details_req = LoginDetailsRequest()
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)
-        login_details_req.set_username("HD5")
+        login_details_req.set_username("QA3")
         login_details_req.set_password("12")
         login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
         login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
         login_details_req.is_error_expected(True)
         login_details_req.set_extraction_id("LoginErrorMessageExtraction")
-        # added method to close login window using Close button click
         login_details_req.close_login_windows()
         call(stub.login, login_details_req.build())
         # end region
 
+        # region open FE login window
+        open_app_req = OpenApplicationRequest()
+        open_app_req.set_session_id(session_id)
+        open_app_req.set_parent_event_id(init_event)
+        open_app_req.set_work_dir(Stubs.custom_config['qf_trading_fe_folder'])
+        open_app_req.set_application_file(Stubs.custom_config['qf_trading_fe_exec'])
+        stub.openApplication(open_app_req.build())
+        # end region
+
+        # region input login credentials 2st step
+        login_details_req = LoginDetailsRequest()
+        login_details_req.set_session_id(session_id)
+        login_details_req.set_parent_event_id(init_event)
+        login_details_req.set_username("QA3")
+        login_details_req.set_password("qa3")
+        login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
+        login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
+        login_details_req.is_error_expected(True)
+        login_details_req.set_extraction_id("LoginErrorMessageExtraction")
+        login_details_req.close_login_windows()
+        call(stub.login, login_details_req.build())
+        # end region
+
+        # region open FE login window
+        open_app_req = OpenApplicationRequest()
+        open_app_req.set_session_id(session_id)
+        open_app_req.set_parent_event_id(init_event)
+        open_app_req.set_work_dir(Stubs.custom_config['qf_trading_fe_folder'])
+        open_app_req.set_application_file(Stubs.custom_config['qf_trading_fe_exec'])
+        stub.openApplication(open_app_req.build())
+        # end region
+
+        # region input login credentials 3st step
+        login_details_req = LoginDetailsRequest()
+        login_details_req.set_session_id(session_id)
+        login_details_req.set_parent_event_id(init_event)
+        login_details_req.set_username("QA3")
+        login_details_req.set_password("qa3")
+        login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
+        login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
+        login_details_req.is_error_expected(True)
+        login_details_req.set_extraction_id("LoginErrorMessageExtraction")
+        login_details_req.close_login_windows()
+        call(stub.login, login_details_req.build())
+        # end region
     else:
         get_opened_fe(case_id, session_id)
 
