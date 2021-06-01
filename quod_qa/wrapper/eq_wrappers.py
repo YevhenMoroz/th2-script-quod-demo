@@ -1,6 +1,4 @@
 from datetime import datetime, timedelta
-
-from th2_grpc_act_gui_quod import middle_office_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 from custom.basic_custom_actions import create_event
@@ -18,7 +16,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request
+    direct_loc_request, direct_moc_request, direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -47,8 +45,8 @@ def open_fe2(session_id, report_id, folder, user, password):
 def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
     try:
         fix_manager_qtwquod = FixManager(connectivity, case_id)
-        rule_manager = RuleManager(session)
-        rule = rule_manager.add_OCR()
+        rule_manager = RuleManager()
+        rule = rule_manager.add_OCR(session)
         cancel_parms = {
             "ClOrdID": cl_order_id,
             "Account": client,
@@ -232,7 +230,7 @@ def accept_modify(lookup, qty, price):
 
 def direct_loc_order(qty, route):
     try:
-        call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+        call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -373,13 +371,6 @@ def verify_value(request, case_id, column_name, expected_value):
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 
-
-def check_time_sleep_fix_order(request, fix_message, time1):
-    for i in range(1, 4):
-        if (get_cl_order_id(request) == fix_message['ClOrdID']):
-            time.sleep(time1)
-        else:
-            break
 
 
 def notify_dfd(request):
