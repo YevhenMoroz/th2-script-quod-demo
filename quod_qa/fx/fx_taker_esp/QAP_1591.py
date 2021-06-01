@@ -8,7 +8,7 @@ from custom.tenor_settlement_date import m1_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, \
-    ContextActionType, ExtractRatesTileDataRequest
+    ExtractRatesTileDataRequest
 from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
