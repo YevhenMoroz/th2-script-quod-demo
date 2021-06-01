@@ -595,7 +595,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor(self, name: str):
+    def extract_tenor_date(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
