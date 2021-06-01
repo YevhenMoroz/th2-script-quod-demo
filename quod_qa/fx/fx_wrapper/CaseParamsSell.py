@@ -7,8 +7,9 @@ from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 class CaseParamsSell:
 
-    # connectivity = 'fix-ss-308-mercury-standard'
-    connectivity = 'fix-ss-esp-314-luna-standard'
+    # connectivityESP = 'fix-ss-308-mercury-standard'
+    connectivityESP = 'fix-ss-esp-314-luna-standard'
+    connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
     # mdreqid = None
     # clordid = None
     md_params=None

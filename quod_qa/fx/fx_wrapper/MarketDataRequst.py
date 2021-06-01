@@ -58,9 +58,9 @@ class MarketDataRequst:
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(
             bca.convert_to_request(
                 'Send MDR (subscribe)',
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
             ))
         return self
 
@@ -69,9 +69,9 @@ class MarketDataRequst:
         self.md_params['SubscriptionRequestType'] = '1'
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(bca.convert_to_request(
                 'Send MDR (subscribe)',
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
             ), 10000)
         return self
 
@@ -158,7 +158,7 @@ class MarketDataRequst:
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -173,7 +173,7 @@ class MarketDataRequst:
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -189,7 +189,7 @@ class MarketDataRequst:
                 'Market Data Request Reject',
                 bca.filter_to_grpc('MarketDataRequestReject', self.md_reject_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -311,9 +311,9 @@ class MarketDataRequst:
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send MDR (unsubscribe)',
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
             ))
 
 

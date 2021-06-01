@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
 import logging
@@ -7,7 +9,8 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-client = 'Palladium1'
+# client = 'Palladium1'
+client = 'CLIENT1'
 account = 'Palladium1_1'
 side = '1'
 orderqty = '1000000'
@@ -34,10 +37,16 @@ def execute(report_id):
         params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency,
                                 settlcurrency, settltype, settldate, symbol, securitytype, securityid,
                                 account=account)
-        params.prepare_md_for_verification(bands)
+        # params.prepare_md_for_verification(bands)
 
         md = FixClientSell(params)
-        md.send_md_request_timeout(10000)
+        md.send_md_request()
+        md.send_new_order_single('1.18999').verify_order_pending()
+        md.verify_order_filled()
+        time.sleep(5)
+        md.verify_order_filled_2()
+
+
 
 
 

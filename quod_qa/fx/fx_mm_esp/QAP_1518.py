@@ -1,4 +1,8 @@
+import time
+
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
 import logging
 from pathlib import Path
@@ -22,6 +26,7 @@ securityid='EUR/USD'
 bands=[1000000,2000000,3000000]
 md=None
 settldate=tsd.spo()
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
 
 
@@ -31,16 +36,22 @@ def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
-        params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency,
-                                settlcurrency, settltype, settldate, symbol, securitytype, securityid,
-                                account=account)
+
+        #Preconditions
+        params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency,settlcurrency,
+                                settltype, settldate, symbol, securitytype, securityid,account=account)
+        md = FixClientSell(params).send_md_request().send_md_unsubscribe()
+        #Send market data to the HSBC venue EUR/USD spot
+        FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
+            send_market_data_spot()
+
+        time.sleep(5)
         params.prepare_md_for_verification(bands)
-
-        md = FixClientSell(params)
-        price = md.send_md_request().\
-            verify_md_pending().\
-            extruct_filed('Price')
-
+        #Step 1
+        md.send_md_request().\
+            verify_md_pending()
+        price = md.extruct_filed('Price')
+        #Step 2-5
         md.send_new_order_single(price)\
             .verify_order_pending()\
             .verify_order_new()\

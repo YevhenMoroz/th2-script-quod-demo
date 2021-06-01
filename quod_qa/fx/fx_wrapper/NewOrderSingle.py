@@ -44,8 +44,8 @@ class NewOrderSingle():
         tif = self.prepeare_tif()
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new order ' + tif, self.case_params.connectivity, self.case_params.case_id,
-                bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivity)
+                'Send new order ' + tif, self.case_params.connectivityESP, self.case_params.case_id,
+                bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivityESP)
             ))
         return self
 
@@ -93,7 +93,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Pending',
                 bca.filter_to_grpc('ExecutionReport', ex_rep_pending, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -143,7 +143,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
                 bca.filter_to_grpc('ExecutionReport', ex_rep_new, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -197,7 +197,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled' ,
                 bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -258,7 +258,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
                 bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
