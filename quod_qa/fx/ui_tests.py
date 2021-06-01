@@ -436,6 +436,7 @@ def extract_di_panel(base_request, dealer_intervention_servise ):
     # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
     extraction_request.extract_request_state("rfqDetails.requestState")
     extraction_request.extract_request_side("rfqDetails.requestSide")
+    extraction_request.extract_button_text("rfqDetails.buttonText")
 
     result = call(dealer_intervention_servise.getRFQDetails, extraction_request.build())
     for R in result:
@@ -558,8 +559,8 @@ def execute(report_id):
         # endregion
 
         # region Dealer Intervention
-        # extract_di_panel(base_request, dealer_interventions_service)
-        set_value_di_panel(base_request, dealer_interventions_service)
+        extract_di_panel(base_request, dealer_interventions_service)
+        # set_value_di_panel(base_request, dealer_interventions_service)
         # endregion
         # close_fe_2(case_id, session_id)
 

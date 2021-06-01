@@ -137,6 +137,7 @@ class RFQPanelValues(Enum):
     ASK_PRICE_LARGE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.ASK_PRICE_LARGE
     REQUEST_STATE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_STATE
     REQUEST_SIDE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_SIDE
+    BUTTON_TEXT = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.BUTTON_TEXT
 
 
 class RFQExtractionDetailsRequest:
@@ -181,6 +182,9 @@ class RFQExtractionDetailsRequest:
 
     def extract_request_side(self, name: str):
         self.extract_value(RFQPanelValues.REQUEST_SIDE, name)
+
+    def extract_button_text(self, name: str):
+        self.extract_value(RFQPanelValues.BUTTON_TEXT, name)
 
     def extract_value(self, field: RFQPanelValues, name: str):
         extracted_value = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedValue()
