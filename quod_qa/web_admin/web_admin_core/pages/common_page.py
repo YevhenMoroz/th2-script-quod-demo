@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 
 from quod_qa.web_admin.web_admin_core.utils.common_constants import CommonConstants
+from quod_qa.web_admin.web_admin_core.utils.csv_utils.csv_reader import CsvReader
 from quod_qa.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfReader
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_core.utils.web_driver_utils import delete_all_files_with_extension, \
@@ -83,15 +84,25 @@ class CommonPage:
         delete_all_files_with_extension(download_directory, ".pdf")
         delete_all_files_with_extension(download_directory, ".csv")
 
+    def get_csv_context(self):
+        path_to_csv = self.__get_downloaded_file(".csv")
+
+        csv_reader = CsvReader(path_to_csv)
+        return csv_reader.read_csv_content()
+
     def is_pdf_contains_value(self, value: str):
-        download_directory = self.web_driver_container.download_dir
-
-        files = find_files_by_extension(download_directory, ".pdf")
-
-        if len(files) > 1:
-            raise ValueError("In the download directory found several PDF files, but must be only one!")
-
-        path_to_pdf = os.path.join(download_directory, files.pop(0))
+        path_to_pdf = self.__get_downloaded_file(".pdf")
 
         pdf_reader = PdfReader(path_to_pdf)
         return pdf_reader.is_contains(value)
+
+    def __get_downloaded_file(self, extension: str):
+        download_directory = self.web_driver_container.download_dir
+
+        files = find_files_by_extension(download_directory, extension)
+
+        if len(files) > 1:
+            raise ValueError(f"In the download directory found several {extension} files, but must be only one!")
+
+        return os.path.join(download_directory, files.pop(0))
+
