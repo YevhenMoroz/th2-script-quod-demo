@@ -1,7 +1,10 @@
 import time
 
+from th2_grpc_check1.check1_pb2 import PreFilter
+from th2_grpc_common.common_pb2 import ValueFilter, MessageFilter, FilterOperation, Direction
+
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
 from stubs import Stubs
 
 
@@ -19,7 +22,7 @@ class MarketDataRequst:
 
 
 
-    def __init__(self, case_params=CaseParams, market_depth='0', md_update_type='0'):
+    def __init__(self, case_params=CaseParamsSell, market_depth='0', md_update_type='0'):
         self.market_depth=market_depth
         self.md_update_type=md_update_type
         self.case_params=case_params
@@ -55,10 +58,21 @@ class MarketDataRequst:
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(
             bca.convert_to_request(
                 'Send MDR (subscribe)',
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
             ))
+        return self
+
+    #Send MarketDataRequest subscribe method
+    def send_md_request_timeout(self):
+        self.md_params['SubscriptionRequestType'] = '1'
+        self.subscribe = self.fix_act.placeMarketDataRequestFIX(bca.convert_to_request(
+                'Send MDR (subscribe)',
+                self.case_params.connectivityESP,
+                self.case_params.case_id,
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
+            ), 10000)
         return self
 
     def set_md_subscribe_response(self):
@@ -128,7 +142,7 @@ class MarketDataRequst:
                 .message_value.fields['MDEntryID'].simple_value
             return mdEntryId
 
-    def prepare_md_response(self,*args, published=True ,which_bands_not_pb=None, priced=True,which_bands_not_pr=None):
+    def prepare_md_response(self, *args, published=True, which_bands_not_pb=None, priced=True, which_bands_not_pr=None):
         self.parse_settl_type()
         if self.case_params.securitytype == 'FXFWD':
             self.prepare_md_for_verification_fwrd(*args, published, which_bands_not_pb, priced, which_bands_not_pr)
@@ -144,7 +158,7 @@ class MarketDataRequst:
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -159,7 +173,7 @@ class MarketDataRequst:
                 'Receive MarketDataSnapshotFullRefresh (pending)',
                 bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -175,7 +189,7 @@ class MarketDataRequst:
                 'Market Data Request Reject',
                 bca.filter_to_grpc('MarketDataRequestReject', self.md_reject_response, ['MDReqID']),
                 self.subscribe.checkpoint_id,
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id
             )
         )
@@ -297,9 +311,9 @@ class MarketDataRequst:
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send MDR (unsubscribe)',
-                self.case_params.connectivity,
+                self.case_params.connectivityESP,
                 self.case_params.case_id,
-                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
+                bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivityESP)
             ))
 
 
@@ -308,56 +322,38 @@ class MarketDataRequst:
             self.case_params.settltype = 'M1'
 
 
+    def CheckMarketDataSequence(self, parameters, response, key_parameters = ['MDReqID'], message_name='Check MarketDataSnapshotFullRefresh', direction='FIRST', case = None):
+        if case == None:
+            case = self.case_params.case_id
+
+        pre_filter = PreFilter(
+            fields={
+                'header': ValueFilter(
+                    message_filter=MessageFilter(
+                        fields={
+                            'MsgType': ValueFilter(simple_filter='W', operation=FilterOperation.EQUAL)
+                        }
+                    )
+                )
+            }
+        )
+
+        message_sequence = list()
+        for param in parameters:
+            message_sequence.append(bca.filter_to_grpc("MarketDataSnapshotFullRefresh", param, key_parameters))
+
+        self.verifier.submitCheckSequenceRule(
+            bca.create_check_sequence_rule(
+                message_name,
+                pre_filter,
+                message_sequence,
+                response.checkpoint_id,
+                'fix-ss-esp-314-luna-standard',
+                case,
+                Direction.Value(direction)
+            )
+        )
 
 
 
 
-
-
-    # one_band={
-    #     {
-    #         'SettlType': 0,
-    #         'MDEntryPx': '*',
-    #         'MDEntryTime': '*',
-    #         'MDEntryID': '*',
-    #         'MDEntrySize': '1000000',
-    #         'QuoteEntryID': '*',
-    #         'MDOriginType': 1,
-    #         'SettlDate': '',
-    #         'MDQuoteType': 1,
-    #         'MDEntryPositionNo': 1,
-    #         'MDEntryDate': '*',
-    #         'MDEntryType': 0
-    #     }
-    # }
-    # Send MarketDataRequest subscribe method
-    # def send_md_request(self,case_id):
-    #     self.md_params['SubscriptionRequestType'] = '1'
-    #     subscribe = self.fix_act.placeMarketDataRequestFIX(
-    #         bca.convert_to_request(
-    #             'Send MDR (subscribe)',
-    #             self.case_params.connectivity,
-    #             case_id,
-    #             bca.message_to_grpc('MarketDataRequest', self.md_params, self.case_params.connectivity)
-    #         ))
-    #     price =  subscribe \
-    #         .response_messages_list[0].fields['NoMDEntries'] \
-    #         .message_value.fields['NoMDEntries'].list_value.values[1] \
-    #         .message_value.fields['MDEntryPx'].simple_value
-    #
-    #     self.md_subscribe_response['MDReqID']=self.md_params['MDReqID']
-    #     self.md_subscribe_response['MDReqID']['Symbol']=self.case_params.symbol
-    #     self.md_subscribe_response['NoMDEntries']['Symbol']=self.case_params.symbol
-    #
-    #     self.verifier.submitCheckRule(
-    #         bca.create_check_rule(
-    #             'Receive MarketDataSnapshotFullRefresh (pending)',
-    #             bca.filter_to_grpc('MarketDataSnapshotFullRefresh', self.md_subscribe_response, ['MDReqID']),
-    #             subscribe.checkpoint_id,
-    #             self.case_params['Connectivity'],
-    #             self.case_id
-    #         )
-    #     )
-    #
-    #     #return price for Sending Order in future
-    #     return price
