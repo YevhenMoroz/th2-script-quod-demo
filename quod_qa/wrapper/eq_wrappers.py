@@ -17,14 +17,14 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request
+    direct_loc_request, direct_moc_request, direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
-rule_connectivity = "fix-ss-310-columbia-standart"
+rule_connectivity = "fix-bs-310-columbia"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -46,8 +46,8 @@ def open_fe2(session_id, report_id, folder, user, password):
 def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
     try:
         fix_manager_qtwquod = FixManager(connectivity, case_id)
-        rule_manager = RuleManager(session)
-        rule = rule_manager.add_OCR()
+        rule_manager = RuleManager()
+        rule = rule_manager.add_OCR(session)
         cancel_parms = {
             "ClOrdID": cl_order_id,
             "Account": client,
@@ -63,7 +63,7 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
         rule_manager.remove_rule(rule)
 
 
-def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False,  recipient=None,
+def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=False,
                  sell_side=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
                  ):
@@ -231,7 +231,7 @@ def accept_modify(lookup, qty, price):
 
 def direct_loc_order(qty, route):
     try:
-        call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+        call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -359,26 +359,22 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def verify_value(request, case_id, column_name, expected_value):
+def verify_value(request, case_id, column_name, expected_value, is_child):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    if is_child:
+        result = call(Stubs.win_act_order_book.getChildOrdersDetails, order_details.request())
+    else:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
 
-
-def check_time_sleep_fix_order(request, fix_message, time1):
-    for i in range(1, 4):
-        if (get_cl_order_id(request) == fix_message['ClOrdID']):
-            time.sleep(time1)
-        else:
-            break
 
 
 def notify_dfd(request):
