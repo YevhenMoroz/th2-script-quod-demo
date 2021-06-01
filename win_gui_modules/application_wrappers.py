@@ -50,6 +50,9 @@ class LoginDetailsRequest:
     def set_extraction_id(self, extraction_id: str):
         self.login_details.extractionId = extraction_id
 
+    def close_login_windows(self):
+        self.login_details.closeLoginWindow = True
+
     def build(self):
         return self.login_details
 
