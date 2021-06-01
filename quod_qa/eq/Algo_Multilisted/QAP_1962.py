@@ -203,7 +203,6 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*'
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         
@@ -322,6 +321,7 @@ def execute(report_id):
         fix_cancel = FixMessage(cancel_parms)
         responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
 
+        time.sleep(2)
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_7 = {
             'CumQty': '0',
@@ -341,7 +341,7 @@ def execute(report_id):
             'LeavesQty': '0',
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_7, responce_cancel, direction='SECOND', case=case_id_4, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['Text', 'OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_7, responce_cancel, direction='SECOND', case=case_id_4, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
 
         # Check SS (FIXSELLQUOD5 35=8 on 35=F)
         er_8 = {
@@ -357,7 +357,7 @@ def execute(report_id):
             'SettlDate': '*',
             'Currency': 'EUR',
             'TimeInForce': tif_gtc,
-            'ExecType': 4,
+            'ExecType': '4',
             'HandlInst': 2,
             'LeavesQty': 0,
             'NoParty': '*',
@@ -367,7 +367,6 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'QtyType': 0,
             'ExecRestatementReason': 4,
-            'SettlType': 0,
             'TargetStrategy': 1008,
             'Instrument': '*',
             'StopPx': stop_price,
@@ -375,11 +374,8 @@ def execute(report_id):
             'Text': '*',
             'LastMkt': ex_destination_1     
         }
-        fix_verifier_ss.CheckExecutionReport(er_8, responce_cancel, case=case_id_4, message_name="SS FIXSELLQUOD5 send 35=8 Cancel", key_parameters=['OrdStatus', 'ExecType', 'TimeInForce', 'OrdType'])
+        fix_verifier_ss.CheckExecutionReport(er_8, responce_cancel, case=case_id_4, message_name="SS FIXSELLQUOD5 send 35=8 Cancel", key_parameters=['OrdStatus', 'ExecType', 'TimeInForce', 'OrdType', 'OrderID'])
         #endregion
-
-
-        time.sleep(1)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
