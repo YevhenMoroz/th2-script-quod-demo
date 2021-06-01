@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+from th2_grpc_act_gui_quod import middle_office_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 from custom.basic_custom_actions import create_event
@@ -11,7 +13,7 @@ from stubs import Stubs
 import time
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -22,7 +24,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
+connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart   # fix-ss-back-office
 rule_connectivity = "fix-ss-310-columbia-standart"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -427,7 +429,7 @@ def approve_block(request):
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
                settlement_date=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
-               fees_rate=None,  misc_arr:[]= None):
+               fees_rate=None, misc_arr: [] = None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     ticket_details = modify_request.add_ticket_details()
@@ -485,7 +487,8 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def unbook_order (request):
+
+def unbook_order(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     try:
@@ -493,7 +496,8 @@ def unbook_order (request):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def allocate_order (request,arr_allocation_param:[]):
+
+def allocate_order(request, arr_allocation_param: []):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
 
@@ -520,10 +524,26 @@ def allocate_order (request,arr_allocation_param:[]):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def unallocate_order (request):
+
+def unallocate_order(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     try:
         call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
+
+
+def view_orders_for_block(request, count: int):
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request = ViewOrderExtractionDetails(base=request)
+    lenght = "middleOffice.viewOrdersCount"
+    extract_request.extract_length(lenght)
+    arr_response = []
+    for i in range(1, count + 1):
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(i)
+        dma_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
+        order_details.add_extraction_detail(dma_order_id_view)
+        arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
+    return arr_response
