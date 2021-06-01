@@ -56,8 +56,8 @@ class TestCase:
         #     logging.error('FE is not opened')
         #     prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
-    #send market data
-    def send_market_data(self, qty, price):
+    # send market data
+    def send_market_data(self, qty):
         act = Stubs.fix_act
         event_store = Stubs.event_store
         simulator = Stubs.simulator
@@ -81,16 +81,40 @@ class TestCase:
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": price,
+                    "MDEntryPx": 1.12734,
+                    "MDEntrySize": qty,
+                    "MDEntryPositionNo": 1,
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.12618,
+                    "MDEntrySize": qty+2000000,
+                    "MDEntryPositionNo": 2,
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.12592,
+                    "MDEntrySize": qty+8000000,
+                    "MDEntryPositionNo": 3,
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.12784,
                     "MDEntrySize": qty,
                     "MDEntryPositionNo": 1,
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": price,
-                    "MDEntrySize": qty,
+                    "MDEntryPx": 1.12795,
+                    "MDEntrySize": qty+2000000,
                     "MDEntryPositionNo": 2,
-                }
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.12827,
+                    "MDEntrySize": qty+8000000,
+                    "MDEntryPositionNo": 3,
+                },
             ]
         }
 
@@ -105,8 +129,8 @@ class TestCase:
     # Main method
     def execute(self):
         try:
-            self.prepare_frontend()
-            self.send_market_data(1000000, 500)
+            # self.prepare_frontend()
+            self.send_market_data(1000000)
             # self.send_market_data(5000000)
             # self.send_market_data(7000000)
         except Exception as e:
