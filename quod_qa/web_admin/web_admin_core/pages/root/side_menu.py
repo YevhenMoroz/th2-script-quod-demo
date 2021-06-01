@@ -10,6 +10,7 @@ from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_cons
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook.washbook_constants import WashbookConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook_rules.washbook_rules_constants import \
     WashbookRulesConstants
+from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.auto_hedger.auto_hedger_constants import \
     AutoHedgerConstants
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_constants import \
@@ -81,22 +82,21 @@ from quod_qa.web_admin.web_admin_core.pages.users.desks.desks_constants import D
 from quod_qa.web_admin.web_admin_core.pages.users.user_sessions.user_sessions_constants import UserSessionsConstants
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_constants import UsersConstants
 from quod_qa.web_admin.web_admin_core.utils.toggle_state_enum import ToggleStateEnum
-from quod_qa.web_admin.web_admin_core.utils.web_driver_utils import find_by_css_selector, find_by_xpath
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-class SideMenu:
+class SideMenu(CommonPage):
 
-    def __init__(self, web_driver, wait_driver):
-        self.web_driver = web_driver
-        self.wait_driver = wait_driver
+    def __init__(self, web_driver_container: WebDriverContainer):
+        super().__init__(web_driver_container)
 
     def toggle_container(self, selector: str, expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         if expected_state == ToggleStateEnum.CLOSED:
-            container = find_by_css_selector(self.wait_driver, selector)
+            container = self.find_by_css_selector(selector)
             container.click()
 
     def click_menu_item(self, page_item_selector: str):
-        page_item = find_by_xpath(self.wait_driver, page_item_selector)
+        page_item = self.find_by_xpath(page_item_selector)
         page_item.click()
 
     def open_page(self, page_item_selector: str, container_selector: str, expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
@@ -104,7 +104,7 @@ class SideMenu:
         self.click_menu_item(page_item_selector)
 
     def check_is_page_opened(self, page_title_selector: str):
-        find_by_xpath(self.wait_driver, page_title_selector)
+        self.find_by_xpath(page_title_selector)
 
     def open_accounts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ACCOUNTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR, container_expected_state)

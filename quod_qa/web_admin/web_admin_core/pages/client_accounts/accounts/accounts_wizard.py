@@ -1,14 +1,13 @@
 import time
 
-from selenium.webdriver.support.wait import WebDriverWait
-
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
 class AccountsWizard(CommonPage):
-    def __init__(self, web_driver_wait: WebDriverWait):
-        super().__init__(web_driver_wait)
+    def __init__(self, web_driver_container: WebDriverContainer):
+        super().__init__(web_driver_container)
 
     def set_id(self, value: str):
         self.set_text_by_xpath(AccountsConstants.WIZARD_ID_INPUT_XPATH, value)

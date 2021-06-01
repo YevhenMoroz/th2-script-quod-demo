@@ -1,14 +1,13 @@
 import time
 
-from selenium.webdriver.support.wait import WebDriverWait
-
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
 class AccountsPage(CommonPage):
-    def __init__(self, web_driver_wait: WebDriverWait):
-        super().__init__(web_driver_wait)
+    def __init__(self, web_driver_container: WebDriverContainer):
+        super().__init__(web_driver_container)
 
     def click_new_button(self):
         new_button = self.find_by_xpath(AccountsConstants.NEW_BUTTON_XPATH)
@@ -34,9 +33,11 @@ class AccountsPage(CommonPage):
         self.find_by_xpath(AccountsConstants.CLONE_ENTITY_BUTTON_GRID_XPATH).click()
         time.sleep(2)
 
-    def click_download_pdf_entity_button(self):
+    def click_download_pdf_entity_button_and_check_pdf(self, value: str):
+        self.clear_download_directory()
         self.find_by_xpath(AccountsConstants.DOWNLOAD_PDF_ENTITY_BUTTON_GRID_XPATH).click()
         time.sleep(2)
+        return self.is_pdf_contains_value(value)
 
     def toggle_entity_toggle_button(self):
         self.find_by_xpath(AccountsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_GRID_XPATH).click()

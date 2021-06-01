@@ -1,15 +1,21 @@
+import os
+
 import pyperclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 
 from quod_qa.web_admin.web_admin_core.utils.common_constants import CommonConstants
+from quod_qa.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfReader
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from quod_qa.web_admin.web_admin_core.utils.web_driver_utils import delete_all_files_with_extension, \
+    find_files_by_extension
 
 
 class CommonPage:
-    def __init__(self, web_driver_wait: WebDriverWait):
-        self.web_driver_wait = web_driver_wait
+    def __init__(self, web_driver_container: WebDriverContainer):
+        self.web_driver_container = web_driver_container
+        self.web_driver_wait = web_driver_container.get_wait_driver()
 
     def find_by_css_selector(self, css_selector: str):
         return self.find_by(By.CSS_SELECTOR, css_selector)
@@ -71,3 +77,21 @@ class CommonPage:
     
         return CommonConstants.CHECKED_ATTRIBUTE in toggle_button_state_attribute
 
+    def clear_download_directory(self):
+        download_directory = self.web_driver_container.download_dir
+
+        delete_all_files_with_extension(download_directory, ".pdf")
+        delete_all_files_with_extension(download_directory, ".csv")
+
+    def is_pdf_contains_value(self, value: str):
+        download_directory = self.web_driver_container.download_dir
+
+        files = find_files_by_extension(download_directory, ".pdf")
+
+        if len(files) > 1:
+            raise ValueError("In the download directory found several PDF files, but must be only one!")
+
+        path_to_pdf = os.path.join(download_directory, files.pop(0))
+
+        pdf_reader = PdfReader(path_to_pdf)
+        return pdf_reader.is_contains(value)

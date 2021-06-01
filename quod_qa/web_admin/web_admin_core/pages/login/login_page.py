@@ -1,13 +1,12 @@
-from selenium.webdriver.support.wait import WebDriverWait
-
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.login.login_constants import LoginConstants
 from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
 class LoginPage(CommonPage):
-    def __init__(self, web_driver_wait: WebDriverWait):
-        super().__init__(web_driver_wait)
+    def __init__(self, web_driver_container: WebDriverContainer):
+        super().__init__(web_driver_container)
 
     def set_login(self, login: str):
         login_input = self.find_by_css_selector(LoginConstants.LOGIN_INPUT_CSS_SELECTOR)
