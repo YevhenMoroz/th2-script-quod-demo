@@ -1,14 +1,9 @@
 import logging
 from pathlib import Path
-
-import timestring
-
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import m1_front_end
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.common_wrappers import BaseTileDetails
-
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
