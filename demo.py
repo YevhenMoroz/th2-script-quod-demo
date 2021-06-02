@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_esp import test, QAP_2825, SendMD, clone, QAP_1518, QAP_2823, QAP_2874, QAP_2876, QAP_2880, \
-    QAP_2879, QAP_2873, QAP_2872
+    QAP_2879, QAP_2873, QAP_2872, QAP_2966
 from quod_qa.fx.fx_mm_rfq import QAP_1746
 
 from stubs import Stubs
@@ -45,24 +45,7 @@ def test_run():
             },
         }
     try:
-        QAP_1518.execute(report_id)
-
-        # fx_mm_esp_fix(report_id)
-        # QAP_2879.execute(report_id)
-        # test.execute(report_id)
-        # clone.execute(report_id)
-        # QAP_2086.execute(report_id)
-        # QAP_2084.execute(report_id)
-        # QAP_2085.execute(report_id)
-        # QAP_3841.execute(report_id)
-        # QAP_2079.execute(report_id)
-        # QAP_2797.execute(report_id)
-        # # QAP_1558.execute(report_id)
-        # QAP_1559.execute(report_id)
-        # QAP_1554.execute(report_id)
-        # QAP_1597.execute(report_id)
-        # QAP_4094.execute(report_id)
-        # QAP_3555_bloked.execute(report_id)
+        QAP_2966.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
         # QAP_3390.execute(report_id)
