@@ -128,12 +128,12 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': now.strftime("%H:%M:%S")
+                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'EndDate',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': (now + timedelta(hours=2)).strftime("%H:%M:%S")
+                    'StrategyParameterValue': (now + timedelta(hours=2)).strftime("%Y%m%d-%H:%M:%S")
                 }
             ]
         }
