@@ -128,12 +128,12 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': now.strftime("%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'EndDate',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': (now + timedelta(hours=2)).strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': (now + timedelta(hours=2)).strftime("%H:%M:%S")
                 }
             ]
         }
@@ -189,6 +189,7 @@ def execute(report_id):
             SettlType='*'
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        #endregion
 
         #region Cancel Algo Order
         case_id_2 = bca.create_event("Cansel Algo Order", case_id)
