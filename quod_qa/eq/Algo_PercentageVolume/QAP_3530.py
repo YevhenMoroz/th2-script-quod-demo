@@ -131,7 +131,7 @@ def execute(report_id):
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
+                    'StrategyParameterType': '6',
                     'StrategyParameterValue': '30.0'
                 },
                 {
