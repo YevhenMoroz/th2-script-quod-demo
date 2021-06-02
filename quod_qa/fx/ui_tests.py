@@ -423,7 +423,7 @@ def extract_cp_rates_panel(base_tile_details, cp_service):
     result =  call(cp_service.extractRateTileValues, values.build())
     print(result)
 
-def extract_di_panel(base_request, dealer_intervention_servise ):
+def extract_di_panel(base_request, dealer_intervention_service ):
     extraction_request = RFQExtractionDetailsRequest(base=base_request)
     extraction_request.set_extraction_id("ExtractionId")
     extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
@@ -438,7 +438,7 @@ def extract_di_panel(base_request, dealer_intervention_servise ):
     extraction_request.extract_request_side("rfqDetails.requestSide")
     extraction_request.extract_button_text("rfqDetails.buttonText")
 
-    result = call(dealer_intervention_servise.getRFQDetails, extraction_request.build())
+    result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
     for R in result:
         print(f'{R} = {result[R]}')
 
