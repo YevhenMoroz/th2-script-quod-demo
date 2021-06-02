@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-def execute(report_id):
 
+def execute(report_id):
     case_name = "QAP-477"
     seconds, nanos = timestamps()
     case_id = create_event(case_name, report_id)
@@ -23,13 +23,12 @@ def execute(report_id):
     common_act = Stubs.win_act
     qty = "900"
     price = "20"
-    client = "CLIENT1"
+    client = "CLIENTSKYLPTOR"
     lookup = "VETO"
     order_type = "Limit"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    desk = Stubs.custom_config['qf_trading_fe_user_desk']
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
@@ -37,12 +36,9 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, desk, price, False)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregions
 
-    # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -67,30 +63,36 @@ def execute(report_id):
     # region DirectLOC split
     eq_wrappers.direct_loc_order('50', 'ChiX direct access')
     # endregion
-    order_id=request[order_id.name]
-    # check sub Order status
+    order_id = eq_wrappers.get_order_id(base_request)
+    # check Child Order status
 
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getChildOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking Child order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent('Qty', order_qty.name, str(int(int(qty)/2))),
-                                                  ]))
+    order_info_extraction = "getOrderInfo"
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(base_request)
+    main_order_details.set_extraction_id(order_info_extraction)
+    main_order_details.set_filter(["Order ID", eq_wrappers.get_order_id(base_request)])
+    main_order_id = ExtractionDetail("order_id", "Order ID")
+    main_order_extraction_action = ExtractionAction.create_extraction_action(
+        extraction_details=[main_order_id])
+    child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+    child_order_qty = ExtractionDetail("subOrder_lvl_1.Qty", "Qty")
+    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
+        extraction_details=[child1_id])
+    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
+    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
+    main_order_details.add_single_order_info(
+        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
+    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
+
+    child_ord_id1 = request[child1_id.name]
+    lvl2_details = OrdersDetails.create()
+    lvl2_details.set_default_params(base_request)
+    algo_split_man_extr_id = "order.algo_split_man"
+    lvl2_details.set_extraction_id(algo_split_man_extr_id)
+    lvl2_details.set_filter(["Order ID", child_ord_id1])
+
+    call(Stubs.win_act_order_book.getChildOrdersDetails, lvl2_details.request())
+    eq_wrappers.verify_value(base_request, case_id, 'Order ID', child_ord_id1, True)
+    eq_wrappers.verify_value(base_request, case_id, 'Qty', '450', True)
+    eq_wrappers.verify_value(base_request, case_id, 'ExecPcy', 'DMA', True)
     # endregion
-    # region Close FE
-    # close_fe(case_id, session_id)
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
