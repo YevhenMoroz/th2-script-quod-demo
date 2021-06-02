@@ -55,7 +55,7 @@ instrument = {
 def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    ocrr_rule = rule_manager.add_OrderCancelReplace_ExecutionReport(connectivity_buy_side)
+    ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
     return [nos_rule, ocrr_rule, ocr_rule]
 
