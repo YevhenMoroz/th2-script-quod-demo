@@ -4,7 +4,7 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRatesTileRequest
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -25,10 +25,11 @@ class TestCase:
         # Services setup
         self.common_act = Stubs.win_act
         self.ar_service = Stubs.win_act_aggregated_rates_service
+        self.cp_service = Stubs.win_act_cp_service
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-574', report_id)
+        self.case_id = bca.create_event('QAP-2761', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
@@ -47,7 +48,7 @@ class TestCase:
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        # get_opened_fe_303(self.case_id, self.session_id, work_dir, self.user, password)
+        # get_opened_fe_303(self.case_id, self.session_id)
         prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
         # try:
@@ -126,16 +127,26 @@ class TestCase:
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_hsbc, 'fix-fh-fx-esp')
             ))
 
+    def create_or_get_rates_tile(self):
+        call(self.ar_service.createRatesTile, self.base_details.build())
+
+    def modify_rates_tile(self, qty):
+        modify_request = ModifyRatesTileRequest(details=self.base_details)
+        modify_request.set_quantity(qty)
+        call(self.ar_service.modifyRatesTile, modify_request.build())
+
     # Main method
     def execute(self):
         try:
-            # self.prepare_frontend()
+            self.prepare_frontend()
+            self.create_or_get_rates_tile()
             self.send_market_data(1000000)
+            self.modify_rates_tile('4000000')
             # self.send_market_data(5000000)
             # self.send_market_data(7000000)
         except Exception as e:
             logging.error('Error execution', exc_info=True)
         # close_fe(self.case_id, self.session_id)
 
-if __name__ == '__main__':
-    pass
+# if __name__ == '__main__':
+#     pass
