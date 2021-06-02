@@ -157,7 +157,8 @@ def test_run():
         # QAP_1591.execute(report_id)
         # QAP_2373.execute(report_id)
         # QAP_2416.execute(report_id)
-        QAP_2854.execute(report_id)
+        # QAP_2854.execute(report_id)
+
         print('duration time = ' + str(datetime.now() - start))
 
     except Exception:
