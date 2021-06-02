@@ -21,7 +21,7 @@ def execute(report_id, case_params):
 
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    ttl = 90
+    ttl = 120
     wait_step = 5
     seconds, nanos = bca.timestamps()  # Store case start time
 
@@ -84,19 +84,26 @@ def execute(report_id, case_params):
 
     quote_cancel_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
-        'SenderCompID': 'QUODFX_UAT',
-        'TargetCompID': 'QUOD5',
-        'QuoteCancelType': '5'
+        'QuoteCancelType': '5',
+        'NoQuoteEntries': [{
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'SecurityType': 'FXSPOT'
+                },
+            },
+            ],
+        'QuoteID': '*'
         }
 
     verifier.submitCheckRule(
             bca.create_check_rule(
-                    "Checking QuoteCancell",
+                    "Checking QuoteCancel",
                     bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
                     send_rfq.checkpoint_id,
                     case_params['TraderConnectivity'],
                     case_id
                     )
             )
+
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))
