@@ -20,6 +20,7 @@ timeouts = True
 
 
 qty = 1000
+child_qty = 67
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
@@ -270,7 +271,7 @@ def execute(report_id):
         new_order_single_bs = {
             'NoParty': '*',
             'Account': account,        
-            'OrderQty': qty,
+            'OrderQty': child_qty,
             'OrdType': new_order_single_params['OrdType'],
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
@@ -285,14 +286,14 @@ def execute(report_id):
             'HandlInst': '1',
             'ExDestination': instrument['SecurityExchange']
         }
-        fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order')
+        fix_verifier_bs.CheckNewOrderSingle(new_order_single_bs, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order', key_parameters=['OrderQty', 'Price'])
 
         # Check that FIXBUYQUOD5 sent 35=8 pending new
         er_3 = {
             'Account': account,
             'CumQty': '0',
             'ExecID': '*',
-            'OrderQty': qty,
+            'OrderQty': child_qty,
             'Text': text_pn,
             'OrdType': '2',
             'ClOrdID': '*',
@@ -305,17 +306,17 @@ def execute(report_id):
             'TimeInForce': tif_day,
             'ExecType': "A",
             'ExDestination': ex_destination_1,
-            'LeavesQty': qty
+            'LeavesQty': child_qty
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'Price', 'OrderQty'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
             er_3,
             OrdStatus='0',
             ExecType="0",
-            OrderQty=qty,
+            OrderQty=child_qty,
             Text=text_n,
         )
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
@@ -351,7 +352,7 @@ def execute(report_id):
         er_5 = {
             'CumQty': '0',
             'ExecID': '*',
-            'OrderQty': qty,
+            'OrderQty': child_qty,
             'ClOrdID': '*',
             'Text': text_c,
             'OrderID': '*',
