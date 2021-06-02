@@ -13,43 +13,45 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, case_params):
-    # FIXME: multiple issue appears because of dictionary fields differ
-    #       check pod="gtwquod5-fx-..."
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
-    ttl = 120
-    wait_step = 5
-    seconds, nanos = bca.timestamps()  # Store case start time
-
-    reusable_params = defauot_quote_params
-    reusable_params['Account'] = case_params['Account']
-    reusable_params['Instrument']['Product'] = 4
-
-    rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{
-            **reusable_params,
-            'Currency': reusable_params['Instrument']['Symbol'][0:3],
-            'QuoteType': '1',
-            'OrderQty': reusable_params['OrderQty'],
-            'OrdType': 'D',
-            'ExpireTime': get_expire_time(ttl),
-            'TransactTime': (datetime.utcnow().isoformat())}]
+def cancel_quote(quote_req_id, verifier, checkpoint_id, connectivity, case_id):
+    quote_cancel_params = {
+        'QuoteReqID': quote_req_id,
+        'QuoteCancelType': '5',
+        'NoQuoteEntries': [{
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'SecurityType': 'FXSPOT'
+                },
+            },
+            ],
+        'QuoteID': '*'
         }
+
+    verifier.submitCheckRule(
+            bca.create_check_rule(
+                    "Checking QuoteCancel",
+                    bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
+                    checkpoint_id,
+                    connectivity,
+                    case_id
+                    )
+            )
+
+
+def send_rfq(rfq_params, act, connectivity, case_id):
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
     send_rfq = act.placeQuoteFIX(
             bca.convert_to_request(
                     text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
+                    connectivity,
                     case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+                    bca.message_to_grpc('QuoteRequest', rfq_params, connectivity)
                     ))
+    return send_rfq
 
+
+def verify_qute(reusable_params, rfq_params, case_id, verifier, sent_rfq, connectivity):
     quote_params = {
         'QuoteReqID': rfq_params['QuoteReqID'],
         'OfferPx': '*',
@@ -71,39 +73,56 @@ def execute(report_id, case_params):
             bca.create_check_rule(
                     text_messages['recQ'],
                     bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                    send_rfq.checkpoint_id,
-                    case_params['TraderConnectivity'],
+                    sent_rfq.checkpoint_id,
+                    connectivity,
                     case_id
                     )
             )
 
+
+def wait_quote_expiration(wait_step, ttl):
     print(f'Waiting while quote expire for {ttl} time')
     for i in range(0, int(ttl / wait_step + 1)):
         print(f'{ttl - i * wait_step}sec left')
         time.sleep(wait_step)
 
-    quote_cancel_params = {
-        'QuoteReqID': rfq_params['QuoteReqID'],
-        'QuoteCancelType': '5',
-        'NoQuoteEntries': [{
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-                },
-            },
-            ],
-        'QuoteID': '*'
-        }
 
-    verifier.submitCheckRule(
-            bca.create_check_rule(
-                    "Checking QuoteCancel",
-                    bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
-                    send_rfq.checkpoint_id,
-                    case_params['TraderConnectivity'],
-                    case_id
-                    )
-            )
+def execute(report_id, case_params):
+    # region Preparation
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
+
+    act = Stubs.fix_act
+    verifier = Stubs.verifier
+    ttl = 120
+    wait_step = 5
+    seconds, nanos = bca.timestamps()  # Store case start time
+
+    reusable_params = defauot_quote_params
+    reusable_params['Account'] = case_params['Account']
+    reusable_params['Instrument']['Product'] = 4
+    rfq_params = {
+        'QuoteReqID': bca.client_orderid(9),
+        'NoRelatedSymbols': [{
+            **reusable_params,
+            'Currency': reusable_params['Instrument']['Symbol'][0:3],
+            'QuoteType': '1',
+            'OrderQty': reusable_params['OrderQty'],
+            'OrdType': 'D',
+            'ExpireTime': get_expire_time(ttl),
+            'TransactTime': (datetime.utcnow().isoformat())}]
+        }
+    # endregion
+
+    sent_rfq = send_rfq(rfq_params, act, case_params['TraderConnectivity'], case_id)
+
+    verify_qute(reusable_params, rfq_params, case_id, verifier,
+                sent_rfq, case_params['TraderConnectivity'])
+
+    wait_quote_expiration(wait_step, ttl)
+
+    cancel_quote(rfq_params['QuoteReqID'], verifier, sent_rfq.checkpoint_id,
+                 case_params['TraderConnectivity'], case_id)
 
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))
