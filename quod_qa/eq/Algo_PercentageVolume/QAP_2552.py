@@ -28,7 +28,7 @@ text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
 side = 2
-price = 40
+price = 20
 tif_day = 0
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
@@ -111,21 +111,7 @@ def execute(report_id):
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1)
+
 
         market_data2 = [
             {
@@ -138,6 +124,22 @@ def execute(report_id):
             }
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
+
+        market_data3 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data3)
         # time.sleep(10)
         # market_data2 = [
         #     {
