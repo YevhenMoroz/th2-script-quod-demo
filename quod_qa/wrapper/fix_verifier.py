@@ -27,6 +27,38 @@ class FixVerifier:
             )
         )
 
+    def CheckAllocationInstruction(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
+                             message_name='Check AllocationInstruction', direction='FIRST', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("AllocationInstruction", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    def CheckConfirmation(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
+                              message_name='Check Confirmation', direction='FIRST', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("Confirmation", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
     def CheckExecutionReportSequence(self, parameters, response, key_parameters = ['ClOrdID', 'OrdStatus'], message_name='Check ExecutionReport', direction='FIRST', case = None):
         if case == None:
             case = self.case_id
