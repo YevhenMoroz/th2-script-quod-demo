@@ -151,7 +151,7 @@ class FilterPositionsDetails:
         return request
 
     def set_account(self, account1: str):
-        self.filter_details.account = account1
+        self.filter_details.client = account1
 
     def set_currency_mode(self, show: bool):
         self.filter_details.showAutoFilterRaw = show

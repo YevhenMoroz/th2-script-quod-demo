@@ -40,6 +40,10 @@ class ExtractionDetailsRequest:
             self.request = dealer_intervention_operations_pb2.ExtractionDetails(data=data.build())
         else:
             self.request = dealer_intervention_operations_pb2.ExtractionDetails()
+        self.request.clearFilterBefore = False
+
+    def set_clear_flag(self, flag: bool = True):
+        self.request.clearFilterBefore = flag
 
     def set_data(self, data: BaseTableDataRequest):
         self.request.data.CopyFrom(data.build())
@@ -62,14 +66,8 @@ class ExtractionDetailsRequest:
 
 class ModificationRequest:
     def __init__(self, base: common_pb2.EmptyRequest = None):
-        if base is not None:
-            self.request = dealer_intervention_operations_pb2.ModificationRequest(base=base)
-        else:
-            self.request = dealer_intervention_operations_pb2.ModificationRequest()
-
-    def set_default_params(self, base_request: common_pb2.EmptyRequest):
-        self.request.base.CopyFrom(base_request)
-
+        self.request = dealer_intervention_operations_pb2.ModificationRequest(base=base)
+        self.request.action = dealer_intervention_operations_pb2.ModificationRequest.Action.NONE
     def widen_spread(self):
         self._append_spread_action(SpreadAction.WIDEN_SPREAD)
 
@@ -100,6 +98,24 @@ class ModificationRequest:
     def set_quote_ttl(self, quote_ttl: str):
         self.request.quoteTTL = quote_ttl
 
+    def set_bid_large(self, bidLarge: str):
+        self.request.bidLarge = bidLarge
+
+    def set_bid_small(self, bidSmall: str):
+        self.request.bidSmall = bidSmall
+
+    def set_ask_large(self, askLarge: str):
+        self.request.askLarge = askLarge
+
+    def set_ask_small(self, askSmall: str):
+        self.request.askSmall = askSmall
+
+    def set_spread_step(self, spreadStep: str):
+        self.request.spreadStep = spreadStep
+
+    def click_is_hedged_chec_box(self, flag: bool = True):
+        self.request.isHedged = flag
+
     def send(self):
         self.request.action = dealer_intervention_operations_pb2.ModificationRequest.Action.SEND
 
@@ -121,6 +137,7 @@ class RFQPanelValues(Enum):
     ASK_PRICE_LARGE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.ASK_PRICE_LARGE
     REQUEST_STATE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_STATE
     REQUEST_SIDE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_SIDE
+    BUTTON_TEXT = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.BUTTON_TEXT
 
 
 class RFQExtractionDetailsRequest:
@@ -166,6 +183,9 @@ class RFQExtractionDetailsRequest:
     def extract_request_side(self, name: str):
         self.extract_value(RFQPanelValues.REQUEST_SIDE, name)
 
+    def extract_button_text(self, name: str):
+        self.extract_value(RFQPanelValues.BUTTON_TEXT, name)
+
     def extract_value(self, field: RFQPanelValues, name: str):
         extracted_value = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedValue()
         extracted_value.type = field.value
@@ -174,4 +194,3 @@ class RFQExtractionDetailsRequest:
 
     def build(self):
         return self.request
-

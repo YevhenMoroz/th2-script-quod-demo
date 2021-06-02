@@ -13,6 +13,5 @@ grpcio
 grpcio-tools
 google-api-core
 pandas~=1.2.1
-
 utils~=1.0.1
 timestring~=1.6.4
