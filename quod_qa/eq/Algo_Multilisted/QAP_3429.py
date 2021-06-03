@@ -45,11 +45,8 @@ def rule_creation():
     ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD1", False, qty, price)
     ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD2", False, qty, price)
 
-    ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDL2", True, 1000, 40)
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "KEPLER", "QDL1", 45)
-    trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, "KEPLER", "QDL1", 45, 100, 0)
-
-    return [nos_rule, ioc_rule_1, ioc_rule_2, ioc_rule_3, trade_rule]
+    ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDL2", True, 1100, 40)
+    return [ioc_rule_1, ioc_rule_2, ioc_rule_3]
 
 
 def rule_destroyer(list_rules):
@@ -184,7 +181,7 @@ def execute(report_id):
         OrdStatus='0',
         SettlDate='*',
         ExecRestatementReason='*',
-        SettlType='*',
+        SecondaryAlgoPolicyID='QA_SORPING'
     )
     verifier_310_sell_side.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 new')
 
@@ -206,7 +203,8 @@ def execute(report_id):
         'Currency': 'EUR',
         'TimeInForce': 3,
         'Instrument': '*',
-        'HandlInst': 1
+        'HandlInst': 1,
+        'NoParty': '*'
     }
     verifier_310_buy_side.CheckNewOrderSingle(nos_2, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_2, message_name='Algo ping QDD1' )
 
@@ -215,74 +213,67 @@ def execute(report_id):
         nos_2,
         ExDestination ='QDD2'
     )
-    verifier_310_buy_side.CheckNewOrderSingle(nos_3, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_2, message_name='Algo ping QDD1')
+    verifier_310_buy_side.CheckNewOrderSingle(nos_3, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_2, message_name='Algo ping QDD2')
 
     # Check that sim cancel IOC order on QDD1
     er_3 = {
         'Side': side,
-        # 'Price': price,
-        # 'ExDestination': 'QDD1',
-        # 'Account': client,
         'ExecID': '*',
         'OrderQty': qty,
         'AvgPx': 0,
         'OrdStatus': 4,
         'OrdType': 2,
         'ClOrdID': '*',
-        # 'OrderCapacity': 'A',
         'TransactTime': '*',
-        # 'ChildOrderID': '*',
         'TimeInForce': 3,
         'ExecType': 4,
         'LeavesQty': 0,
         'CumQty': 0,
         'Text': '*',
-        'OrderID': '*'
+        'OrderID': '*',
+        'ExDestination': 'QDD1'
     }
-    verifier_310_buy_side.CheckExecutionReport(er_3, responce_new_order_single,key_parameters = ['Side', 'ExecType'], direction='SECOND',case=case_id_2, message_name='ExecutionReport from QDD2')
+    verifier_310_buy_side.CheckExecutionReport(er_3, responce_new_order_single,key_parameters = ['Side', 'ExecType', 'ExDestination'], direction='SECOND',case=case_id_2, message_name='ExecutionReport from QDD1')
 
-#TODO Add difference between cancel on QDD1 and QDD2
 
     # Check that sim cancel IOC order on QDD2
     er_3 = {
         'Side': side,
-        # 'Price': price,
-        # 'ExDestination': 'QDD1',
-        # 'Account': client,
         'ExecID': '*',
         'OrderQty': qty,
         'AvgPx': 0,
         'OrdStatus': 4,
         'OrdType': 2,
         'ClOrdID': '*',
-        # 'OrderCapacity': 'A',
         'TransactTime': '*',
-        # 'ChildOrderID': '*',
         'TimeInForce': 3,
         'ExecType': 4,
         'LeavesQty': 0,
         'CumQty': 0,
         'Text': '*',
-        'OrderID': '*'
+        'OrderID': '*',
+        'ExDestination': 'QDD2'
     }
-    verifier_310_buy_side.CheckExecutionReport(er_3, responce_new_order_single, key_parameters=['Side', 'ExecType'], direction='SECOND', case=case_id_2, message_name='ExecutionReport from QDD2')
+    verifier_310_buy_side.CheckExecutionReport(er_3, responce_new_order_single, key_parameters=['Side', 'ExecType', 'ExDestination'], direction='SECOND', case=case_id_2, message_name='ExecutionReport from QDD2')
 
 
     # Check that algo send dday order on QUODLIT1
 
     case_id_3 = bca.create_event("Lit phase", case_id)
 
+    time.sleep(2)
     nos_4 = dict(
         nos_2,
-        ExDestination ='QDL1',
-        TimeInForce = 0
+        ExDestination ='QDL2',
+        TimeInForce = 3,
+        Price=40
     )
-    verifier_310_buy_side.CheckNewOrderSingle(nos_4, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_3, message_name='NewOrderSingle to QDL1')
+    verifier_310_buy_side.CheckNewOrderSingle(nos_4, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_3, message_name='NewOrderSingle to QDL2')
 
 
     time.sleep(2)
     er_4 = {
-        'ExDestination': 'QDL1',
+        'ExDestination': 'QDL2',
         'ExecType': 'A',
         'OrdStatus': 'A',
         'Account': client,
@@ -296,9 +287,9 @@ def execute(report_id):
         'TransactTime': '*',
         'Side': side,
         'AvgPx': 0,
-        'Price': price,
-        'TimeInForce': 0,
-        'LeavesQty': 0
+        'Price': 40,
+        'TimeInForce': 3,
+        'LeavesQty': qty
     }
     verifier_310_buy_side.CheckExecutionReport(er_4, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus'],direction='SECOND', case=case_id_3, message_name='ExecutionReport pending new')
 
@@ -309,49 +300,77 @@ def execute(report_id):
     )
     verifier_310_buy_side.CheckExecutionReport(er_5, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus'],direction='SECOND', case=case_id_3, message_name='ExecutionReport new')
 
-    case_id_4 = bca.create_event("Cancel algo", case_id)
-
-    # Cancel order
-    cancel_parms = {
-        "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
-        "Account": fix_message_new_order_single.get_parameter('Account'),
-        "Side": fix_message_new_order_single.get_parameter('Side'),
-        "TransactTime": datetime.utcnow().isoformat(),
-        "OrigClOrdID": fix_message_new_order_single.get_ClOrdID()
-    }
-    fix_cancel = FixMessage(cancel_parms)
-    responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
-    cancel_er_params = {
-        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-        'OrdStatus': '4',
+    er_6 = {
+        'Side': side,
         'ExecID': '*',
         'OrderQty': qty,
-        'LastQty': 0,
+        'AvgPx': 0,
+        'OrdStatus': 2,
+        'OrdType': 2,
+        'ClOrdID': '*',
+        'TransactTime': '*',
+        'TimeInForce': 3,
+        'ExecType': 'F',
+        'LeavesQty': 0,
+        'CumQty': 1100,
+        'Text': '*',
+        'OrderID': '*',
+        'ExDestination': 'QDL2',
+        'Account': client,
+        'LastQty': qty,
+        'LastPx': 40,
+        'OrderCapacity': 'A',
+        'AvgPx': 40,
+        'Price': 40,
+        'Currency': 'EUR',
+        'Instrument': '*'
+
+    }
+
+    verifier_310_buy_side.CheckExecutionReport(er_6, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus'],direction='SECOND', case=case_id_3, message_name='ExecutionReport trade')
+
+
+    case_id_4 = bca.create_event("Execution report on sell side", case_id)
+    # ER on sell side
+    trade_er_params = {
+        'Account': client,
+        'LastQty': qty,
+        'AvgPx': 40,
+        'SecondaryAlgoPolicyID': 'QA_SORPING',
+        'LastExecutionPolicy': 0,
+        'TradeDate': '*',
+        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+        'OrdStatus': '2',
+        'ExecID': '*',
+        'OrderQty': qty,
         'OrderID':responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'Side': side,
-        'AvgPx': 0,
         'SettlDate': '*',
         'Currency': 'EUR',
         'TimeInForce': 0,
-        'ExecType': 4,
+        'ExecType': 'F',
         'HandlInst': 2,
         'LeavesQty': 0,
         'NoParty': '*',
-        'CumQty': 0,
-        'LastPx': 0,
+        'CumQty': 1100,
+        'LastPx': 40,
         'OrdType': 2,
         'OrderCapacity': 'A',
         'QtyType': 0,
-        'ExecRestatementReason': 4,
-        'SettlType': 0,
         'Price': price,
         'TargetStrategy': 1011,
         'Instrument': '*',
-        'OrigClOrdID': '*'
+        'SecondaryOrderID': 1,
+        'LastMkt': 'QDL2',
+        'Text': '*',
+        'ChildOrderID': '*',
+        'SecondaryExecID': '*',
+        'ExDestination': '*',
+        'GrossTradeAmt': '*'
     }
     time.sleep(1)
-    verifier_310_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4)
+    verifier_310_sell_side.CheckExecutionReport(trade_er_params, responce_new_order_single, case=case_id_4)
 
 
 
