@@ -115,7 +115,9 @@ def create_order(case_id):
         }
     fix_message_new_order_single = FixMessage(new_order_single_params)
     fix_message_new_order_single.add_random_ClOrdID()
-    responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+    fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+    cl_ord = fix_message_new_order_single.get_ClOrdID()
+    return cl_ord
 
 
 def send_market_data(symbol: str, case_id :str, market_data ):
@@ -178,12 +180,15 @@ def prepared_fe(case_id):
         get_opened_fe(case_id, session_id, work_dir)
     return  base_request
 
-def check_order_book(ex_id, base_request, case_id):
+def check_order_book(ex_id, base_request, case_id, cl_ord):
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
+    print(cl_ord)
+    ob.set_filter(['ClOrdID', str(cl_ord)])
+    call(act_ob.getOrdersDetails, ob.request())
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
     ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
     ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
@@ -244,8 +249,8 @@ def execute(reportid):
         case_id = create_event(case_name, report_id)
         base_request = prepared_fe(case_id)
         rule_list = rule_creation()
-        create_order(case_id)
-        check_order_book("Test_FE_id", base_request, case_id)
+        cl_ord = create_order(case_id)
+        check_order_book("Test_FE_id", base_request, case_id, cl_ord)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
