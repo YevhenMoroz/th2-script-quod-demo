@@ -54,9 +54,8 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nos_rule, ocr_rule]
+    nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, qty, price)
+    return [nos_ioc_rule]
 
 
 def rule_destroyer(list_rules):
@@ -111,6 +110,7 @@ def execute(report_id):
         ]
         send_market_data(s_par, case_id_0, market_data1)
 
+
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
@@ -126,7 +126,7 @@ def execute(report_id):
             'Price': price,
             'Currency': currency,
             'TargetStrategy': 1005,
-                    'NoStrategyParameters': [
+            'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '19',
@@ -189,7 +189,7 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'TimeInForce', 'OrderQty'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -198,9 +198,8 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*'
         )
-        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'TimeInForce', 'OrderQty'])
 
         #region Slice 1
         case_id_2 = bca.create_event("Check Slice 1", case_id)
@@ -218,12 +217,12 @@ def execute(report_id):
             'Price': price,
             'SettlDate': '*',
             'Currency': currency,
-            'TimeInForce': new_order_single_params['TimeInForce'],
+            'TimeInForce': tif_ioc,
             'Instrument': '*',
             'HandlInst': '1',
             'ExDestination': instrument['SecurityExchange']
         }
-        fix_verifier_bs.CheckNewOrderSingle(new_slice_1, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order Slice 1')
+        fix_verifier_bs.CheckNewOrderSingle(new_slice_1, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order Slice 1', key_parameters=['OrderQty', 'TimeInForce', 'Price'])
 
         # Check that FIXBUYQUOD5 sent 35=8 pending new
         er_3 = {
@@ -240,13 +239,13 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'Price': price,
-            'TimeInForce': new_order_single_params['TimeInForce'],
+            'TimeInForce': tif_ioc,
             'ExecType': "A",
             'ExDestination': ex_destination_1,
-            'LeavesQty': '0'
+            'LeavesQty': int(qty / 2)
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'TimeInForce', 'Price'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
@@ -256,11 +255,13 @@ def execute(report_id):
             OrderQty=int(qty / 2),
             Text=text_n,
         )
-        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'TimeInForce'])
         
-        time.sleep(70)
+        time.sleep(5)
+        #endregion
+        
         #region Cancel Algo Order
-        case_id_5 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_4 = bca.create_event("Cansel Algo Order", case_id)
         # Cancel Order
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
@@ -271,7 +272,7 @@ def execute(report_id):
         }
     
         fix_cancel = FixMessage(cancel_parms)
-        responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_5)
+        responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
 
         # Check SS sent 35=F
         cancel_ss_param = {
@@ -281,26 +282,7 @@ def execute(report_id):
             'TransactTime': '*',
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
-        fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_5, message_name='SS FIXSELLQUOD5 sent 35=F Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
-
-        # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
-        er_10 = {
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': int(qty / 2),
-            'ClOrdID': '*',
-            'Text': text_c,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*',
-        }
-
-        fix_verifier_bs.CheckExecutionReport(er_10, responce_cancel, direction='SECOND', case=case_id_5, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=F Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         
         # Check ss (on FIXQUODSELL5 sent 35=8 on cancel)
         er_11 = {
@@ -327,17 +309,15 @@ def execute(report_id):
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',
         'ExecRestatementReason': '*',
-        'SettlType': '*',
-        'Price': inc_price,
+        'Price': price,
         'TargetStrategy': new_order_single_params['TargetStrategy'],
         'Instrument': instrument,
         'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
 
-        fix_verifier_ss.CheckExecutionReport(er_11, responce_cancel, case=case_id_5, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
-        #endregion
-
-        time.sleep(20)
+        fix_verifier_ss.CheckExecutionReport(er_11, responce_cancel, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
+        #endregion   
+        
     
     except:
         logging.error("Error execution",exc_info=True)
