@@ -124,15 +124,12 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Price': price,
             'Currency': currency,
-            "DisplayInstruction":{
-                'DisplayQty' : display_qty
-            },
             'TargetStrategy': 2,
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '30.0'
+                    'StrategyParameterType': '11',
+                    'StrategyParameterValue': '30'
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -170,7 +167,6 @@ def execute(report_id):
             'HandlInst': new_order_single_params['HandlInst'],
             'LeavesQty': qty,
             'NoParty': '*',
-            'MaxFloor': display_qty,
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
@@ -237,7 +233,6 @@ def execute(report_id):
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': '0',
         'NoParty': '*',
-        'MaxFloor': display_qty,
         'CumQty': '0',
         'LastPx': '0',
         'OrdType': order_type,
