@@ -7,12 +7,17 @@ import time
 from datetime import datetime
 from stubs import Stubs
 from logging import getLogger, INFO
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps, create_event, message_to_grpc, convert_to_request
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager
 from custom.verifier import Verifier
+import quod_qa.wrapper.eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,9 +28,19 @@ lookup = "PAR"       #CH0012268360_CHF
 ex_destination = "XPAR"
 account = 'XPAR_CLIENT2'
 client = 'CLIENT2'
-order_type = "Limit"
+order_type = 2
 ex_destination_1 = "XPAR"
 report_id = None
+s_par = '1015'
+side = 2
+instrument = {
+            'Symbol': 'FR0010263202_EUR',
+            'SecurityID': 'FR0010263202',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+tif_day = 0
+currency = 'EUR'
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
@@ -33,26 +48,74 @@ connectivity_sell_side = "fix-ss-310-columbia-standart"
 connectivity_fh = 'fix-fh-310-columbia'
 
 
-def create_order(base_request):
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_quantity(str(qty))
-    order_ticket.set_limit(str(price))
-    order_ticket.set_client(client)
-    order_ticket.set_order_type(order_type)
+def create_order(case_id):
+    case_id = bca.create_event(os.path.basename(__file__), report_id)
+        # Send_MarkerData
+    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
-    twap_strategy = order_ticket.add_twap_strategy("Quod TWAP")
-    twap_strategy.set_start_date("Now")
-    twap_strategy.set_end_date("Now", "0.2")
-    twap_strategy.set_aggressivity("Passive")
+    case_id_0 = bca.create_event("Send Market Data", case_id)
+    market_data2 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '20',
+                'MDEntrySize': '100',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+    send_market_dataT(s_par, case_id_0, market_data2)
 
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
+    market_data3 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+    send_market_data(s_par, case_id_0, market_data3)
 
+    #quod_qa.wrapper.eq_wrappers.create_order_via_fix()
 
-    order_ticket_service = Stubs.win_act_order_ticket
-    call(order_ticket_service.placeOrder, new_order_details.build())
+    case_id_1 = bca.create_event("Create Algo Order", case_id)
+    new_order_single_params = {
+            'Account': client,
+            'HandlInst': 2,
+            'Side': side,
+            'OrderQty': qty,
+            'TimeInForce': tif_day,
+            'OrdType': order_type,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': instrument,
+            'OrderCapacity': 'A',
+            'Price': price,
+            'Currency': currency,
+            'TargetStrategy': 2,
+                'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'PercentageVolume',
+                    'StrategyParameterType': '11',
+                    'StrategyParameterValue': '30'
+                },
+                {
+                    'StrategyParameterName': 'Aggressivity',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '2'
+                }
+            ]
+        }
+    fix_message_new_order_single = FixMessage(new_order_single_params)
+    fix_message_new_order_single.add_random_ClOrdID()
+    responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
 
 def send_market_data(symbol: str, case_id :str, market_data ):
@@ -70,6 +133,24 @@ def send_market_data(symbol: str, case_id :str, market_data ):
         connectivity_fh,
         case_id,
         message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
+    ))
+
+
+def send_market_dataT(symbol: str, case_id :str, market_data ):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol,
+            connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntriesIR': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
 
@@ -144,7 +225,7 @@ def check_order_book(ex_id, base_request, case_id):
     verifier.verify()
 
     verifier.set_event_name("Check child order")
-    verifier.compare_values('Qty', str(int(qty/2)), response[sub_order_qty.name].replace(",", ""))
+    verifier.compare_values('Qty', str(43), response[sub_order_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Open', response[sub_order_status.name])
     verifier.compare_values('LmtPrice', str(price), response[sub_order_price.name])
     verifier.verify()
@@ -152,11 +233,10 @@ def check_order_book(ex_id, base_request, case_id):
     extraction_id = "getOrderAnalysisAlgoParameters"
 
     call(act.getOrderAnalysisAlgoParameters,
-         order_analysis_algo_parameters_request(extraction_id, ["Waves"], {"Order ID": response[ob_id.name]}))
+         order_analysis_algo_parameters_request(extraction_id, ["Aggressivity"], {"Order ID": response[ob_id.name]}))
 
     call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
-                                                 [verify_ent("Aggressivity", "Aggressivity", '1')]))
-
+                                                 [verify_ent("Aggressivity", "Aggressivity", '2')]))
 
 def execute(reportid):
     try:
@@ -164,7 +244,7 @@ def execute(reportid):
         case_id = create_event(case_name, report_id)
         base_request = prepared_fe(case_id)
         rule_list = rule_creation()
-        create_order(base_request)
+        create_order(case_id)
         check_order_book("Test_FE_id", base_request, case_id)
     except:
         logging.error("Error execution",exc_info=True)
