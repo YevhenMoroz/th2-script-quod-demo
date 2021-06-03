@@ -87,7 +87,7 @@ def send_rfq(reusable_params, ttl, case_params, case_id, act):
         }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
-    send_rfq = act.sendMessage(
+    act.sendMessage(
             bca.convert_to_request(
                     text_messages['sendQR'],
                     case_params['TraderConnectivity'],
