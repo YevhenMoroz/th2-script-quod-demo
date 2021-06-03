@@ -9,7 +9,9 @@ from stubs import Stubs
 # from quod_qa.eq.DMA import RIN_1144
 # from quod_qa.eq.DMA import RIN_1141
 # from quod_qa.eq.DMA import RIN_1151
-from quod_qa.eq.DMA import RIN_1164
+# from quod_qa.eq.DMA import RIN_1164
+# from quod_qa.eq.DMA import RIN_1161
+from quod_qa.eq.Care import RIN_1162
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -30,7 +32,9 @@ def test_run():
         # RIN_1144.execute(report_id)
         # RIN_1141.execute(report_id)
         # RIN_1151.execute(report_id)
-        RIN_1164.execute(report_id)
+        # RIN_1164.execute(report_id)
+        # RIN_1161.execute(report_id)
+        RIN_1162.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
