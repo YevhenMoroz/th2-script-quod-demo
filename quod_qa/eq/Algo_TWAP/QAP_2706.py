@@ -126,7 +126,7 @@ def execute(report_id):
             'Price': price,
             'Currency': currency,
             'TargetStrategy': 1005,
-                    'NoStrategyParameters': [
+                'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '19',
