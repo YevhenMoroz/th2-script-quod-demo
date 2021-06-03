@@ -13,8 +13,10 @@ from quod_qa.eq.Algo_Multilisted import QAP_1810, QAP_3028, QAP_3058, QAP_3059, 
     QAP_1985, QAP_1988, QAP_1990, QAP_1992, QAP_1995, QAP_1996, QAP_1997, QAP_1998, QAP_2068, QAP_2476, QAP_2857, \
     QAP_2982, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027
 from quod_qa.eq.Algo_TWAP import QAP_3122
+from quod_qa.eq.Sorping import QAP_2409
 from rule_management import RuleManager
 from stubs import Stubs
+from test_cases import QAP_1641
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -99,9 +101,14 @@ def test_run():
         # QAP_3058.execute(report_id)
         # QAP_3059.execute(report_id)
         # QAP_3134.execute(report_id)
-        QAP_3429.execute(report_id)
-        #
+        QAP_2409.execute(report_id)
         # # endregion
+        # rm = RuleManager()
+        # rm.remove_all_rules()
+        # rm.print_active_rules()
+        # QAP_3429.execute(report_id)
+        # QAP_1641.execute(report_id)
+
 
 
     except Exception:
