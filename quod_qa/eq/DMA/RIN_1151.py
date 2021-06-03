@@ -91,7 +91,7 @@ def execute(report_id):
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)
         login_details_req.set_username("QA3")
-        login_details_req.set_password("qa3")
+        login_details_req.set_password("old_pass")
         login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
         login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
         login_details_req.is_error_expected(True)

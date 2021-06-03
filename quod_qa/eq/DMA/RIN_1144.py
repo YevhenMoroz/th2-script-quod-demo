@@ -78,14 +78,14 @@ def execute(report_id):
     order_status = ExtractionDetail("order_status", "Sts")
     order_client = ExtractionDetail("order_client", "Client")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_client,
+                                                                                            order_client
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Open"),
-                                                  verify_ent("Client", order_client.name, client[0]),
+                                                  verify_ent("Client", order_client.name, client[0])
                                                   ]))
     # endregion
 
@@ -121,14 +121,14 @@ def execute(report_id):
     order_status = ExtractionDetail("order_status", "Sts")
     order_client = ExtractionDetail("order_client", "Client")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_client,
+                                                                                            order_client
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Open"),
-                                                  verify_ent("Client", order_client.name, client[0]),
+                                                  verify_ent("Client", order_client.name, client[0])
                                                   ]))
     # endregion
 
@@ -164,14 +164,14 @@ def execute(report_id):
     order_status = ExtractionDetail("order_status", "Sts")
     order_client = ExtractionDetail("order_client", "Client")
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_client,
+                                                                                            order_client
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Open"),
-                                                  verify_ent("Client", order_client.name, client[1]),
+                                                  verify_ent("Client", order_client.name, client[1])
                                                   ]))
     # endregion
 
