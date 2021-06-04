@@ -51,13 +51,13 @@ connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(case_id):
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    caseid = bca.create_event('Send Order via FIX', case_id)
         # Send_MarkerData
-    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
-    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+    fix_manager_310 = FixManager(connectivity_sell_side, caseid)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, caseid)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, caseid)
 
-    case_id_0 = bca.create_event("Send Market Data", case_id)
+    case_id_0 = bca.create_event("Send Market Data", caseid)
     market_data2 = [
             {
                 'MDUpdateAction': '0',
@@ -88,7 +88,7 @@ def create_order(case_id):
 
     #quod_qa.wrapper.eq_wrappers.create_order_via_fix()
 
-    case_id_1 = bca.create_event("Create Algo Order", case_id)
+    case_id_1 = bca.create_event("Create Algo Order", caseid)
     new_order_single_params = {
             'Account': client,
             'HandlInst': 2,
@@ -113,11 +113,6 @@ def create_order(case_id):
                     'StrategyParameterName': 'EndDate',
                     'StrategyParameterType': '19',
                     'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
-                },
-                {
-                    'StrategyParameterName': 'Waves',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '4'
                 },
                 {
                     'StrategyParameterName': 'SliceDuration',
