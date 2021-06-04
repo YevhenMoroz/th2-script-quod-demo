@@ -3,6 +3,8 @@ import logging
 import time
 from datetime import datetime, timedelta
 from copy import deepcopy
+
+from th2_grpc_act_gui_quod.common_pb2 import NARROW_SPREAD
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
@@ -36,6 +38,7 @@ order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
+waves = 2
 
 now = datetime.today() - timedelta(hours=3)
 
@@ -111,6 +114,7 @@ def execute(report_id):
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
+        n_waves = waves
         new_order_single_params = {
             'Account': client,
             'HandlInst': 2,
@@ -138,7 +142,7 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'Waves',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': '2'
+                    'StrategyParameterValue': n_waves
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -207,7 +211,7 @@ def execute(report_id):
         new_order_single_bs = {
             'NoParty': '*',
             'Account': account,        
-            'OrderQty': int(qty / 2),
+            'OrderQty': int(qty / n_waves),
             'OrdType': new_order_single_params['OrdType'],
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
@@ -229,7 +233,7 @@ def execute(report_id):
             'Account': account,
             'CumQty': '0',
             'ExecID': '*',
-            'OrderQty': int(qty / 2),
+            'OrderQty': int(qty / n_waves),
             'Text': text_pn,
             'OrdType': '2',
             'ClOrdID': '*',
@@ -242,7 +246,7 @@ def execute(report_id):
             'TimeInForce': new_order_single_params['TimeInForce'],
             'ExecType': "A",
             'ExDestination': ex_destination_1,
-            'LeavesQty': int (qty / 2)
+            'LeavesQty': int (qty / n_waves)
         }
 
         fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
@@ -252,7 +256,6 @@ def execute(report_id):
             er_3,
             OrdStatus='0',
             ExecType="0",
-            OrderQty=int (qty / 2),
             Text=text_n,
         )
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
@@ -287,7 +290,7 @@ def execute(report_id):
         er_5 = {
             'CumQty': '0',
             'ExecID': '*',
-            'OrderQty': int(qty / 2),
+            'OrderQty': int(qty / n_waves),
             'ClOrdID': '*',
             'Text': text_c,
             'OrderID': '*',
