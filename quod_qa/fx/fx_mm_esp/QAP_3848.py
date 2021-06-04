@@ -13,17 +13,15 @@ logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium1'
 account = 'Palladium1_1'
-side = '1'
-orderqty = '1000000'
-ordtype = '2'
-timeinforce = '4'
 currency= 'EUR'
 settlcurrency = 'USD'
 settltype=0
 symbol='EUR/USD'
 securitytype='FXSPOT'
 securityid='EUR/USD'
+booktype='0'
 bands=[1000000,2000000,3000000]
+bands_tiered=[1000000,2000000,3000000]
 md=None
 settldate=tsd.spo()
 defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
@@ -38,24 +36,21 @@ def execute(report_id):
         case_id = bca.create_event(case_name, report_id)
 
         #Preconditions
-        params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency,settlcurrency,
-                                settltype, settldate, symbol, securitytype, securityid,account=account)
-        md = FixClientSell(params).send_md_request().send_md_unsubscribe()
+        params = CaseParamsSell(client, case_id,
+                                settltype, settldate, symbol, securitytype, booktype=booktype)
+        #
         #Send market data to the HSBC venue EUR/USD spot
-        FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
-            send_market_data_spot()
+        # FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
+        #     send_market_data_spot()
 
         time.sleep(5)
-        params.prepare_md_for_verification(bands)
+        md = FixClientSell(params)\
+            # .send_md_request().send_md_unsubscribe()
+        params.prepare_md_for_verification(bands_tiered)
         #Step 1
         md.send_md_request().\
             verify_md_pending()
-        price = md.extruct_filed('Price')
-        #Step 2-5
-        md.send_new_order_single(price)\
-            .verify_order_pending()\
-            .verify_order_new()\
-            .verify_order_filled()
+
 
 
 

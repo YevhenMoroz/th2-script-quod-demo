@@ -1,8 +1,10 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import test, QAP_2825, SendMD, clone, QAP_1518, QAP_2823, QAP_2874, QAP_2876
+from quod_qa.fx.fx_mm_esp import test, QAP_2825, SendMD, clone, QAP_1518, QAP_2823, QAP_2874, QAP_2876, QAP_2880, \
+    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012
 from quod_qa.fx.fx_mm_rfq import QAP_1746
+from rule_management import RuleManager
 
 from stubs import Stubs
 
@@ -13,6 +15,17 @@ logger.setLevel(logging.INFO)
 timeouts = False
 
 channels = dict()
+
+def fx_mm_esp_fix(report_id):
+    QAP_1518.execute(report_id)
+    QAP_2823.execute(report_id)
+    QAP_2874.execute(report_id)
+    QAP_2876.execute(report_id)
+    QAP_2880.execute(report_id)
+    QAP_2879.execute(report_id)
+    QAP_2873.execute(report_id)
+    QAP_2872.execute(report_id)
+    QAP_2966.execute(report_id)
 
 
 def test_run():
@@ -35,23 +48,11 @@ def test_run():
             },
         }
     try:
-        test.execute(report_id)
         # clone.execute(report_id)
-        # QAP_2086.execute(report_id)
-        # QAP_2084.execute(report_id)
-        # QAP_2085.execute(report_id)
-        # QAP_3841.execute(report_id)
-        # QAP_2079.execute(report_id)
-        # QAP_2797.execute(report_id)
-        # # QAP_1558.execute(report_id)
-        # QAP_1559.execute(report_id)
-        # QAP_1554.execute(report_id)
-        # QAP_1597.execute(report_id)
-        # QAP_4094.execute(report_id)
-        # QAP_3555_bloked.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
-        # QAP_3390.execute(report_id)
+        QAP_2012.execute(report_id)
+        QAP_3848.execute(report_id)
         # QAP_2750.execute(report_id)
         # QAP_1560.execute(report_id)
         # QAP_2825.execute(report_id)
@@ -82,7 +83,7 @@ def test_run():
         # QAP_580.execute(report_id)
 
         # rfq_tile_example.execute(report_id)
-
+        #
         # rm = RuleManager()
         # rm.print_active_rules()
         # rm.remove_rule_by_id()
@@ -106,10 +107,10 @@ if __name__ == '__main__':
     test_run()
     Stubs.factory.close()
 
-def fx_mm_esp_fix(report_id):
-    QAP_1518.execute(report_id)
-    QAP_2823.execute(report_id)
-    QAP_2874.execute(report_id)
-    QAP_2876.execute(report_id)
+
+
+
+
+
 
 

@@ -1,6 +1,9 @@
 import time
 from pathlib import Path
+
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
@@ -27,7 +30,8 @@ settlcurrency = 'CAD'
 settltype='W1'
 symbol1='USD/CAD'
 symbol2='EUR/CAD'
-securitytype='FXFWD'
+securitytype_spo= 'FXSPOT'
+securitytype_fwd= 'FXFWD'
 securityidsource='8'
 securityid1='USD/CAD'
 securityid2='EUR/CAD'
@@ -36,15 +40,23 @@ md=None
 settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d %H:%M:%S')
 settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
 
-a = bands[0]
-
+defaultmdsymbol_spo_1='USD/CAD:SPO:REG:HSBC'
+defaultmdsymbol_spo_2='EUR/CAD:SPO:REG:HSBC'
 
 def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
+
+
+
         params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency1,
-                                settlcurrency, settltype, settldate1, symbol1, securitytype, securityid1)
+                                settlcurrency, settltype, settldate1, symbol1, securitytype_fwd, securityid1)
+        #Send market data to the HSBC venue EUR/USD spot
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_fwd)).\
+            send_market_data_spot()
+
+
         params.prepare_md_for_verification(bands,published=False)
         #Steps 1-3
         md1= FixClientSell(params)

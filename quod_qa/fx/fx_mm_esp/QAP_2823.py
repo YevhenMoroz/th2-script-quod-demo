@@ -31,21 +31,21 @@ defaultmdsymbol_spo='USD/NOK:SPO:REG:HSBC'
 
 
 
-
 def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
+        # Preconditions
+        params_sell=CaseParamsSell(client,case_id,side,orderqty,ordtype,timeinforce,currency,settlcurrency,
+        settltype,settldate_wk1,symbol,securitytype_fwd,securityid)
+        md = FixClientSell(params_sell).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue USD/NOK spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype_spo)).\
             send_market_data_spot()
 
         #Step 1-3
-        params_sell=CaseParamsSell(client,case_id,side,orderqty,ordtype,timeinforce,currency,settlcurrency,
-        settltype,settldate_wk1,symbol,securitytype_fwd,securityid)
         params_sell.prepare_md_for_verification(bands, priced=False)
-        md = FixClientSell(params_sell).\
-            send_md_request().\
+        md.send_md_request().\
             verify_md_pending()
         price=md.extruct_filed('Price')
         #Step 4
@@ -58,7 +58,7 @@ def execute(report_id):
         logging.error('Error execution', exc_info=True)
     finally:
         md.send_md_unsubscribe()
-        pass
+
 
 
 
