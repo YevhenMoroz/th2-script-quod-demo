@@ -13,7 +13,8 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
-                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest)
+                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
+                                                       ESPTileOrderSide)
 from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
@@ -294,17 +295,17 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     Method just set values( don't close the window)
     """
     order_ticket = FXOrderDetails()
-    # order_ticket.set_price_large('1.23')
-    # order_ticket.set_price_pips('456')
-    # order_ticket.set_qty('1150000')
-    # order_ticket.set_client('FIXCLIENT3')
-    # order_ticket.set_tif('Day')
-    # order_ticket.set_slippage('2.5')
-    # order_ticket.set_order_type('Limit')
-    # order_ticket.set_stop_price('1.3')
-    order_ticket.set_pending()
-    order_ticket.set_keep_open()
-    order_ticket.set_custom_algo_check_box()
+    order_ticket.set_price_large('1.23')
+    order_ticket.set_price_pips('456')
+    order_ticket.set_qty('1150000')
+    order_ticket.set_client('FIXCLIENT3')
+    order_ticket.set_tif('FillOrKill')
+    order_ticket.set_slippage('2.5')
+    order_ticket.set_order_type('Limit')
+    order_ticket.set_stop_price('1.3')
+    # order_ticket.set_pending()
+    # order_ticket.set_keep_open()
+    # order_ticket.set_custom_algo_check_box()
     # order_ticket.set_custom_algo("Quod TWAP")
     # order_ticket.set_strategy("TWAPBROKER")
 
@@ -314,10 +315,10 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
 
 def place_fx_order(base_request, order_ticket_service):
     """
-    Method demonstrate how work settign valuese to FX Order ticket.
+    Method demonstrate how work setting values to FX Order ticket.
     And then set the details to NewFxOrderDetails object with base_request object.
 
-    You should use FXOrderDetails object to define valused that should be set.
+    You should use FXOrderDetails object to define values that should be set.
     You may set from 1 to all available fields.
     You should use only dot for separation of numbers with floating point
     """
@@ -466,6 +467,38 @@ def set_value_di_panel(base_request, dealer_interventions_service):
     call(dealer_interventions_service.modifyAssignedRFQ, modify_request.build())
 
 
+def place_esp_by_bid_btn(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.BID_BTN)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+def place_esp_by_ask_btn(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.ASK_BTN)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+def place_esp_by_tob_buy(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.BUY)
+    call(service.placeESPOrder, rfq_request.build())
+
+def place_esp_by_tob_sell(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.SELL)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+
 def execute(report_id):
     # region Preparation
 
@@ -533,6 +566,11 @@ def execute(report_id):
         # extract_rfq_panel()
         # extract_rfq_table_data()
         # extract_rates_panel(base_tile_details, ar_service)
+        # all available ways to open orderTicket via esp panel
+        place_esp_by_bid_btn(base_request)
+        # place_esp_by_ask_btn(base_request)
+        # place_esp_by_tob_buy(base_request)
+        # place_esp_by_tob_sell(base_request)
         # endregion
 
         # region My Orders ↓
@@ -559,7 +597,7 @@ def execute(report_id):
         # endregion
 
         # region Dealer Intervention
-        extract_di_panel(base_request, dealer_interventions_service)
+        # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # endregion
         # close_fe_2(case_id, session_id)
