@@ -74,8 +74,8 @@ def execute(report_id):
     except Exception as e:
         logging.error('Error execution', exc_info=True)
     finally:
-        # md.send_md_unsubscribe()
-        pass
+        md.send_md_unsubscribe()
+
 
 
 
