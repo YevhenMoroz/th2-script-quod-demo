@@ -183,7 +183,6 @@ def execute(report_id):
         OrdStatus='0',
         SettlDate='*',
         ExecRestatementReason='*',
-        SettlType='*',
     )
     fix_verifier_sell_side.CheckExecutionReport(er_2, responce, case=case_id_1,
                                                 message_name='FIXQUODSELL5 sent 35=8 new')
@@ -233,7 +232,7 @@ def execute(report_id):
         'AvgPx': 0,
         'Price': stop_price_1,
         'TimeInForce': 0,
-        'LeavesQty': 0
+        'LeavesQty': qty
     }
     fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
@@ -327,7 +326,7 @@ def execute(report_id):
         'AvgPx': 0,
         'Price': stop_price_2,
         'TimeInForce': 0,
-        'LeavesQty': 0
+        'LeavesQty': qty
     }
     fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
@@ -396,7 +395,7 @@ def execute(report_id):
         'AvgPx': 0,
         'Price': stop_price_3,
         'TimeInForce': 0,
-        'LeavesQty': 0
+        'LeavesQty': qty
     }
     fix_verifier_buy_side.CheckExecutionReport(er_3, responce,
                                                key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty', 'Price'],
@@ -446,7 +445,6 @@ def execute(report_id):
         'OrderCapacity': 'A',
         'QtyType': 0,
         'ExecRestatementReason': 4,
-        'SettlType': 0,
         'Price': price_3,
         'TargetStrategy': 1008,
         'Instrument': '*',

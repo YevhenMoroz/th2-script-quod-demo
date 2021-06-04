@@ -22,6 +22,7 @@ connectivity_feed_handler = "fix-fh-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
 symbol_paris = "734"
 symbol_trqx = "3416"
+ex_destination_1 = "XPAR"
 ord_type = 3
 instrument = {
             'Symbol': 'FR0000121121_EUR',
@@ -32,8 +33,8 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", True)
-    market_rule = rule_manager.add_NewOrdSingle_Market(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", False, 0, 0)
+    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, "XPAR_CLIENT1", ex_destination_1, True)
+    market_rule = rule_manager.add_NewOrdSingle_Market(connectivity_buy_side, "XPAR_CLIENT1", ex_destination_1, False, 0, 0)
     return [ocr_rule, market_rule]
 
 
@@ -126,7 +127,6 @@ def execute(report_id):
         OrdStatus='0',
         SettlDate='*',
         ExecRestatementReason='*',
-        SettlType='*',
     )
     fix_verifier_sell_side.CheckExecutionReport(er_2, responce, case=case_id_1,
                                                 message_name='FIXQUODSELL5 sent 35=8 new')
@@ -241,7 +241,7 @@ def execute(report_id):
     fix_cancel = FixMessage(cancel_parms)
     responce_cancel = fix_manager.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
 
-    time.sleep(3)
+    time.sleep(5)
     cancel_er_params = {
         'ClOrdID': fix_message_multilisting.get_ClOrdID(),
         'OrdStatus': '4',
@@ -265,14 +265,14 @@ def execute(report_id):
         'OrderCapacity': 'A',
         'QtyType': 0,
         'ExecRestatementReason': 4,
-        'SettlType': 0,
         'TargetStrategy': 1008,
         'Instrument': '*',
-        'OrigClOrdID': '*',
         'StopPx': stop_price,
-        'NoStrategyParameters': '*'
+        'NoStrategyParameters': '*',
+        'Text': '*', 
+        'LastMkt': ex_destination_1
     }
 
-    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4)
+    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrdStatus', 'ExecType', 'ClOrdID', 'TimeInForce'])
     time.sleep(5)
     rule_destroyer(list_rules)

@@ -1,5 +1,4 @@
 from th2_grpc_check1.check1_pb2 import PreFilter
-
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import Direction, ValueFilter, MessageFilter, FilterOperation

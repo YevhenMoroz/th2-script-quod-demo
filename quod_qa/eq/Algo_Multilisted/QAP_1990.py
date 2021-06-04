@@ -200,7 +200,6 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*',
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
@@ -321,7 +320,7 @@ def execute(report_id):
             'Text': text_f,
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'SettlType': '*',
+            'ChildOrderID': fix_message_new_order_single.get_ClOrdID(),
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': '*',
             'SecondaryExecID': '*',
@@ -334,6 +333,7 @@ def execute(report_id):
 
 
         time.sleep(1)
-        rule_destroyer(rule_list)
     except:
         logging.error("Error execution",exc_info=True)
+    finally:
+        rule_destroyer(rule_list)

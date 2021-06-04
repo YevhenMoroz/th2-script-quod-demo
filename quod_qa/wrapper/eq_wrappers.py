@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
-    ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -17,8 +16,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -222,35 +220,6 @@ def accept_order(lookup, qty, price):
 def accept_modify(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptModifyPlusChild, accept_order_request(lookup, qty, price))
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-
-
-def direct_loc_order(qty, route):
-    try:
-        call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-
-
-def direct_moc_order(qty, route):
-    try:
-        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-
-
-def direct_child_care_order(qty, route, recipient, count):
-    try:
-        call(Stubs.win_act_order_book.orderBookDirectChildCare,
-             direct_child_care_сorrect('UnmatchedQty', qty, recipient, route, count))
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-
-
-def reject_order(lookup, qty, price):
-    try:
-        call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
     except Exception:
         logger.error("Error execution", exc_info=True)
 

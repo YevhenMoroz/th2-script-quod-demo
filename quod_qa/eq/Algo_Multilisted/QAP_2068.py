@@ -15,6 +15,8 @@ from stubs import Stubs
 
 
 qty = 1000
+qty_xpar = 300
+qty_trqx = 700
 account = "CLIENT1"
 time_in_force = 0
 price = 35
@@ -197,7 +199,6 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*',
         )
         verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 new')
 
@@ -246,7 +247,7 @@ def execute(report_id):
             'AvgPx': 0,
             'Price': price,
             'TimeInForce': time_in_force,
-            'LeavesQty': 0
+            'LeavesQty': qty_xpar
         }
         verifier_310_buy_side.CheckExecutionReport(er_4, responce,
                                                    key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty'],
@@ -305,7 +306,7 @@ def execute(report_id):
             'AvgPx': 0,
             'Price': price,
             'TimeInForce': time_in_force,
-            'LeavesQty': 0
+            'LeavesQty': qty_trqx
         }
         verifier_310_buy_side.CheckExecutionReport(er_6, responce,
                                                    key_parameters=['ExDestination', 'ExecType', 'OrdStatus', 'OrderQty'],
@@ -355,7 +356,6 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'QtyType': 0,
             'ExecRestatementReason': 4,
-            'SettlType': 0,
             'Price': price,
             'TargetStrategy': 1008,
             'NoStrategyParameters': '*',
