@@ -369,22 +369,23 @@ def deselect_rows(base_tile_details, cp_service):
     call(cp_service.deselectRows, request.build())
 
 
-def extract_rates_panel(base_tile_details, ar_service):
+def extract_rates_panel_esp(base_tile_details, ar_service):
     s = 'RatesTile0'
     request = ExtractRatesTileDataRequest(base_tile_details)
     request.set_extraction_id(f'{s}.extraction_id')
-    request.extract_instrument(f'{s}.instrument')
-    request.extract_quantity(f'{s}.quantity')
-    request.extract_tenor(f'{s}.tenor')
-    request.extract_best_bid(f'{s}.best_bid')
-    request.extract_best_bid_large(f'{s}.best_bid_large')
-    request.extract_best_bid_small(f'{s}.best_bid_small')
-    request.extract_best_ask(f'{s}.best_ask')
-    request.extract_best_ask_large(f'{s}.best_ask_large')
-    request.extract_best_ask_small(f'{s}.best_ask_small')
-    request.extract_spread(f'{s}.spread')
-    request.extract_instrument(f'{s}.spread')
-    request.extract_client_tier(f'{s}.spread')
+    # request.extract_instrument(f'{s}.instrument')
+    # request.extract_quantity(f'{s}.quantity')
+    # request.extract_tenor(f'{s}.tenor')
+    # request.extract_best_bid(f'{s}.best_bid')
+    # request.extract_best_bid_large(f'{s}.best_bid_large')
+    # request.extract_best_bid_small(f'{s}.best_bid_small')
+    # request.extract_best_ask(f'{s}.best_ask')
+    # request.extract_best_ask_large(f'{s}.best_ask_large')
+    # request.extract_best_ask_small(f'{s}.best_ask_small')
+    # request.extract_spread(f'{s}.spread')
+    # request.extract_instrument(f'{s}.instrument')
+    # request.extract_client_tier(f'{s}.client_tier')
+    request.extract_1click_btn_text(f'{s}.btn_text')
 
     result = call(ar_service.extractRatesTileValues, request.build())
     print(result)
@@ -565,9 +566,9 @@ def execute(report_id):
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
         # extract_rfq_panel()
         # extract_rfq_table_data()
-        # extract_rates_panel(base_tile_details, ar_service)
+        extract_rates_panel_esp(base_details, ar_service)
         # all available ways to open orderTicket via esp panel
-        place_esp_by_bid_btn(base_request)
+        # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
         # place_esp_by_tob_buy(base_request)
         # place_esp_by_tob_sell(base_request)
