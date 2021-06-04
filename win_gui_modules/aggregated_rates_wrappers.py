@@ -4,8 +4,9 @@ from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
 from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
-from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -122,6 +123,17 @@ class ContextActionRatesTile:
 
     @staticmethod
     def add_context_action_type(context_action_types: list, details: BaseTileDetails = None):
+        action = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType()
+        action.data.CopyFrom(details.build())
+        for act in context_action_types:
+            action.actionType.append(act)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def add_aggregated_rates(context_action_types=[ContextActionType.CHECK_AGGREGATED_RATES.value],
+                             details: BaseTileDetails = None):
         action = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType()
         action.data.CopyFrom(details.build())
         for act in context_action_types:
@@ -584,7 +596,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor(self, name: str):
+    def extract_tenor_date(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
@@ -611,7 +623,7 @@ class ExtractRatesTileDataRequest:
     def extract_best_ask(self, name: str):
         self.extract_value(RatesTileValues.BEST_ASK, name)
 
-    def extract_value(self, field: RFQTileValues, name: str):
+    def extract_value(self, field: RatesTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
         extracted_value.type = field.value
         extracted_value.name = name
@@ -700,5 +712,43 @@ class PlaceESPOrder:
     def set_action(self, action: ESPTileOrderSide):
         self.__request_details.action = action.value
 
+    def top_of_book(self, check: bool):
+        self.__request_details.topOfBook = check
+
+    def close_ticket(self, close: bool):
+        self.__request_details.closeTicketWindow = close
+
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
+
+
+class MoveESPOrderTicketRequest:
+    def __init__(self, base: EmptyRequest = None):
+        self.base = base
+        self.request = ar_operations_pb2.MoveESPOrderTicketRequest()
+        self.move_window_request = None
+
+    def set_default_params(self, base_request):
+        self.base = base_request
+
+    def ask(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.ASK
+
+    def bid(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.BID
+
+    def top_of_book(self):
+        self.request.topOfBook = True
+
+    def panel_index(self, index):
+        self.request.panelIndex = index
+
+    def add_move_window_details(self) -> MoveWindowDetails():
+        self.move_window_request = MoveWindowDetails()
+        return self.move_window_request
+
+    def build(self):
+        self.move_window_request.set_default_params(self.base)
+        self.request.moveWindowDetails.CopyFrom(self.move_window_request.build())
+        return self.request
+
