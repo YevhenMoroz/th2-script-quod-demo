@@ -51,10 +51,18 @@ class FixClientSell():
                 self.case_params_sell.case_id,
                 bca.message_to_grpc('MarketDataRequest', self.case_params_sell.md_params, self.case_params_sell.connectivityESP)
             ))
+        return self
 
     #Send RFQ
     def send_request_for_quote(self):
-        pass
+        send_rfq = self.fix_act.placeQuoteFIX(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell.connectivityRFQ,
+                self.case_params_sell.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell.rfq_params, self.case_params_sell.connectivityRFQ)
+            ))
+        return self
 
     #Send New Order Single
     def send_new_order_single(self,price):
@@ -64,6 +72,16 @@ class FixClientSell():
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell.connectivityESP, self.case_params_sell.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell.order_params, self.case_params_sell.connectivityESP)
+            ))
+        return self
+
+    def send_new_order_single_timeout(self,price):
+        tif = prepeare_tif(self.case_params_sell.timeinforce)
+        self.case_params_sell.order_params['Price'] = price
+        self.new_order = self.fix_act.placeOrderFIX(
+            request=bca.convert_to_request(
+                'Send new order ' + tif, self.case_params_sell.connectivityESP, self.case_params_sell.case_id,
+                bca.message_to_grpc('NewOrderSingle', self.case_params_sell.order_params, self.case_params_sell.connectivityESP),5
             ))
         return self
 

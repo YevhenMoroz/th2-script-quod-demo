@@ -1,7 +1,8 @@
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
+from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 
@@ -12,6 +13,8 @@ class CaseParamsSell:
     # mdreqid = None
     # clordid = None
     md_params = None
+    rfq_params = None
+    rfq_params_swap = None
     order_params = None
     md_subscribe_response = None
     order_exec_report = None
@@ -25,7 +28,8 @@ class CaseParamsSell:
                  settlcurrency='USD',
                  settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT', securityid='EUR/USD',
                  securityidsource='8',
-                 handlinstr='1', securityexchange='XQFX', product=4, market_depth='0', md_update_type='0', account=''
+                 handlinstr='1', securityexchange='XQFX', product=4, market_depth='0', md_update_type='0', account='',
+                 ttl=120, booktype='0'
                  ):
         self.client = client
         self.case_id = case_id
@@ -47,13 +51,18 @@ class CaseParamsSell:
         self.market_depth = market_depth
         self.md_update_type = md_update_type
         self.account = account
+        self.ttl = ttl
+        self.booktype=booktype
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
+        self.quote_reqid = bca.client_orderid(9)
 
         self.set_market_data_params()
         self.set_new_order_single_params()
         self.set_md_subscribe_response()
         self.set_order_exec_rep_params()
+        self.set_rfq_params()
+        self.set_rfq_params_swap()
 
     # Set market data request parameters
     def set_market_data_params(self):
@@ -62,6 +71,7 @@ class CaseParamsSell:
             'MDReqID': self.mdreqid,
             'MarketDepth': self.market_depth,
             'MDUpdateType': self.md_update_type,
+            'BookType': self.booktype,
             'NoMDEntryTypes': [{'MDEntryType': '0'}, {'MDEntryType': '1'}],
             'NoRelatedSymbols': [
                 {
@@ -76,7 +86,69 @@ class CaseParamsSell:
             ]
         }
 
-    # Set New Order Single parameters
+    def set_rfq_params(self):
+        self.rfq_params = {
+            'QuoteReqID': self.quote_reqid,
+            'NoRelatedSymbols': [{
+                'Account': self.client,
+                'Side': self.side,
+                'Instrument': {
+                    'Symbol': self.symbol,
+                    'SecurityType': self.securitytype
+                },
+                'SettlDate': self.settldate,
+                'SettlType': self.settltype,
+                'Currency': self.currency,
+                'QuoteType': '1',
+                'OrderQty': self.orderqty,
+                'OrdType': 'D'
+                # 'ExpireTime': (datetime.now() + timedelta(seconds=self.ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
+                # 'TransactTime': (datetime.utcnow().isoformat())
+            }
+            ]
+        }
+
+# QAP_2143
+    def set_rfq_params_swap(self):
+        self.rfq_params_swap = {
+            'QuoteReqID': self.quote_reqid,
+            'NoRelatedSymbols': [
+                {
+                    'Account': self.client,
+                    'Currency': self.currency,
+                    'OrderQty': self.orderqty,
+                    'Instrument': {
+                        'Symbol': self.symbol,
+                        'SecurityType': self.securitytype
+                    },
+                    'NoLegs': [
+                        {
+                            'InstrumentLeg': {
+                                'LegSymbol': 'instrument',
+                                'LegSecurityType': 'FXSPOT'
+                            },
+                            'LegSide': 1,
+                            'LegSettlType': 0,
+                            'LegSettlDate': self.settldate,
+                            'LegOrderQty': 16000001
+                        },
+                        {
+                            'InstrumentLeg': {
+                                'LegSymbol': 'instrument',
+                                'LegSecurityType': 'FXFWD'
+                            },
+                            'LegSide': 2,
+                            'LegSettlType': 7,
+                            'LegSettlDate': self.settldate,
+                            'LegOrderQty': 16000001
+                        }
+                    ]
+                }
+            ]
+        }
+
+        # Set New Order Single parameters
+
     def set_new_order_single_params(self):
         self.order_params = {
             'Account': self.client,
