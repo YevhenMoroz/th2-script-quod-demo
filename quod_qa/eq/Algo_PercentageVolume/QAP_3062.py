@@ -16,12 +16,17 @@ from stubs import Stubs
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+connectivity_buy_side = "fix-buy-side-316-ganymede"
+connectivity_sell_side = "fix-buy-side-316-ganymede"
+connectivity_fh = 'fix-feed-handler-316-ganymede'
+
+
 
 
 def execute(report_id):
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT2")
-    ocr_rule = rule_manager.add_OCR("fix-bs-eq-paris")
+    nos_rule = rule_manager.add_NOS(connectivity_buy_side, "XPAR_CLIENT2")
+    ocr_rule = rule_manager.add_OCR(connectivity_sell_side)
 
 
 
@@ -29,10 +34,10 @@ def execute(report_id):
 
     case_id = bca.create_event(os.path.basename(__file__), report_id)
 
-    fix_manager_fh_paris = FixManager('fix-fh-eq-paris', case_id)
-    fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-    fix_verifier_ss = FixVerifier('gtwquod5', case_id)
-    fix_verifier_bs = FixVerifier('fix-bs-eq-paris', case_id)
+    fix_manager_fh_paris = FixManager(connectivity_buy_side, case_id)
+    fix_manager_qtwquod5 = FixManager(connectivity_sell_side, case_id)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
 
     symbol = '1042'
@@ -55,7 +60,7 @@ def execute(report_id):
     }
 
     fix_message_md = FixMessage(mdir_params_trade)
-    fix_manager_fh_paris.Send_MarketDataIncrementalRefresh_FixMessage(fix_message_md, symbol)
+    # fix_manager_fh_paris.Send_MarketDataIncrementalRefresh_FixMessage(fix_message_md, symbol)
 
     # Send NewOrderSingle
     iceberg_params = {
