@@ -142,7 +142,7 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'Waves',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': waves
+                    'StrategyParameterValue': n_waves
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
