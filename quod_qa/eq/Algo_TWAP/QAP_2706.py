@@ -572,6 +572,7 @@ def execute(report_id):
 
         #region Slice 4
         case_id_5 = bca.create_event("Create Slice 4", case_id)
+        n_waves -= 1
         # Check bs (FIXQUODSELL5 sent 35=D Slice 4)
         new_slice_4 = {
             'NoParty': '*',
