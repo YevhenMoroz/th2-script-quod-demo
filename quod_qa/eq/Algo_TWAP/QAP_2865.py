@@ -1,6 +1,6 @@
 import os
 import logging
-from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction, CancelOrderDetails
 from win_gui_modules.wrappers import *
 from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 import time
@@ -261,6 +261,9 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
                                                   verify_ent("Child Order Qty - 4", child4_order_qty.name, "200")]))
     # end region
 
+    cancel_order_details = CancelOrderDetails()
+    cancel_order_details.set_default_params(base_request)
+    call(act_ob.cancelOrder, cancel_order_details.build())
 
 def execute(reportid):
     try:
