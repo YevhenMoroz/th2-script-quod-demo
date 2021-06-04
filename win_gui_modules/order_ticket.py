@@ -39,6 +39,9 @@ class OrderTicketDetails:
     def set_account(self, account: str):
         self.order.account = account
 
+    def set_instrument(self, instrument: str):
+        self.order.instrument = instrument
+
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
 

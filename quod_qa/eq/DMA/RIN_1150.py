@@ -1,12 +1,9 @@
 import logging
 
 from datetime import datetime
-
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
+from th2_grpc_act_gui_quod.order_ticket_pb2 import ExtractOrderTicketValuesRequest
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_ticket import OrderTicketDetails
@@ -31,6 +28,10 @@ def execute(report_id):
     qty = "0"
     client = "HAKKIM"
     lookup = "TCS"
+    order_type = "Limit"
+    tif = "Day"
+    price = "10"
+    symbol = "TCS"
     # endregion
 
     # region Open FE
@@ -48,19 +49,32 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # end region
 
-    # region Create order via FE
+    #region Create order via FE
     order_ticket = OrderTicketDetails()
+    order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty)
+    order_ticket.set_limit(price)
     order_ticket.set_client(client)
-    order_ticket.set_order_type("Market")
+    order_ticket.set_order_type("Limit")
     order_ticket.set_tif("Day")
     order_ticket.buy()
 
-    order_id = eq_wrappers.get_order_id(base_request)
+    new_order_details = NewOrderDetails()
+    new_order_details.set_lookup_instr(lookup)
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+    call(order_ticket_service.setOrderDetails, new_order_details.build())
+
+    error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+    error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
+    error_message_value.name = "ErrorMessage"
+
+    request = ExtractOrderTicketValuesRequest()
+    request.base.CopyFrom(base_request)
+    request.extractionId = "ErrorMessageExtractionID"
+    request.extractedValues.append(error_message_value)
+    result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
+    print(result)
     # end region
-
-    # region for handle errors
-
-    # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
