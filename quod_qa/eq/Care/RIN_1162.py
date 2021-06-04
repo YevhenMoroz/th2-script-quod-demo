@@ -11,7 +11,7 @@ from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from quod_qa.wrapper import eq_wrappers
@@ -29,14 +29,13 @@ def execute(report_id):
 
     # region Declarations
     order_book_service = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "20000001"
     client = "HAKKIM"
     lookup = "RELIANCE"
     order_type = "Limit"
     tif = "Day"
     price = "15"
-    recipient = "QA3"
+    recipient = "RIN-DESK (CL)"
     free_notes = "11822 Calculated CumOrdQty"
     # endregion
 
@@ -62,10 +61,6 @@ def execute(report_id):
 
     order_id = eq_wrappers.get_order_id(base_request)
 
-    # region accept order
-    # eq_wrappers.accept_order(lookup, qty, price)
-    # end region
-
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -79,19 +74,17 @@ def execute(report_id):
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_free_notes
                                                                                             ])
-
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
 
-    data = call(order_book_service.getOrdersDetails, order_details.request())
-    actual_free_notes = data['order_free_notes']
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Rejected")]))
+    column_data = call(order_book_service.getOrdersDetails, order_details.request())
+    actual_free_notes = column_data['order_free_notes']  # get the needed dictionary value
+
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    # verifier.compare_values("Order Status", "Rejected", order_status.name)
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
+    # using custom verifier to get slice of column content (verify_ent() get path as argument, not the content string)
     verifier.compare_values("FreeNotes", free_notes, actual_free_notes[:26])
     verifier.verify()
-    print(data)
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
