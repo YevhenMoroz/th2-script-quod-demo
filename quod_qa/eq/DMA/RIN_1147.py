@@ -6,13 +6,21 @@ from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+# wrapper for errors extracting
+# def extract_error_message_order_ticket(base_request, order_ticket_service):
+#     # extract rates tile table values
+#     extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+#     extract_errors_request.extract_error_message()
+#     result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
+#     print(result)
 
 
 def execute(report_id):
@@ -23,7 +31,8 @@ def execute(report_id):
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "400"
-    price = ["0", "-10", "10", "abc"]
+    # "0-111111111" using to bypass the inability to enter a minus after clearing a "Price" field
+    price = ["0", "0-111111111", "10", "abc"]
     stop_price = ["20", "abc"]
     client = "HAKKIM"
     lookup = "RELIANCE"
@@ -60,6 +69,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
 
+    # extract_error_message_order_ticket(base_request, order_ticket_service) - replace code bellow with this
     error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
     error_message_value.name = "ErrorMessage"
@@ -137,7 +147,7 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
                                                   verify_ent("Client", order_free_notes.name,
-                                                             "11603 'Price' (-10) negative or zero")
+                                                             "11603 'Price' (-99999999) negative or zero")
                                                   ]))
     # endregion
 

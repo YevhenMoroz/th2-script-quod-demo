@@ -48,7 +48,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-  # region Create order via FE
+    # region Create order via FE
 
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
@@ -74,7 +74,6 @@ def execute(report_id):
     request.extractionId = "ErrorMessageExtractionID"
     request.extractedValues.append(error_message_value)
 
-
     result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
     print(result)
 
@@ -91,6 +90,5 @@ def execute(report_id):
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
-
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
