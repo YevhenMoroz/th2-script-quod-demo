@@ -22,8 +22,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart   # fix-ss-back-office
-rule_connectivity = "fix-ss-310-columbia-standart"
+connectivity = "gtwquod5"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
+rule_connectivity = "fix-bs-310-columbia"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -347,6 +347,20 @@ def get_order_id(request):
     return result[order_id.name]
 
 
+def get_is_locked(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("IsLocked")
+    is_locked = ExtractionDetail("IsLocked", "IsLocked")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[is_locked])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    try:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    return result[is_locked.name]
+
+
 def get_cl_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -358,19 +372,21 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def verify_value(request, case_id, column_name, expected_value):
+def verify_value(request, case_id, column_name, expected_value, is_child=False):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    if is_child:
+        result = call(Stubs.win_act_order_book.getChildOrdersDetails, order_details.request())
+    else:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
-
 
 
 def notify_dfd(request):
@@ -521,6 +537,24 @@ def unallocate_order(request):
     modify_request = ModifyTicketDetails(base=request)
     try:
         call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_in_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_out_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
 
