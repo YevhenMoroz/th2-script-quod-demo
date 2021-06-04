@@ -253,7 +253,6 @@ def execute(report_id):
             er_3,
             OrdStatus='0',
             ExecType="0",
-            OrderQty=int(qty / 2),
             Text=text_n,
         )
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
