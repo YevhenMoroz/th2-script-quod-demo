@@ -49,13 +49,13 @@ connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(case_id):
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    caseid = bca.create_event('Send order via FIX', case_id)
         # Send_MarkerData
-    fix_manager_310 = FixManager(connectivity_sell_side, case_id)
-    fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-    fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+    fix_manager_310 = FixManager(connectivity_sell_side, caseid)
+    fix_verifier_ss = FixVerifier(connectivity_sell_side, caseid)
+    fix_verifier_bs = FixVerifier(connectivity_buy_side, caseid)
 
-    case_id_0 = bca.create_event("Send Market Data", case_id)
+    case_id_0 = bca.create_event("Send Market Data", caseid)
     market_data2 = [
             {
                 'MDUpdateAction': '0',
@@ -86,7 +86,7 @@ def create_order(case_id):
 
     #quod_qa.wrapper.eq_wrappers.create_order_via_fix()
 
-    case_id_1 = bca.create_event("Create Algo Order", case_id)
+    case_id_1 = bca.create_event("Create Algo Order", caseid)
     new_order_single_params = {
             'Account': client,
             'HandlInst': 2,
@@ -186,7 +186,6 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
-    print(cl_ord)
     ob.set_filter(['ClOrdID', str(cl_ord)])
     call(act_ob.getOrdersDetails, ob.request())
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
@@ -238,15 +237,18 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     extraction_id = "getOrderAnalysisAlgoParameters"
 
     call(act.getOrderAnalysisAlgoParameters,
-         order_analysis_algo_parameters_request(extraction_id, ["Aggressivity"], {"Order ID": response[ob_id.name]}))
+         order_analysis_algo_parameters_request(extraction_id, ["Aggressivity", "PercentageVolume"], {"Order ID": response[ob_id.name]}))
 
     call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
                                                  [verify_ent("Aggressivity", "Aggressivity", '2')]))
-    
-    call(act.getOrderAnalysisAlgoParameters,
-             order_analysis_algo_parameters_request(extraction_id, ["PercentageVolume"], {"Order ID": response[ob_id.name]}))
+
     call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
                                                      [verify_ent("PercentageVolume", "PercentageVolume", "30.0")]))
+                                                         
+    # call(act.getOrderAnalysisAlgoParameters,
+    #          order_analysis_algo_parameters_request(extraction_id, ["PercentageVolume"], {"Order ID": response[ob_id.name]}))
+    # call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
+    #                                                  [verify_ent("PercentageVolume", "PercentageVolume", "30.0")]))
 
 def execute(reportid):
     try:
