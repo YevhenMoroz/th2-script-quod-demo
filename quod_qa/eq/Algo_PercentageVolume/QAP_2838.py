@@ -242,6 +242,11 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
 
     call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
                                                  [verify_ent("Aggressivity", "Aggressivity", '2')]))
+    
+    call(act.getOrderAnalysisAlgoParameters,
+             order_analysis_algo_parameters_request(extraction_id, ["PercentageVolume"], {"Order ID": response[ob_id.name]}))
+    call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
+                                                     [verify_ent("PercentageVolume", "PercentageVolume", "30.0")]))
 
 def execute(reportid):
     try:
