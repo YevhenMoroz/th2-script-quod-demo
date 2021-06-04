@@ -38,7 +38,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-        self.order.account = account
+        self.order.client = account
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
@@ -107,6 +107,9 @@ class FXOrderDetails:
 
     def set_qty(self, qty: str):
         self.order.qty = qty
+
+    def set_display_qty(self, qty: str):
+        self.order.displayQty = qty
 
     def set_client(self, client: str):
         self.order.client = client

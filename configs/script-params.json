@@ -6,16 +6,19 @@
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder_303": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210226_5.1.125.138_rev170176_303",
-  "qf_trading_fe_folder_305": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210525_5.1.132.145_rev1621526300_e53615cc_310_Columbia",
-  "qf_trading_fe_folder_308": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210226_5.1.125.138_rev170176 - Copy",
+  "qf_trading_fe_folder": "C:\\QA\\FE\\Quod_Financial_Trader_Front-end_64bits_20210525_5.1.132.145_rev1621526300_e53615cc_310_Columbia",
+  "qf_trading_fe_user": "HD5",
+  "qf_trading_fe_password": "HD5",
+
+  "qf_trading_fe_folder_1": "",
+  "qf_trading_fe_user_1": "",
+  "qf_trading_fe_password_1": "",
+
+  "qf_trading_fe_folder_2": "",
+  "qf_trading_fe_user_2": "",
+  "qf_trading_fe_password_2": "",
+
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user_303": "ostronov",
-  "qf_trading_fe_password_303": "ostronov",
-  "qf_trading_fe_user_308": "QA2",
-  "qf_trading_fe_password_308": "QA2",
-  "qf_trading_fe_user_305": "HD5",
-  "qf_trading_fe_password_305": "HD5",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
   "qf_trading_fe_main_win_name": "Quod Financial - 310 COLUMBIA",
   "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "

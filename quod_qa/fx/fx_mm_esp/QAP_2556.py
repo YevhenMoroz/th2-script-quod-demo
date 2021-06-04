@@ -70,15 +70,14 @@ def execute(report_id):
     slippage = "1"
     instrument_type = "Spot"
     qty = "1000000"
-    owner = "ostronov"
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
+    owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     try:
-
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(case_id, session_id)
+        else:
+            get_opened_fe(case_id, session_id)
+        # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         place_order(base_details, cp_service, client, slippage, qty)
@@ -88,5 +87,9 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        # Close tile
-        call(cp_service.closeWindow, case_base_request)
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)

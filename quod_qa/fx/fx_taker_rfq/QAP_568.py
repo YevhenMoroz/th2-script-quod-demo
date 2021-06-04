@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -21,13 +22,15 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
+    action = ContextAction.create_venue_filters(venues)
+    modify_request.add_context_action(action)
     call(service.modifyRFQTile, modify_request.build())
 
 
@@ -39,7 +42,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue)
+    rfq_request.set_venue(venue[0])
     rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 
@@ -108,7 +111,7 @@ def execute(report_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
-    case_venue = "HSB"
+    case_venue = ["HSB"]
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
@@ -131,7 +134,7 @@ def execute(report_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
-                        case_to_currency, case_near_tenor, case_client)
+                        case_to_currency, case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, common_act)
 

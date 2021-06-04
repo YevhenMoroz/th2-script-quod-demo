@@ -130,6 +130,17 @@ class ContextActionRatesTile:
         context_action.add_action(action)
         return context_action
 
+    @staticmethod
+    def add_aggregated_rates(context_action_types=[ContextActionType.CHECK_AGGREGATED_RATES.value],
+                             details: BaseTileDetails = None):
+        action = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType()
+        action.data.CopyFrom(details.build())
+        for act in context_action_types:
+            action.actionType.append(act)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
     def add_action(self, action):
         if isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterVenues):
             self.request.filterVenues.CopyFrom(action)
@@ -584,7 +595,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor(self, name: str):
+    def extract_tenor_date(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
@@ -611,7 +622,7 @@ class ExtractRatesTileDataRequest:
     def extract_best_ask(self, name: str):
         self.extract_value(RatesTileValues.BEST_ASK, name)
 
-    def extract_value(self, field: RFQTileValues, name: str):
+    def extract_value(self, field: RatesTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
         extracted_value.type = field.value
         extracted_value.name = name
