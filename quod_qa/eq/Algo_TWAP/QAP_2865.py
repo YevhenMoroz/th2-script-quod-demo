@@ -262,12 +262,12 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
                                                   verify_ent("Child Order Qty - 4", child4_order_qty.name, "200")]))
     # end region
 
-    call(act.getOrderAnalysisAlgoParameters,
+    call(act.getOrderAnalysisEvents,
          create_order_analysis_events_request(extraction_id, {"Order ID": response[ob_id.name]}))
-         
+
     
-    call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
-                                                 [verify_ent("Aggressivity", "Aggressivity", '2')]))
+    call(act.verifyEntities, verification(extraction_id, "verifyEntities",
+                                                 [verify_ent("Narratives", "Narrative", 'To comply with quantity constraints, changing slice duration from 60 sec to 71 sec')]))
 
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(base_request)
