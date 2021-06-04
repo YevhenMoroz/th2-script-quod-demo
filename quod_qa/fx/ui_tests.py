@@ -566,12 +566,12 @@ def execute(report_id):
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
         # extract_rfq_panel()
         # extract_rfq_table_data()
-        extract_rates_panel_esp(base_details, ar_service)
+        # extract_rates_panel_esp(base_details, ar_service)
         # all available ways to open orderTicket via esp panel
         # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
-        # place_esp_by_tob_buy(base_request)
-        # place_esp_by_tob_sell(base_request)
+        place_esp_by_tob_buy(base_request)
+        place_esp_by_tob_sell(base_request)
         # endregion
 
         # region My Orders ↓
