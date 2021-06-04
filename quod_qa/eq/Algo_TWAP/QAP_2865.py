@@ -100,6 +100,7 @@ def create_order(case_id):
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Price': price,
+            'ExDestination': ex_destination_1,
             'Currency': currency,
             'TargetStrategy': 1005,
             'NoStrategyParameters': [
@@ -114,10 +115,15 @@ def create_order(case_id):
                     'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
+                    'StrategyParameterName': 'Waves',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '4'
+                },
+                {
                     'StrategyParameterName': 'SliceDuration',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': '10'
-                },
+                    'StrategyParameterValue': '1'
+                },                
                 {
                     'StrategyParameterName': 'Aggressivity',
                     'StrategyParameterType': '1',
@@ -127,7 +133,7 @@ def create_order(case_id):
         }
     fix_message_new_order_single = FixMessage(new_order_single_params)
     fix_message_new_order_single.add_random_ClOrdID()
-    fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+    fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single,  case=case_id_1)
     cl_ord = fix_message_new_order_single.get_ClOrdID()
     return cl_ord
 
@@ -197,54 +203,69 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
     ob.set_extraction_id(ex_id)
-    print(cl_ord)
     ob.set_filter(['ClOrdID', str(cl_ord)])
-    call(act_ob.getOrdersDetails, ob.request())
+
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
     ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
     ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
 
-    sub_order_qty = ExtractionDetail("subOrder_lvl_2.id", "Qty")
-    sub_order_price = ExtractionDetail("subOrder_lvl_2.lmtprice", "LmtPrice")
-    sub_order_status = ExtractionDetail("subOrder_lvl_2.status", "Sts")
-    sub_order_order_id = ExtractionDetail("subOrder_lvl_2.orderid", "Order ID")
-    lvl2_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_status,
-                                                                                                      sub_order_qty,
-                                                                                                      sub_order_price,
-                                                                                                      sub_order_order_id]))
-    lvl2_details = OrdersDetails.create(info=lvl2_info)
 
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty,
                                                                                  ob_id,
                                                                                  ob_limit_price,
-                                                                                 ob_sts]),
-            sub_order_details=lvl2_details))
+                                                                                 ob_sts])))
 
     response = call(act_ob.getOrdersDetails, ob.request())
 
 
-    # print(ob_qty.name)
-    # print(ob_id.name)
-    # print(ob_limit_price.name)
-    # print(sub_order_status.name)
-    # print(sub_order_qty.name)
-    # print(sub_order_price.name)
+    # region extraction Child order details
+    child_order_info_extraction = "getOrderInfoChild"
+    child_main_order_details = OrdersDetails()
+    child_main_order_details.set_default_params(base_request)
+    child_main_order_details.set_extraction_id(child_order_info_extraction)
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check algo order")
-    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
-    verifier.compare_values('Sts', 'Open', response[ob_sts.name])
-    verifier.compare_values('LmtPrice', str(price), response[ob_limit_price.name])
-    verifier.verify()
+    child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+    child1_order_qty = ExtractionDetail("subOrder_lvl_1.Qty", "Qty")
+    sub_lvl1_1_ext_action = ExtractionAction.create_extraction_action(extraction_details=[child1_id, child1_order_qty])
+    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action])
 
-    verifier.set_event_name("Check child order")
-    verifier.compare_values('Qty', str(43), response[sub_order_qty.name].replace(",", ""))
-    verifier.compare_values('Sts', 'Open', response[sub_order_status.name])
-    verifier.compare_values('LmtPrice', str(price), response[sub_order_price.name])
-    verifier.verify()
+    child2_id = ExtractionDetail("subOrder_lvl_2.id", "Order ID")
+    child2_order_qty = ExtractionDetail("subOrder_lvl_2.Qty", "Qty")
+    sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(extraction_details=[child2_id, child2_order_qty])
+    sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
+
+    child3_id = ExtractionDetail("subOrder_lvl_3.id", "Order ID")
+    child3_order_qty = ExtractionDetail("subOrder_lvl_3.Qty", "Qty")
+    sub_lvl1_3_ext_action = ExtractionAction.create_extraction_action(extraction_details=[child3_id, child3_order_qty])
+    sub_lv1_3_info = OrderInfo.create(actions=[sub_lvl1_3_ext_action])
+
+    child4_id = ExtractionDetail("subOrder_lvl_4.id", "Order ID")
+    child4_order_qty = ExtractionDetail("subOrder_lvl_4.Qty", "Qty")
+    sub_lvl1_4_ext_action = ExtractionAction.create_extraction_action(extraction_details=[child4_id, child4_order_qty])
+    sub_lv1_4_info = OrderInfo.create(actions=[sub_lvl1_4_ext_action])
+
+    time.sleep(240)
+    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info,
+                                                              sub_lv1_2_info,
+                                                              sub_lv1_3_info,
+                                                              sub_lv1_4_info])
+    child_main_order_details.add_single_order_info(OrderInfo.create(sub_order_details=sub_order_details))
+
+    # child request
+    call(act_ob.getOrdersDetails, child_main_order_details.request())
+    # end region extraction
+
+    # region verify Child details
+    call(act.verifyEntities, verification(child_order_info_extraction, "checking Child order",
+                                                 [verify_ent("Child Order Qty - 1", child1_order_qty.name, "50"),
+                                                  verify_ent("Child Order Qty - 2", child2_order_qty.name, "50"),
+                                                  verify_ent("Child Order Qty - 3", child3_order_qty.name, "100"),
+                                                  verify_ent("Child Order Qty - 4", child4_order_qty.name, "200")]))
+    # end region
+
 
 def execute(reportid):
     try:
@@ -253,7 +274,7 @@ def execute(reportid):
         base_request = prepared_fe(case_id)
         rule_list = rule_creation()
         cl_ord = create_order(case_id)
-        check_order_book("Test_FE_id", base_request, case_id, cl_ord)
+        check_order_book("before_order_details", base_request, case_id, cl_ord)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
