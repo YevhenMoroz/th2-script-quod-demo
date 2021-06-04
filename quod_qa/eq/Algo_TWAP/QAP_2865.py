@@ -33,6 +33,7 @@ client = 'CLIENT2'
 order_type = 2
 ex_destination_1 = "XPAR"
 report_id = None
+extraction_id = "getOrderAnalysisAlgoParameters"
 s_par = '982'
 side = 2
 instrument = {
@@ -260,6 +261,9 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
                                                   verify_ent("Child Order Qty - 3", child3_order_qty.name, "100"),
                                                   verify_ent("Child Order Qty - 4", child4_order_qty.name, "200")]))
     # end region
+
+    call(act.getOrderAnalysisAlgoParameters,
+         order_analysis_algo_parameters_request(extraction_id, ["Aggressivity", "PercentageVolume"], {"Order ID": response[ob_id.name]}))
 
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(base_request)
