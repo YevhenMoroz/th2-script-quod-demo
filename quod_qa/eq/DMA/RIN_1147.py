@@ -45,53 +45,53 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # # region Create 1st order via FE
-    # order_ticket = OrderTicketDetails()
-    # order_ticket.set_instrument(symbol)
-    # order_ticket.set_quantity(qty)
-    # order_ticket.set_limit(price[0])
-    # order_ticket.set_client(client)
-    # order_ticket.set_order_type("Limit")
-    # order_ticket.buy()
-    #
-    # new_order_details = NewOrderDetails()
-    # new_order_details.set_lookup_instr(lookup)
-    # new_order_details.set_order_details(order_ticket)
-    # new_order_details.set_default_params(base_request)
-    # call(order_ticket_service.setOrderDetails, new_order_details.build())
-    #
-    # error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-    # error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
-    # error_message_value.name = "ErrorMessage"
-    #
-    # request = ExtractOrderTicketValuesRequest()
-    # request.base.CopyFrom(base_request)
-    # request.extractionId = "ErrorMessageExtractionID"
-    # request.extractedValues.append(error_message_value)
-    # call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
-    # # end region
-    #
-    # # region Check values in OrderBook
-    # before_order_details_id = "before_order_details"
-    #
-    # order_details = OrdersDetails()
-    # order_details.set_default_params(base_request)
-    # order_details.set_extraction_id(before_order_details_id)
-    # order_status = ExtractionDetail("order_status", "Sts")
-    # order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
-    #
-    # order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-    #                                                                                         order_free_notes
-    #                                                                                         ])
-    # order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    #
-    # call(act.getOrdersDetails, order_details.request())
-    # call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-    #                                              [verify_ent("Status", order_status.name, "Rejected"),
-    #                                               verify_ent("Client", order_free_notes.name,
-    #                                                          "11603 'Price' (0) negative or zero")
-    #                                               ]))
-    # # endregion
+    # region Create 1st order via FE
+    order_ticket = OrderTicketDetails()
+    order_ticket.set_instrument(symbol)
+    order_ticket.set_quantity(qty)
+    order_ticket.set_limit(price[0])
+    order_ticket.set_client(client)
+    order_ticket.set_order_type("Limit")
+    order_ticket.buy()
+
+    new_order_details = NewOrderDetails()
+    new_order_details.set_lookup_instr(lookup)
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+    call(order_ticket_service.setOrderDetails, new_order_details.build())
+
+    error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+    error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
+    error_message_value.name = "ErrorMessage"
+
+    request = ExtractOrderTicketValuesRequest()
+    request.base.CopyFrom(base_request)
+    request.extractionId = "ErrorMessageExtractionID"
+    request.extractedValues.append(error_message_value)
+    call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
+    # end region
+
+    # region Check values in OrderBook
+    before_order_details_id = "before_order_details"
+
+    order_details = OrdersDetails()
+    order_details.set_default_params(base_request)
+    order_details.set_extraction_id(before_order_details_id)
+    order_status = ExtractionDetail("order_status", "Sts")
+    order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
+
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
+                                                                                            order_free_notes
+                                                                                            ])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+
+    call(act.getOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
+                                                 [verify_ent("Status", order_status.name, "Rejected"),
+                                                  verify_ent("Client", order_free_notes.name,
+                                                             "11603 'Price' (0) negative or zero")
+                                                  ]))
+    # endregion
 
     # region Create 2nd order via FE
     order_ticket = OrderTicketDetails()
