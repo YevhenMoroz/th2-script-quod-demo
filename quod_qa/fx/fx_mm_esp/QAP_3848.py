@@ -44,8 +44,7 @@ def execute(report_id):
             send_market_data_spot()
 
         time.sleep(5)
-        md = FixClientSellEsp(params)\
-            # .send_md_request().send_md_unsubscribe()
+        md = FixClientSellEsp(params)
         params.prepare_md_for_verification(bands_tiered)
         #Step 1
         md.send_md_request().\

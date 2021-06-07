@@ -26,6 +26,7 @@ def fx_mm_esp_fix(report_id):
     QAP_2873.execute(report_id)
     QAP_2872.execute(report_id)
     QAP_2966.execute(report_id)
+    QAP_3848.execute(report_id)
 
 
 def test_run():
@@ -51,8 +52,7 @@ def test_run():
         # clone.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
-        # QAP_2012.execute(report_id)
-        QAP_3848.execute(report_id)
+        QAP_2012.execute(report_id)
         # QAP_2750.execute(report_id)
         # QAP_1560.execute(report_id)
         # QAP_2825.execute(report_id)
