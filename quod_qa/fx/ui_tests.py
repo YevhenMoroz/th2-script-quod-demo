@@ -15,7 +15,8 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
                                                        ESPTileOrderSide)
-from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues
+from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
+                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide)
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
@@ -303,6 +304,7 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     order_ticket.set_slippage('2.5')
     order_ticket.set_order_type('Limit')
     order_ticket.set_stop_price('1.3')
+    order_ticket.set_place()
     # order_ticket.set_pending()
     # order_ticket.set_keep_open()
     # order_ticket.set_custom_algo_check_box()
@@ -499,6 +501,10 @@ def place_esp_by_tob_sell(base_request):
     call(service.placeESPOrder, rfq_request.build())
 
 
+def open_ot_by_doubleclick_row(btd, cp_service, row):
+    request = PlaceRateTileTableOrderRequest(btd,row, RatesTileTableOrdSide.SELL  )
+    call( cp_service.placeRateTileTableOrder, request.build())
+
 
 def execute(report_id):
     # region Preparation
@@ -517,7 +523,7 @@ def execute(report_id):
 
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    base_tile_details = BaseTileData(base=base_request)
+    base_tile_data = BaseTileData(base=base_request)
     base_details = BaseTileDetails(base= base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
@@ -570,15 +576,13 @@ def execute(report_id):
         # all available ways to open orderTicket via esp panel
         # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
-        place_esp_by_tob_buy(base_request)
-        place_esp_by_tob_sell(base_request)
+        # place_esp_by_tob_buy(base_request)
+        # place_esp_by_tob_sell(base_request)
         # endregion
 
         # region My Orders ↓
-
         # get_my_orders_details(ob_act,  base_request, order_id)
         # get_trade_book_details(ob_act,  base_request, order_id)
-
         # endregion
 
         # region OrderTicket
@@ -595,6 +599,9 @@ def execute(report_id):
         # time.sleep(5)
         # print('Deselecting')
         # deselect_rows(base_tile_details,cp_service)
+        row = 2
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
         # endregion
 
         # region Dealer Intervention
