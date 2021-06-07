@@ -39,17 +39,17 @@ def execute(report_id):
         mdu_params_spo = {
             "MDReqID": simulator.getMDRefIDForConnection303(
                 request=RequestMDRefID(
-                    symbol="EUR/CAD:SPO:REG:HSBC",
+                    symbol="EUR/USD:SPO:REG:HSBC",
                     connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
             'Instrument': {
-                'Symbol': 'EUR/CAD',
+                'Symbol': 'GBP/USD',
                 'SecurityType': 'FXSPOT'
             },
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.19597,
-                    "MDEntrySize": 2000000,
+                    "MDEntrySize": 3000000,
                     "MDEntryPositionNo": 1,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -57,7 +57,7 @@ def execute(report_id):
                 {
                     "MDEntryType": "1",
                     "MDEntryPx": 1.19609,
-                    "MDEntrySize": 2000000,
+                    "MDEntrySize": 3000000,
                     "MDEntryPositionNo": 1,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -134,13 +134,13 @@ def execute(report_id):
             ]
         }
 
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data MO1',
-                'fix-fh-314-luna',
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
-            ))
+        # act.sendMessage(
+        #     bca.convert_to_request(
+        #         'Send Market Data MO1',
+        #         'fix-fh-314-luna',
+        #         case_id,
+        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_fwd, 'fix-fh-314-luna')
+        #     ))
 
 
 
