@@ -116,51 +116,51 @@ def execute(report_id):
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         # Step 2
-        # press_executable(base_details, cp_service)
+        press_executable(base_details, cp_service)
         # Step 3
         place_order(base_details, cp_service, client, slippage, qty_1m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_1m, owner, client, executable_off, sts_rej)
-        # # Step 4
-        # press_executable(base_details, cp_service)
-        # press_pricing(base_details, cp_service)
-        # # Step 5
-        # place_order(base_details, cp_service, client, slippage, qty_1m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_1m, owner, client, pricing_off, sts_rej)
-        # # Step 6
-        # press_pricing(base_details, cp_service)
-        # select_rows(base_details, cp_service, [1, 2])
-        # press_executable(base_details, cp_service)
-        # # Step 7
-        # place_order(base_details, cp_service, client, slippage, qty_1m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_1m, owner, client, empty_free_notes, sts_term)
-        # place_order(base_details, cp_service, client, slippage, qty_2m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_2m, owner, client, notes, sts_rej)
-        # # Step 8
-        # press_pricing(base_details, cp_service)
-        # press_executable(base_details, cp_service)
-        # # Step 9
-        # place_order(base_details, cp_service, client, slippage, qty_1m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_1m, owner, client, empty_free_notes, sts_term)
-        # place_order(base_details, cp_service, client, slippage, qty_2m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_2m, owner, client, notes, sts_rej)
-        # # Step 10
-        # press_pricing(base_details, cp_service)
-        # place_order(base_details, cp_service, client, slippage, qty_2m)
-        # check_order_book(case_base_request, ob_service, instrument_type, case_id,
-        #                  qty_2m, owner, client, empty_free_notes, sts_term)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_1m, owner, client, executable_off, sts_rej)
+        # Step 4
+        press_executable(base_details, cp_service)
+        press_pricing(base_details, cp_service)
+        # Step 5
+        place_order(base_details, cp_service, client, slippage, qty_1m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_1m, owner, client, pricing_off, sts_rej)
+        # Step 6
+        press_pricing(base_details, cp_service)
+        select_rows(base_details, cp_service, [1, 2])
+        press_executable(base_details, cp_service)
+        # Step 7
+        place_order(base_details, cp_service, client, slippage, qty_1m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_1m, owner, client, empty_free_notes, sts_term)
+        place_order(base_details, cp_service, client, slippage, qty_2m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_2m, owner, client, notes, sts_rej)
+        # Step 8
+        press_pricing(base_details, cp_service)
+        press_executable(base_details, cp_service)
+        # Step 9
+        place_order(base_details, cp_service, client, slippage, qty_1m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_1m, owner, client, empty_free_notes, sts_term)
+        place_order(base_details, cp_service, client, slippage, qty_2m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_2m, owner, client, notes, sts_rej)
+        # Step 10
+        press_pricing(base_details, cp_service)
+        place_order(base_details, cp_service, client, slippage, qty_2m)
+        check_order_book(case_base_request, ob_service, instrument_type, case_id,
+                         qty_2m, owner, client, empty_free_notes, sts_term)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
