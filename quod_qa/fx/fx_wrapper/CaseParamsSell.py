@@ -6,49 +6,47 @@ from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 
 class CaseParamsSell:
-
     # connectivityESP = 'fix-ss-308-mercury-standard'
     connectivityESP = 'fix-ss-esp-314-luna-standard'
     connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
     # mdreqid = None
     # clordid = None
-    md_params=None
-    order_params=None
-    md_subscribe_response=None
-    order_exec_report=None
-    order_pending=None
-    order_new=None
-    order_filled=None
-    order_rejected=None
-    order_algo_rejected=None
+    md_params = None
+    order_params = None
+    md_subscribe_response = None
+    order_exec_report = None
+    order_pending = None
+    order_new = None
+    order_filled = None
+    order_rejected = None
+    order_algo_rejected = None
 
-
-
-
-    def __init__(self, client, case_id, side='1', orderqty=1, ordtype='2', timeinforce='4', currency='EUR', settlcurrency='USD',
-                 settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT', securityid='EUR/USD', securityidsource='8',
+    def __init__(self, client, case_id, side='1', orderqty=1, ordtype='2', timeinforce='4', currency='EUR',
+                 settlcurrency='USD',
+                 settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT', securityid='EUR/USD',
+                 securityidsource='8',
                  handlinstr='1', securityexchange='XQFX', product=4, market_depth='0', md_update_type='0', account=''
                  ):
-        self.client=client
-        self.case_id=case_id
-        self.handlinstr=handlinstr
-        self.side=side
-        self.orderqty=orderqty
-        self.ordtype=ordtype
-        self.timeinforce=timeinforce
-        self.currency=currency
-        self.settlcurrency=settlcurrency
-        self.settltype=settltype
-        self.settldate=settldate
-        self.symbol=symbol
-        self.securitytype=securitytype
-        self.securityidsource=securityidsource
-        self.securityid=securityid
-        self.securityexchange=securityexchange
-        self.product=product
-        self.market_depth=market_depth
-        self.md_update_type=md_update_type
-        self.account=account
+        self.client = client
+        self.case_id = case_id
+        self.handlinstr = handlinstr
+        self.side = side
+        self.orderqty = orderqty
+        self.ordtype = ordtype
+        self.timeinforce = timeinforce
+        self.currency = currency
+        self.settlcurrency = settlcurrency
+        self.settltype = settltype
+        self.settldate = settldate
+        self.symbol = symbol
+        self.securitytype = securitytype
+        self.securityidsource = securityidsource
+        self.securityid = securityid
+        self.securityexchange = securityexchange
+        self.product = product
+        self.market_depth = market_depth
+        self.md_update_type = md_update_type
+        self.account = account
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
 
@@ -57,9 +55,9 @@ class CaseParamsSell:
         self.set_md_subscribe_response()
         self.set_order_exec_rep_params()
 
-    #Set market data request parameters
+    # Set market data request parameters
     def set_market_data_params(self):
-        self.md_params={
+        self.md_params = {
             'SenderSubID': self.client,
             'MDReqID': self.mdreqid,
             'MarketDepth': self.market_depth,
@@ -78,7 +76,7 @@ class CaseParamsSell:
             ]
         }
 
-    #Set New Order Single parameters
+    # Set New Order Single parameters
     def set_new_order_single_params(self):
         self.order_params = {
             'Account': self.client,
@@ -100,7 +98,7 @@ class CaseParamsSell:
             'Currency': self.currency
         }
 
-    #Defaulf band with qty=1M for verification
+    # Defaulf band with qty=1M for verification
     def set_md_subscribe_response(self):
         self.md_subscribe_response = {
             'MDReqID': self.mdreqid,
@@ -141,19 +139,20 @@ class CaseParamsSell:
             ]
         }
 
-    #Set custom parameters for md verification
-    def prepare_md_for_verification(self,qty_count, published=True, which_bands_not_pb=None, priced=True, which_bands_not_pr=None):
+    # Set custom parameters for md verification
+    def prepare_md_for_verification(self, qty_count, published=True, which_bands_not_pb=None, priced=True,
+                                    which_bands_not_pr=None):
         if len(qty_count) > 0:
             a = len(qty_count)
             band = 0
             row_pub = 0
             row_prc = 0
-            check_pub=0
-            check_price=0
+            check_pub = 0
+            check_price = 0
             self.md_subscribe_response['NoMDEntries'].clear()
-            md_entry_position=1
+            md_entry_position = 1
             for qty in qty_count:
-                b=qty
+                b = qty
                 md_entry_type = 0
                 while md_entry_type < 2:
                     self.md_subscribe_response['NoMDEntries'].append({
@@ -170,35 +169,40 @@ class CaseParamsSell:
                         'MDEntryDate': '*',
                         'MDEntryType': md_entry_type
                     })
-                    if self.securitytype=='FXFWD':
+                    if self.securitytype == 'FXFWD':
                         self.md_subscribe_response['NoMDEntries'][band]['MDEntryForwardPoints'] = '*'
                         self.md_subscribe_response['NoMDEntries'][band]['MDEntrySpotRate'] = '*'
                     if published == False:
                         if which_bands_not_pb == None:
                             self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
                         else:
-                            if qty!=which_bands_not_pb[row_pub]:
+                            if qty != which_bands_not_pb[row_pub]:
                                 self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '1'
-                            if qty==which_bands_not_pb[row_pub]:
+                            if qty == which_bands_not_pb[row_pub]:
                                 self.md_subscribe_response['NoMDEntries'][band]['MDQuoteType'] = '0'
                                 check_pub += 1
 
                     if priced == False:
                         if which_bands_not_pr == None:
                             self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
-                        elif qty==which_bands_not_pr[row_prc]:
-                                self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
-                                check_price += 1
+                        elif qty == which_bands_not_pr[row_prc]:
+                            self.md_subscribe_response['NoMDEntries'][band]['QuoteCondition'] = 'B'
+                            check_price += 1
 
-                    md_entry_type +=1
-                    band +=1
-                md_entry_position +=1
-                if check_pub!=0:
-                    row_pub +=1
+                    md_entry_type += 1
+                    band += 1
+                md_entry_position += 1
+                if check_pub != 0:
+                    row_pub += 1
                 if check_price != 0:
                     row_prc += 1
 
-    #Set parameters for verification new order Pending responce
+    def prepare_md_for_verification_custom(self, no_md_entries):
+        self.md_subscribe_response['NoMDEntries'].clear()
+        self.md_subscribe_response['NoMDEntries'] = no_md_entries
+        return self
+
+    # Set parameters for verification new order Pending responce
     def set_order_exec_rep_params(self):
         def_order_exec_report = {
             'HandlInst': self.handlinstr,
@@ -235,24 +239,23 @@ class CaseParamsSell:
             }],
             'LeavesQty': self.orderqty
         }
-        self.order_exec_report=def_order_exec_report
+        self.order_exec_report = def_order_exec_report
 
+        # Prepera order perding report
 
-        #Prepera order perding report
-
-    #Prepera order pending report
+    # Prepera order pending report
     def prepape_order_pending_report(self):
         self.set_order_exec_rep_params()
-        self.order_pending=self.order_exec_report
+        self.order_pending = self.order_exec_report
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
 
-    #Prepera order new report
+    # Prepera order new report
     def prepape_order_new_report(self):
         self.set_order_exec_rep_params()
-        self.order_new=self.order_exec_report
-        self.order_new['Account']=self.client
+        self.order_new = self.order_exec_report
+        self.order_new['Account'] = self.client
         self.order_new['OrdStatus'] = '0'
         self.order_new['ExecType'] = '0'
         self.order_new['SettlDate'] = self.settldate.split(' ')[0]
@@ -263,10 +266,10 @@ class CaseParamsSell:
     def prepape_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account']=self.client
+        self.order_filled['Account'] = self.client
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
-        self.order_filled['Instrument']['SecurityType']=self.securitytype
+        self.order_filled['Instrument']['SecurityType'] = self.securitytype
         self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
         self.order_filled['LastQty'] = self.orderqty
@@ -277,12 +280,11 @@ class CaseParamsSell:
         self.order_filled['GrossTradeAmt'] = '*'
         # self.order_filled.pop('ExecRestatementReason')
 
-
     # Prepera order rejected report
     def prepape_order_rejected_report(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
-        self.order_rejected['Account']=self.client
+        self.order_rejected['Account'] = self.client
         self.order_rejected['OrdStatus'] = '8'
         self.order_rejected['ExecType'] = '8'
         self.order_rejected['ExecRestatementReason'] = '4'
@@ -304,5 +306,3 @@ class CaseParamsSell:
         self.order_algo_rejected['Instrument'].pop('SecurityIDSource')
         self.order_algo_rejected['Instrument'].pop('SecurityID')
         self.order_algo_rejected.pop('SettlType')
-
-

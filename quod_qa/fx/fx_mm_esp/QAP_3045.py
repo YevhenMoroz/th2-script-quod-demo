@@ -1,20 +1,16 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
 
@@ -22,36 +18,25 @@ def create_or_get_rates_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
 
 
-def modify_rates_tile(base_request, service, from_c, to_c, tenor, venue):
+def modify_rates_tile(base_request, service, instrument, client):
     modify_request = ModifyRatesTileRequest(details=base_request)
-    venue_filter = ContextActionRatesTile.create_venue_filter(venue)
-    modify_request.add_context_action(venue_filter)
-    modify_request.set_instrument(from_c, to_c, tenor)
+    modify_request.set_client_tier(client)
+    modify_request.set_instrument(instrument)
     call(service.modifyRatesTile, modify_request.build())
 
 
-def open_aggregated_rates(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    add_agr_rates = ContextActionRatesTile.add_aggregated_rates(details=base_request)
-    modify_request.add_context_actions([add_agr_rates])
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def check_qty_band(base_request, service, case_id, qty, row):
+def check_margins(base_request, service, case_id, row, base):
     extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
     extract_table_request.set_row_number(row)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Qty", "Qty"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Qty", "Qty"))
-    response = call(service.extractESPAggrRatesTableValues, extract_table_request.build())
-
-    ask_qty = response["rateTileAsk.Qty"]
+    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
+    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
+    response = call(service.extractRatesTileTableValues, extract_table_request.build())
 
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check Qty band")
-    verifier.compare_values("Ask qty", qty, ask_qty)
-
+    verifier.set_event_name("Check base margins")
+    verifier.compare_values("Base", base, response["rateTile.askBase"])
     verifier.verify()
 
 
@@ -109,22 +94,21 @@ no_md_entries = [
 
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
-
-    # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
     set_base(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
+
+    cp_service = Stubs.win_act_cp_service
+
+    instrument = "EUR/GBP-SPOT"
+    client_tier = "Silver"
+
+    default_md_symbol_spo = "EUR/GBP:SPO:REG:HSBC"
+    symbol = "EUR/GBP"
+    security_type_spo = "FXSPOT"
 
     case_base_request = get_base_request(session_id, case_id)
-    base_esp_details = BaseTileDetails(base=case_base_request)
-    default_md_symbol_spo = 'GBP/USD:SPO:REG:HSBC'
-    symbol = "GBP/USD"
-    security_type_spo = "FXSPOT"
-    from_curr = "GBP"
-    to_curr = "USD"
-    tenor = "Spot"
-    venue = "HSBC"
+    base_details = BaseTileDetails(base=case_base_request)
 
     try:
         if not Stubs.frontend_is_open:
@@ -132,24 +116,21 @@ def execute(report_id):
         else:
             get_opened_fe(case_id, session_id)
         # Step 1
-        create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor, venue)
-        open_aggregated_rates(base_esp_details, ar_service)
+        create_or_get_rates_tile(base_details, cp_service)
+        modify_rates_tile(base_details, cp_service, instrument, client_tier)
         params = CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type_spo)
         params.prepare_custom_md_spot(no_md_entries)
         FixClientBuy(params).send_market_data_spot()
+        check_margins(base_details, cp_service, case_id, 1, "0.1")
+        check_margins(base_details, cp_service, case_id, 2, "0")
 
-        time.sleep(5)
-        check_qty_band(base_esp_details, ar_service, case_id, "200K", 1)
-        check_qty_band(base_esp_details, ar_service, case_id, "6M", 2)
-        check_qty_band(base_esp_details, ar_service, case_id, "1.2B", 3)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         try:
             # Close tile
-            call(ar_service.closeRatesTile, base_esp_details.build())
+            call(cp_service.closeRatesTile, base_details.build())
 
         except Exception:
             logging.error("Error execution", exc_info=True)

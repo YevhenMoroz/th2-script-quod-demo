@@ -52,34 +52,23 @@ def check_esp_tile(base_request, service, case_id, instrument, date):
     verifier.verify()
 
 
-def check_aggregated_rates(base_request, service, case_id):
+def check_pts(base_request, service, case_id):
     extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
     extract_table_request.set_row_number(1)
     extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Pts", "Pts"))
     extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Pts", "Pts"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Px", "Px"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Px", "Px"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Spot", "Spot"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Spot", "Spot"))
     response = call(service.extractESPAggrRatesTableValues, extract_table_request.build())
 
     ask_pts = response["rateTileAsk.Pts"]
     bid_pts = response["rateTileBid.Pts"]
-    ask_px = response["rateTileAsk.Px"]
-    bid_px = response["rateTileBid.Px"]
-    ask_spot = response["rateTileAsk.Spot"]
-    bid_spot = response["rateTileBid.Spot"]
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check pts")
-    verifier.compare_values("Ask pts", "", ask_pts, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Bid pts", "", bid_pts, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Ask px", "", ask_px, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Bid px", "", bid_px, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Ask spot", "", ask_spot, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Bid spot", "", bid_spot, VerificationMethod.NOT_EQUALS)
+    verifier.compare_values("Ask pts", "0.000", ask_pts, VerificationMethod.NOT_EQUALS)
+    verifier.compare_values("Bid pts", "0.000", bid_pts, VerificationMethod.NOT_EQUALS)
+
     verifier.verify()
 
 
@@ -97,7 +86,7 @@ def execute(report_id):
 
     from_curr = "EUR"
     to_curr = "USD"
-    tenor = "1M"
+    tenor = "3W"
     m1 = m1_front_end()
     instrument = from_curr + "/" + to_curr + "-" + tenor
 
@@ -113,7 +102,7 @@ def execute(report_id):
         check_esp_tile(base_esp_details, ar_service, case_id, instrument, m1)
         # Step 3
         open_aggregated_rates(base_esp_details, ar_service)
-        check_aggregated_rates(base_esp_details, ar_service, case_id)
+        check_pts(base_esp_details, ar_service, case_id)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

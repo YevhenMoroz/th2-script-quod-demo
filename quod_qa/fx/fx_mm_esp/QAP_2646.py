@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
@@ -65,9 +67,14 @@ def execute(report_id):
 
     cp_service = Stubs.win_act_cp_service
 
-    instrument_nok_sek = "NOK/SEK-SPOT"
-    instrument_usd_sek = "USD/SEK-SPOT"
+    securityType = 'FXSPOT',
+    instrument_gbp_nok = "GBP/NOK-SPOT"
+    def_md_symbol_gbp_usd = "GBP/USD:SPO:REG:HSBC"
+    symbol_gbp_usd = 'GBP/USD'
+    instrument_gbp_usd = "GBP/USD-SPOT"
     instrument_usd_nok = "USD/NOK-SPOT"
+    def_md_symbol_usd_nok = "USD/NOK:SPO:REG:HSBC"
+    symbol_usd_nok = 'USD/NOK'
     client_tier = "Silver"
 
     case_base_request = get_base_request(session_id, case_id)
@@ -85,9 +92,13 @@ def execute(report_id):
         create_or_get_rates_tile(base_details_usd_sek, cp_service)
         create_or_get_rates_tile(base_details_usd_nok, cp_service)
 
-        modify_rates_tile(base_details_nok_sek, cp_service, instrument_nok_sek, client_tier)
-        modify_rates_tile(base_details_usd_sek, cp_service, instrument_usd_sek, client_tier)
+        modify_rates_tile(base_details_nok_sek, cp_service, instrument_gbp_nok, client_tier)
+        modify_rates_tile(base_details_usd_sek, cp_service, instrument_gbp_usd, client_tier)
         modify_rates_tile(base_details_usd_nok, cp_service, instrument_usd_nok, client_tier)
+
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_gbp_usd, symbol_gbp_usd)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_usd_nok, symbol_usd_nok)).send_market_data_spot()
+
         # Step 2
         price_before_increase = check_ask_price(base_details_nok_sek, cp_service)
         increase_margin(base_details_usd_sek, cp_service, "500")

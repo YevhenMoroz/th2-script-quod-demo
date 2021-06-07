@@ -149,7 +149,9 @@ class CaseParamsBuy():
     def prepare_custom_md_spot(self, no_md_entries):
         self.market_d_params_spot['NoMDEntries'].clear()
         self.market_d_params_spot['NoMDEntries']=no_md_entries
+        return self
 
     def prepare_custom_md_fwd(self,no_md_entries):
         self.market_d_params_fwd['NoMDEntries'].clear()
         self.market_d_params_fwd['NoMDEntries']=no_md_entries
+        return self
