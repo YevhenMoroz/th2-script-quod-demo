@@ -1,10 +1,12 @@
 import logging
 
+from custom.verifier import Verifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRatesTileRequest
+from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRatesTileRequest, \
+    ExtractRatesTileDataRequest, PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -135,18 +137,42 @@ class TestCase:
         modify_request.set_quantity(qty)
         call(self.ar_service.modifyRatesTile, modify_request.build())
 
+    def check_order_ticket(self, qty, side):
+        ticket = 'OrderTicket'
+        esp_request = PlaceESPOrder(details=self.base_details)
+        if side == 'buy':
+            esp_request.set_action(ESPTileOrderSide.BUY)
+        else:
+            esp_request.set_action(ESPTileOrderSide.SELL)
+        esp_request.top_of_book(True)
+        esp_request.close_ticket(True)
+        tick_qty = esp_request.extract_quantity(f'{ticket}.qty')
+        esp_request.extract_large(f'{ticket}.large')
+        esp_request.extract_pips(f'{ticket}.pips')
+        result = call(self.ar_service.placeESPOrder, esp_request.build())
+        #
+        #
+        # cust_verifier = Verifier(self.case_id)
+        # cust_verifier.set_event_name('Checking OrderTicket for ' + side + ' side and Qty: ' + qty)
+        # cust_verifier.compare_values('OrderTicket Qty', qty, result[tick_qty])
+        # cust_verifier.verify()
+        for k in result:
+            print(f'{k} = {result[k]}')
+
     # Main method
     def execute(self):
         try:
+            qty_1 = '1000000'
             self.prepare_frontend()
             self.create_or_get_rates_tile()
-            self.send_market_data(1000000)
-            self.modify_rates_tile('4000000')
+            # self.send_market_data(1000000)
+            self.modify_rates_tile(qty_1)
+            self.check_order_ticket(qty_1, 'buy')
             # self.send_market_data(5000000)
             # self.send_market_data(7000000)
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-        # close_fe(self.case_id, self.session_id)
+        close_fe(self.case_id, self.session_id)
 
 # if __name__ == '__main__':
 #     pass

@@ -696,6 +696,17 @@ class PlaceRFQRequest:
         return self.__request_details
 
 
+@dataclass
+class ESPExtractionDetails:
+    name: str
+
+
+class ExtractedType(Enum):
+    price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
+    price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
+    qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+
+
 class PlaceESPOrder:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:
@@ -717,6 +728,21 @@ class PlaceESPOrder:
 
     def close_ticket(self, close: bool):
         self.__request_details.closeTicketWindow = close
+
+    def extract_quantity(self, name: str):
+        self.extract_value(ExtractedType.qty, name)
+
+    def extract_large(self, name: str):
+        self.extract_value(ExtractedType.price_large, name)
+
+    def extract_pips(self, name: str):
+        self.extract_value(ExtractedType.price_pips, name)
+
+    def extract_value(self, field: ExtractedType, name: str):
+        extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request_details.extractedValues.append(extracted_value)
 
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
