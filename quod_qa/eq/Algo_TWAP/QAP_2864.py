@@ -36,11 +36,11 @@ report_id = None
 extraction_id = "getOrderAnalysisEvents"
 before_order_details_id = "beforeTWAPAlgo_order_details"
 after_order_details_id = "afterTWAPAlgo_order_details"
-s_par = '1015'
+s_par = '982'
 side = 2
 instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
+            'Symbol': 'FR0000044448_EUR',
+            'SecurityID': 'FR0000044448',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -248,16 +248,17 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     call(act_ob.getOrdersDetails, main_order_details.request())
 
     call(act.verifyEntities, verification(after_order_details_id, "checking child orders",
-                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, "200"),
-                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, "150"),
+                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, "50"),
+                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, "50"),
                                                       verify_ent("Sub order 3 qty", sub_order3_qty.name, "100"),
-                                                      verify_ent("Sub order 4 qty", sub_order4_qty.name, "50"),
+                                                      verify_ent("Sub order 4 qty", sub_order4_qty.name, "200"),
                                                       verify_ent("Sub order count", length_name, "4")]))
 
     extraction_id = "getOrderAnalysisAlgoParameters"
 
     call(act.getOrderAnalysisAlgoParameters,
             order_analysis_algo_parameters_request(extraction_id, ["Waves"], {"Order ID": request["order_id"]}))
+    time.sleep(20)
     call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
                                                      [verify_ent("Waves", "Waves", "4")]))
 def execute(reportid):
