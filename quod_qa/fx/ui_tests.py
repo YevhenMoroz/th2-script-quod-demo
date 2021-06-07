@@ -400,16 +400,21 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     function demonstrate what and how you can extract value from Forex Order Ticket
     """
     request = ExtractFxOrderTicketValuesRequest(base_tile_details)
-    ot = "OrderTicket"
-    request.get_instrument(f"{ot}.instrument")
-    request.get_price_large(f'{ot}.price_large')
-    request.get_price_pips(f'{ot}.price_pips')
-    request.get_tif(f'{ot}.tif')
-    request.get_order_type(f'{ot}.order_type')
-    request.get_quantity(f'{ot}.quantity')
-    request.get_slippage(f'{ot}.slippage')
-    request.get_stop_price(f'{ot}.stopprice')
-    request.get_client(f'{ot}.client')
+    # ot = "fx_order_ticket"
+    # request.get_instrument(f"{ot}.instrument")
+    # request.get_price_large(f'{ot}.price_large')
+    # request.get_price_pips(f'{ot}.price_pips')
+    # request.get_tif(f'{ot}.tif')
+    # request.get_order_type(f'{ot}.order_type')
+    # request.get_quantity(f'{ot}.quantity')
+    # request.get_slippage(f'{ot}.slippage')
+    # request.get_stop_price(f'{ot}.stopprice')
+    # request.get_client(f'{ot}.client')
+    request.get_algo();
+    request.get_strategy();
+    request.get_child_strategy();
+    request.get_is_algo_checked();
+
 
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
@@ -524,7 +529,7 @@ def execute(report_id):
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     base_tile_data = BaseTileData(base=base_request)
-    base_details = BaseTileDetails(base= base_request)
+    base_tile_details = BaseTileDetails(base= base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
@@ -588,7 +593,7 @@ def execute(report_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-        # extract_order_ticket_values(base_tile_details, order_ticket_service)
+        extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
@@ -599,9 +604,9 @@ def execute(report_id):
         # time.sleep(5)
         # print('Deselecting')
         # deselect_rows(base_tile_details,cp_service)
-        row = 2
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
-        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # row = 2
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
+        # set_fx_order_ticket_value(base_request,order_ticket_service)
         # endregion
 
         # region Dealer Intervention
