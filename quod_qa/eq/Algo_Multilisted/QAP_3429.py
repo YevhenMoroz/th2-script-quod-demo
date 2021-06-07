@@ -303,7 +303,6 @@ def execute(report_id):
             'Side': side,
             'ExecID': '*',
             'OrderQty': qty,
-            'AvgPx': 0,
             'OrdStatus': 2,
             'OrdType': 2,
             'ClOrdID': '*',
