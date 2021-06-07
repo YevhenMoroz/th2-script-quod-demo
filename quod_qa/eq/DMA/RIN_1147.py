@@ -69,6 +69,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
 
+    # error extraction
     # extract_error_message_order_ticket(base_request, order_ticket_service) - replace code bellow with this
     error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
@@ -118,6 +119,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
 
+    # error extraction
     error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
     error_message_value.name = "ErrorMessage"
@@ -167,6 +169,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
 
+    # error extraction
     error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
     error_message_value.name = "ErrorMessage"
@@ -215,6 +218,7 @@ def execute(report_id):
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
 
+    # error extraction
     error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
     error_message_value.name = "ErrorMessage"
