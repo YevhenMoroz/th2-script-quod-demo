@@ -1,11 +1,14 @@
 from dataclasses import dataclass
+from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 
 from th2_grpc_act_gui_quod import ar_operations_pb2
 from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
+from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
-from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -695,6 +698,17 @@ class PlaceRFQRequest:
         return self.__request_details
 
 
+@dataclass
+class ESPExtractionDetails:
+    name: str
+
+
+class ExtractedType(Enum):
+    price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
+    price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
+    qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+
+
 class PlaceESPOrder:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:
@@ -711,5 +725,58 @@ class PlaceESPOrder:
     def set_action(self, action: ESPTileOrderSide):
         self.__request_details.action = action.value
 
+    def top_of_book(self, check: bool):
+        self.__request_details.topOfBook = check
+
+    def close_ticket(self, close: bool):
+        self.__request_details.closeTicketWindow = close
+
+    def extract_quantity(self, name: str):
+        self.extract_value(ExtractedType.qty, name)
+
+    def extract_large(self, name: str):
+        self.extract_value(ExtractedType.price_large, name)
+
+    def extract_pips(self, name: str):
+        self.extract_value(ExtractedType.price_pips, name)
+
+    def extract_value(self, field: ExtractedType, name: str):
+        extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request_details.extractedValues.append(extracted_value)
+
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
+
+
+class MoveESPOrderTicketRequest:
+    def __init__(self, base: EmptyRequest = None):
+        self.base = base
+        self.request = ar_operations_pb2.MoveESPOrderTicketRequest()
+        self.move_window_request = None
+
+    def set_default_params(self, base_request):
+        self.base = base_request
+
+    def ask(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.ASK
+
+    def bid(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.BID
+
+    def top_of_book(self):
+        self.request.topOfBook = True
+
+    def panel_index(self, index):
+        self.request.panelIndex = index
+
+    def add_move_window_details(self) -> MoveWindowDetails():
+        self.move_window_request = MoveWindowDetails()
+        return self.move_window_request
+
+    def build(self):
+        self.move_window_request.set_default_params(self.base)
+        self.request.moveWindowDetails.CopyFrom(self.move_window_request.build())
+        return self.request
+

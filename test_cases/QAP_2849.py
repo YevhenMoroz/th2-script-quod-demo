@@ -12,7 +12,8 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,7 +30,7 @@ def execute(report_id):
     bs_trqx = 'fix-bs-eq-trqx'
 
     seconds, nanos = timestamps()  # Store case start time
-    case_name = "QAP-3304"
+    case_name = "QAP-2849"
 
     # Create sub-report for case
     case_id = create_event(case_name, report_id)
@@ -57,7 +58,7 @@ def execute(report_id):
             'Side': '2',
             'OrderQty': '100',
             'OrdType': '2',
-            'Price': '100',
+            'Price': '10',
             'TimeInForce': '0',
             'DeliverToCompID': 'PARIS',
             'Instrument': {
@@ -93,7 +94,15 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': case_params['Instrument'],
             'OrderCapacity': 'A',
-            'Currency': 'EUR'
+            'Currency': 'EUR',
+            'PositionEffect': 'O',
+            'NoAllocs': [
+                {
+                    'AllocAccount': 'MOClientSA1',
+                    'AllocQty': case_params['OrderQty']
+                }
+            ]
+
         }
         new_dma_order = fix_act.placeOrderFIX(
             request=bca.convert_to_request(
@@ -105,8 +114,33 @@ def execute(report_id):
 
         middle_office_service = Stubs.win_act_middle_office_service
 
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
+
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
+        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_exec_status, main_order_post_trade_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                 main_order_exec_status.name, "Filled"),
+                                                      verify_ent("Order Post Trade Status",
+                                                                 main_order_post_trade_status.name, "ReadyToBook")
+                                                      ]))
+
+        # book order
+
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
+        settlement_details = modify_request.add_settlement_details()
+        settlement_details.set_settlement_type("Regular")
 
         call(middle_office_service.bookOrder, modify_request.build())
 
@@ -149,63 +183,50 @@ def execute(report_id):
         verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
         verifier.verify()
 
-        # Step 2 UnBook Order
+        # Step 2 Approve Order
 
         modify_request = ModifyTicketDetails(base=base_request)
-        modify_request.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-        call(middle_office_service.unBookOrder, modify_request.build())
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
 
-        extraction_id = "main_order"
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-
-        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
-        main_order_id = ExtractionDetail("main_order_id", "Order ID")
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_post_trade_status, main_order_id])
-        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
-
-        call(act2.getOrdersDetails, main_order_details.request())
-        call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                     [verify_ent("Order PostTradeStatus",
-                                                                 main_order_post_trade_status.name, "ReadyToBook")]))
-
-        ext_id_unbook = "MiddleOfficeExtractionId2"
-        middle_office_service_unbook = Stubs.win_act_middle_office_service
-        extract_request_unbook = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request_unbook.set_extraction_id(ext_id_unbook)
+        ext_id_approve = "MiddleOfficeExtractionId2"
+        middle_office_service_approve = Stubs.win_act_middle_office_service
+        extract_request_approve = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request_approve.set_extraction_id(ext_id_approve)
         block_order_status = ExtractionDetail("middleOffice.status", "Status")
         block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
         block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request_unbook.add_extraction_details(
-            [block_order_status, block_order_match_status, block_order_summary_status])
-        request_unbook = call(middle_office_service_unbook.extractMiddleOfficeBlotterValues, extract_request_unbook.build())
-
-        extraction_id = "main_order"
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["ClOrdID", dma_order_params['ClOrdID']])
-
-        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
-        main_order_id = ExtractionDetail("main_order_id", "Order ID")
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_post_trade_status, main_order_id])
-        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
-
-        call(act2.getOrdersDetails, main_order_details.request())
-        call(common_act.verifyEntities, verification(extraction_id, "checking order",
-                                                     [verify_ent("Order PostTradeStatus",
-                                                                 main_order_post_trade_status.name, "ReadyToBook")]))
+        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status, block_order_summary_status])
+        request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
 
         verifier.set_event_name("Checking block order")
-        verifier.compare_values("Order Status", "Canceled", request_unbook[block_order_status.name])
-        verifier.compare_values("Order Match Status", "Unmatched", request_unbook[block_order_match_status.name])
-        verifier.compare_values("Order Summary Status", "", request_unbook[block_order_summary_status.name])
+        verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "MatchedAgreed", request_approve[block_order_summary_status.name])
+        verifier.verify()
+
+        # Check allocations blotter
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        allocate_qty = ExtractionDetail("middleOffice.qty", "Alloc Qty")
+        allocate_price = ExtractionDetail("middleOffice.price", "Avg Px")
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_price, allocate_qty, allocate_status, allocate_account_id, allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Qty", "100", request_allocate_blotter[allocate_qty.name])
+        verifier.compare_values("Allocation Avg Px", "10", request_allocate_blotter[allocate_price.name])
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
         verifier.verify()
 
     except Exception as e:

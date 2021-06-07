@@ -91,3 +91,40 @@ class TableCheckDetails:
 
     def build(self):
         return self._request
+
+
+class MoveWindowDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = common_pb2.MoveWindowDetails(base=base)
+        else:
+            self._request = common_pb2.MoveWindowDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_from_x_offset(self, from_x_offset: str):
+        self._request.fromXOffset = from_x_offset
+
+    def set_from_y_offset(self, from_y_offset: str):
+        self._request.fromYOffset = from_y_offset
+
+    def set_to_x_offset(self, to_x_offset: str):
+        self._request.toXOffset = to_x_offset
+
+    def set_to_y_offset(self, to_y_offset: str):
+        self._request.toYOffset = to_y_offset
+
+    def set_from_offset(self, from_x_offset: str, from_y_offset: str):
+        self._request.fromXOffset = from_x_offset
+        self._request.fromYOffset = from_y_offset
+
+    def set_to_offset(self, to_x_offset: str, to_y_offset: str):
+        self._request.toXOffset = to_x_offset
+        self._request.toYOffset = to_y_offset
+
+    def close_window(self):
+        self._request.closeWindow = True
+
+    def build(self):
+        return self._request
