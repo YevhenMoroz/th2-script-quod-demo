@@ -8,10 +8,10 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-import time
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
+    ExtractMiddleOfficeBlotterValuesRequest
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -22,8 +22,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-connectivity = "gtwquod5"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
-rule_connectivity = "fix-bs-310-columbia"
+connectivity = "gtwquod5"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart   # fix-ss-back-office
+rule_connectivity = "gtwquod5"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -63,7 +63,7 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
-                 price=None, washbook=None, account=False,
+                 price=None, washbook=None, account=None,
                  is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
                  ):
     order_ticket = OrderTicketDetails()
@@ -92,7 +92,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(rule_connectivity,
-                                                                             "XPAR_" + client, "XPAR", int(price))
+                                                                             client + "_PARIS", "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -102,8 +102,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None):
     try:
-        rule_manager = RuleManager()
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+        fix_manager = FixManager(connectivity, case_id)
         fix_params = {
             'Account': client,
             'HandlInst': handl_inst,
@@ -124,18 +123,13 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         }
         if price == None:
             fix_params.pop('Price')
-            price = 0
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(rule_connectivity,
-                                                                             "XPAR_" + client, "XPAR", int(price))
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
-        response = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
         fix_params['response'] = response
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
 
 
 def amend_order_via_fix(case_id, fix_message, parametr_list):
@@ -153,7 +147,7 @@ def amend_order_via_fix(case_id, fix_message, parametr_list):
         rule_manager.remove_rule(rule)
 
 
-def amend_order(request, client=None, qty=None, price=None):
+def amend_order(request, client=None, qty=None, price=None, account=None):
     order_amend = OrderTicketDetails()
     if not qty is None:
         order_amend.set_quantity(qty)
@@ -161,6 +155,8 @@ def amend_order(request, client=None, qty=None, price=None):
         order_amend.set_limit(price)
     if not client is None:
         order_amend.set_client(client)
+    if not account is None:
+        order_amend.set_account(account)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
@@ -386,6 +382,20 @@ def verify_value(request, case_id, column_name, expected_value, is_child=False):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values(column_name, expected_value, result[value.name])
+    verifier.verify()
+
+
+def middle_office_verify_value(request, case_id, column_name, expected_value):
+    ext_id = "MiddleOfficeExtractionId"
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=request)
+    extract_request.set_extraction_id(ext_id)
+    extraction_detail = ExtractionDetail(column_name, column_name)
+    extract_request.add_extraction_details([extraction_detail])
+    request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Checking block order")
+    verifier.compare_values(column_name, expected_value, request[extraction_detail.name])
     verifier.verify()
 
 
