@@ -4,13 +4,7 @@ from custom import basic_custom_actions as bca
 # from quod_qa.fx import fix_demo, ui_tests
 # from rule_management import RuleManager
 from stubs import Stubs
-
-# from quod_qa.eq.DMA import RIN_1147
-# from quod_qa.eq.DMA import RIN_1144
-from quod_qa.eq.DMA import RIN_1141
-# from quod_qa.eq.DMA import RIN_1151
-# from quod_qa.eq.DMA import RIN_1164
-# from quod_qa.eq.DMA import RIN_1161
+from quod_qa.eq.DMA import RIN_1147, RIN_1144, RIN_1141, RIN_1151, RIN_1164, RIN_1161, RIN_1165
 # from quod_qa.eq.Care import RIN_1162
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -30,11 +24,12 @@ def test_run():
     try:
         # RIN_1147.execute(report_id)
         # RIN_1144.execute(report_id)
-        RIN_1141.execute(report_id)
+        # RIN_1141.execute(report_id)
         # RIN_1151.execute(report_id)
         # RIN_1164.execute(report_id)
         # RIN_1161.execute(report_id)
         # RIN_1162.execute(report_id)
+        RIN_1165.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
