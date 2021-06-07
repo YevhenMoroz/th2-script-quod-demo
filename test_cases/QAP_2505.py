@@ -1,28 +1,32 @@
+import locale
 import logging
 import time
 from datetime import datetime
 
+from pandas import Timestamp as tm
+from pandas.tseries.offsets import BusinessDay as bd
+
 from custom.verifier import Verifier
 from rule_management import RuleManager
 from stubs import Stubs
-from custom import basic_custom_actions as bca
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues, TableActionsRequest, TableAction
+    ContextAction, ExtractRFQTileValues, TableActionsRequest, TableAction, MoveESPOrderTicketRequest
+from win_gui_modules.dealing_positions_wrappers import ExtractionPositionsAction, ExtractionPositionsFieldsDetails, \
+    GetOrdersDetailsRequest, PositionsInfo
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe_2, close_fe, \
     get_opened_fe, prepare_fe303, get_opened_fe_303
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 
 
 class TestCase:
     def __init__(self, report_id):
         # Logger setup
-        self.cl_ord_id = None
+        self.ord_id = None
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
@@ -32,6 +36,7 @@ class TestCase:
         self.common_act = Stubs.win_act
         self.ar_service = Stubs.win_act_aggregated_rates_service
         self.ob_act = Stubs.win_act_order_book
+        self.pos_service = Stubs.act_fx_dealing_positions
 
         # Case parameters setup
         self.case_id = bca.create_event('QAP-2505', report_id)
@@ -137,7 +142,7 @@ class TestCase:
             'QuoteID': '*',
             'OfferSpotRate': '35.001',
             'ValidUntilTime': '*',
-            'Currency': 'EUR',
+            'Currency': rfq_params_terminated['NoRelatedSymbols'][0]['Currency'],
             'QuoteType': 1
         }
 
@@ -162,8 +167,6 @@ class TestCase:
             'TimeInForce': 4
         }
 
-        self.cl_ord_id = order_params['ClOrdID']
-
         # Send NewOrderSingle for Quote Filled
         send_order = self.act.placeOrderFIX(
             bca.convert_to_request(
@@ -187,14 +190,14 @@ class TestCase:
                 {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
             ],
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': self.reusable_params['Instrument']['Symbol'],
                 'SecurityIDSource': 8,
-                'SecurityID': 'EUR/USD',
+                'SecurityID': self.reusable_params['Instrument']['Symbol'],
                 'SecurityExchange': 'XQFX',
                 'Product': 4
             },
             'SettlCurrency': 'USD',
-            'Currency': 'EUR',
+            'Currency': rfq_params_terminated['NoRelatedSymbols'][0]['Currency'],
             'HandlInst': 1,
             'AvgPx': 0,
             'QtyType': 0,
@@ -260,6 +263,8 @@ class TestCase:
             'GrossTradeAmt': '*'
         }
 
+        self.ord_id = er_filled_params['OrderID']
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive ExecutionReport Filled',
@@ -270,69 +275,76 @@ class TestCase:
             )
         )
 
-    # extracting rfq value method
-    def check_rfq_values(self, details, c_pair, n_tenor, f_tenor):
-        cur_pair = "aggrRfqTile.currencyPair"
-        near_tenor = "aggrRfqTile.nearSettlement"
-        far_tenor = "aggrRfqTile.farLegTenor"
-        extract_values_request = ExtractRFQTileValues(details=details)
-        extract_values_request.extract_currency_pair(cur_pair)
-        extract_values_request.extract_tenor(near_tenor)
-        extract_values_request.extract_far_leg_tenor(far_tenor)
-        response = call(self.ar_service.extractRFQTileValues, extract_values_request.build())
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name("Checking RFQ_Tile_2 Details")
-        verifier.compare_values("Currency Pair", response[cur_pair], c_pair)
-        verifier.compare_values("Near Settlement Date", response[near_tenor], n_tenor)
-        verifier.compare_values("Far Leg Tenor", response[far_tenor], f_tenor)
-        verifier.verify()
-
-    # Create or get RFQ method
-    def create_or_get_rfq(self):
-        call(self.ar_service.createRFQTile, self.base_details.build())
-
-    # Create or get RFQ method
-    def create_rfq_tile(self, rfq):
-        call(self.ar_service.createRFQTile, rfq.build())
-
     # Check OrderBook method
     def check_ob(self):
         execution_id = bca.client_orderid(4)
         ob = OrdersDetails()
         ob.set_default_params(self.base_request)
         ob.set_extraction_id(execution_id)
-        ob.set_filter(["ClOrdID", self.cl_ord_id])
-        sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "ExecID")
+        ob.set_filter(["Order ID", self.ord_id])
+        # print(self.ord_id)
+        # sub_order_id_dt = ExtractionDetail("subOrder_lvl_1.id", "ExecID")
         sub_order_qty = ExtractionDetail("subOrder_lvl_1.id", "Qty")
         sub_order_price = ExtractionDetail("subOrder_lvl_1.execprice", "ExecPrice")
         lvl1_info = OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_id_dt,
-                                                                                 sub_order_qty,
+            action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_qty,
                                                                                  sub_order_price]))
         lvl1_details = OrdersDetails.create(info=lvl1_info)
         ob.add_single_order_info(
             OrderInfo.create(
                 action=ExtractionAction.create_extraction_action(), sub_order_details=lvl1_details))
         request = call(self.ob_act.getOrdersDetails, ob.request())
-        # call(self.common_act.verifyEntities, verification(execution_id, "checking OB",
-        #                                                   [verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-        #                                                    verify_ent("OB ID vs QB ID", ob_id.name, self.quote_id)]))
-        print("ExecPrice: " + request[sub_order_price.name])
+        return request[sub_order_price.name]
+        # print("ExecPrice: " + request[sub_order_price.name])
+
+    def get_dealing_position(self):
+        extraction_id = bca.client_orderid(4)
+        quote_pos_details = GetOrdersDetailsRequest()
+        quote_pos_details.set_default_params(self.base_request)
+        quote_pos_details.set_extraction_id(extraction_id)
+
+        quote_pos = ExtractionPositionsFieldsDetails("qt_pos.position", "Quote Position")
+
+        quote_pos_details.add_single_positions_info(
+            PositionsInfo.create(
+                action=ExtractionPositionsAction.create_extraction_action(extraction_details=[quote_pos])))
+
+        response = call(self.pos_service.getFxDealingPositionsDetails, quote_pos_details.request())
+        # print(response[quote_pos.value])
+        con_qty = f"{response[quote_pos.value].replace(',','')}"
+        return float(con_qty)
+
+    def compare_position(self, pre_position, position, post_positon):
+        cust_verifier = Verifier(self.case_id)
+        post_pos = pre_position + position
+        cust_verifier.compare_values('Quote Position', post_pos, post_positon)
+        cust_verifier.verify()
 
     # Main method. Must call in demo.py by "QAP_682.TestCase(report_id).execute()" command
     def execute(self):
         try:
-            self.prepare_frontend()
+            qty_1 = 6000000
             # Step 1
-            self.send_rfq_via_FIX(6000000)
-            self.check_ob()
+            self.prepare_frontend()
+            # self.send_rfq_via_FIX(qty_1)
+            # self.check_ob()
+            pre_position = self.get_dealing_position()
+            self.send_rfq_via_FIX(qty_1)
+            post_position = self.get_dealing_position()
+            print(pre_position, post_position)
+            # position = self.check_ob() * -abs(qty_1)
+            # self.compare_position(pre_position, position, post_position)
+            # self.send_rfq_via_FIX(qty_1)
+            # self.check_dealing_position(position)
+            # self.check_ob()
             # self.modify_tile(self.base_request, 6000000, "Spot", "EUR", "USD")
             # self.send_rfq()
             # self.cancel_rfq()
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+            # close_fe(self.case_id, self.session_id)
 
-        # close_fe(self.case_id, self.session_id)
+        close_fe(self.case_id, self.session_id)
 
 
 if __name__ == '__main__':
