@@ -33,7 +33,6 @@ client = 'CLIENT2'
 order_type = 2
 ex_destination_1 = "XPAR"
 report_id = None
-extraction_id = "getOrderAnalysisEvents"
 before_order_details_id = "beforeTWAPAlgo_order_details"
 after_order_details_id = "afterTWAPAlgo_order_details"
 s_par = '982'
