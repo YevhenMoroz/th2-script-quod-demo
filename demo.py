@@ -6,8 +6,8 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 
 # from quod_qa.eq.DMA import RIN_1147
-from quod_qa.eq.DMA import RIN_1144
-# from quod_qa.eq.DMA import RIN_1141
+# from quod_qa.eq.DMA import RIN_1144
+from quod_qa.eq.DMA import RIN_1141
 # from quod_qa.eq.DMA import RIN_1151
 # from quod_qa.eq.DMA import RIN_1164
 # from quod_qa.eq.DMA import RIN_1161
@@ -29,8 +29,8 @@ def test_run():
 
     try:
         # RIN_1147.execute(report_id)
-        RIN_1144.execute(report_id)
-        # RIN_1141.execute(report_id)
+        # RIN_1144.execute(report_id)
+        RIN_1141.execute(report_id)
         # RIN_1151.execute(report_id)
         # RIN_1164.execute(report_id)
         # RIN_1161.execute(report_id)

@@ -99,7 +99,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("Client", order_free_notes.name,
+                                                  verify_ent("FreeNotes", order_free_notes.name,
                                                              "11603 'Price' (0) negative or zero")
                                                   ]))
     # endregion
@@ -148,7 +148,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("Client", order_free_notes.name,
+                                                  verify_ent("FreeNotes", order_free_notes.name,
                                                              "11603 'Price' (-99999999) negative or zero")
                                                   ]))
     # endregion
@@ -198,7 +198,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("Client", order_free_notes.name,
+                                                  verify_ent("FreeNotes", order_free_notes.name,
                                                              "11605 'StopPrice' (20) greater than 'Price' (10)")
                                                   ]))
     # endregion
@@ -247,7 +247,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("Client", order_free_notes.name,
+                                                  verify_ent("FreeNotes", order_free_notes.name,
                                                              "11603 'Price' (0) negative or zero")
                                                   ]))
     # endregion
