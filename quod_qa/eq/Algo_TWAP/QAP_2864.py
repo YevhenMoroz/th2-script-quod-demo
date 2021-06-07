@@ -197,7 +197,6 @@ def prepared_fe(case_id):
 def check_order_book(ex_id, base_request, case_id, cl_ord):
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
-    ob = OrdersDetails()
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(before_order_details_id)
