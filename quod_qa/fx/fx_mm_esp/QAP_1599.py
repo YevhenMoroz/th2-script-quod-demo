@@ -189,11 +189,11 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tiles
-    #         # call(ar_service.closeRatesTile, base_details.build())
-    #         # call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tiles
+            call(ar_service.closeRatesTile, base_details.build())
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
