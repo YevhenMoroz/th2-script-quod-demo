@@ -296,20 +296,22 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     Method just set values( don't close the window)
     """
     order_ticket = FXOrderDetails()
-    order_ticket.set_price_large('1.23')
-    order_ticket.set_price_pips('456')
-    order_ticket.set_qty('1150000')
-    order_ticket.set_client('FIXCLIENT3')
-    order_ticket.set_tif('FillOrKill')
-    order_ticket.set_slippage('2.5')
-    order_ticket.set_order_type('Limit')
-    order_ticket.set_stop_price('1.3')
-    order_ticket.set_place()
+
+    # order_ticket.set_price_large('1.23')
+    # order_ticket.set_price_pips('456')
+    # order_ticket.set_qty('1150000')
+    # order_ticket.set_client('FIXCLIENT3')
+    # order_ticket.set_tif('FillOrKill')
+    # order_ticket.set_slippage('2.5')
+    # order_ticket.set_order_type('Limit')
+    # order_ticket.set_stop_price('1.3')
+    # order_ticket.set_place()
     # order_ticket.set_pending()
     # order_ticket.set_keep_open()
-    # order_ticket.set_custom_algo_check_box()
-    # order_ticket.set_custom_algo("Quod TWAP")
-    # order_ticket.set_strategy("TWAPBROKER")
+    order_ticket.set_custom_algo_check_box()
+    order_ticket.set_custom_algo('Quod TWAP')
+    order_ticket.set_strategy('TWAPBROKER')
+    order_ticket.set_child_strategy('BasicTaker')
 
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(order_ticket_service.placeFxOrder, new_order_details.build())
@@ -592,8 +594,8 @@ def execute(report_id):
 
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
-        extract_order_ticket_values(base_tile_data, order_ticket_service)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 

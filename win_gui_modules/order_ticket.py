@@ -144,6 +144,9 @@ class FXOrderDetails:
     def set_strategy(self, strategy: str):
         self.order.strategy = strategy
 
+    def set_child_strategy(self, childStrategy: str):
+        self.order.childStrategy = childStrategy
+
     def build(self):
         return self.order
 
