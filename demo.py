@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555
+from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_1599
 
 from stubs import Stubs
 
@@ -146,7 +146,9 @@ def test_run():
         # QAP_1560.execute(report_id)
         # QAP_1536.execute(report_id)
         # QAP_2825.execute(report_id)
-        QAP_2555.execute(report_id)
+        # QAP_2555.execute(report_id)
+        # QAP_2038.execute(report_id)
+        QAP_1599.execute(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
