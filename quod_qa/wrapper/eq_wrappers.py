@@ -11,7 +11,7 @@ from stubs import Stubs
 import time
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -22,7 +22,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-connectivity = "fix-ss-310-columbia-standart"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
+connectivity = "gtwquod5"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart
 rule_connectivity = "fix-bs-310-columbia"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -347,6 +347,20 @@ def get_order_id(request):
     return result[order_id.name]
 
 
+def get_is_locked(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("IsLocked")
+    is_locked = ExtractionDetail("IsLocked", "IsLocked")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[is_locked])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    try:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    return result[is_locked.name]
+
+
 def get_cl_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -358,7 +372,7 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def verify_value(request, case_id, column_name, expected_value, is_child):
+def verify_value(request, case_id, column_name, expected_value, is_child=False):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
@@ -373,7 +387,6 @@ def verify_value(request, case_id, column_name, expected_value, is_child):
     verifier.set_event_name("Check value")
     verifier.compare_values(column_name, expected_value, result[value.name])
     verifier.verify()
-
 
 
 def notify_dfd(request):
@@ -423,7 +436,7 @@ def approve_block(request):
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
                settlement_date=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
-               fees_rate=None,  misc_arr:[]= None):
+               fees_rate=None, misc_arr: [] = None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     ticket_details = modify_request.add_ticket_details()
@@ -481,7 +494,8 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def unbook_order (request):
+
+def unbook_order(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     try:
@@ -489,7 +503,8 @@ def unbook_order (request):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def allocate_order (request,arr_allocation_param:[]):
+
+def allocate_order(request, arr_allocation_param: []):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
 
@@ -516,10 +531,44 @@ def allocate_order (request,arr_allocation_param:[]):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-def unallocate_order (request):
+
+def unallocate_order(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     try:
         call(middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
+
+
+def check_in_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_out_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def view_orders_for_block(request, count: int):
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request = ViewOrderExtractionDetails(base=request)
+    lenght = "middleOffice.viewOrdersCount"
+    extract_request.extract_length(lenght)
+    arr_response = []
+    for i in range(1, count + 1):
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(i)
+        dma_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
+        order_details.add_extraction_detail(dma_order_id_view)
+        arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
+    return arr_response

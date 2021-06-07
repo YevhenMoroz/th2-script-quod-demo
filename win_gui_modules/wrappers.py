@@ -197,3 +197,15 @@ def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
     request.qtyPercentage = qty_percent
 
     return request
+
+
+def check_in_order_request():
+    request = act_ui_win_pb2.GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
+                                                           parentEventId=BaseParams.event_id)
+    return request
+
+
+def check_out_order_request():
+    request = act_ui_win_pb2.GetOrderAnalysisEventsRequest(sessionID=BaseParams.session_id,
+                                                           parentEventId=BaseParams.event_id)
+    return request
