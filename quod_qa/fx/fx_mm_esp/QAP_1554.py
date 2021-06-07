@@ -1,6 +1,6 @@
 import time
 
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -41,9 +41,9 @@ a = bands[0]
 def execute(report_id):
     try:
         case_id = bca.create_event('1554', report_id)
-        params = CaseParamsSell(connectivity, client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce,
-                                currency=currency, settlcurrency=settlcurrency, settltype=settltype1, settldate= settldate1, symbol=symbol,
-                                securitytype=securitytype1, securityidsource=securityidsource, securityid=securityid)
+        params = CaseParamsSellEsp(connectivity, client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype1, settldate= settldate1, symbol=symbol,
+                                   securitytype=securitytype1, securityidsource=securityidsource, securityid=securityid)
 
         #Steps 1-2
         md = MarketDataRequst(params)

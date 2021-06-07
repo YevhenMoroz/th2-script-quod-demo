@@ -3,9 +3,9 @@ from datetime import datetime
 
 from custom.tenor_settlement_date import spo
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
@@ -273,7 +273,7 @@ def execute(report_id):
         # Step 1 SEND MARKET DATA
 
         # SEND MD EUR/USD spot
-        FixClientSell(CaseParamsSell(client, case_id, symbol=symbol_usd_chf, securitytype=securitytype, settldate=settldate, settltype=settltype)).\
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_usd_chf, securitytype=securitytype, settldate=settldate, settltype=settltype)).\
             send_md_request().send_md_unsubscribe()
         FixClientBuy(CaseParamsBuy(case_id, defmdsymb_usd_chf_barx, symbol_usd_chf, securitytype).
                      prepare_custom_md_spot(no_md_entries_usd_chf_barx)).send_market_data_spot()

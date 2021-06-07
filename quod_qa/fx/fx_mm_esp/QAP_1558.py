@@ -2,9 +2,9 @@ import time
 from pathlib import Path
 
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -50,8 +50,8 @@ def execute(report_id):
 
 
 
-        params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency1,
-                                settlcurrency, settltype, settldate1, symbol1, securitytype_fwd, securityid1)
+        params = CaseParamsSellEsp(client, case_id, side, orderqty, ordtype, timeinforce, currency1,
+                                   settlcurrency, settltype, settldate1, symbol1, securitytype_fwd, securityid1)
         #Send market data to the HSBC venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_fwd)).\
             send_market_data_spot()
@@ -59,7 +59,7 @@ def execute(report_id):
 
         params.prepare_md_for_verification(bands,published=False)
         #Steps 1-3
-        md1= FixClientSell(params)
+        md1= FixClientSellEsp(params)
         price = md1.send_md_request().verify_md_pending().extruct_filed('Price')
         text = 'empty book'
 

@@ -1,9 +1,9 @@
 import time
 
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSell import FixClientSell
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
@@ -38,9 +38,9 @@ def execute(report_id):
         case_id = bca.create_event(case_name, report_id)
 
         #Preconditions
-        params = CaseParamsSell(client, case_id, side, orderqty, ordtype, timeinforce, currency,settlcurrency,
-                                settltype, settldate, symbol, securitytype, securityid,account=account)
-        md = FixClientSell(params).send_md_request().send_md_unsubscribe()
+        params = CaseParamsSellEsp(client, case_id, side, orderqty, ordtype, timeinforce, currency, settlcurrency,
+                                   settltype, settldate, symbol, securitytype, securityid, account=account)
+        md = FixClientSellEsp(params).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
             send_market_data_spot()

@@ -4,7 +4,7 @@ from th2_grpc_check1.check1_pb2 import PreFilter
 from th2_grpc_common.common_pb2 import ValueFilter, MessageFilter, FilterOperation, Direction
 
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from stubs import Stubs
 
 
@@ -22,7 +22,7 @@ class MarketDataRequst:
 
 
 
-    def __init__(self, case_params=CaseParamsSell, market_depth='0', md_update_type='0'):
+    def __init__(self, case_params=CaseParamsSellEsp, market_depth='0', md_update_type='0'):
         self.market_depth=market_depth
         self.md_update_type=md_update_type
         self.case_params=case_params
