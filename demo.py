@@ -1,7 +1,10 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555
+from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2646, QAP_3045, SendMD, QAP_2037, QAP_1599
+from quod_qa.fx.fx_taker_esp import QAP_1115, QAP_833, QAP_110, QAP_4156, QAP_492, QAP_231, QAP_382, QAP_1591, QAP_2373, \
+    QAP_2416, QAP_2854, QAP_3042, QAP_3364, QAP_404, QAP_2947, QAP_2948, QAP_2949
+from quod_qa.fx.fx_taker_rfq import QAP_568, QAP_569, QAP_574, QAP_2826, QAP_2835, QAP_2847
 
 from stubs import Stubs
 
@@ -15,7 +18,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     test_cases = {
         'qap_1560': {
@@ -146,8 +149,25 @@ def test_run():
         # QAP_1560.execute(report_id)
         # QAP_1536.execute(report_id)
         # QAP_2825.execute(report_id)
-        QAP_2555.execute(report_id)
-
+        # QAP_2555.execute(report_id)
+        # QAP_4156.execute(report_id)
+        # QAP_492.execute(report_id)
+        # QAP_231.execute(report_id)
+        # QAP_382.execute(report_id)
+        # QAP_1591.execute(report_id)
+        # QAP_2373.execute(report_id)
+        # QAP_2416.execute(report_id)
+        # QAP_2854.execute(report_id)
+        # QAP_3042.execute(report_id)
+        # QAP_3364.execute(report_id)
+        # QAP_404.execute(report_id)
+        # QAP_2947.execute(report_id)
+        # QAP_2948.execute(report_id)
+        # QAP_2949.execute(report_id)
+        # QAP_3045.execute(report_id)
+        # SendMD.execute(report_id)
+        # QAP_2037.execute(report_id)
+        QAP_1599.execute(report_id)
         print('duration time = ' + str(datetime.now() - start))
 
     except Exception:
