@@ -2,7 +2,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
     TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
-    TemplateOrderCancelReplaceExecutionReport
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -188,6 +188,16 @@ class RuleManager:
             request=TemplateOrderCancelReplaceExecutionReport(connection_id=ConnectionID(session_alias=session),
                                                                      trade=trade
                                             ))
+
+    @staticmethod
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+        return Stubs.simulator.createOrderCancelReplaceRequest(
+            request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
+                                                      account=account,
+                                                      exdestination=exdestination,
+                                                      modify=modify
+                                            ))
+
 
     # ------------------------
 
