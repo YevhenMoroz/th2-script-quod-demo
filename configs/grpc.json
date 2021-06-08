@@ -69,8 +69,8 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -84,8 +84,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -99,8 +99,8 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -114,8 +114,8 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -129,8 +129,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -144,8 +144,8 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -159,8 +159,8 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -174,8 +174,8 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -189,8 +189,8 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -204,8 +204,8 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {

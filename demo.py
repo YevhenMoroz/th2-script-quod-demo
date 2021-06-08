@@ -1,17 +1,18 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from examples.dealer_intervention import get_rfq_details
 from quod_qa.eq.Algo_Multilisted import QAP_2982, QAP_1986, QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, \
     QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, \
     QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027, QAP_1951, \
     QAP_1990, QAP_3028
-from quod_qa.eq.Algo_TWAP import QAP_3124, QAP_2706, QAP_3122
-from quod_qa.eq.Algo_TWAP import QAP_3123, QAP_2706, QAP_3122, QAP_3124
-from quod_qa.fx.fx_taker_esp import QAP_110
+
+from quod_qa.fx import ui_tests
+from quod_qa.fx.fx_mm_rfq import (QAP_1970, QAP_1971, QAP_1972, QAP_2062, QAP_2121, QAP_1545, QAP_1537, QAP_1539WIP,
+                                  QAP_1541CANCELLED, QAP_1542, QAP_1547, QAP_1548, QAP_1562, QAP_1563)
 from rule_management import RuleManager
 from stubs import Stubs
-from test_cases import QAP_638
-from quod_qa.eq.Care import QAP_4015
+from test_cases import QAP_638, QAP_1552
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('FiLL tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('kbrit tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
 
@@ -35,10 +36,20 @@ def test_run():
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
         }
+        # QAP_1970.execute(report_id, test_cases)
+        # QAP_1971.execute(report_id, test_cases)
+        # QAP_1972.execute(report_id, test_cases)
+        # QAP_2062.execute(report_id, test_cases)
+        # QAP_1545.execute(report_id, test_cases)
+        # QAP_1537.execute(report_id, test_cases)
+        # QAP_1539WIP.execute(report_id, test_cases)
+        # QAP_1542.execute(report_id, test_cases)
+        # QAP_1547.execute(report_id, test_cases)
+        # QAP_1548.execute(report_id, test_cases)
+        # QAP_1562.execute(report_id, test_cases)
+        # QAP_1563.execute(report_id, test_cases)
 
-        start = datetime.now()
-        print(f'start time = {start}')
-
+        ui_tests.execute(report_id)
         # region Acceptance list RFQ Taker
         # QAP_568.execute(report_id)
         # QAP_569.execute(report_id)
@@ -126,27 +137,8 @@ def test_run():
         # QAP_3589.execute(report_id)
         # endregion
 
-        # QAP_595.execute(report_id)
-        # QAP_751.execute(report_id)
-        # QAP_2774.execute(report_id)
-        # QAP_571.execute(report_id)
-        # QAP_2729.execute(report_id)
-        # my_test.execute(report_id)
-        # QAP_718.execute(report_id)
-        # QAP_2419.execute(report_id)
-        # pricing_tile_test.execute(report_id)
-        # QAP_1418.execute(report_id)
-        # QAP_2556.execute(report_id)
-        # QAP_569.execute(report_id)
-        # QAP_2117.execute(report_id)
-        # QAP_2587.execute(report_id)
-        # QAP_2855.execute(report_id)
-        # QAP_3563.execute(report_id)
-        # QAP_568.execute(report_id)
-        # QAP_833.execute(report_id)
-        # QAP_1115.execute(report_id)
 
-        print('duration time = ' + str(datetime.now() - start))
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)
