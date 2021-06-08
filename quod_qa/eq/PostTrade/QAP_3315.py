@@ -51,8 +51,8 @@ def execute(report_id):
     eq_wrappers.book_order(base_request, client, price)
     # endregion
     # region Verify
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Match Status", "Unmatched")
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Status", "ApprovalPending")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
     params = {
         'Quantity': qty,
         'TradeDate': '*',
@@ -176,6 +176,6 @@ def execute(report_id):
     eq_wrappers.unallocate_order(base_request)
     # endregion
     # region Verify
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Match Status", "Matched")
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Status", "Accepted")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
     # endregion

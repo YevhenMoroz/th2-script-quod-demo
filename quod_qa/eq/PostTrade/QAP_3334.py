@@ -51,6 +51,6 @@ def execute(report_id):
     eq_wrappers.book_order(base_request, client2, price)
     # endregion
     # region Verify
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Conf Service", "CTM")
-    eq_wrappers.middle_office_verify_value(base_request, case_id, "Client ID", client2)
+    eq_wrappers.verify_block_value(base_request, case_id, "Conf Service", "CTM")
+    eq_wrappers.verify_block_value(base_request, case_id, "Client ID", client2)
     # endregion

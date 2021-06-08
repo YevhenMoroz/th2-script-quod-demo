@@ -11,7 +11,7 @@ from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
-    ExtractMiddleOfficeBlotterValuesRequest
+    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -385,7 +385,7 @@ def verify_value(request, case_id, column_name, expected_value, is_child=False):
     verifier.verify()
 
 
-def middle_office_verify_value(request, case_id, column_name, expected_value):
+def verify_block_value(request, case_id, column_name, expected_value):
     ext_id = "MiddleOfficeExtractionId"
     middle_office_service = Stubs.win_act_middle_office_service
     extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=request)
@@ -396,6 +396,20 @@ def middle_office_verify_value(request, case_id, column_name, expected_value):
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking block order")
     verifier.compare_values(column_name, expected_value, request[extraction_detail.name])
+    verifier.verify()
+
+
+def verify_allocate_value(request, case_id, account, column_name, expected_value):
+    extract_request = AllocationsExtractionDetails(base=request)
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request.set_allocations_filter({"Account ID": account})
+    extraction_detail = ExtractionDetail("middleOffice.qty", "Alloc Qty")
+    order_details = extract_request.add_order_details()
+    order_details.add_extraction_details([extraction_detail])
+    request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Checking allocate blotter")
+    verifier.compare_values(column_name, expected_value, request_allocate_blotter[extraction_detail.name])
     verifier.verify()
 
 

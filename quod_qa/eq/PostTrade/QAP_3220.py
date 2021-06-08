@@ -96,7 +96,7 @@ def execute(report_id):
     # endregion
 
     # Region Verify order
-    eq_wrappers.middle_office_verify_value(base_request, case_id, 'Status', 'Accepted')
-    eq_wrappers.middle_office_verify_value(base_request, case_id, 'Summary Status', '')
-    eq_wrappers.middle_office_verify_value(base_request, case_id, 'Match Status', 'Matched')
+    eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'Accepted')
+    eq_wrappers.verify_block_value(base_request, case_id, 'Summary Status', '')
+    eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Matched')
     # endregion
