@@ -596,3 +596,10 @@ def view_orders_for_block(request, count: int):
         order_details.add_extraction_detail(dma_order_id_view)
         arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
     return arr_response
+
+def check_error_in_book(request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(request)
+    modify_request.set_partial_error_message("qwerty")
+    error = call(middle_office_service.bookOrder, modify_request.build())
+    return error

@@ -18,7 +18,7 @@ def execute(report_id):
     # region Declarations
     qty = "800"
     price = "3"
-    client = "MOClient"
+    client = "SBK"
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
@@ -36,7 +36,7 @@ def execute(report_id):
                                                                              'MOClient_PARIS', "XPAR", 3)
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-eq-paris', 'MOClient_PARIS', 'XPAR', 3,
                                                                       800, 0)
-        time.sleep(12)
+        time.sleep(1)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -52,7 +52,8 @@ def execute(report_id):
     # # endregion
     # # region Book
     response = eq_wrappers.check_error_in_book(base_request)
+    print(response)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values('Check value', "sd", response)
+    verifier.compare_values('Check value', "Error - [QUOD-11699] Invalid AccountGroupID: MOClient", response['errorMessage'])
     verifier.verify()
