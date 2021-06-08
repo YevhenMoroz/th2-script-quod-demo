@@ -147,6 +147,12 @@ class FXOrderDetails:
     def set_child_strategy(self, childStrategy: str):
         self.order.childStrategy = childStrategy
 
+    def set_care_order(self, desk: str, partial_desk: bool = False,
+                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
+        self.order.careOrderParams.desk = desk
+        self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
+
     def build(self):
         return self.order
 
