@@ -52,7 +52,6 @@ def execute(report_id):
     # # endregion
     # # region Book
     response = eq_wrappers.check_error_in_book(base_request)
-    print(response)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values('Check value', "Error - [QUOD-11699] Invalid AccountGroupID: MOClient", response['errorMessage'])
