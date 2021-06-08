@@ -71,8 +71,8 @@ def extract_column_base(base_request, service):
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
     extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
+    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base (%)"))
+    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base (%)"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
 
     bid_base = float(response["rateTile.bidBase"])
@@ -84,7 +84,7 @@ def check_bid_price(case_id, esp_bid, pricing_price, base):
     expected_price = esp_bid * (1 - base / 100)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check bid price on Pricing tile")
-    verifier.compare_values("Bid price", str(round(expected_price, 5)), str(pricing_price))
+    verifier.compare_values("Bid price", str(round(expected_price, 3)), str(pricing_price))
     verifier.verify()
 
 
@@ -92,7 +92,7 @@ def check_ask_price(case_id, esp_bid, pricing_price, base):
     expected_price = esp_bid * (1 + base / 100)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check ask price on Pricing tile")
-    verifier.compare_values("ask price", str(round(expected_price, 5)), str(pricing_price))
+    verifier.compare_values("ask price", str(round(expected_price, 3)), str(pricing_price))
     verifier.verify()
 
 
@@ -112,11 +112,11 @@ def execute(report_id):
     to_curr = "JPY"
     tenor = "Spot"
     venue = "HSBC"
-    instrument = "EYR/JPY-Spot"
+    instrument = "EUR/JPY-Spot"
     client_tier = "Silver"
 
-    def_md_symbol_gbp_aud = "EYR/JPY:SPO:REG:HSBC"
-    symbol_gbp_aud = "EYR/JPY"
+    def_md_symbol_gbp_aud = "EUR/JPY:SPO:REG:HSBC"
+    symbol_gbp_aud = "EUR/JPY"
 
     try:
 
@@ -142,11 +142,11 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tiles
-    #         call(ar_service.closeRatesTile, base_details.build())
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tiles
+            call(ar_service.closeRatesTile, base_details.build())
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
