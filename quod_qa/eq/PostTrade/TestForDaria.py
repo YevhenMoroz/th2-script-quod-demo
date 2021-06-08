@@ -18,7 +18,7 @@ def execute(report_id):
     # region Declarations
     qty = "900"
     price = "40"
-    client = "MOClient"
+    client = "SBK"
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
