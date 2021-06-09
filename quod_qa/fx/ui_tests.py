@@ -20,7 +20,7 @@ from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, Deselect
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
-                                                   DefaultFXValues, FXConfigsRequest)
+                                                   DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
@@ -250,8 +250,14 @@ def set_order_ticket_options(option_service, base_request):
     Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
 
     """
+
+    # TODO: fix issue :
+
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues();
+    slippage = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
+    slippage2 = CustomCurrencySlippage(instrument='GBP/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
+    # slippage3 = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321', removeRowNumber=2)
+    fx_values = DefaultFXValues([slippage, slippage2])
     fx_values.AggressiveTIF = "Pegger"
     order_type = "Market"
     tif = "FillOrKill"
@@ -269,8 +275,8 @@ def set_order_ticket_options(option_service, base_request):
     # fx_values.PassiveStrategy = strategy
     # fx_values.PassiveChildStrategy = child_strategy
     # fx_values.AlgoSlippage = '12367.45'
-    fx_values.DMASlippage = '12678.09'
-    fx_values.Client = "FIXCLIENT4"
+    # fx_values.DMASlippage = '12678.09'
+    # fx_values.Client = "FIXCLIENT4"
 
     order_ticket_options.set_default_fx_values(fx_values)
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
@@ -563,7 +569,7 @@ def execute(report_id):
 
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
-        # set_order_ticket_options(option_service, base_request)
+        set_order_ticket_options(option_service, base_request)
         # set_order_ticket_options(option_service, base_request)
         # set_one_click_mod(option_service, base_request)
         # endregion
@@ -597,7 +603,7 @@ def execute(report_id):
 
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
-        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # set_fx_order_ticket_value(base_request,order_ticket_service)
         # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
