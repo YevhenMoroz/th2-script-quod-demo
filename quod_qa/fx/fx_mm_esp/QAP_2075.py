@@ -41,7 +41,7 @@ def execute(report_id):
             send_md_request().send_md_unsubscribe()
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
 
-        #Step 1...
+        #Step 1-4
         params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,currency=currency,
                                    settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
                                    securityidsource=securityidsource, securityid=securityid, account=account)
@@ -52,6 +52,7 @@ def execute(report_id):
             verify_order_pending().\
             verify_order_filled()
 
+        #Step 5
 
 
     except Exception as e:

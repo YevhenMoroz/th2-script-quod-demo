@@ -13,6 +13,7 @@ class FixClientSellEsp():
     md_pending_response=None
     price=''
 
+
     def __init__(self, case_params_sell_esp):
         self.case_params_sell_esp=case_params_sell_esp
 
@@ -54,9 +55,11 @@ class FixClientSellEsp():
         return self
 
     #Send New Order Single
-    def send_new_order_single(self,price):
+    def send_new_order_single(self,price,qty=''):
         tif = prepeare_tif(self.case_params_sell_esp.timeinforce)
         self.case_params_sell_esp.order_params['Price'] = price
+        if qty!='':
+            self.case_params_sell_esp.order_params['OrderQty'] = qty
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_esp.connectivityESP, self.case_params_sell_esp.case_id,

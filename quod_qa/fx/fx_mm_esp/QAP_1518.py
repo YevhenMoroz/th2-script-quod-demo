@@ -23,7 +23,7 @@ settltype=0
 symbol='EUR/USD'
 securitytype='FXSPOT'
 securityid='EUR/USD'
-bands=[1000000,2000000,3000000]
+bands=[2000000,6000000,12000000]
 md=None
 settldate=tsd.spo()
 defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
@@ -38,21 +38,26 @@ def execute(report_id):
         case_id = bca.create_event(case_name, report_id)
 
         #Preconditions
-        params = CaseParamsSellEsp(client, case_id, side, orderqty, ordtype, timeinforce, currency, settlcurrency,
-                                   settltype, settldate, symbol, securitytype, securityid, account=account)
-        md = FixClientSellEsp(params).send_md_request().send_md_unsubscribe()
+        params_0 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency,
+                                   settlcurrency=settlcurrency,settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                   securityid=securityid, account=account)
+        md_0 = FixClientSellEsp(params_0).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
             send_market_data_spot()
-
         time.sleep(5)
-        params.prepare_md_for_verification(bands)
+
         #Step 1
-        md.send_md_request().\
+        params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency,
+                                   settlcurrency=settlcurrency,settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                   securityid=securityid, account=account)
+        md_1 =FixClientSellEsp(params_1)
+        params_1.prepare_md_for_verification(bands)
+        md_1.send_md_request().\
             verify_md_pending()
-        price = md.extruct_filed('Price')
+        price = md_1.extruct_filed('Price')
         #Step 2-5
-        md.send_new_order_single(price)\
+        md_1.send_new_order_single(price)\
             .verify_order_pending()\
             .verify_order_new()\
             .verify_order_filled()
@@ -64,7 +69,7 @@ def execute(report_id):
     except Exception as e:
         logging.error('Error execution', exc_info=True)
     finally:
-        md.send_md_unsubscribe()
+        md_1.send_md_unsubscribe()
 
 
 
