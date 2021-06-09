@@ -36,7 +36,7 @@ class AccountsConstants:
 
     DIMENSIONS_EDIT_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'edit')]"
     DIMENSIONS_DELETE_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'delete')]"
-    DIMENSIONS_CREATE_ENTITY_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'create')]"
+    DIMENSIONS_CREATE_ENTITY_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'create') or contains(@class, 'save')]"
     DIMENSIONS_DISCARD_ENTITY_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'cancel')]"
 
     DIMENSIONS_VENUE_ACCOUNT_INPUT_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Venue Account *']"
