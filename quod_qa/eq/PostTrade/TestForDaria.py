@@ -1,9 +1,13 @@
+from th2_grpc_act_gui_quod import middle_office_service
+
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
-from win_gui_modules.utils import set_session_id, get_base_request
+from win_gui_modules import middle_office_wrappers
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.utils import set_session_id, get_base_request, call
 import logging
 import time
 from rule_management import RuleManager
@@ -28,13 +32,18 @@ def execute(report_id):
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    # # # endregion
+    # # # region Create CO
+    # fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
+    # response = fix_message.pop('response')
     # # endregion
-    # # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
-    response = fix_message.pop('response')
-    # endregion
-    eq_wrappers.accept_order("VETO", qty, price)
-    eq_wrappers.manual_execution(base_request, qty, price)
-    eq_wrappers.complete_order(base_request)
-    # # region Book
-    eq_wrappers.book_order(base_request, client, price)
+    # eq_wrappers.accept_order("VETO", qty, price)
+    # eq_wrappers.manual_execution(base_request, qty, price)
+    # eq_wrappers.complete_order(base_request)
+    # # # region Book
+    # eq_wrappers.book_order(base_request, client, price)
+
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=base_request)
+    modify_request.set_partial_error_message("QUOD-11699")
+    print(call(middle_office_service.bookOrder, modify_request.build()))
