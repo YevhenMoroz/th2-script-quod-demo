@@ -7,7 +7,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 logger = logging.getLogger(__name__)
@@ -114,8 +114,8 @@ def execute(report_id):
             ))
 
         #Step4
-        params = CaseParamsSell(connectivity, client, case_id, settltype=settltype, settldate= settldate, symbol=symbol,
-                                securitytype=securitytype, securityid=securityid)
+        params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate= settldate, symbol=symbol,
+                                   securitytype=securitytype, securityid=securityid)
         md = MarketDataRequst(params)
         md.set_md_params().send_md_request().prepare_md_response(bands)
         md.md_subscribe_response['NoMDEntries'][0]['MDEntryForwardPoints']=fwd_pts_bid

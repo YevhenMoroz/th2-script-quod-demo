@@ -1,6 +1,6 @@
 import time
 
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -37,9 +37,9 @@ settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%
 def execute(report_id):
     try:
         case_id = bca.create_event('QAP_3555', report_id)
-        params = CaseParamsSell(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                                currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
-                                securityidsource=securityidsource, securityid=securityid)
+        params = CaseParamsSellEsp(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
+                                   securityidsource=securityidsource, securityid=securityid)
         params.mdreqid = bca.client_orderid(10)
         params.clordid= bca.client_orderid(9)
         md = MarketDataRequst(params)

@@ -12,7 +12,7 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 # FIX_data
@@ -175,9 +175,9 @@ def execute(report_id):
                 case_id,
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, 'fix-fh-314-luna')
             ))
-        params = CaseParamsSell(connectivity, client, case_id, settltype=settltype, settldate=settldate,
-                                symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
-                                securityid=securityid)
+        params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
+                                   symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
+                                   securityid=securityid)
         md = MarketDataRequst(params). \
             set_md_params() \
             .send_md_request() \
@@ -202,9 +202,9 @@ def execute(report_id):
         compare_prices_not_equal(case_id, ask_before, ask_after)
         compare_prices(case_id, line_2_before, line_2_after)
         # Step 3
-        params = CaseParamsSell(connectivity, client, case_id, settltype=settltype, settldate=settldate,
-                                symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
-                                securityid=securityid)
+        params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
+                                   symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
+                                   securityid=securityid)
         md2 = MarketDataRequst(params). \
             set_md_params() \
             .send_md_request()

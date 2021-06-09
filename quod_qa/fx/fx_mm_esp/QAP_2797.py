@@ -1,4 +1,10 @@
-from quod_qa.fx.fx_wrapper.CaseParamsSell import CaseParamsSell
+from pathlib import Path
+
+from custom.tenor_settlement_date import spo
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -24,11 +30,12 @@ symbol='EUR/USD'
 securitytype='FXSPOT'
 securityidsource='8'
 securityid='EUR/USD'
-bands=[1000000,2000000,3000000]
+bands=[2000000,6000000,12000000]
 ord_status='Rejected'
 settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
 md=None
-
+settldate_spo=spo()
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
 
 
@@ -36,19 +43,25 @@ md=None
 
 def execute(report_id):
     try:
-        case_id = bca.create_event('QAP_2797', report_id)
-        params = CaseParamsSell(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                                currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
-                                securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
-        md = MarketDataRequst(params)
-        md.set_md_params().send_md_request().\
-            verify_md_pending(bands)
-        price=md.extruct_filed('Price')
+        case_name = Path(__file__).name[:-3]
+        case_id = bca.create_event(case_name, report_id)
+        #Precondition
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_spo, symbol=symbol, securitytype=securitytype)).\
+            send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
 
+        #Step 1-3
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
+                                   securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
+        params.prepare_md_for_verification(bands)
+        md = FixClientSellEsp(params).send_md_request().verify_md_pending()
+        price= md.extruct_filed('Price')
         text='not enough quantity in book'
-        md.case_params.orderqty1 = new_orderqty
-        NewOrderSingle(params).send_new_order_single(price).\
-            verify_order_pending(). \
+        params.orderqty=new_orderqty
+        params.set_new_order_single_params()
+        md.send_new_order_single(price).\
+            verify_order_pending().\
             verify_order_rejected(text)
 
 

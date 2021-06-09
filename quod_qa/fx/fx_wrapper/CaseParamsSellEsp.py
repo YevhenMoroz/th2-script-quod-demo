@@ -1,14 +1,14 @@
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
+from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 
-class CaseParamsSell:
+class CaseParamsSellEsp:
     # connectivityESP = 'fix-ss-308-mercury-standard'
     connectivityESP = 'fix-ss-esp-314-luna-standard'
-    connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
     # mdreqid = None
     # clordid = None
     md_params = None
@@ -22,10 +22,9 @@ class CaseParamsSell:
     order_algo_rejected = None
 
     def __init__(self, client, case_id, side='1', orderqty=1, ordtype='2', timeinforce='4', currency='EUR',
-                 settlcurrency='USD',
-                 settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT', securityid='EUR/USD',
-                 securityidsource='8',
-                 handlinstr='1', securityexchange='XQFX', product=4, market_depth='0', md_update_type='0', account=''
+                 settlcurrency='USD', settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT',
+                 securityid='EUR/USD',securityidsource='8',handlinstr='1', securityexchange='XQFX', product=4,
+                 market_depth='0', md_update_type='0', account='', booktype='0'
                  ):
         self.client = client
         self.case_id = case_id
@@ -47,8 +46,10 @@ class CaseParamsSell:
         self.market_depth = market_depth
         self.md_update_type = md_update_type
         self.account = account
+        self.booktype=booktype
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
+        self.quote_reqid = bca.client_orderid(9)
 
         self.set_market_data_params()
         self.set_new_order_single_params()
@@ -62,6 +63,7 @@ class CaseParamsSell:
             'MDReqID': self.mdreqid,
             'MarketDepth': self.market_depth,
             'MDUpdateType': self.md_update_type,
+            'BookType': self.booktype,
             'NoMDEntryTypes': [{'MDEntryType': '0'}, {'MDEntryType': '1'}],
             'NoRelatedSymbols': [
                 {
@@ -105,7 +107,10 @@ class CaseParamsSell:
             'Instrument': {
                 'Symbol': self.symbol
             },
+            'OrigMDArrivalTime':'*',
             'LastUpdateTime': '*',
+            'OrigMDTime':'*',
+            'MDTime': '*',
             'NoMDEntries': [
                 {
                     'SettlType': 0,
@@ -135,6 +140,7 @@ class CaseParamsSell:
                     'MDEntryDate': '*',
                     'MDEntryType': 1
                 }
+
 
             ]
         }
@@ -266,7 +272,7 @@ class CaseParamsSell:
     def prepape_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account'] = self.client
+        self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
