@@ -1,7 +1,15 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_1599
+from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034
+from quod_qa.fx.fx_mm_rfq import QAP_1746
+from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
+    QAP_573, QAP_574, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, \
+    QAP_590, QAP_591, QAP_593, QAP_594, QAP_595, QAP_597, QAP_598, QAP_599, QAP_600, QAP_601, QAP_602, QAP_604, QAP_605, \
+    QAP_606, QAP_609, QAP_610, QAP_611, QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, \
+    QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, QAP_850, QAP_982, \
+    QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, \
+    QAP_3589
 
 from stubs import Stubs
 
@@ -18,12 +26,11 @@ def test_run():
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     test_cases = {
-        'qap_1560': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        }
+        'case_id': bca.create_event_id(),
+        'TraderConnectivity': 'gtwquod5-fx',
+        'Account': 'MMCLIENT1',
+        'SenderCompID': 'QUODFX_UAT',
+        'TargetCompID': 'QUOD5',
     }
     try:
 
@@ -148,7 +155,9 @@ def test_run():
         # QAP_2825.execute(report_id)
         # QAP_2555.execute(report_id)
         # QAP_2038.execute(report_id)
-        QAP_1599.execute(report_id)
+        # QAP_1599.execute(report_id)
+        QAP_2034.execute(report_id)
+
 
         print('duration time = ' + str(datetime.now() - start))
 
