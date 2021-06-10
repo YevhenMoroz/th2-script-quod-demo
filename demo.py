@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034
+from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034, QAP_2075, \
+    QAP_1601
 from quod_qa.fx.fx_mm_rfq import QAP_1746
 from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
     QAP_573, QAP_574, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, \
@@ -23,14 +24,15 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     test_cases = {
-        'case_id': bca.create_event_id(),
-        'TraderConnectivity': 'gtwquod5-fx',
-        'Account': 'MMCLIENT1',
-        'SenderCompID': 'QUODFX_UAT',
-        'TargetCompID': 'QUOD5',
+        'qap_1560': {
+            **channels,
+            'case_id': bca.create_event_id(),
+            'Connectivity': 'fix-fh-314-luna'
+            # 'Connectivity': 'fix-qsesp-303'
+        }
     }
     try:
 
@@ -157,7 +159,8 @@ def test_run():
         # QAP_2038.execute(report_id)
         # QAP_1599.execute(report_id)
         QAP_2034.execute(report_id)
-
+        # QAP_2075.execute(report_id)
+        # QAP_1601.execute(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
