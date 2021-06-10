@@ -11,6 +11,7 @@ from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 from th2_grpc_sim_http.sim_template_service import SimTemplateService
+from th2_grpc_act_rest_quod.rest_act_service import RestActService
 
 
 class Stubs:
@@ -33,7 +34,7 @@ class Stubs:
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
     win_act_middle_office_service = factory.grpc_router.get_service(MiddleOfficeOperationsService)
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
-
+    api_service = factory.grpc_router.get_service(RestActService)
     custom_config = factory.create_custom_configuration()
     session_id = None
     frontend_is_open = False
