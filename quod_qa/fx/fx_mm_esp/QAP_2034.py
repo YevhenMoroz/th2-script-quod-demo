@@ -1,4 +1,5 @@
 import logging
+import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1
@@ -11,6 +12,21 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
+
+
+def round_decimals_up(number: float, decimals: int):
+    """
+    Returns a value rounded up to a specific number of decimal places.
+    """
+    if not isinstance(decimals, int):
+        raise TypeError("decimal places must be an integer")
+    elif decimals < 0:
+        raise ValueError("decimal places has to be 0 or more")
+    elif decimals == 0:
+        return math.ceil(number)
+
+    factor = 10 ** decimals
+    return math.ceil(number * factor) / factor
 
 
 def create_or_get_esp_tile(base_request, service):
@@ -70,7 +86,9 @@ def extract_price_from_pricing_tile(base_request, service):
 
 def check_price_on_pricing_tile(case_id, price, spot, pts):
     expected_price = spot + pts / 10000
-
+    print(spot)
+    print(pts)
+    print(expected_price)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check price")
     verifier.compare_values("Price", str(round(expected_price, 5)), str(price))
@@ -122,13 +140,11 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
 
     expected_bid_pts = bid_pts * (1 - (bid_base / 100))
     expected_ask_pts = ask_pts * (1 + (ask_base / 100))
-    print(expected_bid_pts)
-    print(expected_ask_pts)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Pts in Pricing tile")
-    verifier.compare_values("Bid pts", str(expected_bid_pts), str(bid_pts_mm))
-    verifier.compare_values("Ask pts", str(expected_ask_pts), str(ask_pts_mm))
+    verifier.compare_values("Bid pts", str(round(expected_bid_pts, 3)), str(bid_pts_mm))
+    verifier.compare_values("Ask pts", str(round_decimals_up(expected_ask_pts, 3)), str(ask_pts_mm))
     verifier.verify()
 
     return [bid_pts_mm, ask_pts_mm]
@@ -183,11 +199,11 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            # Close tiles
-            call(ar_service.closeRatesTile, base_details.build())
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    # finally:
+    #     try:
+    #         # Close tiles
+    #         call(ar_service.closeRatesTile, base_details.build())
+    #         call(cp_service.closeRatesTile, base_details.build())
+    #
+    #     except Exception:
+    #         logging.error("Error execution", exc_info=True)
