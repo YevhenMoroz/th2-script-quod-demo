@@ -74,7 +74,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "MMCLIENT2"
-    venue_list = ["CIT", "HSB"]
+    venue_list = ["CITI", "HSBC"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_terminated = "Terminated"
