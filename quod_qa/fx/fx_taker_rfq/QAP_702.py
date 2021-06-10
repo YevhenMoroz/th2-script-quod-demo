@@ -140,7 +140,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = ["CIT"]
+    case_venue = ["CITI"]
     case_filter_venue = "CITI"
     case_qty = 10000000
     quote_sts_new = 'New'

@@ -134,7 +134,7 @@ def execute(report_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "Spot"
-    case_venue = ["HSB"]
+    case_venue = ["HSBS"]
     case_filter_venue = "HSBC"
     case_qty = 10000000
     quote_sts_new = 'New'
