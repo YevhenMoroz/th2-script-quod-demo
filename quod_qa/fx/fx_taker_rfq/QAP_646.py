@@ -117,7 +117,7 @@ def execute(report_id):
     case_far_tenor = "1W"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_venue = "HSBC"
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"

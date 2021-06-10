@@ -46,7 +46,7 @@ def execute(report_id):
     case_qty = 1000000
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
     case_date = next_monday_front_end()
 

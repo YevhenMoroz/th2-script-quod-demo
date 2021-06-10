@@ -122,7 +122,7 @@ def check_value_in_header(base_request, service, case_id, value):
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "1M"

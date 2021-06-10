@@ -118,7 +118,7 @@ def execute(report_id):
     case_near_tenor = "MAR IMM"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     venue_list = ["CIT", "HSB"]
     quote_sts_new = 'New'
     case_instr_type = 'FXForward'

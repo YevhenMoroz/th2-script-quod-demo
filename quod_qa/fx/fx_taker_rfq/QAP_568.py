@@ -116,7 +116,7 @@ def execute(report_id):
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

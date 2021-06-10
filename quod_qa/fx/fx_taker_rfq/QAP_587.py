@@ -122,7 +122,7 @@ def execute(report_id):
     case_currency_eur = "EUR"
     case_currency_usd = "USD"
     case_currency_cad = "CAD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     venues_hsb = ["HSB"]
     venues_cit = ["CIT"]
     quote_sts_new = 'New'

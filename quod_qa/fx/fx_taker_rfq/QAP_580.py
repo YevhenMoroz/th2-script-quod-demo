@@ -110,7 +110,7 @@ def execute(report_id):
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     venues = ["HSB"]
 
     # Create sub-report for case

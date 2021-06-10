@@ -96,7 +96,7 @@ def execute(report_id):
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_pair = case_from_currency + "/" + case_to_currency
     case_qty = 10000000
     case_qty2 = "1m"

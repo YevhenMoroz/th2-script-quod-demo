@@ -110,7 +110,7 @@ def execute(report_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"

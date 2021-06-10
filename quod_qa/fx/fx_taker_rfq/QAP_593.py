@@ -110,7 +110,7 @@ def execute(report_id):
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     quote_sts_new = 'New'
     case_venues = ["HSB"]
     quote_quote_sts_accepted = "Accepted"

@@ -58,7 +58,7 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_eur_currency = "EUR"
     case_usd_currency = "USD"
     case_ndf_currency = "PHP"

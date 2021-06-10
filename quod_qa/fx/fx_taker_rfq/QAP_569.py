@@ -123,7 +123,7 @@ def execute(report_id):
     # case params
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "FXForward"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "1M"
