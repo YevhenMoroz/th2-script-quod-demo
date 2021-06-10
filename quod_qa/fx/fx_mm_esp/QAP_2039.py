@@ -109,14 +109,14 @@ def execute(report_id):
     base_details = BaseTileDetails(base=case_base_request)
 
     from_curr = "AUD"
-    to_curr = "BRL"
+    to_curr = "CAD"
     tenor = "Spot"
     venue = "HSBC"
-    instrument = "AUD/BRL-Spot"
+    instrument = "AUD/CAD-Spot"
     client_tier = "Silver"
 
-    def_md_symbol_aud_brl = "AUD/BRL:SPO:REG:HSBC"
-    symbol_aud_brl = "AUD/BRL"
+    def_md_symbol_aud_cad = "AUD/CAD:SPO:REG:HSBC"
+    symbol_aud_cad = "AUD/CAD"
 
     try:
 
@@ -132,13 +132,12 @@ def execute(report_id):
         create_or_get_pricing_tile(base_details, cp_service)
         modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_aud_brl, symbol_aud_brl)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_aud_cad, symbol_aud_cad)).send_market_data_spot()
         esp_price = extract_price_from_esp(base_details, ar_service)
         pricing_tile_price = extract_price_from_pricing_tile(base_details, cp_service)
         base = extract_column_base(base_details, cp_service)
         check_bid_price(case_id, esp_price[0], pricing_tile_price[0], base[0])
         check_ask_price(case_id, esp_price[1], pricing_tile_price[1], base[1])
-
 
     except Exception:
         logging.error("Error execution", exc_info=True)
