@@ -4,8 +4,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide, \
-    ExtractRatesTileDataRequest, ContextActionRatesTile, ActionsRatesTile
+from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, ActionsRatesTile
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
 from win_gui_modules.order_ticket import FXOrderDetails
@@ -21,9 +20,8 @@ def create_or_get_rates_tile(base_request, service):
 def modify_order_ticket(base_request, service, qty):
     order_ticket = FXOrderDetails()
     order_ticket.set_qty(qty)
-    new_order_details = NewFxOrderDetails()
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
+    order_ticket.set_place()
+    new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())
 
 

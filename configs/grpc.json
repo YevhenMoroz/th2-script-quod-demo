@@ -69,8 +69,8 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -84,8 +84,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -99,8 +99,8 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -114,8 +114,8 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -129,8 +129,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -144,8 +144,8 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -158,45 +158,45 @@
     "Win_Act_Client_Pricing": {
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "localhost",
-          "port": 8080
+        "act_client_pricing": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_client_pricing"
         ]
       }
     },
     "Win_Act_Middle_Office": {
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "localhost",
-          "port": 8080
+        "act_middle_office": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_middle_office"
         ]
       }
     },
     "Win_Act_Dealer_Intervention": {
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "localhost",
-          "port": 8080
+        "act_dealer_interventions": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_dealer_interventions"
         ]
       }
     },
@@ -204,8 +204,8 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {

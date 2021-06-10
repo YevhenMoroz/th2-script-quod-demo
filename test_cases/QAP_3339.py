@@ -8,11 +8,16 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
-from win_gui_modules.order_book_wrappers import ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import ManualExecutingDetails, OrdersDetails, ExtractionDetail, OrderInfo,\
+    ExtractionAction
 from win_gui_modules.order_book_wrappers import CompleteOrdersDetails
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
+from custom.verifier import Verifier
+
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
+
 
 #from test_cases.QAP_1560 import TestCase
 
@@ -23,16 +28,18 @@ logger.setLevel(logging.INFO)
 
 def execute(report_id):
     rule_manager = RuleManager()
+    act2 = Stubs.win_act_order_book
 
     # Store case start time
     seconds, nanos = bca.timestamps()
     case_name = "QAP-3339"
 
+
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
 
     session_id = set_session_id()
-    #set_base(session_id, case_id)
+    set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
     username = Stubs.custom_config['qf_trading_fe_user_305']
@@ -144,6 +151,28 @@ def execute(report_id):
 
         call(service.manualExecution, manual_executing_details.build())
 
+        # verify
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", care_order_id])
+
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
+
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=
+                                                                                 [main_order_exec_status,
+                                                                                  main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        request = call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                 main_order_exec_status.name, "PartiallyFilled")]))
+
         #verify execution report2
         execution_report2_params = {
             'ClOrdID': care_order_id,
@@ -202,6 +231,28 @@ def execute(report_id):
         executions_details.set_settlement_date_offset(1)
 
         call(service.manualExecution, manual_executing_details.build())
+
+        # verify
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", care_order_id])
+
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
+
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=
+                                                                                 [main_order_exec_status,
+                                                                                  main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        request = call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                 main_order_exec_status.name, "Filled")]))
 
         #verify execution report2
         execution_report3_params = {

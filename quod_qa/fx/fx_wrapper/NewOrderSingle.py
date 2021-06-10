@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_wrapper.CaseParams import CaseParams
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -16,7 +16,7 @@ class NewOrderSingle():
     verifier = Stubs.verifier
     # check_order_status=None
 
-    def __init__(self, case_params=CaseParams):
+    def __init__(self, case_params=CaseParamsSellEsp):
         self.case_params=case_params
 
     # Send New Order Single
@@ -44,8 +44,8 @@ class NewOrderSingle():
         tif = self.prepeare_tif()
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new order ' + tif, self.case_params.connectivity, self.case_params.case_id,
-                bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivity)
+                'Send new order ' + tif, self.case_params.connectivityESP, self.case_params.case_id,
+                bca.message_to_grpc('NewOrderSingle', order_params, self.case_params.connectivityESP)
             ))
         return self
 
@@ -93,7 +93,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Pending',
                 bca.filter_to_grpc('ExecutionReport', ex_rep_pending, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -122,9 +122,9 @@ class NewOrderSingle():
             'CumQty': '0',
             'LastPx': '0',
             'LastQty': '0',
+            'QtyType': '0',
             'SettlDate': self.case_params.settldate.split(' ')[0],
             'SettlType': self.case_params.settltype,
-            'QtyType': '0',
             'OrderQty': self.case_params.orderqty,
             'Price': self.price,
             'SettlCurrency': self.case_params.settlcurrency,
@@ -143,7 +143,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
                 bca.filter_to_grpc('ExecutionReport', ex_rep_new, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -197,7 +197,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled' ,
                 bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )
@@ -258,7 +258,7 @@ class NewOrderSingle():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
                 bca.filter_to_grpc('ExecutionReport', final_ex_report, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params.connectivity, self.case_params.case_id
+                self.checkpoint, self.case_params.connectivityESP, self.case_params.case_id
             ),
             timeout=3000
         )

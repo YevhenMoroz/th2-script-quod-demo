@@ -167,8 +167,12 @@ def execute(report_id):
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, order_info["orderBook.quoteid"])
         # Step 3
         check_trades_book(case_base_request, ob_act, case_id, order_info["executions.id"], case_qty)
-        # Close Tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

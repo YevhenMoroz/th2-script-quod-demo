@@ -91,7 +91,7 @@ def execute(report_id):
     case_quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
-    quote_quote_sts_accepted = "Accepted"
+    quote_sts_accepted = "Accepted"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -112,26 +112,32 @@ def execute(report_id):
                         case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue_1)
+                              quote_sts_new, quote_sts_accepted, case_filter_venue_1)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_new, quote_sts_accepted, case_filter_venue)
 
         check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
-                         quote_quote_sts_accepted, case_filter_venue_1)
+                         quote_sts_accepted, case_filter_venue_1)
         check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
-                         quote_quote_sts_accepted, case_filter_venue)
+                         quote_sts_accepted, case_filter_venue)
 
         # Step 2
+        cancel_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
                               quote_sts_terminated, quote_sts_terminated, case_filter_venue_1)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_terminated, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_terminated, quote_sts_terminated, case_filter_venue)
 
         check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
                          quote_sts_terminated, case_filter_venue_1)
         check_quote_book(case_base_request, ar_service, case_id, case_quote_owner,
-                         quote_quote_sts_accepted, case_filter_venue)
-        # Close Tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
+                         quote_sts_terminated, case_filter_venue)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

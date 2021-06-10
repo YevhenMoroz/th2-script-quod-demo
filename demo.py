@@ -36,6 +36,9 @@ def test_run():
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD5',
         }
+
+        start = datetime.now()
+        print(f'start time = {start}')
         # QAP_1970.execute(report_id, test_cases)
         # QAP_1971.execute(report_id, test_cases)
         # QAP_1972.execute(report_id, test_cases)
@@ -48,6 +51,8 @@ def test_run():
         # QAP_1548.execute(report_id, test_cases)
         # QAP_1562.execute(report_id, test_cases)
         # QAP_1563.execute(report_id, test_cases)
+
+
 
         ui_tests.execute(report_id)
         # region Acceptance list RFQ Taker
@@ -125,7 +130,6 @@ def test_run():
         # QAP_992.execute(report_id)
         # QAP_1585.execute(report_id)
         # QAP_1713.execute(report_id)
-
         # QAP_2419.execute(report_id)
         # QAP_2514.execute(report_id)
         # QAP_2728.execute(report_id)
@@ -137,8 +141,41 @@ def test_run():
         # QAP_3589.execute(report_id)
         # endregion
 
+        # QAP_595.execute(report_id)
+        # QAP_751.execute(report_id)
+        # QAP_2774.execute(report_id)
+        # QAP_571.execute(report_id)
+        # QAP_2729.execute(report_id)
+        # my_test.execute(report_id)
+        # QAP_718.execute(report_id)
+        # QAP_2419.execute(report_id)
+        # pricing_tile_test.execute(report_id)
+        # QAP_1418.execute(report_id)
+        # QAP_2556.execute(report_id)
+        # QAP_569.execute(report_id)
+        # QAP_2117.execute(report_id)
+
+        # QAP_2855.execute(report_id)
+        # QAP_3563.execute(report_id)
+        # QAP_568.execute(report_id)
+        # QAP_833.execute(report_id)
+        # QAP_1115.execute(report_id)
+        # QAP_110.execute(report_id)
+        # QAP_2069.execute(report_id)
+        # QAP_2646.execute(report_id)
+        # QAP_2587.execute(report_id)
+        # QAP_2796.execute(report_id)
+        # QAP_992.execute(report_id)
+        # QAP_1560.execute(report_id)
+        # QAP_1536.execute(report_id)
+        # QAP_2825.execute(report_id)
+        # QAP_2555.execute(report_id)
+        # QAP_2038.execute(report_id)
+        # QAP_1599.execute(report_id)
+        # QAP_2034.execute(report_id)
 
 
+        print('duration time = ' + str(datetime.now() - start))
 
     except Exception:
         logging.error("Error execution", exc_info=True)
