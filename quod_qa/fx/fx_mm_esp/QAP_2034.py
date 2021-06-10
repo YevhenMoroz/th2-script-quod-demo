@@ -2,7 +2,6 @@ import logging
 import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1
 from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
@@ -85,10 +84,8 @@ def extract_price_from_pricing_tile(base_request, service):
 
 
 def check_price_on_pricing_tile(case_id, price, spot, pts):
-    expected_price = spot + pts / 10000
-    print(spot)
-    print(pts)
-    print(expected_price)
+    expected_price = spot + pts / 100
+
     verifier = Verifier(case_id)
     verifier.set_event_name("Check price")
     verifier.compare_values("Price", str(round(expected_price, 5)), str(price))
@@ -199,11 +196,11 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tiles
-    #         call(ar_service.closeRatesTile, base_details.build())
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tiles
+            call(ar_service.closeRatesTile, base_details.build())
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
