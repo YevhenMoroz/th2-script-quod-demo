@@ -3,7 +3,7 @@ import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.common_tools import round_decimals_up
+from quod_qa.common_tools import round_decimals_up, round_decimals_down
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
@@ -70,7 +70,7 @@ def extract_price_from_pricing_tile(base_request, service):
 
 
 def check_price_on_pricing_tile(case_id, price, spot, pts):
-    expected_price = spot + pts / 100
+    expected_price = spot + pts / 10000
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check price")
@@ -121,22 +121,24 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
     bid_pts_mm = float(response["rateTile.bidPts"])
     ask_pts_mm = float(response["rateTile.askPts"])
 
-    expected_bid_pts = bid_pts * (1 - (bid_base / 100))
-    expected_ask_pts = ask_pts * (1 + (ask_base / 100))
+    expected_bid_pts = bid_pts * (1 - (bid_base / 10000))
+    expected_ask_pts = ask_pts * (1 + (ask_base / 10000))
+    print(bid_pts)
+    print(bid_base)
+    print(expected_bid_pts)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Pts in Pricing tile")
-    verifier.compare_values("Bid pts", str(round(expected_bid_pts, 3)), str(bid_pts_mm))
-    verifier.compare_values("Ask pts", str(round_decimals_up(expected_ask_pts, 3)), str(ask_pts_mm))
+    verifier.compare_values("Bid pts", str(round_decimals_down(expected_bid_pts, 1)), str(bid_pts_mm))
+    verifier.compare_values("Ask pts", str(round_decimals_up(expected_ask_pts, 1)), str(ask_pts_mm))
     verifier.verify()
 
     return [bid_pts_mm, ask_pts_mm]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -146,14 +148,14 @@ def execute(report_id):
     base_details = BaseTileDetails(base=case_base_request)
 
     from_curr = "AUD"
-    to_curr = "BRL"
+    to_curr = "CAD"
     tenor = "1W"
     venue = "HSBC"
-    instrument = "AUD/BRL-1W"
+    instrument = "AUD/CAD-1W"
     client_tier = "Silver"
 
-    def_md_symbol_aud_brl = "AUD/BRL:SPO:REG:HSBC"
-    symbol_aud_brl = "AUD/BRL"
+    def_md_symbol_aud_cad = "AUD/CAD:SPO:REG:HSBC"
+    symbol_aud_cad = "AUD/CAD"
 
     try:
 
@@ -169,7 +171,7 @@ def execute(report_id):
         create_or_get_pricing_tile(base_details, cp_service)
         modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_aud_brl, symbol_aud_brl)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_aud_cad, symbol_aud_cad)).send_market_data_spot()
         esp_pts = extract_pts_from_esp(base_details, ar_service)
         mm_base = extract_column_base(base_details, cp_service)
         pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],
