@@ -127,18 +127,49 @@ class ModificationRequest:
 
 
 class RFQPanelValues(Enum):
-    QUOTE_TTL = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.QUOTE_TTL
-    BID_PRICE_PIPS = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.BID_PRICE_PIPS
-    ASK_PRICE_PIPS = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.ASK_PRICE_PIPS
-    NEAR_LEG_QUANTITY = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.NEAR_LEG_QUANTITY
-    FAR_LEG_QUANTITY = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.FAR_LEG_QUANTITY
-    PRICE_SPREAD = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.PRICE_SPREAD
-    BID_PRICE_LARGE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.BID_PRICE_LARGE
-    ASK_PRICE_LARGE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.ASK_PRICE_LARGE
-    REQUEST_STATE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_STATE
-    REQUEST_SIDE = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.REQUEST_SIDE
-    BUTTON_TEXT = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType.BUTTON_TEXT
-
+    short_path = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedType
+    QUOTE_TTL                            = short_path.QUOTE_TTL
+    BID_PRICE_PIPS                       = short_path.BID_PRICE_PIPS
+    ASK_PRICE_PIPS                       = short_path.ASK_PRICE_PIPS
+    NEAR_LEG_QUANTITY                    = short_path.NEAR_LEG_QUANTITY
+    FAR_LEG_QUANTITY                     = short_path.FAR_LEG_QUANTITY
+    PRICE_SPREAD                         = short_path.PRICE_SPREAD
+    BID_PRICE_LARGE                      = short_path.BID_PRICE_LARGE
+    ASK_PRICE_LARGE                      = short_path.ASK_PRICE_LARGE
+    REQUEST_STATE                        = short_path.REQUEST_STATE
+    REQUEST_SIDE                         = short_path.REQUEST_SIDE
+    BUTTON_TEXT                          = short_path.BUTTON_TEXT
+    INSTRUMENT_LABEL_CONTROL             = short_path.INSTRUMENT_LABEL_CONTROL
+    CURRENCY_VALUE_LABEL_CONTROL         = short_path.CURRENCY_VALUE_LABEL_CONTROL
+    NEAR_TENOR_LABEL                     = short_path.NEAR_TENOR_LABEL
+    FAR_TENOR_LABEL                      = short_path.FAR_TENOR_LABEL
+    NEAR_SETTL_DATE_LABEL                = short_path.NEAR_SETTL_DATE_LABEL
+    FAR_SETTL_DATE_LABEL                 = short_path.FAR_SETTL_DATE_LABEL
+    PARTY_VALUE_LABEL_CONTROL            = short_path.PARTY_VALUE_LABEL_CONTROL
+    REQUEST_SIDE_VALUE_LABEL_CONTROL     = short_path.REQUEST_SIDE_VALUE_LABEL_CONTROL
+    FILL_SIDE_VALUE_LABEL_CONTROL        = short_path.FILL_SIDE_VALUE_LABEL_CONTROL
+    CREATION_VALUE_LABEL_CONTROL         = short_path.CREATION_VALUE_LABEL_CONTROL
+    BID_NEAR_POINTS_VALUE_LABEL          = short_path.BID_NEAR_POINTS_VALUE_LABEL
+    BID_FAR_POINTS_VALUE_LABEL           = short_path.BID_FAR_POINTS_VALUE_LABEL
+    BID_NEAR_PRICE_VALUE_LABEL           = short_path.BID_NEAR_PRICE_VALUE_LABEL
+    BID_FAR_PRICE_VALUE_LABEL            = short_path.BID_FAR_PRICE_VALUE_LABEL
+    BID_VALUE_LABEL                      = short_path.BID_VALUE_LABEL
+    ASK_VALUE_LABEL                      = short_path.ASK_VALUE_LABEL
+    ASK_NEAR_POINTS_VALUE_LABEL          = short_path.ASK_NEAR_POINTS_VALUE_LABEL
+    ASK_FAR_POINTS_VALUE_LABEL           = short_path.ASK_FAR_POINTS_VALUE_LABEL
+    ASK_NEAR_PRICE_VALUE_LABEL           = short_path.ASK_NEAR_PRICE_VALUE_LABEL
+    ASK_FAR_PRICE_VALUE_LABEL            = short_path.ASK_FAR_PRICE_VALUE_LABEL
+    OPPOSITE_NEAR_BID_QTY_VALUE_LABEL    = short_path.OPPOSITE_NEAR_BID_QTY_VALUE_LABEL
+    OPPOSITE_NEAR_ASK_QTY_VALUE_LABEL    = short_path.OPPOSITE_NEAR_ASK_QTY_VALUE_LABEL
+    OPPOSITE_FAR_BID_QTY_VALUE_LABEL     = short_path.OPPOSITE_FAR_BID_QTY_VALUE_LABEL
+    OPPOSITE_FAR_ASK_QTY_VALUE_LABEL     = short_path.OPPOSITE_FAR_ASK_QTY_VALUE_LABEL
+    IS_BID_PRICE_PIPS_ENABLED            = short_path.IS_BID_PRICE_PIPS_ENABLED
+    IS_ASK_PRICE_PIPS_ENABLED            = short_path.IS_ASK_PRICE_PIPS_ENABLED
+    IS_NEAR_LEG_QUANTITY_ENABLED         = short_path.IS_NEAR_LEG_QUANTITY_ENABLED
+    IS_FAR_LEG_QUANTITY_ENABLED          = short_path.IS_FAR_LEG_QUANTITY_ENABLED
+    IS_PRICE_SPREAD_ENABLED              = short_path.IS_PRICE_SPREAD_ENABLED
+    IS_BID_PRICE_LARGE_ENABLED           = short_path.IS_BID_PRICE_LARGE_ENABLED
+    IS_ASK_PRICE_LARGE_ENABLED           = short_path.IS_ASK_PRICE_LARGE_ENABLED
 
 class RFQExtractionDetailsRequest:
     def __init__(self, base: common_pb2.EmptyRequest = None):
@@ -185,6 +216,37 @@ class RFQExtractionDetailsRequest:
 
     def extract_button_text(self, name: str):
         self.extract_value(RFQPanelValues.BUTTON_TEXT, name)
+    def extract_instrument_label_control(self, name: str):    self.extract_value(RFQPanelValues.INSTRUMENT_LABEL_CONTROL, name)
+    def extract_currency_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.CURRENCY_VALUE_LABEL_CONTROL, name)
+    def extract_near_tenor_label(self, name: str):    self.extract_value(RFQPanelValues.NEAR_TENOR_LABEL, name)
+    def extract_far_tenor_label(self, name: str):    self.extract_value(RFQPanelValues.FAR_TENOR_LABEL, name)
+    def extract_near_settl_date_label(self, name: str):    self.extract_value(RFQPanelValues.NEAR_SETTL_DATE_LABEL, name)
+    def extract_far_settl_date_label(self, name: str):    self.extract_value(RFQPanelValues.FAR_SETTL_DATE_LABEL, name)
+    def extract_party_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.PARTY_VALUE_LABEL_CONTROL, name)
+    def extract_request_side_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.REQUEST_SIDE_VALUE_LABEL_CONTROL, name)
+    def extract_fill_side_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.FILL_SIDE_VALUE_LABEL_CONTROL, name)
+    def extract_creation_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.CREATION_VALUE_LABEL_CONTROL, name)
+    def extract_bid_near_points_value_label(self, name: str):    self.extract_value(RFQPanelValues.BID_NEAR_POINTS_VALUE_LABEL, name)
+    def extract_bid_far_points_value_label(self, name: str):    self.extract_value(RFQPanelValues.BID_FAR_POINTS_VALUE_LABEL, name)
+    def extract_bid_near_price_value_label(self, name: str):    self.extract_value(RFQPanelValues.BID_NEAR_PRICE_VALUE_LABEL, name)
+    def extract_bid_far_price_value_label(self, name: str):    self.extract_value(RFQPanelValues.BID_FAR_PRICE_VALUE_LABEL, name)
+    def extract_bid_value_label(self, name: str):    self.extract_value(RFQPanelValues.BID_VALUE_LABEL, name)
+    def extract_ask_value_label(self, name: str):    self.extract_value(RFQPanelValues.ASK_VALUE_LABEL, name)
+    def extract_ask_near_points_value_label(self, name: str):    self.extract_value(RFQPanelValues.ASK_NEAR_POINTS_VALUE_LABEL, name)
+    def extract_ask_far_points_value_label(self, name: str):    self.extract_value(RFQPanelValues.ASK_FAR_POINTS_VALUE_LABEL, name)
+    def extract_ask_near_price_value_label(self, name: str):    self.extract_value(RFQPanelValues.ASK_NEAR_PRICE_VALUE_LABEL, name)
+    def extract_ask_far_price_value_label(self, name: str):    self.extract_value(RFQPanelValues.ASK_FAR_PRICE_VALUE_LABEL, name)
+    def extract_opposite_near_bid_qty_value_label(self, name: str):    self.extract_value(RFQPanelValues.OPPOSITE_NEAR_BID_QTY_VALUE_LABEL, name)
+    def extract_opposite_near_ask_qty_value_label(self, name: str):    self.extract_value(RFQPanelValues.OPPOSITE_NEAR_ASK_QTY_VALUE_LABEL, name)
+    def extract_opposite_far_bid_qty_value_label(self, name: str):    self.extract_value(RFQPanelValues.OPPOSITE_FAR_BID_QTY_VALUE_LABEL, name)
+    def extract_opposite_far_ask_qty_value_label(self, name: str):    self.extract_value(RFQPanelValues.OPPOSITE_FAR_ASK_QTY_VALUE_LABEL, name)
+    def extract_is_bid_price_pips_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_BID_PRICE_PIPS_ENABLED, name)
+    def extract_is_ask_price_pips_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_ASK_PRICE_PIPS_ENABLED, name)
+    def extract_is_near_leg_quantity_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_NEAR_LEG_QUANTITY_ENABLED, name)
+    def extract_is_far_leg_quantity_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_FAR_LEG_QUANTITY_ENABLED, name)
+    def extract_is_price_spread_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_PRICE_SPREAD_ENABLED, name)
+    def extract_is_bid_price_large_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_BID_PRICE_LARGE_ENABLED, name)
+    def extract_is_ask_price_large_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_ASK_PRICE_LARGE_ENABLED, name)
 
     def extract_value(self, field: RFQPanelValues, name: str):
         extracted_value = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedValue()

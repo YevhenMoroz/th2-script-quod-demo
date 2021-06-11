@@ -446,17 +446,50 @@ def extract_cp_rates_panel(base_tile_details, cp_service):
 def extract_di_panel(base_request, dealer_intervention_service):
     extraction_request = RFQExtractionDetailsRequest(base=base_request)
     extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
-    extraction_request.extract_price_spread("rfqDetails.priceSpread")
-    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
-    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-    extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
-    extraction_request.extract_near_leg_quantity("rfqDetails.nerLegQty")
-    # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
-    extraction_request.extract_request_state("rfqDetails.requestState")
-    extraction_request.extract_request_side("rfqDetails.requestSide")
-    extraction_request.extract_button_text("rfqDetails.buttonText")
+    # extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
+    # extraction_request.extract_price_spread("rfqDetails.priceSpread")
+    # extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
+    # extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
+    # extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    # extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
+    # extraction_request.extract_near_leg_quantity("rfqDetails.nerLegQty")
+    # # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
+    # extraction_request.extract_request_state("rfqDetails.requestState")
+    # extraction_request.extract_request_side("rfqDetails.requestSide")
+    # extraction_request.extract_button_text("rfqDetails.buttonText")
+    dmi_rfq = 'rfqDetails'
+    # extraction_request.extract_instrument_label_control(f'{dmi_rfq}.instrument_label_control')
+    # extraction_request.extract_currency_value_label_control(f'{dmi_rfq}.currency_value_label_control')
+    # extraction_request.extract_near_tenor_label(f'{dmi_rfq}.near_tenor_label')
+    # extraction_request.extract_far_tenor_label(f'{dmi_rfq}.far_tenor_label')
+    # extraction_request.extract_near_settl_date_label(f'{dmi_rfq}.near_settl_date_label')
+    # extraction_request.extract_far_settl_date_label(f'{dmi_rfq}.far_settl_date_label')
+    # extraction_request.extract_party_value_label_control(f'{dmi_rfq}.party_value_label_control')
+    # extraction_request.extract_request_side_value_label_control(f'{dmi_rfq}.request_side_value_label_control')
+    # extraction_request.extract_fill_side_value_label_control(f'{dmi_rfq}.fill_side_value_label_control')
+    # extraction_request.extract_creation_value_label_control(f'{dmi_rfq}.creation_value_label_control')
+    # extraction_request.extract_bid_near_points_value_label(f'{dmi_rfq}.bid_near_points_value_label')
+    # extraction_request.extract_bid_far_points_value_label(f'{dmi_rfq}.bid_far_points_value_label')
+    # extraction_request.extract_bid_near_price_value_label(f'{dmi_rfq}.bid_near_price_value_label')
+    # extraction_request.extract_bid_far_price_value_label(f'{dmi_rfq}.bid_far_price_value_label')
+    # extraction_request.extract_bid_value_label(f'{dmi_rfq}.bid_value_label')
+    # extraction_request.extract_ask_value_label(f'{dmi_rfq}.ask_value_label')
+    # extraction_request.extract_ask_near_points_value_label(f'{dmi_rfq}.ask_near_points_value_label')
+    # extraction_request.extract_ask_far_points_value_label(f'{dmi_rfq}.ask_far_points_value_label')
+    # extraction_request.extract_ask_near_price_value_label(f'{dmi_rfq}.ask_near_price_value_label')
+    # extraction_request.extract_ask_far_price_value_label(f'{dmi_rfq}.ask_far_price_value_label')
+    # extraction_request.extract_opposite_near_bid_qty_value_label(f'{dmi_rfq}.opposite_near_bid_qty_value_label')
+    # extraction_request.extract_opposite_near_ask_qty_value_label(f'{dmi_rfq}.opposite_near_ask_qty_value_label')
+    # extraction_request.extract_opposite_far_bid_qty_value_label(f'{dmi_rfq}.opposite_far_bid_qty_value_label')
+    # extraction_request.extract_opposite_far_ask_qty_value_label(f'{dmi_rfq}.opposite_far_ask_qty_value_label')
+    #
+    extraction_request.extract_is_bid_price_pips_enabled(f'{dmi_rfq}.is_bid_price_pips_enabled')
+    extraction_request.extract_is_ask_price_pips_enabled(f'{dmi_rfq}.is_ask_price_pips_enabled')
+    # extraction_request.extract_is_near_leg_quantity_enabled(f'{dmi_rfq}.is_near_leg_quantity_enabled')
+    # extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
+    extraction_request.extract_is_price_spread_enabled(f'{dmi_rfq}.is_price_spread_enabled')
+    extraction_request.extract_is_bid_price_large_enabled(f'{dmi_rfq}.is_bid_price_large_enabled')
+    extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
 
     result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
     for R in result:
@@ -656,13 +689,13 @@ def execute(report_id, session_id):
         # endregion
 
         # region Dealer Intervention
-        # extract_di_panel(base_request, dealer_interventions_service)
+        extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # endregion
 
         # region example of Drab&Drop
-        coords = open_ar_window_move_left(ar_service, base_request)
-        ar_pilots_to_actions(ar_service, base_request, coords)
+        # coords = open_ar_window_move_left(ar_service, base_request)
+        # ar_pilots_to_actions(ar_service, base_request, coords)
         # endregion
     except Exception as e:
         logging.error("Error execution", exc_info=True)
