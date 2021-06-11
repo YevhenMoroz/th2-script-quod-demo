@@ -45,8 +45,9 @@ def rule_creation():
     ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD1", False, qty, price)
     ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDD2", False, qty, price)
 
-    ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDL2", True, 1100, 40)
-    return [ioc_rule_1, ioc_rule_2, ioc_rule_3]
+    # ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, "KEPLER", "QDL2", True, 1100, 40)
+    fok_rule = rule_manager.add_NewOrdSingle_FOK(connectivity_buy_side,"KEPLER","QDL2", True, 45)
+    return [ioc_rule_1, ioc_rule_2, fok_rule]
 
 
 def rule_destroyer(list_rules):
@@ -256,7 +257,7 @@ def execute(report_id):
         verifier_310_buy_side.CheckExecutionReport(er_3, responce_new_order_single, key_parameters=['Side', 'ExecType', 'ExDestination'], direction='SECOND', case=case_id_2, message_name='ExecutionReport from QDD2')
 
 
-        # Check that algo send dday order on QUODLIT1
+        # Check that algo send FOK order on QUODLIT3
 
         case_id_3 = bca.create_event("Lit phase", case_id)
 
@@ -264,10 +265,10 @@ def execute(report_id):
         nos_4 = dict(
             nos_2,
             ExDestination ='QDL2',
-            TimeInForce = 3,
+            TimeInForce = 4,
             Price=40
         )
-        verifier_310_buy_side.CheckNewOrderSingle(nos_4, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price'], case=case_id_3, message_name='NewOrderSingle to QDL2')
+        verifier_310_buy_side.CheckNewOrderSingle(nos_4, responce_new_order_single,key_parameters = ['ExDestination', 'Side', 'Price', 'TimeInForce'], case=case_id_3, message_name='NewOrderSingle to QDL2')
 
 
         time.sleep(2)
@@ -287,10 +288,10 @@ def execute(report_id):
             'Side': side,
             'AvgPx': 0,
             'Price': 40,
-            'TimeInForce': 3,
+            'TimeInForce': 4,
             'LeavesQty': qty
         }
-        verifier_310_buy_side.CheckExecutionReport(er_4, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus'],direction='SECOND', case=case_id_3, message_name='ExecutionReport pending new')
+        verifier_310_buy_side.CheckExecutionReport(er_4, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus', 'TimeInForce'],direction='SECOND', case=case_id_3, message_name='ExecutionReport pending new')
 
         er_5 = dict(
             er_4,
