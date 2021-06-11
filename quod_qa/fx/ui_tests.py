@@ -14,10 +14,10 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
-                                                       ESPTileOrderSide)
+                                                       ESPTileOrderSide, MoveESPOrdedrTicketRequest)
 from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
                                                      PlaceRateTileTableOrderRequest, RatesTileTableOrdSide)
-from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
@@ -315,7 +315,7 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     order_ticket.set_custom_algo('Quod TWAP')
     order_ticket.set_strategy('TWAPBROKER')
     order_ticket.set_child_strategy('BasicTaker')
-    order_ticket.set_care_order('kbrit2 (HeadOfSaleDealer)', True) # Desk Market Marking FX (CN)
+    order_ticket.set_care_order('kbrit2 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
     # order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
 
     order_ticket.set_place()
@@ -426,7 +426,6 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     request.get_child_strategy();
     request.get_is_algo_checked();
 
-
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
     for k in result:
@@ -434,16 +433,17 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
 
 
 def extract_cp_rates_panel(base_tile_details, cp_service):
-    values = ExtractRatesTileValues(details= base_tile_details)
+    values = ExtractRatesTileValues(details=base_tile_details)
 
     s = 'RatesTile0'
     values.extract_instrument(f'{s}.instrument')
     values.extract_client_tier(f'{s}.client_tier')
 
-    result =  call(cp_service.extractRateTileValues, values.build())
+    result = call(cp_service.extractRateTileValues, values.build())
     print(result)
 
-def extract_di_panel(base_request, dealer_intervention_service ):
+
+def extract_di_panel(base_request, dealer_intervention_service):
     extraction_request = RFQExtractionDetailsRequest(base=base_request)
     extraction_request.set_extraction_id("ExtractionId")
     extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
@@ -509,6 +509,7 @@ def place_esp_by_tob_buy(base_request):
     rfq_request.set_action(ESPTileOrderSide.BUY)
     call(service.placeESPOrder, rfq_request.build())
 
+
 def place_esp_by_tob_sell(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
@@ -518,11 +519,44 @@ def place_esp_by_tob_sell(base_request):
 
 
 def open_ot_by_doubleclick_row(btd, cp_service, row):
-    request = PlaceRateTileTableOrderRequest(btd,row, RatesTileTableOrdSide.SELL  )
-    call( cp_service.placeRateTileTableOrder, request.build())
+    request = PlaceRateTileTableOrderRequest(btd, row, RatesTileTableOrdSide.SELL)
+    call(cp_service.placeRateTileTableOrder, request.build())
 
 
-def execute(report_id):
+def open_ar_window_move_left(ar_service, empty_request):
+    print('open_ar_window_move_left')
+    move_window_details = MoveWindowDetails(base=empty_request)
+    move_window_details.set_from_offset('800', '15')
+    move_window_details.set_to_offset('-200', '0')
+
+    positions = call(ar_service.arWindowPilotsOrderBookRequest, move_window_details.build())
+    print(positions)
+    return positions
+
+
+def ar_pilots_to_actions(ar_service, empty_request, positions):
+    print('resize_order_ticket')
+    move_window_details = MoveWindowDetails(base=empty_request)
+    move_window_details.set_from_offset('950', '50')
+    move_window_details.set_to_offset(str(950+990), str(50+125))
+
+    positions = call(ar_service.arWindowPilotsOrderBookRequest, move_window_details.build())
+    print(positions)
+    return positions
+
+
+def get_height(positions, key) -> int:
+    # {'newPosition': 'Left:1966 Top:137 Width:570 Height:837', 'initialPosition': 'Left:1016 Top:137 Width:570 Height:837'}
+    return int(positions[key].split(' ')[3].split(':')[1])
+
+
+def get_width(positions, key) -> int:
+    # {'newPosition': 'Left:1966 Top:137 Width:570 Height:837', 'initialPosition': 'Left:1016 Top:137 Width:570 Height:837'}
+    return int(positions[key].split(' ')[2].split(':')[1])
+
+
+
+def execute(report_id, session_id):
     # region Preparation
 
     common_act = Stubs.win_act
@@ -535,12 +569,12 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    print(f'{case_name} started {datetime.now()}')
 
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     base_tile_data = BaseTileData(base=base_request)
-    base_tile_details = BaseTileDetails(base= base_request)
+    base_tile_details = BaseTileDetails(base=base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
@@ -569,7 +603,7 @@ def execute(report_id):
 
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
-        set_order_ticket_options(option_service, base_request)
+        # set_order_ticket_options(option_service, base_request)
         # set_order_ticket_options(option_service, base_request)
         # set_one_click_mod(option_service, base_request)
         # endregion
@@ -594,6 +628,7 @@ def execute(report_id):
         # place_esp_by_ask_btn(base_request)
         # place_esp_by_tob_buy(base_request)
         # place_esp_by_tob_sell(base_request)
+
         # endregion
 
         # region My Orders ↓
@@ -624,8 +659,11 @@ def execute(report_id):
         # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # endregion
-        # close_fe_2(case_id, session_id)
 
+        # region example of Drab&Drop
+        coords = open_ar_window_move_left(ar_service, base_request)
+        ar_pilots_to_actions(ar_service, base_request, coords)
+        # endregion
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 

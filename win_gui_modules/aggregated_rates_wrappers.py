@@ -6,7 +6,7 @@ from th2_grpc_act_gui_quod import ar_operations_pb2
 from th2_grpc_act_gui_quod.ar_operations_pb2 import CellExtractionDetails, ActionsRatesTile
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
-from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -757,7 +757,7 @@ class PlaceESPOrder:
         return self.__request_details
 
 
-class MoveESPOrderTicketRequest:
+class MoveESPOrdedrTicketRequest:
     def __init__(self, base: EmptyRequest = None):
         self.base = base
         self.request = ar_operations_pb2.MoveESPOrderTicketRequest()
