@@ -23,7 +23,7 @@ def execute(report_id):
     price = "20"
     client = "CLIENT1"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
+    lookup = "VETO"
     order_type = "Limit"
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
@@ -37,7 +37,7 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient='vskulinec', price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"

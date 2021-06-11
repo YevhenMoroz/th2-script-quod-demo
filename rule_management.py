@@ -203,4 +203,3 @@ if __name__ == '__main__':
                                                                   2, 2000, 2)
     # rule_manager.remove_all_rules()
     rule_manager.print_active_rules()
-    Stubs.factory.close()
