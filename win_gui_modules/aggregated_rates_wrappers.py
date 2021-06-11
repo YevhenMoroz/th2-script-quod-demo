@@ -705,6 +705,10 @@ class ExtractedType(Enum):
     price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
     price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
     qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+    instrument = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.INSTRUMENT
+    order_type = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.ORDER_TYPE
+    time_in_force = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.TIME_IN_FORCE
+    side_button = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.SIDE_BUTTON
 
 
 class PlaceESPOrder:
@@ -737,6 +741,18 @@ class PlaceESPOrder:
 
     def extract_pips(self, name: str):
         self.extract_value(ExtractedType.price_pips, name)
+
+    def extract_instrument(self, name: str):
+        self.extract_value(ExtractedType.instrument, name)
+
+    def extract_order_type(self, name: str):
+        self.extract_value(ExtractedType.order_type, name)
+
+    def extract_time_in_force(self, name: str):
+        self.extract_value(ExtractedType.time_in_force, name)
+
+    def extract_side_button(self, name: str):
+        self.extract_value(ExtractedType.side_button, name)
 
     def extract_value(self, field: ExtractedType, name: str):
         extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
