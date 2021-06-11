@@ -86,8 +86,8 @@ def check_spread(base_request, service, case_id):
     extract_value_request.extract_bid_pips("rates_tile.bid_pips")
     response = call(service.extractRateTileValues, extract_value_request.build())
 
-    bid = float(response["rates_tile.bid_large"] + response["rates_tile.bid_pips"])
-    ask = float(response["rates_tile.ask_large"] + response["rates_tile.ask_pips"])
+    bid = float(response["rates_tile.bid_large"]) + float(response["rates_tile.bid_pips"])
+    ask = float(response["rates_tile.ask_large"]) + float(response["rates_tile.ask_pips"])
     extracted_spread = response["rates_tile.spread"]
     calculated_spread = round((ask - bid) * 10000, 1)
 
@@ -122,7 +122,7 @@ def compare_spreads(case_id, spread_before, spread_after, pips, *args):
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service

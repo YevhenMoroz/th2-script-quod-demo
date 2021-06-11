@@ -211,9 +211,10 @@ def execute(report_id, session_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        md.send_md_unsubscribe()
+
         try:
             # Close tile
+            md.send_md_unsubscribe()
             call(cp_service.closeRatesTile, base_details.build())
 
         except Exception:

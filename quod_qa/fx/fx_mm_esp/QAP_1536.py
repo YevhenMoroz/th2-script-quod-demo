@@ -53,7 +53,7 @@ def check_date(base_request, service, case_id, expected_date):
     now = datetime.now()
     extracted_value = response["ratesTile.Date"]
     date = extracted_value + "-" + str(now.year)
-    extracted_date = datetime.strptime(date, "%d-%B-%Y").strftime('%Y-%m-%d %H:%M:%S')
+    extracted_date = datetime.strptime(date, "%d-%b-%Y").strftime('%Y-%m-%d %H:%M:%S')
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Tenor date on pricing tile")
@@ -85,19 +85,19 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         # Step 2
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        check_instrument(base_details, cp_service, case_id, instrument, client_tier)
+    #     modify_rates_tile(base_details, cp_service, instrument, client_tier)
+    #     check_instrument(base_details, cp_service, case_id, instrument, client_tier)
         check_date(base_details, cp_service, case_id, date_spo)
-        # Step 3
-        modify_rates_tile(base_details, cp_service, wrong_instrument, client_tier)
-        check_instrument(base_details, cp_service, case_id, instrument, client_tier)
-
+    #     # Step 3
+    #     modify_rates_tile(base_details, cp_service, wrong_instrument, client_tier)
+    #     check_instrument(base_details, cp_service, case_id, instrument, client_tier)
+    #
     except Exception:
         logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    # finally:
+    #     try:
+    #         # Close tile
+    #         call(cp_service.closeRatesTile, base_details.build())
+    #
+    #     except Exception:
+    #         logging.error("Error execution", exc_info=True)
