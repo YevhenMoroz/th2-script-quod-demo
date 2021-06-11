@@ -2,7 +2,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
     TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
-    TemplateOrderCancelReplaceExecutionReport
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -14,7 +14,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
 
     # Console output list of IDs active rules
     @staticmethod
@@ -86,7 +86,7 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int, delay: int):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                                account=account,
@@ -96,7 +96,7 @@ class RuleManager:
                                                                delay= delay))
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: int):
+    def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: float):
         return Stubs.simulator.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
                                                              account=account,
@@ -189,11 +189,21 @@ class RuleManager:
                                                                      trade=trade
                                             ))
 
+    @staticmethod
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+        return Stubs.simulator.createOrderCancelReplaceRequest(
+            request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
+                                                      account=account,
+                                                      exdestination=exdestination,
+                                                      modify=modify
+                                            ))
+
+
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    #rule_manager.remove_rule_by_id()  
+    #rule_manager.remove_rule_by_id() 
     rule_manager.print_active_rules()
     #rule_manager.remove_all_rules()
