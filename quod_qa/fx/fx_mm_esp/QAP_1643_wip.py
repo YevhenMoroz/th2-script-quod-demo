@@ -3,7 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
@@ -19,6 +19,12 @@ def modify_rates_tile(base_request, service, instrument, client, pips):
     modify_request.set_client_tier(client)
     modify_request.set_pips(pips)
     call(service.modifyRatesTile, modify_request.build())
+
+
+def select_line(base_request, service, line):
+    modify_request = SelectRowsRequest(details=base_request)
+    modify_request.set_row_numbers(line)
+    call(service.selectRows, modify_request.build())
 
 
 def modify_spread(base_request, service, *args):
@@ -129,11 +135,13 @@ def execute(report_id, session_id):
 
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
-    instrument = "EUR/USD-1W"
+    instrument = "EUR/USD-Spot"
     client_tier = "Silver"
     pips = "2"
+    default_base="0.2"
 
     try:
+
         if not Stubs.frontend_is_open:
             prepare_fe_2(case_id, session_id)
         else:
@@ -141,6 +149,7 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier, pips)
+        select_line(base_details, cp_service, 2)
         # Step 2
         spread_before = check_spread(base_details, cp_service, case_id)
         # Step 3

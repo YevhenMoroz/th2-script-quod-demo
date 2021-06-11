@@ -110,7 +110,7 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_venue = "HSB"
@@ -118,15 +118,15 @@ def execute(report_id):
     case_near_tenor = "MAR IMM"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
-    venue_list = ["CIT", "HSB"]
+    case_client = "ASPECT_CITI"
+    venue_list = ["CITI", "HSBC"]
     quote_sts_new = 'New'
     case_instr_type = 'FXForward'
     quote_quote_sts_accepted = "Accepted"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service

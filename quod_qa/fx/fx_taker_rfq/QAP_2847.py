@@ -76,15 +76,15 @@ def check_quote_book(base_request, service, case_id, owner, quote_sts, venue):
 # TODO Change in webadmin->Venue->CITIR->SuportQuoteCancel
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = ["CIT", "HSB"]
+    case_venue = ["CITI", "HSBC"]
     case_filter_venue = "CITI"
     case_filter_venue_1 = "HSBC"
     case_qty = 10000000
@@ -95,7 +95,7 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 

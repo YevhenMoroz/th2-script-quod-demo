@@ -1,9 +1,7 @@
 import logging
-import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.common_tools import round_decimals_up
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
@@ -24,8 +22,7 @@ def modify_esp_tile(base_request, service, from_c, to_c, tenor, venue):
     modify_request.set_instrument(from_c, to_c, tenor)
     from win_gui_modules.aggregated_rates_wrappers import ContextActionRatesTile
     venue_filter = ContextActionRatesTile.create_venue_filter(venue)
-    add_agr_rates = ContextActionRatesTile.add_aggregated_rates(details=base_request)
-    modify_request.add_context_actions([venue_filter, add_agr_rates])
+    modify_request.add_context_actions([venue_filter])
     call(service.modifyRatesTile, modify_request.build())
 
 
@@ -41,17 +38,17 @@ def modify_pricing_tile(base_request, service, instrument, client):
     call(service.modifyRatesTile, modify_request.build())
 
 
-def extract_pts_from_esp(base_request, service):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
+def extract_price_from_esp(base_request, service):
+    from win_gui_modules.aggregated_rates_wrappers import ExtractRatesTileDataRequest
+    extraction_value = ExtractRatesTileDataRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Pts", "Pts"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Pts", "Pts"))
-    response = call(service.extractESPAggrRatesTableValues, extract_table_request.build())
-    bid_pts = float(response["rateTileBid.Pts"])
-    ask_pts = float(response["rateTileAsk.Pts"])
-    return [bid_pts, ask_pts]
+    extraction_value.set_extraction_id(extraction_id)
+    extraction_value.extract_best_bid("ratesTile.Bid")
+    extraction_value.extract_best_ask("ratesTile.Ask")
+    response = call(service.extractRatesTileValues, extraction_value.build())
+    bid = float(response["ratesTile.Bid"])
+    ask = float(response["ratesTile.Ask"])
+    return [bid, ask]
 
 
 def extract_price_from_pricing_tile(base_request, service):
@@ -69,23 +66,13 @@ def extract_price_from_pricing_tile(base_request, service):
     return [bid, ask]
 
 
-def check_price_on_pricing_tile(case_id, price, spot, pts):
-    expected_price = spot + pts / 100
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check price")
-    verifier.compare_values("Price", str(round(expected_price, 5)), str(price))
-    verifier.verify()
-
-
 def extract_column_base(base_request, service):
-    from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
     extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
     extract_table_request.set_row_number(1)
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.askBase", "Base (%)"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.bidBase", "Base (%)"))
+    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base (b)"))
+    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base (b)"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
 
     bid_base = float(response["rateTile.bidBase"])
@@ -93,50 +80,26 @@ def extract_column_base(base_request, service):
     return [bid_base, ask_base]
 
 
-def extract_column_spot(base_request, service):
-    from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askSpot", "Spot"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidSpot", "Spot"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-
-    bid_spot = float(response["rateTile.bidSpot"])
-    ask_spot = float(response["rateTile.askSpot"])
-    return [bid_spot, ask_spot]
-
-
-def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base, ask_base):
-    from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askPts", "Pts"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidPts", "Pts"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-
-    bid_pts_mm = float(response["rateTile.bidPts"])
-    ask_pts_mm = float(response["rateTile.askPts"])
-
-    expected_bid_pts = bid_pts * (1 - (bid_base / 100))
-    expected_ask_pts = ask_pts * (1 + (ask_base / 100))
-
+def check_bid_price(case_id, esp_bid, pricing_price, base):
+    expected_price = esp_bid * (1 - base / 10000)
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check Pts in Pricing tile")
-    verifier.compare_values("Bid pts", str(round(expected_bid_pts, 3)), str(bid_pts_mm))
-    verifier.compare_values("Ask pts", str(round_decimals_up(expected_ask_pts, 3)), str(ask_pts_mm))
+    verifier.set_event_name("Check bid price on Pricing tile")
+    verifier.compare_values("Bid price", str(round(expected_price, 5)), str(pricing_price))
     verifier.verify()
 
-    return [bid_pts_mm, ask_pts_mm]
+
+def check_ask_price(case_id, esp_bid, pricing_price, base):
+    expected_price = esp_bid * (1 + base / 10000)
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check ask price on Pricing tile")
+    verifier.compare_values("ask price", str(round(expected_price, 5)), str(pricing_price))
+    verifier.verify()
 
 
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -145,15 +108,15 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
 
-    from_curr = "EUR"
-    to_curr = "JPY"
-    tenor = "1W"
+    from_curr = "AUD"
+    to_curr = "CAD"
+    tenor = "Spot"
     venue = "HSBC"
-    instrument = "EUR/JPY-1W"
+    instrument = "AUD/CAD-Spot"
     client_tier = "Silver"
 
-    def_md_symbol_eur_jpy = "EUR/JPY:SPO:REG:HSBC"
-    symbol_eur_jpy = "EUR/JPY"
+    def_md_symbol_aud_cad = "AUD/CAD:SPO:REG:HSBC"
+    symbol_aud_cad = "AUD/CAD"
 
     try:
 
@@ -169,16 +132,12 @@ def execute(report_id, session_id):
         create_or_get_pricing_tile(base_details, cp_service)
         modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_jpy, symbol_eur_jpy)).send_market_data_spot()
-        esp_pts = extract_pts_from_esp(base_details, ar_service)
-        mm_base = extract_column_base(base_details, cp_service)
-        pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],
-                                  mm_base[0], mm_base[1])
-        spot_mm = extract_column_spot(base_details, cp_service)
-        price_mm = extract_price_from_pricing_tile(base_details, cp_service)
-
-        check_price_on_pricing_tile(case_id, price_mm[0], spot_mm[0], pts_mm[0])
-        check_price_on_pricing_tile(case_id, price_mm[1], spot_mm[1], pts_mm[1])
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_aud_cad, symbol_aud_cad)).send_market_data_spot()
+        esp_price = extract_price_from_esp(base_details, ar_service)
+        pricing_tile_price = extract_price_from_pricing_tile(base_details, cp_service)
+        base = extract_column_base(base_details, cp_service)
+        check_bid_price(case_id, esp_price[0], pricing_tile_price[0], base[0])
+        check_ask_price(case_id, esp_price[1], pricing_tile_price[1], base[1])
 
     except Exception:
         logging.error("Error execution", exc_info=True)
