@@ -27,15 +27,14 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     test_cases = {
-        'qap_1560': {
-            **channels,
-            'case_id': bca.create_event_id(),
-            'Connectivity': 'fix-fh-314-luna'
-            # 'Connectivity': 'fix-qsesp-303'
-        }
+        'case_id': bca.create_event_id(),
+        'TraderConnectivity': 'gtwquod5-fx',
+        'Account': 'MMCLIENT1',
+        'SenderCompID': 'QUODFX_UAT',
+        'TargetCompID': 'QUOD5',
     }
 
     def acceptance_rfq_taker(report_id, session_id):
