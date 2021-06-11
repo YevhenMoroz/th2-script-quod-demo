@@ -23,7 +23,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 connectivity = "gtwquod5"  # 'fix-bs-310-columbia' # gtwquod5 fix-ss-310-columbia-standart   # fix-ss-back-office
-rule_connectivity = "gtwquod5"
+rule_connectivity = "fix-bs-310-columbia"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -270,14 +270,15 @@ def cancel_order(request):
         logger.error("Error execution", exc_info=True)
 
 
-def split_limit_order(request, order_id, qty, type):
+def split_limit_order(request, qty, type, price):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
     order_split_limit.set_order_type(type)
+    order_split_limit.set_limit(price)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_split_limit)
-    amend_order_details.set_filter(["Order ID", order_id])
+
     try:
         call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
     except Exception:
@@ -460,7 +461,7 @@ def approve_block(request):
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
                settlement_date=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
-               fees_rate=None, misc_arr: [] = None):
+               fees_rate=None, fee_type=None, fee_category=None, misc_arr: [] = None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     ticket_details = modify_request.add_ticket_details()
@@ -491,10 +492,9 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
         commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(basis=comm_basis, rate=comm_rate)
-
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
-        fees_details.add_fees(basis=fees_basis, rate=fees_rate)
+
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
@@ -596,6 +596,7 @@ def view_orders_for_block(request, count: int):
         order_details.add_extraction_detail(dma_order_id_view)
         arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
     return arr_response
+
 
 def check_error_in_book(request):
     middle_office_service = Stubs.win_act_middle_office_service

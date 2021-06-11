@@ -44,10 +44,10 @@ def execute(report_id):
     # endregion
 
     # # region Create CO
-    # fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
+    #fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
     # # endregion
 
-    eq_wrappers.split_limit_order(base_request, qty, 'Limit', '10000')
+    eq_wrappers.split_limit_order(base_request, qty, 'Limit', '21')
     # result = eq_wrappers.extract_error_message_order_ticket(base_request, Stubs.win_act_order_ticket)
     extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
     extract_errors_request.extract_error_message()
@@ -55,6 +55,6 @@ def execute(report_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values("Order ID from View", result,
-                            "Error - [QUOD-11605] 'Price' (10000) greater than Parent`s 'Price' (40)"
+                            "Error - [QUOD-11605] 'Price' (21) greater than Parent`s 'Price' (20)"
                             )
     verifier.verify()

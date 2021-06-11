@@ -11,7 +11,9 @@ from win_gui_modules.wrappers import set_base
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-def get_params(response,qty,order_sts,side,account):
+
+
+def get_params(response, qty, order_sts, side, account):
     params = {
         'Account': account,
         'OrderQty': qty,
@@ -44,8 +46,11 @@ def get_params(response,qty,order_sts,side,account):
         'ChildOrderID': '*',
         'ExDestination': '*',
         'GrossTradeAmt': '*',
+        'VenueType': '*'
     }
     return params
+
+
 def execute(report_id):
     case_name = "QAP-3306"
 
@@ -70,12 +75,12 @@ def execute(report_id):
     try:
         rule_manager = RuleManager()
         rule1 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty3),
-                                                    float(price))
+                                                     float(price))
         rule2 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty2),
                                                      float(price))
         rule3 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty1),
                                                      float(price))
-        fix_message1 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1,int(qty1), 0)
+        fix_message1 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty1), 0)
         fix_message2 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty2), 0)
         fix_message3 = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, int(qty3), 0)
         response1 = fix_message1.pop('response')
@@ -91,13 +96,17 @@ def execute(report_id):
     # endregion
     # region Verify
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3,"1",1,client), response1,['OrdStatus', 'ClOrdID'])
-    fix_verifier_ss.CheckExecutionReport(get_params(response2, qty2, "2", 2,client), response1, ['OrdStatus', 'ClOrdID'])
+    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3, "2", 1, client), response1,
+                                         ['OrdStatus', 'ClOrdID'])
+    fix_verifier_ss.CheckExecutionReport(get_params(response2, qty2, "2", 2, client), response1,
+                                         ['OrdStatus', 'ClOrdID'])
     # endregion
     # region Manual Cross
     eq_wrappers.manual_cross_orders(base_request, qty3, price, [1, 3], "BSML")
     # endregion
     # region Verify
-    fix_verifier_ss.CheckExecutionReport(get_params(response1, qty1,"2",2,client), response1,['ExecType','OrdStatus','ClOrdID'])
-    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3,"2",1,client), response1,['ExecType','OrdStatus','ClOrdID'])
+    fix_verifier_ss.CheckExecutionReport(get_params(response1, qty1, "2", 2, client), response1,
+                                         ['ExecType', 'OrdStatus', 'ClOrdID'])
+    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3, "2", 1, client), response1,
+                                         ['ExecType', 'OrdStatus', 'ClOrdID'])
     # endregion

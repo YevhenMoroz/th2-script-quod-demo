@@ -18,7 +18,7 @@ def execute(report_id):
     # region Declarations
     qty = "900"
     price = "40"
-    client = "CLIENTYMOROZ"
+    client = "CLIENT_YMOROZ"
     account = "YM_client_SA1"
     account2 = "YM_client_SA2"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -33,25 +33,12 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
-    # region Create DMA
-    connectivity_buy_side = "fix-bs-eq-paris"
-    rule_manager = RuleManager()
-    try:
-        rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, client + "_PARIS",
-                                                                         "XPAR", int(price))
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, client + "_PARIS", "XPAR",
-                                                                       int(price)
-                                                                       , int(qty), 0)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
-        response = fix_message.pop('response')
-        time.sleep(1)
-    finally:
-        rule_manager.remove_rule(trade_rule)
-        rule_manager.remove_rule(rule)
+    # region Create CO
     # endregion
+    eq_wrappers.manual_execution(base_request,qty,price)
+    eq_wrappers.complete_order(base_request)
     # region Book
-    eq_wrappers.book_order(base_request, client, price,fees_basis="Absolute",fees_rate="10",fee_type="Regulatory",
-                           fee_category="Charges")
+    eq_wrappers.book_order(base_request, client, price,comm_rate="10",comm_basis="Absolute")
     # endregion
     '''
     # region Verify

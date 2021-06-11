@@ -1,21 +1,18 @@
 {
-  "target_server_win": "quod_XXq",
+  "target_server_win": "quod_10q",
   "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder": "",
-  "qf_trading_fe_user": "",
-  "qf_trading_fe_password": "",
-
-  "qf_trading_fe_folder_1": "",
-  "qf_trading_fe_user_1": "",
-  "qf_trading_fe_password_1": "",
-
-  "qf_trading_fe_folder_2": "",
-  "qf_trading_fe_user_2": "",
-  "qf_trading_fe_password_2": ""
-
+  "qf_trading_fe_folder": "C:\\QA\\FE\\5.1.130.143_rev1620840188",
+  "qf_trading_fe_exec": "QuodFrontEnd.exe",
+  "qf_trading_fe_user": "ymoroz",
+  "qf_trading_fe_password": "ymoroz",
+  "qf_trading_fe_user2": "regressionUser",
+  "qf_trading_fe_password2": "regressionUser",
+  "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
+  "qf_trading_fe_main_win_name": "Quod Financial - 305 Galileo",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (310 COLUMBIA) "
 }

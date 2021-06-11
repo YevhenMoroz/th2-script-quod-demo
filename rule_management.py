@@ -1,7 +1,8 @@
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
-    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNewOrdSingleExecutionReportTrade, \
-    TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateOrderCancelRequest, TemplateNewOrdSingleFOK, \
-    TemplateNewOrdSingleIOC, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
+    TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
+    TemplateOrderCancelReplaceExecutionReport
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -120,6 +121,8 @@ class RuleManager:
         return Stubs.simulator.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
+
+
     @staticmethod
     def add_OCR(session: str):
         return Stubs.simulator.createQuodOCRRule(request=
@@ -174,6 +177,17 @@ class RuleManager:
                                             ))
 
     @staticmethod
+    def add_NewOrdSingleMarket_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: int):
+        return Stubs.simulator.createMarketNewOrdSingleIOC(
+            request=TemplateMarketNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                            account=account,
+                                            venue=venue,
+                                            trade=trade,
+                                            tradedQty=tradedQty,
+                                            price=price
+                                            ))
+
+    @staticmethod
     def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
         return Stubs.simulator.createNewOrdSingleMarket(
             request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
@@ -197,9 +211,8 @@ class RuleManager:
 if __name__ == '__main__':
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia",
-                                                                         "CLIENTSKYLPTOR_PARIS", "XPAR", 40)
+                                                                              "CLIENTSKYLPTOR_PARIS", "XPAR", 40)
     nos_rule1 = rule_manager.add_OCRR("fix-bs-310-columbia")
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade("fix-bs-310-columbia", "CLIENTSKYLPTOR_PARIS", "XPAR",
-                                                                  2, 2000, 2)
-    # rule_manager.remove_all_rules()
+                                                                     2, 2000, 2)
     rule_manager.print_active_rules()

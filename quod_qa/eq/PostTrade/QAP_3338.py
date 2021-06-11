@@ -26,7 +26,7 @@ def execute(report_id):
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    #eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # # region Create CO
     try:
@@ -39,8 +39,7 @@ def execute(report_id):
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        print('check')
-        time.sleep(5)
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
 
