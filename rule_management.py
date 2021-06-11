@@ -86,7 +86,7 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int, delay: int):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                                account=account,
@@ -96,7 +96,7 @@ class RuleManager:
                                                                delay= delay))
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: int):
+    def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: float):
         return Stubs.simulator.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
                                                              account=account,
