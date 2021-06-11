@@ -133,10 +133,10 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
     return [bid_pts_mm, ask_pts_mm]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
