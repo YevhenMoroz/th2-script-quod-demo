@@ -85,7 +85,7 @@ def execute(report_id, session_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
-    venues = ["HSB"]
+    venues = ["HSBC"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

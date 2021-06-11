@@ -47,11 +47,11 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    case_venues_filter = ["HSB", "CIT"]
+    case_venues_filter = ["HSBC", "CITI"]
     case_from_curr = "EUR"
     case_to_curr = "USD"
-    venue_cit = "CIT"
-    venue_hsb = "HSB"
+    venue_cit = "CITI"
+    venue_hsb = "HSBC"
     venue_ms = "MS"
 
     # Create sub-report for case

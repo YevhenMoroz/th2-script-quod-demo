@@ -120,7 +120,7 @@ def execute(report_id, session_id):
     case_from_currency = "USD"
     case_to_currency = "PHP"
     case_client = "ASPECT_CITI"
-    venues = ["HSB", "CIT"]
+    venues = ["HSBC", "CITI"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_sts_expired = "Expired"

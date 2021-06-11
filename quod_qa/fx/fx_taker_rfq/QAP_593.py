@@ -112,7 +112,7 @@ def execute(report_id, session_id):
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
     quote_sts_new = 'New'
-    case_venues = ["HSB"]
+    case_venues = ["HSBC"]
     quote_quote_sts_accepted = "Accepted"
 
     # Create sub-report for case

@@ -132,7 +132,7 @@ def execute(report_id, session_id):
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
-    venue_list = ["CIT", "HSB"]
+    venue_list = ["CITI", "HSBC"]
 
     case_from_currency = "EUR"
     case_to_currency = "USD"

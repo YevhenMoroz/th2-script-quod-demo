@@ -124,7 +124,7 @@ def execute(report_id, session_id):
     case_currency_php = "PHP"
     case_currency_cad = "CAD"
     case_client = "ASPECT_CITI"
-    venues_hsb = ["HSB"]
+    venues_hsb = ["HSBC"]
     venues_cit = ["CIT"]
     quote_sts_new = 'New'
     quote_sts_terminated = 'Terminated'
