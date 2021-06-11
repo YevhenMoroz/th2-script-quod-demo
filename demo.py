@@ -167,6 +167,8 @@ def test_run():
         mm_esp_plus_fe(report_id, session_id)
         # endregion
 
+        # QAP_1536.execute(report_id, session_id)
+
         print('duration time = ' + str(datetime.now() - start))
         Stubs.win_act.unregister(session_id)
     except Exception:
