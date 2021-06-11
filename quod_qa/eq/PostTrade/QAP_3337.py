@@ -17,30 +17,37 @@ def execute(report_id):
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
-    price = "40"
-    client = "CLIENT_YMOROZ"
+    price = "50"
+    client = "CLIENTYMOROZ"
     account = "YM_client_SA1"
-    account2 = "YM_client_SA2"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
-    recipient = "ymoroz (HeadOfSaleDealer)"
     # endregion
-
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-
     # region Create CO
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-eq-paris',
+                                                                             'CLIENTYMOROZ_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-eq-paris', 'CLIENTYMOROZ_PARIS', 'XPAR',
+                                                                      int(price), int(qty), 1)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        response = fix_message.pop('response')
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    finally:
+        time.sleep(1)
+        rule_manager.remove_rule(nos_rule)
+        rule_manager.remove_rule(nos_rule2)
     # endregion
-    eq_wrappers.manual_execution(base_request,qty,price)
-    eq_wrappers.complete_order(base_request)
     # region Book
-    eq_wrappers.book_order(base_request, client, price,comm_rate="10",comm_basis="Absolute")
+    eq_wrappers.book_order(base_request, client, price)
     # endregion
-    '''
     # region Verify
     eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
     eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
@@ -53,15 +60,148 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
     # endregion
     # region Allocate
-    arr_allocation_param = [{"Security Account": account, "Alloc Qty": str(450)},
-                            {"Security Account": account2, "Alloc Qty": str(450)}]
+    arr_allocation_param = [{"Security Account": account, "Alloc Qty": qty}]
     eq_wrappers.allocate_order(base_request, arr_allocation_param)
     # endregion
-
     # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "MatchedAgreed")
     eq_wrappers.verify_allocate_value(base_request, case_id, account, "Status", "Matched")
     eq_wrappers.verify_allocate_value(base_request, case_id, account, "Match Status", "Affirmed")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account2, "Status", "Matched")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account2, "Match Status", "Affirmed")
     # endregion
-    '''
+    # region UnAllocate
+    eq_wrappers.unallocate_order(base_request)
+    # endregion
+    # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
+    eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "")
+    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Status", "Canceled")
+    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Match Status", "Unmatched")
+    params = {
+        'TradeDate': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'AllocQty': qty,
+        'AllocAccount': account,
+        'ConfirmType': 2,
+        'Side': '*',
+        'Currency': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'header': '*',
+        'SettlDate': '*',
+        'LastMkt': '*',
+        'GrossTradeAmt': '*',
+        'MatchStatus': '*',
+        'ConfirmStatus': '*',
+        'QuodTradeQualifier': '*',
+        'NoOrders': [
+            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+             'OrderID': '*'}
+        ],
+        'AllocID': '*',
+        'NetMoney': '*',
+        'ReportedPx': '*',
+        'CpctyConfGrp': '*',
+        'ConfirmTransType': '2',
+        'CommissionData': '*',
+        'NoMiscFees': '*',
+        'ConfirmID': '*'
+    }
+    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders','ConfirmTransType'])
+    # endregion
+    # region UnBook
+    eq_wrappers.unbook_order(base_request)
+    # endregion
+    # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Canceled")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
+    params = {
+        'Quantity': qty,
+        'TradeDate': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'Side': '*',
+        'Currency': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'header': '*',
+        'SettlDate': '*',
+        'LastMkt': '*',
+        'GrossTradeAmt': '*',
+        'QuodTradeQualifier': '*',
+        'NoOrders': [
+            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+             'OrderID': '*'}
+        ],
+        'AllocID': '*',
+        'NetMoney': '*',
+        'BookingType': '*',
+        'AllocType': '2',
+        'RootSettlCurrAmt': '*',
+        'AllocTransType': '0',
+        'ReportedPx': '*',
+        'NoAllocs': [
+            {
+                'AllocNetPrice': '*',
+                'AllocAccount': account,
+                'AllocPrice': price,
+                'AllocQty': qty,
+                'NoMiscFees': [
+                    {
+                        'MiscFeeAmt': '*',
+                        'MiscFeeCurr': '*',
+                        'MiscFeeType': '*',
+                    }
+                ]
+            }
+        ],
+    }
+    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
+    params = {
+        'Quantity': qty,
+        'TradeDate': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'Side': '*',
+        'Currency': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'header': '*',
+        'SettlDate': '*',
+        'LastMkt': '*',
+        'GrossTradeAmt': '*',
+        'QuodTradeQualifier': '*',
+        'NoOrders': [
+            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+             'OrderID': '*'}
+        ],
+        'AllocID': '*',
+        'NetMoney': '*',
+        'BookingType': '*',
+        'AllocType': '5',
+        'RootSettlCurrAmt': '*',
+        'AllocTransType': '0',
+        'ReportedPx': '*',
+        'NoAllocs': [
+            {
+                'AllocNetPrice': '*',
+                'AllocAccount': account,
+                'AllocPrice': price,
+                'AllocQty': qty,
+                'NoMiscFees': [
+                    {
+                        'MiscFeeAmt': '*',
+                        'MiscFeeCurr': '*',
+                        'MiscFeeType': '*',
+                    }
+                ]
+            }
+        ],
+    }
+    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
+    # endregion
+

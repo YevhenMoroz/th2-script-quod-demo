@@ -6,9 +6,8 @@ th2-grpc-act-quod==3.0.5
 th2-grpc-sim-quod==3.0.12
 th2-grpc-sim==3.1.1
 th2-grpc-sim-http==3.0.11
-th2-grpc-act-gui-quod==1.13.8-quod-dev.327
+th2-grpc-act-gui-quod==1.13.2-quod-dev.367
 th2-grpc-hand==2.7.3
-th2-win-act-quod.version==2.2.4-quod_act_master_test.832
 
 grpcio
 grpcio-tools

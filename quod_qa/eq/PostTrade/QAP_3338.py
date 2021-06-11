@@ -16,7 +16,7 @@ def execute(report_id):
     case_name = "QAP-3338"
     case_id = create_event(case_name, report_id)
     # region Declarations
-    qty = "800"
+    qty = "900"
     price = "3"
     client = "MOClient"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -26,7 +26,7 @@ def execute(report_id):
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
-    #eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # # region Create CO
     try:
