@@ -65,7 +65,7 @@ def check_quote_book(ex_id, base_request, service, case_id, owner, quote_sts):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_venue = "HSB"
@@ -81,7 +81,7 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service

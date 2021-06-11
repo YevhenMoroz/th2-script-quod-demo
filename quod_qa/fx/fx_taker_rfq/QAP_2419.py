@@ -117,7 +117,7 @@ def set_order_ticket_options(option_service, base_request, client):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     option_service = Stubs.win_act_options
@@ -139,7 +139,7 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)

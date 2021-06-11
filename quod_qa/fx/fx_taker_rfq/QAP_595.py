@@ -64,7 +64,7 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
@@ -80,7 +80,7 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
