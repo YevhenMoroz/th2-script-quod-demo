@@ -1,9 +1,11 @@
 import logging
+import time
 from datetime import datetime
 
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.run_client_accounts import RunClientsAccounts
 from quod_qa.web_admin.web_admin_test_cases.general.run_general import RunGeneral
+from quod_qa.web_admin.web_admin_test_cases.other.run_other import RunOthers
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from quod_qa.web_admin import QAP_758, login_logout_example
@@ -33,7 +35,8 @@ def test_run():
     # content
     web_driver_container = WebDriverContainer()
 
-    RunClientsAccounts(web_driver_container).execute()
+    # RunClientsAccounts(web_driver_container).execute()
+    RunOthers(web_driver_container).execute()
 
 
 if __name__ == '__main__':
