@@ -11,7 +11,9 @@ class CaseParamsSellRfq:
     connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
     rfq_params = None
     rfq_params_swap = None
+    quote_cancel= None
     quote_params = None
+    quote_cancel_params = None
     order_params = None
     order_exec_report = None
     order_pending = None
@@ -56,6 +58,7 @@ class CaseParamsSellRfq:
         self.set_rfq_params()
         self.set_rfq_params_swap()
         self.set_quote_params()
+        self.set_quote_cancel_params()
 
 
     def set_rfq_params(self):
@@ -139,6 +142,26 @@ class CaseParamsSellRfq:
             'SettlType': '*',
             'Account': '*',
 
+        }
+
+    def set_quote_cancel_params(self):
+        self.quote_cancel = {
+            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteCancelType': '251',
+        }
+
+    def prepape_quote_cancel_report(self):
+        self.quote_cancel_params = {
+            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteCancelType': '5',
+            'NoQuoteEntries': [{
+                'Instrument': {
+                    'Symbol': self.symbol,
+                    'SecurityType': self.securitytype
+                },
+            },
+            ],
+            'QuoteID': '*'
         }
 
     # Set New Order Single parameters
