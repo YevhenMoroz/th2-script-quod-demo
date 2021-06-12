@@ -14,6 +14,7 @@ class CaseParamsSellEsp:
     md_params = None
     order_params = None
     md_subscribe_response = None
+    md_reject_response = None
     order_exec_report = None
     order_pending = None
     order_new = None
@@ -144,6 +145,15 @@ class CaseParamsSellEsp:
 
             ]
         }
+
+    def set_md_reject_response(self,text):
+        self.md_reject_response = {
+            'MDReqID': self.mdreqid,
+            'MDReqRejReason': '0',
+            'Text': text
+        }
+        return self
+
 
     # Set custom parameters for md verification
     def prepare_md_for_verification(self, qty_count, published=True, which_bands_not_pb=None, priced=True,

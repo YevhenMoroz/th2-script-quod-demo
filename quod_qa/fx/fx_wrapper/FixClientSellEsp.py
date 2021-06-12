@@ -111,6 +111,22 @@ class FixClientSellEsp():
             ))
         return self
 
+    def verify_md_rejected(self,text,reason=''):
+        self.case_params_sell_esp.set_md_reject_response(text)
+        time.sleep(5)
+        if reason=='date':
+            self.case_params_sell_esp.md_reject_response.pop('MDReqRejReason')
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Market Data Request Reject',
+                bca.filter_to_grpc('MarketDataRequestReject', self.case_params_sell_esp.md_reject_response, ['MDReqID']),
+                self.subscribe.checkpoint_id,
+                self.case_params_sell_esp.connectivityESP,
+                self.case_params_sell_esp.case_id
+            )
+        )
+        return self
+
     def verify_order_pending(self,price='', qty=''):
         self.case_params_sell_esp.prepape_order_pending_report()
         self.case_params_sell_esp.order_pending['Price'] = self.price
@@ -203,6 +219,8 @@ class FixClientSellEsp():
         self.case_params_sell_esp.order_rejected['Text']=text
         if qty !='':
             self.case_params_sell_esp.order_rejected['OrderQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_rejected['Price']=price
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',

@@ -1,4 +1,10 @@
+from pathlib import Path
+
+from custom.tenor_settlement_date import spo
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
@@ -11,7 +17,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium1'
-connectivity = 'fix-ss-308-mercury-standard'
 side = '1'
 orderqty = 1000000
 ordtype = '2'
@@ -23,11 +28,11 @@ symbol='EUR/USD'
 securitytype='FXSPOT'
 securityidsource='8'
 securityid='EUR/USD'
-bands=[1000000,2000000,3000000]
+bands=[2000000,6000000,12000000]
 ord_status='Rejected'
-settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
+settldate = spo()
 md=None
-
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
 
 
@@ -35,19 +40,24 @@ md=None
 
 def execute(report_id):
     try:
-        case_id = bca.create_event('QAP_2086', report_id)
-        params = CaseParamsSellEsp(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+        case_name = Path(__file__).name[:-3]
+        case_id = bca.create_event(case_name, report_id)
+        #Precondition
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype)).\
+            send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
+
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
                                    currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
                                    securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
-        md = MarketDataRequst(params)
-        md.set_md_params().send_md_request().\
-            verify_md_pending(bands)
-        price=md.extruct_filed('Price')
+        params.prepare_md_for_verification(bands)
+        md = FixClientSellEsp(params).send_md_request().verify_md_pending()
+        price= md.extruct_filed('Price')
         new_price = round(float(price)-0.1,5)
         text='order price ({0}) lower than offer ({1})'.format(new_price, price)
-        NewOrderSingle(params).send_new_order_single(new_price).\
-            verify_order_pending(). \
-            verify_order_rejected(text)
+        md.send_new_order_single(new_price).\
+            verify_order_pending(new_price).\
+            verify_order_rejected(text,new_price)
 
 
 

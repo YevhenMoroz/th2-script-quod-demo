@@ -2,12 +2,13 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_esp import test, QAP_2825, SendMD, clone, QAP_1518, QAP_2823, QAP_2874, QAP_2876, QAP_2880, \
-    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2078
+    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2078, \
+    QAP_2084, QAP_2086, QAP_2085, QAP_3841, QAP_2079, QAP_1554, QAP_1597, QAP_3390, QAP_2750
 from quod_qa.fx.fx_mm_rfq import QAP_1746
 from rule_management import RuleManager
 
 from stubs import Stubs
-
+from test_cases import QAP_1560
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,7 +23,15 @@ def fx_mm_esp_fix(report_id):
     QAP_1559.execute(report_id)
     QAP_2797.execute(report_id)
     QAP_2082.execute(report_id)
-
+    QAP_2084.execute(report_id)
+    QAP_2086.execute(report_id)
+    QAP_2085.execute(report_id)
+    QAP_2079.execute(report_id)
+    QAP_3841.execute(report_id)
+    QAP_1554.execute(report_id)
+    QAP_1597.execute(report_id)
+    QAP_3390.execute(report_id)
+    QAP_2750.execute(report_id)
     QAP_2823.execute(report_id)
     QAP_2874.execute(report_id)
     QAP_2876.execute(report_id)
@@ -55,9 +64,13 @@ def test_run():
             },
         }
     try:
-        QAP_2078.execute(report_id)
 
-        # clone.execute(report_id)
+
+
+
+        QAP_2082.execute(report_id)
+
+        clone.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
         # QAP_2750.execute(report_id)
@@ -92,7 +105,7 @@ def test_run():
         # rfq_tile_example.execute(report_id)
         #
         # rm = RuleManager()
-        # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
+        # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
         # rm.print_active_rules()
         # rm.remove_rule_by_id()
 
