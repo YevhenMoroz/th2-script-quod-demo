@@ -117,6 +117,6 @@ def execute(report_id, case_params):
                     case_id
                     )
             )
-
+    # TODO: quod: add check of second FE User
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))

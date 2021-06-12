@@ -1,6 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -71,6 +72,23 @@ class ModifyRatesTileRequest:
         return self.modify_request
 
 
+class RatesTileTableOrdSide(Enum):
+    Sides = cp_operations_pb2.PlaceRatesTileOrderRequest.Side
+    # The buy and sell side have been reversed because act confused them
+    SELL = Sides.BUY
+    BUY= Sides.SELL
+
+
+class PlaceRateTileTableOrderRequest:
+
+    def __init__(self, data: BaseTileData, row: int = 1, side: RatesTileTableOrdSide = RatesTileTableOrdSide.BUY):
+        self.request = cp_operations_pb2.PlaceRateTileTableOrderRequest(data=data)
+        self.request.side = side.value
+        self.request.row = row
+
+    def build(self):
+        return self.request
+
 class PlaceRatesTileOrderRequest:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:
@@ -81,7 +99,7 @@ class PlaceRatesTileOrderRequest:
     def set_details(self, details: BaseTileDetails):
         self.place_order_request.data.CopyFrom(details.build())
 
-# The buy and sell side have been reversed because act confused them
+    # The buy and sell side have been reversed because act confused them
     def buy(self):
         self.place_order_request.side = cp_operations_pb2.PlaceRatesTileOrderRequest.Side.SELL
 
@@ -223,6 +241,7 @@ class ExtractRatesTileTableValuesRequest:
     def build(self):
         return self.request
 
+
 class SelectRowsRequest:
     def __init__(self, details: BaseTileDetails):
         if details is not None:
@@ -231,10 +250,11 @@ class SelectRowsRequest:
     def set_row_numbers(self, row_numbers: list):
         self.extractionId = "rows"
         for row_number in row_numbers:
-            self.request.rowNumbers.append( row_number)
+            self.request.rowNumbers.append(row_number)
 
     def build(self):
         return self.request
+
 
 class DeselectRowsRequest:
     def __init__(self, details: BaseTileDetails):

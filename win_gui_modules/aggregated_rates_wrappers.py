@@ -411,6 +411,7 @@ class RatesTileValues(Enum):
     SPREAD = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.SPREAD
     BEST_BID = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_BID
     BEST_ASK = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BEST_ASK
+    ONE_CLICK_BTN_TEXT = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ONE_CLICK_BTN_TEXT
 
 
 class ExtractRFQTileValues:
@@ -611,6 +612,9 @@ class ExtractRatesTileDataRequest:
     def extract_best_ask(self, name: str):
         self.extract_value(RatesTileValues.BEST_ASK, name)
 
+    def extract_1click_btn_text(self, name: str):
+        self.extract_value(RatesTileValues.ONE_CLICK_BTN_TEXT, name)
+
     def extract_value(self, field: RFQTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
         extracted_value.type = field.value
@@ -660,8 +664,12 @@ class RFQTileOrderSide(Enum):
 
 # The buy and sell side have been reversed because act confused them
 class ESPTileOrderSide(Enum):
+    # buy and sell is top of book pips
     BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
     SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
+    # bid and ask btns
+    BID_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.BID_BTN
+    ASK_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.ASK_BTN
 
 
 class PlaceRFQRequest:

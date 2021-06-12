@@ -7,7 +7,8 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
-
+from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,6 +19,7 @@ def execute(report_id, case_params):
     case_name = Path(__file__).name[:-3]
     act = Stubs.fix_act
     verifier = Stubs.verifier
+    simulator = Stubs.simulator
     seconds, nanos = bca.timestamps()  # Store case start time
     case_id = bca.create_event(case_name, report_id)
 
@@ -36,11 +38,11 @@ def execute(report_id, case_params):
         }
 
     # mdu_params = {
-    #     # "MDReqID": simulator.getMDRefIDForConnection(
-    #     #     request=RequestMDRefID(
-    #     #         symbol="EUR/USD", connection_id=ConnectionID(
-    #     #             session_alias="fix-fh-fx-esp"))).MDRefID,
-    #     "MDReqID": "EUR/USD:SPO:REG:HSBC_2",
+    #     "MDReqID": simulator.getMDRefIDForConnection(
+    #         request=RequestMDRefID(
+    #             symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(
+    #                 session_alias="fix-fh-fx-esp"))).MDRefID,
+    #     # "MDReqID": "EUR/USD:SPO:REG:HSBC_2",
     #     "MDReportID": "3",
     #     # "MDTime": "TBU",
     #     # "MDArrivalTime": "TBU",
@@ -51,16 +53,16 @@ def execute(report_id, case_params):
     #     # "LastUpdateTime": "TBU",
     #     "NoMDEntries": [
     #         {
-    #             "MDEntryType": "1",
-    #             "MDEntryPx": 100,
-    #             "MDEntrySize": 1000,
-    #             "MDEntryPositionNo": 1
+    #             'MDEntryType': '0',
+    #             'MDEntryPx': '1.1111',
+    #             'MDEntrySize': '100000',
+    #             'MDEntryPositionNo': '1'
     #         },
     #         {
-    #             "MDEntryType": "0",
-    #             "MDEntryPx": 110,
-    #             "MDEntrySize": 1000,
-    #             "MDEntryPositionNo": 1
+    #             'MDEntryType': '1',
+    #             'MDEntryPx': '1.2222',
+    #             'MDEntrySize': '100000',
+    #             'MDEntryPositionNo': '1'
     #         },
     #
     #     ]
@@ -93,15 +95,15 @@ def execute(report_id, case_params):
                     case_id,
                     bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
                     ))
-
+    # print(f'send_rfq = \n{send_rfq}')
     quote_params = {
         **reusable_params,
         'QuoteReqID': rfq_params['QuoteReqID'],
         'Product': 4,
-        'OfferPx': '35.001',
+        'OfferPx': '*',
         'OfferSize': useful_params['RfqQty'],
         'QuoteID': '*',
-        'OfferSpotRate': '35.001',
+        'OfferSpotRate': '*',
         'ValidUntilTime': '*',
         'Currency': 'EUR'
         }
@@ -135,6 +137,8 @@ def execute(report_id, case_params):
                     case_id,
                     bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
                     ))
+
+    print(f'send_order = \n{send_order}')
 
     er_pending_params = {
         'Side': reusable_params['Side'],

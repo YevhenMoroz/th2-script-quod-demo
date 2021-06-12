@@ -13,9 +13,12 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
-                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest)
-from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues
+                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
+                                                       ESPTileOrderSide)
+from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
+                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide)
 from win_gui_modules.common_wrappers import BaseTileDetails
+from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues, FXConfigsRequest)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
@@ -293,19 +296,22 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     Method just set values( don't close the window)
     """
     order_ticket = FXOrderDetails()
+
     # order_ticket.set_price_large('1.23')
     # order_ticket.set_price_pips('456')
     # order_ticket.set_qty('1150000')
     # order_ticket.set_client('FIXCLIENT3')
-    # order_ticket.set_tif('Day')
+    # order_ticket.set_tif('FillOrKill')
     # order_ticket.set_slippage('2.5')
     # order_ticket.set_order_type('Limit')
     # order_ticket.set_stop_price('1.3')
-    order_ticket.set_pending()
-    order_ticket.set_keep_open()
+    # order_ticket.set_place()
+    # order_ticket.set_pending()
+    # order_ticket.set_keep_open()
     order_ticket.set_custom_algo_check_box()
-    # order_ticket.set_custom_algo("Quod TWAP")
-    # order_ticket.set_strategy("TWAPBROKER")
+    order_ticket.set_custom_algo('Quod TWAP')
+    order_ticket.set_strategy('TWAPBROKER')
+    order_ticket.set_child_strategy('BasicTaker')
 
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(order_ticket_service.placeFxOrder, new_order_details.build())
@@ -313,10 +319,10 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
 
 def place_fx_order(base_request, order_ticket_service):
     """
-    Method demonstrate how work settign valuese to FX Order ticket.
+    Method demonstrate how work setting values to FX Order ticket.
     And then set the details to NewFxOrderDetails object with base_request object.
 
-    You should use FXOrderDetails object to define valused that should be set.
+    You should use FXOrderDetails object to define values that should be set.
     You may set from 1 to all available fields.
     You should use only dot for separation of numbers with floating point
     """
@@ -367,22 +373,23 @@ def deselect_rows(base_tile_details, cp_service):
     call(cp_service.deselectRows, request.build())
 
 
-def extract_rates_panel(base_tile_details, ar_service):
+def extract_rates_panel_esp(base_tile_details, ar_service):
     s = 'RatesTile0'
     request = ExtractRatesTileDataRequest(base_tile_details)
     request.set_extraction_id(f'{s}.extraction_id')
-    request.extract_instrument(f'{s}.instrument')
-    request.extract_quantity(f'{s}.quantity')
-    request.extract_tenor(f'{s}.tenor')
-    request.extract_best_bid(f'{s}.best_bid')
-    request.extract_best_bid_large(f'{s}.best_bid_large')
-    request.extract_best_bid_small(f'{s}.best_bid_small')
-    request.extract_best_ask(f'{s}.best_ask')
-    request.extract_best_ask_large(f'{s}.best_ask_large')
-    request.extract_best_ask_small(f'{s}.best_ask_small')
-    request.extract_spread(f'{s}.spread')
-    request.extract_instrument(f'{s}.spread')
-    request.extract_client_tier(f'{s}.spread')
+    # request.extract_instrument(f'{s}.instrument')
+    # request.extract_quantity(f'{s}.quantity')
+    # request.extract_tenor(f'{s}.tenor')
+    # request.extract_best_bid(f'{s}.best_bid')
+    # request.extract_best_bid_large(f'{s}.best_bid_large')
+    # request.extract_best_bid_small(f'{s}.best_bid_small')
+    # request.extract_best_ask(f'{s}.best_ask')
+    # request.extract_best_ask_large(f'{s}.best_ask_large')
+    # request.extract_best_ask_small(f'{s}.best_ask_small')
+    # request.extract_spread(f'{s}.spread')
+    # request.extract_instrument(f'{s}.instrument')
+    # request.extract_client_tier(f'{s}.client_tier')
+    request.extract_1click_btn_text(f'{s}.btn_text')
 
     result = call(ar_service.extractRatesTileValues, request.build())
     print(result)
@@ -395,16 +402,21 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     function demonstrate what and how you can extract value from Forex Order Ticket
     """
     request = ExtractFxOrderTicketValuesRequest(base_tile_details)
-    ot = "OrderTicket"
-    request.get_instrument(f"{ot}.instrument")
-    request.get_price_large(f'{ot}.price_large')
-    request.get_price_pips(f'{ot}.price_pips')
-    request.get_tif(f'{ot}.tif')
-    request.get_order_type(f'{ot}.order_type')
-    request.get_quantity(f'{ot}.quantity')
-    request.get_slippage(f'{ot}.slippage')
-    request.get_stop_price(f'{ot}.stopprice')
-    request.get_client(f'{ot}.client')
+    # ot = "fx_order_ticket"
+    # request.get_instrument(f"{ot}.instrument")
+    # request.get_price_large(f'{ot}.price_large')
+    # request.get_price_pips(f'{ot}.price_pips')
+    # request.get_tif(f'{ot}.tif')
+    # request.get_order_type(f'{ot}.order_type')
+    # request.get_quantity(f'{ot}.quantity')
+    # request.get_slippage(f'{ot}.slippage')
+    # request.get_stop_price(f'{ot}.stopprice')
+    # request.get_client(f'{ot}.client')
+    request.get_algo();
+    request.get_strategy();
+    request.get_child_strategy();
+    request.get_is_algo_checked();
+
 
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
@@ -422,6 +434,83 @@ def extract_cp_rates_panel(base_tile_details, cp_service):
     result =  call(cp_service.extractRateTileValues, values.build())
     print(result)
 
+def extract_di_panel(base_request, dealer_intervention_service ):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_request.set_extraction_id("ExtractionId")
+    extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
+    extraction_request.extract_price_spread("rfqDetails.priceSpread")
+    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
+    extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
+    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
+    extraction_request.extract_near_leg_quantity("rfqDetails.nerLegQty")
+    # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
+    extraction_request.extract_request_state("rfqDetails.requestState")
+    extraction_request.extract_request_side("rfqDetails.requestSide")
+    extraction_request.extract_button_text("rfqDetails.buttonText")
+
+    result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
+    for R in result:
+        print(f'{R} = {result[R]}')
+
+
+def set_value_di_panel(base_request, dealer_interventions_service):
+    modify_request = ModificationRequest(base=base_request)
+    modify_request.set_quote_ttl("123")
+    modify_request.set_bid_large('999.')
+    modify_request.set_bid_small('999')
+    modify_request.set_ask_large('999.')
+    modify_request.set_ask_small('999')
+    modify_request.set_spread_step('999')
+    modify_request.click_is_hedged_chec_box()
+    # modify_request.increase_ask()
+    # modify_request.decrease_ask()
+    # modify_request.increase_bid()
+    # modify_request.decrease_bid()
+    # modify_request.narrow_spread()
+    # modify_request.widen_spread()
+    # modify_request.skew_towards_ask()
+    # modify_request.skew_towards_bid()
+    # modify_request.send()
+    # modify_request.reject()
+
+    call(dealer_interventions_service.modifyAssignedRFQ, modify_request.build())
+
+
+def place_esp_by_bid_btn(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.BID_BTN)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+def place_esp_by_ask_btn(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.ASK_BTN)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+def place_esp_by_tob_buy(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.BUY)
+    call(service.placeESPOrder, rfq_request.build())
+
+def place_esp_by_tob_sell(base_request):
+    service = Stubs.win_act_aggregated_rates_service
+    btd = BaseTileDetails(base=base_request)
+    rfq_request = PlaceESPOrder(details=btd)
+    rfq_request.set_action(ESPTileOrderSide.SELL)
+    call(service.placeESPOrder, rfq_request.build())
+
+
+def open_ot_by_doubleclick_row(btd, cp_service, row):
+    request = PlaceRateTileTableOrderRequest(btd,row, RatesTileTableOrdSide.SELL  )
+    call( cp_service.placeRateTileTableOrder, request.build())
 
 
 def execute(report_id):
@@ -441,14 +530,15 @@ def execute(report_id):
 
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    base_tile_details = BaseTileData(base=base_request)
-    base_details = BaseTileDetails(base= base_request)
+    base_tile_data = BaseTileData(base=base_request)
+    base_tile_details = BaseTileDetails(base= base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     cp_service = Stubs.win_act_cp_service
     option_service = Stubs.win_act_options
     order_ticket_service = Stubs.win_act_order_ticket_fx
+    dealer_interventions_service = Stubs.win_act_dealer_intervention_service
 
     # endregion
     Stubs.frontend_is_open = True
@@ -489,32 +579,42 @@ def execute(report_id):
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
         # extract_rfq_panel()
         # extract_rfq_table_data()
-        # extract_rates_panel(base_tile_details, ar_service)
+        # extract_rates_panel_esp(base_details, ar_service)
+        # all available ways to open orderTicket via esp panel
+        # place_esp_by_bid_btn(base_request)
+        # place_esp_by_ask_btn(base_request)
+        # place_esp_by_tob_buy(base_request)
+        # place_esp_by_tob_sell(base_request)
         # endregion
 
         # region My Orders ↓
-
         # get_my_orders_details(ob_act,  base_request, order_id)
         # get_trade_book_details(ob_act,  base_request, order_id)
-
         # endregion
 
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
-        # extract_order_ticket_values(base_tile_details, order_ticket_service)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
         # region ClientPricing
-        extract_cp_rates_panel(base_details,cp_service)
+        # extract_cp_rates_panel(base_details,cp_service)
         # select_rows(base_tile_details, [1, 2, 4], cp_service)
         # print('Sleeping')
         # time.sleep(5)
         # print('Deselecting')
         # deselect_rows(base_tile_details,cp_service)
+        # row = 2
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
+        # set_fx_order_ticket_value(base_request,order_ticket_service)
         # endregion
 
+        # region Dealer Intervention
+        # extract_di_panel(base_request, dealer_interventions_service)
+        # set_value_di_panel(base_request, dealer_interventions_service)
+        # endregion
         # close_fe_2(case_id, session_id)
 
     except Exception as e:

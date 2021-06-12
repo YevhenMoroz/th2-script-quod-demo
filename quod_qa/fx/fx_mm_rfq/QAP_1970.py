@@ -5,11 +5,11 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom.tenor_settlement_date import get_expire_time
-from custom.verifier import Verifier as Ver
+from custom.verifier import Verifier as Ver, Verifier, VerificationMethod
 from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
-                                                          ExtractionDetailsRequest)
+                                                          ExtractionDetailsRequest, RFQExtractionDetailsRequest)
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
 from win_gui_modules.wrappers import set_base
@@ -30,6 +30,7 @@ def execute(report_id, case_params):
     seconds, nanos = bca.timestamps()  # Store case start time
     service = Stubs.win_act_dealer_intervention_service
     ttl = 180
+    print(tsd.spo())
     reusable_params = {
         'Account': case_params['Account'],
         'Side': 1,
@@ -98,7 +99,6 @@ def execute(report_id, case_params):
 
         # region Assign to me rfq
         base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
         base_data.set_row_number(1)
 
         call(service.assignToMe, base_data.build())
@@ -108,7 +108,16 @@ def execute(report_id, case_params):
         base_data = BaseTableDataRequest(base=base_request)
         call(service.estimate, base_data.build())
         # endregion
-        # TODO: add extraction of from dealer intervention bid ask fields
+
+        # region Extracting ask pips
+        extraction_request = RFQExtractionDetailsRequest(base=base_request)
+        extraction_request.set_extraction_id("ExtractionId")
+        extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
+        extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+
+        pips1 = call(service.getRFQDetails, extraction_request.build())
+        print(pips1)
+        # endregion
 
         # region  send quote
         modify_request = ModificationRequest(base=base_request)
@@ -119,6 +128,7 @@ def execute(report_id, case_params):
         # region Check Quote in Assigned Grid
         base_data = BaseTableDataRequest(base=base_request)
         base_data.set_row_number(1)
+        base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
 
         extraction_request = ExtractionDetailsRequest(base_data)
         extraction_request.set_extraction_id("ExtractionId")
@@ -164,9 +174,19 @@ def execute(report_id, case_params):
 
         # region Modify and ReSend Quote
         modify_request = ModificationRequest(base=base_request)
-        modify_request.increase_bid()
+        modify_request.increase_ask()
         modify_request.send()
         call(service.modifyAssignedRFQ, modify_request.build())
+        # endregion
+
+        # region Extracting ask pips
+        extraction_request = RFQExtractionDetailsRequest(base=base_request)
+        extraction_request.set_extraction_id("ExtractionId")
+        extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
+        extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+
+        pips2 = call(service.getRFQDetails, extraction_request.build())
+        print(pips2)
         # endregion
 
         # region Catch Quote message 35=S with new prices
@@ -181,16 +201,34 @@ def execute(report_id, case_params):
                 )
         # endregion
 
-
-        # region Clear Filters
-        # TODO: add filter cleaner
+        # region check of pips
+        verifier = Verifier(case_id)
+        verifier.set_event_name("Check pips")
+        verifier.compare_values('pips',
+                                pips1['rfqDetails.askPricePips'],
+                                pips2['rfqDetails.askPricePips'],
+                                VerificationMethod.NOT_EQUALS)
+        verifier.verify()
         # endregion
+
+
 
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # region Clear Filters
+            base_data = BaseTableDataRequest(base=base_request)
+            base_data.set_row_number(1)
 
+            extraction_request = ExtractionDetailsRequest(base_data)
+            extraction_request.set_clear_flag()
 
-
+            response = call(service.getAssignedRFQDetails, extraction_request.build())
+            response = call(service.getUnassignedRFQDetails, extraction_request.build())
+            # endregion
+        except Exception:
+            logging.error("Error execution", exc_info=True)
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))

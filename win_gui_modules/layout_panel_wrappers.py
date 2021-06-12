@@ -12,7 +12,7 @@ class WorkspaceModificationRequest:
         self.ws_modify_request.base.CopyFrom(base_request)
 
     def set_path(self, path: str):
-        self.ws_modify_request.path = path
+        self.ws_modify_request.Sides = path
 
     def set_filename(self, filename: str):
         self.ws_modify_request.fileName = filename
