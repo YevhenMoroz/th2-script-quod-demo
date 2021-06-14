@@ -6,7 +6,7 @@
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder": "C:\\Users\\srublyov\\Desktop\\FE\\5.1.132.145_310_Columbia",
+  "qf_trading_fe_folder": "C:\\ProgramData\\QuodFinancialQUOD_QUOD310_COLUMBIA\\Quod_Financial_Trader_Front-end_64bits",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
   "qf_trading_fe_user": "HD4",
   "qf_trading_fe_password": "HD4",
