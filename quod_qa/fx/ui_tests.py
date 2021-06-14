@@ -483,13 +483,15 @@ def extract_di_panel(base_request, dealer_intervention_service):
     # extraction_request.extract_opposite_far_bid_qty_value_label(f'{dmi_rfq}.opposite_far_bid_qty_value_label')
     # extraction_request.extract_opposite_far_ask_qty_value_label(f'{dmi_rfq}.opposite_far_ask_qty_value_label')
     #
-    extraction_request.extract_is_bid_price_pips_enabled(f'{dmi_rfq}.is_bid_price_pips_enabled')
-    extraction_request.extract_is_ask_price_pips_enabled(f'{dmi_rfq}.is_ask_price_pips_enabled')
+    # extraction_request.extract_is_bid_price_pips_enabled(f'{dmi_rfq}.is_bid_price_pips_enabled')
+    # extraction_request.extract_is_ask_price_pips_enabled(f'{dmi_rfq}.is_ask_price_pips_enabled')
     # extraction_request.extract_is_near_leg_quantity_enabled(f'{dmi_rfq}.is_near_leg_quantity_enabled')
     # extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
-    extraction_request.extract_is_price_spread_enabled(f'{dmi_rfq}.is_price_spread_enabled')
-    extraction_request.extract_is_bid_price_large_enabled(f'{dmi_rfq}.is_bid_price_large_enabled')
-    extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
+    # extraction_request.extract_is_price_spread_enabled(f'{dmi_rfq}.is_price_spread_enabled')
+    # extraction_request.extract_is_bid_price_large_enabled(f'{dmi_rfq}.is_bid_price_large_enabled')
+    # extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
+    extraction_request.extract_case_state_value_label_control(f'{dmi_rfq}.case_state_value_label_control')
+    extraction_request.extract_quot_estate_value_label_control(f'{dmi_rfq}.quot_estate_value_label_control')
 
     result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
     for R in result:

@@ -170,6 +170,8 @@ class RFQPanelValues(Enum):
     IS_PRICE_SPREAD_ENABLED              = short_path.IS_PRICE_SPREAD_ENABLED
     IS_BID_PRICE_LARGE_ENABLED           = short_path.IS_BID_PRICE_LARGE_ENABLED
     IS_ASK_PRICE_LARGE_ENABLED           = short_path.IS_ASK_PRICE_LARGE_ENABLED
+    CASE_STATE_VALUE_LABEL_CONTROL          = short_path.CASE_STATE_VALUE_LABEL_CONTROL
+    QUOT_ESTATE_VALUE_LABEL_CONTROL         = short_path.QUOT_ESTATE_VALUE_LABEL_CONTROL
 
 class RFQExtractionDetailsRequest:
     def __init__(self, base: common_pb2.EmptyRequest = None):
@@ -247,6 +249,8 @@ class RFQExtractionDetailsRequest:
     def extract_is_price_spread_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_PRICE_SPREAD_ENABLED, name)
     def extract_is_bid_price_large_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_BID_PRICE_LARGE_ENABLED, name)
     def extract_is_ask_price_large_enabled(self, name: str):    self.extract_value(RFQPanelValues.IS_ASK_PRICE_LARGE_ENABLED, name)
+    def extract_case_state_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.CASE_STATE_VALUE_LABEL_CONTROL, name)
+    def extract_quot_estate_value_label_control(self, name: str):    self.extract_value(RFQPanelValues.QUOT_ESTATE_VALUE_LABEL_CONTROL, name)
 
     def extract_value(self, field: RFQPanelValues, name: str):
         extracted_value = dealer_intervention_operations_pb2.RFQExtractionDetails.ExtractedValue()
