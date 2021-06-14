@@ -106,12 +106,13 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-def execute(report_id, session_id):
+def execute(report_id):
     try:
         f_act = Stubs.fix_act
         verifier = Stubs.verifier
         ob_act = Stubs.win_act_order_book
         simulator = Stubs.simulator
+        session_id = set_session_id()
 
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
