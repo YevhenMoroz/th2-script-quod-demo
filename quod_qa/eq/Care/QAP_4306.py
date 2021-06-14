@@ -23,7 +23,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "RIN_1162"
+    case_name = "QAP_4306"
 
     seconds, nanos = timestamps()  # Store case start time
 

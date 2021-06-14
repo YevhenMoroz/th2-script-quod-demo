@@ -24,16 +24,14 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "RIN_1147"
+    case_name = "QAP_4310"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     order_ticket_service = Stubs.win_act_order_ticket
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "400"
-    # "0-111111111" using to bypass the inability to enter a minus after clearing a "Price" field
-    price = ["0", "0-111111111", "10", "abc"]
-    stop_price = ["20", "abc"]
+    qty = ["100", "0"]
+    price = "0"
     client = "HAKKIM"
     lookup = "RELIANCE"
     symbol = "RELIANCE"
@@ -56,11 +54,6 @@ def execute(report_id):
 
     # region Create 1st order via FE
     order_ticket = OrderTicketDetails()
-    order_ticket.set_instrument(symbol)
-    order_ticket.set_quantity(qty)
-    order_ticket.set_limit(price[0])
-    order_ticket.set_client(client)
-    order_ticket.set_order_type("Limit")
     order_ticket.buy()
 
     new_order_details = NewOrderDetails()
@@ -82,33 +75,11 @@ def execute(report_id):
     call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
     # end region
 
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
-
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_free_notes
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("FreeNotes", order_free_notes.name,
-                                                             "11603 'Price' (0) negative or zero")
-                                                  ]))
-    # endregion
-
     # region Create 2nd order via FE
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
-    order_ticket.set_quantity(qty)
-    order_ticket.set_limit(price[1])
+    order_ticket.set_quantity(qty[0])
+    order_ticket.set_limit(price)
     order_ticket.set_client(client)
     order_ticket.set_order_type("Limit")
     order_ticket.buy()
@@ -149,18 +120,16 @@ def execute(report_id):
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Status", order_status.name, "Rejected"),
                                                   verify_ent("FreeNotes", order_free_notes.name,
-                                                             "11603 'Price' (-99999999) negative or zero")
+                                                             "11603 'Price' (0) negative or zero")
                                                   ]))
     # endregion
 
     # region Create 3rd order via FE
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
-    order_ticket.set_quantity(qty)
-    order_ticket.set_limit(price[2])
-    order_ticket.set_stop_price(stop_price[0])
+    order_ticket.set_quantity(qty[1])
     order_ticket.set_client(client)
-    order_ticket.set_order_type("Limit")
+    order_ticket.set_order_type("Market")
     order_ticket.buy()
 
     new_order_details = NewOrderDetails()
@@ -180,76 +149,5 @@ def execute(report_id):
     request.extractedValues.append(error_message_value)
     call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
     # end region
-
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
-
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_free_notes
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("FreeNotes", order_free_notes.name,
-                                                             "11605 'StopPrice' (20) greater than 'Price' (10)")
-                                                  ]))
-    # endregion
-
-    # region Create 4th order via FE
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_instrument(symbol)
-    order_ticket.set_quantity(qty)
-    order_ticket.set_limit(price[3])
-    order_ticket.set_client(client)
-    order_ticket.set_order_type("Limit")
-    order_ticket.buy()
-
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-    call(order_ticket_service.setOrderDetails, new_order_details.build())
-
-    # error extraction
-    error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-    error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
-    error_message_value.name = "ErrorMessage"
-
-    request = ExtractOrderTicketValuesRequest()
-    request.base.CopyFrom(base_request)
-    request.extractionId = "ErrorMessageExtractionID"
-    request.extractedValues.append(error_message_value)
-    call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
-    # end region
-
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
-
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_free_notes
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("FreeNotes", order_free_notes.name,
-                                                             "11603 'Price' (0) negative or zero")
-                                                  ]))
-    # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
