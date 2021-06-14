@@ -9,10 +9,12 @@ from quod_qa.eq.Algo_Multilisted import QAP_2982, QAP_1986, QAP_1988, QAP_1965, 
 
 from quod_qa.fx import ui_tests
 from quod_qa.fx.fx_mm_rfq import (QAP_1970, QAP_1971, QAP_1972, QAP_2062, QAP_2121, QAP_1545, QAP_1537, QAP_1539WIP,
-                                  QAP_1541CANCELLED, QAP_1542, QAP_1547, QAP_1548, QAP_1562, QAP_1563)
+                                  QAP_1541CANCELLED, QAP_1542, QAP_1547, QAP_1548, QAP_1562, QAP_1563, QAP_1746_WIP,
+                                  QAP_2066)
 from rule_management import RuleManager
 from stubs import Stubs
 from test_cases import QAP_638, QAP_1552
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -27,34 +29,46 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('kbrit tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
+    s_id = set_session_id()
+    Stubs.frontend_is_open = True
     try:
-
-        test_cases = {
+        # case_params = {
+        #     'case_id': bca.create_event_id(),
+        #     'TraderConnectivity': 'gtwquod5-fx',
+        #     'Account': 'MMCLIENT1',
+        #     'SenderCompID': 'QUODFX_UAT',
+        #     'TargetCompID': 'QUOD5',
+        #     }
+        case_params = {
             'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'gtwquod5-fx',
-            'Account': 'MMCLIENT1',
+            'TraderConnectivity': 'fix-ss-rfq-314-luna-standard',
+            'Account': 'Iridium1',
             'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD5',
-        }
+            'TargetCompID': 'QUOD9',
+            }
 
         start = datetime.now()
         print(f'start time = {start}')
-        # QAP_1970.execute(report_id, test_cases)
-        # QAP_1971.execute(report_id, test_cases)
-        # QAP_1972.execute(report_id, test_cases)
-        # QAP_2062.execute(report_id, test_cases)
-        # QAP_1545.execute(report_id, test_cases)
-        # QAP_1537.execute(report_id, test_cases)
-        # QAP_1539WIP.execute(report_id, test_cases)
-        # QAP_1542.execute(report_id, test_cases)
-        # QAP_1547.execute(report_id, test_cases)
-        # QAP_1548.execute(report_id, test_cases)
-        # QAP_1562.execute(report_id, test_cases)
-        # QAP_1563.execute(report_id, test_cases)
+        QAP_2066.execute(report_id, case_params, s_id)
+        # QAP_1970.execute(report_id, case_params)
+        # QAP_1971.execute(report_id, case_params)
+        # QAP_1972.execute(report_id, case_params)
+        # QAP_2062.execute(report_id, case_params)
+        # QAP_1545.execute(report_id, case_params)
+        # QAP_1537.execute(report_id, case_params)
+        # QAP_1539WIP.execute(report_id, case_params)
+        # QAP_1542.execute(report_id, case_params)
+        # QAP_1547.execute(report_id, case_params)
+        # QAP_1548.execute(report_id, case_params)
+        # QAP_1562.execute(report_id, case_params)
+        # QAP_1563.execute(report_id, case_params)
 
 
+        # QAP_1746_WIP.execute(report_id,case_params)
 
-        ui_tests.execute(report_id)
+        # ui_tests.execute(report_id, s_id)
+        # ui_tests.execute(report_id, sid)
+        # ui_tests.execute(report_id, sid)
         # region Acceptance list RFQ Taker
         # QAP_568.execute(report_id)
         # QAP_569.execute(report_id)
@@ -179,6 +193,9 @@ def test_run():
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    finally:
+        Stubs.win_act.unregister(s_id)
 
 
 if __name__ == '__main__':
