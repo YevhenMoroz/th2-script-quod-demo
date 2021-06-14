@@ -108,10 +108,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        f_act = Stubs.fix_act
-        verifier = Stubs.verifier
         ob_act = Stubs.win_act_order_book
-        simulator = Stubs.simulator
         session_id = set_session_id()
 
         rule_list = rule_creation();
@@ -307,7 +304,7 @@ def execute(report_id):
             OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
         request = call(ob_act.getOrdersDetails, main_order_details.request())
 
-        child_id_list = ['child1: ' + request[child1_id.name], 'child2: ' + request[child2_id.name]]
+        #child_id_list = ['child1: ' + request[child1_id.name], 'child2: ' + request[child2_id.name]]
         child_ord_id1 = request[child1_id.name]
         child_ord_id2 = request[child2_id.name]
 
