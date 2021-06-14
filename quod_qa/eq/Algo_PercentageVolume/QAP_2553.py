@@ -172,8 +172,8 @@ def execute(report_id):
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '30.0'
+                    'StrategyParameterType': '11',
+                    'StrategyParameterValue': '30'
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -246,7 +246,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
