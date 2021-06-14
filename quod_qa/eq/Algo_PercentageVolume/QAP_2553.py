@@ -12,6 +12,10 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from win_gui_modules.wrappers import verification, verify_ent, set_base
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
+from win_gui_modules.order_book_wrappers import OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
+
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +32,7 @@ text_c='order canceled'
 text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
-side = 2
+side = 1
 price = 20
 tif_day = 0
 ex_destination_1 = "XPAR"
@@ -102,10 +106,17 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-def execute(report_id):
+def execute(report_id, session_id):
     try:
+        f_act = Stubs.fix_act
+        verifier = Stubs.verifier
+        ob_act = Stubs.win_act_order_book
+        simulator = Stubs.simulator
+
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         # Send_MarkerData
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
@@ -128,8 +139,8 @@ def execute(report_id):
         market_data3 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '20',
+                'MDEntrySize': '100',
                 'MDEntryPositionNo': '1'
             },
             {
@@ -140,19 +151,8 @@ def execute(report_id):
             }
         ]
         send_market_data(s_par, case_id_0, market_data3)
-        # time.sleep(10)
-        # market_data2 = [
-        #     {
-        #         'MDUpdateAction': '0',
-        #         'MDEntryType': '2',
-        #         'MDEntryPx': '123',
-        #         'MDEntrySize': '1234',
-        #         'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-        #         'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-        #     }
-        # ]
-        # send_market_dataT(s_par, case_id_0, market_data2)
-        # time.sleep(2)
+        
+        time.sleep(2)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
@@ -235,6 +235,81 @@ def execute(report_id):
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
+        #main order
+        main_order = {
+        'ExecID': '*',
+        'OrderQty': qty,
+        'NoStrategyParameters': '*',
+        'LastQty': '0',
+        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+        'TransactTime': '*',
+        'Side': side,
+        'AvgPx': '0',
+        "OrdStatus": "4",
+        'SettlDate': '*',
+        'Currency': currency,
+        'TimeInForce': tif_day,
+        'ExecType': '4',
+        'HandlInst': new_order_single_params['HandlInst'],
+        'LeavesQty': '0',
+        'NoParty': '*',
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': order_type,
+        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+        'OrderCapacity': new_order_single_params['OrderCapacity'],
+        'QtyType': '0',
+        'ExecRestatementReason': '*',
+        'Price': price,
+        'TargetStrategy': new_order_single_params['TargetStrategy'],
+        'Instrument': instrument,
+        'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
+
+        }
+
+        #set FE params
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        child_ord_id1 = None
+        child_ord_id2 = None
+
+        if not Stubs.frontend_is_open:
+            prepare_fe(case_id, session_id, work_dir, username, password)
+        else:
+            get_opened_fe(case_id, session_id, work_dir)
+
+        order_info_extraction = "getOrderInfo"
+
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(order_info_extraction)
+        main_order_details.set_filter(["Order ID", main_order['OrderID']])
+        main_order_id = ExtractionDetail("order_id", "Order ID")
+
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_id])
+
+        child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+        sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
+            extraction_details=[child1_id])
+        sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
+
+        child2_id = ExtractionDetail("subOrder_lvl_2.id", "Order ID")
+        sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(
+            extraction_detail=child2_id)
+        sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
+
+        sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
+
+        main_order_details.add_single_order_info(
+            OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
+        request = call(ob_act.getOrdersDetails, main_order_details.request())
+
+        child_id_list = ['child1: ' + request[child1_id.name], 'child2: ' + request[child2_id.name]]
+        child_ord_id1 = request[child1_id.name]
+        child_ord_id2 = request[child2_id.name]
+
         #region Check Buy Side
         case_id_2 = bca.create_event("Check Buy Side", case_id)
         # Check bs (FIXQUODSELL5 sent 35=D pending new)
@@ -266,7 +341,7 @@ def execute(report_id):
             'Text': text_pn,
             'OrdType': '2',
             'ClOrdID': '*',
-            'OrderID': '*',
+            'OrderID': child_ord_id1,
             'TransactTime': '*',
             'Side': side,
             'AvgPx': '0',
@@ -278,7 +353,7 @@ def execute(report_id):
             'LeavesQty': child_qty
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'OrderID'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
@@ -290,6 +365,39 @@ def execute(report_id):
         )
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
 
+
+        # Check that FIXBUYQUOD5 sent 35=8 pending new
+        er_5 = {
+            'Account': account,
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': child_qty,
+            'Text': text_pn,
+            'OrdType': '2',
+            'ClOrdID': '*',
+            'OrderID': child_ord_id2,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'Price': price,
+            'TimeInForce': tif_day,
+            'ExecType': "A",
+            'ExDestination': ex_destination_1,
+            'LeavesQty': child_qty
+        }
+
+        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'OrderID'])
+
+        # Check that FIXBUYQUOD5 sent 35=8 new
+        er_6 = dict(
+            er_5,
+            OrdStatus='0',
+            ExecType="0",
+            OrderQty=child_qty,
+            Text=text_n,
+        )
+        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
 
         #region Cancel Algo Order
         case_id_3 = bca.create_event("Cansel Algo Order", case_id)
@@ -318,7 +426,7 @@ def execute(report_id):
         time.sleep(3)
 
         # Check bs (on FIXBUYTH2 sent 35=8 on 35=F)
-        er_5 = {
+        er_7 = {
             'CumQty': '0',
             'ExecID': '*',
             'OrderQty': child_qty,
@@ -334,10 +442,10 @@ def execute(report_id):
             'OrigClOrdID': '*'
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_5, responce_cancel, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_7, responce_cancel, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
 
         # Check ss (on FIXQUODSELL5 sent 35=8 on 35=F)
-        er_6 = {
+        er_8 = {
         'ExecID': '*',
         'OrderQty': qty,
         'NoStrategyParameters': '*',
@@ -367,7 +475,7 @@ def execute(report_id):
         'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
 
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_cancel, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
+        fix_verifier_ss.CheckExecutionReport(er_8, responce_cancel, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])
         #endregion
     
     except:
