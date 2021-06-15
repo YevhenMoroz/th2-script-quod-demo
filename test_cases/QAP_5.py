@@ -32,7 +32,7 @@ class TestCase:
         self.ob_act = Stubs.win_act_order_book
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP-2761', report_id)
+        self.case_id = bca.create_event('QAP-5', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
