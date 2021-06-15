@@ -11,16 +11,6 @@ timeouts = True
 
 
 def send_swap_rfq(reusable_params, case_params, case_id, fix_act, ttl, qty1, qty2):
-    # rfq_params = {
-    #     'NoRelatedSymbols': [{
-    #         **reusable_params,
-    #         # 'QuoteType': '1',
-    #         'OrderQty': reusable_params['OrderQty'],
-    #         'OrdType': 'D',
-    #         'ExpireTime': get_expire_time(ttl),
-    #         'TransactTime': (datetime.utcnow().isoformat())}]
-    #     }
-
     rfq_params = {
         'QuoteReqID': bca.client_orderid(9),
         'NoRelatedSymbols': [

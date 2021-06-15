@@ -2,6 +2,15 @@ from stubs import Stubs
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe
 
 
+def print_args(fn):
+    def wrapper(self):
+        print(f"{str(fn.__name__)}()")
+        fn(self)
+
+    return wrapper
+
+
+@print_args
 def prepare_fe(case_id, session_id):
     print(f'prepare_fe(frontend_is_open={Stubs.frontend_is_open})')
 
