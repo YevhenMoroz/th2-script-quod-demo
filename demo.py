@@ -4,8 +4,8 @@ from custom import basic_custom_actions as bca
 # from quod_qa.fx import fix_demo, ui_tests
 # from rule_management import RuleManager
 from stubs import Stubs
-from quod_qa.eq.DMA import QAP_4287, QAP_4304, QAP_4310, QAP_4325, QAP_4311, QAP_4314, QAP_4291
-# from quod_qa.eq.Care import QAP_4306
+from quod_qa.eq.DMA import QAP_4297, QAP_4304, QAP_4310, QAP_4325, QAP_4311, QAP_4314, QAP_4291
+from quod_qa.eq.Care import QAP_4306
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,11 +22,11 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        # QAP_4287.execute(report_id)
-        # QAP_4304.execute(report_id)
+        # QAP_4297.execute(report_id)
+        QAP_4304.execute(report_id)
         # QAP_4310.execute(report_id)
-        # RIN_1151.execute(report_id)
-        QAP_4311.execute(report_id)
+        # QAP_4325.execute(report_id)
+        # QAP_4311.execute(report_id)
         # QAP_4314.execute(report_id)
         # QAP_4306.execute(report_id)
         # QAP_4291.execute(report_id)

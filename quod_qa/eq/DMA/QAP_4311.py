@@ -9,7 +9,7 @@ from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
-from quod_qa.wrapper.eq_wrappers import create_order, verify_value
+from quod_qa.wrapper import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,7 +18,9 @@ timeouts = True
 
 def execute(report_id):
     case_name = "QAP_4311"
+
     seconds, nanos = timestamps()  # Store case start time
+
     # region Declarations
     lookup = "RELIANCE"  # Setting values for all orders
     order_type = "Limit"
@@ -43,12 +45,12 @@ def execute(report_id):
     # endregion
 
     # region Create order via FE
-    create_order(base_request, qty, client, lookup, order_type, tif="Day",
-                 is_care=False, recipient=None, price=price, sell_side=False, disclose_flag=False, expire_date=None)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, "Day",
+                             False, None, price, False, False, None)
     # endregion
 
     # region Check values in OrderBook
-    verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

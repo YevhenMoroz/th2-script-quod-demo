@@ -2,14 +2,11 @@ import logging
 
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
 from custom.basic_custom_actions import create_event, timestamps
 
-
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
@@ -29,12 +26,12 @@ def execute(report_id):
 
     # region Declarations
     order_book_service = Stubs.win_act_order_book
-    qty = "20000001"
-    client = "HAKKIM"
     lookup = "RELIANCE"
     order_type = "Limit"
-    tif = "Day"
     price = "15"
+    qty = "20000001"
+    tif = "Day"
+    client = "HAKKIM"
     recipient = "RIN-DESK (CL)"
     free_notes = "11822 Calculated CumOrdQty"
     # endregion

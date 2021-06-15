@@ -1,14 +1,18 @@
 import logging
 
 from datetime import datetime
-from th2_grpc_act_gui_quod.order_ticket_pb2 import ExtractOrderTicketValuesRequest
+
 from custom.basic_custom_actions import create_event, timestamps
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
+
 from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.wrappers import set_base
+
+from quod_qa.fx.ui_test_ex import extract_error_message_order_ticket
+from quod_qa.wrapper import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,15 +21,16 @@ timeouts = True
 
 def execute(report_id):
     case_name = "QAP_4291"
+
     seconds, nanos = timestamps()  # Store case start time
+
     # region Declarations
     order_ticket_service = Stubs.win_act_order_ticket
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "10"
-    price = "4.0"
-    client = "HAKKIM"
+
     lookup = "RELIANCE"
+    price = "400"  # need to change price to 4.0
+    qty = "10000000"
+    client = "HAKKIM"
     symbol = "RELIANCE"
     # endregion
 
@@ -58,39 +63,14 @@ def execute(report_id):
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
-
     # error extraction
-    error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-    error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
-    error_message_value.name = "ErrorMessage"
-
-    request = ExtractOrderTicketValuesRequest()
-    request.base.CopyFrom(base_request)
-    request.extractionId = "ErrorMessageExtractionID"
-    request.extractedValues.append(error_message_value)
-    call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
+    extract_error_message_order_ticket(base_request, order_ticket_service)
     # end region
 
     # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_free_notes = ExtractionDetail("order_free_notes", "FreeNotes")
-
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_free_notes
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Rejected"),
-                                                  verify_ent("FreeNotes", order_free_notes.name,
-                                                             "'OrdAmount' (40) greater than 'MaxOrdAmt' (30)")
-                                                  ]))
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
+    eq_wrappers.verify_value(base_request, case_id, "FreeNotes",
+                             "11810 'OrdAmount' (50729232.7) greater than 'MaxOrdAmt' (30000000)")
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
