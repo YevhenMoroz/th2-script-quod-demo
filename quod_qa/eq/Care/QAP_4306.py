@@ -26,6 +26,7 @@ def execute(report_id):
 
     # region Declarations
     order_book_service = Stubs.win_act_order_book
+
     lookup = "RELIANCE"
     order_type = "Limit"
     price = "15"

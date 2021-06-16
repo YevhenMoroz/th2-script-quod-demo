@@ -28,9 +28,10 @@ def execute(report_id):
     order_ticket_service = Stubs.win_act_order_ticket
 
     lookup = "RELIANCE"
+    # "0-111111111" using to bypass the inability to enter a minus after clearing a "Price" field
     price = ["0", "0-111111111", "10", "abc"]
     stop_price = ["20", "abc"]
-    qty = "400"  # "0-111111111" using to bypass the inability to enter a minus after clearing a "Price" field
+    qty = "400"
     client = "HAKKIM"
     symbol = "RELIANCE"
     # endregion
@@ -125,6 +126,7 @@ def execute(report_id):
     order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty)
     order_ticket.set_limit(price[3])
+    order_ticket.set_stop_price(stop_price[1])
     order_ticket.set_client(client)
     order_ticket.set_order_type("Limit")
     order_ticket.buy()

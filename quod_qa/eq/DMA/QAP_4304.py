@@ -8,7 +8,6 @@ from stubs import Stubs
 
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
@@ -29,6 +28,7 @@ def execute(report_id):
     order_ticket_service = Stubs.win_act_order_ticket
 
     lookup = "RELIANCE"
+    order_type = "Limit"
     price = ["1234567,89", "100"]
     qty = ["100", "1234567891011", "200"]
     client = "HAKKIM"
@@ -51,25 +51,8 @@ def execute(report_id):
     # endregion
 
     # region Create 1st order via FE
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_instrument(symbol)
-    order_ticket.set_order_type("Limit")
-    order_ticket.set_quantity(qty[0])
-    order_ticket.set_limit(price[0])
-    order_ticket.set_client(client)
-    order_ticket.buy()
-
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-    call(order_ticket_service.setOrderDetails, new_order_details.build())
-
-    extraction_id = "order.dma"
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(extraction_id)
-    main_order_details.set_filter(["Lookup", lookup])
+    eq_wrappers.create_order(base_request, qty[0], client, lookup, order_type, "Day",
+                             False, None, price[0], False, False, None)
     # endregion
 
     # region Check values in OrderBook
@@ -77,25 +60,8 @@ def execute(report_id):
     # endregion
 
     # region Create 2nd order via FE
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_instrument(symbol)
-    order_ticket.set_order_type("Limit")
-    order_ticket.set_quantity(qty[1])
-    order_ticket.set_limit(price[1])
-    order_ticket.set_client(client)
-    order_ticket.buy()
-
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-    call(order_ticket_service.setOrderDetails, new_order_details.build())
-
-    extraction_id = "order.dma"
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(extraction_id)
-    main_order_details.set_filter(["Lookup", lookup])
+    eq_wrappers.create_order(base_request, qty[1], client, lookup, order_type, "Day",
+                             False, None, price[1], False, False, None)
     # endregion
 
     # region Check values in OrderBook

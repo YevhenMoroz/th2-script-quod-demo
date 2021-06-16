@@ -22,7 +22,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        # QAP_4297.execute(report_id)
+        QAP_4297.execute(report_id)
         # QAP_4304.execute(report_id)
         # QAP_4310.execute(report_id)
         # QAP_4325.execute(report_id)
@@ -30,7 +30,7 @@ def test_run():
         # QAP_4314.execute(report_id)
         # QAP_4306.execute(report_id)
         # QAP_4291.execute(report_id)
-        QAP_4322.execute(report_id)
+        # QAP_4322.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
