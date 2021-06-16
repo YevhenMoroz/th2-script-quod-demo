@@ -23,8 +23,8 @@ def test_run():
 
     try:
         # QAP_4297.execute(report_id)
-        QAP_4304.execute(report_id)
-        # QAP_4310.execute(report_id)
+        # QAP_4304.execute(report_id)
+        QAP_4310.execute(report_id)
         # QAP_4325.execute(report_id)
         # QAP_4311.execute(report_id)
         # QAP_4314.execute(report_id)

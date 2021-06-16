@@ -6,7 +6,7 @@ from custom.basic_custom_actions import create_event, timestamps
 
 from stubs import Stubs
 
-from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketValuesRequest
+from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
@@ -115,17 +115,8 @@ def execute(report_id):
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(base_request)
     call(order_ticket_service.setOrderDetails, new_order_details.build())
-
     # error extraction
-    error_message_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-    error_message_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
-    error_message_value.name = "ErrorMessage"
-
-    request = ExtractOrderTicketValuesRequest()
-    request.base.CopyFrom(base_request)
-    request.extractionId = "ErrorMessageExtractionID"
-    request.extractedValues.append(error_message_value)
-    call(Stubs.win_act_order_ticket.extractOrderTicketErrors, request)
+    extract_error_message_order_ticket(base_request, order_ticket_service)
     # end region
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
