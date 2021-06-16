@@ -385,6 +385,6 @@ def execute(report_id):
         logging.error("Error execution", exc_info=True)
 
 
-print('end time = ' + str(datetime.now()))
+# print('end time = ' + str(datetime.now()))
 # for rule in [RFQ, TRFQ]:
 #     rule_manager.remove_rule(rule)
