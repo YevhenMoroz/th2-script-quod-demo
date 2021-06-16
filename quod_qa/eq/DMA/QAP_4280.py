@@ -17,15 +17,15 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP_4311"
+    case_name = "QAP_4280"
 
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
     lookup = "RELIANCE"  # Setting values for all orders
     order_type = "Limit"
-    price = "1.2"
-    qty = "10000000"
+    price = "10"
+    qty = "1200"
     tif = "Day"
     client = "HAKKIM"
     # endregion
@@ -52,6 +52,8 @@ def execute(report_id):
 
     # region Check values in OrderBook
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_value(base_request, case_id, "GatingRuleName", "QAP-4280(Gr_for_DMA)")
+    eq_wrappers.verify_value(base_request, case_id, "GatingRuleCondName", "DMADefResult")
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

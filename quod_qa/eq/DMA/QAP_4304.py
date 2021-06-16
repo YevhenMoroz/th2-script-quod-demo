@@ -31,6 +31,7 @@ def execute(report_id):
     order_type = "Limit"
     price = ["1234567,89", "100"]
     qty = ["100", "1234567891011", "200"]
+    tif = "Day"
     client = "HAKKIM"
     symbol = "RELIANCE"
     # endregion
@@ -51,7 +52,7 @@ def execute(report_id):
     # endregion
 
     # region Create 1st order via FE
-    eq_wrappers.create_order(base_request, qty[0], client, lookup, order_type, "Day",
+    eq_wrappers.create_order(base_request, qty[0], client, lookup, order_type, tif,
                              False, None, price[0], False, False, None)
     # endregion
 
@@ -60,7 +61,7 @@ def execute(report_id):
     # endregion
 
     # region Create 2nd order via FE
-    eq_wrappers.create_order(base_request, qty[1], client, lookup, order_type, "Day",
+    eq_wrappers.create_order(base_request, qty[1], client, lookup, order_type, tif,
                              False, None, price[1], False, False, None)
     # endregion
 
