@@ -53,8 +53,8 @@ def execute(report_id):
     # end region
 
     # region Create Care order via FE
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif, True, recipient, price, False,
-                             DiscloseFlagEnum.DEFAULT_VALUE)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
+                             True, recipient, price, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # end region
 
     order_id = eq_wrappers.get_order_id(base_request)
