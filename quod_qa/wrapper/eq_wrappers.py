@@ -371,7 +371,7 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def verify_value(request, case_id, column_name, expected_value, is_child=False):
+def verify_order_value(request, case_id, column_name, expected_value, is_child=False):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
@@ -462,7 +462,7 @@ def approve_block(request):
 
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
-               settlement_date=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
+               settlement_date=None,pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None, fees_basis=None,
                fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
@@ -485,18 +485,20 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     if exchange_rate_calc is not None:
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
-        settlement_details.toggle_settlement_date()
+        #settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date(settlement_date)
+    if pset is not None:
+        settlement_details.set_pset(pset)
     if toggle_recompute is not False:
         settlement_details.toggle_recompute()
 
-    if comm_basis and comm_rate is not None:
+    if comm_basis is not None:
         commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
-    if fees_basis and fees_rate is not None:
+    if fees_basis is not None:
         fees_details = modify_request.add_fees_details()
-        fees_details.add_fees(fees_type, fees_basis, fees_rate,category=fees_category)
+        fees_details.add_fees(fees_type, fees_basis, rate=fees_rate,category=fees_category)
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
@@ -552,7 +554,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if exchange_rate_calc is not None:
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
-        settlement_details.toggle_settlement_date()
+        #settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date(settlement_date)
     if pset is not None:
         settlement_details.set_pset(pset)

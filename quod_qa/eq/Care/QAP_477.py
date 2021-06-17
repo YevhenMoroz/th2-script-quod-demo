@@ -92,7 +92,7 @@ def execute(report_id):
     lvl2_details.set_filter(["Order ID", child_ord_id1])
 
     call(Stubs.win_act_order_book.getChildOrdersDetails, lvl2_details.request())
-    eq_wrappers.verify_value(base_request, case_id, 'Order ID', child_ord_id1, True)
-    eq_wrappers.verify_value(base_request, case_id, 'Qty', '450', True)
-    eq_wrappers.verify_value(base_request, case_id, 'ExecPcy', 'DMA', True)
+    eq_wrappers.verify_order_value(base_request, case_id, 'Order ID', child_ord_id1, True)
+    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '450', True)
+    eq_wrappers.verify_order_value(base_request, case_id, 'ExecPcy', 'DMA', True)
     # endregion

@@ -101,7 +101,7 @@ def execute(report_id):
     # endregion
 
     # region verify isLocked
-    eq_wrappers.verify_value(base_request, case_id, 'IsLocked', 'Yes', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'IsLocked', 'Yes', False)
     #
     # region manual execute order
     eq_wrappers.manual_execution(base_request, qty, price)
