@@ -15,12 +15,13 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id):
-    case_name = "QAP-3349"
+    case_name = "QAP-3352"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "50"
     client = "CLIENTYMOROZ"
+    account = "CLIENT_YMOROZ_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -63,26 +64,42 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "PSET", "CREST")
     eq_wrappers.verify_block_value(base_request, case_id, "PSET BIC", "CRSTGB22")
     # endregion
-    # region Amend block
+    # region Approve
+    eq_wrappers.approve_block(base_request)
+    # endregion
+    # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
+    # endregion
+    # region Allocate
+    arr_allocation_param = [{"Security Account": account, "Alloc Qty": qty}]
+    eq_wrappers.allocate_order(base_request, arr_allocation_param)
+    # endregion
+    # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "MatchedAgreed")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Affirmed")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Matched")
+    # endregion
+    # region Amend allocate
     data += datetime.timedelta(days=1)
-    book_ticket=eq_wrappers.amend_block(base_request, settlement_currency="UAH",
+    alloc_ticket=eq_wrappers.amend_allocate(base_request, settlement_currency="UAH",
                             settlement_date=data.strftime("%#m/%#d/%Y"), exchange_rate="3", exchange_rate_calc="Divide",
                             pset="EURO_CLEAR")
     # endregion
     # region Verify
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking realtime parameters")
-    verifier.compare_values("Pset Bic", "MGTCBEBE", book_ticket["book.psetBic"])
-    verifier.compare_values("Exchange Rate", "3", book_ticket["book.exchangeRate"])
-    verifier.compare_values("Settlement Type", "Regular", book_ticket["book.settlementType"])
-    verifier.compare_values("Agr Price", price, book_ticket["book.agreedPrice"])
+    verifier.compare_values("Pset Bic", "MGTCBEBE", alloc_ticket["alloc.psetBic"])
+    verifier.compare_values("Exchange Rate", "3", alloc_ticket["alloc.exchangeRate"])
+    verifier.compare_values("Settlement Type", "Regular", alloc_ticket["alloc.settlementType"])
+    verifier.compare_values("Agr Price", price, alloc_ticket["alloc.agreedPrice"])
     verifier.verify()
-    eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
-    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
-    eq_wrappers.verify_block_value(base_request, case_id, "SettlCurrency", "UAH")
-    eq_wrappers.verify_block_value(base_request, case_id, "SettlCurrFxRateCalc", "D")
-    eq_wrappers.verify_block_value(base_request, case_id, "ExchangeRate", "3")
-    eq_wrappers.verify_block_value(base_request, case_id, "SettlDate", data.strftime("%#m/%#d/%Y"))
-    eq_wrappers.verify_block_value(base_request, case_id, "PSET", "EURO_CLEAR")
-    eq_wrappers.verify_block_value(base_request, case_id, "PSET BIC", "MGTCBEBE")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Affirmed")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Matched")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Settl Currency", "UAH")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Settl Curr Fx Rate Calc Text", "Divide")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Settl Curr Fx Rate", "3")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "SettlDate", data.strftime("%#m/%#d/%Y"))
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET", "EURO_CLEAR")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET BIC", "MGTCBEBE")
     # endregion

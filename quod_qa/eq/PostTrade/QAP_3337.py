@@ -67,8 +67,8 @@ def execute(report_id):
     # endregion
     # region Verify
     eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "MatchedAgreed")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Status", "Affirmed")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Match Status", "Matched")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Affirmed", account)
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Matched", account)
     # endregion
     # region UnAllocate
     eq_wrappers.unallocate_order(base_request)
@@ -77,8 +77,8 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
     eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
     eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Status", "Canceled")
-    eq_wrappers.verify_allocate_value(base_request, case_id, account, "Match Status", "Unmatched")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Canceled", account)
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Unmatched", account)
     params = {
         'Account': client,
         'TradeDate': '*',
