@@ -1,5 +1,6 @@
 import os
 import logging
+import math
 import time
 from datetime import datetime, timedelta
 from copy import deepcopy
@@ -20,10 +21,18 @@ timeouts = True
 
 
 qty = 1000
-ltq_child_qty = 86  #last trade qty child
-md_child_qty = 43
-md_child_qty2 = 215
-md_child_qty3 = 65
+start_ltq = 200
+start_oo_qty = 100
+oo_qty = 500  #open order
+oo_dec_qty = 150
+percentage = 30
+ltq_child_qty = math.ceil((percentage * start_ltq) / (100 - percentage))
+md_child_qty = math.ceil((percentage * start_oo_qty) / (100 - percentage))
+md_child_qty2 = math.ceil((percentage * oo_qty) / (100 - percentage))
+md_child_qty3 = math.ceil((percentage * oo_dec_qty) / (100 - percentage))
+MDEntrySize = start_oo_qty + ltq_child_qty
+MDEntrySize2 = oo_qty + ltq_child_qty + md_child_qty2
+MDEntrySize3 =  oo_dec_qty + ltq_child_qty + md_child_qty3
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
@@ -33,10 +42,6 @@ text_ret = 'reached end time'
 text_s = 'sim work'
 side = 1
 price = 1
-start_ltq = 200
-start_oo_qty = 186
-oo_qty = 629  #open order
-oo_dec_qty = 451
 tif_day = 0
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
@@ -44,7 +49,6 @@ order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
-percentage = 30
 aggressivity = 2
 
 now = datetime.today() - timedelta(hours=3)
@@ -138,7 +142,7 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': start_oo_qty,
+                'MDEntrySize': MDEntrySize,
                 'MDEntryPositionNo': '1'
             },
             {
@@ -342,12 +346,12 @@ def execute(report_id):
 
         #region Modify open order qty
         case_id_3 = bca.create_event("Modify Order", case_id)
-        # Update market data  
+        # Update market data          
         market_data4 = [
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': oo_qty,
+                'MDEntrySize': MDEntrySize2,
                 'MDEntryPositionNo': '1'
             },
             {
@@ -470,27 +474,27 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_10, responce_new_order_single, direction='SECOND', case=case_id_4,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
         #endregion
 
-        # #region Modify open order qty
-        # case_id_5 = bca.create_event("Modify Order", case_id)
-        # # Update market data  
-        # market_data5 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '1',
-        #         'MDEntrySize': oo_dec_qty,
-        #         'MDEntryPositionNo': '1'
-        #     },
-        #     {
-        #         'MDEntryType': '1',
-        #         'MDEntryPx': '0',
-        #         'MDEntrySize': '0',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data(s_par, case_id_5, market_data5)
+        #region Modify open order qty
+        case_id_5 = bca.create_event("Modify Order", case_id)
+        # Update market data  
+        market_data5 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': MDEntrySize3,
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_5, market_data5)
 
-        # time.sleep(2)
-        # #endregion
+        time.sleep(2)
+        #endregion
 
         # #region Check Buy Side After Second Amend
         case_id_6 = bca.create_event("Check Buy Side After Second Amend", case_id)
