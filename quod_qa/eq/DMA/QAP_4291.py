@@ -49,7 +49,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create order via FE
+    # region Create order via FE according to 1st and 2nd steps
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty)

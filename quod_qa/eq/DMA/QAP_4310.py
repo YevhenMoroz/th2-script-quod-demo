@@ -49,7 +49,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create 1st order via FE
+    # region Create order via FE according to 1st step
     order_ticket = OrderTicketDetails()
     order_ticket.buy()
 
@@ -62,7 +62,7 @@ def execute(report_id):
     extract_error_message_order_ticket(base_request, order_ticket_service)
     # end region
 
-    # region Create 2nd order via FE
+    # region Create order via FE according to 2nd step
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty[0])
@@ -85,7 +85,7 @@ def execute(report_id):
     eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (0) negative or zero")
     # endregion
 
-    # region Create 3rd order via FE
+    # region Create order via FE according to 3rd step
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty[1])

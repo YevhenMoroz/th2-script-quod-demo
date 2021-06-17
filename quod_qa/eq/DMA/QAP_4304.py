@@ -51,7 +51,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create 1st order via FE
+    # region Create order via FE according to 1st step
     eq_wrappers.create_order(base_request, qty[0], client, lookup, order_type, tif,
                              False, None, price[0], False, False, None)
     # endregion
@@ -60,7 +60,7 @@ def execute(report_id):
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
     # endregion
 
-    # region Create 2nd order via FE
+    # region Create order via FE according to 2nd step
     eq_wrappers.create_order(base_request, qty[1], client, lookup, order_type, tif,
                              False, None, price[1], False, False, None)
     # endregion
@@ -69,7 +69,7 @@ def execute(report_id):
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
     # endregion
 
-    # region Create 3rd order via FE
+    # region Create order via FE according to 3rd step
     order_ticket = OrderTicketDetails()
     order_ticket.set_instrument(symbol)
     order_ticket.set_quantity(qty[2])

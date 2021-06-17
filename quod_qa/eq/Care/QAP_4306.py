@@ -52,14 +52,14 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # end region
 
-    # region Create Care order via FE
+    # region Create order via FE according to 1st step
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
                              True, recipient, price, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # end region
 
     order_id = eq_wrappers.get_order_id(base_request)
 
-    # region Check values in OrderBook
+    # region Check values in OrderBook according to 2nd step
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
@@ -80,7 +80,7 @@ def execute(report_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
-    # using custom verifier to get slice of column content (verify_ent() get path as argument, not the content string)
+    # using custom verifier to get slice of column content (verify_ent() get path as argument, not the string's content)
     verifier.compare_values("FreeNotes", free_notes, actual_free_notes[:26])
     verifier.verify()
     # endregion

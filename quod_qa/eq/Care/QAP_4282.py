@@ -47,12 +47,12 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create order via FE
+    # region Create order via FE according to 1st step
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
                              True, recipient, price, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # endregion
 
-    # region Check values in OrderBook
+    # region Check values in OrderBook according to 2nd step
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Held")
     eq_wrappers.verify_value(base_request, case_id, "GatingRuleName", "QAP-4282(Gr_for_Care)")
     eq_wrappers.verify_value(base_request, case_id, "GatingRuleCondName", "CareTinyQty")

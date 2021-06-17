@@ -31,7 +31,7 @@ def execute(report_id):
         stub = Stubs.win_act
         init_event = create_event("Initialization", parent_id=case_id)
 
-        # region open FE login window
+        # region Open FE login window
         open_app_req = OpenApplicationRequest()
         open_app_req.set_session_id(session_id)
         open_app_req.set_parent_event_id(init_event)
@@ -40,7 +40,7 @@ def execute(report_id):
         stub.openApplication(open_app_req.build())
         # end region
 
-        # region input login credentials 1st step
+        # region Input login credentials according to 1st step
         login_details_req = LoginDetailsRequest()
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)
@@ -54,7 +54,7 @@ def execute(report_id):
         call(stub.login, login_details_req.build())
         # end region
 
-        # region open FE login window
+        # region Open FE login window
         open_app_req = OpenApplicationRequest()
         open_app_req.set_session_id(session_id)
         open_app_req.set_parent_event_id(init_event)
@@ -63,7 +63,7 @@ def execute(report_id):
         stub.openApplication(open_app_req.build())
         # end region
 
-        # region input login credentials 2st step
+        # region Input login credentials according to 2nd step
         login_details_req = LoginDetailsRequest()
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)
@@ -77,7 +77,7 @@ def execute(report_id):
         call(stub.login, login_details_req.build())
         # end region
 
-        # region open FE login window
+        # region Open FE login window
         open_app_req = OpenApplicationRequest()
         open_app_req.set_session_id(session_id)
         open_app_req.set_parent_event_id(init_event)
@@ -86,7 +86,7 @@ def execute(report_id):
         stub.openApplication(open_app_req.build())
         # end region
 
-        # region input login credentials 3st step
+        # region Input login credentials according to 3rd step
         login_details_req = LoginDetailsRequest()
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)

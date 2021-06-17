@@ -45,7 +45,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create order via FE
+    # region Create order via FE according to 1st and 2nd steps
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
                              False, None, price, False, False, None)
     # endregion
