@@ -374,6 +374,42 @@ def execute(report_id):
         
         time.sleep(2)
 
+        # Check bs (on FIXBUYTH2 sent 38 on 35=F first child)
+        er_7 = {
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': ltq_child_qty,
+            'ClOrdID': '*',
+            'Text': text_c,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': '4',
+            'ExecType': '4',
+            'LeavesQty': '0',
+            'OrigClOrdID': '*'
+        }
+        fix_verifier_bs.CheckExecutionReport(er_7, responce_cancel, direction='SECOND', case=case_id_7, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+
+        # Check bs (on FIXBUYTH2 sent 38 on 35=F second child)
+        er_8 = {
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': md_child_qty,
+            'ClOrdID': '*',
+            'Text': text_c,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': '4',
+            'ExecType': '4',
+            'LeavesQty': '0',
+            'OrigClOrdID': '*'
+        }
+        fix_verifier_bs.CheckExecutionReport(er_8, responce_cancel, direction='SECOND', case=case_id_7, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+
         # Check ss (on FIXQUODSELL5 sent 35=8 on 35=F)
         er_15 = {
         'ExecID': '*',
