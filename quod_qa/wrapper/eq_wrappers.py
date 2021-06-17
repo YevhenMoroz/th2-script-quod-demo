@@ -586,7 +586,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
-
+    '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("BookExtractionId")
     extraction_details.extract_net_price("book.netPrice")
@@ -598,7 +598,11 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     extraction_details.extract_pset_bic("book.psetBic")
     extraction_details.extract_exchange_rate("book.settlementType")
     extraction_details.extract_settlement_type("book.exchangeRate")
-    return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+    '''
+    try:
+        return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
 
 
 def unbook_order(request):
@@ -621,7 +625,7 @@ def allocate_order(request, arr_allocation_param: []):
     '''
     for i in arr_allocation_param:
         allocations_details.add_allocation_param(i)
-
+    '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("AllocExtractionId")
     extraction_details.extract_agreed_price("alloc.agreedPrice")
@@ -633,6 +637,7 @@ def allocate_order(request, arr_allocation_param: []):
     extraction_details.extract_pset_bic("alloc.psetBic")
     extraction_details.extract_exchange_rate("alloc.exchangeRate")
     extraction_details.extract_block_settlement_type("alloc.settlementType")
+    '''
     try:
         response = call(Stubs.win_act_middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
         return response
@@ -640,13 +645,16 @@ def allocate_order(request, arr_allocation_param: []):
         logger.error("Error execution", exc_info=True)
 
 
-def amend_allocate(request,account=None, settlement_currency=None,exchange_rate=None, exchange_rate_calc=None,
+def amend_allocate(request,account=None,agreed_price=None, settlement_currency=None,exchange_rate=None, exchange_rate_calc=None,
                    settlement_date=None,pset=None, comm_basis=None,comm_rate=None,fees_basis=None, fees_rate=None,
                    fee_type=None, fee_category=None, misc_arr: [] = None, remove_commissions=False, remove_fees=False):
     modify_request = ModifyTicketDetails(base=request)
     amend_allocations_details = modify_request.add_amend_allocations_details()
+    ticket_details = modify_request.add_ticket_details()
     if account is not None:
         amend_allocations_details.set_allocations_filter({"Account ID": account})
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
     settlement_details = modify_request.add_settlement_details()
     if settlement_currency is not None:
         settlement_details.set_settlement_currency(settlement_currency)
@@ -656,7 +664,8 @@ def amend_allocate(request,account=None, settlement_currency=None,exchange_rate=
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
         settlement_details.set_settlement_date(settlement_date)
-    settlement_details.set_pset(pset)
+    if pset is not None:
+        settlement_details.set_pset(pset)
 
     if remove_commissions:
         commissions_details = modify_request.add_commissions_details()
@@ -691,9 +700,10 @@ def amend_allocate(request,account=None, settlement_currency=None,exchange_rate=
     extraction_details.extract_pset_bic("alloc.psetBic")
     extraction_details.extract_exchange_rate("alloc.exchangeRate")
     extraction_details.extract_block_settlement_type("alloc.settlementType")
-
-    return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
-
+    try:
+        return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
 
 def unallocate_order(request):
     modify_request = ModifyTicketDetails(base=request)
@@ -732,13 +742,19 @@ def view_orders_for_block(request, count: int):
         order_details.set_order_number(i)
         dma_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
         order_details.add_extraction_detail(dma_order_id_view)
+    try:
         arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
-    return arr_response
+        return arr_response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
 
 
 def check_error_in_book(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(request)
     modify_request.set_partial_error_message("qwerty")
-    error = call(middle_office_service.bookOrder, modify_request.build())
-    return error
+    try:
+        error = call(middle_office_service.bookOrder, modify_request.build())
+        return error
+    except Exception:
+            logger.error("Error execution", exc_info=True)
