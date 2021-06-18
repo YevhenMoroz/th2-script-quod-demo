@@ -86,6 +86,7 @@ def execute(report_id):
         'Currency': '*',
         'NoParty': '*',
         'Instrument': '*',
+        'BookID': '*',
         'header': '*',
         'AllocInstructionMiscBlock1': '*',
         'SettlDate': '*',
@@ -103,14 +104,10 @@ def execute(report_id):
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '1',
-        'CommissionData': '*',
-        'NoMiscFees': '*',
         'ConfirmID': '*'
     }
     fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
-    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders', 'ConfirmTransType'])
-    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
-
+    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders','ConfirmTransType','Account'])
     params = {
         'Account': client,
         'Quantity': qty,
@@ -149,5 +146,5 @@ def execute(report_id):
             }
         ],
     }
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
+    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType','Account'])
     # endregion
