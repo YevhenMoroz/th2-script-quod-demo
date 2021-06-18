@@ -11,7 +11,7 @@ from stubs import Stubs
 
 from quod_qa.eq.DMA import QAP_4297, QAP_4304, QAP_4310, QAP_4325, QAP_4311, QAP_4314, QAP_4291, QAP_4322, QAP_4300, \
     QAP_4280, QAP_4307
-from quod_qa.eq.Care import QAP_4306, QAP_4288, QAP_4282
+from quod_qa.eq.Care import QAP_4306, QAP_4288, QAP_4282, QAP_4303
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -39,7 +39,8 @@ def test_run():
         # QAP_4280.execute(report_id)
         # QAP_4307.execute(report_id)
         # QAP_4288.execute(report_id)
-        QAP_4282.execute(report_id)
+        # QAP_4282.execute(report_id)
+        QAP_4303.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
