@@ -403,7 +403,7 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': MDEntrySize,
+                'MDEntrySize': 26,
                 'MDEntryPositionNo': '1'
             },
             {
