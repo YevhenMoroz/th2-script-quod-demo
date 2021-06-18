@@ -105,7 +105,7 @@ class RuleManager:
                                                                price=price,
                                                                traded_price=traded_price,
                                                                qty=qty,
-                                                               tradedQty=traded_qty,
+                                                               traded_qty=traded_qty,
                                                                delay= delay))
 
     @staticmethod
