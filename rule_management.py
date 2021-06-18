@@ -2,7 +2,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
     TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
-    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -92,6 +92,19 @@ class RuleManager:
                                                                account=account,
                                                                venue=venue,
                                                                price=price,
+                                                               tradedQty=traded_qty,
+                                                               delay= delay))
+
+    
+    @staticmethod
+    def add_NewOrdSingleExecutionReportTradeByOrdQty(session: str, account: str, exdestination : str, price: float, traded_price: float, qty: int, traded_qty: int, delay: int):
+        return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQty(
+            request=TemplateNewOrdSingleExecutionReportTradeByOrdQty(connection_id=ConnectionID(session_alias=session),
+                                                               account=account,
+                                                               exdestination=exdestination,
+                                                               price=price,
+                                                               traded_price=traded_price,
+                                                               qty=qty,
                                                                tradedQty=traded_qty,
                                                                delay= delay))
 
