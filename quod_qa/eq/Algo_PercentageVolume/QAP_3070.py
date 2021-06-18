@@ -32,6 +32,7 @@ text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
+text_p = 'Partial fill'
 text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
@@ -63,9 +64,10 @@ instrument = {
 def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, account, ex_destination_1, price, ltq_child_qty, 0)
+    nos_trade_by_qty_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price, price, 43, 43, 0)
+    nos2_trade_by_qty_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price, price, 19, 17, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nos_rule, nos_trade_rule, ocr_rule]
+    return [nos_rule, nos_trade_by_qty_rule, nos2_trade_by_qty_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -294,7 +296,6 @@ def execute(report_id):
             'ExDestination': ex_destination_1,
             'LeavesQty': ltq_child_qty
         }
-        #check text
         fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'OrderQty', 'Price'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
@@ -308,10 +309,7 @@ def execute(report_id):
 
         #region Check Buy Side
         case_id_3 = bca.create_event("Check Filled Orders", case_id)
-        #Filled orders
-        
-        time.sleep(3)
-
+        #send last trade qty
         market_data6 = [
             {
                 'MDUpdateAction': '0',
@@ -327,37 +325,53 @@ def execute(report_id):
         
         # Check bs (on FIXBUYTH2 sent 38 on 35=F first child)
         er_7 = {
-            'CumQty': '0',
+            'Account': account,
+            'CumQty': ltq_child_qty,
+            'LastPx': price,
             'ExecID': '*',
             'OrderQty': ltq_child_qty,
+            'OrdType': order_type,
             'ClOrdID': '*',
-            'Text': text_c,
+            'LastQty': ltq_child_qty,
+            'Text': text_f,
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*'
+            'AvgPx': '*',
+            'OrdStatus': '2',
+            'Price': price,
+            'Currency': currency,
+            'TimeInForce': new_order_single_params['TimeInForce'],
+            'Instrument': '*',
+            'ExecType': "F",
+            'LeavesQty': '0'
         }
         fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
 
         # Check bs (on FIXBUYTH2 sent 38 on 35=F second child)
         er_8 = {
-            'CumQty': '0',
+            'Account': account,
+            'CumQty': 17,
+            'LastPx': price,
             'ExecID': '*',
-            'OrderQty': md_child_qty,
+            'OrderQty': 19,
+            'OrdType': '2',
             'ClOrdID': '*',
-            'Text': text_c,
+            'LastQty': 17,
+            'Text': text_p,
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*'
+            'AvgPx': '*',
+            'OrdStatus': '1',
+            'Price': price,
+            'Currency': currency,
+            'TimeInForce': new_order_single_params['TimeInForce'],
+            'Instrument': '*',
+            'ExecType': "F",
+            'LeavesQty': 2
         }
         fix_verifier_bs.CheckExecutionReport(er_8, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
@@ -399,7 +413,7 @@ def execute(report_id):
         'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'Side': side,
-        'AvgPx': '0',
+        'AvgPx': '1',
         "OrdStatus": "4",
         'SettlDate': '*',
         'Currency': currency,
@@ -408,7 +422,7 @@ def execute(report_id):
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': '0',
         'NoParty': '*',
-        'CumQty': '0',
+        'CumQty': start_oo_qty,
         'LastPx': '0',
         'OrdType': order_type,
         'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
