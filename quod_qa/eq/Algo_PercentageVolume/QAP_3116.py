@@ -22,13 +22,11 @@ timeouts = True
 
 qty = 1000
 start_ltq = 200
-start_oo_qty = 100
-oo_qty = 500  #open order
-oo_dec_qty = 150
+oo_qty = 60  #open order
 percentage = 30
 ltq_child_qty = math.ceil((percentage * start_ltq) / (100 - percentage))
-md_child_qty = math.ceil((percentage * start_oo_qty) / (100 - percentage))
-MDEntrySize = start_oo_qty + ltq_child_qty
+md_child_qty = math.ceil((percentage * oo_qty) / (100 - percentage))
+MDEntrySize = 52
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
@@ -66,8 +64,9 @@ def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, 146, price)
-    return [nos_rule, ocr_rule, nos_ioc_ltq_rule]
+    nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, account, ex_destination_1, price, oo_qty, 0)
+    nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, 40, price)
+    return [nos_rule, nos_trade_rule, ocr_rule, nos_ioc_ltq_rule]
 
 
 def rule_destroyer(list_rules):
@@ -138,14 +137,14 @@ def execute(report_id):
         market_data3 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': MDEntrySize,
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': oo_qty,
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -184,6 +183,34 @@ def execute(report_id):
         fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
         
+        time.sleep(2)
+        market_data4 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '1',
+                'MDEntrySize': oo_qty,
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+        send_market_dataT(s_par, case_id_1, market_data4)
+
+        market_data5 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_1, market_data5)
         #Check that FIXQUODSELL5 receive 35=D
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),
@@ -360,23 +387,23 @@ def execute(report_id):
         fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_3)
         time.sleep(1)
 
-        market_data4 = [
+        market_data6 = [
             {
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
                 'MDEntryPx': '1',
-                'MDEntrySize': start_oo_qty,
+                'MDEntrySize': oo_qty,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
             }
         ]
-        send_market_dataT(s_par, case_id_0, market_data2)
+        send_market_dataT(s_par, case_id_3, market_data6)
 
-        market_data5 = [
+        market_data7 = [
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': start_oo_qty,
+                'MDEntrySize': MDEntrySize,
                 'MDEntryPositionNo': '1'
             },
             {
@@ -386,7 +413,7 @@ def execute(report_id):
                 'MDEntryPositionNo': '1'
             }
         ]
-        send_market_data(s_par, case_id_0, market_data5)
+        send_market_data(s_par, case_id_3, market_data7)
 
         mod_algo_ss_param = dict(
             fix_modify_message.get_parameters(),
