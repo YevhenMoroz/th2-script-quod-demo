@@ -2,6 +2,7 @@ import logging
 import time
 from datetime import datetime
 
+
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.run_client_accounts import RunClientsAccounts
 from quod_qa.web_admin.web_admin_test_cases.general.run_general import RunGeneral
@@ -37,6 +38,7 @@ def test_run():
 
     # RunClientsAccounts(web_driver_container).execute()
     RunOthers(web_driver_container).execute()
+    #RunRoutes(web_driver_container).execute()
 
 
 if __name__ == '__main__':
