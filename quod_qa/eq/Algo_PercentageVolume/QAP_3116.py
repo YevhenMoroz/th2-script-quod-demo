@@ -24,6 +24,7 @@ qty = 1000
 start_ltq = 200
 oo_qty = 60  #open order
 percentage = 30
+ioc_qty = 40
 ltq_child_qty = math.ceil((percentage * start_ltq) / (100 - percentage))
 md_child_qty = math.ceil((percentage * oo_qty) / (100 - percentage))
 MDEntrySize = 52
@@ -37,6 +38,7 @@ text_s = 'sim work'
 side = 1
 price = 1
 tif_day = 0
+tif_ioc = 3
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 order_type = 2
@@ -64,9 +66,9 @@ def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, account, ex_destination_1, price, oo_qty, 0)
-    nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, 40, price)
-    return [nos_rule, nos_trade_rule, ocr_rule, nos_ioc_ltq_rule]
+    nos_trade_by_qty_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price, price, 86, oo_qty, 0)
+    nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, 40, price)
+    return [nos_rule, nos_trade_by_qty_rule, ocr_rule, nos_ioc_ltq_rule]
 
 
 def rule_destroyer(list_rules):
@@ -199,8 +201,8 @@ def execute(report_id):
         market_data5 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '52',   
                 'MDEntryPositionNo': '1'
             },
             {
@@ -211,6 +213,22 @@ def execute(report_id):
             }
         ]
         send_market_data(s_par, case_id_1, market_data5)
+
+        market_data15 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '52',   
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_1, market_data15)
         #Check that FIXQUODSELL5 receive 35=D
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),
@@ -403,7 +421,7 @@ def execute(report_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': 26,
+                'MDEntrySize': '26',
                 'MDEntryPositionNo': '1'
             },
             {
@@ -423,7 +441,7 @@ def execute(report_id):
 
         fix_verifier_ss.CheckOrderCancelReplaceRequest(mod_algo_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FIXQUODSELL5 receive 35=G')
 
-                # Check bs (on FIXBUYTH2 sent 38 on 35=F first child)
+        # Check bs (on FIXBUYTH2 sent 38 on 35=F first child)
         er_7 = {
             'CumQty': '0',
             'ExecID': '*',
@@ -439,7 +457,7 @@ def execute(report_id):
             'LeavesQty': '0',
             'OrigClOrdID': '*'
         }
-        fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text'])
 
         # Check bs (on FIXBUYTH2 sent 38 on 35=F second child)
         er_8 = {
@@ -457,7 +475,60 @@ def execute(report_id):
             'LeavesQty': '0',
             'OrigClOrdID': '*'
         }
-        fix_verifier_bs.CheckExecutionReport(er_8, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_8, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text'])
+
+        # Check that FIXBUYQUOD5 sent 35=8 pending new on IOC
+        er_9 = {
+            'Account': account,
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': ioc_qty,
+            'Text': text_pn,
+            'OrdType': '2',
+            'ClOrdID': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'Price': price,
+            'TimeInForce': tif_ioc,
+            'ExecType': "A",
+            'ExDestination': ex_destination_1,
+            'LeavesQty': ioc_qty
+        }
+        #check text
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FIXBUYTH2 sent 35=8 Pending New IOC', key_parameters=['ExecType', 'OrdStatus', 'OrderQty', 'Price', 'TimeInForce'])
+
+        # Check that FIXBUYQUOD5 sent 35=8 new
+        er_10 = dict(
+            er_9,
+            OrdStatus='0',
+            ExecType="0",
+            Text=text_n,
+        )
+        fix_verifier_bs.CheckExecutionReport(er_10, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='FIXBUYTH2 sent 35=8 New IOC', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus', 'TimeInForce'])
+
+        time.sleep(3)
+
+        er_11 = {
+            'CumQty': '0',
+            'ExecID': '*',
+            'OrderQty': ioc_qty,
+            'OrdType': order_type,
+            'ClOrdID': '*',
+            'Text': text_c,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': 4,
+            'TimeInForce': tif_ioc,
+            'ExecType': 4,
+            'ExDestination': ex_destination_1,
+            'LeavesQty': '0'
+        }
+        fix_verifier_bs.CheckExecutionReport(er_11, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FixBUYTH2 sent 35=8 Cancel IOC', key_parameters=['OrderQty', 'TimeInForce', 'ExecType', 'OrdStatus', 'Text'])
         #endregion
 
         time.sleep(3)
@@ -497,7 +568,7 @@ def execute(report_id):
         'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
         'TransactTime': '*',
         'Side': side,
-        'AvgPx': '0',
+        'AvgPx': '1',
         "OrdStatus": "4",
         'SettlDate': '*',
         'Currency': currency,
@@ -506,7 +577,7 @@ def execute(report_id):
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': '0',
         'NoParty': '*',
-        'CumQty': '0',
+        'CumQty': oo_qty,
         'LastPx': '0',
         'OrdType': order_type,
         'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
