@@ -21,7 +21,8 @@ from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import (OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction,
+                                                 ModifyFXOrderDetails)
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -590,9 +591,15 @@ def get_width(positions, key) -> int:
     return int(positions[key].split(' ')[2].split(':')[1])
 
 
+def amend_order(ob_act, base_request):
+    order_details = FXOrderDetails()
+
+    modify_ot_order_request = ModifyFXOrderDetails(base_request)
+    modify_ot_order_request.set_order_details(order_details)
+
+    call(ob_act.amendOrder, modify_ot_order_request.build())
 
 def execute(report_id, session_id):
-    # region Preparation
 
     common_act = Stubs.win_act
 
@@ -691,7 +698,7 @@ def execute(report_id, session_id):
         # endregion
 
         # region Dealer Intervention
-        extract_di_panel(base_request, dealer_interventions_service)
+        # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # endregion
 
@@ -699,6 +706,11 @@ def execute(report_id, session_id):
         # coords = open_ar_window_move_left(ar_service, base_request)
         # ar_pilots_to_actions(ar_service, base_request, coords)
         # endregion
+    
+        # region OrderTicket actions
+        amend_order(ob_act, base_request)
+        # endregion
+    
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
