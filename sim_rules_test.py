@@ -11,7 +11,7 @@ simulator = Stubs.simulator
 
 # DemoRule = simulator.createTemplateQuodDemoRule(
 #     request=TemplateQuodDemoRule(
-#         connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'),
+#         connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-RET-child'),
 #         demo_field1=123,
 # #         demo_field2='KCH_QA_RET_CHILD'))
 #

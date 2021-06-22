@@ -9,9 +9,12 @@ from stubs import Stubs
 # from rule_management import RuleManager
 # from quod_qa.fx import fix_demo, ui_tests
 
-from quod_qa.eq.DMA import QAP_4297, QAP_4304, QAP_4310, QAP_4325, QAP_4311, QAP_4314, QAP_4291, QAP_4322, QAP_4300, \
-    QAP_4280, QAP_4307
-from quod_qa.eq.Care import QAP_4306, QAP_4288, QAP_4282, QAP_4303
+from quod_qa.RET.Risk_Limits import QAP_4311, QAP_4314, QAP_4306, QAP_4291, QAP_4322, QAP_4300
+from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4307, QAP_4288, QAP_4282
+from quod_qa.RET.Benchmark import QAP_4303
+from quod_qa.RET.DMA import QAP_4297, QAP_4304, QAP_4310
+from quod_qa.RET.Login import QAP_4325
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
