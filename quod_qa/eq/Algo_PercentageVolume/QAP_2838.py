@@ -244,10 +244,7 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
 
     call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
                                                      [verify_ent("PercentageVolume", "PercentageVolume", "30.0")]))
-                                                         
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    call(act_ob.cancelOrder, cancel_order_details.build())
+
 
 def execute(reportid):
     try:
