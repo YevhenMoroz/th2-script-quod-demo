@@ -14,6 +14,7 @@ from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4307, QAP_4288, QAP_4282
 from quod_qa.RET.Benchmark import QAP_4303
 from quod_qa.RET.DMA import QAP_4297, QAP_4304, QAP_4310
 from quod_qa.RET.Login import QAP_4325
+from quod_qa.RET.FIX import DMA_FixFE_test
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -43,7 +44,8 @@ def test_run():
         # QAP_4307.execute(report_id)
         # QAP_4288.execute(report_id)
         # QAP_4282.execute(report_id)
-        QAP_4303.execute(report_id)
+        # QAP_4303.execute(report_id)
+        DMA_FixFE_test.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

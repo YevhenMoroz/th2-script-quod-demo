@@ -85,8 +85,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, price=None):
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                             "XPAR_" + client, "XPAR", int(price))
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-310-columbia",
+                                                                             "XLON_" + client, "XLON", int(price))
         fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
         fix_params = {
@@ -99,12 +99,12 @@ def create_order_via_fix(case_id, HandlInst, side, client, ord_type, qty, tif, p
             'Price': price,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
+                'Symbol': 'GB00B0J6N107_GBP',
+                'SecurityID': 'GB00B0J6N107',
                 'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
+                'SecurityExchange': 'XLON'
             },
-            'Currency': 'EUR',
+            'Currency': 'GBP',
         }
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()

@@ -13,6 +13,7 @@ from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsS
 
 
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
+from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
 
 
 class Stubs:
@@ -26,7 +27,7 @@ class Stubs:
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
-    # simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
+    simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
     # simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)
     win_act = factory.grpc_router.get_service(ActUIWinService)
