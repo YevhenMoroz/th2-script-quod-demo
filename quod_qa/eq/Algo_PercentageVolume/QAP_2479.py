@@ -352,7 +352,7 @@ def execute(report_id):
         time.sleep(70)
 
         #region Cancel Algo Order
-        case_id_7 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_7 = bca.create_event("Cancel Algo Order", case_id)
         # Check BS sent 35=F
         er_7 = {
             'CumQty': '0',
