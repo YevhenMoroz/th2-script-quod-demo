@@ -186,7 +186,6 @@ def execute(report_id):
         'ClOrdID': '*',
         'OrderCapacity': 'A',
         'TransactTime': '*',
-        'ChildOrderID': '*',
         'SettlDate': '*',
         'Currency': 'EUR',
         'TimeInForce': time_in_force,
@@ -273,6 +272,6 @@ def execute(report_id):
         'Text': '*'
     }
 
-    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrdStatus', 'ExecType', 'ClOrdID', 'TimeInForce'])
+    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrdStatus', 'ExecType', 'TimeInForce'])
     time.sleep(5)
     rule_destroyer(list_rules)
