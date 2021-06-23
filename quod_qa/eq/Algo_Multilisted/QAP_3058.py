@@ -26,6 +26,7 @@ connectivity_sell_side = "fix-ss-310-columbia-standart"
 symbol_paris = "734"
 symbol_trqx = "3416"
 ord_type = 3
+ord_type_buy_side = 1
 
 instrument = {
             'Symbol': 'FR0000121121_EUR',
@@ -71,6 +72,7 @@ def execute(report_id):
         rule_list = rule_creation()
         fix_manager = FixManager(connectivity_sell_side, case_id)
         verifier_310_sell_side = FixVerifier(connectivity_sell_side, case_id)
+        verifier_310_buy_side = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_1 = bca.create_event("Send MarketData", case_id)
         market_data1 = [
@@ -175,6 +177,7 @@ def execute(report_id):
             NoParty='*',
             NoStrategyParameters='*'
         )
+        verifier_310_sell_side.CheckExecutionReport(er_1, responce, case=case_id_2, message_name="Check PendingNew and New")
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -183,11 +186,138 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*',
         )
 
-        verifier_310_sell_side.CheckExecutionReportSequence([er_1, er_2], responce, case=case_id_2, message_name="Check PendingNew and New")
+        verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2, message_name="Check PendingNew and New")
 
+        # Send MD
+        case_id_3 = bca.create_event("Send MarketData", case_id)
+        MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol_paris,
+            connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
+        )).MDRefID
+
+        mdir_params_trade = {
+            'MDReqID': MDRefID_1,
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': '2',
+                    'MDEntryPx': '40',
+                    'MDEntrySize': '3000',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+                }
+            ]
+        }
+
+        Stubs.fix_act.sendMessage(request=convert_to_request(
+            'Send MarketDataIncrementalRefresh',
+            connectivity_feed_handler,
+            case_id_3,
+            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_feed_handler)
+        ))
+        time.sleep(10)
+        Stubs.fix_act.sendMessage(request=convert_to_request(
+            'Send MarketDataIncrementalRefresh',
+            connectivity_feed_handler,
+            case_id_3,
+            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, connectivity_feed_handler)
+        ))
+        time.sleep(5)
+
+        # Check buy-side
+        case_id_4 = bca.create_event("Check buy-side", case_id)
+        nos_2 = {
+            'Side': side,
+            'ExDestination': 'XPAR',
+            'Account': "XPAR_CLIENT1",
+            'OrderQty': qty,
+            'OrdType': ord_type_buy_side,
+            'ClOrdID': '*',
+            'OrderCapacity': 'A',
+            'TransactTime': '*',
+            'SettlDate': '*',
+            'Currency': 'EUR',
+            'TimeInForce': time_in_force,
+            'Instrument': '*',
+            'HandlInst': 1,
+            'NoParty': '*'
+        }
+        verifier_310_buy_side.CheckNewOrderSingle(nos_2, responce, key_parameters=['ExDestination', 'Side', 'OrdType'],
+                                                  case=case_id_4, message_name='Stop algo sent child to venue')
+
+        er_3 = {
+            'ExDestination': 'XPAR',
+            'ExecType': 'A',
+            'OrdStatus': 'A',
+            'Account': "XPAR_CLIENT1",
+            'CumQty': 0,
+            'ExecID': '*',
+            'OrderQty': qty,
+            'OrdType': ord_type_buy_side,
+            'ClOrdID': '*',
+            'Text': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': 0,
+            'TimeInForce': time_in_force,
+            'LeavesQty': qty,
+
+        }
+        verifier_310_buy_side.CheckExecutionReport(er_3, responce,
+                                                   key_parameters=['ExDestination', 'ExecType', 'OrdStatus',
+                                                                   'OrderQty'],
+                                                   direction='SECOND', case=case_id_4,
+                                                   message_name='ExecutionReport pending new')
+
+        er_4 = dict(
+            er_3,
+            ExecType='A',
+            OrdStatus='A',
+        )
+        verifier_310_buy_side.CheckExecutionReport(er_4, responce,
+                                                   key_parameters=['ExDestination', 'ExecType', 'OrdStatus',
+                                                                   'OrderQty'],
+                                                   direction='SECOND', case=case_id_4,
+                                                   message_name='ExecutionReport new')
+
+        # Check sell-side
+        case_id_5 = bca.create_event("Check sell-side", case_id)
+        er_8 = {
+            'ExecID': '*',
+            'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': '0',
+            'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            "OrdStatus": "4",
+            'SettlDate': '*',
+            'Currency': 'EUR',
+            'TimeInForce': time_in_force,
+            'ExecType': '4',
+            'HandlInst': multilisting_params['HandlInst'],
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'OrdType': ord_type,
+            'ClOrdID': fix_message_multilisting.get_parameter('ClOrdID'),
+            'OrderCapacity': multilisting_params['OrderCapacity'],
+            'QtyType': '0',
+            'ExecRestatementReason': '*',
+            'StopPx': stop_price,
+            'TargetStrategy': multilisting_params['TargetStrategy'],
+            'Instrument': instrument,
+            'Text': '*',
+            'LastMkt': 'XPAR'
+        }
+        verifier_310_sell_side.CheckExecutionReport(er_8, responce, case=case_id_5,
+                                             message_name="SS FIXSELLQUOD5 send 35=8 Cancel",
+                                             key_parameters=['OrdStatus', 'ExecType', 'TimeInForce', 'OrdType'])
 
         rule_destroyer(rule_list)
     except Exception:
