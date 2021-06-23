@@ -276,10 +276,6 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     
     call(act.verifyEntities, vr)
 
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    call(act_ob.cancelOrder, cancel_order_details.build())
-
 def execute(reportid):
     try:
         report_id = reportid
