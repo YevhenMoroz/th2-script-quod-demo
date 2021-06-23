@@ -311,8 +311,8 @@ def execute(report_id):
 
 
         time.sleep(3)
-        #region Cansel order
-        case_id_4 = bca.create_event("Cansel Order", case_id)
+        #region Cancel order
+        case_id_4 = bca.create_event("Cancel Order", case_id)
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_7 = {
             'CumQty': '0',
