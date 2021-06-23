@@ -22,7 +22,7 @@ from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsReq
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
 from win_gui_modules.order_book_wrappers import (OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction,
-                                                 ModifyFXOrderDetails, CancelFXOrderDetails)
+                                                 ModifyFXOrderDetails, CancelFXOrderDetails, ReleaseFXOrderDetails)
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -593,7 +593,7 @@ def get_width(positions, key) -> int:
 
 def amend_order(ob_act, base_request):
     order_details = FXOrderDetails()
-
+    order_details.set_qty('123123123')
     modify_ot_order_request = ModifyFXOrderDetails(base_request)
     modify_ot_order_request.set_order_details(order_details)
 
@@ -603,6 +603,13 @@ def amend_order(ob_act, base_request):
 def cancel_order(ob_act, base_request):
     cansel_order_request = CancelFXOrderDetails(base_request)
     call(ob_act.cancelOrder, cansel_order_request.build())
+
+
+def release_order(ob_act, base_request):
+    order_details = FXOrderDetails()
+    release_order_request =ReleaseFXOrderDetails(base_request)
+    release_order_request.set_order_details(order_details)
+    call(ob_act.releaseOrder, release_order_request.build())
 
 def execute(report_id, session_id):
 
@@ -625,6 +632,7 @@ def execute(report_id, session_id):
 
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
+    ob_fx_act = Stubs.win_act_order_book_fx
     cp_service = Stubs.win_act_cp_service
     option_service = Stubs.win_act_options
     order_ticket_service = Stubs.win_act_order_ticket_fx
@@ -713,8 +721,9 @@ def execute(report_id, session_id):
         # endregion
     
         # region OrderTicket actions
-        # amend_order(ob_act, base_request)
-        cancel_order(ob_act, base_request)
+        amend_order(ob_fx_act, base_request)
+        # cancel_order(ob_fx_act, base_request)
+        release_order(ob_fx_act, base_request)
         # endregion
     
     except Exception as e:
