@@ -216,7 +216,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -263,7 +262,7 @@ def execute(report_id):
 
         
         #region Cancel Algo Order
-        case_id_3 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_3 = bca.create_event("Cancel Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
