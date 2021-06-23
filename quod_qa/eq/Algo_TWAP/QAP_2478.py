@@ -212,7 +212,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -289,7 +288,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -335,7 +333,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -410,7 +407,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -446,7 +442,7 @@ def execute(report_id):
         #endregion
 
         #region Cancel Algo Order
-        case_id_4 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Check SS (on FIXQUODSELL5 sent 35=8 Slice 4)
         cancel_param = {
         'ExecID': '*',
