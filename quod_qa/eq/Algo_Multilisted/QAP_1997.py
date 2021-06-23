@@ -260,8 +260,8 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
-        #region Cansel order
-        case_id_3 = bca.create_event("Cansel Order", case_id)
+        #region Cancel order
+        case_id_3 = bca.create_event("Cancel Order", case_id)
         # Check BS FIXBSTH2 sent 35=8 on Cancel
         er_5 = {
             'CumQty': '0',
