@@ -461,11 +461,22 @@ def approve_block(request):
         logger.error("Error execution", exc_info=True)
 
 
+def check_booking_toggle_manual(base_request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=base_request)
+    modify_request.add_commissions_details()
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
+    return call(middle_office_service.bookOrder, modify_request.build())
+
+
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
                settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
                fees_basis=None,
-               fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None):
+               fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
+               remove_fees=False):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     ticket_details = modify_request.add_ticket_details()
@@ -487,20 +498,26 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     if exchange_rate_calc is not None:
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
-        # settlement_details.toggle_settlement_date()
+        response = check_booking_toggle_manual(request)
+        if response['book.manualCheckboxState'] != 'checked':
+            settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date(settlement_date)
     if pset is not None:
         settlement_details.set_pset(pset)
     if toggle_recompute is not False:
         settlement_details.toggle_recompute()
 
+    commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
-        commissions_details = modify_request.add_commissions_details()
         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
+    if remove_commission:
+        commissions_details.remove_commissions()
+    fees_details = modify_request.add_fees_details()
     if fees_basis is not None:
-        fees_details = modify_request.add_fees_details()
         fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
+    if remove_fees:
+        fees_details.remove_fees()
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
@@ -586,9 +603,9 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
-    '''
+
     extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.set_extraction_id("BookExtractionId", )
     extraction_details.extract_net_price("book.netPrice")
     extraction_details.extract_net_amount("book.netAmount")
     extraction_details.extract_total_comm("book.totalComm")
@@ -598,7 +615,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     extraction_details.extract_pset_bic("book.psetBic")
     extraction_details.extract_exchange_rate("book.settlementType")
     extraction_details.extract_settlement_type("book.exchangeRate")
-    '''
+
     try:
         return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:
@@ -627,16 +644,14 @@ def allocate_order(request, arr_allocation_param: []):
         allocations_details.add_allocation_param(i)
     '''
     extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("AllocExtractionId")
-    extraction_details.extract_agreed_price("alloc.agreedPrice")
-    extraction_details.extract_gross_amount("alloc.grossAmount")
-    extraction_details.extract_total_comm("alloc.totalComm")
-    extraction_details.extract_total_fees("alloc.totalFees")
-    extraction_details.extract_net_price("alloc.netPrice")
-    extraction_details.extract_net_amount("alloc.netAmount")
-    extraction_details.extract_pset_bic("alloc.psetBic")
-    extraction_details.extract_exchange_rate("alloc.exchangeRate")
-    extraction_details.extract_block_settlement_type("alloc.settlementType")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.exchangeRate")
     '''
     try:
         response = call(Stubs.win_act_middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
@@ -645,8 +660,9 @@ def allocate_order(request, arr_allocation_param: []):
         logger.error("Error execution", exc_info=True)
 
 
-def amend_allocate(request,account=None,agreed_price=None, settlement_currency=None,exchange_rate=None, exchange_rate_calc=None,
-                   settlement_date=None,pset=None, comm_basis=None,comm_rate=None,fees_basis=None, fees_rate=None,
+def amend_allocate(request, account=None, agreed_price=None, settlement_currency=None, exchange_rate=None,
+                   exchange_rate_calc=None,
+                   settlement_date=None, pset=None, comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None,
                    fee_type=None, fee_category=None, misc_arr: [] = None, remove_commissions=False, remove_fees=False):
     modify_request = ModifyTicketDetails(base=request)
     amend_allocations_details = modify_request.add_amend_allocations_details()
@@ -688,22 +704,22 @@ def amend_allocate(request,account=None,agreed_price=None, settlement_currency=N
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
-
+    '''
     extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("AllocExtractionId")
-    extraction_details.extract_agreed_price("alloc.agreedPrice")
-    extraction_details.extract_gross_amount("alloc.grossAmount")
-    extraction_details.extract_total_comm("alloc.totalComm")
-    extraction_details.extract_total_fees("alloc.totalFees")
-    extraction_details.extract_net_price("alloc.netPrice")
-    extraction_details.extract_net_amount("alloc.netAmount")
-    extraction_details.extract_pset_bic("alloc.psetBic")
-    extraction_details.extract_exchange_rate("alloc.exchangeRate")
-    extraction_details.extract_block_settlement_type("alloc.settlementType")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.exchangeRate")
+    '''
     try:
         return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
+
 
 def unallocate_order(request):
     modify_request = ModifyTicketDetails(base=request)
@@ -757,4 +773,4 @@ def check_error_in_book(request):
         error = call(middle_office_service.bookOrder, modify_request.build())
         return error
     except Exception:
-            logger.error("Error execution", exc_info=True)
+        logger.error("Error execution", exc_info=True)
