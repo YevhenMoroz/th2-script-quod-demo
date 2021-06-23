@@ -263,8 +263,8 @@ def execute(report_id):
         #endregion
 
 
-        #region Cansel order
-        case_id_3 = bca.create_event("Cansel Order", case_id)
+        #region Cancel order
+        case_id_3 = bca.create_event("Cancel Order", case_id)
         # Check BS FIXBSTH2 sent 35=8 on Cancel
         er_5 = {
             'CumQty': '0',
