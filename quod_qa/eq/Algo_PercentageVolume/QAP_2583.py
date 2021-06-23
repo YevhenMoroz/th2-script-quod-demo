@@ -28,7 +28,7 @@ text_c='order canceled'
 text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
-side = 2
+side = 1
 price = 1
 dma_qty = 100
 tif_day = 0
@@ -85,6 +85,24 @@ def send_market_data(symbol: str, case_id :str, market_data ):
     ))
 
 
+def send_market_dataT(symbol: str, case_id :str, market_data ):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol,
+            connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntriesIR': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
+    ))
+
+
 def execute(report_id):
     try:
         rule_list = rule_creation();
@@ -95,42 +113,34 @@ def execute(report_id):
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
+
+        market_data2 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '20',
+                'MDEntrySize': '100',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+        send_market_dataT(s_par, case_id_0, market_data2)
+
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '20',
+                'MDEntrySize': '100',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             }
         ]
         send_market_data(s_par, case_id_0, market_data1)
-
-        time.sleep(2)
-
-        #send DMA order
-        case_id_11 = bca.create_event("Create first Algo Order", case_id)
-        new_dma_order_single_params = {
-            'Account': client,
-            'HandlInst': 1,
-            'Side': side,
-            'OrderQty': dma_qty,
-            'TimeInForce': tif_day,
-            'OrdType': order_type,
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': instrument,
-            'OrderCapacity': 'A',
-            'Price': price,
-            'Currency': currency,
-        }
-        fix_message_new_dma_order_single = FixMessage(new_dma_order_single_params)
-        fix_message_new_dma_order_single.add_random_ClOrdID()
-        responce_new_dma_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_dma_order_single, case=case_id_11)
 
         time.sleep(2)
 
@@ -150,6 +160,16 @@ def execute(report_id):
             'Currency': currency,
             'TargetStrategy': 2,
                 'NoStrategyParameters': [
+                # {
+                #     'StrategyParameterName': 'StartDate',
+                #     'StrategyParameterType': '19',
+                #     'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                # },
+                # {
+                #     'StrategyParameterName': 'EndDate',
+                #     'StrategyParameterType': '19',
+                #     'StrategyParameterValue': (now + timedelta(minutes=8)).strftime("%Y%m%d-%H:%M:%S")
+                # },
                 {
                     'StrategyParameterName': 'PercentageVolume',
                     'StrategyParameterType': '11',
@@ -173,6 +193,24 @@ def execute(report_id):
             ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
 
         fix_verifier_ss.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
+
+
+        market_data4 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '20',
+                'MDEntrySize': '186',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data4)
+
 
         #Check that FIXQUODSELL5 sent 35=8 pending new first order
         er_1 ={
@@ -231,9 +269,19 @@ def execute(report_id):
             'Currency': currency,
             'TargetStrategy': 2,
                 'NoStrategyParameters': [
+                # {
+                #     'StrategyParameterName': 'StartDate',
+                #     'StrategyParameterType': '19',
+                #     'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                # },
+                # {
+                #     'StrategyParameterName': 'EndDate',
+                #     'StrategyParameterType': '19',
+                #     'StrategyParameterValue': (now + timedelta(minutes=8)).strftime("%Y%m%d-%H:%M:%S")
+                # },
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '1',
+                    'StrategyParameterType': '11',
                     'StrategyParameterValue': '30'
                 },
                 {
@@ -296,8 +344,10 @@ def execute(report_id):
         )
         fix_verifier_ss.CheckExecutionReport(er_4, responce_new_order_single_2, case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
+        time.sleep(120)
+
         #region Cancel first Algo Order
-        case_id_3 = bca.create_event("Cansel first Algo Order", case_id)
+        case_id_3 = bca.create_event("Cancel first Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
@@ -356,7 +406,7 @@ def execute(report_id):
         #endregion
 
         #region Cancel second Algo Order
-        case_id_4 = bca.create_event("Cansel second Algo Order", case_id)
+        case_id_4 = bca.create_event("Cancel second Algo Order", case_id)
 
         cancel_parms_2 = {
         "ClOrdID": fix_message_new_order_single_2.get_ClOrdID(),
