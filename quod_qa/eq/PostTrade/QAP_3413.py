@@ -1,5 +1,7 @@
 import time
+import datetime
 
+from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
@@ -13,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id):
-    case_name = "QAP-3388"
+    case_name = "QAP-3413"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
@@ -44,15 +46,25 @@ def execute(report_id):
     finally:
         time.sleep(1)
         rule_manager.remove_rule(nos_rule)
-
         rule_manager.remove_rule(nos_rule2)
     # endregion
     # region Book
-    eq_wrappers.book_order(base_request, client, price)
+    eq_wrappers.book_order(base_request, client, price, pset="CREST")
     # endregion
     # region Verify
     eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
     eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
+    eq_wrappers.verify_block_value(base_request, case_id, "PSET", "CREST")
+    eq_wrappers.verify_block_value(base_request, case_id, "PSET BIC", "CRSTGB22")
+    # endregion
+    # region Amend Book
+    eq_wrappers.amend_block(base_request,pset="EURO_CLEAR")
+    # endregion
+    # region Verify
+    eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
+    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
+    eq_wrappers.verify_block_value(base_request, case_id, "PSET", "EURO_CLEAR")
+    eq_wrappers.verify_block_value(base_request, case_id, "PSET BIC", "MGTCBEBE")
     # endregion
     # region Approve
     eq_wrappers.approve_block(base_request)
@@ -69,82 +81,15 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "Summary Status", "MatchedAgreed")
     eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Affirmed")
     eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Matched")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET", "EURO_CLEAR")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET BIC", "MGTCBEBE")
     # endregion
     # region Amend allocate
-    eq_wrappers.amend_allocate(base_request, agreed_price=str(int(price) + 1))
+    eq_wrappers.amend_allocate(base_request, pset="CREST")
     # endregion
     # region Verify
-    params = {
-        'Account': client,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'AllocQty': qty,
-        'AllocAccount': account,
-        'ConfirmType': 2,
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'BookID': '*',
-        'header': '*',
-        'AllocInstructionMiscBlock1': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'MatchStatus': '*',
-        'ConfirmStatus': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'ReportedPx': '*',
-        'CpctyConfGrp': '*',
-        'ConfirmTransType': '1',
-        'ConfirmID': '*'
-    }
-    fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
-    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders','ConfirmTransType','Account'])
-    params = {
-        'Account': client,
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'BookID': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '2',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '1',
-        'ReportedPx': '*',
-        'AllocInstructionMiscBlock1': '*',
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '*',
-                'AllocAccount': account,
-                'AllocPrice': str(int(price) + 1),
-                'AllocQty': qty,
-
-            }
-        ],
-    }
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType','Account'])
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Affirmed")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Matched")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET", "CREST")
+    eq_wrappers.verify_allocate_value(base_request, case_id, "PSET BIC", "CRSTGB22")
     # endregion
