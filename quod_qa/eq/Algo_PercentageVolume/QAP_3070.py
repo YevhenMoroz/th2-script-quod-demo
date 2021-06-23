@@ -379,7 +379,7 @@ def execute(report_id):
         time.sleep(3)
 
         #region Cancel Algo Order
-        case_id_7 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_7 = bca.create_event("Cancel Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
