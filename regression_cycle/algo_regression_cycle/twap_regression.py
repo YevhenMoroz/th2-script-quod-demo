@@ -11,7 +11,7 @@ timeouts = False
 channels = dict()
 
 def test_run(parent_id= None):
-    report_id = bca.create_event('TWAP ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+    report_id = bca.create_event('TWAP regression', parent_id)
     try:
         pass
     except Exception:
