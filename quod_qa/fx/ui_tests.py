@@ -22,7 +22,7 @@ from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsReq
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
                                                    DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
 from win_gui_modules.order_book_wrappers import (OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction,
-                                                 ModifyFXOrderDetails)
+                                                 ModifyFXOrderDetails, CancelFXOrderDetails)
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -599,6 +599,11 @@ def amend_order(ob_act, base_request):
 
     call(ob_act.amendOrder, modify_ot_order_request.build())
 
+
+def cancel_order(ob_act, base_request):
+    cansel_order_request = CancelFXOrderDetails(base_request)
+    call(ob_act.cancelOrder, cansel_order_request.build())
+
 def execute(report_id, session_id):
 
     common_act = Stubs.win_act
@@ -708,7 +713,8 @@ def execute(report_id, session_id):
         # endregion
     
         # region OrderTicket actions
-        amend_order(ob_act, base_request)
+        # amend_order(ob_act, base_request)
+        cancel_order(ob_act, base_request)
         # endregion
     
     except Exception as e:

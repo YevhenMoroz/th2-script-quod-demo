@@ -82,6 +82,32 @@ class CancelOrderDetails:
         return self.cancel_order_details
 
 
+class CancelFXOrderDetails:
+    def __init__(self, base_request):
+        self.cancel_order_details = order_book_fx_pb2.CancelFXOrderDetails()
+        self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.cancel_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_comment(self, comment: str):
+        self.cancel_order_details.comment = comment
+
+    def set_cancel_children(self, cancel_children: bool = False):
+        self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.cancel_order_details
+
+
 @dataclass
 class ExtractionDetail:
     name: str
