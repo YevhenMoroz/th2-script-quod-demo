@@ -187,12 +187,12 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '0',
             'Price': price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
         }
+        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1, message_name='SS FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -201,9 +201,8 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*'
         )
-        fix_verifier_ss.CheckExecutionReportSequence([er_1, er_2], responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
 
@@ -218,7 +217,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -252,17 +250,16 @@ def execute(report_id):
             'LeavesQty': qty
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'TimeInForce', 'Price', 'OrderQty'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
             er_3,
             OrdStatus='0',
             ExecType="0",
-            OrderQty=qty,
             Text=text_n,
         )
-        fix_verifier_ss.CheckExecutionReportSequence([er_3, er_4], responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ExecType', 'OrdStatus', 'TimeInForce', 'Price', 'OrderQty'])
         #endregion
 
 
@@ -287,40 +284,6 @@ def execute(report_id):
             'LeavesQty': '0'
         }
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='BS FIXBSTH2 sent 35=8 Cancel', key_parameters=['Text', 'OrderQry',  'OrdStatus', 'ExecType'])
-
-        # Check SS FIXSELLQUOD5 sent 35=8 on Cancel
-        er_6 = {
-            'ExecID': '*',
-            'OrderQty': qty,
-            'NoStrategyParameters': '*',
-            'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'SettlDate': '*',
-            'Currency': currency,
-            'TimeInForce': tif_ioc,
-            'ExecType': '4',
-            'HandlInst': new_order_single_params['HandlInst'],
-            'LeavesQty': '0',
-            'NoParty': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'LastMkt': ex_destination_1,
-            'Text': text_nlf,
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'QtyType': '0',
-            'ExecRestatementReason': '*',
-            'SettlType': '*',
-            'Price': price,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
-            'Instrument': instrument,
-        }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Text', 'ClOrdID', 'OrderQry', 'Price', 'OrdStatus', 'ExecType'])
         #endregion
 
 
