@@ -348,9 +348,9 @@ def execute(report_id):
         #endregion
 
         
-        #region Cansel order
-        case_id_4 = bca.create_event("Cansel Order", case_id)
-        # Cansel order
+        #region Cancel order
+        case_id_4 = bca.create_event("Cancel Order", case_id)
+        # Cancel order
         cancel_parms = {
             "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
             "Account": fix_message_new_order_single.get_parameter('Account'),
