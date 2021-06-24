@@ -65,12 +65,26 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorTest": {
+      "service-class": "TemplateSimulatorTestService",
+      "endpoints": {
+        "simulator_test": {
+          "host": "10.0.22.22",
+          "port": 32314
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator_test"]
+      }
+    },
+
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -84,8 +98,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -99,8 +113,8 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -114,8 +128,8 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -129,8 +143,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -140,12 +154,27 @@
         ]
       }
     },
+	"Win_Act_Order_Book_FX": {
+      "service-class": "OrderBookFXServiceService",
+      "endpoints": {
+        "act_order_book_fx": {
+          "host": "localhost",
+          "port": 8080
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_fx"
+        ]
+      }
+    },
     "Win_Act_Aggregated_Rates": {
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -159,8 +188,8 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_client_pricing": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -174,8 +203,8 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_middle_office": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -189,8 +218,8 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_dealer_interventions": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
@@ -204,8 +233,8 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "10.0.22.22",
-          "port": 32223
+          "host": "localhost",
+          "port": 8080
         }
       },
       "strategy": {
