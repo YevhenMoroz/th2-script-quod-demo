@@ -320,7 +320,7 @@ def execute(report_id):
         fix_cancel = FixMessage(cancel_parms)
         responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
 
-        time.sleep(1)
+        time.sleep(3)
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_7 = {
             'CumQty': '0',
