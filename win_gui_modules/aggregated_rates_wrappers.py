@@ -596,7 +596,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor_date(self, name: str):
+    def extract_tenor(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
@@ -622,6 +622,9 @@ class ExtractRatesTileDataRequest:
 
     def extract_best_ask(self, name: str):
         self.extract_value(RatesTileValues.BEST_ASK, name)
+
+    def extract_1click_btn_text(self, name: str):
+        self.extract_value(RatesTileValues.ONE_CLICK_BTN_TEXT, name)
 
     def extract_value(self, field: RatesTileValues, name: str):
         extracted_value = ar_operations_pb2.ExtractRatesTileValuesRequest.ExtractedValue()
@@ -672,8 +675,12 @@ class RFQTileOrderSide(Enum):
 
 # The buy and sell side have been reversed because act confused them
 class ESPTileOrderSide(Enum):
+    # buy and sell is top of book pips
     BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
     SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
+    # bid and ask btns
+    BID_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.BID_BTN
+    ASK_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.ASK_BTN
 
 
 class PlaceRFQRequest:
@@ -695,7 +702,7 @@ class PlaceRFQRequest:
     def build(self) -> ar_operations_pb2.RFQTileOrderDetails:
         return self.__request_details
 
-
+# TODO: quod - refactor
 # @dataclass
 # class ESPExtractionDetails:
 #     name: str
@@ -722,6 +729,8 @@ class PlaceESPOrder:
 
     def set_action(self, action: ESPTileOrderSide):
         self.__request_details.action = action.value
+
+    # TODO: quod - refactor: remove extraction method from Place ESPOrder action
     #
     # def top_of_book(self, check: bool):
     #     self.__request_details.topOfBook = check
@@ -748,33 +757,33 @@ class PlaceESPOrder:
         return self.__request_details
 
 
-# class MoveESPOrderTicketRequest:
-#     def __init__(self, base: EmptyRequest = None):
-#         self.base = base
-#         self.request = ar_operations_pb2.MoveESPOrderTicketRequest()
-#         self.move_window_request = None
-#
-#     def set_default_params(self, base_request):
-#         self.base = base_request
-#
-#     def ask(self):
-#         self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.ASK
-#
-#     def bid(self):
-#         self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.BID
-#
-#     def top_of_book(self):
-#         self.request.topOfBook = True
-#
-#     def panel_index(self, index):
-#         self.request.panelIndex = index
-#
-#     def add_move_window_details(self) -> MoveWindowDetails():
-#         self.move_window_request = MoveWindowDetails()
-#         return self.move_window_request
-#
-#     def build(self):
-#         self.move_window_request.set_default_params(self.base)
-#         self.request.moveWindowDetails.CopyFrom(self.move_window_request.build())
-#         return self.request
-#
+class MoveESPOrdedrTicketRequest:
+    def __init__(self, base: EmptyRequest = None):
+        self.base = base
+        self.request = ar_operations_pb2.MoveESPOrderTicketRequest()
+        self.move_window_request = None
+
+    def set_default_params(self, base_request):
+        self.base = base_request
+
+    def ask(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.ASK
+
+    def bid(self):
+        self.request.side = ar_operations_pb2.MoveESPOrderTicketRequest.Side.BID
+
+    def top_of_book(self):
+        self.request.topOfBook = True
+
+    def panel_index(self, index):
+        self.request.panelIndex = index
+
+    def add_move_window_details(self) -> MoveWindowDetails():
+        self.move_window_request = MoveWindowDetails()
+        return self.move_window_request
+
+    def build(self):
+        self.move_window_request.set_default_params(self.base)
+        self.request.moveWindowDetails.CopyFrom(self.move_window_request.build())
+        return self.request
+
