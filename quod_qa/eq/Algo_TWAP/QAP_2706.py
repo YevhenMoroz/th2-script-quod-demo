@@ -41,7 +41,7 @@ waves = 4
 
 now = datetime.today() - timedelta(hours=3)
 startdate = now.strftime("%Y%m%d-%H:%M:%S")
-enddate = now + timedelta(minutes=5).strftime("%Y%m%d-%H:%M:%S")
+enddate = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
