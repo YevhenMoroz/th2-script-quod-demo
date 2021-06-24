@@ -40,6 +40,8 @@ s_par = '1015'
 waves = 4
 
 now = datetime.today() - timedelta(hours=3)
+startdate = now.strftime("%Y%m%d-%H:%M:%S")
+enddate = now + timedelta(minutes=5).strftime("%Y%m%d-%H:%M:%S")
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
@@ -132,12 +134,12 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '19',
-                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': startdate
                 },
                 {
                     'StrategyParameterName': 'EndDate',
                     'StrategyParameterType': '19',
-                    'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': enddate
                 },
                 {
                     'StrategyParameterName': 'Waves',
