@@ -220,6 +220,10 @@ class ExtractRatesTileTableValuesRequest:
         var.name = detail.name
         var.colName = detail.column_name
 
+    def check_venue_to_present(self, venue):
+        self.request.checkVenueToPresent = True
+        self.request.venueToCheck = venue
+
     def build(self):
         return self.request
 

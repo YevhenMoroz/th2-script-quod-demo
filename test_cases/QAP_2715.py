@@ -1,20 +1,19 @@
 import logging
 
+from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
+
 from custom.verifier import Verifier
-from rule_management import RuleManager
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRatesTileRequest, \
-    ExtractRatesTileDataRequest, PlaceESPOrder, ESPTileOrderSide, ContextActionRatesTile, ContextActionType
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
+from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide, \
+    ContextActionRatesTile, ContextActionType
 from win_gui_modules.wrappers import set_base, verification, verify_ent
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
-    ExtractRatesTileValues
+from win_gui_modules.order_book_wrappers import ExtractionDetail
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe, get_opened_fe, \
-    prepare_fe303, get_opened_fe_303
+from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.order_ticket import ExtractFxOrderTicketValuesRequest
 
 
 class TestCase:
@@ -207,11 +206,9 @@ class TestCase:
                 }
             ]
         }
-        nos_response = self.api.sendMessage(
+        self.api.sendMessage(
             request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyVenue', modify_params, 'rest_wa303'),
-                                         parent_event_id=self.case_id)
-            )
-        # print(bca.message_to_grpc('ModifyVenueStatus', modify_params,'rest_wa303'))
+                                         parent_event_id=self.case_id))
 
         modify_venue_params = {
             "venueID": "HSBC",
@@ -226,16 +223,16 @@ class TestCase:
             ]
         }
         nos_response = self.api.sendMessage(
-            request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa303'),
-                                         parent_event_id=self.case_id)
-            )
+            request=SubmitMessageRequest(
+                message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa303'),
+                parent_event_id=self.case_id)
+        )
         # print(bca.message_to_grpc('ModifyVenueStatus', modify_venue_params,'rest_wa303'))
 
     # FE open method
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        # get_opened_fe_303(self.case_id, self.session_id)
         prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
     def create_or_get_rates_tile(self, tile):
@@ -253,44 +250,53 @@ class TestCase:
         modify_request.set_quantity(qty)
         call(self.ar_service.modifyRatesTile, modify_request.build())
 
-    def Check_rates_tile_table_values(self, row, bid, ask):
-        extract_table_request = ExtractRatesTileTableValuesRequest(details=self.base_details)
-        extract_table_request.set_extraction_id("extrId1")
-        extract_table_request.set_row_number(row)
-        extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.AskPx", "Px"))
-        extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.BidPx", "Px"))
-        data_table = call(self.ar_service.extractESPAggrRatesTableValues, extract_table_request.build())
+    # extract rates tile table values
+    def check_venues_in_order_ticket(self, tile, venue):
+        order_ticket_checking = ExtractOrderTicketValuesRequest(data=tile.build())
+        order_ticket_checking.side = ExtractOrderTicketValuesRequest.Side.BID
+        order_ticket_checking.venueToExtract = venue
+        result = call(self.ar_service.extractRatesOrderTicketValues, order_ticket_checking)
+
         verifier = Verifier(self.case_id)
-        verifier.set_event_name("Checking RatesTile Details")
-        verifier.compare_values("best bid", data_table["rateTile.BidPx"], bid)
-        verifier.compare_values("best ask", data_table["rateTile.AskPx"], ask)
+        verifier.set_event_name(f"Check {venue} in order ticket")
+        verifier.compare_values("Checked", result[f'{venue}_checked'], "false")
         verifier.verify()
 
-        return data_table
+    # extract rates tile table values
+    def check_venues_in_dve(self, tile, venue):
+        dve = ExtractDirectVenueExecutionRequest(data=tile.build())
+        dve.extractBidSide = True
+        dve.extractAskSide = True
+        dve.venueToExtract = venue
+        result = call(self.ar_service.extractDirectVenueExecutionValues, dve)
 
-    def check_order_ticket(self, qty, side, check):
-        ticket = 'OrderTicket'
-        esp_request = PlaceESPOrder(details=self.base_details)
-        if side == 'buy':
-            esp_request.set_action(ESPTileOrderSide.BUY)
-        else:
-            esp_request.set_action(ESPTileOrderSide.SELL)
-        esp_request.top_of_book(True)
-        esp_request.close_ticket(True)
-        esp_request.extract_quantity(f'{ticket}.qty')
-        esp_request.extract_pips(f'{ticket}.pips')
-        result = call(self.ar_service.placeESPOrder, esp_request.build())
-        for k in result:
-            print(f'{k} = {result[k]}')
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name(f"Check {venue} in DVE")
+        verifier.compare_values("Bid Price", result['bid_price'], "")
+        verifier.compare_values("Ask Price", result['ask_price'], "")
+        verifier.verify()
+
+    # extract rates tile table values
+    def check_venues_in_esp_table(self, tile, venue):
+        extract_table_request = ExtractRatesTileTableValuesRequest(details=tile)
+        extract_table_request.set_extraction_id("ExtractionId1")
+        extract_table_request.check_venue_to_present(venue)
+        result = call(self.ar_service.extractESPAggrRatesTableValues, extract_table_request.build())
+
+        for x in result:
+            print(x, ' - ', result[x])
 
     # Main method
     def execute(self):
         try:
             self.set_venue_unhealthy("true")
-            # self.prepare_frontend()
-            # # self.create_or_get_rates_tile(self.tile_1)
-            # self.check_unhealthy_venues(self.tile_1)
-            # self.check_unhealthy_venues(self.tile_2)
+            self.prepare_frontend()
+            self.create_or_get_rates_tile(self.tile_1)
+            self.check_unhealthy_venues(self.tile_1)
+            self.check_unhealthy_venues(self.tile_2)
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C')
+            self.check_venues_in_dve(self.tile_2, self.venue)
+            self.check_venues_in_esp_table(self.tile_1, self.venue)
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
