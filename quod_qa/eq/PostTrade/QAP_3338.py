@@ -16,7 +16,7 @@ def execute(report_id):
     case_name = "QAP-3338"
     case_id = create_event(case_name, report_id)
     # region Declarations
-    qty = "800"
+    qty = "900"
     price = "3"
     client = "MOClient"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -39,16 +39,15 @@ def execute(report_id):
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        print('check')
-        time.sleep(5)
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
 
     # endregion
     response = fix_message.pop('response')
     # region verify order
-    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled', False)
-    eq_wrappers.verify_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
     # # endregion
     # # region Book
     eq_wrappers.book_order(base_request, client, price, misc_arr=['BOF1C', 'BOF2C', 'BOF3C',

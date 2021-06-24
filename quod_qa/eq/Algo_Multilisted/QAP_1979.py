@@ -204,7 +204,6 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*',
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
@@ -250,7 +249,7 @@ def execute(report_id):
             'TimeInForce': new_order_single_params['TimeInForce'],
             'ExecType': "A",
             'ExDestination': ex_destination_1,
-            'LeavesQty': '0'
+            'LeavesQty': qty
         }
 
         fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
@@ -339,7 +338,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '*',
             'Price': agr_price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument,
@@ -510,7 +508,7 @@ def execute(report_id):
             'Text': text_f,
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'SettlType': '*',
+            'ChildOrderID': fix_message_new_order_single.get_ClOrdID(),
             'Price': agr_price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': '*',
@@ -522,6 +520,7 @@ def execute(report_id):
         #endregion
 
         time.sleep(1)
-        rule_destroyer(rule_list)
     except:
         logging.error("Error execution",exc_info=True)
+    finally:
+        rule_destroyer(rule_list)

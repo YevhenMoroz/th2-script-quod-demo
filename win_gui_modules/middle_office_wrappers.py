@@ -197,6 +197,21 @@ class AmendAllocationsDetails:
 class FeesDetails:
     def __init__(self, request: middle_office_pb2.FeesDetails()):
         self.request = request
+    def add_fees(self, feeType: str = None, basis: str = None, rate: str = None, amount: str = None,
+                 currency: str = None, category: str = None):
+        var = self.request.feesTabTableParams.add()
+        if feeType is not None:
+            var.feeType = feeType
+        if basis is not None:
+            var.basis = basis
+        if rate is not None:
+            var.rate = rate
+        if amount is not None:
+            var.amount = amount
+        if currency is not None:
+            var.currency = currency
+        if category is not None:
+            var.category = category
 
     def remove_fees(self):
         self.request.removeFees = True

@@ -33,11 +33,11 @@ def execute(report_id):
     # endregion
 
     # region verify value
-    eq_wrappers.verify_value(base_request, case_id, 'Account ID', 'TestAccount')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Account ID', 'TestAccount')
     # endregion
     # create order with washbook
     eq_wrappers.create_order(base_request, qty, client, 'XPAR', 'Limit', 'Day', False, 'CLIENTYMOROZ', '50', True,
                              False, False)
     # region verify value
-    eq_wrappers.verify_value(base_request, case_id, 'Wash Book', 'CareWB')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Wash Book', 'CareWB')
     # endregion

@@ -55,4 +55,4 @@ def execute(report_id):
     # Amend fix order
     eq_wrappers.amend_order(base_request, 'CLIENTYMOROZ')
     # endregion
-    eq_wrappers.verify_value(base_request, case_id, 'Client ID', 'CLIENTYMOROZ')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Client ID', 'CLIENTYMOROZ')

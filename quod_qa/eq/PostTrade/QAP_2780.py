@@ -81,7 +81,7 @@ def execute(report_id):
     # endregion
     # region Book
     eq_wrappers.book_order(base_request,client,price)
-    eq_wrappers.verify_value(base_request, case_id, "PostTradeStatus", "Booked")
+    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Booked")
     # endregion
     # region View orders
     response=eq_wrappers.view_orders_for_block(base_request,1)

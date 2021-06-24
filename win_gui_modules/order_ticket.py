@@ -10,7 +10,12 @@ from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipati
 from .common_wrappers import CommissionsDetails, BaseTileDetails
 from enum import Enum
 
+from .utils import call
 
+
+class OrderTicketExtractedValue(Enum):
+    DISCLOSE_FLAG = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISCLOSE_FLAG
+    ERROR_MESSAGE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
 class OrderTicketDetails:
 
     def __init__(self):
@@ -38,7 +43,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-        self.order.client = account
+        self.order.account = account
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
@@ -205,3 +210,53 @@ class ExtractFxOrderTicketValuesRequest:
 
     def build(self):
         return self.request
+
+class ExtractOrderTicketValuesRequest:
+
+    def __init__(self, base_request, extractionId: str = 'extractOrderTicketValues'):
+        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
+        self.request.base.CopyFrom(base_request)
+        self.request.extractionId = extractionId
+
+    def get_disclose_flag_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.DISCLOSE_FLAG)
+
+    def get_extract_value(self, field: OrderTicketExtractedValue):
+        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = "Disclose flag state extraction"
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+class ExtractOrderTicketErrorsRequest:
+
+    def __init__(self, base_request, extractionId: str = 'ErrorMessageExtractionID'):
+        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
+        self.request.base.CopyFrom(base_request)
+        self.request.extractionId = extractionId
+
+    def extract_error_message(self):
+        self.get_extract_value(OrderTicketExtractedValue.ERROR_MESSAGE)
+
+    def get_extract_value(self, field: OrderTicketExtractedValue):
+        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = "ErrorMessage"
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+    def extract_error_message_order_ticket(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+        extract_errors_request.extract_error_message()
+        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
+        print(result)
+
+    def get_disclose_flag_state(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
+        extract_disclose_flag_request.get_disclose_flag_state()
+        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
+        print(result)

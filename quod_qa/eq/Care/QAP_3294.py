@@ -46,27 +46,27 @@ def execute(report_id):
     # endregion
 
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
     # region Execute
     eq_wrappers.manual_execution(base_request, qty, price)
     # endregion
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "ExecSts", "Filled")
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
     # endregion
     # region Complete
     eq_wrappers.complete_order(base_request)
     # endregion
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "DoneForDay", "ReadyToBook")
-    eq_wrappers.verify_value(base_request, case_id, "PostTradeStatus", "Yes")
+    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "ReadyToBook")
+    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Yes")
     # endregion
     # region Un-Complete
     eq_wrappers.un_complete_order(base_request)
     # end region
 
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "DoneForDay", "")
-    eq_wrappers.verify_value(base_request, case_id, "PostTradeStatus", "")
+    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "")
+    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "")
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -40,5 +40,5 @@ def execute(report_id):
     # endregion
 
     # verification
-    eq_wrappers.verify_value(base_request, case_id, 'Capacity', 'Agency')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Capacity', 'Agency')
     # endregion

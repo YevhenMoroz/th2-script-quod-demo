@@ -37,7 +37,7 @@ def execute(report_id):
                              False, DiscloseFlagEnum.REALTIME, None)
     # endregion
     # region check value disclose flag in orderbook
-    eq_wrappers.verify_value(base_request, case_id, 'DiscloseExec', 'R')
+    eq_wrappers.verify_order_value(base_request, case_id, 'DiscloseExec', 'R')
     disclose_flag_value = ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
     disclose_flag_value.type = ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISCLOSE_FLAG
     disclose_flag_value.name = "DiscloseFlag"
