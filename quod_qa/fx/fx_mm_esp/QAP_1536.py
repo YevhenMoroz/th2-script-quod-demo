@@ -64,7 +64,7 @@ def check_date(base_request, service, case_id, expected_date):
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -72,7 +72,7 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "EUR/USD-Spot"
-    wrong_instrument="GBP/OMR-Spot"
+    wrong_instrument = "BRL/BRL-Spot"
     client_tier = "Silver"
     date_spo = spo_front_end()
 
@@ -85,19 +85,19 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         # Step 2
-    #     modify_rates_tile(base_details, cp_service, instrument, client_tier)
-    #     check_instrument(base_details, cp_service, case_id, instrument, client_tier)
+        modify_rates_tile(base_details, cp_service, instrument, client_tier)
+        check_instrument(base_details, cp_service, case_id, instrument, client_tier)
         check_date(base_details, cp_service, case_id, date_spo)
-    #     # Step 3
-    #     modify_rates_tile(base_details, cp_service, wrong_instrument, client_tier)
-    #     check_instrument(base_details, cp_service, case_id, instrument, client_tier)
+        # Step 3
+        modify_rates_tile(base_details, cp_service, wrong_instrument, client_tier)
+        check_instrument(base_details, cp_service, case_id, instrument, client_tier)
     #
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)
