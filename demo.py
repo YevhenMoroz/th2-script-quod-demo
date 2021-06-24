@@ -27,7 +27,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     test_cases = {
         'case_id': bca.create_event_id(),
@@ -163,10 +163,10 @@ def test_run():
         # endregion
 
         # region fx_mm_esp+fe
-        mm_esp_plus_fe(report_id, session_id)
+        # mm_esp_plus_fe(report_id, session_id)
         # endregion
 
-        # QAP_1536.execute(report_id, session_id)
+        QAP_1536.execute(report_id, session_id)
 
         print('duration time = ' + str(datetime.now() - start))
         Stubs.win_act.unregister(session_id)
