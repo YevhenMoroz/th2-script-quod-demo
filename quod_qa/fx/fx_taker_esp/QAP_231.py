@@ -112,11 +112,11 @@ def execute(report_id, session_id):
             get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_esp_details, ar_service)
-        # modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
-        # place_order(base_esp_details, ar_service)
-        # # Step 2
-        # modify_order_ticket(case_base_request, order_ticket_service, qty)
-        # check_order_book(case_base_request, ob_service, case_id, owner, qty, sts_validated, equal)
+        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
+        place_order(base_esp_details, ar_service)
+        # Step 2
+        modify_order_ticket(case_base_request, order_ticket_service, qty)
+        check_order_book(case_base_request, ob_service, case_id, owner, qty, sts_validated, equal)
         # Step 3-4
         amend_order(case_base_request, fx_ob_service, amend_qty)
         # Step 5
@@ -125,9 +125,9 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         call(ar_service.closeRatesTile, base_esp_details.build())
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRatesTile, base_esp_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)
