@@ -108,6 +108,9 @@ class FXOrderDetails:
     def set_qty(self, qty: str):
         self.order.qty = qty
 
+    def set_display_qty(self, qty: str):
+        self.order.displayQty = qty
+
     def set_client(self, client: str):
         self.order.client = client
 
@@ -147,6 +150,12 @@ class FXOrderDetails:
     def set_child_strategy(self, childStrategy: str):
         self.order.childStrategy = childStrategy
 
+    def set_care_order(self, desk: str, partial_desk: bool = False,
+                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
+        self.order.careOrderParams.desk = desk
+        self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
+
     def build(self):
         return self.order
 
@@ -166,6 +175,7 @@ class OrderTicketValues(Enum):
     STRATEGY        = types.STRATEGY
     CHILD_STRATEGY  = types.CHILD_STRATEGY
     IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
+    ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
 
 class ExtractFxOrderTicketValuesRequest:
 
@@ -212,6 +222,10 @@ class ExtractFxOrderTicketValuesRequest:
 
     def get_is_algo_checked(self, is_algo_checked: str = 'fx_order_ticket.is_algo_checked'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.IS_ALGO_CHECKED)
+
+
+    def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
+        self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
 
 
     def get_extract_value(self, name: str, field: OrderTicketValues):

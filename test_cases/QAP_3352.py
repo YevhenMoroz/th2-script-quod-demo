@@ -111,10 +111,10 @@ def execute(report_id):
 
         settlement_details = modify_request.add_settlement_details()
         settlement_details.set_settlement_type("Regular")
-        #settlement_details.set_settlement_currency("AED")
+        settlement_details.set_settlement_currency("AED")
         settlement_details.set_exchange_rate("10")
         settlement_details.set_exchange_rate_calc("Multiply")
-        #settlement_details.set_settlement_date("3/27/2021")
+        settlement_details.set_settlement_date("12/27/2021")
         settlement_details.set_pset("EURO_CLEAR")
 
         agreed_price = "book.agreedPrice"
@@ -176,13 +176,13 @@ def execute(report_id):
         block_order_settl_date = ExtractionDetail("middleOffice.settlDate", "SettlDate")
         block_order_pset = ExtractionDetail("middleOffice.pset", "PSET")
         block_order_pset_bic = ExtractionDetail("middleOffice.psetbic", "PSET BIC")
-        block_order_root_commission = ExtractionDetail("middleOffice.rootCommission", "RootCommission")
+        block_order_total_fees = ExtractionDetail("middleOffice.totalFees", "Total Fees")
         block_order_net_amt = ExtractionDetail("middleOffice.netAmt", "Net Amt")
         block_order_net_price = ExtractionDetail("middleOffice.netPrice", "Net Price")
         extract_request.add_extraction_details(
             [block_order_id, block_id, block_order_status, block_order_match_status, block_order_summary_status,
              block_order_settl_type, block_order_settl_currency, block_order_exchange_rate, block_order_settl_curr_fx_rate_calc,
-             block_order_settl_date, block_order_pset, block_order_pset_bic, block_order_root_commission, block_order_net_amt, block_order_net_price])
+             block_order_settl_date, block_order_pset, block_order_pset_bic, block_order_total_fees, block_order_net_amt, block_order_net_price])
         request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
         verifier = Verifier(case_id)
@@ -196,10 +196,10 @@ def execute(report_id):
         verifier.compare_values("Order SettlCurrency", "AED", request[block_order_settl_currency.name])
         verifier.compare_values("Order ExchangeRate", request_book[exchange_rate], request[block_order_exchange_rate.name])
         verifier.compare_values("Order SettlCurrFxRateCalc", "M", request[block_order_settl_curr_fx_rate_calc.name])
-        verifier.compare_values("Order SettlDate", "3/27/2021", request[block_order_settl_date.name])
+        verifier.compare_values("Order SettlDate", "12/27/2021", request[block_order_settl_date.name])
         verifier.compare_values("Order PSET", "EURO_CLEAR", request[block_order_pset.name])
         verifier.compare_values("Order PSET BIC", request_book[pset_bic], request[block_order_pset_bic.name])
-        verifier.compare_values("Order RootCommission", request_book[total_fees], request[block_order_root_commission.name],)
+        verifier.compare_values("Order Total Fees", request_book[total_fees], request[block_order_total_fees.name],)
         verifier.compare_values("Order Net Amt", request_book[net_amount], request[block_order_net_amt.name])
         verifier.compare_values("Order Net Price", request_book[net_price], request[block_order_net_price.name])
         verifier.verify()
@@ -237,7 +237,7 @@ def execute(report_id):
         modify_request = ModifyTicketDetails(base=base_request)
 
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": "100"})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": "100"})
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
 
         ext_id_allocate = "MiddleOfficeExtractionId2"
@@ -252,7 +252,7 @@ def execute(report_id):
 
         verifier = Verifier(case_id)
 
-        verifier.set_event_name("Checking block order after approve")
+        verifier.set_event_name("Checking block order after allocate")
         verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
         verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
         verifier.compare_values("Order Summary Status", "MatchedAgreed", request_allocate[block_order_summary_status.name])
@@ -284,10 +284,10 @@ def execute(report_id):
         amend_allocations_details = modify_request.add_amend_allocations_details()
         amend_allocations_details.set_filter({"Account ID": "MOClientSA1"})
         settlement_details = modify_request.add_settlement_details()
-        #settlement_details.set_settlement_currency("FIM")
+        settlement_details.set_settlement_currency("FIM")
         settlement_details.set_exchange_rate("100")
         settlement_details.set_exchange_rate_calc("Divide")
-        #settlement_details.set_settlement_date("3/27/2022")
+        settlement_details.set_settlement_date("3/27/2022")
         settlement_details.set_pset("CREST")
 
         # Remove comissions

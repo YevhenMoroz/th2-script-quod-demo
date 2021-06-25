@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
-from .order_ticket import OrderTicketDetails
-from th2_grpc_act_gui_quod import order_book_pb2
+from .order_ticket import OrderTicketDetails, FXOrderDetails
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
 
 
@@ -21,6 +21,30 @@ class ModifyOrderDetails:
 
     def set_default_params(self, base_request):
         self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.modify_order_details
+
+
+class ModifyFXOrderDetails:
+    def __init__(self, base_request):
+        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+
+        self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
 
     def set_selected_row_count(self, selected_row_count: int):
         self.modify_order_details.multipleRowSelection = True
@@ -56,6 +80,55 @@ class CancelOrderDetails:
 
     def build(self):
         return self.cancel_order_details
+
+
+class CancelFXOrderDetails:
+    def __init__(self, base_request):
+        self.cancel_order_details = order_book_fx_pb2.CancelFXOrderDetails()
+        self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.cancel_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_comment(self, comment: str):
+        self.cancel_order_details.comment = comment
+
+    def set_cancel_children(self, cancel_children: bool = False):
+        self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.cancel_order_details
+
+
+class ReleaseFXOrderDetails:
+    def __init__(self, base_request):
+        self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+        self.release_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.release_order_details.multipleRowSelection = True
+        self.release_order_details.selectedRowCount = selected_row_count
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.release_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.release_order_details
 
 
 @dataclass
@@ -394,6 +467,9 @@ class ManualCrossDetails:
 
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
 
     def set_price(self, value: str):
         self._request.price = value

@@ -8,9 +8,13 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, prepare_fe, close_fe, get_base_request, call
-from win_gui_modules.order_book_wrappers import ManualExecutingDetails
+from win_gui_modules.order_book_wrappers import ManualExecutingDetails, OrdersDetails, ExtractionDetail, OrderInfo,\
+    ExtractionAction
 from win_gui_modules.order_book_wrappers import CompleteOrdersDetails
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
+    AllocationsExtractionDetails
+from custom.verifier import Verifier
+
 from win_gui_modules.wrappers import *
 from rule_management import RuleManager
 
@@ -21,6 +25,7 @@ logger.setLevel(logging.INFO)
 
 def execute(report_id):
     rule_manager = RuleManager()
+    act2 = Stubs.win_act_order_book
 
     # Store case start time
     seconds, nanos = bca.timestamps()
@@ -30,7 +35,7 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
 
     session_id = set_session_id()
-    #set_base(session_id, case_id)
+    set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
     username = Stubs.custom_config['qf_trading_fe_user_305']
@@ -138,6 +143,31 @@ def execute(report_id):
 
         call(service.manualExecution, manual_executing_details.build())
 
+        # verify
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", care_order_id])
+
+        main_order_status = ExtractionDetail("order_status", "Sts")
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
+
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=
+                                                                                 [main_order_status,
+                                                                                  main_order_exec_status,
+                                                                                  main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        request = call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Status", main_order_status.name, "Open"),
+                                                      verify_ent("Order Exec Status",
+                                                                 main_order_exec_status.name, "Filled")]))
+
         # verify execution report2
         execution_report2_params = {
             'ClOrdID': care_order_id,
@@ -185,6 +215,25 @@ def execute(report_id):
 
         call(service.completeOrders, complete_orders_details.build())
 
+        # verify
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", care_order_id])
+
+        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_post_trade_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Post Trade Status",
+                                                                 main_order_post_trade_status.name, "ReadyToBook")
+                                                      ]))
+
         # Checkpoint3 creation
         checkpoint_response3 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id3 = checkpoint_response3.checkpoint
@@ -228,12 +277,76 @@ def execute(report_id):
 
         response = call(middle_office_service.bookOrder, modify_request.build())
 
+        #verify
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", care_order_id])
+
+        main_order_post_trade_status = ExtractionDetail("post_trade_status", "PostTradeStatus")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_post_trade_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        request = call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order PostTradeStatus",
+                                                                 main_order_post_trade_status.name, "Booked")]))
+
+        block_order_id = request[main_order_id.name]
+        if not block_order_id:
+            raise Exception("Block order id is not returned")
+        print("Block order id " + block_order_id)
+
+        ext_id = "MiddleOfficeExtractionId"
+        middle_office_service = Stubs.win_act_middle_office_service
+        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request.set_extraction_id(ext_id)
+        extract_request.set_filter(["Order ID", block_order_id])
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request.add_extraction_details(
+            [block_order_status, block_order_match_status, block_order_summary_status])
+        request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
+        verifier.verify()
+
+
         #approve
         #middle_office_service = Stubs.win_act_middle_office_service
 
         modify_request = ModifyTicketDetails(base=base_request)
         modify_request.set_filter(["Order ID", care_order_id])
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+
+        #verify
+        ext_id_approve = "MiddleOfficeExtractionId2"
+        middle_office_service_approve = Stubs.win_act_middle_office_service
+        extract_request_approve = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request_approve.set_extraction_id(ext_id_approve)
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request_approve.add_extraction_details([block_order_status, block_order_match_status,
+                                                        block_order_summary_status])
+        request_approve = call(middle_office_service_approve.extractMiddleOfficeBlotterValues, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking block order")
+        verifier.compare_values("Order Status", "Accepted", request_approve[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_approve[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "", request_approve[block_order_summary_status.name])
+        verifier.verify()
 
         #verify allocationinstruction1
         allocation_instruction_report_params1 = {
@@ -292,7 +405,7 @@ def execute(report_id):
         modify_request = ModifyTicketDetails(base=base_request)
 
         allocations_details = modify_request.add_allocations_details()
-        allocations_details.add_allocation_param({"Account": "MOClientSA1", "Alloc Qty": qty})
+        allocations_details.add_allocation_param({"Security Account": "MOClientSA1", "Alloc Qty": qty})
 
         extraction_details = modify_request.add_extraction_details()
         extraction_details.set_extraction_id("BookExtractionId")
@@ -304,6 +417,55 @@ def execute(report_id):
         extraction_details.extract_agreed_price("book.agreedPrice")
 
         call(middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
+
+        # verify
+        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        ext_id_allocate = "MiddleOfficeExtractionId3"
+        extract_request_allocate = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        extract_request_allocate.set_extraction_id(ext_id_allocate)
+        block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        extract_request.add_extraction_details(
+            [block_order_status, block_order_match_status, block_order_summary_status])
+        request_allocate = call(middle_office_service.extractMiddleOfficeBlotterValues,
+                                extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking block order after allocate")
+        verifier.compare_values("Order Status", "Accepted", request_allocate[block_order_status.name])
+        verifier.compare_values("Order Match Status", "Matched", request_allocate[block_order_match_status.name])
+        verifier.compare_values("Order Summary Status", "MatchedAgreed",
+                                request_allocate[block_order_summary_status.name])
+        verifier.verify()
+
+        # Check allocations blotter for MOClientSA1
+
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_block_filter({"Order ID": block_order_id})
+        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        allocate_qty = ExtractionDetail("middleOffice.qty", "Alloc Qty")
+        allocate_price = ExtractionDetail("middleOffice.price", "Avg Px")
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details(
+            [allocate_qty, allocate_price, allocate_status, allocate_account_id, allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClientSA1",
+                                request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched",
+                                request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
 
         #verify confirmation
         confirmation_report_params = {

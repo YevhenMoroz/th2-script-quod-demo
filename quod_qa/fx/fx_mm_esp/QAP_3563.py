@@ -80,7 +80,7 @@ def execute(report_id):
     instrument = "EUR/CAD-SPOT"
     client_tier = "Palladium"
     client = "Palladium1"
-    owner = "ostronov"
+    owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)

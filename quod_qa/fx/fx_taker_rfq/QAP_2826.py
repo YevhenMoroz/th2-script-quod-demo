@@ -123,7 +123,7 @@ def execute(report_id):
     case_to_currency = "USD"
     case_near_tenor = "Spot"
     case_far_tenor = "1W"
-    case_venue = ["CITI"]
+    case_venue = ["CIT"]
     case_filter_venue = "CITI"
 
     case_qty = 2000
@@ -159,8 +159,11 @@ def execute(report_id):
                                     case_qty, case_qty2)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

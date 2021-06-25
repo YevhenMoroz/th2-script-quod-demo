@@ -218,52 +218,6 @@ def execute(report_id, case_params):
                     )
             )
 
-    # er_new_params = {
-    #     'Side': reusable_params['Side'],
-    #     'Account': reusable_params['Account'],
-    #     'SettlDate': reusable_params['SettlDate'],
-    #     'SettlType': reusable_params['SettlType'],
-    #     'ClOrdID': order_params['ClOrdID'],
-    #     'OrderQty': order_params['OrderQty'],
-    #     'LeavesQty': order_params['OrderQty'],
-    #     'TimeInForce': order_params['TimeInForce'],
-    #     'OrdType': order_params['OrdType'],
-    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-    #     'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
-    #     'NoParty': [
-    #         {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
-    #         ],
-    #     'Instrument': {
-    #         'Symbol': 'EUR/USD',
-    #         'SecurityIDSource': 8,
-    #         'SecurityID': 'EUR/USD',
-    #         'SecurityExchange': 'XQFX'
-    #         },
-    #     'SettlCurrency': 'USD',
-    #     'Currency': 'EUR',
-    #     'ExecRestatementReason': 4,
-    #     'HandlInst': 1,
-    #     'AvgPx': 0,
-    #     'QtyType': 0,
-    #     'LastQty': 0,
-    #     'CumQty': 0,
-    #     'LastPx': 0,
-    #     'OrdStatus': 0,
-    #     'ExecType': 0,
-    #     'ExecID': '*',
-    #     'TransactTime': '*'
-    #     }
-    #
-    # verifier.submitCheckRule(
-    #         bca.create_check_rule(
-    #                 messages['ExecReportPending'],
-    #                 bca.filter_to_grpc('ExecutionReport', er_new_params, ['ClOrdID', 'OrdStatus', 'ExecType']),
-    #                 send_order.checkpoint_id,
-    #                 case_params['TraderConnectivity'],
-    #                 case_id
-    #                 )
-    #         )
-
     er_filled_params = {
         'Side': reusable_params['Side'],
         'Account': reusable_params['Account'],

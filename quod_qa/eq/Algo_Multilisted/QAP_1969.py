@@ -292,14 +292,43 @@ def execute(report_id):
         case_id_3 = bca.create_event("Check Filled Order", case_id)
         # Check SS (FIXSELLQUOD5 35=8 on Filled Order)
         er_6 = {
-            'OrdStatus': '2',
-            'ExecType': 'F',
-            'Price': price,
+            'Account': client,
+            'ExecID': '*',
             'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': qty,
+            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': price,
+            'OrdStatus': '2',
+            'SettlDate': '*',
+            'LastExecutionPolicy': '*',
+            'Currency': currency,
             'TimeInForce': tif_ioc,
-            'Text': text_f
+            'TradeDate': '*',
+            'ExecType': 'F',
+            'HandlInst': new_order_single_params['HandlInst'],
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': qty,
+            'LastPx': price,
+            'OrdType': order_type,
+            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'SecondaryOrderID': '*',
+            'LastMkt': ex_destination_1,
+            'Text': text_f,
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'QtyType': '0',
+            'SettlType': '*',
+            'Price': price,
+            'TargetStrategy': '*',
+            'Instrument': '*',
+            'SecondaryExecID': '*',
+            'ExDestination': '*',
+            'GrossTradeAmt': '*'            
         }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['TimeInForce','Text'])
+        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3, message_name='SS FIXSELLQUOD5 send 35=8 Filled', key_parameters=['TimeInForce', 'OrderID', 'ExecType', 'OrdStatus'])
         #endregion
 
         time.sleep(1)

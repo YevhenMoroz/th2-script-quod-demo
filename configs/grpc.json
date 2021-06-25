@@ -65,6 +65,20 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorTest": {
+      "service-class": "TemplateSimulatorTestService",
+      "endpoints": {
+        "simulator_test": {
+          "host": "10.0.22.22",
+          "port": 32314
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator_test"]
+      }
+    },
+
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
@@ -140,6 +154,21 @@
         ]
       }
     },
+	"Win_Act_Order_Book_FX": {
+      "service-class": "OrderBookFXServiceService",
+      "endpoints": {
+        "act_order_book_fx": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_fx"
+        ]
+      }
+    },
     "Win_Act_Aggregated_Rates": {
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
@@ -158,7 +187,7 @@
     "Win_Act_Client_Pricing": {
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_client_pricing": {
           "host": "10.0.22.22",
           "port": 32223
         }
@@ -166,14 +195,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_client_pricing"
         ]
       }
     },
     "Win_Act_Middle_Office": {
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_middle_office": {
           "host": "10.0.22.22",
           "port": 32223
         }
@@ -181,14 +210,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_middle_office"
         ]
       }
     },
     "Win_Act_Dealer_Intervention": {
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
-        "act_rfq": {
+        "act_dealer_interventions": {
           "host": "10.0.22.22",
           "port": 32223
         }
@@ -196,7 +225,7 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_dealer_interventions"
         ]
       }
     },
