@@ -2,18 +2,16 @@ import logging
 
 from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
 
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide, \
-    ContextActionRatesTile, ContextActionType
-from win_gui_modules.wrappers import set_base, verification, verify_ent
-from win_gui_modules.order_book_wrappers import ExtractionDetail
+from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, ContextActionType
+from win_gui_modules.application_wrappers import CloseApplicationRequest
+from win_gui_modules.wrappers import set_base
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
-from win_gui_modules.order_ticket import ExtractFxOrderTicketValuesRequest
 
 
 class TestCase:
@@ -251,7 +249,7 @@ class TestCase:
         call(self.ar_service.modifyRatesTile, modify_request.build())
 
     # extract rates tile table values
-    def check_venues_in_order_ticket(self, tile, venue):
+    def check_venues_in_order_ticket(self, tile, venue, status):
         order_ticket_checking = ExtractOrderTicketValuesRequest(data=tile.build())
         order_ticket_checking.side = ExtractOrderTicketValuesRequest.Side.BID
         order_ticket_checking.venueToExtract = venue
@@ -259,11 +257,11 @@ class TestCase:
 
         verifier = Verifier(self.case_id)
         verifier.set_event_name(f"Check {venue} in order ticket")
-        verifier.compare_values("Checked", result[f'{venue}_checked'], "false")
+        verifier.compare_values("Checked", result[f'{venue}_checked'], status)
         verifier.verify()
 
     # extract rates tile table values
-    def check_venues_in_dve(self, tile, venue):
+    def check_venues_in_dve(self, tile, venue, method):
         dve = ExtractDirectVenueExecutionRequest(data=tile.build())
         dve.extractBidSide = True
         dve.extractAskSide = True
@@ -272,35 +270,59 @@ class TestCase:
 
         verifier = Verifier(self.case_id)
         verifier.set_event_name(f"Check {venue} in DVE")
-        verifier.compare_values("Bid Price", result['bid_price'], "")
-        verifier.compare_values("Ask Price", result['ask_price'], "")
+        verifier.compare_values("Bid Price", result['bid_price'], "", verification_method=method)
+        verifier.compare_values("Ask Price", result['ask_price'], "", verification_method=method)
         verifier.verify()
 
     # extract rates tile table values
-    def check_venues_in_esp_table(self, tile, venue):
+    def check_venues_in_esp_table(self, tile, venue, status):
         extract_table_request = ExtractRatesTileTableValuesRequest(details=tile)
         extract_table_request.set_extraction_id("ExtractionId1")
         extract_table_request.check_venue_to_present(venue)
         result = call(self.ar_service.extractESPAggrRatesTableValues, extract_table_request.build())
 
-        for x in result:
-            print(x, ' - ', result[x])
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name(f"Check {venue} in ESP table")
+        verifier.compare_values(f"{venue} exists", result[f'{venue}_exists'], status)
+        verifier.verify()
+
+    def save_and_close_fe_workspace(self):
+        # Close the FrontEnd and safe workspace
+        close_app_request = CloseApplicationRequest()
+        close_app_request.set_default_params(self.base_request)
+        close_app_request.save_workspace()
+        self.common_act.closeApplication(close_app_request.build())
 
     # Main method
     def execute(self):
         try:
             self.set_venue_unhealthy("true")
             self.prepare_frontend()
+
             self.create_or_get_rates_tile(self.tile_1)
             self.check_unhealthy_venues(self.tile_1)
             self.check_unhealthy_venues(self.tile_2)
-            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C')
-            self.check_venues_in_dve(self.tile_2, self.venue)
-            self.check_venues_in_esp_table(self.tile_1, self.venue)
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'false')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'false')
+
+            self.check_unhealthy_venues(self.tile_1)
+            self.check_unhealthy_venues(self.tile_2)
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
+
+            self.save_and_close_fe_workspace()
+            self.prepare_frontend()
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
+
+            self.set_venue_unhealthy("false")
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-        # close_fe(self.case_id, self.session_id)
-
-# if __name__ == '__main__':
-#     pass
+        close_fe(self.case_id, self.session_id)
