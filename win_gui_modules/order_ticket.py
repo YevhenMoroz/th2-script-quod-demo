@@ -180,6 +180,7 @@ class OrderTicketValues(Enum):
     STRATEGY        = types.STRATEGY
     CHILD_STRATEGY  = types.CHILD_STRATEGY
     IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
+    ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
 
 class ExtractFxOrderTicketValuesRequest:
 
@@ -226,6 +227,10 @@ class ExtractFxOrderTicketValuesRequest:
 
     def get_is_algo_checked(self, is_algo_checked: str = 'fx_order_ticket.is_algo_checked'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.IS_ALGO_CHECKED)
+
+
+    def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
+        self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
 
 
     def get_extract_value(self, name: str, field: OrderTicketValues):
