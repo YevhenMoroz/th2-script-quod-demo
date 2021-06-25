@@ -20,7 +20,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-client = 'Palladium1'
+client = 'Iridium1'
 settltype = '0'
 symbol = 'EUR/USD'
 currency = 'EUR'
@@ -46,20 +46,20 @@ def execute(report_id):
         # params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate,
         #                                 symbol=symbol, securitytype=securitytype)
         # FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
-        # # Send market data to the HSBC venue EUR/USD spot
+        # Send market data to the HSBC venue EUR/USD spot
         # FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
         #     send_market_data_spot()
 
         # Step 1-5
-        params = CaseParamsSellRfq(client, case_id, side=side, orderqty=orderqty, symbol=symbol,
-                                   securitytype=securitytype,
-                                   settldate=settldate, settltype=settltype, currency=currency)
-
-        FixClientSellRfq(params). \
-            send_request_for_quote(). \
-            verify_quote_pending(). \
-            send_quote_cancel(). \
-            verify_quote_cancel()
+        # params = CaseParamsSellRfq(client, case_id, side=side, orderqty=orderqty, symbol=symbol,
+        #                            securitytype=securitytype,
+        #                            settldate=settldate, settltype=settltype, currency=currency)
+        #
+        # FixClientSellRfq(params). \
+        #     send_request_for_quote(). \
+        #     verify_quote_pending(). \
+        #     send_quote_cancel(). \
+        #     verify_quote_cancel()
 
     except Exception as e:
         logging.error('Error execution', exc_info=True)

@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_rfq import QAP_1537
+from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
 from stubs import Stubs
@@ -63,7 +63,8 @@ def test_run():
     try:
 
         # rfq.execute(report_id)
-        QAP_1537.execute(report_id,test_cases)
+        # QAP_1537.execute(report_id,test_cases)
+        QAP_2345.execute(report_id)
 
 
 
