@@ -384,6 +384,23 @@ class CompleteOrdersDetails:
     def build(self):
         return self._request
 
+# Use for ReOrder Action and ReOrder Leaves Action
+class BaseOrdersDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.BaseOrdersDetails(base=base)
+        else:
+            self._request = order_book_pb2.BaseOrdersDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def build(self):
+        return self._request
+
 
 class ManualCrossDetails:
     def __init__(self, base: EmptyRequest = None):

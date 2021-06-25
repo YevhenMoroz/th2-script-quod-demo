@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from th2_grpc_act_gui_quod import middle_office_service
+from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
 from custom.basic_custom_actions import create_event
@@ -20,14 +20,22 @@ from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request, direct_moc_request, direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails
+    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
+
+
+def get_buy_connectivity():
+    return buy_connectivity
+
+
+def get_sell_connectivity():
+    return sell_connectivity
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -774,3 +782,8 @@ def check_error_in_book(request):
         return error
     except Exception:
         logger.error("Error execution", exc_info=True)
+
+
+def re_order_leaves(request, is_sall=False):
+    base_orders_details = BaseOrdersDetails(request)
+    call(Stubs.win_act_order_book.reOrderLeaves, base_orders_details.build())
