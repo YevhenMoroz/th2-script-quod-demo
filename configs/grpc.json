@@ -140,6 +140,21 @@
         ]
       }
     },
+	"Win_Act_Order_Book_FX": {
+      "service-class": "OrderBookFXServiceService",
+      "endpoints": {
+        "act_order_book_fx": {
+          "host": "10.0.22.24",
+          "port": 32288
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_fx"
+        ]
+      }
+    },
     "Win_Act_Aggregated_Rates": {
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
