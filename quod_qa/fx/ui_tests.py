@@ -422,10 +422,12 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     # request.get_slippage(f'{ot}.slippage')
     # request.get_stop_price(f'{ot}.stopprice')
     # request.get_client(f'{ot}.client')
-    request.get_algo();
-    request.get_strategy();
-    request.get_child_strategy();
-    request.get_is_algo_checked();
+    # request.get_algo()
+    # request.get_strategy()
+    # request.get_child_strategy()
+    # request.get_is_algo_checked()
+
+    request.get_error_message_text()
 
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
@@ -526,7 +528,8 @@ def place_esp_by_bid_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
-    rfq_request.set_action(ESPTileOrderSide.BID_BTN)
+    rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.top_of_book(False)
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -534,7 +537,8 @@ def place_esp_by_ask_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
-    rfq_request.set_action(ESPTileOrderSide.ASK_BTN)
+    rfq_request.set_action(ESPTileOrderSide.SELL)
+    rfq_request.top_of_book(False)
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -543,6 +547,7 @@ def place_esp_by_tob_buy(base_request):
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
     rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.top_of_book()
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -551,6 +556,7 @@ def place_esp_by_tob_sell(base_request):
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
     rfq_request.set_action(ESPTileOrderSide.SELL)
+    rfq_request.top_of_book()
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -639,7 +645,6 @@ def execute(report_id, session_id):
     dealer_interventions_service = Stubs.win_act_dealer_intervention_service
 
     # endregion
-    Stubs.frontend_is_open = True
     if not Stubs.frontend_is_open:
         prepare_fe_2(case_id, session_id)
         # ,
@@ -682,7 +687,7 @@ def execute(report_id, session_id):
         # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
         # place_esp_by_tob_buy(base_request)
-        # place_esp_by_tob_sell(base_request)
+        place_esp_by_tob_sell(base_request)
 
         # endregion
 
@@ -694,7 +699,7 @@ def execute(report_id, session_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-        # extract_order_ticket_values(base_tile_data, order_ticket_service)
+           # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
@@ -721,9 +726,9 @@ def execute(report_id, session_id):
         # endregion
     
         # region OrderTicket actions
-        amend_order(ob_fx_act, base_request)
+        # amend_order(ob_fx_act, base_request)
         # cancel_order(ob_fx_act, base_request)
-        release_order(ob_fx_act, base_request)
+        # release_order(ob_fx_act, base_request)
         # endregion
     
     except Exception as e:
