@@ -3,7 +3,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest, \
+    DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
@@ -18,6 +19,12 @@ def modify_rates_tile(base_request, service, instrument, client):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_instrument(instrument)
     modify_request.set_client_tier(client)
+    call(service.modifyRatesTile, modify_request.build())
+
+
+def switch_to_tired(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.toggle_tiered()
     call(service.modifyRatesTile, modify_request.build())
 
 
@@ -75,13 +82,15 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        # TODO Go to tiered sections
+        # switch_to_tired(base_details, cp_service)
         # Step 2
         press_executable(base_details, cp_service)
 
         check_tile_value(base_details, cp_service, case_id, 1)
         check_tile_value(base_details, cp_service, case_id, 2)
         check_tile_value(base_details, cp_service, case_id, 3)
+        request = DeselectRowsRequest(base_details)
+        call(cp_service.deselectRows, request.build())
         # Step 3
         press_executable(base_details, cp_service)
         press_pricing(base_details, cp_service)
@@ -89,6 +98,9 @@ def execute(report_id, session_id):
         check_tile_value(base_details, cp_service, case_id, 1)
         check_tile_value(base_details, cp_service, case_id, 2)
         check_tile_value(base_details, cp_service, case_id, 3)
+        request = DeselectRowsRequest(base_details)
+        call(cp_service.deselectRows, request.build())
+        press_pricing(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
