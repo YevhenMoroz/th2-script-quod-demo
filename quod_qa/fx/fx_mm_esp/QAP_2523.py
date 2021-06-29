@@ -82,7 +82,7 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        # switch_to_tired(base_details, cp_service)
+        switch_to_tired(base_details, cp_service)
         # Step 2
         press_executable(base_details, cp_service)
 
