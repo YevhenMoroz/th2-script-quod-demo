@@ -203,7 +203,7 @@ def execute(report_id):
     
         fix_cancel = FixMessage(cancel_parms)
         responce_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_2)
-
+        time.sleep(3)
         # Check SS sent 35=F
         cancel_ss_param = {
             'Side': side,
