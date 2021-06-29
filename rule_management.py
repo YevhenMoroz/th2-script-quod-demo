@@ -217,6 +217,6 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    #rule_manager.remove_rule_by_id() 
+    #rule_manager.remove_rule_by_id()
     rule_manager.print_active_rules()
     #rule_manager.remove_all_rules()
