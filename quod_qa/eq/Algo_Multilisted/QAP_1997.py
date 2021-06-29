@@ -51,7 +51,8 @@ instrument = {
 def rule_creation():
     rule_manager = RuleManager()
     nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, qty, price)
-    return [nos_ioc_rule]
+    ocr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
+    return [nos_ioc_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -91,14 +92,14 @@ def execute(report_id):
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -106,14 +107,14 @@ def execute(report_id):
         market_data2 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             }
         ]
