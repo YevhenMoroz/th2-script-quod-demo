@@ -369,9 +369,8 @@ def execute(report_id):
             'ExecRestatementReason': '*',
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument,
-            'LastMkt': ex_destination_1,
-            'Text': text_e,
             'StopPx': stop_price,
+            'OrigClOrdID': fix_message_new_order_single.get_ClOrdID(),
 
         }
         fix_verifier_ss.CheckExecutionReport(er_8, responce_new_order_single, case=case_id_4, message_name="SS FIXSELLQUOD5 send 35=8 Cancel", key_parameters=['OrdStatus', 'ExecType', 'TimeInForce', 'OrdType'])
