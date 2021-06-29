@@ -65,7 +65,7 @@ def execute(report_id, session_id):
     fix_manager = FixManager(buy_connectivity, case_id)
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(buy_connectivity)
+        rule = rule_manager.add_OCRR(eq_wrappers.get_buy_connectivity())
         fix_modify_message = deepcopy(fix_message1)
         fix_modify_message.change_parameters({'Price': 3})
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
