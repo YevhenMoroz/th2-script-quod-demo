@@ -26,6 +26,12 @@ class ModifyRatesTileRequest:
     def toggle_live(self):
         self.modify_request.toggleLive = True
 
+    def toggle_tiered(self):
+        self.modify_request.toggleTiered = True
+
+    def toggle_sweepable(self):
+        self.modify_request.toggleSweepable = True
+
     def toggle_automated(self):
         self.modify_request.toggleAutomated = True
 
