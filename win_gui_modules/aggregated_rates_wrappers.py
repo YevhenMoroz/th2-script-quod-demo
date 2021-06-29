@@ -673,10 +673,10 @@ class TableActionsRequest:
     def build(self):
         return self.request
 
-
+# The buy and sell side have been reversed because act confused them
 class RFQTileOrderSide(Enum):
-    BUY = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
-    SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
+    BUY = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
+    SELL = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
 
 
 # The buy and sell side have been reversed because act confused them
