@@ -527,7 +527,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
