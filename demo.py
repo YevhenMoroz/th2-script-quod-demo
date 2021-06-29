@@ -30,7 +30,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     try:
-        # QAP_4297.execute(report_id)
+        QAP_4297.execute(report_id)
         # QAP_4304.execute(report_id)
         # QAP_4310.execute(report_id)
         # QAP_4325.execute(report_id)
@@ -44,7 +44,7 @@ def test_run():
         # QAP_4307.execute(report_id)
         # QAP_4288.execute(report_id)
         # QAP_4282.execute(report_id)
-        QAP_4303.execute(report_id)
+        # QAP_4303.execute(report_id)
         # DMA_FixFE_test.execute(report_id)
         # QAP_4301_fix.execute(report_id)
     except Exception:
