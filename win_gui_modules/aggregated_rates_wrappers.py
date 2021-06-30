@@ -736,6 +736,9 @@ class PlaceESPOrder:
     def set_action(self, action: ESPTileOrderSide):
         self.__request_details.action = action.value
 
+    def top_of_book(self, check: bool = True):
+        self.__request_details.topOfBook = check
+
     # TODO: quod - refactor: remove extraction method from Place ESPOrder action
     #
     # def top_of_book(self, check: bool):
