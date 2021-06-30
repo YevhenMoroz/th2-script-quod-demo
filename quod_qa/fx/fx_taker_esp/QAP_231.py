@@ -26,6 +26,7 @@ def modify_rates_tile(base_request, service, from_c, to_c, tenor):
 
 def place_order(base_request, service):
     esp_request = PlaceESPOrder(details=base_request)
+    esp_request.top_of_book()
     esp_request.set_action(ESPTileOrderSide.BUY)
     call(service.placeESPOrder, esp_request.build())
 
