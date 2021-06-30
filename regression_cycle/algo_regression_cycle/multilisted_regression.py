@@ -4,7 +4,7 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from datetime import datetime
-from quod_qa.eq.Algo_Multilisted import  QAP_3058, QAP_1967, QAP_1966, QAP_1963, QAP_1962, QAP_1958, QAP_1957, QAP_1954, QAP_1983, QAP_1984, QAP_2068, QAP_1953, QAP_3021, QAP_2982, QAP_1986, QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027,QAP_1951, QAP_1990, QAP_3028
+from quod_qa.eq.Algo_Multilisted import  QAP_3134, QAP_2476, QAP_3058, QAP_1967, QAP_1966, QAP_1963, QAP_1962, QAP_1958, QAP_1957, QAP_1954, QAP_1983, QAP_1984, QAP_2068, QAP_1953, QAP_3021, QAP_2982, QAP_1986, QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027,QAP_1951, QAP_1990, QAP_3028
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -50,6 +50,7 @@ def test_run(parent_id= None):
         QAP_1996.execute(report_id)
         QAP_1997.execute(report_id)
         QAP_1998.execute(report_id)
+        QAP_2476.execute(report_id)
         QAP_2982.execute(report_id)
         QAP_3019.execute(report_id)
         QAP_3021.execute(report_id)
@@ -58,6 +59,7 @@ def test_run(parent_id= None):
         QAP_3027.execute(report_id)
         QAP_3028.execute(report_id)
         QAP_3058.execute(report_id)
+        QAP_3134.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
