@@ -68,7 +68,7 @@ def execute(report_id):
 
     fix_params = {
         'Account': "CLIENT1",
-        'HandlInst': "1",
+        'HandlInst': "2",
         'Side': "2",
         'OrderQty': "1300",
         'TimeInForce': "6",
