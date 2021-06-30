@@ -19,6 +19,15 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+def clear_filters(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    base_data.set_row_number(1)
+    extraction_request = ExtractionDetailsRequest(base_data)
+    extraction_request.set_clear_flag()
+    call(service.getAssignedRFQDetails, extraction_request.build())
+    call(service.getUnassignedRFQDetails, extraction_request.build())
+
+
 def execute(report_id, case_params):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -159,15 +168,17 @@ def execute(report_id, case_params):
         ver.verify()
         # endregion
 
-        # TODO: add filter cleaner
-        # region Clear Filters
-        # endregion
-
+    except Exception as e:
+        logging.error("Error execution", exc_info=True)
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-
+    finally:
+        try:
+            clear_filters(base_request, service)
+        except Exception:
+            logging.error("Error execution", exc_info=True)
 
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))
