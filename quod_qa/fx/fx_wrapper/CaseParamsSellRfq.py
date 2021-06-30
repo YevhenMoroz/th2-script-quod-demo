@@ -13,7 +13,7 @@ class CaseParamsSellRfq:
     rfq_params_swap = None
     quote_cancel= None
     quote_params = None
-    quote_cancel_params = None
+    # quote_cancel_params = None
     order_params = None
     order_exec_report = None
     order_pending = None
@@ -58,8 +58,6 @@ class CaseParamsSellRfq:
         self.set_rfq_params()
         self.set_rfq_params_swap()
         self.set_quote_params()
-        self.set_quote_cancel_params()
-
 
     def set_rfq_params(self):
         self.rfq_params = {
@@ -82,10 +80,6 @@ class CaseParamsSellRfq:
             }
             ]
         }
-
-    def prepare_rfq_params(self):
-        if self.side=='':
-            self.rfq_params['NoRelatedSymbols'][0].pop('Side')
 
     # QAP_2143
     def set_rfq_params_swap(self):
@@ -130,14 +124,17 @@ class CaseParamsSellRfq:
         self.quote_params = {
             'QuoteReqID': self.rfq_params['QuoteReqID'],
             'OfferPx': '*',
+            'BidPx': '*',
             'OfferSize': '*',
+            'BidSize': '*',
             'QuoteID': '*',
+            'QuoteMsgID': '*',
             'OfferSpotRate': '*',
+            'BidSpotRate': '*',
             'ValidUntilTime': '*',
             'Currency': 'EUR',
             'QuoteType': self.rfq_params['NoRelatedSymbols'][0]['QuoteType'],
             'Instrument': '*',
-            'Side': '*',
             'SettlDate': '*',
             'SettlType': '*',
             'Account': '*',
@@ -147,21 +144,8 @@ class CaseParamsSellRfq:
     def set_quote_cancel_params(self):
         self.quote_cancel = {
             'QuoteReqID': self.rfq_params['QuoteReqID'],
-            'QuoteCancelType': '251',
-        }
-
-    def prepape_quote_cancel_report(self):
-        self.quote_cancel_params = {
-            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteID': '*',
             'QuoteCancelType': '5',
-            'NoQuoteEntries': [{
-                'Instrument': {
-                    'Symbol': self.symbol,
-                    'SecurityType': self.securitytype
-                },
-            },
-            ],
-            'QuoteID': '*'
         }
 
     # Set New Order Single parameters
@@ -185,8 +169,6 @@ class CaseParamsSellRfq:
             },
             'Currency': self.currency
         }
-
-
 
     # Set parameters for verification new order Pending responce
     def set_order_exec_rep_params(self):
@@ -229,16 +211,24 @@ class CaseParamsSellRfq:
 
         # Prepera order perding report
 
-    # Prepera order pending report
-    def prepape_order_pending_report(self):
+
+    #PREPARING
+
+    # Prepare  requset params
+    def prepare_rfq_params(self):
+        if self.side=='':
+            self.rfq_params['NoRelatedSymbols'][0].pop('Side')
+
+    # Prepare  order pending report
+    def prepare_order_pending_report(self):
         self.set_order_exec_rep_params()
         self.order_pending = self.order_exec_report
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
 
-    # Prepera order new report
-    def prepape_order_new_report(self):
+    # Prepare  order new report
+    def prepare_order_new_report(self):
         self.set_order_exec_rep_params()
         self.order_new = self.order_exec_report
         self.order_new['Account'] = self.client
@@ -248,8 +238,8 @@ class CaseParamsSellRfq:
         self.order_new['SettlType'] = self.settltype
         self.order_new['ExecRestatementReason'] = '4'
 
-    # Prepera order filled report
-    def prepape_order_filled_report(self):
+    # Prepare  order filled report
+    def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
         self.order_filled['Account'] = self.client
@@ -266,8 +256,8 @@ class CaseParamsSellRfq:
         self.order_filled['GrossTradeAmt'] = '*'
         # self.order_filled.pop('ExecRestatementReason')
 
-    # Prepera order rejected report
-    def prepape_order_rejected_report(self):
+    # Prepare  order rejected report
+    def prepare_order_rejected_report(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
         self.order_rejected['Account'] = self.client
@@ -279,10 +269,10 @@ class CaseParamsSellRfq:
         self.order_rejected['SettlType'] = self.settltype
         self.order_rejected['OrderQty'] = self.order_params['OrderQty']
 
-    # Prepera order rejected report Alog
-    def prepape_order_algo_rejected_report(self):
+    # Prepare  order rejected report Alog
+    def prepare_order_algo_rejected_report(self):
         self.set_order_exec_rep_params()
-        self.prepape_order_rejected_report()
+        self.prepare_order_rejected_report()
         self.order_algo_rejected = self.order_rejected
         self.order_algo_rejected.pop('SettlDate')
         self.order_algo_rejected['HandlInst'] = '2'
@@ -292,3 +282,33 @@ class CaseParamsSellRfq:
         self.order_algo_rejected['Instrument'].pop('SecurityIDSource')
         self.order_algo_rejected['Instrument'].pop('SecurityID')
         self.order_algo_rejected.pop('SettlType')
+
+    # Prepare quote no side report
+    def prepare_quote_report(self):
+        if self.side=='1':
+            self.quote_params['Side']='1'
+            self.quote_params['BidSpotRate'].pop()
+            self.quote_params['BidSize'].pop()
+            self.quote_params['BidPx'].pop()
+        elif self.side=='2':
+            self.quote_params['Side']='2'
+            self.quote_params['OfferSpotRate'].pop()
+            self.quote_params['OfferSize'].pop()
+            self.quote_params['OfferPx'].pop()
+
+    # def prepape_quote_cancel_report(self):
+    #     self.quote_cancel_params = {
+    #         'QuoteReqID': self.rfq_params['QuoteReqID'],
+    #         'QuoteCancelType': '5',
+    #         'NoQuoteEntries': [{
+    #             'Instrument': {
+    #                 'Symbol': self.symbol,
+    #                 'SecurityType': self.securitytype
+    #             },
+    #         },
+    #         ],
+    #         'QuoteID': '*'
+    #     }
+
+
+

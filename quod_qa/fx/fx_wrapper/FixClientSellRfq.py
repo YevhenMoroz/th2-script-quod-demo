@@ -11,7 +11,8 @@ class FixClientSellRfq():
     case_params_sell_rfq = None
     new_order = None
     quote_response = None
-    price = ''
+    # offer_px = ''
+    # bid_px = ''
 
     def __init__(self, case_params_sell_rfq):
         self.case_params_sell_rfq = case_params_sell_rfq
@@ -44,7 +45,9 @@ class FixClientSellRfq():
         return self
 
     def send_quote_cancel(self):
-        self.quote = self.fix_act.placeQuoteFIX(
+        self.case_params_sell_rfq.set_quote_cancel_params()
+        self.case_params_sell_rfq.quote_cancel['QuoteID']=self.case_params_sell_rfq.quote_params['QuoteID']
+        self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send QuoteCancel',
                 self.case_params_sell_rfq.connectivityRFQ,
@@ -78,27 +81,36 @@ class FixClientSellRfq():
         return self
 
     # Extract filed by name
-    def extruct_filed(self, field, band_number=1):
-        if field.lower() == 'price':
-            self.price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
-                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
-                .message_value.fields['MDEntryPx'].simple_value
-            return self.price
-        elif field.lower() == 'mdentryid':
-            mdEntryId = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
-                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
-                .message_value.fields['MDEntryID'].simple_value
-            return mdEntryId
-        elif field.lower() == 'mdentryforwardpoints':
-            mdentryforwardpoints = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
-                .message_value.fields['NoMDEntries'].list_value.values[band_number] \
-                .message_value.fields['MDEntryForwardPoints'].simple_value
-            return mdentryforwardpoints
+    def extruct_filed(self, field):
+        extract_value = self.quote.response_messages_list[0].fields[field].simple_value
+        return extract_value
+
+
 
     # VERIFICATION
 
     # Check Market Data respons was received
     def verify_quote_pending(self):
+        self.case_params_sell_rfq.prepare_quote_report()
+        self.case_params_sell_rfq.quote_params['QuoteID'] = self.extruct_filed('QuoteID')
+        self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
+        self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.extruct_filed('QuoteMsgID')
+        self.case_params_sell_rfq.quote_params['SettlType'] = self.extruct_filed('SettlType')
+        self.case_params_sell_rfq.quote_params['SettlDate'] = self.extruct_filed('SettlDate')
+
+        if 'Side' in self.case_params_sell_rfq.quote_params.keys():
+            if self.case_params_sell_rfq.quote_params['Side']==1:
+                self.case_params_sell_rfq.quote_params['OfferPx'] = self.extruct_filed('OfferPx')
+                self.case_params_sell_rfq.quote_params['OfferSize'] = self.extruct_filed('OfferSize')
+            if self.case_params_sell_rfq.quote_params['Side']==2:
+                self.case_params_sell_rfq.quote_params['BidPx'] = self.extruct_filed('BidPx')
+                self.case_params_sell_rfq.quote_params['BidSize'] = self.extruct_filed('BidSize')
+        else:
+            self.case_params_sell_rfq.quote_params['OfferPx'] = self.extruct_filed('OfferPx')
+            self.case_params_sell_rfq.quote_params['OfferSize'] = self.extruct_filed('OfferSize')
+            self.case_params_sell_rfq.quote_params['BidPx'] = self.extruct_filed('BidPx')
+            self.case_params_sell_rfq.quote_params['BidSize'] = self.extruct_filed('BidSize')
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
@@ -125,7 +137,7 @@ class FixClientSellRfq():
 
 
     def verify_order_pending(self, price='', qty=''):
-        self.case_params_sell_rfq.prepape_order_pending_report()
+        self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending['Price'] = self.price
         if price != '':
             self.case_params_sell_rfq.order_pending['Price'] = price
@@ -147,7 +159,7 @@ class FixClientSellRfq():
 
 
     def verify_order_new(self):
-        self.case_params_sell_rfq.prepape_order_new_report()
+        self.case_params_sell_rfq.prepare_order_new_report()
         self.case_params_sell_rfq.order_new['Price'] = self.price
         self.case_params_sell_rfq.order_new['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
@@ -163,7 +175,7 @@ class FixClientSellRfq():
 
 
     def verify_order_filled(self, price='', qty=''):
-        self.case_params_sell_rfq.prepape_order_filled_report()
+        self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
@@ -183,7 +195,7 @@ class FixClientSellRfq():
 
 
     def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate=''):
-        self.case_params_sell_rfq.prepape_order_filled_report()
+        self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
@@ -213,7 +225,7 @@ class FixClientSellRfq():
 
 
     def verify_order_rejected(self, text='', price='', qty=''):
-        self.case_params_sell_rfq.prepape_order_rejected_report()
+        self.case_params_sell_rfq.prepare_order_rejected_report()
         self.case_params_sell_rfq.order_rejected['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
         self.case_params_sell_rfq.order_rejected['Price'] = self.price
@@ -232,7 +244,7 @@ class FixClientSellRfq():
 
 
     def verify_order_algo_rejected(self, text):
-        self.case_params_sell_rfq.prepape_order_algo_rejected_report()
+        self.case_params_sell_rfq.prepare_order_algo_rejected_report()
         self.case_params_sell_rfq.order_algo_rejected['Price'] = self.price
         self.case_params_sell_rfq.order_algo_rejected['Text'] = text
 
