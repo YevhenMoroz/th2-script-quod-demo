@@ -130,13 +130,13 @@ def compare_position(case_id, pos_before, pos_after):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     pos_service = Stubs.act_fx_dealing_positions
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI1"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
@@ -149,11 +149,10 @@ def execute(report_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = "Spot"
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    # quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
@@ -165,22 +164,23 @@ def execute(report_id):
     try:
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, case_symbol, case_client)
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
-                        case_near_tenor, case_venue)
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
-        # Step 2
-        place_order_tob(base_rfq_details, ar_service)
-        quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
-                                    case_qty)
-        check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        pos_after = get_dealing_positions_details(pos_service, case_base_request, case_symbol, case_client)
-        compare_position(case_id, pos_before, pos_after)
-
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
+        pos_before = get_dealing_positions_details(pos_service, case_base_request, case_symbol, case_client)
+        # create_or_get_rfq(base_rfq_details, ar_service)
+        # modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
+        #                 case_near_tenor, case_venue)
+        # send_rfq(base_rfq_details, ar_service)
+        # check_quote_request_b(case_base_request, ar_service, case_id,
+        #                       quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+        # # Step 2
+        # place_order_tob(base_rfq_details, ar_service)
+        # quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
+        #                             case_qty)
+        # check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
+        # pos_after = get_dealing_positions_details(pos_service, case_base_request, case_symbol, case_client)
+        # compare_position(case_id, pos_before, pos_after)
+        #
+        # # Close tile
+        # call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)

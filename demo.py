@@ -8,9 +8,11 @@ from quod_qa.eq.Algo_Multilisted import QAP_2982, QAP_1986, QAP_1988, QAP_1965, 
     QAP_1990, QAP_3028
 
 from quod_qa.fx import ui_tests
-from quod_qa.fx.fx_mm_rfq import (QAP_1970, QAP_1971, QAP_1972, QAP_2062, QAP_2121, QAP_1545, QAP_1537, QAP_1539WIP,
+from quod_qa.fx.fx_mm_esp import QAP_2084
+from quod_qa.fx.fx_mm_rfq import (QAP_1970, QAP_1971, QAP_1972, QAP_2062, QAP_2121, QAP_1545, QAP_1537, QAP_1539,
                                   QAP_1541CANCELLED, QAP_1542, QAP_1547, QAP_1548, QAP_1562, QAP_1563, QAP_1746_WIP,
                                   QAP_2066)
+from quod_qa.fx.fx_taker_rfq import QAP_718
 from rule_management import RuleManager
 from stubs import Stubs
 from test_cases import QAP_638, QAP_1552
@@ -49,7 +51,7 @@ def test_run():
 
         start = datetime.now()
         print(f'start time = {start}')
-        QAP_2066.execute(report_id, case_params, s_id)
+        # QAP_2066.execute(report_id, case_params, s_id)
         # QAP_1970.execute(report_id, case_params)
         # QAP_1971.execute(report_id, case_params)
         # QAP_1972.execute(report_id, case_params)
@@ -65,10 +67,16 @@ def test_run():
 
 
         # QAP_1746_WIP.execute(report_id,case_params)
-
-        # ui_tests.execute(report_id, s_id)
-        # ui_tests.execute(report_id, sid)
-        # ui_tests.execute(report_id, sid)
+        rm = RuleManager()
+        # rm.add_fx_md_to('fix-fh-314-luna')
+        # rm.add_fx_md_to('fix-fh-fx-esp')
+        # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
+        # rm.remove_rule_by_id(98)
+        # rm.print_active_rules_sim_test()
+        # rm.print_active_rules()
+        # QAP_718.execute(report_id, s_id)
+        ui_tests.execute(report_id, s_id)
+        # QAP_2084.execute(report_id)
         # region Acceptance list RFQ Taker
         # QAP_568.execute(report_id)
         # QAP_569.execute(report_id)
