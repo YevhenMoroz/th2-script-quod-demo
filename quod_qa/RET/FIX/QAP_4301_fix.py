@@ -66,7 +66,6 @@ def execute(report_id):
 
     fix_manager_qtwquod5 = FixManager(connectivity_buy_side, case_id)
 
-
     fix_params = {
         'Account': "CLIENT1",
         'HandlInst': "1",
