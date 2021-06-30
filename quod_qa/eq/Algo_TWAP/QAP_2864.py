@@ -23,7 +23,6 @@ import quod_qa.wrapper.eq_wrappers
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-now = datetime.today() - timedelta(hours=3)
 qty = 200
 price = 1
 lookup = "PAR"       #CH0012268360_CHF
@@ -53,6 +52,8 @@ connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(case_id):
+    now = datetime.today() - timedelta(hours=3)
+    
     caseid = bca.create_event('Send Order via FIX', case_id)
         # Send_MarkerData
     fix_manager_310 = FixManager(connectivity_sell_side, caseid)
