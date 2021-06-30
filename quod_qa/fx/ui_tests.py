@@ -411,6 +411,7 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     """
     function demonstrate what and how you can extract value from Forex Order Ticket
     """
+    print('extract_order_ticket_values()')
     request = ExtractFxOrderTicketValuesRequest(base_tile_details)
     # ot = "fx_order_ticket"
     # request.get_instrument(f"{ot}.instrument")
@@ -428,7 +429,7 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     # request.get_is_algo_checked()
 
     request.get_error_message_text()
-
+    print('call()')
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
     for k in result:
@@ -687,7 +688,7 @@ def execute(report_id, session_id):
         # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
         # place_esp_by_tob_buy(base_request)
-        place_esp_by_tob_sell(base_request)
+        # place_esp_by_tob_sell(base_request)
 
         # endregion
 
@@ -699,7 +700,7 @@ def execute(report_id, session_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-           # extract_order_ticket_values(base_tile_data, order_ticket_service)
+        extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
@@ -725,7 +726,7 @@ def execute(report_id, session_id):
         # ar_pilots_to_actions(ar_service, base_request, coords)
         # endregion
     
-        # region OrderTicket actions
+        # region OrderBook actions
         # amend_order(ob_fx_act, base_request)
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
