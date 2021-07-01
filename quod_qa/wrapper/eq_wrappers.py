@@ -24,8 +24,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -110,7 +110,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         rule_manager.remove_rule(nos_rule)
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,alloc_account=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = {
@@ -123,6 +123,12 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             'Price': price,
             'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
             'TransactTime': datetime.utcnow().isoformat(),
+            'NoAllocs': [
+                {
+                    'AllocAccount': alloc_account,
+                    'AllocQty':qty
+                }
+            ],
             'Instrument': {
                 'Symbol': 'FR0004186856_EUR',
                 'SecurityID': 'FR0004186856',
@@ -133,6 +139,8 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         }
         if price == None:
             fix_params.pop('Price')
+        if alloc_account == None:
+            fix_params.pop('NoAllocs')
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
