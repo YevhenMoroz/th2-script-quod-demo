@@ -10,7 +10,7 @@ from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, 
     PositionsInfo, ExtractionPositionsAction
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
 
-from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 
@@ -67,21 +67,24 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     extraction_id = bca.client_orderid(4)
     dealing_positions_details.set_extraction_id(extraction_id)
     dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
-    position = ExtractionPositionsFieldsDetails("dealingpositions.position", "Quote Position (USD)")
+    position = ExtractionPositionsFieldsDetails("dealingpositions.position", "Quote Position")
+    position_usd = ExtractionPositionsFieldsDetails("dealingpositions.positionUSD", "Quote Position (USD)")
+    mkt_price = ExtractionPositionsFieldsDetails("dealingpositions.mktPx", "Mkt Px")
     dealing_positions_details.add_single_positions_info(
         PositionsInfo.create(
-            action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
+            action=ExtractionPositionsAction.create_extraction_action(
+                extraction_details=[position, mkt_price, position_usd])))
 
     response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
-    return float(response["dealingpositions.position"].replace(",", ""))
+    return response
 
 
-def compare_position(case_id, pos_before, position, pos_after):
-    expected_pos = pos_before + position
+def compare_position(case_id, pos_before, position, mkt_px, pos_after):
+    expected_pos = (float(pos_before.replace(",", "")) + position) / float(mkt_px)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Compare position")
-    verifier.compare_values("Quote position", str(round(expected_pos, 2)), str(pos_after))
+    verifier.compare_values("Quote position", str(round(expected_pos, 2)), str(pos_after).replace(",", ""))
 
     verifier.verify()
 
@@ -109,15 +112,8 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
+
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         create_or_get_rates_tile(base_details, cp_service)
@@ -126,25 +122,29 @@ def execute(report_id, session_id):
         pos_after_6m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         price = check_order_book(case_base_request, ob_act)
         position = price * -abs(float(qty_6m))
-        compare_position(case_id, pos_before, position, pos_after_6m)
+        compare_position(case_id, pos_before["dealingpositions.position"], position,
+                         pos_before["dealingpositions.mktPx"], pos_after_6m["dealingpositions.positionUSD"])
         # Step 2
         place_order_buy(base_details, cp_service, qty_2m, slippage, client)
         pos_after_2m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         price = check_order_book(case_base_request, ob_act)
         position = price * -abs(float(qty_2m))
-        compare_position(case_id, pos_after_6m, position, pos_after_2m)
+        compare_position(case_id, pos_after_6m["dealingpositions.position"], position,
+                         pos_after_6m["dealingpositions.mktPx"], pos_after_2m["dealingpositions.positionUSD"])
         # Step 3
         place_order_sell(base_details, cp_service, qty_8m, slippage, client)
         pos_after_8m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         price = check_order_book(case_base_request, ob_act)
         position = price * abs(float(qty_8m))
-        compare_position(case_id, pos_after_2m, position, pos_after_8m)
+        compare_position(case_id, pos_after_2m["dealingpositions.position"], position,
+                         pos_after_8m["dealingpositions.mktPx"], pos_after_8m["dealingpositions.positionUSD"])
         # Step 4
         place_order_sell(base_details, cp_service, qty_3m, slippage, client)
         pos_after_3m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         price = check_order_book(case_base_request, ob_act)
         position = price * abs(float(qty_3m))
-        compare_position(case_id, pos_after_8m, position, pos_after_3m)
+        compare_position(case_id, pos_after_8m["dealingpositions.position"], position,
+                         pos_after_8m["dealingpositions.mktPx"], pos_after_3m["dealingpositions.positionUSD"])
 
     except Exception:
         logging.error("Error execution", exc_info=True)

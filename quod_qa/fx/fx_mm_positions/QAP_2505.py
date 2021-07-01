@@ -112,7 +112,6 @@ def execute(report_id, session_id):
     try:
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        print(pos_before)
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         place_order_buy(base_details, cp_service, qty_6m, slippage, client)
