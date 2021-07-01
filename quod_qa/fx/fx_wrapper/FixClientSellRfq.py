@@ -178,20 +178,22 @@ class FixClientSellRfq():
         return self
 
 
-    def verify_order_filled(self, price='', qty=''):
+    def verify_order_filled(self, price='', qty='', spot_settl_date=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
+        self.case_params_sell_rfq.order_filled['SpotSettlDate'] = self.case_params_sell_rfq.order_params
         self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
-
+        if spot_settl_date!='':
+            self.case_params_sell_rfq.order_filled['SpotSettlDate'] = spot_settl_date
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SPOT',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
@@ -240,7 +242,7 @@ class FixClientSellRfq():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_rejected, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
