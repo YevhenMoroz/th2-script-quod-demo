@@ -108,7 +108,7 @@ def execute(report_id, case_params):
         base_data = BaseTableDataRequest(base=base_request)
         call(service.estimate, base_data.build())
         # endregion
-        # TODO: add extraction of from dealer intervention bid ask fields
+
         # region Extracting ask pips
         extraction_request = RFQExtractionDetailsRequest(base=base_request)
         extraction_request.set_extraction_id("ExtractionId")

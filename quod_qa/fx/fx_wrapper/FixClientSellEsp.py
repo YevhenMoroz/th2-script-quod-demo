@@ -111,8 +111,24 @@ class FixClientSellEsp():
             ))
         return self
 
+    def verify_md_rejected(self,text,reason=''):
+        self.case_params_sell_esp.set_md_reject_response(text)
+        time.sleep(5)
+        if reason=='date':
+            self.case_params_sell_esp.md_reject_response.pop('MDReqRejReason')
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Market Data Request Reject',
+                bca.filter_to_grpc('MarketDataRequestReject', self.case_params_sell_esp.md_reject_response, ['MDReqID']),
+                self.subscribe.checkpoint_id,
+                self.case_params_sell_esp.connectivityESP,
+                self.case_params_sell_esp.case_id
+            )
+        )
+        return self
+
     def verify_order_pending(self,price='', qty=''):
-        self.case_params_sell_esp.prepape_order_pending_report()
+        self.case_params_sell_esp.prepare_order_pending_report()
         self.case_params_sell_esp.order_pending['Price'] = self.price
         if price != '':
             self.case_params_sell_esp.order_pending['Price'] = price
@@ -132,7 +148,7 @@ class FixClientSellEsp():
         return self
 
     def verify_order_new(self):
-        self.case_params_sell_esp.prepape_order_new_report()
+        self.case_params_sell_esp.prepare_order_new_report()
         self.case_params_sell_esp.order_new['Price']=self.price
         self.case_params_sell_esp.order_new['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         self.verifier.submitCheckRule(
@@ -146,7 +162,7 @@ class FixClientSellEsp():
         return self
 
     def verify_order_filled(self,price='', qty=''):
-        self.case_params_sell_esp.prepape_order_filled_report()
+        self.case_params_sell_esp.prepare_order_filled_report()
         self.case_params_sell_esp.order_filled['Price']=self.price
         self.case_params_sell_esp.order_filled['LastPx']=self.price
         self.case_params_sell_esp.order_filled['AvgPx']=self.price
@@ -167,7 +183,7 @@ class FixClientSellEsp():
 
 
     def verify_order_filled_fwd(self,price='', qty='',fwd_point='',last_spot_rate=''):
-        self.case_params_sell_esp.prepape_order_filled_report()
+        self.case_params_sell_esp.prepare_order_filled_report()
         self.case_params_sell_esp.order_filled['Price']=self.price
         self.case_params_sell_esp.order_filled['LastPx']=self.price
         self.case_params_sell_esp.order_filled['AvgPx']=self.price
@@ -197,12 +213,14 @@ class FixClientSellEsp():
         return self
 
     def verify_order_rejected(self,text='',price='', qty=''):
-        self.case_params_sell_esp.prepape_order_rejected_report()
+        self.case_params_sell_esp.prepare_order_rejected_report()
         self.case_params_sell_esp.order_rejected['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         self.case_params_sell_esp.order_rejected['Price']=self.price
         self.case_params_sell_esp.order_rejected['Text']=text
         if qty !='':
             self.case_params_sell_esp.order_rejected['OrderQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_rejected['Price']=price
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
@@ -214,7 +232,7 @@ class FixClientSellEsp():
         return self
 
     def verify_order_algo_rejected(self,text):
-        self.case_params_sell_esp.prepape_order_algo_rejected_report()
+        self.case_params_sell_esp.prepare_order_algo_rejected_report()
         self.case_params_sell_esp.order_algo_rejected['Price']=self.price
         self.case_params_sell_esp.order_algo_rejected['Text']=text
 

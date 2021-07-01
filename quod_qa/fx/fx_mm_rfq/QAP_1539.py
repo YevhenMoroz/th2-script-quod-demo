@@ -1,95 +1,68 @@
 import logging
 from datetime import datetime, timedelta
+from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
+from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 
-from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import get_expire_time
-from quod_qa.fx.default_params_fx import defauot_quote_params, text_messages
-from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+client = 'Palladium1'
+settltype = '0'
+symbol = 'EUR/USD'
+currency = 'EUR'
+securitytype = 'FXSPOT'
+securityidsource = '8'
+side = ''
+orderqty = '1000000'
+securityid = 'EUR/USD'
+bands = [1000000]
+md = None
+settldate = tsd.spo()
+ExpireTime = (datetime.now() + timedelta(seconds=120)).strftime("%Y%m%d-%H:%M:%S.000"),
+TransactTime = (datetime.utcnow().isoformat())
+defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
 
-# FIXME: add check QuoteRequest terminated on FE
-# FIXME: raplace method placeQuoteFIX() by sendQuoteCancel()
-def execute(report_id, case_params):
-    case_name = Path(__file__).name
-    case_id = bca.create_event(case_name, report_id)
 
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
+def execute(report_id):
+    try:
+        case_name = Path(__file__).name[:-3]
+        case_id = bca.create_event(case_name, report_id)
 
-    seconds, nanos = bca.timestamps()  # Store case start time
+        #Preconditions
+        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate,
+                                        symbol=symbol, securitytype=securitytype)
+        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
+        # Send market data to the HSBC venue EUR/USD spot
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
+            send_market_data_spot()
 
-    reusable_params = defauot_quote_params
-    reusable_params['Account'] = case_params['Account']
-    reusable_params['Instrument']['Product'] = 4
-    ttl = 100
+        # Step 1-2
+        params = CaseParamsSellRfq(client, case_id, side=side, orderqty=orderqty, symbol=symbol,
+                                   securitytype=securitytype,
+                                   settldate=settldate, settltype=settltype, currency=currency)
 
-    rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{
-            **reusable_params,
-            'Currency': reusable_params['Instrument']['Symbol'][0:3],
-            'QuoteType': '1',
-            'OrderQty': reusable_params['OrderQty'],
-            'OrdType': 'D',
-            'ExpireTime': get_expire_time(ttl),
-            'TransactTime': (datetime.utcnow().isoformat())}]
-        }
-    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
+        rfq = (FixClientSellRfq(params). \
+               send_request_for_quote(). \
+               rfq.verify_quote_pending())
+        rfq.send_quote_cancel()
 
-    send_rfq = act.placeQuoteFIX(
-            bca.convert_to_request(
-                    text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                    ))
+        #Step 3
+        #ostronov
 
-    quote_params = {
-        'QuoteReqID': rfq_params['QuoteReqID'],
-        'OfferPx': '*',
-        'OfferSize': reusable_params['OrderQty'],
-        'QuoteID': '*',
-        'OfferSpotRate': '*',
-        'ValidUntilTime': '*',
-        'Currency': 'EUR',
-        'QuoteType': rfq_params['NoRelatedSymbols'][0]['QuoteType'],
-        'Instrument': reusable_params['Instrument'],
-        'Side': reusable_params['Side'],
-        'SettlDate': reusable_params['SettlDate'],
-        'SettlType': reusable_params['SettlType'],
-        'Account': reusable_params['Account']
+        #Step 4
+        #ostronov
 
-        }
 
-    verifier.submitCheckRule(
-            bca.create_check_rule(
-                    text_messages['recQ'],
-                    bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                    send_rfq.checkpoint_id,
-                    case_params['TraderConnectivity'],
-                    case_id
-                    )
-            )
 
-    quote_cancel_params = {
-        'QuoteReqID': rfq_params['QuoteReqID'],
-        'SenderCompID': 'QUODFX_UAT',
-        'TargetCompID': 'QUOD5',
-        'QuoteCancelType': '5'
-        }
-    logger.debug("Send new order with ClOrdID = {}".format(quote_cancel_params['QuoteReqID']))
 
-    act.placeQuoteFIX(
-            bca.convert_to_request(
-                    'Trying to send QuoteCancel',
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteCancel', quote_cancel_params, case_params['TraderConnectivity'])
-                    ))
-
-    logger.info("Case {} was executed in {} sec.".format(
-            case_name, str(round(datetime.now().timestamp() - seconds))))
+    except Exception as e:
+        logging.error('Error execution', exc_info=True)
+    finally:
+        pass

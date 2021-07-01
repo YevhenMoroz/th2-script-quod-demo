@@ -1,19 +1,19 @@
+from pathlib import Path
+
+from custom.tenor_settlement_date import spo, wk1
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from custom import basic_custom_actions as bca
 import logging
-from quod_qa.fx.fx_wrapper.NewOrderSingle import NewOrderSingle
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
-import time
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium1'
 account = 'Palladium1_1'
-connectivity = 'fix-ss-308-mercury-standard'
 side = '1'
 orderqty = 1000000
 ordtype = '2'
@@ -25,10 +25,11 @@ symbol='EUR/USD'
 securitytype='FXFWD'
 securityidsource='8'
 securityid='EUR/USD'
-bands=[1000000,2000000,3000000]
+bands=[2000000,6000000,12000000]
 ord_status='Rejected'
+settldate = wk1()
 md=None
-settldate = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
 
 
@@ -37,23 +38,25 @@ settldate = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%
 
 def execute(report_id):
     try:
-        case_id = bca.create_event('QAP_2085', report_id)
-        params = CaseParamsSellEsp(connectivity, client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
-                                   securityidsource=securityidsource, securityid=securityid)
-        md = MarketDataRequst(params)
-        md.set_md_params().send_md_request().\
-            verify_md_pending(bands)
-        time.sleep(5)
-        price=md.extruct_filed('Price')
-        print(price)
-        NewOrderSingle(params).\
-            send_new_order_single(price).\
+        case_name = Path(__file__).name[:-3]
+        case_id = bca.create_event(case_name, report_id)
+        #Precondition
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype)).\
+            send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
+
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,currency=currency,
+                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                   securityidsource=securityidsource, securityid=securityid,account=account)
+        params.prepare_md_for_verification(bands)
+        md = FixClientSellEsp(params).\
+            send_md_request().\
+            verify_md_pending()
+        price= md.extruct_filed('Price')
+        md.send_new_order_single(price).\
             verify_order_pending().\
             verify_order_new().\
-            verify_order_filled(account)
-
-
+            verify_order_filled_fwd()
 
 
 

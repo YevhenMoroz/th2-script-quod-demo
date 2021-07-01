@@ -65,6 +65,20 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorTest": {
+      "service-class": "TemplateSimulatorTestService",
+      "endpoints": {
+        "simulator_test": {
+          "host": "10.0.22.22",
+          "port": 32314
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator_test"]
+      }
+    },
+
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
@@ -137,6 +151,21 @@
         "name": "robin",
         "endpoints": [
           "act_order_book"
+        ]
+      }
+    },
+	"Win_Act_Order_Book_FX": {
+      "service-class": "OrderBookFXServiceService",
+      "endpoints": {
+        "act_order_book_fx": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_fx"
         ]
       }
     },

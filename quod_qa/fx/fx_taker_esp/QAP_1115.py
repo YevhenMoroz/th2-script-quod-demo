@@ -26,6 +26,7 @@ def modify_order_ticket(base_request, service):
 def place_order(base_request, service):
     esp_request = PlaceESPOrder(details=base_request)
     esp_request.set_action(ESPTileOrderSide.BUY)
+    esp_request.top_of_book()
     call(service.placeESPOrder, esp_request.build())
 
 

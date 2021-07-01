@@ -7,6 +7,7 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 class CaseParamsBuy():
 
     connectivity = 'fix-fh-314-luna'
+    # simulator = Stubs.test_sim
     simulator = Stubs.simulator
     market_d_params_spot=None
     market_d_params_fwd=None
@@ -24,7 +25,7 @@ class CaseParamsBuy():
 
     def set_market_data_spot(self):
         self.market_d_params_spot = {
-            "MDReqID": self.simulator.getMDRefIDForConnection303(
+            "MDReqID": self.simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
                     symbol=self.defaultmdsymbol,
                     connection_id=ConnectionID(session_alias=self.connectivity))).MDRefID,
@@ -86,7 +87,7 @@ class CaseParamsBuy():
 
     def set_market_data_fwd(self):
         self.market_d_params_fwd={
-            "MDReqID": self.simulator.getMDRefIDForConnection303(
+            "MDReqID": self.simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
                     symbol=self.defaultmdsymbol,
                     connection_id=ConnectionID(session_alias=self.connectivity))).MDRefID,

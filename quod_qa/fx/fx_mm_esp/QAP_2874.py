@@ -41,17 +41,17 @@ def execute(report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
         # Preconditions
-        params_sell=CaseParamsSellEsp(client, case_id, side, orderqty1, ordtype, timeinforce, currency, settlcurrency,
-                                      settltype, settldate_wk1, symbol, securitytype_fwd, securityid)
-        md = FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
+        params_sell=CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd)
+        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue USD/SEK spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype_spo)).\
             send_market_data_spot()
 
         #Step 1-3
-        params_sell.prepare_md_for_verification(bands, priced=False, which_bands_not_pr=bands_not_priced)
-        md.send_md_request().\
-            verify_md_pending()
+        params=CaseParamsSellEsp(client, case_id, side, orderqty1, ordtype, timeinforce, currency, settlcurrency,
+                                      settltype, settldate_wk1, symbol, securitytype_fwd, securityid,account=account)
+        params.prepare_md_for_verification(bands, priced=False, which_bands_not_pr=bands_not_priced)
+        md = FixClientSellEsp(params).send_md_request().verify_md_pending()
         price=md.extruct_filed('Price')
 
         #Step 4
@@ -59,12 +59,11 @@ def execute(report_id):
         last_spot_rate=str(round((float(price)-float(fwd_p)),5))
         md.send_new_order_single(price).verify_order_pending().verify_order_new().\
             verify_order_filled_fwd(price,fwd_point=fwd_p,last_spot_rate=last_spot_rate)
-
-
-
         time.sleep(3)
+
         #Step 5
-        params_sell.order_params['OrderQty']=orderqty2
+        params.orderqty=orderqty2
+        params.set_new_order_single_params()
         text='not enough quantity in book'
         md.send_new_order_single(price).\
             verify_order_pending().\

@@ -8,12 +8,13 @@ from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 class CaseParamsSellEsp:
     # connectivityESP = 'fix-ss-308-mercury-standard'
-    connectivityESP = 'fix-ss-esp-314-luna-standard'
+    connectivityESP = 'fix-sell-esp-m-314luna-stand'
     # mdreqid = None
     # clordid = None
     md_params = None
     order_params = None
     md_subscribe_response = None
+    md_reject_response = None
     order_exec_report = None
     order_pending = None
     order_new = None
@@ -144,6 +145,15 @@ class CaseParamsSellEsp:
 
             ]
         }
+
+    def set_md_reject_response(self,text):
+        self.md_reject_response = {
+            'MDReqID': self.mdreqid,
+            'MDReqRejReason': '0',
+            'Text': text
+        }
+        return self
+
 
     # Set custom parameters for md verification
     def prepare_md_for_verification(self, qty_count, published=True, which_bands_not_pb=None, priced=True,
@@ -284,6 +294,7 @@ class CaseParamsSellEsp:
         self.order_filled['TradeDate'] = '*'
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
+        self.order_filled.pop('Client')
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepera order rejected report

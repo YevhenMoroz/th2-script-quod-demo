@@ -28,6 +28,7 @@ def close_order_ticket(base_request, service):
 def place_order(base_request, service):
     esp_request = PlaceESPOrder(details=base_request)
     esp_request.set_action(ESPTileOrderSide.BUY)
+    esp_request.top_of_book()
     call(service.placeESPOrder, esp_request.build())
 
 
@@ -51,7 +52,7 @@ def click_one_click_button(base_request, service):
 
 def set_order_ticket_options(base_request, service, ord_type, tif, agr_str_t, str_t, child_str_t, client):
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues()
+    fx_values = DefaultFXValues([])
     fx_values.AggressiveTIF = tif
     fx_values.AggressiveOrderType = ord_type
     fx_values.AggressiveStrategyType = agr_str_t
@@ -97,7 +98,7 @@ def execute(report_id, session_id):
     ob_service = Stubs.win_act_order_book
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
 
