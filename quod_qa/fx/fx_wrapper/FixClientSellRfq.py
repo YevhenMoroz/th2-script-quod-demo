@@ -22,6 +22,7 @@ class FixClientSellRfq():
     # Send RFQ
     def send_request_for_quote(self):
         self.case_params_sell_rfq.prepare_rfq_params()
+        print('RFQ' , self.case_params_sell_rfq.rfq_params)
         self.quote = self.fix_act.placeQuoteFIX(
             bca.convert_to_request(
                 'Send Request For Quote',
@@ -63,7 +64,7 @@ class FixClientSellRfq():
         self.price = price
         self.case_params_sell_rfq.order_params['Price'] = self.price
         self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
-        print(self.case_params_sell_rfq.order_params)
+        print('Send an order', self.case_params_sell_rfq.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
