@@ -11,8 +11,8 @@ class FixClientSellRfq():
     case_params_sell_rfq = None
     new_order = None
     quote_response = None
-    # offer_px = ''
-    # bid_px = ''
+    price =''
+    quote_id=''
 
     def __init__(self, case_params_sell_rfq):
         self.case_params_sell_rfq = case_params_sell_rfq
@@ -60,12 +60,15 @@ class FixClientSellRfq():
     # Send New Order Single
     def send_new_order_single(self, price):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
-        self.case_params_sell_rfq.order_params['Price'] = price
+        self.price = price
+        self.case_params_sell_rfq.order_params['Price'] = self.price
+        self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
+        print(self.case_params_sell_rfq.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new order ' + tif, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id,
+                'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell_rfq.order_params,
-                                    self.case_params_sell_rfq.connectivityESP)
+                                    self.case_params_sell_rfq.connectivityRFQ)
             ))
         return self
 
@@ -74,9 +77,9 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_params['Price'] = price
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new order ' + tif, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id,
+                'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell_rfq.order_params,
-                                    self.case_params_sell_rfq.connectivityESP), 5
+                                    self.case_params_sell_rfq.connectivityRFQ), 5
             ))
         return self
 
@@ -92,7 +95,8 @@ class FixClientSellRfq():
     # Check Market Data respons was received
     def verify_quote_pending(self):
         self.case_params_sell_rfq.prepare_quote_report()
-        self.case_params_sell_rfq.quote_params['QuoteID'] = self.extruct_filed('QuoteID')
+        self.quote_id=self.extruct_filed('QuoteID')
+        self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
         self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.extruct_filed('QuoteMsgID')
         self.case_params_sell_rfq.quote_params['SettlType'] = self.extruct_filed('SettlType')
@@ -151,7 +155,7 @@ class FixClientSellRfq():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Pending',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
@@ -167,7 +171,7 @@ class FixClientSellRfq():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_new, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
@@ -217,7 +221,7 @@ class FixClientSellRfq():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled FORWARD',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )

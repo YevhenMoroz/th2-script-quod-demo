@@ -294,6 +294,7 @@ class CaseParamsSellEsp:
         self.order_filled['TradeDate'] = '*'
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
+        self.order_filled.pop('Client')
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepera order rejected report

@@ -2,6 +2,7 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
+from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
@@ -22,7 +23,7 @@ class CaseParamsSellRfq:
     order_rejected = None
     order_algo_rejected = None
 
-    def __init__(self, client, case_id, side='', orderqty=1, ordtype='2', timeinforce='4', currency='EUR',
+    def __init__(self, client, case_id, side='', orderqty=1, ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, settldate='', symbol='EUR/USD', securitytype='FXSPOT',
                  securityid='EUR/USD',securityidsource='8',handlinstr='1', securityexchange='XQFX', product=4,
                  market_depth='0', md_update_type='0', account='', ttl=120, booktype='0'
@@ -157,6 +158,7 @@ class CaseParamsSellRfq:
             'OrderQty': self.orderqty,
             'TimeInForce': self.timeinforce,
             'Price': '',
+            'QuoteID': '',
             'OrdType': self.ordtype,
             'ClOrdID': self.clordid,
             'TransactTime': datetime.utcnow().isoformat(),
@@ -223,7 +225,9 @@ class CaseParamsSellRfq:
     def prepare_order_pending_report(self):
         self.set_order_exec_rep_params()
         self.order_pending = self.order_exec_report
+        self.order_pending['Account'] = self.client
         self.order_pending['OrdStatus'] = 'A'
+        self.order_pending['OrderID'] = '*'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
 
@@ -242,9 +246,10 @@ class CaseParamsSellRfq:
     def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account'] = self.client
+        self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
+        self.order_filled['SpotSettlDate'] = tsd.spo()
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
         self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
@@ -287,14 +292,24 @@ class CaseParamsSellRfq:
     def prepare_quote_report(self):
         if self.side=='1':
             self.quote_params['Side']='1'
-            self.quote_params['BidSpotRate'].pop()
-            self.quote_params['BidSize'].pop()
-            self.quote_params['BidPx'].pop()
+            self.quote_params.pop('BidSpotRate')
+            self.quote_params.pop('BidSize')
+            self.quote_params.pop('BidPx')
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+                self.quote_params['OfferForwardPoints']='*'
         elif self.side=='2':
             self.quote_params['Side']='2'
-            self.quote_params['OfferSpotRate'].pop()
-            self.quote_params['OfferSize'].pop()
-            self.quote_params['OfferPx'].pop()
+            self.quote_params.pop('OfferSpotRate')
+            self.quote_params.pop('OfferSize')
+            self.quote_params.pop('OfferPx')
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+                self.quote_params['BidForwardPoints']='*'
+        elif self.side=='':
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+                self.quote_params['OfferForwardPoints'] = '*'
+                self.quote_params['BidForwardPoints'] = '*'
+
+
 
     # def prepape_quote_cancel_report(self):
     #     self.quote_cancel_params = {
