@@ -2,8 +2,8 @@ import logging
 import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1
 from custom.verifier import Verifier
+from quod_qa.common_tools import round_decimals_up
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
@@ -12,21 +12,6 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
-
-
-def round_decimals_up(number: float, decimals: int):
-    """
-    Returns a value rounded up to a specific number of decimal places.
-    """
-    if not isinstance(decimals, int):
-        raise TypeError("decimal places must be an integer")
-    elif decimals < 0:
-        raise ValueError("decimal places has to be 0 or more")
-    elif decimals == 0:
-        return math.ceil(number)
-
-    factor = 10 ** decimals
-    return math.ceil(number * factor) / factor
 
 
 def create_or_get_esp_tile(base_request, service):
@@ -85,10 +70,8 @@ def extract_price_from_pricing_tile(base_request, service):
 
 
 def check_price_on_pricing_tile(case_id, price, spot, pts):
-    expected_price = spot + pts / 10000
-    print(spot)
-    print(pts)
-    print(expected_price)
+    expected_price = spot + pts / 100
+
     verifier = Verifier(case_id)
     verifier.set_event_name("Check price")
     verifier.compare_values("Price", str(round(expected_price, 5)), str(price))
@@ -150,10 +133,10 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
     return [bid_pts_mm, ask_pts_mm]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -199,11 +182,11 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     try:
-    #         # Close tiles
-    #         call(ar_service.closeRatesTile, base_details.build())
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tiles
+            call(ar_service.closeRatesTile, base_details.build())
+            call(cp_service.closeRatesTile, base_details.build())
+
+        except Exception:
+            logging.error("Error execution", exc_info=True)

@@ -95,22 +95,22 @@ def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id):
                                            verify_ent("OB ID vs QB ID", ob_id.name, qb_id)]))
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     common_act = Stubs.win_act
 
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
-    case_venue = "HSB"
+    case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service

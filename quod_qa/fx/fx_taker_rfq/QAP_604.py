@@ -121,7 +121,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     return response[ob_id.name]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
@@ -131,16 +131,16 @@ def execute(report_id):
     case_filter_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
-    case_venue = ["CIT", "HSB"]
+    case_venue = ["CITI", "HSBC"]
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 

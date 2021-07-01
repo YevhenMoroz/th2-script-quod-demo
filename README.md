@@ -1,6 +1,6 @@
 *Demo script for Quod Financial*
 
-Use "pip install -r requirements.txt" command to install project dependencies
+Use "pip install -r requirements_common3.txt" command to install project dependencies
 
 also may be used for components install after update
 pip install --index-url https://quod-repos.exactpro.com/repository/quod-pypi/simple/ th2-grpc-act-quod==2.3.3

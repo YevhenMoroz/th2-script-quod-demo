@@ -83,12 +83,12 @@ def check_aggregated_rates(base_request, service, case_id):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
 

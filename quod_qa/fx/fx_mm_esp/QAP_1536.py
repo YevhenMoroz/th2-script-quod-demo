@@ -53,7 +53,7 @@ def check_date(base_request, service, case_id, expected_date):
     now = datetime.now()
     extracted_value = response["ratesTile.Date"]
     date = extracted_value + "-" + str(now.year)
-    extracted_date = datetime.strptime(date, "%d-%B-%Y").strftime('%Y-%m-%d %H:%M:%S')
+    extracted_date = datetime.strptime(date, "%d-%b-%Y").strftime('%Y-%m-%d %H:%M:%S')
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Tenor date on pricing tile")
@@ -61,10 +61,10 @@ def check_date(base_request, service, case_id, expected_date):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -72,7 +72,7 @@ def execute(report_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "EUR/USD-Spot"
-    wrong_instrument="GBP/OMR-Spot"
+    wrong_instrument = "BRL/BRL-Spot"
     client_tier = "Silver"
     date_spo = spo_front_end()
 
@@ -91,7 +91,7 @@ def execute(report_id):
         # Step 3
         modify_rates_tile(base_details, cp_service, wrong_instrument, client_tier)
         check_instrument(base_details, cp_service, case_id, instrument, client_tier)
-
+    #
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

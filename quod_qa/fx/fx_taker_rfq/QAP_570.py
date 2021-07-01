@@ -21,10 +21,10 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venue):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity_as_string(qty)
-    action = ContextAction.create_venue_filters(["HSB"])
+    action = ContextAction.create_venue_filters(venue)
     modify_request.add_context_action(action)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -63,7 +63,7 @@ def check_order_book(base_request, instr_type, act, act_ob, qty):
                                            verify_ent("OB Qty", ob_qty.name, str(qty))]))
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     common_act = Stubs.win_act
 
     case_name = Path(__file__).name[:-3]
@@ -74,11 +74,12 @@ def execute(report_id):
     case_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
+    case_venue_filter=["HSBC"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
@@ -94,7 +95,7 @@ def execute(report_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty1, case_from_currency,
-                        case_to_currency, case_tenor, case_client)
+                        case_to_currency, case_tenor, case_client, case_venue_filter)
 
         modify_request.set_quantity(case_qty2)
         call(ar_service.modifyRFQTile, modify_request.build())
@@ -106,7 +107,7 @@ def execute(report_id):
 
         # Step 3
         modify_rfq_tile(base_rfq_details, ar_service, case_qty3, case_from_currency,
-                        case_to_currency, case_tenor, case_client)
+                        case_to_currency, case_tenor, case_client, case_venue_filter)
         send_rfq(base_rfq_details, ar_service)
         # Step 4
         place_order_tob(base_rfq_details, ar_service)

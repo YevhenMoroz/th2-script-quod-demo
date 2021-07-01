@@ -44,16 +44,16 @@ def execute(report_id):
     # region Create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True, recipient=recipient, price=price)
     # endregion
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Sent")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
     # region Reassign order
     eq_wrappers.reassign_order(base_request, desk)
     # endregion
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Sent")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
 
 
     # region Accept order
     eq_wrappers.accept_order(lookup, qty, price)
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
-    eq_wrappers.verify_value(base_request, case_id, "Recpt", user)
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Recpt", user)
     # endregion
 

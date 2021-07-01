@@ -100,7 +100,7 @@ def execute(report_id):
     eq_wrappers.check_out_order(base_request)
     # endregion
     # region check_out order
-    eq_wrappers.verify_value(base_request, case_id, 'IsLocked', 'Yes', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'IsLocked', 'Yes', False)
     # endregion
     time.sleep(20)
     # region CancelOrderReplaceRequest sent

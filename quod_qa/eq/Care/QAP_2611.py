@@ -39,4 +39,4 @@ def execute(report_id):
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username,
                              price=price, washbook=washbook,account=account)
     # endregion
-    eq_wrappers.verify_value(base_request,case_id,"Wash Book", "CareWB")
+    eq_wrappers.verify_order_value(base_request, case_id, "Wash Book", "CareWB")

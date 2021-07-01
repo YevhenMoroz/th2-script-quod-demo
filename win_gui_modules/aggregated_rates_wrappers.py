@@ -350,6 +350,12 @@ class ModifyRatesTileRequest:
     def set_tenor(self, tenor: str):
         self.modify_request.tenor = tenor
 
+    def set_settlement_date(self, settlement_date: date):
+        self.modify_request.settlementDate.FromDatetime(datetime.fromordinal(settlement_date.toordinal()))
+
+    def clear_settlement_date(self, clear_settlement_date: bool):
+        self.modify_request.clearSettlementDate = clear_settlement_date
+
     def set_instrument(self, from_currency: str, to_currency: str, set_tenor: str):
         self.modify_request.changeInstrument = True
         self.modify_request.fromCurrency = from_currency

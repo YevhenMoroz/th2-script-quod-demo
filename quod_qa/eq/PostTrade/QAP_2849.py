@@ -46,8 +46,8 @@ def execute(report_id):
     # endregion
     #
     # region verify order
-    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled', False)
-    eq_wrappers.verify_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
+    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
     # # endregion
     #
     # # region Book
