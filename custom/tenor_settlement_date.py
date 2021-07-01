@@ -27,6 +27,10 @@ def spo():
     return (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d')
 
 
+def spo_ndf():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
+
+
 def sn():
     return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y%m%d')
 
