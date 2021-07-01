@@ -249,7 +249,7 @@ class CaseParamsSellRfq:
         self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
-        self.order_filled['SpotSettlDate'] = tsd.spo()
+        self.order_filled['SpotSettlDate'] = '*',
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
         self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
