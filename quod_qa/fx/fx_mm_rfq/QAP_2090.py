@@ -14,18 +14,19 @@ from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-client = 'Palladium1'
-account = 'Palladium1_1'
-settltype = '0'
-symbol = 'EUR/USD'
-currency = 'EUR'
-securitytype = 'FXSPOT'
-securityidsource = '8'
+client = 'Palladium2'
+account = 'Palladium2_2'
+settltype = 'W3'
+symbol = 'GBP/USD'
+securityid = 'GBP/USD'
+currency = 'GBP'
+settlcurrency = 'USD'
 side = '2'
+securitytype = 'FXFWD'
+securityidsource = '8'
 orderqty = '1000000'
-securityid = 'EUR/USD'
 settldate = tsd.spo()
-defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
+defaultmdsymbol='GBP/USD:SPO:REG:HSBC'
 bid_px_expected='1.19596'
 
 def execute(report_id):
@@ -33,25 +34,25 @@ def execute(report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
         #Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype)).\
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                           securityid=securityid,currency=currency, settlcurrency=settlcurrency)).\
             send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol, symbol, securitytype)).send_market_data_spot()
 
         # Step 1-2
-        params = CaseParamsSellRfq(client, case_id, side=side, orderqty=orderqty, symbol=symbol,
-                                   securitytype=securitytype,settldate=settldate, settltype=settltype, currency=currency,
-                                   account=account)
+        params = CaseParamsSellRfq(client, case_id, orderqty=orderqty, symbol=symbol, securityid=securityid,securitytype=securitytype,settldate=settldate,
+                                   settltype=settltype, currency=currency, settlcurrency=settlcurrency,account=account)
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
-        rfq.verify_quote_pending(bid_size=orderqty, bid_px=bid_px_expected, bid_spot_rate=bid_px_expected)
+        rfq.verify_quote_pending()
 
         # Step 3-4
         bid_px = rfq.extruct_filed('BidPx')
-        rfq.send_new_order_single(bid_px)
+        rfq.send_new_order_single(bid_px,side=side)
         rfq.verify_order_pending()
         # rfq.verify_order_new()
-        rfq.verify_order_filled(price=bid_px)
+        rfq.verify_order_filled_fwd(price=bid_px)
 
 
 

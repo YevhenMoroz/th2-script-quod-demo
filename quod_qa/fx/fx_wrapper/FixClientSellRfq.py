@@ -96,7 +96,7 @@ class FixClientSellRfq():
     # VERIFICATION
 
     # Check Market Data respons was received
-    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px=''):
+    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate=''):
         self.case_params_sell_rfq.prepare_quote_report()
         self.quote_id=self.extruct_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
@@ -104,15 +104,7 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
         self.case_params_sell_rfq.quote_params['SettlType'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
         self.case_params_sell_rfq.quote_params['SettlDate'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
-
-        if 'Side' in self.case_params_sell_rfq.quote_params.keys():
-            if self.case_params_sell_rfq.quote_params['Side']==1:
-                self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
-                self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
-            if self.case_params_sell_rfq.quote_params['Side']==2:
-                self.case_params_sell_rfq.quote_params['BidPx'] = '*'
-                self.case_params_sell_rfq.quote_params['BidSize'] = '*'
-        else:
+        if 'Side' in self.case_params_sell_rfq.quote_params.keys() == False:
             self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
             self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
             self.case_params_sell_rfq.quote_params['BidPx'] = '*'
@@ -129,6 +121,8 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params['OfferPx'] = offer_px
         if bid_px!='':
             self.case_params_sell_rfq.quote_params['BidPx'] = bid_px
+        if bid_spot_rate!='':
+            self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(

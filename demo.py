@@ -3,7 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx import clone
 from quod_qa.fx.fx_mm_esp import QAP_2990
-from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055
+from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
 from stubs import Stubs
@@ -48,6 +48,7 @@ def fx_mm_rfq_fix(report_id):
     pass
     # QAP_1746.execute(report_id)
     # QAP_1978.execute(report_id)
+    # QAP_2089.execute(report_id)
 
 
 def test_run():
@@ -74,8 +75,8 @@ def test_run():
         # QAP_1537.execute(report_id,test_cases)
         # QAP_2345.execute(report_id)
 
-        # QAP_2089.execute(report_id)
-        QAP_2055.execute(report_id)
+        # QAP_2090.execute(report_id)
+        # QAP_2055.execute(report_id)
 
 
 
@@ -85,7 +86,7 @@ def test_run():
 
 
 
-        # clone.execute(report_id)
+        clone.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
         # QAP_2750.execute(report_id)
