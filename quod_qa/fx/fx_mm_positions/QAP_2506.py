@@ -80,7 +80,9 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
 
 
 def compare_position(case_id, pos_before, position, mkt_px, pos_after):
-    expected_pos = (float(pos_before.replace(",", "")) + position) / float(mkt_px)
+    pos_before = float(pos_before.replace(",", ""))
+    mkt_px = float(mkt_px)
+    expected_pos = (pos_before + position) / mkt_px
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Compare position")

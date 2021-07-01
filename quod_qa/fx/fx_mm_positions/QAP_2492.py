@@ -75,7 +75,10 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
 
 
 def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
-    expected_pnl = (float(position.replace(",", "")) * float(mtk_px)) + float(quote_pos.replace(",", ""))
+    quote_pos = float(quote_pos.replace(",", ""))
+    position = float(position.replace(",", ""))
+    mtk_px = float(mtk_px)
+    expected_pnl = (position * mtk_px) + quote_pos
     extracted_pnl = extracted_pnl + ".0"
     verifier = Verifier(case_id)
     verifier.set_event_name("Check MTM Pnl")
@@ -107,10 +110,6 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     base_tile_data = BaseTileData(base=case_base_request)
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument_spot, client_tier)
@@ -137,7 +136,6 @@ def execute(report_id, session_id):
                   position_info_after_3m["dealingpositions.mktPx"],
                   position_info_after_3m["dealingpositions.quotePosition"],
                   position_info_after_3m["dealingpositions.mtmPnl"])
-
 
     except Exception:
         logging.error("Error execution", exc_info=True)
