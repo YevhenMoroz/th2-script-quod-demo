@@ -36,6 +36,7 @@ def close_order_ticket(base_request, service):
 def place_order(base_request, service):
     rfq_request = PlaceESPOrder(details=base_request)
     rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.top_of_book()
     call(service.placeESPOrder, rfq_request.build())
 
 

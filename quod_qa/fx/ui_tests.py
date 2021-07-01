@@ -526,7 +526,8 @@ def place_esp_by_bid_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
-    rfq_request.set_action(ESPTileOrderSide.BID_BTN)
+    rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.top_of_book(False)
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -534,7 +535,8 @@ def place_esp_by_ask_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
-    rfq_request.set_action(ESPTileOrderSide.ASK_BTN)
+    rfq_request.set_action(ESPTileOrderSide.SELL)
+    rfq_request.top_of_book(False)
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -543,6 +545,7 @@ def place_esp_by_tob_buy(base_request):
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
     rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.top_of_book()
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -551,6 +554,7 @@ def place_esp_by_tob_sell(base_request):
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
     rfq_request.set_action(ESPTileOrderSide.SELL)
+    rfq_request.top_of_book()
     call(service.placeESPOrder, rfq_request.build())
 
 
