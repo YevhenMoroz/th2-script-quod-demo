@@ -117,11 +117,8 @@ def execute(report_id, session_id):
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         place_order_buy(base_details, cp_service, qty_6m, slippage, client)
         pos_after_6m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        print(pos_after_6m)
         price = check_order_book(case_base_request, ob_act)
         position = price * -abs(float(qty_6m))
-        print(price)
-        print(position)
         compare_position(case_id, pos_before, position, pos_after_6m)
         # Step 2
         place_order_buy(base_details, cp_service, qty_2m, slippage, client)
