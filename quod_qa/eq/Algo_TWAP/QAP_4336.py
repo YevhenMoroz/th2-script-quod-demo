@@ -180,11 +180,6 @@ def execute(report_id):
                     'StrategyParameterValue': waves
                 },
                 {
-                    'StrategyParameterName': 'MaxWouldShares',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '350'
-                },
-                {
                     'StrategyParameterName': 'MaxWouldPercentage',
                     'StrategyParameterType': '6',
                     'StrategyParameterValue': '70'
