@@ -1,11 +1,14 @@
 from datetime import datetime
-
+from custom import tenor_settlement_date as tsd
+from datetime import datetime, timedelta
 from custom.tenor_settlement_date import wk1_front_end
 
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
+from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
@@ -49,6 +52,29 @@ def compare_position(case_id, pos_before, position, pos_after):
 
     verifier.verify()
 
+#Preconditions
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+timeouts = True
+client = 'Silver1'
+account = 'Silver1_1'
+settltype = 'W1'
+symbol = 'EUR/USD'
+currency = 'EUR'
+securitytype = 'FXFWD'
+securityidsource = '8'
+side = '1'
+orderqty = '1000000'
+securityid = 'EUR/USD'
+bands = [1000000]
+settldate = tsd.wk1()
+ExpireTime = (datetime.now() + timedelta(seconds=120)).strftime("%Y%m%d-%H:%M:%S.000"),
+TransactTime = (datetime.utcnow().isoformat())
+
+
+
+
+
 
 def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
@@ -60,7 +86,7 @@ def execute(report_id, session_id):
     from_currency = "GBP"
     to_currency = "USD"
     near_tenor = "Spot"
-    qty = 1000000
+    orderqty = 1000000
     symbol = from_currency + "/" + to_currency
     date_wk1 = wk1_front_end()
     date_wk1 = datetime.strptime(date_wk1, '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y')
@@ -79,8 +105,19 @@ def execute(report_id, session_id):
     try:
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client, date_wk1)
-        # TODO Send RFQ and buy new order
-        position = qty
+
+        #Send rfq
+        rfq= FixClientSellRfq(CaseParamsSellRfq(client, case_id, side=side, orderqty=orderqty, symbol=symbol,securitytype=securitytype,settldate=settldate,
+                                           settltype=settltype, currency=currency,account=account)).\
+            send_request_for_quote().\
+            verify_quote_pending()
+        price = rfq.extruct_filed('OfferPx')
+        rfq.send_new_order_single(price).\
+            verify_order_pending().\
+            verify_order_filled_fwd()
+
+
+        position = orderqty
         position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client, date_wk1)
         compare_position(case_id, pos_before, position, position_after)
 
