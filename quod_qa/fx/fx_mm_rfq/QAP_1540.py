@@ -23,7 +23,7 @@ def execute(report_id, case_params):
     reusable_params = defauot_quote_params
     reusable_params['Account'] = case_params['Account']
     reusable_params['Instrument']['Product'] = 4
-    # TODO: ttl could be changed to smaller when it would be fixed( you may ask kbrit about it)
+    #  quod ttl could be changed to smaller when it would be fixed( you may ask kbrit about it)
     ttl = 120
     wait_step = 5
     seconds, nanos = bca.timestamps()  # Store case start time

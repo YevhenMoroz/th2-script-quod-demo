@@ -55,7 +55,7 @@ def check_qty(exec_id, base_request, service, case_id):
 def check_quote_request_b(ex_id, base_request, service, act, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
-    qrb.set_filter(["Venue", "HSBC"])
+    qrb.set_filter(["Venue", "CITI"])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
@@ -114,13 +114,13 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
-    case_venue = "HSBCR"
+    case_venue = "CITIR"
     case_qty = 10000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
-    venues = ["HSBC"]
+    venues = ["CITI"]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
