@@ -4,7 +4,7 @@ import pyperclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
-
+from selenium.webdriver.support.select import Select
 from quod_qa.web_admin.web_admin_core.utils.common_constants import CommonConstants
 from quod_qa.web_admin.web_admin_core.utils.csv_utils.csv_reader import CsvReader
 from quod_qa.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfReader
@@ -69,6 +69,14 @@ class CommonPage:
         option_xpath = CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)
         option = self.find_by_xpath(option_xpath)
         option.click()
+
+    def select_value_from_dropdown_list(self, xpath: str, value: str):
+        """
+        Method was created for select value from dropdown list
+        if if there is no input field
+        """
+        select = Select(self.find_by_xpath(xpath))
+        select.select_by_value(value)
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         checkbox_state_span = self.get_checkbox_state_span(checkbox_xpath)

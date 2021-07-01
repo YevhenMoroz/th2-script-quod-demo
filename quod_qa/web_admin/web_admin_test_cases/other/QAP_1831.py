@@ -12,8 +12,8 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 
 class QAP_1831(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer):
-        super().__init__(web_driver_container, self.__class__.__name__)
+    def __init__(self, web_driver_container: WebDriverContainer,second_lvl_id):
+        super().__init__(web_driver_container, self.__class__.__name__,second_lvl_id)
         self.name = "qap 1831"
         self.default_scenario = "Custom one"
 
@@ -38,6 +38,7 @@ class QAP_1831(CommonTestCase):
         strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
         routes_wizard.click_on_save_changes()
         routes_main_menu.set_name_at_filter(self.name)
+        time.sleep(1)
 
     def test_context(self):
         self.precondition()

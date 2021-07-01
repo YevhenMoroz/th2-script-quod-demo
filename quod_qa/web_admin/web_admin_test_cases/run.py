@@ -6,6 +6,7 @@ from datetime import datetime
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.run_client_accounts import RunClientsAccounts
 from quod_qa.web_admin.web_admin_test_cases.general.run_general import RunGeneral
+from quod_qa.web_admin.web_admin_test_cases.order_management.run_order_management import RunOrderManagement
 from quod_qa.web_admin.web_admin_test_cases.other.run_other import RunOthers
 from stubs import Stubs
 from custom import basic_custom_actions as bca
@@ -37,8 +38,9 @@ def test_run():
     web_driver_container = WebDriverContainer()
 
     # RunClientsAccounts(web_driver_container).execute()
-    RunOthers(web_driver_container).execute()
-    #RunRoutes(web_driver_container).execute()
+    # RunOthers(web_driver_container,report_id).execute()
+    RunOrderManagement(web_driver_container, report_id).execute()
+
 
 
 if __name__ == '__main__':

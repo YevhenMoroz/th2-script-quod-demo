@@ -10,8 +10,8 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 
 class QAP_802(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer):
-        super().__init__(web_driver_container, self.__class__.__name__)
+    def __init__(self, web_driver_container: WebDriverContainer,second_lvl_id):
+        super().__init__(web_driver_container, self.__class__.__name__,second_lvl_id)
         self.name = "zzz"
 
     def precondition(self):

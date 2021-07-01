@@ -9,11 +9,11 @@ from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDrive
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-# TODO: blocked with filter at venues tab, verify before execute !!!
+# TODO: DOUBLE CHECK WORK OF THIS TEST CASE!!!
 class QAP_1739(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer):
-        super().__init__(web_driver_container, self.__class__.__name__)
+    def __init__(self, web_driver_container: WebDriverContainer,second_lvl_id):
+        super().__init__(web_driver_container, self.__class__.__name__,second_lvl_id)
         self.name = "qap 1739"
         self.first_venue = "EURONEXT AMSTERDAM"
         self.second_venue = "BAML"
@@ -32,9 +32,10 @@ class QAP_1739(CommonTestCase):
         routes_main_menu.click_on_new_button()
         routes_wizard = RoutesWizard(self.web_driver_container)
         routes_wizard.set_name_at_values_tab(self.name)
-        routes_wizard.click_on_save_changes()
+        # routes_wizard.click_on_save_changes()
         venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
         # create two new venues
+
         venues_sub_wizard.click_on_plus_at_venues_tab()
         venues_sub_wizard.set_venue_at_venues_tab(self.first_venue)
         venues_sub_wizard.click_on_check_mark_at_venues_tab()
@@ -43,6 +44,7 @@ class QAP_1739(CommonTestCase):
         venues_sub_wizard.click_on_check_mark_at_venues_tab()
         # TODO: verify that venue filter work correctly
         venues_sub_wizard.set_venue_filter_at_venues_tab(self.second_venue)
+        time.sleep(2)
         venues_sub_wizard.click_on_edit_at_venues_tab()
 
     def test_context(self):

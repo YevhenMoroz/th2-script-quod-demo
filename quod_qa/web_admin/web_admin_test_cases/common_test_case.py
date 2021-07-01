@@ -8,11 +8,11 @@ from stubs import Stubs
 
 
 class CommonTestCase:
-    def __init__(self, web_driver_container: WebDriverContainer, test_case_id):
+    def __init__(self, web_driver_container: WebDriverContainer, test_case_id, root_id):
         self.web_driver_container = web_driver_container
-        self.report_id = bca.create_event(
-            f'{Stubs.custom_config["web_admin_login"]} tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
-        self.test_case_id = bca.create_event(test_case_id, self.report_id)
+        # self.report_id = bca.create_event(
+        #     f'{Stubs.custom_config["web_admin_login"]} tests_ ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+        self.test_case_id = bca.create_event(test_case_id, root_id)
 
     # TODO: resolve issue with missing error message in the except block
     def run(self):
