@@ -16,7 +16,8 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
                                                        ESPTileOrderSide, MoveESPOrdedrTicketRequest)
 from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
-                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide)
+                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
+                                                     ExtractRatesTileTableValuesRequest)
 from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
@@ -307,21 +308,21 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     order_ticket.set_price_large('1.23')
     order_ticket.set_price_pips('456')
     order_ticket.set_qty('1150000')
-    order_ticket.set_client('FIXCLIENT3')
+    order_ticket.set_client('ASPECT_CITI')
     order_ticket.set_tif('FillOrKill')
     order_ticket.set_slippage('2.5')
     order_ticket.set_order_type('Limit')
     order_ticket.set_stop_price('1.3')
     # order_ticket.set_custom_algo_check_box()
-    order_ticket.set_custom_algo('Quod TWAP')
-    order_ticket.set_strategy('TWAPBROKER')
-    order_ticket.set_child_strategy('BasicTaker')
-    order_ticket.set_care_order('kbrit2 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
-    # order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
+    order_ticket.set_custom_algo('Quod VWAP')
+    order_ticket.set_strategy('Quod VWAP Default')
+    order_ticket.set_child_strategy('test')
+    # order_ticket.set_care_order('QA3 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
+    # order_ticket.set_care_order('Text Aspect Desk of Traders (CN)', False)#Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
 
     order_ticket.set_place()
-    # order_ticket.set_pending()
-    # order_ticket.set_keep_open()
+    order_ticket.set_pending()
+    order_ticket.set_keep_open()
 
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(order_ticket_service.placeFxOrder, new_order_details.build())
@@ -618,6 +619,19 @@ def release_order(ob_act, base_request):
     release_order_request.set_order_details(order_details)
     call(ob_act.releaseOrder, release_order_request.build())
 
+def check_tile_value(base_request, service, row):
+    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
+    extraction_id = bca.client_orderid(4)
+    extract_table_request.set_extraction_id(extraction_id)
+    extract_table_request.set_row_number(row)
+    extract_table_request.is_tiered(True)
+    extract_table_request.set_ask_extraction_fields([ExtractionDetail("rateTile.askPx", "Px"),
+                                                     ExtractionDetail("rateTile.askPub", "Pub")])
+    extract_table_request.set_bid_extraction_fields([ExtractionDetail("rateTile.bidPx", "Px"),
+                                                     ExtractionDetail("rateTile.bidPub", "Pub")])
+    response = call(service.extractRatesTileTableValues, extract_table_request.build())
+    print(response)
+
 def execute(report_id, session_id):
 
     common_act = Stubs.win_act
@@ -700,12 +714,13 @@ def execute(report_id, session_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-        extract_order_ticket_values(base_tile_data, order_ticket_service)
+        # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
         # region ClientPricing
         # extract_cp_rates_panel(base_details,cp_service)
+        check_tile_value(base_tile_details, cp_service,1 )
         # select_rows(base_tile_details, [1, 2, 4], cp_service)
         # print('Sleeping')
         # time.sleep(5)
