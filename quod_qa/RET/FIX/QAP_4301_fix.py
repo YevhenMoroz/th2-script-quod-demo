@@ -1,5 +1,6 @@
 import logging
 import os
+from copy import deepcopy
 from datetime import datetime, date, timedelta
 
 from quod_qa.wrapper import eq_wrappers
@@ -61,14 +62,14 @@ def execute(report_id):
 
     # region Create order via FIX
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia", "XLON_CLIENT1",
-                                                                         "XLON", 20)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-310-columbia", "XLON_CLIENT1",
+    #                                                                      "XLON", 20)
 
     fix_manager_qtwquod5 = FixManager(connectivity_buy_side, case_id)
 
     fix_params = {
         'Account': "CLIENT1",
-        'HandlInst': "2",
+        'HandlInst': "1",
         'Side': "2",
         'OrderQty': "1300",
         'TimeInForce': "6",
@@ -86,25 +87,67 @@ def execute(report_id):
     }
 
     fix_message = FixMessage(fix_params)
-
     fix_message.add_random_ClOrdID()
-    response = fix_message.pop('response')
-    fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message)
+    response = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message, case=case_id)
     # end region
 
     # Check on ss
     params = {
-        'OrderQty': qty,
-        'ExecType': '3',
-        'OrdStatus': '1',
+        'ExecID': "*",
+        'OrderQty': "1300",
+        'ExpireDate': expire_date.strftime("%Y%m%d"),
+        'LastQty': "*",
+        'OrderID': "*",
+        'TransactTime': "*",
+        'ExecType': '0',
+        'HandlInst': '1',
+        'LastPx': '0',
+        'OrdType': "2",
+        'LeavesQty': '1300',
+        'NoParty': '*',
+        'CumQty': '0',
+        'OrdStatus': '0',
+        'SettlDate': '*',
+        'Currency': 'GBP',
         'Side': 2,
+        'AvgPx': 0,
         'Price': price,
-        'TimeInForce': 0,
+        'TimeInForce': 6,
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'SecondaryOrderID': "*",
+        'LastMkt': "CHIX",
+        'OrderCapacity': "A",
+        'QtyType': "0",
+        'Instrument': {
+            'Symbol': 'GB00B0J6N107_GBP',
+            'SecurityID': 'GB00B0J6N107',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XLON'
+        },
     }
-    print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
+    # print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
+
+    # region Amend order
+    case_id_1 = bca.create_event("Modify Order", case_id)
+    # Send OrderCancelReplaceRequest
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters({'OrderQty': "1500"})
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, message_name='Amend order')
+
+    # Cancel order
+    cancel_parms = {
+        "ClOrdID": fix_message.get_ClOrdID(),
+        "Account": fix_message.get_parameter('Account'),
+        "Side": fix_message.get_parameter('Side'),
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": fix_message.get_ClOrdID()
+    }
+
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id)
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
