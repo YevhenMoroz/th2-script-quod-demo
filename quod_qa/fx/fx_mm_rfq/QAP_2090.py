@@ -25,9 +25,15 @@ side = '2'
 securitytype = 'FXFWD'
 securityidsource = '8'
 orderqty = '1000000'
-settldate = tsd.spo()
+settldate = tsd.wk3()
 defaultmdsymbol='GBP/USD:SPO:REG:HSBC'
-bid_px_expected='1.19596'
+bid_px_expected='1.19628'
+offer_px_expected='1.19628'
+bid_forward_points='0.00031'
+offer_forward_points='0.00019'
+bid_spot_rate='1.19597'
+offer_spot_rate='1.19609'
+
 
 def execute(report_id):
     try:
@@ -45,14 +51,15 @@ def execute(report_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
-        rfq.verify_quote_pending()
+        rfq.verify_quote_pending(bid_px=bid_px_expected,offer_px=offer_px_expected, bid_forward_points=bid_forward_points,offer_forward_points=offer_forward_points,
+                                 bid_spot_rate=bid_spot_rate,offer_spot_rate= offer_spot_rate,offer_size=orderqty, bid_size=orderqty)
 
         # Step 3-4
         bid_px = rfq.extruct_filed('BidPx')
         rfq.send_new_order_single(bid_px,side=side)
-        rfq.verify_order_pending()
+        rfq.verify_order_pending(side=side)
         # rfq.verify_order_new()
-        rfq.verify_order_filled_fwd(price=bid_px)
+        rfq.verify_order_filled_fwd(price=bid_px, side=side,last_spot_rate=bid_spot_rate, fwd_point=bid_forward_points)
 
 
 

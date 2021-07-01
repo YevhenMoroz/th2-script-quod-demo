@@ -75,18 +75,18 @@ def test_run():
         # QAP_1537.execute(report_id,test_cases)
         # QAP_2345.execute(report_id)
 
-        # QAP_2090.execute(report_id)
+        QAP_2090.execute(report_id)
         # QAP_2055.execute(report_id)
 
 
 
         # QAP_2990.execute(report_id)
+        #
 
 
 
 
-
-        clone.execute(report_id)
+        # clone.execute(report_id)
         # test.execute(report_id)
         # SendMD.execute(report_id)
         # QAP_2750.execute(report_id)

@@ -96,7 +96,7 @@ class FixClientSellRfq():
     # VERIFICATION
 
     # Check Market Data respons was received
-    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate=''):
+    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''):
         self.case_params_sell_rfq.prepare_quote_report()
         self.quote_id=self.extruct_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
@@ -123,6 +123,8 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params['BidPx'] = bid_px
         if bid_spot_rate!='':
             self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
+        if offer_spot_rate!='':
+            self.case_params_sell_rfq.quote_params['OfferSpotRate'] = offer_spot_rate
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(
