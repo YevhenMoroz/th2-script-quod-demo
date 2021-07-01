@@ -133,14 +133,14 @@ def execute(report_id, session_id):
             verify_quote_pending()
         price = rfq.extruct_filed("BidPx")
         rfq.send_new_order_single(price). \
-            verify_order_pending(). \
-            verify_order_filled()
+            verify_order_pending()
+        rfq.verify_order_filled()
         # Step 2
-        position_info = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        check_pnl(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
-                  position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnl"])
-        check_pnl_usd(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
-                      position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnlUsd"])
+        # position_info = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        # check_pnl(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
+        #           position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnl"])
+        # check_pnl_usd(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
+        #               position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnlUsd"])
         # Step 3
         # rfq = FixClientSellRfq(
         #     CaseParamsSellRfq(client, case_id, side=side_s, orderqty=qty_8m, symbol=symbol, securitytype=security_type,
