@@ -22,6 +22,7 @@ class FixClientSellRfq():
     # Send RFQ
     def send_request_for_quote(self):
         self.case_params_sell_rfq.prepare_rfq_params()
+        print('RFQ' , self.case_params_sell_rfq.rfq_params)
         self.quote = self.fix_act.placeQuoteFIX(
             bca.convert_to_request(
                 'Send Request For Quote',
@@ -58,12 +59,14 @@ class FixClientSellRfq():
         return self
 
     # Send New Order Single
-    def send_new_order_single(self, price):
+    def send_new_order_single(self, price, side=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
         self.price = price
         self.case_params_sell_rfq.order_params['Price'] = self.price
         self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
-        print(self.case_params_sell_rfq.order_params)
+        if side!='':
+            self.case_params_sell_rfq.order_params['Side'] = side
+        print('Send an order', self.case_params_sell_rfq.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
@@ -93,27 +96,33 @@ class FixClientSellRfq():
     # VERIFICATION
 
     # Check Market Data respons was received
-    def verify_quote_pending(self):
+    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate=''):
         self.case_params_sell_rfq.prepare_quote_report()
         self.quote_id=self.extruct_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
+        self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.quote_id
         self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
-        self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.extruct_filed('QuoteMsgID')
-        self.case_params_sell_rfq.quote_params['SettlType'] = self.extruct_filed('SettlType')
-        self.case_params_sell_rfq.quote_params['SettlDate'] = self.extruct_filed('SettlDate')
-
-        if 'Side' in self.case_params_sell_rfq.quote_params.keys():
-            if self.case_params_sell_rfq.quote_params['Side']==1:
-                self.case_params_sell_rfq.quote_params['OfferPx'] = self.extruct_filed('OfferPx')
-                self.case_params_sell_rfq.quote_params['OfferSize'] = self.extruct_filed('OfferSize')
-            if self.case_params_sell_rfq.quote_params['Side']==2:
-                self.case_params_sell_rfq.quote_params['BidPx'] = self.extruct_filed('BidPx')
-                self.case_params_sell_rfq.quote_params['BidSize'] = self.extruct_filed('BidSize')
-        else:
-            self.case_params_sell_rfq.quote_params['OfferPx'] = self.extruct_filed('OfferPx')
-            self.case_params_sell_rfq.quote_params['OfferSize'] = self.extruct_filed('OfferSize')
-            self.case_params_sell_rfq.quote_params['BidPx'] = self.extruct_filed('BidPx')
-            self.case_params_sell_rfq.quote_params['BidSize'] = self.extruct_filed('BidSize')
+        self.case_params_sell_rfq.quote_params['SettlType'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
+        self.case_params_sell_rfq.quote_params['SettlDate'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
+        if 'Side' in self.case_params_sell_rfq.quote_params.keys() == False:
+            self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
+            self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
+            self.case_params_sell_rfq.quote_params['BidPx'] = '*'
+            self.case_params_sell_rfq.quote_params['BidSize'] = '*'
+        if offer_forward_points!='':
+            self.case_params_sell_rfq.quote_params['OfferForwardPoints'] = offer_forward_points
+        if bid_forward_points!='':
+            self.case_params_sell_rfq.quote_params['BidForwardPoints'] = bid_forward_points
+        if bid_size!='':
+            self.case_params_sell_rfq.quote_params['BidSize'] = bid_size
+        if offer_size!='':
+            self.case_params_sell_rfq.quote_params['OfferSize'] = offer_size
+        if offer_px!='':
+            self.case_params_sell_rfq.quote_params['OfferPx'] = offer_px
+        if bid_px!='':
+            self.case_params_sell_rfq.quote_params['BidPx'] = bid_px
+        if bid_spot_rate!='':
+            self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(
@@ -140,7 +149,7 @@ class FixClientSellRfq():
         return self
 
 
-    def verify_order_pending(self, price='', qty=''):
+    def verify_order_pending(self, price='', qty='',side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending['Price'] = self.price
         if price != '':
@@ -150,6 +159,8 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
             self.case_params_sell_rfq.order_pending['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
+        if side!='':
+            self.case_params_sell_rfq.order_pending['Side'] = side
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -178,17 +189,17 @@ class FixClientSellRfq():
         return self
 
 
-    def verify_order_filled(self, price='', qty='', spot_settl_date=''):
+    def verify_order_filled(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
+        if side!='':
+            self.case_params_sell_rfq.order_filled['Side'] = side
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
-        self.case_params_sell_rfq.order_filled['SpotSettlDate'] = self.case_params_sell_rfq.order_params
         self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
-        if spot_settl_date!='':
-            self.case_params_sell_rfq.order_filled['SpotSettlDate'] = spot_settl_date
+
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SPOT',
@@ -200,15 +211,14 @@ class FixClientSellRfq():
         return self
 
 
-    def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate=''):
+    def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate='',side=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = '*'
         self.case_params_sell_rfq.order_filled['Price'] = self.price
-        self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
-            'OrderID'].simple_value
+        self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         self.case_params_sell_rfq.order_filled['LastForwardPoints'] = '*'
         if price != '':
             self.case_params_sell_rfq.order_filled['Price'] = price
@@ -218,6 +228,8 @@ class FixClientSellRfq():
         if fwd_point != '':
             self.case_params_sell_rfq.order_filled['LastSpotRate'] = last_spot_rate
             self.case_params_sell_rfq.order_filled['LastForwardPoints'] = fwd_point
+        if side!='':
+            self.case_params_sell_rfq.order_filled['Side'] = side
 
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(

@@ -133,7 +133,7 @@ class CaseParamsSellRfq:
             'OfferSpotRate': '*',
             'BidSpotRate': '*',
             'ValidUntilTime': '*',
-            'Currency': 'EUR',
+            'Currency': self.currency,
             'QuoteType': self.rfq_params['NoRelatedSymbols'][0]['QuoteType'],
             'Instrument': '*',
             'SettlDate': '*',
@@ -292,16 +292,26 @@ class CaseParamsSellRfq:
     def prepare_quote_report(self):
         if self.side=='1':
             self.quote_params['Side']='1'
-            self.quote_params.pop('BidSpotRate')
-            self.quote_params.pop('BidSize')
-            self.quote_params.pop('BidPx')
+            if self.symbol[0:3]==self.currency:
+                self.quote_params.pop('BidSpotRate')
+                self.quote_params.pop('BidSize')
+                self.quote_params.pop('BidPx')
+            if self.symbol[4:]==self.currency:
+                self.quote_params.pop('OfferSpotRate')
+                self.quote_params.pop('OfferSize')
+                self.quote_params.pop('OfferPx')
             if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
                 self.quote_params['OfferForwardPoints']='*'
         elif self.side=='2':
             self.quote_params['Side']='2'
-            self.quote_params.pop('OfferSpotRate')
-            self.quote_params.pop('OfferSize')
-            self.quote_params.pop('OfferPx')
+            if self.symbol[0:3]==self.currency:
+                self.quote_params.pop('OfferSpotRate')
+                self.quote_params.pop('OfferSize')
+                self.quote_params.pop('OfferPx')
+            if self.symbol[4:]==self.currency:
+                self.quote_params.pop('BidSpotRate')
+                self.quote_params.pop('BidSize')
+                self.quote_params.pop('BidPx')
             if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
                 self.quote_params['BidForwardPoints']='*'
         elif self.side=='':

@@ -1,6 +1,8 @@
 import logging
-from datetime import datetime, timedelta
+from pandas import Timestamp as tm
+from pandas.tseries.offsets import BusinessDay as bd
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from datetime import datetime, timedelta
 from pathlib import Path
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
@@ -13,13 +15,13 @@ client = 'Palladium1'
 account = 'Palladium1_1'
 settltype = 'W1'
 side ='1'
-symbol = 'EUR/USD'
-currency = 'EUR'
+symbol = 'USD/PHP'
+currency = 'USD'
 securitytype = 'FXFWD'
 securityidsource = '8'
 orderqty = '1000000'
 securityid = 'EUR/USD'
-settldate = tsd.wk1()
+settldate = (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
 
 
 
@@ -30,15 +32,12 @@ def execute(report_id):
 
 
         # Step 1-2
-        params = CaseParamsSellRfq(client, case_id, orderqty=orderqty, symbol=symbol,
-                                   securitytype=securitytype,settldate=settldate, settltype=settltype, currency=currency,
-                                   account=account)
+        params = CaseParamsSellRfq(client, case_id, orderqty=orderqty, side=side, symbol=symbol,securitytype=securitytype,settldate=settldate,
+                                   settltype=settltype, currency=currency,account=account)
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
-        bid_fwd_points='0.00038'
-        of_fwd_points='0.00022'
-        rfq.verify_quote_pending(offer_forward_points=of_fwd_points, bid_forward_points=bid_fwd_points)
+        rfq.verify_quote_pending()
 
         # Step 3-4
         offer_px = rfq.extruct_filed('OfferPx')
