@@ -113,10 +113,6 @@ def execute(report_id, session_id):
             verify_order_filled()
 
         # Step 5
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         order_info = check_order_book(case_base_request, ob_act, case_id)
         check_trades_book(case_base_request, ob_act, case_id, order_info[0], order_info[1])
 

@@ -85,11 +85,6 @@ def execute(report_id, session_id):
 
     try:
 
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
-
         # Step 1 Open CP rates tile
 
         create_or_get_pricing_tile(base_details, cp_service)

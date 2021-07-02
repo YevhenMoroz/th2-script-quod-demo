@@ -82,10 +82,6 @@ def execute(report_id, session_id):
     base_details_usd_nok = BaseTileDetails(base=case_base_request, window_index=2)
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_details_nok_sek, cp_service)
         create_or_get_rates_tile(base_details_usd_sek, cp_service)
