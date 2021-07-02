@@ -138,6 +138,7 @@ class CaseParamsSellRfq:
             'Instrument': {
                 'Symbol': self.rfq_params['NoRelatedSymbols'][0]['Instrument']['Symbol'],
                 'SecurityType':self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType'],
+                'Product':self.product,
             },
             'SettlDate': self.rfq_params['NoRelatedSymbols'][0]['SettlDate'],
             'SettlType': self.rfq_params['NoRelatedSymbols'][0]['SettlType'],
@@ -330,6 +331,7 @@ class CaseParamsSellRfq:
                 self.quote_params['BidForwardPoints'] = '*'
         if self.securitytype =='FXNDF':
             self.quote_params['Instrument']['MaturityDate']='*'
+            self.quote_params['Instrument'].pop('Product')
 
 
 
