@@ -13,7 +13,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('RFQ Taker regression', parent_id)
+    report_id = bca.create_event('FX MM Positions regression', parent_id)
     session_id = set_session_id()
     try:
         QAP_1897.execute(report_id, session_id)

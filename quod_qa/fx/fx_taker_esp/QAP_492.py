@@ -32,6 +32,13 @@ def place_order(base_request, service):
     call(service.placeESPOrder, esp_request.build())
 
 
+def click_on_bid_btn(base_request, service):
+    esp_request = PlaceESPOrder(details=base_request)
+    esp_request.set_action(ESPTileOrderSide.BUY)
+    esp_request.top_of_book(False)
+    call(service.placeESPOrder, esp_request.build())
+
+
 def modify_rates_tile(base_request, service, from_c, to_c, tenor):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_instrument(from_c, to_c, tenor)
@@ -137,11 +144,11 @@ def execute(report_id, session_id):
         check_order_book(case_base_request, ob_service, case_id, tenor, owner,
                          order_type, tif, client)
         # Step 3
-        # TODO Click on bid or ask
+        click_on_bid_btn(base_esp_details, ar_service)
         close_order_ticket(case_base_request, order_ticket_service)
         # Step 4
         set_one_click_mode(case_base_request, option_service, single_click)
-        # TODO Click on bid or ask
+        click_on_bid_btn(base_esp_details, ar_service)
         close_order_ticket(case_base_request, order_ticket_service)
 
     except Exception:
