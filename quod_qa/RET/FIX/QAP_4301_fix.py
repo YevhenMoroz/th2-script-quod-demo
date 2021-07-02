@@ -38,17 +38,17 @@ def execute(report_id):
     session_id = set_session_id()
     set_base(session_id, case_id)
 
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
+    # work_dir = Stubs.custom_config['qf_trading_fe_folder']
+    # username = Stubs.custom_config['qf_trading_fe_user']
+    # password = Stubs.custom_config['qf_trading_fe_password']
+    #
+    # if not Stubs.frontend_is_open:
+    #     prepare_fe(case_id, session_id, work_dir, username, password)
+    # else:
+    #     get_opened_fe(case_id, session_id)
     # endregion
 
-    # region Create order via FIX
+    # region Create order via FIX according to 1st, 2nd and 3rd steps
     fix_manager_310 = FixManager(connectivity_sell_side, case_id)
 
     fix_params = {
@@ -75,8 +75,8 @@ def execute(report_id):
     response = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message, case=case_id)
     # end region
 
-    # Check on ss
-    params = {
+    # region Check order via FIX on sell side according to 4th step
+    verify_params = {
         'ExecID': "*",
         'OrderQty': qty[0],
         'ExpireDate': expire_date.strftime("%Y%m%d"),
@@ -110,38 +110,38 @@ def execute(report_id):
         },
     }
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
+    fix_verifier_ss.CheckExecutionReport(verify_params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
     # endregion
 
-    # region Amend order: Send OrderCancelReplaceRequest
+    # region Amend order via FIX: Send OrderCancelReplaceRequest according to 5th step
     fix_modify_message = deepcopy(fix_message)
     fix_modify_message.change_parameters({'OrderQty': qty[1]})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, message_name='Amend order')
     # endregion
 
-    # Cancel order
-    cancel_parms = {
+    # region Cancel order via FIX according to 6th step
+    cancel_params = {
         "ClOrdID": fix_message.get_ClOrdID(),
         "Account": fix_message.get_parameter('Account'),
         "Side": fix_message.get_parameter('Side'),
         "TransactTime": datetime.utcnow().isoformat(),
         "OrigClOrdID": fix_message.get_ClOrdID()
     }
-    fix_cancel = FixMessage(cancel_parms)
+    fix_cancel = FixMessage(cancel_params)
     response_cancel = fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id)
     # endregion
 
-    # region Verify cancel
-    cancel_ss_param = {
+    # region Verify cancel via FIX
+    verify_cancel_param = {
         'Side': fix_message.get_parameter('Side'),
         'Account': fix_message.get_parameter('Account'),
         'ClOrdID': fix_message.get_ClOrdID(),
         'TransactTime': '*',
         'OrigClOrdID': fix_message.get_ClOrdID()
     }
-    fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, response_cancel, direction='SECOND',
+    fix_verifier_ss.CheckOrderCancelRequest(verify_cancel_param, response_cancel, direction='SECOND',
                                             case=case_id,
                                             message_name='SS FIXSELLQUOD5 sent 35=F Cancel',
                                             key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
