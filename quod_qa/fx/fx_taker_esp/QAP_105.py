@@ -34,7 +34,7 @@ def check_esp_tile(base_request, service, case_id, instrument, date):
     extraction_id = bca.client_orderid(4)
     extraction_value.set_extraction_id(extraction_id)
     extraction_value.extract_instrument("ratesTile.instrument")
-    extraction_value.extract_tenor_date("ratesTile.date")
+    extraction_value.extract_tenor("ratesTile.date")
 
     response = call(service.extractRatesTileValues, extraction_value.build())
 
@@ -82,13 +82,8 @@ def execute(report_id, session_id):
     }
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
 
         # Step 1
-
         create_or_get_rates_tile(base_esp_details, ar_service)
 
         # Step 2-6 Checking data format for tenors
