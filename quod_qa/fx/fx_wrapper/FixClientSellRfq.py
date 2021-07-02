@@ -23,7 +23,7 @@ class FixClientSellRfq():
     def send_request_for_quote(self):
         self.case_params_sell_rfq.prepare_rfq_params()
         print('RFQ' , self.case_params_sell_rfq.rfq_params)
-        self.quote = self.fix_act.placeQuoteFIX(
+        self.quote = self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Request For Quote',
                 self.case_params_sell_rfq.connectivityRFQ,
