@@ -1,4 +1,5 @@
 import os
+import logging
 from custom import basic_custom_actions as bca
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
 from win_gui_modules.wrappers import *
@@ -13,6 +14,10 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager
 from custom.verifier import Verifier
+
+logging.basicConfig(format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 qty = 1000
 child_qty_1 = 86
@@ -175,16 +180,8 @@ def prepared_fe(case_id):
     return  base_request
 
 def check_order_book(ex_id, base_request, case_id):
+        time.sleep(3)
         ob_act = Stubs.win_act_order_book
-
-        order_amend = OrderTicketDetails()
-        vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
-        vol_stategy.set_percentage_volume('40')
-
-        amend_order_details = ModifyOrderDetails()
-        amend_order_details.set_default_params(base_request)
-        amend_order_details.set_order_details(order_amend)
-        call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
 
         order_info_extraction = "getOrderInfo"
 
@@ -195,33 +192,89 @@ def check_order_book(ex_id, base_request, case_id):
 
         main_order_extraction_action = ExtractionAction.create_extraction_action(
             extraction_details=[main_order_id])
+        
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        main_order_response = call(ob_act.getOrdersDetails, main_order_details.request())
+
+
+        order_amend = OrderTicketDetails()
+        vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
+        vol_stategy.set_percentage_volume('40')
+
+        amend_order_details = ModifyOrderDetails()
+        amend_order_details.set_default_params(base_request)
+        amend_order_details.set_order_details(order_amend)
+        call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
+
+        
+        case_id_1 = bca.create_event("Send Market Data", case_id)
+
+        market_data4 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '143',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_1, market_data4)
+
 
         child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+        child1_qty = ExtractionDetail("subOrder_lvl_1.qty", "Qty")
+        child1_sts = ExtractionDetail("subOrder_lvl_1.sts", "Sts")
+        child1_price = ExtractionDetail("subOrder_lvl_1.lmtprice", "Limit Price")
         sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-            extraction_details=[child1_id])
+            extraction_details=[child1_id, child1_qty, child1_sts, child1_price])
         sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
 
-        child2_id = ExtractionDetail("subOrder_lvl_2.id", "Order ID")
-        sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(
-            extraction_detail=child2_id)
-        sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
+        child2_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
+        child2_qty = ExtractionDetail("subOrder_lvl_1.qty", "Qty")
+        child2_sts = ExtractionDetail("subOrder_lvl_1.sts", "Sts")
+        child2_price = ExtractionDetail("subOrder_lvl_1.lmtprice", "Limit Price")
+        sub_lvl1_2_ext_action1 = ExtractionAction.create_extraction_action(
+            extraction_details=[child2_id, child2_qty, child2_sts, child2_price])
+        sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action1])
 
         sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
 
         main_order_details.add_single_order_info(
             OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-        request = call(ob_act.getOrdersDetails, main_order_details.request())
+        child_response = call(ob_act.getOrdersDetails, main_order_details.request())
 
-        #child_id_list = ['child1: ' + request[child1_id.name], 'child2: ' + request[child2_id.name]]
-        child_ord_id1 = request[child1_id.name]
-        child_ord_id2 = request[child2_id.name]
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Check child order 1")
+        verifier.compare_values('Qty', str(child_qty_1), child_response[child1_qty.name].replace(",", ""))
+        verifier.compare_values('Sts', 'Open', child_response[child1_sts.name])
+        verifier.compare_values('Limit Price', str(price), child_response[child1_price.name])
+        verifier.verify()
+
+        verifier.set_event_name("Check child order 2")
+        verifier.compare_values('Qty', str(child_qty_2), child_response[child2_qty.name].replace(",", ""))
+        verifier.compare_values('Sts', 'Open', child_response[child2_sts.name])
+        verifier.compare_values('Limit Price', str(price), child_response[child2_price.name])
+        verifier.verify()
+
+
 
 
 def execute(reportid):
-    report_id = reportid
-    case_id = create_event(case_name, report_id)
-    base_request = prepared_fe(case_id)
-    rule_list = rule_creation()
-    create_order(base_request, case_id)
-    rule_destroyer(rule_list)
-    check_order_book("Test_FE_id", base_request, case_id)
+    try:
+        report_id = reportid
+        case_id = create_event(case_name, report_id)
+        base_request = prepared_fe(case_id)
+        rule_list = rule_creation()
+        create_order(base_request, case_id)
+        check_order_book("Test_FE_id", base_request, case_id)        
+    except:
+        logging.error("Error execution",exc_info=True)
+    finally:
+        rule_destroyer(rule_list)
