@@ -232,7 +232,7 @@ class CaseParamsSellRfq:
         if self.securitytype =='FXNDF':
             self.order_pending['Instrument']['MaturityDate'] = '*'
             self.order_pending['Instrument'].pop('Product')
-        self.order_pending['Account'] = self.client
+        # self.order_pending['Account'] = self.client
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderID'] = '*'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
@@ -256,10 +256,10 @@ class CaseParamsSellRfq:
         self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
-        self.order_filled['SpotSettlDate'] = '*',
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
         self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
+        self.order_filled['SettlDate'] = self.settldate
         self.order_filled['LastQty'] = self.orderqty
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'

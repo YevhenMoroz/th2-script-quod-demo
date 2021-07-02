@@ -177,7 +177,7 @@ class FixClientSellRfq():
         if side!='':
             self.case_params_sell_rfq.order_pending['Side'] = side
 
-
+        print('pending',self.case_params_sell_rfq.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -188,7 +188,6 @@ class FixClientSellRfq():
             timeout=3000
         )
         return self
-
 
     def verify_order_new(self):
         self.case_params_sell_rfq.prepare_order_new_report()
@@ -205,18 +204,20 @@ class FixClientSellRfq():
         )
         return self
 
-
     def verify_order_filled(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
+        self.case_params_sell_rfq.order_filled['SpotSettlDate'] = '*'
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         if side!='':
             self.case_params_sell_rfq.order_filled['Side'] = side
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
         self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
+        print('filled',self.case_params_sell_rfq.order_filled)
 
+        print('custom',self.case_params_sell_rfq.order_filled)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SPOT',

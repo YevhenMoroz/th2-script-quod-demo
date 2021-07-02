@@ -73,10 +73,10 @@ def test_run():
     }
     session_id=set_session_id()
     try:
+        # QAP_2089.execute(report_id)
+        QAP_2500.execute(report_id,session_id)
 
-        # QAP_2500.execute(report_id,session_id)
 
-        QAP_2089.execute(report_id)
 
 
 
