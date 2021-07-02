@@ -129,10 +129,9 @@ def execute(report_id, session_id):
             CaseParamsSellRfq(client, case_id, side=side_b, orderqty=qty_6m, symbol=symbol, securitytype=security_type,
                               settldate=settle_date, securityid=symbol, settlcurrency=settle_currency,
                               settltype=settle_type, currency=currency, account=account)). \
-            send_request_for_quote()
-        rfq.verify_quote_pending()
-        # price = rfq.extruct_filed("BidPx")
-        price = rfq.extruct_filed("OfferPx")
+            send_request_for_quote(). \
+            verify_quote_pending()
+        price = rfq.extruct_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending()
         rfq.verify_order_filled()
