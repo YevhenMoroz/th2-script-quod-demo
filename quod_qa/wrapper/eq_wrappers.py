@@ -26,6 +26,7 @@ from win_gui_modules.wrappers import set_base, accept_order_request
 
 buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
 sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -36,6 +37,10 @@ def get_buy_connectivity():
 
 def get_sell_connectivity():
     return sell_connectivity
+
+
+def get_bo_connectivity():
+    return bo_connectivity
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
