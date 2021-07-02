@@ -3,12 +3,13 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx import clone
 from quod_qa.fx.fx_mm_esp import QAP_2990
+from quod_qa.fx.fx_mm_positions import QAP_2500
 from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090, \
     QAP_1755
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
 from stubs import Stubs
-
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -70,12 +71,12 @@ def test_run():
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD5',
     }
-
+    session_id=set_session_id()
     try:
 
-        fx_mm_rfq_fix(report_id)
+        # QAP_2500.execute(report_id,session_id)
 
-
+        QAP_2089.execute(report_id)
 
 
 

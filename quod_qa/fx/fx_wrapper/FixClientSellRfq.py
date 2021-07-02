@@ -271,7 +271,7 @@ class FixClientSellRfq():
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
                 bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_rejected, ['ClOrdID', 'OrdStatus']),
-                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )

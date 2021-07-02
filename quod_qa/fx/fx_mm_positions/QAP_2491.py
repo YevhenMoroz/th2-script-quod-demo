@@ -14,7 +14,7 @@ from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, 
     PositionsInfo, ExtractionPositionsAction
 from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 
@@ -78,7 +78,9 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
 
 
 def check_avg_price(case_id, quote_pos, position, avg_price):
-    expected_avg_price = float(quote_pos.replace(",", "")) / float(position.replace(",", ""))
+    quote_pos = float(quote_pos.replace(",", ""))
+    position = float(position.replace(",", ""))
+    expected_avg_price = quote_pos / position
     verifier = Verifier(case_id)
     verifier.set_event_name("Check AVG price")
     verifier.compare_values("AVG Price", str(abs(round(expected_avg_price, 8))), avg_price)
@@ -124,12 +126,7 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     base_tile_data = BaseTileData(base=case_base_request)
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
-
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument_spot, client_tier)
         place_order_buy(base_details, cp_service, qty_2m, slippage, client)
@@ -160,8 +157,6 @@ def execute(report_id, session_id):
         check_avg_price(case_id, position_info_after_3m["dealingpositions.quotePosition"],
                         position_info_after_3m["dealingpositions.position"],
                         position_info_after_3m["dealingpositions.avgPx"])
-
-
 
     except Exception:
         logging.error("Error execution", exc_info=True)

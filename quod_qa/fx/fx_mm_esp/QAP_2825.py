@@ -14,7 +14,6 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 
-
 # FIX_data
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
