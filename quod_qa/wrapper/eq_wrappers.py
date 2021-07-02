@@ -110,7 +110,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         rule_manager.remove_rule(nos_rule)
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, alloc_account=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = {
@@ -123,12 +123,7 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             'Price': price,
             'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
             'TransactTime': datetime.utcnow().isoformat(),
-            'NoAllocs': [
-                {
-                    'AllocAccount': alloc_account,
-                    'AllocQty':qty
-                }
-            ],
+            'NoAllocs': no_allocs,
             'Instrument': {
                 'Symbol': 'FR0004186856_EUR',
                 'SecurityID': 'FR0004186856',
@@ -137,9 +132,10 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             },
             'Currency': 'EUR',
         }
+        fix_params.update()
         if price == None:
             fix_params.pop('Price')
-        if alloc_account == None:
+        if no_allocs == None:
             fix_params.pop('NoAllocs')
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
