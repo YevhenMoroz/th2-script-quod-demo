@@ -3,9 +3,9 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
@@ -100,12 +100,6 @@ def execute(report_id, session_id):
     pips = "50"
 
     try:
-
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
-
         # Step 1
 
         create_or_get_rates_tile(base_details, cp_service)
