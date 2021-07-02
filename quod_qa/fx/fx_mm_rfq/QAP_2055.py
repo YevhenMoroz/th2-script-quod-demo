@@ -37,7 +37,7 @@ def execute(report_id):
                                    account=account)
 
         rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote()
+        rfq.send_request_for_quote_no_reply()
 
 
 

@@ -33,6 +33,19 @@ class FixClientSellRfq():
             ))
         return self
 
+    def send_request_for_quote_no_reply(self):
+        self.case_params_sell_rfq.prepare_rfq_params()
+        print('RFQ' , self.case_params_sell_rfq.rfq_params)
+        self.fix_act.sendMessage(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
     # Send RFQ swap
     def send_request_for_quote_swap(self):
         self.quote = self.fix_act.placeQuoteFIX(
@@ -163,6 +176,8 @@ class FixClientSellRfq():
             'OrderID'].simple_value
         if side!='':
             self.case_params_sell_rfq.order_pending['Side'] = side
+
+
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
