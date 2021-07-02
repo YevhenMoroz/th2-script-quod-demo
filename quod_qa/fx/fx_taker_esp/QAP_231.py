@@ -107,10 +107,6 @@ def execute(report_id, session_id):
     sts_validated = "Validated"
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_esp_details, ar_service)
         modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)

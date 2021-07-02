@@ -99,10 +99,6 @@ def execute(report_id, session_id):
     qty = "5000000"
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_esp_details, ar_service)
         click_one_click_button(base_esp_details, ar_service)
