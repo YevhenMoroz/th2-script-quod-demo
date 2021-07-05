@@ -44,6 +44,7 @@ def check_tile_value(base_request, service, case_id, row):
     extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
+    extract_table_request.is_tiered(True)
     extract_table_request.set_row_number(row)
     extract_table_request.set_ask_extraction_fields([ExtractionDetail("rateTile.askPx", "Px"),
                                                      ExtractionDetail("rateTile.askPub", "Pub")])
@@ -85,8 +86,6 @@ def execute(report_id, session_id):
         check_tile_value(base_details, cp_service, case_id, 1)
         check_tile_value(base_details, cp_service, case_id, 2)
         check_tile_value(base_details, cp_service, case_id, 3)
-        request = DeselectRowsRequest(base_details)
-        call(cp_service.deselectRows, request.build())
         # Step 3
         press_executable(base_details, cp_service)
         press_pricing(base_details, cp_service)
@@ -94,8 +93,6 @@ def execute(report_id, session_id):
         check_tile_value(base_details, cp_service, case_id, 1)
         check_tile_value(base_details, cp_service, case_id, 2)
         check_tile_value(base_details, cp_service, case_id, 3)
-        request = DeselectRowsRequest(base_details)
-        call(cp_service.deselectRows, request.build())
         press_pricing(base_details, cp_service)
 
     except Exception:
