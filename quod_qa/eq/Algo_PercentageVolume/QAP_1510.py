@@ -65,7 +65,7 @@ def create_order(base_request):
     order_ticket_service = Stubs.win_act_order_ticket
     call(order_ticket_service.placeOrder, new_order_details.build())
 
-def rule_creation(limit, client, ex_destination):
+def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
@@ -122,7 +122,7 @@ def execute(report_id, session_id):
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    rule_list = rule_creation(price, client, ex_destination)
+    rule_list = rule_creation()
     create_order(base_request)
     rule_destroyer(rule_list)
     check_order_book("check child", base_request, case_id)
