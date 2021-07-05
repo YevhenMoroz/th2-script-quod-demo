@@ -188,6 +188,7 @@ def check_order_book(ex_id, base_request, case_id):
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
+        main_order_details.set_filter(["Owner", Stubs.custom_config['qf_trading_fe_user']])
         main_order_id = ExtractionDetail("order_id", "Order ID")
 
         main_order_extraction_action = ExtractionAction.create_extraction_action(
@@ -195,11 +196,12 @@ def check_order_book(ex_id, base_request, case_id):
         
         main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
-        main_order_response = call(ob_act.getOrdersDetails, main_order_details.request())
+        call(ob_act.getOrdersDetails, main_order_details.request())
 
-
+        
         order_amend = OrderTicketDetails()
         vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
+        vol_stategy.set_start_date('Now')
         vol_stategy.set_percentage_volume('40')
 
         amend_order_details = ModifyOrderDetails()
@@ -262,8 +264,6 @@ def check_order_book(ex_id, base_request, case_id):
         verifier.compare_values('Sts', 'Open', child_response[child2_sts.name])
         verifier.compare_values('Limit Price', str(price), child_response[child2_price.name])
         verifier.verify()
-
-
 
 
 def execute(reportid):
