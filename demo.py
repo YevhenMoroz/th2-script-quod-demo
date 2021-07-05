@@ -16,7 +16,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_718
 from rule_management import RuleManager
 from stubs import Stubs
 from test_cases import QAP_638, QAP_1552
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -26,6 +26,16 @@ timeouts = False
 
 channels = dict()
 
+
+def prepare_fe(case_id, session_id):
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+        # ,
+        #          fe_dir='qf_trading_fe_folder_308',
+        #          fe_user='qf_trading_fe_user_308',
+        #          fe_pass='qf_trading_fe_password_308')
+    else:
+        get_opened_fe(case_id, session_id)
 
 def test_run():
     # Generation id and time for test run
@@ -51,12 +61,13 @@ def test_run():
 
         start = datetime.now()
         print(f'start time = {start}')
+        prepare_fe(report_id,s_id)
         # QAP_2066.execute(report_id, case_params, s_id)
         # QAP_1970.execute(report_id, case_params)
         # QAP_1971.execute(report_id, case_params)
         # QAP_1972.execute(report_id, case_params)
         # QAP_2062.execute(report_id, case_params)
-        # QAP_1545.execute(report_id, case_params)
+        QAP_1545.execute(report_id, case_params,s_id)
         # QAP_1537.execute(report_id, case_params)
         # QAP_1539WIP.execute(report_id, case_params)
         # QAP_1542.execute(report_id, case_params)
@@ -69,13 +80,15 @@ def test_run():
         # QAP_1746_WIP.execute(report_id,case_params)
         rm = RuleManager()
         # rm.add_fx_md_to('fix-fh-314-luna')
-        # rm.add_fx_md_to('fix-fh-fx-esp')
+        # rm.add_RFQ_test_sim('fix-bs-rfq-314-luna-standard')
+        # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
         # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        # rm.remove_rule_by_id(98)
+        # rm.remove_rule_by_id_test_sim(1)
         # rm.print_active_rules_sim_test()
         # rm.print_active_rules()
+        # rm.remove_rule_by_id(630)
         # QAP_718.execute(report_id, s_id)
-        ui_tests.execute(report_id, s_id)
+        # ui_tests.execute(report_id, s_id)
         # QAP_2084.execute(report_id)
         # region Acceptance list RFQ Taker
         # QAP_568.execute(report_id)
