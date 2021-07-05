@@ -15,7 +15,7 @@ from win_gui_modules.utils import set_session_id, get_base_request, call, prepar
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
-    ExtractRatesTileValues, ExtractClientGridValues
+    ExtractRatesTileValues
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 
 
