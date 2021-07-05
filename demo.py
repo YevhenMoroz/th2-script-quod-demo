@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 
-from quod_qa.fx.fx_mm_rfq import  QAP_1545
+from quod_qa.fx.fx_mm_rfq import QAP_1545
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id
@@ -26,6 +26,7 @@ def prepare_fe(case_id, session_id):
     else:
         get_opened_fe(case_id, session_id)
 
+
 def test_run():
     # Generation id and time for test run
     report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
@@ -46,9 +47,9 @@ def test_run():
             'Account': 'Iridium1',
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD9',
-            }
+        }
 
-        prepare_fe(report_id,s_id)
+        prepare_fe(report_id, s_id)
         # rm = RuleManager()
         # rm.print_active_rules()
 
@@ -59,7 +60,6 @@ def test_run():
 
     finally:
         Stubs.win_act.unregister(s_id)
-
 
 
 if __name__ == '__main__':
