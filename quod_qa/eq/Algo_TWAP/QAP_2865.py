@@ -277,14 +277,14 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     
     call(act.verifyEntities, vr)
 
-def execute(reportid):
+def execute(report_id, session_id):
     try:
-        report_id = reportid
         case_id = create_event(case_name, report_id)
-        base_request = prepared_fe(case_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
         cl_ord = create_order(case_id)
-        check_order_book("before_order_details", base_request, case_id, cl_ord)
+        check_order_book("before_order_details", base_request, case_id, cl_ord)  #getOrdersDetails
     except:
         logging.error("Error execution",exc_info=True)
     finally:
