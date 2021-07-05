@@ -126,8 +126,8 @@ class CaseParamsSellRfq:
             'QuoteReqID': self.rfq_params['QuoteReqID'],
             'OfferPx': '*',
             'BidPx': '*',
-            'OfferSize': '*',
-            'BidSize': '*',
+            'OfferSize': self.rfq_params['NoRelatedSymbols'][0]['OrderQty'],
+            'BidSize': self.rfq_params['NoRelatedSymbols'][0]['OrderQty'],
             'QuoteID': '*',
             'QuoteMsgID': '*',
             'OfferSpotRate': '*',
@@ -135,9 +135,13 @@ class CaseParamsSellRfq:
             'ValidUntilTime': '*',
             'Currency': self.currency,
             'QuoteType': self.rfq_params['NoRelatedSymbols'][0]['QuoteType'],
-            'Instrument': '*',
-            'SettlDate': '*',
-            'SettlType': '*',
+            'Instrument': {
+                'Symbol': self.rfq_params['NoRelatedSymbols'][0]['Instrument']['Symbol'],
+                'SecurityType':self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType'],
+                'Product':self.product,
+            },
+            'SettlDate': self.rfq_params['NoRelatedSymbols'][0]['SettlDate'],
+            'SettlType': self.rfq_params['NoRelatedSymbols'][0]['SettlType'],
             'Account': '*',
 
         }
@@ -225,7 +229,10 @@ class CaseParamsSellRfq:
     def prepare_order_pending_report(self):
         self.set_order_exec_rep_params()
         self.order_pending = self.order_exec_report
-        self.order_pending['Account'] = self.client
+        if self.securitytype =='FXNDF':
+            self.order_pending['Instrument']['MaturityDate'] = '*'
+            self.order_pending['Instrument'].pop('Product')
+        # self.order_pending['Account'] = self.client
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderID'] = '*'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
@@ -249,16 +256,20 @@ class CaseParamsSellRfq:
         self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
-        self.order_filled['SpotSettlDate'] = '*',
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
         self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
+        self.order_filled['SettlDate'] = self.settldate
         self.order_filled['LastQty'] = self.orderqty
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'
-        self.order_filled['TradeDate'] = '*'
+        self.order_filled['TradeDate'] = tsd.today()
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
+        if self.securitytype =='FXNDF':
+            self.order_filled['Instrument']['MaturityDate'] = '*'
+            self.order_filled['Instrument'].pop('Product')
+            self.order_filled['SpotSettlDate'] = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepare  order rejected report
@@ -300,7 +311,7 @@ class CaseParamsSellRfq:
                 self.quote_params.pop('OfferSpotRate')
                 self.quote_params.pop('OfferSize')
                 self.quote_params.pop('OfferPx')
-            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD' or self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXNDF':
                 self.quote_params['OfferForwardPoints']='*'
         elif self.side=='2':
             self.quote_params['Side']='2'
@@ -312,12 +323,16 @@ class CaseParamsSellRfq:
                 self.quote_params.pop('BidSpotRate')
                 self.quote_params.pop('BidSize')
                 self.quote_params.pop('BidPx')
-            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD' or self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXNDF':
                 self.quote_params['BidForwardPoints']='*'
         elif self.side=='':
-            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD':
+            if self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXFWD' or self.rfq_params['NoRelatedSymbols'][0]['Instrument']['SecurityType']=='FXNDF':
                 self.quote_params['OfferForwardPoints'] = '*'
                 self.quote_params['BidForwardPoints'] = '*'
+        if self.securitytype =='FXNDF':
+            self.quote_params['Instrument']['MaturityDate']='*'
+            self.quote_params['Instrument'].pop('Product')
+
 
 
 
