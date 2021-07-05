@@ -48,6 +48,8 @@ class FixClientSellRfq():
 
     # Send RFQ swap
     def send_request_for_quote_swap(self):
+        self.case_params_sell_rfq.prepare_rfq_params_swap()
+        print('SWAP RFQ ', self.case_params_sell_rfq.rfq_params_swap)
         self.quote = self.fix_act.placeQuoteFIX(
             bca.convert_to_request(
                 'Send Request For Quote',
@@ -84,6 +86,27 @@ class FixClientSellRfq():
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell_rfq.order_params,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
+    # Send New Order Multi LEg
+    def send_new_order_multi_leg(self, price='', side=''):
+        tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
+        self.price = price
+        self.case_params_sell_rfq.order_multi_leg_params['Price'] = self.price
+
+        if price=='':
+            self.case_params_sell_rfq.order_multi_leg_params.pop('Price')
+        self.case_params_sell_rfq.order_multi_leg_params['QuoteID'] = self.quote_id
+        if side!='':
+            self.case_params_sell_rfq.order_multi_leg_params['Side'] = side
+        print('Send an order', self.case_params_sell_rfq.order_multi_leg_params)
+
+        self.new_order = self.fix_act.placeOrderMultilegFIX(
+            request=bca.convert_to_request(
+                'Send new order multi leg ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('NewOrderMultileg', self.case_params_sell_rfq.order_multi_leg_params,
                                     self.case_params_sell_rfq.connectivityRFQ)
             ))
         return self
@@ -143,6 +166,31 @@ class FixClientSellRfq():
             bca.create_check_rule(
                 'Receive quote',
                 bca.filter_to_grpc('Quote', self.case_params_sell_rfq.quote_params, ['QuoteReqID']),
+                self.quote.checkpoint_id,
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id
+                                  )
+        )
+        return self
+
+    def verify_quote_pending_swap(self,offer_swap_points='',bid_swap_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''):
+        self.case_params_sell_rfq.prepare_quote_report_swap()
+        self.quote_id=self.extruct_filed('QuoteID')
+        self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
+        self.case_params_sell_rfq.quote_params_swap['QuoteMsgID'] = self.quote_id
+        # self.case_params_sell_rfq.quote_params_swap['SettlType'] = '*'
+        # self.case_params_sell_rfq.quote_params['SettlDate'] = '*'
+        # if 'Side' in self.case_params_sell_rfq.quote_params_swap.keys() == False:
+        #     self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
+        #     self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
+        #     self.case_params_sell_rfq.quote_params['BidPx'] = '*'
+        #     self.case_params_sell_rfq.quote_params['BidSize'] = '*'
+
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                'Receive quote',
+                bca.filter_to_grpc('Quote', self.case_params_sell_rfq.quote_params_swap, ['QuoteReqID']),
                 self.quote.checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id

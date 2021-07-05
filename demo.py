@@ -5,7 +5,7 @@ from quod_qa.fx import clone
 from quod_qa.fx.fx_mm_esp import QAP_2990
 from quod_qa.fx.fx_mm_positions import QAP_2500
 from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090, \
-    QAP_1755
+    QAP_1755, QAP_2103
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
 from stubs import Stubs
@@ -75,7 +75,7 @@ def test_run():
     try:
         # QAP_2089.execute(report_id)
         QAP_2500.execute(report_id,session_id)
-
+        # QAP_2103.execute(report_id)
 
 
 
