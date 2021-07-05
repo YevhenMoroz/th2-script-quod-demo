@@ -137,7 +137,8 @@ class FixClientSellRfq():
         self.quote_id=self.extruct_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.quote_id
-        self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
+        # self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
+        self.case_params_sell_rfq.quote_params.pop('Account')
         self.case_params_sell_rfq.quote_params['SettlType'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
         self.case_params_sell_rfq.quote_params['SettlDate'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
         if 'Side' in self.case_params_sell_rfq.quote_params.keys() == False:
