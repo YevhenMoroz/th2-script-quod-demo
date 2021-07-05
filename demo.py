@@ -177,14 +177,16 @@ def test_run():
         # QAP_2505.execute(report_id, session_id)
         # QAP_2506.execute(report_id, session_id)
         # QAP_2508.execute(report_id, session_id)
-        # QAP_2500.execute(report_id, session_id)
+        QAP_2500.execute(report_id, session_id)
         # QAP_2779.execute(report_id, session_id)
         # QAP_105.execute(report_id, session_id)
         # QAP_1589.execute(report_id, session_id)
         # QAP_231.execute(report_id, session_id)
-        QAP_2501_WIP.execute(report_id, session_id)
+        # QAP_2501_WIP.execute(report_id, session_id)
         # QAP_492.execute(report_id, session_id)
         # QAP_851.execute(report_id, session_id)
+        # QAP_2523.execute(report_id, session_id)
+        # ui_tests.execute(report_id, session_id)
         print('duration time = ' + str(datetime.now() - start))
 
     except Exception:
