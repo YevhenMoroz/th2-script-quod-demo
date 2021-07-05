@@ -106,8 +106,8 @@ def execute(report_id, session_id):
     account = "Silver1_1"
     settle_type = "0"
     symbol = "USD/CAD"
-    currency = "USD"
-    settle_currency = "CAD"
+    currency = "CAD"
+    settle_currency = "USD"
     security_type = "FXSPOT"
     side_b = "1"
     side_s = "2"
@@ -134,7 +134,7 @@ def execute(report_id, session_id):
         price = rfq.extruct_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending()
-        rfq.verify_order_filled()
+        rfq.verify_order_filled(price=price)
         # Step 2
         # position_info = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
         # check_pnl(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
