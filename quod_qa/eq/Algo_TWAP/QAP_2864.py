@@ -182,19 +182,6 @@ def rule_destroyer(list_rules):
     for rule in list_rules:
         rule_manager.remove_rule(rule)
 
-def prepared_fe(case_id):
-    session_id = set_session_id()
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id, work_dir)
-    return  base_request
-
 def check_order_book(ex_id, base_request, case_id, cl_ord):
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
@@ -260,14 +247,14 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     time.sleep(20)
     call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
                                                      [verify_ent("Waves", "Waves", "4")]))
-def execute(reportid):
+def execute(report_id, session_id):
     try:
-        report_id = reportid
         case_id = create_event(case_name, report_id)
-        base_request = prepared_fe(case_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
         cl_ord = create_order(case_id)
-        check_order_book("before_order_details", base_request, case_id, cl_ord)
+        check_order_book("before_order_details", base_request, case_id, cl_ord)  #
     except:
         logging.error("Error execution",exc_info=True)
     finally:
