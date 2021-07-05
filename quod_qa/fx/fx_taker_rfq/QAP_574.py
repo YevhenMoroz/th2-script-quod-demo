@@ -1,7 +1,5 @@
 import logging
 from pathlib import Path
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -33,7 +31,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue)
+    rfq_request.set_venue(venue[0])
     rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 
@@ -121,14 +119,9 @@ def execute(report_id, session_id):
     act_ob = Stubs.win_act_order_book
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
     case_name = Path(__file__).name[:-3]
     # case params
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "FXForward"
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
@@ -147,39 +140,35 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        
         # Steps 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
                         case_to_currency, case_date, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         # Step 2
-        place_order_tob(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
+        place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
         # Step 3
         send_rfq(base_rfq_details, ar_service)
         # Step 4
-        place_order_venue(base_rfq_details, ar_service, case_venue)
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
+        place_order_venue(base_rfq_details, ar_service, case_venue)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

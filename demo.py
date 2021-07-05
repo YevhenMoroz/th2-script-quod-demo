@@ -61,6 +61,7 @@ def test_run():
         Stubs.win_act.unregister(s_id)
 
 
+
 if __name__ == '__main__':
     logging.basicConfig()
     test_run()

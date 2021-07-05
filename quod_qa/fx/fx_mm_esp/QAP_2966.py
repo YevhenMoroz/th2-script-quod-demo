@@ -16,6 +16,7 @@ timeouts = True
 client = 'Palladium1'
 settltype = '0'
 securitytype = 'FXSPOT'
+# Cross Through EUR to USD
 symbol_nok_sek = 'NOK/SEK'
 md = None
 settldate = tsd.spo()
@@ -275,22 +276,22 @@ def execute(report_id):
         # Step 1 SEND MARKET DATA
 
         # SEND MD EUR/USD spot
-        # FixClientSell(CaseParamsSell(client, case_id, symbol=symbol_eur_usd,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
-        #     send_md_request().send_md_unsubscribe()
-        # FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_usd,symbol_eur_usd,securitytype).
-        #              prepare_custom_md_spot(no_md_entries_eur_usd)).send_market_data_spot()
-        #
-        # #SEND MD EUR/NOK spot
-        # FixClientSell(CaseParamsSell(client, case_id, symbol=symbol_eur_nok,securitytype=securitytype,settldate=settldate, settltype=settltype))\
-        #     .send_md_request().send_md_unsubscribe()
-        # FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_nok,symbol_eur_nok,securitytype).
-        #              prepare_custom_md_spot(no_md_entries_eur_nok)).send_market_data_spot()
-        #
-        # #SEND MD USD/SEK spot
-        # FixClientSell(CaseParamsSell(client, case_id, symbol=symbol_usd_sek,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
-        #     send_md_request().send_md_unsubscribe()
-        # FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_usd_sek,symbol_usd_sek,securitytype).
-        #              prepare_custom_md_spot(no_md_entries_usd_sek)).send_market_data_spot()
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_eur_usd,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
+            send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_usd,symbol_eur_usd,securitytype).
+                     prepare_custom_md_spot(no_md_entries_eur_usd)).send_market_data_spot()
+
+        #SEND MD EUR/NOK spot
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_eur_nok,securitytype=securitytype,settldate=settldate, settltype=settltype))\
+            .send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_nok,symbol_eur_nok,securitytype).
+                     prepare_custom_md_spot(no_md_entries_eur_nok)).send_market_data_spot()
+
+        #SEND MD USD/SEK spot
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_usd_sek,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
+            send_md_request().send_md_unsubscribe()
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_usd_sek,symbol_usd_sek,securitytype).
+                     prepare_custom_md_spot(no_md_entries_usd_sek)).send_market_data_spot()
 
         # SEND MD USD/SEK spot
         params_eur_usd = CaseParamsSellEsp(client, case_id, symbol=symbol_nok_sek, securitytype=securitytype,

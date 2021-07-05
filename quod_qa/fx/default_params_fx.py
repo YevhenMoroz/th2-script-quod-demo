@@ -23,7 +23,7 @@ text_messages = {
     'sendQR': 'Send QuoteRequest',
     'recQ': 'Receive Quote message',
     'sendNOS': 'Send NewOrderSingle',
-    'recQC': 'Receive QuoteCancel message',
+    'recQC': 'Receive CQuoteCancel message',
     'recQRR': 'Receive QuoteRequestReject message',
     'sendNOwithID': 'Send new order with ClOrdID = {}'
     }

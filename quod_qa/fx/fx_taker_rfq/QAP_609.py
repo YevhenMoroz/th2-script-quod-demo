@@ -1,8 +1,6 @@
 import logging
 import time
 from pathlib import Path
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -113,19 +111,15 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = "QA2"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type_ndf = "NDF"
     case_instr_type_fwd = "FXForward"
     case_venue_hsbcr = "HSBCR"
     case_venue_citir = "CITIR"
     case_qty = 1000000
-    case_tenor_1m="1M"
-    case_tenor_2m="2M"
+    case_tenor_1m = "1M"
+    case_tenor_2m = "2M"
     case_currency_usd = "USD"
     case_currency_php = "PHP"
     case_currency_cad = "CAD"
@@ -138,17 +132,12 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details_0 = BaseTileDetails(base=case_base_request, window_index=0)
     base_rfq_details_1 = BaseTileDetails(base=case_base_request, window_index=1)
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -214,7 +203,6 @@ def execute(report_id, session_id):
         check_quote_request_b("QRB_5", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue_citir)
         # Step 7
-        cancel_rfq(base_rfq_details_0, ar_service)
 
         # Step 8
         place_order_tob(base_rfq_details_1, ar_service)
@@ -227,6 +215,3 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-    finally:
-        for rule in [RFQ, TRFQ]:
-            rule_manager.remove_rule(rule)

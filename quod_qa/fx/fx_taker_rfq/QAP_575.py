@@ -60,10 +60,7 @@ def execute(report_id, session_id):
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
+        
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,

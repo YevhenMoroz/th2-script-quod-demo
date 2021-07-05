@@ -59,7 +59,7 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     set_base(session_id, case_id)
@@ -69,10 +69,6 @@ def execute(report_id, session_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     base_rfq_details_2 = BaseTileDetails(base=case_base_request_2)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
