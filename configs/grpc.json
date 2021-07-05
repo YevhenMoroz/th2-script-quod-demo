@@ -10,20 +10,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["act_fix"]
-      }
-    },
-    "Act-1": {
-      "service-class": "ActService",
-      "endpoints": {
-        "act_1": {
-          "host": "10.0.22.22",
-          "port": 32134
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": ["act_1"]
+        "endpoints": [
+          "act_fix"
+        ]
       }
     },
     "Check1": {
@@ -36,7 +25,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["check1"]
+        "endpoints": [
+          "check1"
+        ]
       }
     },
     "Simulator": {
@@ -49,7 +40,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator"]
+        "endpoints": [
+          "simulator"
+        ]
       }
     },
     "Simulator2": {
@@ -75,7 +68,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator"]
+        "endpoints": [
+          "simulator"
+        ]
       }
     },
     "Win_Act": {
@@ -108,7 +103,7 @@
         ]
       }
     },
-	"Win_Act_Order_Book": {
+    "Win_Act_Order_Book": {
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
@@ -193,7 +188,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulatorHttp"]
+        "endpoints": [
+          "simulatorHttp"
+        ]
       }
     },
     "Act_Rest": {
@@ -208,6 +205,36 @@
         "name": "robin",
         "endpoints": [
           "act_rest"
+        ]
+      }
+    },
+    "Act_Java_Api": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act_java_api": {
+          "host": "10.0.22.22",
+          "port": 31221
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_java_api"
+        ]
+      }
+    },
+    "Win_Act_Fx_Dealing_Positions": {
+      "service-class": "FxDealingPositionsServiceService",
+      "endpoints": {
+        "act_fx_dealing_positions": {
+          "host": "10.0.22.22",
+          "port": 31284
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_fx_dealing_positions"
         ]
       }
     }
