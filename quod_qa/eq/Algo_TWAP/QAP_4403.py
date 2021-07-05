@@ -176,9 +176,9 @@ def execute(report_id):
                     'StrategyParameterValue': '3'
                 },
                 {
-                    'StrategyParameterName': 'MaxWouldPercentage',
+                    'StrategyParameterName': 'MaxWouldShares',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '70'
+                    'StrategyParameterValue': '350'
                 },
 
             ]
@@ -437,9 +437,8 @@ def execute(report_id):
             'LastMkt': ex_destination_1,
             'Text': '*',
             'ExDestination': '*',
-            'GrossTradeAmt': '*'
-
-
+            'GrossTradeAmt': '*',
+            'SecondaryExecID': '*'
         }
         fix_verifier_ss.CheckExecutionReport(execution_report_fill, responce_new_order_single, direction='FIRST', case=case_id_3,
                                                 message_name='Quod sent 35=8 Fill', key_parameters=['OrderID', 'ExecType', 'OrdStatus'])

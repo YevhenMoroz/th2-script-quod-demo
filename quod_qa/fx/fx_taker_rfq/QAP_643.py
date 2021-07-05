@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -50,10 +52,9 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(base_request, service, case_id, status, quote_sts, venue):
+def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_sts, venue):
     qrb = QuoteDetailsRequest(base=base_request)
-    execution_id = bca.client_orderid(4)
-    qrb.set_extraction_id(execution_id)
+    qrb.set_extraction_id(ex_id)
     qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
@@ -69,10 +70,9 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
     verifier.verify()
 
 
-def check_quote_book(base_request, service, case_id, owner, quote_id):
+def check_quote_book(ex_id, base_request, service, case_id, owner, quote_id):
     qb = QuoteDetailsRequest(base=base_request)
-    execution_id = bca.client_orderid(4)
-    qb.set_extraction_id(execution_id)
+    qb.set_extraction_id(ex_id)
     qb.set_filter(["Id", quote_id])
     qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
@@ -88,11 +88,10 @@ def check_quote_book(base_request, service, case_id, owner, quote_id):
     verifier.verify()
 
 
-def check_order_book(base_request, instr_type, act_ob, case_id, currency):
+def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, currency):
     ob = OrdersDetails()
     ob.set_default_params(base_request)
-    execution_id = bca.client_orderid(4)
-    ob.set_extraction_id(execution_id)
+    ob.set_extraction_id(ex_id)
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
@@ -118,6 +117,10 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
@@ -130,7 +133,7 @@ def execute(report_id, session_id):
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'FXSwap'
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = "QA2"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -149,26 +152,28 @@ def execute(report_id, session_id):
         modify_rfq_tile_swap(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
                              case_near_tenor, case_far_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, case_id,
+        check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
+        quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
-        check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-
+        check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, quote_id)
+        cancel_rfq(base_rfq_details, ar_service)
         # Step 3
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, case_id,
+        check_quote_request_b("QRB_1", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 4
         place_order_venue(base_rfq_details, ar_service, case_filter_venue)
-        quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
+        quote_id = check_order_book("OB_1", case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
-        check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-
-        # Close tile
+        check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, quote_id)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    finally:
+        for rule in [RFQ, TRFQ]:
+            rule_manager.remove_rule(rule)

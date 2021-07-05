@@ -191,7 +191,7 @@ def execute(report_id):
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         #region Cancel Algo Order
-        case_id_2 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_2 = bca.create_event("Cancel Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
