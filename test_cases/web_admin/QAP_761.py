@@ -1,108 +1,60 @@
 from custom import basic_custom_actions as bca
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-from custom.verifier import Verifier
-from web_admin_modules.web_wrapper import call, login, logout, check_exists_by_xpath, check_is_clickable
+from web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
+import web_admin_modules.locator_xpath as get_xpath
+import web_admin_modules.locator_constants as LC
 
 
 class TestCase:
-    def __init__(self, report_id):
+    def __init__(self, report_id, web_driver, wait_driver):
         self.case_id = bca.create_event('QAP-761', report_id)
+        self.driver = web_driver
+        self.wait = wait_driver
+        self.test_input = 'TEST'
 
-        self.driver = webdriver.Chrome(ChromeDriverManager().install())
-        self.wait = WebDriverWait(self.driver, 5)
-
-    def create_listing_group(self):
-        data = 'TEST'
-
+    def add_listing_group(self):
         # Navigate to listing groups tab
-        reference_data_tab = self.driver.find_element_by_xpath('//*[text()="Reference Data"]')
+        reference_data_tab = self.driver.find_element_by_xpath(
+            get_xpath.sidebar_menu_tab_by_title(LC.SidebarTabTitle.REFERENCE_DATA))
         reference_data_tab.click()
-        listing_groups_tab = reference_data_tab.find_element_by_xpath('//*[text()="ListingGroups"]')
+        listing_groups_tab = reference_data_tab.find_element_by_xpath(
+            get_xpath.sidebar_menu_sub_tab_by_title(LC.SidebarTabTitle.LISTING_GROUPS))
         listing_groups_tab.click()
 
         # Press New button
-        new_button = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="actions-header"]//*[text()="New"]')))
-        new_button.click()
+        new_btn = self.wait.until(EC.element_to_be_clickable(
+            (By.XPATH, get_xpath.card_header_by_text('Listing Groups') + get_xpath.button_by_text(LC.ButtonText.NEW))))
+        new_btn.click()
 
-        # Wait wizard
-        wizard_xpath = '//wizard'
-        wizard = self.wait.until(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
+        # Fill required fields
+        name_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.NAME_REQ))))
+        name_input.send_keys(self.test_input)
+        venue_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.SUB_VENUE_REQ))))
+        venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
-        # Find buttons
-        clean_btn = wizard.find_element_by_xpath('//*[text()="Clean"]/parent::button')
-        summary_btn = wizard.find_element_by_xpath('//*[text()="Go to Summary"]/parent::button')
-        previous_btn = wizard.find_element_by_xpath('//*[text()="Previous"]/parent::button')
-        next_btn = wizard.find_element_by_xpath('//*[text()="Next"]/parent::button')
-
-        # Check buttons status
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check available buttons on wizard tab')
-        verifier.compare_values('Clean button', 'True', str(check_is_clickable(clean_btn)))
-        verifier.compare_values('Summary button', 'False', str(check_is_clickable(summary_btn)))
-        verifier.compare_values('Previous button', 'False', str(check_is_clickable(previous_btn)))
-        verifier.compare_values('Next button', 'True', str(check_is_clickable(next_btn)))
-        verifier.verify()
-
-        # Find required fields
-        name_input = wizard.find_element_by_xpath('//input[@placeholder="Name"]')
-        name_input.click()
-        name_input.send_keys(data)
-        sub_venue_input = wizard.find_element_by_xpath('//input[@placeholder="SubVenue"]')
-        sub_venue_input.click()
-        sub_venue_input.send_keys(data, Keys.ARROW_DOWN, Keys.ENTER)
-
-        # Go to Summary tab
-        summary_btn.click()
-
-        # Check fields on Summary tab
-        symbol = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                                 '//*[text()="Symbol"]/following-sibling::span'))).text
-        sub_venue = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                                    '//*[text()="SubVenue"]' +
-                                                                    '/following-sibling::span'))).text
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check required fields on Summary tab')
-        verifier.compare_values('Name', data, symbol)
-        verifier.compare_values('SubVenue', data, sub_venue)
-        verifier.verify()
+        # #pdf download
+        # dwn_pdf_btn = self.wait.until(
+        #     EC.presence_of_element_located((By.XPATH, get_xpath.action_by_tooltip(LC.TooltipAction.DOWNLOAD_PDF))))
+        # dwn_pdf_btn.click()
 
         # Submit
-        submit_button = wizard.find_element_by_xpath('//*[text()="Submit"]')
-        submit_button.click()
-        self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                        '//*[text()="Listing Group created with success"]')))
-        self.wait.until_not(EC.presence_of_element_located((By.XPATH, wizard_xpath)))
+        save_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, get_xpath.button_by_text(LC.ButtonText.SAVE_CHANGES))))
+        save_btn.click()
+        self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.LISTING_GROUP_CHANGES_SUCCESS))))
 
-        # Check wizard status
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check displayed of wizard')
-        verifier.compare_values('Wizard displayed', 'False', str(check_exists_by_xpath(self.driver, wizard_xpath)))
-        verifier.verify()
-
-        # Filter grid by Name
-        name_column = self.driver.find_element_by_xpath('//*[text()="Name"]')
-        name_column.click()
-        name_column.click()
-
-        # Check that TEST row was added to grid
-        added_values_count = len(self.driver.find_elements_by_xpath(f'//span[text()="{data}"]'))
-        verifier = Verifier(self.case_id)
-        verifier.set_event_name('Check TEST rows count on grid')
-        verifier.compare_values('Count', '1', str(added_values_count // 2))
-        verifier.verify()
+        # Check changes in grid
+        added_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, self.test_input)
+        verify_row_count(self.case_id, 'Check add, row count on grid', 1, added_row_count)
 
     # Main method. Must call in demo.py by 'QAP_761.TestCase(report_id).execute()' command
     def execute(self):
-        call(login, self.case_id, self.driver, self.wait)
-        call(self.create_listing_group, self.case_id)
-        call(logout, self.case_id, self.wait)
-        self.driver.close()
+        call(self.add_listing_group, self.case_id, 'Add listing group')
 
 
 if __name__ == '__main__':

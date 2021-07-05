@@ -94,6 +94,11 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                         }
                     )
                 )
+            elif tag in ['venueStatusMetric','venuePhaseSession', 'venuePhaseSessionTypeTIF', 'venuePhaseSessionPegPriceType', 'venueOrdCapacity']:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag, group, session_alias)))
+                content[tag] = Value(list_value=ListValue(values=content[tag]))
             else:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
@@ -376,6 +381,22 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
+            )
+        elif isinstance(content[tag], list):
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=prefilter_to_grpc(content[tag][content[tag].index(group)], _nesting_level + 1)
+                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
+                            )
+                        )
+                    }
+                )
             )
         elif isinstance(content[tag], ValueFilter):
             pass

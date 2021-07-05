@@ -39,7 +39,7 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
 
     session_id = set_session_id()
-    # set_base(session_id, case_id)
+    set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
     username = Stubs.custom_config['qf_trading_fe_user_305']
@@ -56,6 +56,10 @@ def execute(report_id):
         qty2 = "70"
         qty3 = "30"
         limit = "5"
+        today = datetime.now()
+        todayp2 = today + timedelta(days=2)
+        todayp2 = todayp2.strftime('%Y%m%d')
+        today = today.strftime('%Y%m%d')
 
         #create care market order
         cmo1_params = {
@@ -63,9 +67,7 @@ def execute(report_id):
             'HandlInst': '3',
             'Side': '1',
             'OrderQty': qty1,
-            'OrdType': '2',
-            'Price': '20',
-            'SettlType': '0',
+            'OrdType': '1',
             'TimeInForce': '0',
             'ClOrdID': bca.client_orderid(9),
             'TransactTime': datetime.utcnow().isoformat(),
@@ -78,7 +80,7 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Currency': 'EUR'
         }
-        new_dma_order = fix_act.placeOrderFIX(
+        new_cmo1_order = fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 "Send new dma order", "gtwquod5", case_id,
                 bca.message_to_grpc('NewOrderSingle', cmo1_params, "gtwquod5")
@@ -105,7 +107,7 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Currency': 'EUR'
         }
-        new_dma_order = fix_act.placeOrderFIX(
+        new_cmo2_order = fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 "Send new dma order", "gtwquod5", case_id,
                 bca.message_to_grpc('NewOrderSingle', cmo2_params, "gtwquod5")
@@ -131,7 +133,7 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Currency': 'EUR'
         }
-        new_dma_order = fix_act.placeOrderFIX(
+        new_cmo3_order = fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 "Send new dma order", "gtwquod5", case_id,
                 bca.message_to_grpc('NewOrderSingle', cmo3_params, "gtwquod5")
@@ -147,10 +149,8 @@ def execute(report_id):
         service = Stubs.win_act_order_book
 
         manual_cross_details = ManualCrossDetails(base_request)
-        base_data = BaseTableDataRequest(base=base_request)
-        #base_data.set_filter_dict({"ClOrdID": test})
-        #manual_cross_details.set_filter_dict({"ClOrdID": test})
-        #manual_cross_details.set_filter({'NIN': '111111', 'Client': 'MOClient'})
+        manual_cross_details.set_filter({"NIN": "111111"})
+        #manual_cross_details.set_filter({'Lookup': 'VETO', 'Owner': 'gtwquod5', 'ClientID': 'MOClient', "NIN": "111111"})
         manual_cross_details.set_selected_rows([3, 2])
 
         manual_cross_details.set_quantity("70")
@@ -160,66 +160,77 @@ def execute(report_id):
 
         call(service.manualCross, manual_cross_details.build())
 
-        # verify
-        # extraction_id = "main_order"
-        # main_order_details = OrdersDetails()
-        # main_order_details.set_default_params(base_request)
-        # main_order_details.set_extraction_id(extraction_id)
-        # main_order_details.set_filter(["ClOrdID", cmo1_params['ClOrdID']])
-        #
-        # main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
-        # main_order_id = ExtractionDetail("main_order_id", "Order ID")
-        # main_order_extraction_action = ExtractionAction.create_extraction_action(
-        #     extraction_details=[main_order_exec_status, main_order_id])
-        # main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
-        #
-        # call(act2.getOrdersDetails, main_order_details.request())
-        # call(common_act.verifyEntities, verification(extraction_id, "checking order",
-        #                                              [verify_ent("Order Exec Status",
-        #                                                          main_order_exec_status.name, "Filled")]))
+        #verify
+        #middle_office_service = Stubs.win_act_middle_office_service
 
-        # extraction_id = "order_details"
-        # order2_details = OrdersDetails()
-        # order2_details.set_default_params(base_request)
-        # order2_details.set_extraction_id(extraction_id)
-        # order2_details.set_filter(["ClOrdID", cmo2_params['ClOrdID']])
-        #
-        # order2_status = ExtractionDetail("order_status", "Sts")
-        # order2_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order2_status])
-        # order2_details.add_single_order_info(OrderInfo.create(action=order2_extraction_action))
-        #
-        # request = call(act2.getOrdersDetails, order2_details.request())
-        # call(common_act.verifyEntities, verification(extraction_id, "checking order",
-        #                                              [verify_ent("ExecStatus", order2_status.name, "Filled")]))
+        extraction_id = "main_order"
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(extraction_id)
+        main_order_details.set_filter(["ClOrdID", cmo1_params['ClOrdID']])
+
+        main_order_exec_status = ExtractionDetail("exec_status", "ExecSts")
+        main_order_id = ExtractionDetail("main_order_id", "Order ID")
+        main_order_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[main_order_exec_status, main_order_id])
+        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+
+        call(act2.getOrdersDetails, main_order_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                main_order_exec_status.name, "PartiallyFilled")]))
+
+        extraction_id = "main_order"
+        order2_details = OrdersDetails()
+        order2_details.set_default_params(base_request)
+        order2_details.set_extraction_id(extraction_id)
+        order2_details.set_filter(["ClOrdID", cmo2_params['ClOrdID']])
+
+        order2_exec_status = ExtractionDetail("exec_status", "ExecSts")
+        order2_id = ExtractionDetail("main_order_id", "Order ID")
+        order2_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[order2_exec_status, order2_id])
+        order2_details.add_single_order_info(OrderInfo.create(action=order2_extraction_action))
+
+        call(act2.getOrdersDetails, order2_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                order2_exec_status.name, "Filled")]))
 
         # verify execution report
         execution_report1_params = {
             'ClOrdID': cmo1_params['ClOrdID'],
-            'OrderID': cmo1_params['ClOrdID'],
-            # 'ExecID': '*',
-            # 'TransactTime': '*',
-            # 'CumQty': '0',
-            # 'SettlDate': todayp2,
-            #
-            # 'OrderQtyData': {
-            #     'OrderQty': qty
-            # },
-            # 'Instrument': {
-            #     'SecurityDesc': '*',
-            #     'Symbol': 'VETO',
-            #     'SecurityIDSource': '4',
-            #     'SecurityID': 'FR0004186856',
-            #     'SecurityExchange': 'XPAR',
-            #
-            # },
-            # 'OrdType': '2',
-            # 'Side': '1',
-            # 'AvgPx': '0',
+            'OrderID': new_cmo1_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'VenueType': 'O',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '70',
+            'SettlDate': todayp2,
+
+            'OrderQtyData': {
+                'OrderQty': qty1
+            },
+            'Instrument': {
+                #'SecurityDesc': '*',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'TradeDate': today,
+            'Currency': 'EUR',
+            'LastCapacity': '1',
+            'LastQty': '70',
+            'LastPx': '5',
+            'OrdType': '1',
+            'Side': '1',
+            'AvgPx': '5',
+            #'Price': limit,
+            'TimeInForce': '0',
             'OrdStatus': '1',
             'ExecType': 'F',
-            'LeavesQty': '30',
-            # 'Price': limit,
-            # 'TimeInForce': '0'
+            'LeavesQty': '30'
         }
 
         Stubs.verifier.submitCheckRule(
@@ -233,31 +244,36 @@ def execute(report_id):
         # verify execution report
         execution_report2_params = {
             'ClOrdID': cmo2_params['ClOrdID'],
-            'OrderID': cmo2_params['ClOrdID'],
-            # 'ExecID': '*',
-            # 'TransactTime': '*',
-            # 'CumQty': '0',
-            # 'SettlDate': todayp2,
-            #
-            # 'OrderQtyData': {
-            #     'OrderQty': qty
-            # },
-            # 'Instrument': {
-            #     'SecurityDesc': '*',
-            #     'Symbol': 'VETO',
-            #     'SecurityIDSource': '4',
-            #     'SecurityID': 'FR0004186856',
-            #     'SecurityExchange': 'XPAR',
-            #
-            # },
-            # 'OrdType': '2',
-            # 'Side': '1',
-            # 'AvgPx': '0',
-            'OrdStatus': '1',
+            'OrderID': new_cmo2_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'VenueType': 'O',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '70',
+            'SettlDate': todayp2,
+
+            'OrderQtyData': {
+                'OrderQty': qty2
+            },
+            'Instrument': {
+                #'SecurityDesc': '*',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'TradeDate': today,
+            'Currency': 'EUR',
+            'LastCapacity': '1',
+            'LastQty': '70',
+            'LastPx': '5',
+            'OrdType': '1',
+            'Side': '2',
+            'AvgPx': '5',
+            'TimeInForce': '0',
+            'OrdStatus': '2',
             'ExecType': 'F',
             'LeavesQty': '0',
-            # 'Price': limit,
-            # 'TimeInForce': '0'
         }
 
         Stubs.verifier.submitCheckRule(
@@ -276,8 +292,10 @@ def execute(report_id):
         service = Stubs.win_act_order_book
 
         manual_cross_details = ManualCrossDetails(base_request)
-        # manual_cross_details.set_filter()
-        #manual_cross_details.set_filter({'NIN': '111111', 'Client': 'MOClient'})
+        #manual_cross_details.set_filter({"CLOrdID": ""})
+        manual_cross_details.set_filter({"NIN": "111111"})
+        #manual_cross_details.set_filter(
+         #   {'Lookup': 'VETO', 'Owner': 'gtwquod5', 'ClientID': 'MOClient', "NIN": "111111"})
         manual_cross_details.set_selected_rows([3, 1])
 
         manual_cross_details.set_quantity("30")
@@ -287,63 +305,73 @@ def execute(report_id):
 
         call(service.manualCross, manual_cross_details.build())
 
-        # # verify
-        # extraction_id = "order_details"
-        # order1_details = OrdersDetails()
-        # order1_details.set_default_params(base_request)
-        # order1_details.set_extraction_id(extraction_id)
-        # order1_details.set_filter(["ClOrdID", cmo1_params['ClOrdID']])
-        #
-        # order1_status = ExtractionDetail("order_status", "Sts")
-        # order1_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order1_status])
-        # order1_details.add_single_order_info(OrderInfo.create(action=order1_extraction_action))
-        #
-        # request = call(act2.getOrdersDetails, order1_details.request())
-        # call(common_act.verifyEntities, verification(extraction_id, "checking order",
-        #                                              [verify_ent("ExecStatus", order1_status.name, "Filled")]))
+        extraction_id = "main_order"
+        order1_details = OrdersDetails()
+        order1_details.set_default_params(base_request)
+        order1_details.set_extraction_id(extraction_id)
+        order1_details.set_filter(["ClOrdID", cmo1_params['ClOrdID']])
 
-        # extraction_id = "order_details"
-        # order3_details = OrdersDetails()
-        # order3_details.set_default_params(base_request)
-        # order3_details.set_extraction_id(extraction_id)
-        # order3_details.set_filter(["ClOrdID", cmo3_params['ClOrdID']])
-        #
-        # order3_status = ExtractionDetail("order_status", "Sts")
-        # order3_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order3_status])
-        # order3_details.add_single_order_info(OrderInfo.create(action=order3_extraction_action))
-        #
-        # request = call(act2.getOrdersDetails, order3_details.request())
-        # call(common_act.verifyEntities, verification(extraction_id, "checking order",
-        #                                              [verify_ent("ExecStatus", order3_status.name, "Filled")]))
+        order1_exec_status = ExtractionDetail("exec_status", "ExecSts")
+        order1_id = ExtractionDetail("main_order_id", "Order ID")
+        order1_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[order1_exec_status, order1_id])
+        order1_details.add_single_order_info(OrderInfo.create(action=order1_extraction_action))
+
+        call(act2.getOrdersDetails, order1_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                order1_exec_status.name, "Filled")]))
+
+        extraction_id = "main_order"
+        order3_details = OrdersDetails()
+        order3_details.set_default_params(base_request)
+        order3_details.set_extraction_id(extraction_id)
+        order3_details.set_filter(["ClOrdID", cmo3_params['ClOrdID']])
+
+        order3_exec_status = ExtractionDetail("exec_status", "ExecSts")
+        order3_id = ExtractionDetail("main_order_id", "Order ID")
+        order3_extraction_action = ExtractionAction.create_extraction_action(
+            extraction_details=[order3_exec_status, order3_id])
+        order3_details.add_single_order_info(OrderInfo.create(action=order3_extraction_action))
+
+        call(act2.getOrdersDetails, order3_details.request())
+        call(common_act.verifyEntities, verification(extraction_id, "checking order",
+                                                     [verify_ent("Order Exec Status",
+                                                                order3_exec_status.name, "Filled")]))
 
         # verify execution report
         execution_report3_params = {
             'ClOrdID': cmo1_params['ClOrdID'],
-            'OrderID': cmo1_params['ClOrdID'],
-            # 'ExecID': '*',
-            # 'TransactTime': '*',
-            # 'CumQty': '0',
-            # 'SettlDate': todayp2,
-            #
-            # 'OrderQtyData': {
-            #     'OrderQty': qty
-            # },
-            # 'Instrument': {
-            #     'SecurityDesc': '*',
-            #     'Symbol': 'VETO',
-            #     'SecurityIDSource': '4',
-            #     'SecurityID': 'FR0004186856',
-            #     'SecurityExchange': 'XPAR',
-            #
-            # },
-            # 'OrdType': '2',
-            # 'Side': '1',
-            # 'AvgPx': '0',
-            'OrdStatus': '1',
+            'OrderID': new_cmo1_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'VenueType': 'O',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '100',
+            'SettlDate': todayp2,
+
+            'OrderQtyData': {
+                'OrderQty': qty1
+            },
+            'Instrument': {
+                #'SecurityDesc': '*',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'TradeDate': today,
+            'Currency': 'EUR',
+            'LastCapacity': '1',
+            'LastQty': '30',
+            'LastPx': '7',
+            'OrdType': '1',
+            'Side': '1',
+            'AvgPx': '5.6',
+            'TimeInForce': '0',
+            'OrdStatus': '2',
             'ExecType': 'F',
-            'LeavesQty': '0',
-            # 'Price': limit,
-            # 'TimeInForce': '0'
+            'LeavesQty': '0'
         }
 
         Stubs.verifier.submitCheckRule(
@@ -357,31 +385,36 @@ def execute(report_id):
         # verify execution report
         execution_report4_params = {
             'ClOrdID': cmo3_params['ClOrdID'],
-            'OrderID': cmo3_params['ClOrdID'],
-            # 'ExecID': '*',
-            # 'TransactTime': '*',
-            # 'CumQty': '0',
-            # 'SettlDate': todayp2,
-            #
-            # 'OrderQtyData': {
-            #     'OrderQty': qty
-            # },
-            # 'Instrument': {
-            #     'SecurityDesc': '*',
-            #     'Symbol': 'VETO',
-            #     'SecurityIDSource': '4',
-            #     'SecurityID': 'FR0004186856',
-            #     'SecurityExchange': 'XPAR',
-            #
-            # },
-            # 'OrdType': '2',
-            # 'Side': '1',
-            # 'AvgPx': '0',
-            'OrdStatus': '1',
+            'OrderID': new_cmo3_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'VenueType': 'O',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': '30',
+            'SettlDate': todayp2,
+
+            'OrderQtyData': {
+                'OrderQty': qty3
+            },
+            'Instrument': {
+                #'SecurityDesc': '*',
+                'Symbol': 'VETO',
+                'SecurityIDSource': '4',
+                'SecurityID': 'FR0004186856',
+                'SecurityExchange': 'XPAR',
+
+            },
+            'TradeDate': today,
+            'Currency': 'EUR',
+            'LastCapacity': '1',
+            'LastQty': '30',
+            'LastPx': '7',
+            'OrdType': '1',
+            'Side': '2',
+            'AvgPx': '7',
+            'TimeInForce': '0',
+            'OrdStatus': '2',
             'ExecType': 'F',
-            'LeavesQty': '0',
-            # 'Price': limit,
-            # 'TimeInForce': '0'
+            'LeavesQty': '0'
         }
 
         Stubs.verifier.submitCheckRule(

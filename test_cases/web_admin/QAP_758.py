@@ -1,76 +1,78 @@
 from custom import basic_custom_actions as bca
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-from web_admin_modules.web_wrapper import call, login, logout
+from web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
+import web_admin_modules.locator_xpath as get_xpath
+import web_admin_modules.locator_constants as LC
 
 
 class TestCase:
-    def __init__(self, report_id):
+    def __init__(self, report_id, web_driver, wait_driver):
         self.case_id = bca.create_event('QAP-758', report_id)
+        self.driver = web_driver
+        self.wait = wait_driver
+        self.test_input = 'TestVenues'
 
-        self.driver = webdriver.Chrome(ChromeDriverManager().install())
-        self.wait = WebDriverWait(self.driver, 5)
-
-    def get_precondition(self):
-        data = 'TEST'
-
+    # Precondition
+    def add_sub_venue(self):
         # Navigate to SubVenues tab
-        reference_data_tab = self.driver.find_element_by_xpath('//*[text()="Reference Data"]')
+        reference_data_tab = self.driver.find_element_by_xpath(
+            get_xpath.sidebar_menu_tab_by_title(LC.SidebarTabTitle.REFERENCE_DATA))
         reference_data_tab.click()
-        sub_venues_tab = reference_data_tab.find_element_by_xpath('//*[text()="SubVenues"]')
+        sub_venues_tab = reference_data_tab.find_element_by_xpath(
+            get_xpath.sidebar_menu_sub_tab_by_title(LC.SidebarTabTitle.SUB_VENUES))
         sub_venues_tab.click()
 
         # Press New button
-        new_button = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="actions-header"]//*[text()="New"]')))
-        new_button.click()
+        new_btn = self.wait.until(EC.element_to_be_clickable(
+            (By.XPATH, get_xpath.card_header_by_text(LC.SidebarTabTitle.SUB_VENUES) + get_xpath.button_by_text(
+                LC.ButtonText.NEW))))
+        new_btn.click()
 
         # Fill required fields
-        name_input = self.wait.until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="Name"]')))
-        name_input.click()
-        name_input.send_keys(data)
-        venue_input = self.wait.until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="Venue"]')))
-        venue_input.click()
-        venue_input.send_keys(data, Keys.ARROW_DOWN, Keys.ENTER)
-
-        # Go to Summary tab
-        summary_tab = self.driver.find_element_by_xpath('//*[@id="header-wizard-tab-3"]')
-        summary_tab.click()
+        name_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.NAME_REQ))))
+        name_input.send_keys(self.test_input)
+        venue_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, get_xpath.input_by_text(LC.InputText.VENUE_REQ))))
+        venue_input.send_keys(self.test_input, Keys.ARROW_DOWN, Keys.ENTER)
 
         # Submit
-        submit_button = self.driver.find_element_by_xpath('//*[text()="Submit"]')
-        submit_button.click()
-        self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                        '//*[text()="Sub Venue created with success"]')))
+        save_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, get_xpath.button_by_text(LC.ButtonText.SAVE_CHANGES))))
+        save_btn.click()
+        self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.SUB_VENUE_CHANGES_SUCCESS))))
+
+        # Check changes in grid
+        added_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, self.test_input)
+        verify_row_count(self.case_id, 'Check add, row count on grid', 1, added_row_count)
 
     def delete_sub_venue(self):
-        # Find TEST row
-        row = self.driver.find_element_by_xpath('//*[text()="TEST"]')
-        row.click()
-
-        # Delete tow
-        delete_btn = self.driver.find_element_by_xpath('//datatable-body-row[contains(@class, "active")]' +
-                                                       '//*[@mattooltip="Delete"]')
+        # Delete row
+        actions_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, get_xpath.actions_btn)))
+        actions_btn.click()
+        delete_btn = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, get_xpath.action_by_tooltip(LC.TooltipAction.DELETE))))
         delete_btn.click()
 
         # Confirm delete
-        confirm_btn = self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                                      '//*[text()="OK"]')))
+        confirm_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, get_xpath.button_by_text(LC.ButtonText.OK))))
         confirm_btn.click()
-        self.wait.until(EC.presence_of_element_located((By.XPATH,
-                                                        '//*[text()="SubVenue has been deleted with success"]')))
+        self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, get_xpath.container_event_by_text(LC.EventText.sub_venue_deleted(self.test_input)))))
 
-    # Main method. Must call in demo.py by 'QAP_758.TestCase(report_id).execute()' command
+        # Check changes in grid
+        edited_row_count = filter_grid_by_field(self.driver, LC.FilterFieldName.NAME, self.test_input)
+        verify_row_count(self.case_id, 'Check delete, row count on grid', 0, edited_row_count)
+
+    # Main method
+    # Must call in web_demo.py by QAP_758.TestCase(report_id, chrome_driver, wait_driver).execute() command
     def execute(self):
-        call(login, self.case_id, self.driver, self.wait)
-        call(self.get_precondition, self.case_id)
-        call(self.delete_sub_venue, self.case_id)
-        call(logout, self.case_id, self.wait)
-        self.driver.close()
+        call(self.add_sub_venue, self.case_id, 'Add SubVenue (Precondition)')
+        call(self.delete_sub_venue, self.case_id, 'Delete SubVenue')
 
 
 if __name__ == '__main__':

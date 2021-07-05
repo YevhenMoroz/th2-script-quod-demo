@@ -220,6 +220,33 @@ class ExtractRatesTileTableValuesRequest:
         var.name = detail.name
         var.colName = detail.column_name
 
+    def check_venue_to_present(self, venue):
+        self.request.checkVenueToPresent = True
+        self.request.venueToCheck = venue
+
+    def build(self):
+        return self.request
+
+
+class SelectRowsRequest:
+    def __init__(self, details: BaseTileDetails):
+        if details is not None:
+            self.request = cp_operations_pb2.SelectRequest(data=details.build())
+
+    def set_row_numbers(self, row_numbers: list):
+        self.extractionId = "rows"
+        for row_number in row_numbers:
+            self.request.rowNumbers.append( row_number)
+
+    def build(self):
+        return self.request
+
+
+class DeselectRowsRequest:
+    def __init__(self, details: BaseTileDetails):
+        if details is not None:
+            self.request = cp_operations_pb2.SelectRequest(data=details.build())
+
     def build(self):
         return self.request
 
