@@ -1,9 +1,14 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, spo_ndf
+from custom.tenor_settlement_date import spo_ndf
 from custom.verifier import Verifier
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
@@ -74,24 +79,12 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     return response
 
 
-def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
-    position = float(position.replace(",", ""))
-    mtk_px = float(mtk_px)
-    quote_pos = float(quote_pos.replace(",", ""))
-    expected_pnl = position * mtk_px + quote_pos
+def check_pnl_usd(case_id, mtm_pnl, mkt_px, extracted_pnl_usd):
+    mtm_pnl = float(mtm_pnl.replace(",", ""))
+    mkt_px = float(mkt_px)
+    expected_pnl_usd = mtm_pnl / mkt_px
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check MTM Pnl")
-    verifier.compare_values("MTM Pnl", str(round(expected_pnl, 2)), extracted_pnl.replace(",", ""))
-    verifier.verify()
-
-
-def check_pnl_usd(case_id, position, mtk_px, quote_pos, extracted_pnl_usd):
-    position = float(position.replace(",", ""))
-    mtk_px = float(mtk_px)
-    quote_pos = float(quote_pos.replace(",", ""))
-    expected_pnl_usd = (position * mtk_px + quote_pos) / mtk_px
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check MTM Pnl")
+    verifier.set_event_name("Check MTM Pnl USD")
     verifier.compare_values("MTM Pnl USD", str(round(expected_pnl_usd, 2)), extracted_pnl_usd.replace(",", ""))
     verifier.verify()
 
@@ -112,7 +105,6 @@ def execute(report_id, session_id):
     side_b = "1"
     side_s = "2"
     settle_date = spo_ndf()
-
     case_name = Path(__file__).name[:-3]
     qty_6m = "6000000"
     qty_8m = "8000000"
@@ -136,44 +128,40 @@ def execute(report_id, session_id):
             verify_order_pending()
         rfq.verify_order_filled(price=price)
         # Step 2
-        # position_info = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        # check_pnl(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
-        #           position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnl"])
-        # check_pnl_usd(case_id, position_info["dealingpositions.position"], position_info["dealingpositions.mktPx"],
-        #               position_info["dealingpositions.quotePosition"], position_info["dealingpositions.mtmPnlUsd"])
+        position_info = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        check_pnl_usd(case_id, position_info["dealingpositions.mtmPnl"], position_info["dealingpositions.mktPx"],
+                      position_info["dealingpositions.mtmPnlUsd"])
         # Step 3
-        # rfq = FixClientSellRfq(
-        #     CaseParamsSellRfq(client, case_id, side=side_s, orderqty=qty_8m, symbol=symbol, securitytype=security_type,
-        #                       settldate=settle_date,
-        #                       settltype=settle_type, currency=currency, account=account)). \
-        #     send_request_for_quote(). \
-        #     verify_quote_pending()
-        # price = rfq.extruct_filed("OfferPx")
-        # rfq.send_new_order_single(price). \
-        #     verify_order_pending(). \
-        #     verify_order_filled()
-        # # Step 4
-        # position_info_after_8m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        # check_pnl_usd(case_id, position_info_after_8m["dealingpositions.position"],
-        #               position_info_after_8m["dealingpositions.mktPx"],
-        #               position_info_after_8m["dealingpositions.quotePosition"],
-        #               position_info_after_8m["dealingpositions.mtmPnlUsd"])
-        # # Step 5
-        # rfq = FixClientSellRfq(
-        #     CaseParamsSellRfq(client, case_id, side=side_s, orderqty=qty_3m, symbol=symbol, securitytype=security_type,
-        #                       settldate=settle_date,
-        #                       settltype=settle_type, currency=currency, account=account)). \
-        #     send_request_for_quote(). \
-        #     verify_quote_pending()
-        # price = rfq.extruct_filed("OfferPx")
-        # rfq.send_new_order_single(price). \
-        #     verify_order_pending(). \
-        #     verify_order_filled()
-        # position_info_after_3m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        # check_pnl_usd(case_id, position_info_after_3m["dealingpositions.position"],
-        #               position_info_after_3m["dealingpositions.mktPx"],
-        #               position_info_after_3m["dealingpositions.quotePosition"],
-        #               position_info_after_3m["dealingpositions.mtmPnlUsd"])
+        rfq = FixClientSellRfq(
+            CaseParamsSellRfq(client, case_id, side=side_s, orderqty=qty_8m, symbol=symbol, securitytype=security_type,
+                              settldate=settle_date, securityid=symbol, settlcurrency=settle_currency,
+                              settltype=settle_type, currency=currency, account=account)). \
+            send_request_for_quote(). \
+            verify_quote_pending()
+        price = rfq.extruct_filed("OfferPx")
+        rfq.send_new_order_single(price). \
+            verify_order_pending(). \
+            verify_order_filled()
+        # Step 4
+        position_info_after_8m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        check_pnl_usd(case_id, position_info_after_8m["dealingpositions.mtmPnl"],
+                      position_info_after_8m["dealingpositions.mktPx"],
+                      position_info_after_8m["dealingpositions.mtmPnlUsd"])
+        # Step 5
+        rfq = FixClientSellRfq(
+            CaseParamsSellRfq(client, case_id, side=side_s, orderqty=qty_3m, symbol=symbol, securitytype=security_type,
+                              settldate=settle_date, securityid=symbol, settlcurrency=settle_currency,
+                              settltype=settle_type, currency=currency, account=account)). \
+            send_request_for_quote(). \
+            verify_quote_pending()
+        price = rfq.extruct_filed("OfferPx")
+        rfq.send_new_order_single(price). \
+            verify_order_pending(). \
+            verify_order_filled()
+        position_info_after_3m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        check_pnl_usd(case_id, position_info_after_3m["dealingpositions.mtmPnl"],
+                      position_info_after_3m["dealingpositions.mktPx"],
+                      position_info_after_3m["dealingpositions.mtmPnlUsd"])
 
     except Exception:
         logging.error("Error execution", exc_info=True)
