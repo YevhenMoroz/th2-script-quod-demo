@@ -1,14 +1,21 @@
 import logging
+import time
 from pathlib import Path
+
 import timestring
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo_front_end
+from custom.tenor_settlement_date import spo, spo_front_end
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction, ExtractRFQTileValues, TableActionsRequest, TableAction, CellExtractionDetails
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -49,6 +56,10 @@ def check_default_value_rfq_tile(exec_id, base_request, service, case_id, curr_p
 def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
 
     case_cur_pair = "AUD/BRL"
@@ -74,9 +85,11 @@ def execute(report_id):
         create_or_get_rfq(base_rfq_details, ar_service)
         check_default_value_rfq_tile("CDV_0", base_rfq_details, ar_service, case_id, case_cur_pair,
                                      case_qty, case_near_tenor, case_date, case_curr_button)
-
-        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception:
+
+    except Exception as e:
         logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

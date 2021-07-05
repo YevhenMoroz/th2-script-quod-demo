@@ -4,7 +4,6 @@ from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import get_expire_time
 from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
 
@@ -81,7 +80,7 @@ def execute(report_id, case_params):
             'QuoteType': '1',
             'OrderQty': useful_params['RfqQty'],
             'OrdType': 'D',
-            'ExpireTime': get_expire_time(),
+            'ExpireTime': reusable_params['SettlDate'] + '-23:59:00.000',
             'TransactTime': (datetime.utcnow().isoformat())}]
         }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))

@@ -100,7 +100,7 @@
       "endpoints": {
         "act_order_ticket_fx": {
           "host": "10.0.22.22",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -114,7 +114,7 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.24",
+          "host": "10.0.22.22",
           "port": 32288
         }
       },
@@ -158,7 +158,7 @@
     "Win_Act_Client_Pricing": {
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
-        "act_client_pricing": {
+        "act_rfq": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -166,14 +166,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_client_pricing"
+          "act_rfq"
         ]
       }
     },
     "Win_Act_Middle_Office": {
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
-        "act_middle_office": {
+        "act_rfq": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -181,14 +181,14 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_middle_office"
+          "act_rfq"
         ]
       }
     },
     "Win_Act_Dealer_Intervention": {
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
-        "act_dealer_interventions": {
+        "act_rfq": {
           "host": "10.0.22.24",
           "port": 32288
         }
@@ -196,7 +196,7 @@
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_dealer_interventions"
+          "act_rfq"
         ]
       }
     },

@@ -2,8 +2,7 @@ from stubs import Stubs
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ApplicationDetails, LoginDetails, CloseApplicationRequest
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_hand.rhbatch_pb2 import RhSessionID, RhTargetServer
-from .application_wrappers import OpenApplicationRequest, LoginDetailsRequest, FEDetailsRequest, \
-    LoadableInstrumentsRequest
+from .application_wrappers import OpenApplicationRequest, LoginDetailsRequest, FEDetailsRequest
 import logging
 from custom.basic_custom_actions import create_event
 
@@ -53,7 +52,7 @@ def close_fe(main_event, session):
     disposing_event = create_event("Disposing", main_event)
     try:
         stub.closeApplication(CloseApplicationRequest(
-            base=EmptyRequest(sessionID=session, parentEventId=disposing_event), saveWorkspace=True))
+            base=EmptyRequest(sessionID=session, parentEventId=disposing_event)))
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
@@ -61,9 +60,9 @@ def close_fe(main_event, session):
 
 
 def prepare_fe_2(main_event, session,
-                 fe_dir: str = 'qf_trading_fe_folder_309',
-                 fe_user: str = 'qf_trading_fe_user_309',
-                 fe_pass: str = 'qf_trading_fe_password_309'):
+                 fe_dir: str = 'qf_trading_fe_folder_303',
+                 fe_user: str = 'qf_trading_fe_user_303',
+                 fe_pass: str = 'qf_trading_fe_password_303'):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
 
@@ -105,13 +104,3 @@ def close_fe_2(main_event, session):
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
     Stubs.frontend_is_open = False
-
-
-def load_instr(base_request, instr_list: list):
-    load_instrs = LoadableInstrumentsRequest()
-    load_instrs.set_default_params(base_request)
-    load_instrs.load_selected_instruments(instr_list)
-    try:
-        Stubs.win_act.loadInstruments(load_instrs.build())
-    except Exception as e:
-        logging.error("Error loading dictionaries", exc_info=True)

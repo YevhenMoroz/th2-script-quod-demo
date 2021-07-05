@@ -1,9 +1,9 @@
 import logging
 from pathlib import Path
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
@@ -11,6 +11,9 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+# TODO Add another type for setQty instead Int64Value
 
 
 def create_or_get_rfq(base_request, service):
@@ -23,9 +26,7 @@ def send_rfq(base_request, service):
 
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_quantity_as_string(qty)
-    action = ContextAction.create_venue_filters(["HSB"])
-    modify_request.add_context_action(action)
+    modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
@@ -60,21 +61,25 @@ def check_order_book(base_request, instr_type, act, act_ob, qty):
     call(act.verifyEntities, verification(extraction_id, "checking OB",
                                           [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
                                            verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB Qty", ob_qty.name, str(qty))]))
+                                           verify_ent("OB Qty", ob_qty.name, qty)]))
 
 
 def execute(report_id):
     common_act = Stubs.win_act
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_instr_type = "Spot"
-    case_qty1 = "1000000"
+    case_qty1 = 1000000
     case_qty2 = 11
-    case_qty3 = "110.50"
+    case_qty3 = 110.50
     case_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -86,37 +91,47 @@ def execute(report_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(details=base_rfq_details)
 
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+    else:
+        get_opened_fe(case_id, session_id)
+
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty1, case_from_currency,
                         case_to_currency, case_tenor, case_client)
 
+        # TODO Which variant is best?
+        # First
         modify_request.set_quantity(case_qty2)
         call(ar_service.modifyRFQTile, modify_request.build())
+
+        # TODO Second
+        # modify_rfq_tile(base_rfq_details, ar_service, case_qty2, case_from_currency,
+        #              case_to_currency, case_tenor, case_client)
+
         send_rfq(base_rfq_details, ar_service)
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, case_instr_type, common_act, ob_act, case_qty2)
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '11')
+        cancel_rfq(base_rfq_details, ar_service)
 
         # Step 3
         modify_rfq_tile(base_rfq_details, ar_service, case_qty3, case_from_currency,
                         case_to_currency, case_tenor, case_client)
         send_rfq(base_rfq_details, ar_service)
-        # Step 4
+        #
+        # # Step 4
         place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, case_instr_type, common_act, ob_act, case_qty3)
+        check_order_book(case_base_request, case_instr_type, common_act, ob_act, '110.50')
+        cancel_rfq(base_rfq_details, ar_service)
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception:
+
+    except Exception as e:
         logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

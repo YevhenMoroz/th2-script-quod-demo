@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+
+import rule_management as rm
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
@@ -25,13 +27,14 @@ def send_rfq(base_request, service):
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
-    modify_request.set_change_currency(True)
+    modify_request.set_change_currency()
     modify_request.add_context_action(action)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
+    modify_request.set_change_currency()
     call(service.modifyRFQTile, modify_request.build())
 
 
@@ -102,8 +105,12 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = "QA2"
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
@@ -121,12 +128,13 @@ def execute(report_id):
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+    else:
+        get_opened_fe(case_id, session_id)
+
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
-        # Step 1
+        # # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
                         case_to_currency, case_near_tenor, case_client, venues)
@@ -138,12 +146,12 @@ def execute(report_id):
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act,
                                        case_to_currency)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
+        cancel_rfq(base_rfq_details, ar_service)
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception:
+
+    except Exception as e:
         logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+
+    for rule in [RFQ, TRFQ]:
+        rule_manager.remove_rule(rule)

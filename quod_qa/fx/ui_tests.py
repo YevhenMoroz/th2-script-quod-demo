@@ -1,9 +1,7 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
 
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 
 import rule_management as rm
@@ -13,14 +11,12 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRFQRequest, ModifyRatesTileRequest,
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
-                                                       ExtractRFQTileValues, ExtractRatesTileDataRequest)
-from win_gui_modules.client_pricing_wrappers import SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues
+                                                       ExtractRFQTileValues)
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
-                                                   DefaultFXValues, FXConfigsRequest)
+                                                   DefaultFXValues)
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
+from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
@@ -87,7 +83,7 @@ def get_trade_book_details(ob_act, base_request, order_id):
     main_order_details.set_filter(["Side", 'Buy',
                                    'Venue', 'QUODFX'])
     main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("trade.1")
+    main_order_details.set_extraction_id( "trade.1")
     # to extruct values from first row user str pairs 'UniqID','ColumnNanme'
     ob_instr_type = ExtractionDetail("tradeBook.instrtype", "ExecID")
     ob_exec_sts = ExtractionDetail("tradeBook.orderid", "Venue")
@@ -103,7 +99,7 @@ def get_trade_book_details(ob_act, base_request, order_id):
     # to extract values to a dict use next statement
     result = call(ob_act.getTradeBookDetails, main_order_details.request())
     # you may use loop to check values
-    for key, value in result.items():
+    for key,value in result.items():
         print(f'\t {key} = {value}')
     # or single value extraction
     print(result[ob_instr_type.name])
@@ -153,9 +149,9 @@ def extract_rfq_table_data(base_details, ar_service):
 def extract_rfq_panel(exec_id, base_request, service):
     """
     Class ExtractRFQTileValues was extended.
-    Here bellow you can see all available fx_wrapper.
+    Here bellow you can see all available methods.
 
-    param name is common for all extract.. fx_wrapper.
+    param name is common for all extract.. methods.
     name it's unique str. It need to extract value from result dict
 
     """
@@ -183,7 +179,7 @@ def extract_rfq_panel(exec_id, base_request, service):
     # extract_value.extract_cur_label_right("ar_rfq.extract_label_buy")
     # extract_value.extract_cur_label_left("ar_rfq.extract_label_sell")
 
-    extract_value.set_extraction_id(exec_id)
+    extract_value.set_extraction_id(exec_id )
     response = call(service.extractRFQTileValues, extract_value.build())
     for line in response:
         print(f'{line} = {response[line]}')
@@ -223,7 +219,7 @@ def export_layout(base_request, option_service):
     modification_request.set_default_params(base_request=base_request)
     modification_request.set_filename("demo_export_file.xml")
     modification_request.set_path(
-            'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
     modification_request.do_export()
 
     call(option_service.modifyWorkspace, modification_request.build())
@@ -234,85 +230,15 @@ def import_layout(base_request, option_service):
     modification_request.set_default_params(base_request=base_request)
     modification_request.set_filename("demo_export_file.xml")
     modification_request.set_path(
-            'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
+        'C:\\Users\\kbrit\\PycharmProjects\\prev_th2-script-quod-demo\\quod_qa\\fx\\fx_taker_rfq')
     modification_request.do_import()
 
     call(option_service.modifyWorkspace, modification_request.build())
 
 
-def set_order_ticket_options(option_service, base_request):
-    """
-    The method can be used for set Only OrderTicket>DefaultFXValues
-        (to add more elements raise a sub-task)
-    To  select Option use Panels
-    Ex: to select valuese in Options>Order Ticket> DefaultFxValues use DefaultFXValues()
-
-    """
-    order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues();
-    fx_values.AggressiveTIF = "Pegger"
-    order_type = "Market"
-    tif = "FillOrKill"
-    strategy_type = "Quod DarkPool"
-    strategy = "PeggedTaker"
-    child_strategy = "BasicTaker"
-    fx_values.AggressiveOrderType = order_type
-    # fx_values.AggressiveTIF = tif
-    # fx_values.AggressiveStrategyType = strategy_type
-    # fx_values.AggressiveStrategy = strategy
-    # fx_values.AggressiveChildStrategy = child_strategy
-    # fx_values.PassiveOrderType = order_type
-    # fx_values.PassiveTIF = tif
-    # fx_values.PassiveStrategyType = strategy_type
-    # fx_values.PassiveStrategy = strategy
-    # fx_values.PassiveChildStrategy = child_strategy
-    # fx_values.AlgoSlippage = '12367.45'
-    fx_values.DMASlippage = '12678.09'
-    fx_values.Client = "FIXCLIENT4"
-
-    order_ticket_options.set_default_fx_values(fx_values)
-    call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
-def set_one_click_mod(option_service, base_request):
-    """
-
-
-    """
-    fx_configs = FXConfigsRequest(base=base_request)
-
-    fx_configs.set_cumulative_qty('5')
-    fx_configs.set_one_click_mode('DoubleClick')
-    fx_configs.set_algo_default_qty('5.1')
-    fx_configs.set_headers_prices_format('VWAP of Default Quantity')
-
-    call(option_service.setOptionForexConfigs, fx_configs.build())
-
-
-def set_fx_order_ticket_value(base_request, order_ticket_service):
-    """
-    Method just set values( don't close the window)
-    """
-    order_ticket = FXOrderDetails()
-    # order_ticket.set_price_large('1.23')
-    # order_ticket.set_price_pips('456')
-    # order_ticket.set_qty('1150000')
-    # order_ticket.set_client('FIXCLIENT3')
-    # order_ticket.set_tif('Day')
-    # order_ticket.set_slippage('2.5')
-    # order_ticket.set_order_type('Limit')
-    # order_ticket.set_stop_price('1.3')
-    order_ticket.set_pending()
-    order_ticket.set_keep_open()
-    order_ticket.set_custom_algo_check_box()
-    # order_ticket.set_custom_algo("Quod TWAP")
-    # order_ticket.set_strategy("TWAPBROKER")
-
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(order_ticket_service.placeFxOrder, new_order_details.build())
-
-
-def place_fx_order(base_request, order_ticket_service):
+def set_fx_order_ticket_value(base_request):
     """
     Method demonstrate how work settign valuese to FX Order ticket.
     And then set the details to NewFxOrderDetails object with base_request object.
@@ -330,147 +256,25 @@ def place_fx_order(base_request, order_ticket_service):
     order_ticket.set_slippage('2.5')
     order_ticket.set_order_type('Limit')
     order_ticket.set_stop_price('1.3')
-    order_ticket.set_place()
 
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    # new servise was added
+    new_order_details = NewFxOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+    # new servise was added 
     order_ticket_service = Stubs.win_act_order_ticket_fx
     call(order_ticket_service.placeFxOrder, new_order_details.build())
 
 
-def close_fx_order(base_request, order_ticket_service):
-    """
-
-    """
-    order_ticket = FXOrderDetails()
-    order_ticket.set_close(True)
-
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(order_ticket_service.placeFxOrder, new_order_details.build())
-
-
-def select_rows(base_tile_details, row_numbers, cp_service):
-    """
-    To select several rows send tuple or list with numbers [1,2,3].
-    WARNING!
-    when you send numbers more than 4 test case will scroll up after it select all rows you asked
-    """
-    request = SelectRowsRequest(base_tile_details)
-    request.set_row_numbers(row_numbers)
-    call(cp_service.selectRows, request.build())
-
-
-def deselect_rows(base_tile_details, cp_service):
-    """
-    The method will deselect all selected rows like Esk button
-    """
-    request = DeselectRowsRequest(base_tile_details)
-    call(cp_service.deselectRows, request.build())
-
-
-def extract_rates_panel(base_tile_details, ar_service):
-    s = 'RatesTile0'
-    request = ExtractRatesTileDataRequest(base_tile_details)
-    request.set_extraction_id(f'{s}.extraction_id')
-    request.extract_instrument(f'{s}.instrument')
-    request.extract_quantity(f'{s}.quantity')
-    request.extract_tenor(f'{s}.tenor')
-    request.extract_best_bid(f'{s}.best_bid')
-    request.extract_best_bid_large(f'{s}.best_bid_large')
-    request.extract_best_bid_small(f'{s}.best_bid_small')
-    request.extract_best_ask(f'{s}.best_ask')
-    request.extract_best_ask_large(f'{s}.best_ask_large')
-    request.extract_best_ask_small(f'{s}.best_ask_small')
-    request.extract_spread(f'{s}.spread')
-    request.extract_instrument(f'{s}.spread')
-    request.extract_client_tier(f'{s}.spread')
-
-    result = call(ar_service.extractRatesTileValues, request.build())
-    print(result)
-    for k in result:
-        print(f'{k} = {result[k]}')
-
-
-def extract_order_ticket_values(base_tile_details, order_ticket_service):
-    """
-    function demonstrate what and how you can extract value from Forex Order Ticket
-    """
-    request = ExtractFxOrderTicketValuesRequest(base_tile_details)
-    ot = "OrderTicket"
-    request.get_instrument(f"{ot}.instrument")
-    request.get_price_large(f'{ot}.price_large')
-    request.get_price_pips(f'{ot}.price_pips')
-    request.get_tif(f'{ot}.tif')
-    request.get_order_type(f'{ot}.order_type')
-    request.get_quantity(f'{ot}.quantity')
-    request.get_slippage(f'{ot}.slippage')
-    request.get_stop_price(f'{ot}.stopprice')
-    request.get_client(f'{ot}.client')
-
-    result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
-    print(result)
-    for k in result:
-        print(f'{k} = {result[k]}')
-
-
-def extract_cp_rates_panel(base_tile_details, cp_service):
-    values = ExtractRatesTileValues(details= base_tile_details)
-
-    s = 'RatesTile0'
-    values.extract_instrument(f'{s}.instrument')
-    values.extract_client_tier(f'{s}.client_tier')
-
-    result =  call(cp_service.extractRateTileValues, values.build())
-    print(result)
-
-def extract_di_panel(base_request, dealer_intervention_servise ):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
-    extraction_request.extract_price_spread("rfqDetails.priceSpread")
-    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
-    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-    extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
-    extraction_request.extract_near_leg_quantity("rfqDetails.nerLegQty")
-    # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
-    extraction_request.extract_request_state("rfqDetails.requestState")
-    extraction_request.extract_request_side("rfqDetails.requestSide")
-    extraction_request.extract_button_text("rfqDetails.buttonText")
-
-    result = call(dealer_intervention_servise.getRFQDetails, extraction_request.build())
-    for R in result:
-        print(f'{R} = {result[R]}')
-
-
-def set_value_di_panel(base_request, dealer_interventions_service):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.set_quote_ttl("123")
-    modify_request.set_bid_large('999.')
-    modify_request.set_bid_small('999')
-    modify_request.set_ask_large('999.')
-    modify_request.set_ask_small('999')
-    modify_request.set_spread_step('999')
-    modify_request.click_is_hedged_chec_box()
-    # modify_request.increase_ask()
-    # modify_request.decrease_ask()
-    # modify_request.increase_bid()
-    # modify_request.decrease_bid()
-    # modify_request.narrow_spread()
-    # modify_request.widen_spread()
-    # modify_request.skew_towards_ask()
-    # modify_request.skew_towards_bid()
-    # modify_request.send()
-    # modify_request.reject()
-
-    call(dealer_interventions_service.modifyAssignedRFQ, modify_request.build())
-
-
 def execute(report_id):
     # region Preparation
-
+    # print('start time = ' + str(datetime.now()))
     common_act = Stubs.win_act
 
+    # Rules
+    rule_manager = rm.RuleManager()
+    # RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
+    # TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
+    # print_active_rules()
     case_name = Path(__file__).name[:-3]
     quote_owner = "kbrit"
     case_instr_type = "Spot"
@@ -480,19 +284,12 @@ def execute(report_id):
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()
-
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    base_tile_details = BaseTileData(base=base_request)
-    base_details = BaseTileDetails(base= base_request)
-
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
-    cp_service = Stubs.win_act_cp_service
+    base_tile_details = BaseTileDetails(base=base_request)
     option_service = Stubs.win_act_options
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-    dealer_interventions_service = Stubs.win_act_dealer_intervention_service
-
     # endregion
     Stubs.frontend_is_open = True
     if not Stubs.frontend_is_open:
@@ -505,7 +302,6 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
 
     try:
-
         # region FE workspace ↓
         # import_layout(base_request, option_service)
         # export_layout(base_request, option_service)
@@ -514,8 +310,6 @@ def execute(report_id):
         # region FE options ↓
         # get_default_fx_value(base_request, option_service)
         # set_order_ticket_options(option_service, base_request)
-        # set_order_ticket_options(option_service, base_request)
-        # set_one_click_mod(option_service, base_request)
         # endregion
 
         # region RFQ tile ↓
@@ -530,9 +324,6 @@ def execute(report_id):
         # region ESP tile ↓
         # create_or_get_rates_tile(base_tile_details, ar_service)
         # modify_rates_tile(base_request, ar_service, 'GBP', 'USD', 1000000, case_venue)
-        # extract_rfq_panel()
-        # extract_rfq_table_data()
-        # extract_rates_panel(base_tile_details, ar_service)
         # endregion
 
         # region My Orders ↓
@@ -543,25 +334,9 @@ def execute(report_id):
         # endregion
 
         # region OrderTicket
-        # place_fx_order(base_request,order_ticket_service)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
-        # extract_order_ticket_values(base_tile_details, order_ticket_service)
-        # close_fx_order(base_request,order_ticket_service);
+        set_fx_order_ticket_value(base_request)
         # endregion
 
-        # region ClientPricing
-        # extract_cp_rates_panel(base_details,cp_service)
-        # select_rows(base_tile_details, [1, 2, 4], cp_service)
-        # print('Sleeping')
-        # time.sleep(5)
-        # print('Deselecting')
-        # deselect_rows(base_tile_details,cp_service)
-        # endregion
-
-        # region Dealer Intervention
-        extract_di_panel(base_request, dealer_interventions_service)
-        # set_value_di_panel(base_request, dealer_interventions_service)
-        # endregion
         # close_fe_2(case_id, session_id)
 
     except Exception as e:

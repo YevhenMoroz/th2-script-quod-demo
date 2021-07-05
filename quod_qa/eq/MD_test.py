@@ -16,7 +16,7 @@ def execute(report_id):
     simulator = Stubs.simulator
 
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="515",
+        symbol="734",
         connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
     )).MDRefID
     mdir_params_bid = {
@@ -24,14 +24,14 @@ def execute(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
