@@ -105,10 +105,9 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-def execute(report_id):
+def execute(report_id, session_id):
     try:
         ob_act = Stubs.win_act_order_book
-        session_id = set_session_id()
 
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
@@ -265,16 +264,8 @@ def execute(report_id):
         }
 
         #set FE params
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
         child_ord_id1 = None
         child_ord_id2 = None
-
-        if not Stubs.frontend_is_open:
-            prepare_fe(case_id, session_id, work_dir, username, password)
-        else:
-            get_opened_fe(case_id, session_id, work_dir)
 
         order_info_extraction = "getOrderInfo"
 
