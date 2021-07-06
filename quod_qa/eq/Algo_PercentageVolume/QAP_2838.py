@@ -231,6 +231,7 @@ def order(ex_id, base_request, case_id):
 
     check_value(vr, "Events Count", "events.count", "4")
     call(act.verifyEntities, vr)
+    
 
     extraction_id = "getOrderAnalysisAlgoParameters"
 
