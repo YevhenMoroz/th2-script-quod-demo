@@ -98,7 +98,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-def order(ex_id, base_request, case_id):
+def order(base_request, case_id):
     caseid = bca.create_event('Send order via FIX', case_id)
     # Send_MarkerData
     fix_manager_310 = FixManager(connectivity_sell_side, caseid)
@@ -175,6 +175,8 @@ def order(ex_id, base_request, case_id):
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_3)
 
+    ex_id = "getOrderInfo"
+    
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
     ob = OrdersDetails()
@@ -268,7 +270,7 @@ def execute(report_id, session_id):
         set_base(session_id, case_id)
         base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
-        order("getOrderInfo", base_request, case_id)
+        order(base_request, case_id)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
