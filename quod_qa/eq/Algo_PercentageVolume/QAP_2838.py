@@ -166,6 +166,8 @@ def order(ex_id, base_request, case_id):
     fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
     fix_message_new_order_single.get_ClOrdID()
 
+    time.sleep(2)
+
     #region Modify order
     case_id_3 = bca.create_event("Modify Order", case_id)
     fix_modify_message = deepcopy(fix_message_new_order_single)
@@ -231,7 +233,7 @@ def order(ex_id, base_request, case_id):
 
     check_value(vr, "Events Count", "events.count", "4")
     call(act.verifyEntities, vr)
-    
+
 
     extraction_id = "getOrderAnalysisAlgoParameters"
 
