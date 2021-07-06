@@ -7,7 +7,6 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 
 # from rule_management import RuleManager
-# from quod_qa.fx import fix_demo, ui_tests
 
 from quod_qa.RET.Risk_Limits import QAP_4311, QAP_4314, QAP_4306, QAP_4291, QAP_4322, QAP_4300
 from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4307, QAP_4288, QAP_4282
