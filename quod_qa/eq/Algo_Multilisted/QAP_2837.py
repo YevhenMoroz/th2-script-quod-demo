@@ -37,7 +37,7 @@ report_id = None
 extraction_id = "getOrderAnalysisAlgoParameters"
 s_par = '1015'
 s_trqx = '3416'
-side = 2
+side = 1
 instrument = {
             'Symbol': 'FR0000121121_EUR',
             'SecurityID': 'FR0000121121',
@@ -170,6 +170,8 @@ def order(ex_id, base_request, case_id):
     fix_message_new_order_single.add_random_ClOrdID()
     fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
     fix_message_new_order_single.get_ClOrdID()
+    
+    time.sleep(2)
 
     #region Modify order
     case_id_3 = bca.create_event("Modify Order", case_id)
@@ -213,14 +215,14 @@ def order(ex_id, base_request, case_id):
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check algo order")
-    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
+    verifier.compare_values('Qty', str(dec_qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Open', response[ob_sts.name])
     verifier.compare_values('LmtPrice', str(price), response[ob_limit_price.name])
     verifier.verify()
 
     verifier.set_event_name("Check child order")
     verifier.compare_values('Qty', str(dec_qty), response[sub_order_qty.name].replace(",", ""))
-    verifier.compare_values('Sts', 'Cancelled', response[sub_order_status.name])
+    verifier.compare_values('Sts', 'Open', response[sub_order_status.name])
     verifier.compare_values('LmtPrice', str(price), response[sub_order_price.name])
     verifier.verify()
 
@@ -234,7 +236,7 @@ def order(ex_id, base_request, case_id):
     check_value(vr, "Event 1 Description contains", "event1.desc", "New User's Synthetic Order Received",
                     VerificationDetails.VerificationMethod.CONTAINS)
 
-    check_value(vr, "Events Count", "events.count", "4")
+    check_value(vr, "Events Count", "events.count", "10")
     call(act.verifyEntities, vr)
 
 
