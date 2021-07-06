@@ -1,3 +1,5 @@
+import os
+
 import logging
 
 from datetime import datetime
@@ -17,7 +19,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP_4307"
+    case_name = os.path.basename(__file__)
 
     seconds, nanos = timestamps()  # Store case start time
 

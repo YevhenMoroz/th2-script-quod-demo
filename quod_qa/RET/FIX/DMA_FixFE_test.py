@@ -1,3 +1,5 @@
+import os
+
 import logging
 
 from datetime import datetime
@@ -16,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id):
-    case_name = "DMA_FixFE_test"
+    case_name = os.path.basename(__file__)
     case_id = create_event(case_name, report_id)
 
     seconds, nanos = timestamps()  # Store case start time
