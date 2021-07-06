@@ -43,12 +43,13 @@ leg2_settldate = tsd.wk1()
 
 defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 defaultmdsymbol_fwr='EUR/USD:FXF:WK1:HSBC'
-bid_px_expected='1.1959203'
-offer_px_expected='1.1961401'
-bid_forward_points='-0.0000497'
-offer_forward_points='0.0000501'
-bid_spot_rate='1.19597'
-offer_spot_rate='1.19609'
+
+offer_swap_p_ex='0.0000101'
+bid_swap_p_ex='-0.0000097'
+bid_px_expected='-0.0000097'
+offer_px_expected='0.0000101'
+
+
 
 
 
@@ -56,27 +57,29 @@ def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
-        #Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=leg1_securitytype,
+        # Precondition
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=leg1_settldate, settldate=settldate, symbol=symbol, securitytype=leg1_securitytype,
                                            securityid=securityid,currency=currency, settlcurrency=settlcurrency)).\
             send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype_spo)).send_market_data_spot()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_fwr, symbol, securitytype_fwd)).send_market_data_fwd()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, leg1_securitytype)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_fwr, symbol, leg2_securitytype)).send_market_data_fwd()
 
         # Step 1-2
-        params = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=orderqty,leg1_ordqty=leg1_ordqty,leg2_ordqty=leg2_ordqty,
-                                   currency=currency,settlcurrency=settlcurrency,
-                                   leg1_settltype=leg1_settltype,leg2_settltype=leg2_settltype,
-                                   settldate=settldate, leg1_settldate=leg1_settldate, leg2_settldate=leg2_settldate,
-                                   symbol=symbol, leg1_symbol=leg1_symbol, leg2_symbol=leg2_symbol,
-                                   securitytype=securitytype_swap, leg1_securitytype=leg1_securitytype, leg2_securitytype=leg2_securitytype,
-                                   securityid=securityid, account=account)
-
-        rfq_swap = FixClientSellRfq(params)
-        rfq_swap.send_request_for_quote_swap()
-        rfq_swap.verify_quote_pending_swap()
-        rfq_swap.send_new_order_multi_leg()
+        # params = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
+        #                            orderqty=orderqty,leg1_ordqty=leg1_ordqty,leg2_ordqty=leg2_ordqty,
+        #                            currency=currency,settlcurrency=settlcurrency,
+        #                            leg1_settltype=leg1_settltype,leg2_settltype=leg2_settltype,
+        #                            settldate=settldate, leg1_settldate=leg1_settldate, leg2_settldate=leg2_settldate,
+        #                            symbol=symbol, leg1_symbol=leg1_symbol, leg2_symbol=leg2_symbol,
+        #                            securitytype=securitytype_swap, leg1_securitytype=leg1_securitytype, leg2_securitytype=leg2_securitytype,
+        #                            securityid=securityid, account=account)
+        #
+        # rfq_swap = FixClientSellRfq(params)
+        # rfq_swap.send_request_for_quote_swap()
+        # rfq_swap.verify_quote_pending_swap(offer_size=orderqty, bid_size=orderqty, offer_swap_points=offer_swap_p_ex,bid_swap_points=bid_swap_p_ex, offer_px=offer_px_expected,
+        #                                    bid_px=bid_px_expected, leg_of_fwd_p=offer_swap_p_ex, leg_bid_fwd_p=bid_swap_p_ex)
+        # rfq_swap.send_new_order_multi_leg().verify_order_pending_swap()
+        # rfq_swap.verify_order_filled()
 
 
 

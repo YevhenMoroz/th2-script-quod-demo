@@ -174,11 +174,31 @@ class FixClientSellRfq():
         )
         return self
 
-    def verify_quote_pending_swap(self,offer_swap_points='',bid_swap_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''):
+    def verify_quote_pending_swap(self,offer_swap_points='',bid_swap_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''
+                                  , leg_of_fwd_p='', leg_bid_fwd_p=''):
         self.case_params_sell_rfq.prepare_quote_report_swap()
         self.quote_id=self.extruct_filed('QuoteID')
         self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap['QuoteMsgID'] = self.quote_id
+        self.case_params_sell_rfq.quote_params_swap.pop('Account')
+        if leg_of_fwd_p!='':
+            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegOfferForwardPoints'] =leg_of_fwd_p
+        if leg_bid_fwd_p!='':
+            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegBidForwardPoints'] =leg_bid_fwd_p
+        if bid_size!='':
+            self.case_params_sell_rfq.quote_params_swap['BidSize'] =bid_size
+        if offer_size!='':
+            self.case_params_sell_rfq.quote_params_swap['OfferSize'] =offer_size
+        if offer_swap_points!='':
+            self.case_params_sell_rfq.quote_params_swap['OfferSwapPoints'] =offer_swap_points
+        if bid_swap_points!='':
+            self.case_params_sell_rfq.quote_params_swap['BidSwapPoints'] =bid_swap_points
+        if offer_px!='':
+            self.case_params_sell_rfq.quote_params_swap['OfferPx'] =offer_px
+        if bid_px!='':
+            self.case_params_sell_rfq.quote_params_swap['BidPx'] =bid_px
+
+
         # self.case_params_sell_rfq.quote_params_swap['SettlType'] = '*'
         # self.case_params_sell_rfq.quote_params['SettlDate'] = '*'
         # if 'Side' in self.case_params_sell_rfq.quote_params_swap.keys() == False:
@@ -225,6 +245,32 @@ class FixClientSellRfq():
             'OrderID'].simple_value
         if side!='':
             self.case_params_sell_rfq.order_pending['Side'] = side
+
+        print('pending',self.case_params_sell_rfq.order_pending)
+        self.checkpoint = self.new_order.checkpoint_id
+        self.verifier.submitCheckRule(
+            request=bca.create_check_rule(
+                'Execution Report with OrdStatus = Pending',
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending, ['ClOrdID', 'OrdStatus']),
+                self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
+            ),
+            timeout=3000
+        )
+        return self
+
+    def verify_order_pending_swap(self, price='', qty='',side=''):
+        self.case_params_sell_rfq.prepare_order_pending_report()
+        self.case_params_sell_rfq.order_pending.pop('Price')
+        if qty != '':
+            self.case_params_sell_rfq.order_pending['OrderQty'] = qty
+            self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
+            self.case_params_sell_rfq.order_pending['OrderID'] = self.new_order.response_messages_list[0].fields[
+            'OrderID'].simple_value
+        self.case_params_sell_rfq.order_pending['Side'] = self.case_params_sell_rfq.leg2_side
+        # if 'Side' in self.case_params_sell_rfq.quote_params_swap.keys():
+        #     pass
+        # if side!='':
+        #     self.case_params_sell_rfq.order_pending['Side'] = side
 
         print('pending',self.case_params_sell_rfq.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
@@ -298,6 +344,7 @@ class FixClientSellRfq():
         if side!='':
             self.case_params_sell_rfq.order_filled['Side'] = side
 
+        print('Filled',self.case_params_sell_rfq.order_filled)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled FORWARD',
