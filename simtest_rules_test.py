@@ -13,18 +13,8 @@ simulator = Stubs.test_sim
 
 coreTest = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
-# OCR = simulator.createQuodOCRRule(
-#     request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-
 # get rules
 running_rules = coreTest.getRulesInfo(request=Empty()).info
-
-
-# # remove rule
-# for r in running_rules:
-#     if r.id.id not in [1, 2]:
-#         core.removeRule(RuleID(id=1))
-# coreTest.removeRule(RuleID(id=1))
 
 print(f'Rules running(test_sim) :{len(running_rules)}')
 active_rules = dict()
@@ -32,8 +22,12 @@ for rule in running_rules:
     active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
 for key, value in active_rules.items():
     print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
-#
 
+# # remove rule
+# for r in running_rules:
+#     if r.id.id not in [1, 2]:
+#         core.removeRule(RuleID(id=1))
+# coreTest.removeRule(RuleID(id=1))
 # Stubs.test_sim.cre(request= TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
 
 

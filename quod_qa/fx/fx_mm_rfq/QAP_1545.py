@@ -107,7 +107,7 @@ def clear_filters(base_request, service):
     base_data.set_row_number(1)
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_request.set_clear_flag()
-    call(service.getAssignedRFQDetails, extraction_request.build())
+    # call(service.getAssignedRFQDetails, extraction_request.build())
     call(service.getUnassignedRFQDetails, extraction_request.build())
 
 
@@ -118,12 +118,11 @@ def clear_prices(base_request, service):
     call(service.modifyAssignedRFQ, modify_request.build())
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params,session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -140,13 +139,12 @@ def execute(report_id, case_params):
             },
         'SettlDate': tsd.spo(),
         'SettlType': '0',
-        'OrderQty': '21050000'
+        'OrderQty': '58000000'
         }
 
     try:
         send_rfq(reusable_params, ttl, case_params, case_id, act)
 
-        prepare_fe(case_id, session_id)
 
         extract_unassigned_grid(base_request, service, reusable_params['OrderQty'])
 
