@@ -1,5 +1,6 @@
 import os
 import logging
+import math
 from custom import basic_custom_actions as bca
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction, CancelOrderDetails
 from win_gui_modules.wrappers import *
@@ -20,9 +21,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 qty = 1000
-child_qty_1 = 86
-child_qty_2 = 43
-child_qty_3 = 67
+start_ltq = 200
+oo_qty = 60  #open order
+percentage = 30
+ioc_qty = 40
+ltq_child_qty = math.ceil((percentage * start_ltq) / (100 - percentage))
+md_child_qty = math.ceil((percentage * oo_qty) / (100 - percentage))
+MDEntrySize = 52
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
@@ -33,6 +38,7 @@ text_s = 'sim work'
 side = 1
 price = 1
 tif_day = 0
+tif_ioc = 3
 ex_destination = "XPAR"
 client = "CLIENT2"
 order_type = 'Limit'
@@ -51,9 +57,10 @@ report_id = None
 def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination, price)
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination, True)
-    ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
-    return [nos_rule, ocr_rule, ocrr_rule]
+    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination, True)
+    nos_trade_by_qty_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination, price, price, 86, oo_qty, 0)
+    nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination, False, 40, price)
+    return [nos_rule, nos_trade_by_qty_rule, ocr_rule, nos_ioc_ltq_rule]
 
 def rule_destroyer(list_rules):
     rule_manager = RuleManager()
@@ -105,7 +112,7 @@ def order(base_request, case_id):
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
                 'MDEntryPx': '1',
-                'MDEntrySize': '200',
+                'MDEntrySize': start_ltq,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
             }
@@ -121,8 +128,8 @@ def order(base_request, case_id):
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': oo_qty,
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -150,11 +157,23 @@ def order(base_request, case_id):
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
 
-        market_data3 = [
+        market_data4 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '1',
+                'MDEntrySize': oo_qty,
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+        send_market_dataT(s_par, case_id_0, market_data4)
+
+        market_data5 = [
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': '186',
+                'MDEntrySize': '52',   
                 'MDEntryPositionNo': '1'
             },
             {
@@ -164,7 +183,23 @@ def order(base_request, case_id):
                 'MDEntryPositionNo': '1'
             }
         ]
-        send_market_data(s_par, case_id_0, market_data3)
+        send_market_data(s_par, case_id_0, market_data5)
+
+        market_data15 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '52',   
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data15)
 
         time.sleep(3)
 
@@ -193,7 +228,7 @@ def order(base_request, case_id):
 
         order_amend = OrderTicketDetails()
         vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
-        vol_stategy.set_percentage_volume('40')
+        vol_stategy.set_aggressivity('Aggressive')
 
         amend_order_details = ModifyOrderDetails()
         amend_order_details.set_default_params(base_request)
@@ -203,11 +238,23 @@ def order(base_request, case_id):
         
         case_id_1 = bca.create_event("Send Market Data", case_id)
 
-        market_data4 = [
+        market_data6 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '1',
+                'MDEntrySize': oo_qty,
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+        send_market_dataT(s_par, case_id_1, market_data6)
+
+        market_data7 = [
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': '100',
+                'MDEntrySize': '26',
                 'MDEntryPositionNo': '1'
             },
             {
@@ -217,29 +264,18 @@ def order(base_request, case_id):
                 'MDEntryPositionNo': '1'
             }
         ]
-        send_market_data(s_par, case_id_1, market_data4)
+        send_market_data(s_par, case_id_1, market_data7)
+        time.sleep(1)
+        after_order_details_id = "afterParsitipationAlgo_order_details"     
 
-        market_data5 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '100',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_1, market_data5)
+        sub_order1_qty = ExtractionDetail("subOrder1.tif", "TIF")
+    
+        sub_order2_qty = ExtractionDetail("subOrder2.tif", "TIF")
 
-        after_order_details_id = "afterTWAPAlgo_order_details"     
+        sub_order3_qty = ExtractionDetail("subOrder3.tif", "TIF")
 
-        sub_order1_qty = ExtractionDetail("subOrder1.qty", "Qty")
-        sub_order2_qty = ExtractionDetail("subOrder2.qty", "Qty")
-        sub_order3_qty = ExtractionDetail("subOrder3.qty", "Qty")
+        sub_order4_qty = ExtractionDetail("subOrder4.tif", "TIF")
+
 
         sub_order_details = OrdersDetails()
         sub_order_details.add_single_order_info(OrderInfo.create(
@@ -248,6 +284,8 @@ def order(base_request, case_id):
             action=ExtractionAction.create_extraction_action(extraction_detail=sub_order2_qty)))
         sub_order_details.add_single_order_info(OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_detail=sub_order3_qty)))
+        sub_order_details.add_single_order_info(OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order4_qty)))
             
         length_name = "subOrders.length"
         sub_order_details.extract_length(length_name)
@@ -263,10 +301,11 @@ def order(base_request, case_id):
         call(ob_act.getOrdersDetails, main_order_details.request())
 
         call(act.verifyEntities, verification(after_order_details_id, "checking child orders",
-                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, str(child_qty_1)),
-                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, str(child_qty_2)),
-                                                      verify_ent("Sub order 3 qty", sub_order3_qty.name, str(child_qty_3)),
-                                                      verify_ent("Sub order count", length_name, "3")]))
+                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, 'Day'),
+                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, 'Day'),
+                                                      verify_ent("Sub order 3 qty", sub_order3_qty.name, 'ImmediateOrCancel'),
+                                                      verify_ent("Sub order 4 qty", sub_order4_qty.name, 'Day'),
+                                                      verify_ent("Sub order count", length_name, "4")]))
 
         cancel_order_details = CancelOrderDetails()
         cancel_order_details.set_default_params(base_request)
