@@ -22,7 +22,7 @@ class FixClientSellRfq():
     # Send RFQ
     def send_request_for_quote(self):
         self.case_params_sell_rfq.prepare_rfq_params()
-        print('RFQ' , self.case_params_sell_rfq.rfq_params)
+        print('RFQ', self.case_params_sell_rfq.rfq_params)
         self.quote = self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Request For Quote',

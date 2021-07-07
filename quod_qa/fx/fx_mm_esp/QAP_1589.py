@@ -8,6 +8,7 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.order_book_wrappers import ExtractionDetail
+from datetime import datetime, timedelta
 
 
 def create_or_get_rates_tile(base_request, service):
@@ -85,6 +86,7 @@ def check_margins(case_id, initial_margin, changed_margin, live_margin, live_off
 
 
 def execute(report_id, session_id):
+    start = datetime.now()
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
@@ -92,7 +94,7 @@ def execute(report_id, session_id):
 
     cp_service = Stubs.win_act_cp_service
 
-    case_base_request = get_base_request(session_id, case_id)
+    case_base_request = get_base_request(session_id=session_id, event_id=case_id)
     base_details = BaseTileDetails(base=case_base_request)
 
     instrument = "EUR/USD-Spot"
@@ -100,11 +102,6 @@ def execute(report_id, session_id):
     pips = "50"
 
     try:
-
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
 
         # Step 1
 
@@ -144,7 +141,7 @@ def execute(report_id, session_id):
     finally:
         try:
             # Close tile
+            print(f'{case_name} duration time = ' + str(datetime.now() - start))
             call(cp_service.closeRatesTile, base_details.build())
-
         except Exception:
             logging.error("Error execution", exc_info=True)

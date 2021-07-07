@@ -13,14 +13,18 @@ from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, 
                                                           ExtractionDetailsRequest, RFQExtractionDetailsRequest
                                                           )
 from win_gui_modules.common_wrappers import BaseTileDetails
+from th2_grpc_act_gui_quod import dealer_intervention_operations_pb2
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
+# Quote request params
 client = 'Palladium1'
 settltype = '0'
 symbol = 'EUR/USD'
@@ -39,9 +43,7 @@ def extract_from_unassigned(base_request, service, qty, row=1):
         base_data.set_filter_dict({"Status": "New"})
         base_data.set_filter_dict({"Qty": str(qty)})
         base_data.set_row_number(row)
-
         extraction_request = ExtractionDetailsRequest(base_data)
-        extraction_request.set_extraction_id("ExtractionId")
         extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Id", "Id")])
         extraction_request.add_extraction_details([ExtractionDetail('dealerIntervention.AutomaticQuoting', 'AutomaticQuoting')])
         result = call(service.getUnassignedRFQDetails, extraction_request.build())
@@ -85,7 +87,17 @@ def verify_results(case_id, di_extraction, qrb_extraction):
     verifier.verify()
 
 
+def clear_filters(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    base_data.set_row_number(1)
+    extraction_request = ExtractionDetailsRequest(base_data)
+    extraction_request.set_clear_flag(True)
+    # service.getUnassignedRFQDetails(extraction_request.build())
+    call(service.getUnassignedRFQDetails, extraction_request.build())
+
+
 def execute(report_id, session_id):
+    start = datetime.now()
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
@@ -94,7 +106,7 @@ def execute(report_id, session_id):
     di_service = Stubs.win_act_dealer_intervention_service
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    base_request = get_base_request(session_id, case_id)
+    base_request = get_base_request(session_id=session_id, event_id=case_id)
     base_details = BaseTileDetails(base=base_request)
 
     act = Stubs.fix_act
@@ -103,15 +115,9 @@ def execute(report_id, session_id):
     seconds, nanos = bca.timestamps()  # Store case start time
 
     ttl = 180
-    # print(tsd.spo())
     try:
+        # Step 1
 
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
-
-        # Step 1-2
         params = CaseParamsSellRfq(
             client, case_id, side=side,
             orderqty=orderqty, symbol=symbol, securitytype=securitytype,
@@ -119,14 +125,17 @@ def execute(report_id, session_id):
         )
         params.prepare_rfq_params()
         FixClientSellRfq(params).send_request_for_quote()
-        unassigned_extraction = extract_from_unassigned(base_request, di_service, orderqty)
+
+        # Step 2
         qrb_extraction = extract_from_quote_request_book(base_request, ar_service, orderqty)
-        # print(f'{unassigned_extraction}\n{qrb_extraction}')
+        unassigned_extraction = extract_from_unassigned(base_request, di_service, orderqty)
+        clear_filters(base_request, di_service)
+        # Step 3
         verify_results(case_id, unassigned_extraction, qrb_extraction)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         try:
-            pass
+            print(f'{case_name} duration time = ' + str(datetime.now() - start))
         except Exception:
             logging.error("Error execution", exc_info=True)
