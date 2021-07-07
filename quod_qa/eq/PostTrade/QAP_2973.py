@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-2973"
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -23,42 +23,35 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # # endregion
-    # # region Create CO
+    #  endregion
+    #  region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-eq-paris',
-                                                                             'MOClient_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-eq-paris', 'MOClient_PARIS', 'XPAR', 3,
-                                                                      800, 1)
-        time.sleep(5)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', "XPAR", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR', float(price), int(qty), 1)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 1, price)
+        time.sleep(1)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
     # endregion
-    # eq_wrappers.accept_order("VETO", qty, price)
-    # eq_wrappers.manual_execution(base_request, qty, price)
-    # eq_wrappers.complete_order(base_request)
     # region verify order
     eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
     eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
-    # # endregion
-    #
-    # # region Book
+    #  endregion
+    #  region Book
     response_book = eq_wrappers.book_order(base_request, client, price, settlement_currency='UAH', exchange_rate='2',
                                            exchange_rate_calc='Multiple', toggle_recompute=True)
-    print(response_book)
     # endregion
-    time.sleep(10)
     # region Verify
     params = {
         'Quantity': qty,
@@ -96,16 +89,15 @@ def execute(report_id):
         'RootCommTypeClCommBasis': '*'
 
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
     # endregion
     # region aprrove block
     eq_wrappers.approve_block(base_request)
     # endregion
+    # region Verify
     param = [{"Security Account": "MOClientSA1", "Alloc Qty": qty}]
     responce_allocation = eq_wrappers.allocate_order(base_request, param)
-    print(responce_allocation)
-    time.sleep(1)
     params = {
         # 'Quantity': qty,
         'TradeDate': '*',
@@ -147,9 +139,8 @@ def execute(report_id):
         'SettlCurrFxRate': '2',
         'SettlCurrFxRateCalc': 'M',
         'SettlCurrency': 'UAH',
-        'SettlCurrAmt': str(int(float(responce_allocation['book.netAmount'].replace(',', '')) * 2)).replace(',', '')
+        'SettlCurrAmt': "*"
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
 
     params = {
@@ -215,5 +206,5 @@ def execute(report_id):
         'RootSettlCurrFxRate': '2',
         'RootSettlCurrFxRateCalc': 'M'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
+    # endregion

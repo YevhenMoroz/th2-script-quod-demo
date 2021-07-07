@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-2697"
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -23,27 +23,35 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # # endregion
-    # # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
-    response = fix_message.pop('response')
     # endregion
-    eq_wrappers.accept_order("VETO", qty, price)
-    eq_wrappers.manual_execution(base_request, qty, price)
-    eq_wrappers.complete_order(base_request)
+    # region Create CO
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR',
+                                                                      int(price), int(qty), 1)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client + "_PARIS", 2, qty, 0, price)
+        response = fix_message.pop('response')
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    finally:
+        time.sleep(1)
+        rule_manager.remove_rule(nos_rule)
+        rule_manager.remove_rule(nos_rule2)
+    # endregion
     # region verify order
     eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
     eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'Booked', False)
-    # # endregion
-    #
-    # # region Book
     # endregion
-    time.sleep(10)
+    # region Book
+    eq_wrappers
+    # endregion
     # region Verify
     params = {
         'Quantity': qty,
@@ -85,7 +93,6 @@ def execute(report_id):
     # endregion
     param = [{"Security Account": "MO_client_SA1", "Alloc Qty": qty}]
     eq_wrappers.allocate_order(base_request, param)
-    time.sleep(10)
     params = {
         # 'Quantity': qty,
         'TradeDate': '*',
@@ -174,11 +181,7 @@ def execute(report_id):
                     }
                 ]
             }
-        ],
-
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'RootCommTypeClCommBasis': '*'
-
+        ]
     }
     fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
