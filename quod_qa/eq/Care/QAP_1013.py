@@ -23,7 +23,7 @@ def execute(report_id):
     price = "20"
     client = "CLIENT1"
     time = datetime.utcnow().isoformat()
-    lookup = "PAR"
+    lookup = "VETO"
     order_type = "Limit"
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
@@ -31,13 +31,13 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    #desk = Stubs.custom_config['qf_trading_fe_user_desk']
+    desk = Stubs.custom_config['qf_trading_fe_user_desk']
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, price=price)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient='vskulinec', price=price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"

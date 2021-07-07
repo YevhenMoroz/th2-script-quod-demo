@@ -47,8 +47,8 @@ def execute(report_id):
     eq_wrappers.manual_cross_orders(base_request, '100000', price, (1, 2), last_mkt)
     # endregion
     # region check order1
-    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled')
-    eq_wrappers.verify_value(base_request, case_id, 'Qty', '800')
+    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '800')
     # endregion
     order_info_extraction_cancel = "getOrderInfo_cancelled"
     main_order_details = OrdersDetails()
@@ -57,6 +57,6 @@ def execute(report_id):
     main_order_details.set_filter(["Order ID", order_id2])
     call(act.getOrdersDetails, main_order_details.request())
     # region check order2
-    eq_wrappers.verify_value(base_request, case_id, 'ExecSts', 'Filled')
-    eq_wrappers.verify_value(base_request, case_id, 'Qty', '800')
+    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '800')
     # endregion

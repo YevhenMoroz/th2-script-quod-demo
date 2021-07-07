@@ -34,8 +34,8 @@ def execute(report_id):
     newQty = "100"
     price = "40"
     newPrice = "1"
-    lookup = "PROL"
-    client = "CLIENTSKYLPTOR"
+    lookup = "VETO"
+    client = "CLIENTYMOROZ"
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE
@@ -46,24 +46,23 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    #eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     param_list = {'Price': newPrice}
     # region ManualExecute
-    eq_wrappers.manual_execution(base_request, str(int(qty)), price)
-    response = fix_message.pop('response')
+    #eq_wrappers.manual_execution(base_request, str(int(qty)), price)
+    #response = fix_message.pop('response')
     # print(fix_message['Price'])
     # Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    eq_wrappers.amend_order_via_fix( case_id,fix_message, param_list)
     # endregion
-    print(fix_message['Price'])
+    print(param_list['Price'])
     # region accept amend
-    eq_wrappers.accept_modify(lookup, qty, price)
+    #eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
-    time.sleep(1)
     # Check on ss
     # print(eq_wrappers.get_order_id(base_request))
     # print(fix_message['ClOrdID'])
@@ -75,6 +74,7 @@ def execute(report_id):
     #     'ClOrdID': fix_message['ClOrdID']
     # }
     # fix_verifier_ss.CheckNewOrderSingle(er_params_new, response, key_parameters=['ClOrdID'])
+    '''
     params = {
         'ExecType': 'F',
         'OrdStatus': '1',
@@ -86,3 +86,4 @@ def execute(report_id):
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
+    '''
