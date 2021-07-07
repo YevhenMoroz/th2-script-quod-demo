@@ -68,7 +68,7 @@ class TestCase:
         res = ''
         for x in range(len(string['bandsTable'])):
             if string['bandsTable'][x] == '#':
-                for y in range(0, 6):
+                for y in range(0, 7):
                     res += string['bandsTable'][x + y]
                 res += ','
         list = res.split(',')
