@@ -1,6 +1,6 @@
 from custom.basic_custom_actions import timestamps
 from quod_qa.eq.PostTrade import QAP_2614, QAP_2615, QAP_2697, QAP_2700, QAP_3338, QAP_3342, QAP_3343, QAP_3349, \
-    QAP_3770
+    QAP_3770, QAP_3333
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -24,6 +24,7 @@ def test_run(parent_id=None):
         QAP_2615.execute(report_id, session_id)
         QAP_2697.execute(report_id, session_id)
         QAP_2700.execute(report_id, session_id)
+        QAP_3333.execute(report_id, session_id)
         QAP_3338.execute(report_id, session_id)
         QAP_3342.execute(report_id, session_id)
         QAP_3343.execute(report_id, session_id)
