@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_esp import QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034, QAP_2075, \
     QAP_1601, QAP_2039, QAP_2035, QAP_1418, QAP_2556, QAP_2117, QAP_2855, QAP_3563, QAP_2069, QAP_2646, QAP_2587, \
     QAP_2796, QAP_1536, QAP_2037, QAP_2072, QAP_2523, QAP_3045, QAP_1511, QAP_1589  # , QAP_1560
-from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055, QAP_1545
+from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055
 from quod_qa.fx.fx_taker_esp import QAP_4156, QAP_833, QAP_1115, QAP_110, QAP_231, QAP_3042, QAP_3364, QAP_105
 from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
     QAP_573, QAP_574, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, \
@@ -38,116 +38,7 @@ def test_run():
         'TargetCompID': 'QUOD5',
     }
 
-    def acceptance_rfq_taker(report_id, session_id):
-        QAP_568.execute(report_id, session_id)
-        QAP_569.execute(report_id, session_id)
-        QAP_574.execute(report_id, session_id)
-        QAP_2826.execute(report_id, session_id)
-        QAP_2835.execute(report_id, session_id)
-        QAP_2847.execute(report_id, session_id)
 
-    def rfq_taker(report_id, session_id):
-        QAP_6.execute(report_id, session_id)
-        QAP_564.execute(report_id, session_id)
-        QAP_565.execute(report_id, session_id)
-        QAP_566.execute(report_id, session_id)
-        QAP_567.execute(report_id, session_id)
-        QAP_568.execute(report_id, session_id)
-        QAP_569.execute(report_id, session_id)
-        QAP_570.execute(report_id, session_id)
-        QAP_571.execute(report_id, session_id)
-        QAP_573.execute(report_id, session_id)
-        QAP_574.execute(report_id, session_id)
-        # QAP_575.execute(report_id, session_id)
-        QAP_576.execute(report_id, session_id)
-        QAP_577.execute(report_id, session_id)
-        QAP_578.execute(report_id, session_id)
-        QAP_579.execute(report_id, session_id)
-        QAP_580.execute(report_id, session_id)
-        QAP_581.execute(report_id, session_id)
-        QAP_582.execute(report_id, session_id)
-        QAP_584.execute(report_id, session_id)
-        QAP_585.execute(report_id, session_id)
-        QAP_587.execute(report_id, session_id)
-        QAP_589.execute(report_id, session_id)
-        QAP_590.execute(report_id, session_id)
-        QAP_591.execute(report_id, session_id)
-        # QAP_592.execute(report_id, session_id)
-        QAP_593.execute(report_id, session_id)
-        QAP_594.execute(report_id, session_id)
-        QAP_595.execute(report_id, session_id)
-        QAP_597.execute(report_id, session_id)
-        QAP_598.execute(report_id, session_id)
-        QAP_599.execute(report_id, session_id)
-        QAP_600.execute(report_id, session_id)
-        QAP_601.execute(report_id, session_id)
-        QAP_602.execute(report_id, session_id)
-        QAP_604.execute(report_id, session_id)
-        QAP_605.execute(report_id, session_id)
-        QAP_606.execute(report_id, session_id)
-        QAP_609.execute(report_id, session_id)
-        QAP_610.execute(report_id, session_id)
-        QAP_611.execute(report_id, session_id)
-        QAP_612.execute(report_id, session_id)
-        QAP_636.execute(report_id, session_id)
-        QAP_643.execute(report_id, session_id)
-        QAP_645.execute(report_id, session_id)
-        QAP_646.execute(report_id, session_id)
-        QAP_648.execute(report_id, session_id)
-        QAP_683.execute(report_id, session_id)
-        QAP_687.execute(report_id, session_id)
-        QAP_702.execute(report_id, session_id)
-        QAP_708.execute(report_id, session_id)
-        QAP_709.execute(report_id, session_id)
-        QAP_710.execute(report_id, session_id)
-        QAP_714.execute(report_id, session_id)
-        QAP_718.execute(report_id, session_id)
-        QAP_741.execute(report_id, session_id)
-        QAP_751.execute(report_id, session_id)
-        QAP_842.execute(report_id, session_id)
-        QAP_847.execute(report_id, session_id)
-        QAP_848.execute(report_id, session_id)
-        QAP_849.execute(report_id, session_id)
-        QAP_850.execute(report_id, session_id)
-        QAP_982.execute(report_id, session_id)
-        QAP_992.execute(report_id, session_id)
-        QAP_1585.execute(report_id, session_id)
-        QAP_1713.execute(report_id, session_id)
-        QAP_2419.execute(report_id, session_id)
-        QAP_2514.execute(report_id, session_id)
-        QAP_2728.execute(report_id, session_id)
-        QAP_2729.execute(report_id, session_id)
-        QAP_2774.execute(report_id, session_id)
-        QAP_2826.execute(report_id, session_id)
-        QAP_2835.execute(report_id, session_id)
-        QAP_2847.execute(report_id, session_id)
-        QAP_3589.execute(report_id, session_id)
-
-    def mm_esp_plus_fe(report_id, session_id):
-        QAP_1418.execute(report_id, session_id)
-        QAP_1536.execute(report_id, session_id)
-        QAP_1560.execute(report_id, session_id)
-        QAP_1599.execute(report_id, session_id)
-        QAP_1601.execute(report_id, session_id)
-        QAP_2034.execute(report_id, session_id)
-        QAP_2035.execute(report_id, session_id)
-        QAP_2037.execute(report_id, session_id)
-        QAP_2038.execute(report_id, session_id)
-        QAP_2039.execute(report_id, session_id)
-        QAP_2069.execute(report_id, session_id)
-        QAP_2072.execute(report_id, session_id)
-        QAP_2075.execute(report_id, session_id)
-        QAP_2117.execute(report_id, session_id)
-        QAP_2523.execute(report_id, session_id)
-        QAP_2555.execute(report_id, session_id)
-        QAP_2556.execute(report_id, session_id)
-        QAP_2587.execute(report_id, session_id)
-        QAP_2646.execute(report_id, session_id)
-        QAP_2796.execute(report_id, session_id)
-        QAP_2825.execute(report_id, session_id)
-        QAP_2855.execute(report_id, session_id)
-        QAP_3045.execute(report_id, session_id)
-        QAP_3563.execute(report_id, session_id)
 
     try:
         start = datetime.now()
@@ -160,17 +51,7 @@ def test_run():
         else:
             get_opened_fe(report_id, session_id)
 
-        # region Acceptance list RFQ Taker
-        # acceptance_rfq_taker(report_id, session_id)
-        # endregion
 
-        # region Regression
-        # rfq_taker(report_id, session_id)
-        # endregion
-
-        # region fx_mm_esp+fe
-        # mm_esp_plus_fe(report_id, session_id)
-        # endregion
 
         # QAP_105.execute(report_id, session_id)
         # QAP_1511.execute(report_id, session_id)
@@ -178,9 +59,11 @@ def test_run():
         # QAP_2055.execute(report_id, session_id)
         Test.execute(report_id, session_id)
         print('duration time = ' + str(datetime.now() - start))
-        Stubs.win_act.unregister(session_id)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':

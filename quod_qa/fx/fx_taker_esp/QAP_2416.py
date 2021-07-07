@@ -102,10 +102,6 @@ def execute(report_id, session_id):
     owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1-2
         set_order_ticket_options(case_base_request, option_service, client)
         # Step 3

@@ -17,10 +17,11 @@ settltype = 'W1'
 side ='1'
 symbol = 'USD/PHP'
 currency = 'USD'
-securitytype = 'FXFWD'
+settlcurrency = 'PHP'
+securitytype = 'FXNDF'
 securityidsource = '8'
 orderqty = '1000000'
-securityid = 'EUR/USD'
+securityid = 'USD/PHP'
 settldate = (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
 
 
@@ -33,20 +34,20 @@ def execute(report_id):
 
         # Step 1-2
         params = CaseParamsSellRfq(client, case_id, orderqty=orderqty, side=side, symbol=symbol,securitytype=securitytype,settldate=settldate,
-                                   settltype=settltype, currency=currency,account=account)
+                                   settltype=settltype, currency=currency, settlcurrency=settlcurrency, account=account,securityid=securityid)
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
         rfq.verify_quote_pending()
 
-        # Step 3-4
+        # # Step 3-4
         offer_px = rfq.extruct_filed('OfferPx')
         last_spot_rate = rfq.extruct_filed('OfferSpotRate')
         last_frw_points = rfq.extruct_filed('OfferForwardPoints')
-        rfq.send_new_order_single(offer_px, side)
-        rfq.verify_order_pending(side=side)
-        # rfq.verify_order_new()
-        rfq.verify_order_filled_fwd(last_spot_rate=last_spot_rate,fwd_point=last_frw_points,side=side)
+        rfq.send_new_order_single(offer_px)
+        rfq.verify_order_pending()
+        # # rfq.verify_order_new()
+        rfq.verify_order_filled_fwd(last_spot_rate=last_spot_rate,fwd_point=last_frw_points)
 
 
 

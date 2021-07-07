@@ -44,7 +44,7 @@ def execute(report_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
-        rfq.verify_quote_pending(bid_size=orderqty, bid_px=bid_px_expected)
+        rfq.verify_quote_pending(bid_size=orderqty, bid_px=bid_px_expected, bid_spot_rate=bid_px_expected)
 
         # Step 3-4
         bid_px = rfq.extruct_filed('BidPx')

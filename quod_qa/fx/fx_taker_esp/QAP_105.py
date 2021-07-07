@@ -84,7 +84,6 @@ def execute(report_id, session_id):
     try:
 
         # Step 1
-
         create_or_get_rates_tile(base_esp_details, ar_service)
 
         # Step 2-6 Checking data format for tenors

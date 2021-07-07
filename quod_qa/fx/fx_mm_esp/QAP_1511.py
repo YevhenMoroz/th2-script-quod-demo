@@ -1,16 +1,11 @@
 import logging
-import math
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.common_tools import round_decimals_up, round_decimals_down
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import call, get_base_request, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
 from datetime import datetime, timedelta
 

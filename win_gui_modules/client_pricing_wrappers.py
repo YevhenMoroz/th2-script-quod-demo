@@ -82,7 +82,7 @@ class RatesTileTableOrdSide(Enum):
     Sides = cp_operations_pb2.PlaceRatesTileOrderRequest.Side
     # The buy and sell side have been reversed because act confused them
     SELL = Sides.BUY
-    BUY= Sides.SELL
+    BUY = Sides.SELL
 
 
 class PlaceRateTileTableOrderRequest:
@@ -225,6 +225,9 @@ class ExtractRatesTileTableValuesRequest:
 
     def set_row_number(self, row_number: int):
         self.request.rowNumber = row_number
+
+    def is_tiered(self, is_trade: bool):
+        self.request.isTrade = is_trade
 
     def set_bid_extraction_fields(self, extractions_fields: list):
         for extraction_field in extractions_fields:

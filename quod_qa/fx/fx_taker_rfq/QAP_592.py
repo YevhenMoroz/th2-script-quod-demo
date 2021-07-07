@@ -140,10 +140,7 @@ def execute(report_id, session_id):
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
+        
         # Step 1
         import_layout(case_base_request, option_service)
         # Step 2-3

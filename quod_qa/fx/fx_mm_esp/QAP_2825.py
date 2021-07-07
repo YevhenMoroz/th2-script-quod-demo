@@ -14,7 +14,6 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 
-
 # FIX_data
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -162,11 +161,6 @@ def execute(report_id, session_id):
         ]
     }
     try:
-
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         act.sendMessage(
             bca.convert_to_request(
