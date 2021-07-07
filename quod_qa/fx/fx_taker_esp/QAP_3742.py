@@ -18,24 +18,10 @@ def create_or_get_rates_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
 
 
-def close_order_ticket(base_request, service):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_close()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
 def place_order(base_request, service):
     esp_request = PlaceESPOrder(details=base_request)
     esp_request.set_action(ESPTileOrderSide.BUY)
     esp_request.top_of_book()
-    call(service.placeESPOrder, esp_request.build())
-
-
-def click_on_bid_btn(base_request, service):
-    esp_request = PlaceESPOrder(details=base_request)
-    esp_request.set_action(ESPTileOrderSide.BUY)
-    esp_request.top_of_book(False)
     call(service.placeESPOrder, esp_request.build())
 
 
@@ -48,35 +34,10 @@ def modify_rates_tile(base_request, service, from_c, to_c, tenor, days: int, qty
     return bca.get_t_plus_date(days).strftime('%Y/%m/%d')
 
 
-def set_one_click_mode(base_request, service, mode):
-    fx_configs = FXConfigsRequest(base=base_request)
-    fx_configs.set_one_click_mode(mode)
-    call(service.setOptionForexConfigs, fx_configs.build())
-
-
 def click_one_click_button(base_request, service):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_click_on_one_click_button()
     call(service.modifyRatesTile, modify_request.build())
-
-
-def minimize_order_book():
-    request = CalcDataContentsRowSelector()
-    request.minimize()
-    request.build()
-
-
-def set_order_ticket_options(base_request, service, ord_type, tif, agr_str_t, str_t, child_str_t, client):
-    order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues([])
-    fx_values.AggressiveTIF = tif
-    fx_values.AggressiveOrderType = ord_type
-    fx_values.AggressiveStrategyType = agr_str_t
-    fx_values.AggressiveStrategy = str_t
-    fx_values.AggressiveChildStrategy = child_str_t
-    fx_values.Client = client
-    order_ticket_options.set_default_fx_values(fx_values)
-    call(service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def check_order_book(base_request, act_ob, case_id, tenor, settle_date, qty, ord_type):
@@ -151,8 +112,6 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
 
     ar_service = Stubs.win_act_aggregated_rates_service
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-    option_service = Stubs.win_act_options
     ob_service = Stubs.win_act_order_book
 
     case_base_request = get_base_request(session_id, case_id)
@@ -162,16 +121,8 @@ def execute(report_id, session_id):
     to_curr = "USD"
     tenor = "Broken"
 
-    tif = "ImmediateOrCancel"
     order_type = "Limit"
-    agr_str_t = "Quod Multilisting"
-    agr_str = "Hedging_test"
-    agr_child_str = "Hedging_QAP"
-    client = "ASPECT_CITI"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
     qty = '5000000'
-
-    single_click = "SingleClick"
 
     try:
         # Step 1
