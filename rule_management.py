@@ -2,7 +2,8 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
     TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
     TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
-    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateMarketNewOrdSingleIOC
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateMarketNewOrdSingleIOC, \
+    TemplateMarketNewOrdSingleFOK
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -222,12 +223,22 @@ class RuleManager:
                                                       modify=modify
                                                       ))
 
+    @staticmethod
+    def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
+        return Stubs.simulator.createMarketNewOrdSingleFOK(
+            request=TemplateMarketNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  price=price
+                                                  ))
+
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_rule_by_id()
-    # rule_manager.remove_rules_by_id_range(22,70)
+    #rule_manager.add_MarketNewOrdSingle_FOK("fix-bs-310-columbia", 'CLIENTYMOROZ_PARIS', "XPAR", True,5)
+    #rule_manager.remove_rules_by_id_range(485,571)
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()

@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-3770"
+    case_name = "QAP-3784"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "49540"
@@ -36,7 +36,7 @@ def execute(report_id, session_id):
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
                                                                       client + '_PARIS', 'XPAR',
                                                                       float(price), int(qty), 1)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -79,7 +79,7 @@ def execute(report_id, session_id):
              'OrderID': '*'}
         ],
         'AllocID': '*',
-        'NetMoney': '38680.84',
+        'NetMoney': '38601.55',
         'BookingType': '*',
         'AllocType': '5',
         'RootSettlCurrAmt': '*',
@@ -103,7 +103,6 @@ def execute(report_id, session_id):
     # endregion
     # region Verify
     params = {
-        # 'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
@@ -137,7 +136,7 @@ def execute(report_id, session_id):
             'CommCurrency': '*',
             'Commission': '38.64'},
         'AllocID': '*',
-        'NetMoney': '38680.84',
+        'NetMoney': '38601.55',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
@@ -165,7 +164,7 @@ def execute(report_id, session_id):
              'OrderID': '*'}
         ],
         'AllocID': '*',
-        'NetMoney': '38680.84',
+        'NetMoney': '38601.55',
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
@@ -174,7 +173,7 @@ def execute(report_id, session_id):
 
         'NoAllocs': [
             {
-                'AllocNetPrice': '0.78',
+                'AllocNetPrice': '0.77',
                 'AllocAccount': account,
                 'AllocPrice': '0.78',
                 'AllocQty': qty,
