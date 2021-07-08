@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.eq.Algo_Iceberg import QAP_2950, QAP_3056, QAP_3055, QAP_3054, QAP_3029
 from quod_qa.eq.Algo_Multilisted import QAP_3429, QAP_3134, QAP_2476, QAP_2837, QAP_3058, QAP_1967, QAP_1966, QAP_1963, QAP_1962, QAP_1958, QAP_1957, QAP_1954, QAP_1983, QAP_1984, QAP_2068, QAP_1953, QAP_3021, QAP_2982, QAP_1986, QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, QAP_1961, QAP_1960, QAP_1980, QAP_1959, QAP_1810, QAP_1952, QAP_1997, QAP_1996, QAP_1995, QAP_1992, QAP_2857, QAP_3019, QAP_3021, QAP_3022, QAP_3025, QAP_3027,QAP_1951, QAP_1990, QAP_3028
-from quod_qa.eq.Algo_TWAP import QAP_4340, QAP_4404, QAP_4336, QAP_4413, QAP_2864, QAP_2865, QAP_3121, QAP_3117, QAP_3120, QAP_3119, QAP_2478, QAP_3532, QAP_2977, QAP_1318, QAP_1319, QAP_3032, QAP_2955, QAP_3123, QAP_2706, QAP_3122, QAP_3124
+from quod_qa.eq.Algo_TWAP import QAP_4340, QAP_4404, QAP_4336, QAP_4413, QAP_2864, QAP_2865, QAP_3121, QAP_3117, QAP_3120, QAP_3119, QAP_2478, QAP_3532, QAP_2977, QAP_1318, QAP_1319, QAP_3032, QAP_2955, QAP_3123, QAP_2706, QAP_3122, QAP_3124, QAP_4274
 from quod_qa.eq.Algo_PercentageVolume import QAP_1324, QAP_1750, QAP_1510, QAP_1515, QAP_1516, QAP_3070, QAP_2479, QAP_3116, QAP_3065, QAP_3063, QAP_3127, QAP_1633, QAP_2980, QAP_3061, QAP_3062, QAP_2838, QAP_2552, QAP_2553,QAP_1634, QAP_2583, QAP_3062, QAP_3530
 from quod_qa.eq.algo_acceptance_list import QAP_2994, QAP_2995, QAP_2996, QAP_2997, QAP_2842, QAP_2839
 from quod_qa.eq.Care import QAP_1013
@@ -26,17 +27,18 @@ def test_run():
     report_id = bca.create_event('srublyov tests ')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        session_id = set_session_id()
-        if not Stubs.frontend_is_open:
-            prepare_fe(report_id, session_id, work_dir, username, password)
-        else:
-            get_opened_fe(report_id, session_id, work_dir)
+        # session_id = set_session_id()
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe(report_id, session_id, work_dir, username, password)
+        # else:
+        #     get_opened_fe(report_id, session_id, work_dir)
 
         #QAP_1324.execute(report_id, session_id)
-        #QAP_1750.execute(report_id, session_id)
-        QAP_2837.execute(report_id, session_id)
+        # QAP_1750.execute(report_id, session_id)
+        # QAP_2837.execute(report_id, session_id)
         # QAP_2838.execute(report_id, session_id)
-        #QAP_1810.execute(report_id)
+        QAP_4274.execute(report_id)
+        # QAP_1810.execute(report_id)
 
         # QAP_2842.execute(report_id, session_id)
         # QAP_2839.execute(report_id, session_id)
