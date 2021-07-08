@@ -26,6 +26,7 @@ logger.setLevel(logging.INFO)
 
 qty = 1300
 dec_qty = 1000
+display_qty = 1100
 price = 20
 lookup = "PAR"       #CH0012268360_CHF
 ex_destination = "XPAR"
@@ -153,6 +154,9 @@ def order(ex_id, base_request, case_id):
             'Price': price,
             'Currency': currency,
             'TargetStrategy': "1008",
+            "DisplayInstruction":{
+                'DisplayQty' : dec_qty
+            },
             'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'AvailableVenues',
@@ -176,7 +180,7 @@ def order(ex_id, base_request, case_id):
     #region Modify order
     case_id_3 = bca.create_event("Modify Order", case_id)
     fix_modify_message = deepcopy(fix_message_new_order_single)
-    fix_modify_message.change_parameters({'OrderQty': dec_qty})
+    fix_modify_message.change_parameters({'DisplayInstruction': {'DisplayQty': display_qty}})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_3)
 
@@ -188,16 +192,19 @@ def order(ex_id, base_request, case_id):
     call(act_ob.getOrdersDetails, ob.request())
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
     ob_limit_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
+    ob_displ_qty = ExtractionDetail("orderbook.displQty", "DisplQty")
     ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
 
     sub_order_qty = ExtractionDetail("subOrder_lvl_2.id", "Qty")
     sub_order_price = ExtractionDetail("subOrder_lvl_2.lmtprice", "Limit Price")
+    sub_order_displ_qty = ExtractionDetail("subOrder_lvl_2.displQty", "DisplQty")
     sub_order_status = ExtractionDetail("subOrder_lvl_2.status", "Sts")
     sub_order_order_id = ExtractionDetail("subOrder_lvl_2.orderid", "Order ID")
     lvl2_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_status,
                                                                                                       sub_order_qty,
                                                                                                       sub_order_price,
+                                                                                                      sub_order_displ_qty,
                                                                                                       sub_order_order_id]))
     lvl2_details = OrdersDetails.create(info=lvl2_info)
 
@@ -206,6 +213,7 @@ def order(ex_id, base_request, case_id):
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty,
                                                                                  ob_id,
                                                                                  ob_limit_price,
+                                                                                 ob_displ_qty,
                                                                                  ob_sts]),
             sub_order_details=lvl2_details))
 
@@ -215,15 +223,17 @@ def order(ex_id, base_request, case_id):
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check algo order")
-    verifier.compare_values('Qty', str(dec_qty), response[ob_qty.name].replace(",", ""))
+    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Open', response[ob_sts.name])
     verifier.compare_values('LmtPrice', str(price), response[ob_limit_price.name])
+    verifier.compare_values('DisplQty', str(display_qty), response[ob_displ_qty.name].replace(",", ""))
     verifier.verify()
 
     verifier.set_event_name("Check child order")
-    verifier.compare_values('Qty', str(dec_qty), response[sub_order_qty.name].replace(",", ""))
-    verifier.compare_values('Sts', 'Open', response[sub_order_status.name])
+    verifier.compare_values('Qty', str(qty), response[sub_order_qty.name].replace(",", ""))
+    verifier.compare_values('Sts', 'Cancelled', response[sub_order_status.name])
     verifier.compare_values('LmtPrice', str(price), response[sub_order_price.name])
+    verifier.compare_values('DisplQty', str(display_qty), response[sub_order_displ_qty.name].replace(",", ""))
     verifier.verify()
 
     extraction_id = "getOrderAnalysisEvents"
@@ -236,7 +246,7 @@ def order(ex_id, base_request, case_id):
     check_value(vr, "Event 1 Description contains", "event1.desc", "New User's Synthetic Order Received",
                     VerificationDetails.VerificationMethod.CONTAINS)
 
-    check_value(vr, "Events Count", "events.count", "10")
+    check_value(vr, "Events Count", "events.count", "5")
     call(act.verifyEntities, vr)
 
 
