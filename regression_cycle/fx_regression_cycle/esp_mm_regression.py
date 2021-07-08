@@ -2,7 +2,7 @@ from quod_qa.fx.fx_mm_esp import QAP_1418, QAP_1536, QAP_1560, QAP_1599, QAP_160
     QAP_2038, QAP_2039, QAP_2069, QAP_2072, QAP_2075, QAP_2117, QAP_2523, QAP_2555, QAP_2556, QAP_2587, QAP_2646, \
     QAP_2796, QAP_2825, QAP_2855, QAP_3045, QAP_3563, QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, \
     QAP_2086, QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2750, QAP_2823, QAP_2874, QAP_2876, \
-    QAP_2880, QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012
+    QAP_2880, QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_4094, QAP_2078
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -17,7 +17,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('RFQ Taker regression', parent_id)
+    report_id = bca.create_event('ESP MM regression', parent_id)
     session_id = set_session_id()
 
     try:
@@ -51,6 +51,7 @@ def test_run(parent_id=None):
         QAP_1559.execute(report_id)
         QAP_1597.execute(report_id)
         QAP_2012.execute(report_id)
+        QAP_2078.execute(report_id)
         QAP_2079.execute(report_id)
         QAP_2082.execute(report_id)
         QAP_2084.execute(report_id)
@@ -69,6 +70,7 @@ def test_run(parent_id=None):
         QAP_3390.execute(report_id)
         QAP_3841.execute(report_id)
         QAP_3848.execute(report_id)
+        QAP_4094.execute(report_id)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

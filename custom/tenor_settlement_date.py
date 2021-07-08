@@ -48,7 +48,7 @@ def wk3():
 
 
 def m1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=25)).date().strftime('%Y%m%d')
 
 
 def m2():

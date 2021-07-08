@@ -149,7 +149,7 @@ class CaseParamsSellEsp:
     def set_md_reject_response(self,text):
         self.md_reject_response = {
             'MDReqID': self.mdreqid,
-            'MDReqRejReason': '0',
+            'MDReqRejReason': '3',
             'Text': text
         }
         return self
@@ -260,15 +260,16 @@ class CaseParamsSellEsp:
         # Prepera order perding report
 
     # Prepera order pending report
-    def prepape_order_pending_report(self):
+    def prepare_order_pending_report(self):
         self.set_order_exec_rep_params()
         self.order_pending = self.order_exec_report
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
+        self.order_pending['Account'] = self.order_params['Account']
 
     # Prepera order new report
-    def prepape_order_new_report(self):
+    def prepare_order_new_report(self):
         self.set_order_exec_rep_params()
         self.order_new = self.order_exec_report
         self.order_new['Account'] = self.client
@@ -279,10 +280,10 @@ class CaseParamsSellEsp:
         self.order_new['ExecRestatementReason'] = '4'
 
     # Prepera order filled report
-    def prepape_order_filled_report(self):
+    def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account'] = self.account
+        self.order_filled['Account'] = self.order_params['Account']
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
@@ -292,13 +293,14 @@ class CaseParamsSellEsp:
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'
         self.order_filled['TradeDate'] = '*'
+        self.order_filled['SpotSettlDate'] = '*'
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
-        self.order_filled.pop('Client')
+        # self.order_filled.pop('Client')
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepera order rejected report
-    def prepape_order_rejected_report(self):
+    def prepare_order_rejected_report(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
         self.order_rejected['Account'] = self.client
@@ -311,9 +313,9 @@ class CaseParamsSellEsp:
         self.order_rejected['OrderQty'] = self.order_params['OrderQty']
 
     # Prepera order rejected report Alog
-    def prepape_order_algo_rejected_report(self):
+    def prepare_order_algo_rejected_report(self):
         self.set_order_exec_rep_params()
-        self.prepape_order_rejected_report()
+        self.prepare_order_rejected_report()
         self.order_algo_rejected = self.order_rejected
         self.order_algo_rejected.pop('SettlDate')
         self.order_algo_rejected['HandlInst'] = '2'
