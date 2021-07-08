@@ -47,52 +47,61 @@ def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
-
-        #Precondition
-        params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate1_spo, symbol=symbol1, securitytype=securitytype_spo)
-        params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo, symbol=symbol2, securitytype=securitytype_spo)
-        FixClientSellEsp(params_usd_cad).send_md_request().send_md_unsubscribe()
-        FixClientSellEsp(params_eur_cad).send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)).send_market_data_spot()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)).send_market_data_spot()
-
-        #Steps 1-3
-        params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency1,
-                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1, symbol=symbol1, securitytype=securitytype_fwd,
-                                   securityid=securityid1)
-        params_1.prepare_md_for_verification(bands,published=False)
-        md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
-        price1= md1.extruct_filed('Price')
-        text = 'empty book'
-        md1.send_new_order_single(price1).\
-            verify_order_pending().\
-            verify_order_rejected(text).\
-            send_md_unsubscribe()
-
-        # Step 4-5
-        params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency2,
-                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2, symbol=symbol2, securitytype=securitytype_fwd,
-                                   securityid=securityid2,account=account)
-        params_2.prepare_md_for_verification(bands,published=False,which_bands_not_pb=bands_not_published)
+        params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                     timeinforce=timeinforce, currency=currency2,
+                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
+                                     symbol=symbol2, securitytype=securitytype_fwd,
+                                     securityid=securityid2, account=account)
+        params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
         md2 = FixClientSellEsp(params_2)
-        price2 = md2.send_md_request().verify_md_pending().extruct_filed('Price')
-        md2.send_new_order_single(price2).\
-            verify_order_pending().\
-            verify_order_filled_fwd()
+        try:
 
-        #Step 6
-        text = 'not enough quantity in book'
-        params_2.orderqty=orderqty2
-        params_2.set_new_order_single_params()
-        md2.send_new_order_single(price2).\
-            verify_order_pending().\
-            verify_order_rejected(text)
+            #Precondition
+            params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate1_spo, symbol=symbol1, securitytype=securitytype_spo)
+            params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo, symbol=symbol2, securitytype=securitytype_spo)
+            FixClientSellEsp(params_usd_cad).send_md_request().send_md_unsubscribe()
+            FixClientSellEsp(params_eur_cad).send_md_request().send_md_unsubscribe()
+            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)).send_market_data_spot()
+            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)).send_market_data_spot()
+
+            #Steps 1-3
+            params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency1,
+                                       settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1, symbol=symbol1, securitytype=securitytype_fwd,
+                                       securityid=securityid1)
+            params_1.prepare_md_for_verification(bands,published=False)
+            md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
+            price1= md1.extruct_filed('Price')
+            text = 'empty book'
+            md1.send_new_order_single(price1).\
+                verify_order_pending().\
+                verify_order_rejected(text).\
+                send_md_unsubscribe()
+
+            # Step 4-5
+            params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce, currency=currency2,
+                                       settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2, symbol=symbol2, securitytype=securitytype_fwd,
+                                       securityid=securityid2,account=account)
+            params_2.prepare_md_for_verification(bands,published=False,which_bands_not_pb=bands_not_published)
+            md2 = FixClientSellEsp(params_2)
+            price2 = md2.send_md_request().verify_md_pending().extruct_filed('Price')
+            md2.send_new_order_single(price2).\
+                verify_order_pending().\
+                verify_order_filled_fwd()
+
+            #Step 6
+            text = 'not enough quantity in book'
+            params_2.orderqty=orderqty2
+            params_2.set_new_order_single_params()
+            md2.send_new_order_single(price2).\
+                verify_order_pending().\
+                verify_order_rejected(text)
 
 
-    except Exception as e:
+        except Exception:
+            logging.error('Error execution', exc_info=True)
+        finally:
+            md2.send_md_unsubscribe()
+    except Exception:
         logging.error('Error execution', exc_info=True)
-    finally:
-        md2.send_md_unsubscribe()
-
 
 
