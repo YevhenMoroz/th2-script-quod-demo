@@ -15,6 +15,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, Q
     QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, QAP_850, QAP_982, \
     QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, \
     QAP_3589, QAP_575, QAP_592
+from rule_management import RuleManager
 
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -27,62 +28,59 @@ timeouts = False
 channels = dict()
 
 
+def rule_creation():
+    rule_manager = RuleManager()
+    rfq_quote = rule_manager.add_RFQ('fix-bs-rfq-314-luna-standard')
+    rfq_trade = rule_manager.add_TRFQ('fix-bs-rfq-314-luna-standard')
+    return [rfq_quote, rfq_trade]
+
+
+def rule_destroyer(list_rules):
+    if list_rules != None:
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
+
+
 def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     session_id = set_session_id()
+    # rules = rule_creation()
     try:
+        start = datetime.now()
+        print(f'start time = {start}')
+
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
             get_opened_fe(report_id, session_id)
+        #
 
-        start = datetime.now()
-        print(f'start time = {start}')
+        #
+        # # Create rules for RFQ Taker
+        #
+        # # Add scripts
+        QAP_568.execute(report_id, session_id)
+        # QAP_569.execute(report_id, session_id)
+        # QAP_570.execute(report_id, session_id)
+        # QAP_574.execute(report_id, session_id)
+        # QAP_571.execute(report_id, session_id)
 
-        # region Acceptance list RFQ Taker
-        # acceptance_rfq_taker(report_id, session_id)
-        # endregion
+        rule_manager = RuleManager()
+        rule_manager.remove_rules_by_id_list([442, 443])
+        rule_manager.print_active_rules()
 
-        # region Regression
-        # rfq_taker(report_id, session_id)
-        # endregion
-
-        # region fx_mm_esp+fe
-        # mm_esp_plus_fe(report_id, session_id)
-        # endregion
-
-        # QAP_2378.execute(report_id, session_id)
-        # QAP_2491.execute(report_id, session_id)
-        # QAP_2492.execute(report_id, session_id)
-        # QAP_2494.execute(report_id, session_id)
-        # QAP_2496.execute(report_id, session_id)
-        # QAP_2497.execute(report_id, session_id)
-        # ui_tests.execute(report_id, session_id)
-        # QAP_1897.execute(report_id, session_id)
-        # QAP_1898.execute(report_id, session_id)
-        # QAP_2505.execute(report_id, session_id)
-        # QAP_2506.execute(report_id, session_id)
-        # QAP_2508.execute(report_id, session_id)
-        # QAP_2500.execute(report_id, session_id)
-        # QAP_2779.execute(report_id, session_id)
-        # QAP_105.execute(report_id, session_id)
-        # QAP_1589.execute(report_id, session_id)
-        # QAP_231.execute(report_id, session_id)
-        # QAP_2501_WIP.execute(report_id, session_id)
-        # QAP_492.execute(report_id, session_id)
-        # QAP_851.execute(report_id, session_id)
-        # QAP_2523.execute(report_id, session_id)
-        # ui_tests.execute(report_id, session_id)
-        # QAP_2556.execute(report_id, session_id)
-        QAP_3484.execute(report_id, session_id)
+        # QAP_3484.execute(report_id, session_id)
         print('duration time = ' + str(datetime.now() - start))
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
+        # Remove rules
+        # rule_destroyer(rules)
         Stubs.win_act.unregister(session_id)
 
 
