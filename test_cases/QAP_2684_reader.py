@@ -210,7 +210,7 @@ def execute(report_id):
                 "Readlog NewOrderSingle Received",
                 bca.filter_to_grpc("NewOrderSingle", readlog_nos_params, keys=['ClOrdID', 'CDOrdFreeNotes'],
                                    ignored_fields=['Header']),
-                checkpoint_1, 'QUOD.FIXSELLQUODKepler.log', case_id
+                checkpoint_1, 'log305-kepler-sell', case_id
             )
         )
 
