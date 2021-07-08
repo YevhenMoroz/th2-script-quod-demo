@@ -14,7 +14,7 @@ def execute(report_id):
 
 
     MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="734",
+        symbol="519",
         connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
 
@@ -26,8 +26,8 @@ def execute(report_id):
             {
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
-                'MDEntryPx': '40',
-                'MDEntrySize': '3000',
+                'MDEntryPx': '20',
+                'MDEntrySize': '100',
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
             }
