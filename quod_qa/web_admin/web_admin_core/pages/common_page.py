@@ -5,6 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
+
+from typing import List
+
 from quod_qa.web_admin.web_admin_core.utils.common_constants import CommonConstants
 from quod_qa.web_admin.web_admin_core.utils.csv_utils.csv_reader import CsvReader
 from quod_qa.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfReader
@@ -110,7 +113,7 @@ class CommonPage:
         csv_reader = CsvReader(path_to_csv)
         return csv_reader.read_csv_content()
 
-    def is_pdf_contains_value(self, value: str):
+    def is_pdf_contains_value(self, value):
         path_to_pdf = self.__get_downloaded_file(".pdf")
 
         pdf_reader = PdfReader(path_to_pdf)
@@ -125,3 +128,6 @@ class CommonPage:
             raise ValueError(f"In the download directory found several {extension} files, but must be only one!")
 
         return os.path.join(download_directory, files.pop(0))
+
+
+

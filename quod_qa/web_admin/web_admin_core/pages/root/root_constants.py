@@ -9,7 +9,7 @@ class RootConstants:
     ADMIN_COMMAND_ITEM_XPATH = "//span[text()='AdminCommand']"
 
     USERS_TOGGLE_CSS_SELECTOR = "a[title='Users']"
-    USERS_ITEM_XPATH = "//span[text()='Users']"
+    USERS_ITEM_XPATH = "//*[@href='#/pages/users/view']//span[text()='Users']"
     USER_SESSIONS_ITEM_XPATH = "//span[text()='User Sessions']"
     DESKS_ITEM_XPATH = "//span[text()='Desks']"
 

@@ -1,4 +1,5 @@
 from PyPDF2 import PdfFileReader
+from typing import List
 
 
 class PdfReader:
@@ -22,8 +23,18 @@ class PdfReader:
     def __read_page(self, pdf_reader: PdfFileReader, page_number: int):
         return pdf_reader.getPage(page_number).extractText()
 
-    def is_contains(self, value: str):
+    def is_contains(self, value):
         if not self.pdf_content:
             self.pdf_content = self.read_pdf_content()
-
-        return value in self.pdf_content
+        if isinstance(value, list):
+            for item in value:
+                if item in self.pdf_content:
+                    continue
+                else:
+                    '''
+                    Returned first wrong item that don't contains in pdf_content
+                    '''
+                    return "Wrong item->{}".format(str(item))
+            return True
+        else:
+            return value in self.pdf_content
