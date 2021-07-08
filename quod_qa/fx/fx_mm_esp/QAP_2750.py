@@ -12,7 +12,6 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

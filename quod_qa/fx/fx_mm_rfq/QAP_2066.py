@@ -158,8 +158,6 @@ def execute(report_id, case_params, session_id):
                       int(reusable_params['OrderQty']),
                       int(reusable_params['OrderQty'])+ 1000000)
 
-        prepare_fe(case_id, session_id)
-
         rfq_id = extract_unassigned_grid(base_request, dmi_service, reusable_params['OrderQty'])
 
         assign_firs_request(base_request, dmi_service, rfq_id)

@@ -1,16 +1,11 @@
 from pathlib import Path
 
 from custom.tenor_settlement_date import spo
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
