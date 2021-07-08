@@ -22,14 +22,14 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venue):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(tenor)
     modify_request.set_client(client)
-    action = ContextAction.create_venue_filters(venues)
+    action = ContextAction.create_venue_filter(venue)
     modify_request.add_context_action(action)
     call(service.modifyRFQTile, modify_request.build())
 
@@ -42,7 +42,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue[0])
+    rfq_request.set_venue(venue)
     rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 
@@ -51,18 +51,18 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def check_quote_request_b(base_request, service, act):
+def check_quote_request_b(base_request, service, act, venue):
     qrb = QuoteDetailsRequest(base=base_request)
     extraction_id = bca.client_orderid(4)
     qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Venue", "HSBC"])
+    qrb.set_filter(["Venue", venue])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
     qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
     call(service.getQuoteRequestBookDetails, qrb.request())
     call(act.verifyEntities, verification(extraction_id, "checking QRB",
-                                          [verify_ent("QRB Venue", qrb_venue.name, "HSBCR"),
+                                          [verify_ent("QRB Venue", qrb_venue.name, venue+"R"),
                                            verify_ent("QRB Status", qrb_status.name, "New"),
                                            verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Accepted")]))
 
@@ -111,7 +111,7 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
-    case_venue = ["HSBC"]
+    case_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
@@ -120,20 +120,20 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
     try:
-        
+
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
                         case_to_currency, case_near_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, common_act)
+        check_quote_request_b(case_base_request, ar_service, common_act, case_venue)
 
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
@@ -142,7 +142,7 @@ def execute(report_id, session_id):
 
         # Step 3
         send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b(case_base_request, ar_service, common_act)
+        check_quote_request_b(case_base_request, ar_service, common_act, case_venue)
 
         #  Step 4
         place_order_venue(base_rfq_details, ar_service, case_venue)
