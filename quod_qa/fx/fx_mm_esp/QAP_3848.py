@@ -36,13 +36,15 @@ def execute(report_id):
         case_id = bca.create_event(case_name, report_id)
 
         #Preconditions
-        params = CaseParamsSellEsp(client, case_id,settltype=settltype, settldate=settldate,
+        params_sell = CaseParamsSellEsp(client, case_id,settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, booktype=booktype)
-        #
+        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
             send_market_data_spot()
 
+        params = CaseParamsSellEsp(client, case_id,settltype=settltype, settldate=settldate,
+                                   symbol=symbol, securitytype=securitytype, booktype=booktype)
         time.sleep(5)
         md = FixClientSellEsp(params)
         params.prepare_md_for_verification(bands_tiered)

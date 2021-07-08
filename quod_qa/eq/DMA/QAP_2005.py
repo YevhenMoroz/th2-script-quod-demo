@@ -58,6 +58,8 @@ def execute(report_id, session_id):
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
     except:
         rule_manager.remove_rule(nos_rule)
+    finally:
+        rule_manager.remove_rule(nos_rule)
     # endregion
 
     response = fix_message.pop('response')

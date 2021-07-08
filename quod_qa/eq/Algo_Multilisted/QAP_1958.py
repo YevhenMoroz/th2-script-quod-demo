@@ -220,7 +220,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -294,9 +293,9 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 Partially Filled', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus', 'TimeInForce'])        
         #endregion
 
-        #region Cansel order
-        case_id_4 = bca.create_event("Cansel Order", case_id)
-        # Cansel order
+        #region Cancel order
+        case_id_4 = bca.create_event("Cancel Order", case_id)
+        # Cancel order
         cancel_parms = {
             "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
             "Account": fix_message_new_order_single.get_parameter('Account'),

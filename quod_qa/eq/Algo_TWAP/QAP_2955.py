@@ -37,8 +37,6 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
 
-now = datetime.today() - timedelta(hours=3)
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
@@ -85,6 +83,8 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -276,13 +276,12 @@ def execute(report_id):
             ExecType="0",
             OrdStatus='0',
             SettlDate='*',
-            ExecRestatementReason='*',
-            SettlType='*'
+            ExecRestatementReason='*'
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         #region Cancel Algo Order
-        case_id_2 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_2 = bca.create_event("Cancel Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
@@ -304,7 +303,7 @@ def execute(report_id):
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
         fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_2, message_name='SS FIXSELLQUOD5 sent 35=F Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
-        
+        time.sleep(3)
         # Check ss (on FIXQUODSELL5 sent 35=8 Slice 4)
         er_3 = {
         'ExecID': '*',
@@ -330,7 +329,6 @@ def execute(report_id):
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',
         'ExecRestatementReason': '*',
-        'SettlType': '*',
         'Price': price,
         'TargetStrategy': new_order_single_params['TargetStrategy'],
         'Instrument': instrument,

@@ -23,7 +23,7 @@ text_messages = {
     'sendQR': 'Send QuoteRequest',
     'recQ': 'Receive Quote message',
     'sendNOS': 'Send NewOrderSingle',
-    'recQC': 'Receive QuoteCancel message',
+    'recQC': 'Receive CQuoteCancel message',
     'recQRR': 'Receive QuoteRequestReject message',
     'sendNOwithID': 'Send new order with ClOrdID = {}'
     }
@@ -93,31 +93,31 @@ band6fwd = {
     "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
     "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
     }
-# mdu_params_fwd = {
-#     "MDReqID": simulator.getMDRefIDForConnection303(
-#             request=RequestMDRefID(
-#                     symbol="EUR/USD:FXF:WK1:HSBC",
-#                     connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-#     # "MDReportID": "1",
-#     # "MDTime": "TBU",
-#     # "MDArrivalTime": "TBU",
-#     # "OrigMDTime": "TBU",
-#     # "OrigMDArrivalTime": "TBU",
-#     # "ReplyReceivedTime": "TBU",
-#     'Instrument': {
-#         'Symbol': 'EUR/USD',
-#         'SecurityType': 'FXFWD'
-#         },
-#     # "LastUpdateTime": "TBU",
-#     "NoMDEntries": [
-#         band1fwd,
-#         band2fwd,
-#         band3fwd,
-#         band4fwd,
-#         band5fwd,
-#         band6fwd
-#         ]
-#     }
+mdu_params_fwd = {
+    "MDReqID": simulator.getMDRefIDForConnection303(
+            request=RequestMDRefID(
+                    symbol="EUR/USD:FXF:WK1:HSBC",
+                    connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+    # "MDReportID": "1",
+    # "MDTime": "TBU",
+    # "MDArrivalTime": "TBU",
+    # "OrigMDTime": "TBU",
+    # "OrigMDArrivalTime": "TBU",
+    # "ReplyReceivedTime": "TBU",
+    'Instrument': {
+        'Symbol': 'EUR/USD',
+        'SecurityType': 'FXFWD'
+        },
+    # "LastUpdateTime": "TBU",
+    "NoMDEntries": [
+        band1fwd,
+        band2fwd,
+        band3fwd,
+        band4fwd,
+        band5fwd,
+        band6fwd
+        ]
+    }
 band1fwd = {
     "MDEntryType": "0",
     "MDEntryPx": 1.18192,
@@ -184,28 +184,28 @@ band6fwd = {
     "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
     "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S'),
     }
-# mdu_params_fwd = {
-#     "MDReqID": simulator.getMDRefIDForConnection303(
-#             request=RequestMDRefID(
-#                     symbol="EUR/USD:FXF:WK1:HSBC",
-#                     connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
-#     # "MDReportID": "1",
-#     # "MDTime": "TBU",
-#     # "MDArrivalTime": "TBU",
-#     # "OrigMDTime": "TBU",
-#     # "OrigMDArrivalTime": "TBU",
-#     # "ReplyReceivedTime": "TBU",
-#     'Instrument': {
-#         'Symbol': 'EUR/USD',
-#         'SecurityType': 'FXFWD'
-#         },
-#     # "LastUpdateTime": "TBU",
-#     "NoMDEntries": [
-#         band1fwd,
-#         band2fwd,
-#         band3fwd,
-#         band4fwd,
-#         band5fwd,
-#         band6fwd
-#         ]
-#     }
+mdu_params_fwd = {
+    "MDReqID": simulator.getMDRefIDForConnection303(
+            request=RequestMDRefID(
+                    symbol="EUR/USD:FXF:WK1:HSBC",
+                    connection_id=ConnectionID(session_alias="fix-fh-fx-esp"))).MDRefID,
+    # "MDReportID": "1",
+    # "MDTime": "TBU",
+    # "MDArrivalTime": "TBU",
+    # "OrigMDTime": "TBU",
+    # "OrigMDArrivalTime": "TBU",
+    # "ReplyReceivedTime": "TBU",
+    'Instrument': {
+        'Symbol': 'EUR/USD',
+        'SecurityType': 'FXFWD'
+        },
+    # "LastUpdateTime": "TBU",
+    "NoMDEntries": [
+        band1fwd,
+        band2fwd,
+        band3fwd,
+        band4fwd,
+        band5fwd,
+        band6fwd
+        ]
+    }

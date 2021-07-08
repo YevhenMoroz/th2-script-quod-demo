@@ -51,7 +51,8 @@ instrument = {
 def rule_creation():
     rule_manager = RuleManager()
     nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, qty, price)
-    return [nos_ioc_rule]
+    ocr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
+    return [nos_ioc_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -91,14 +92,14 @@ def execute(report_id):
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -106,14 +107,14 @@ def execute(report_id):
         market_data2 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -215,7 +216,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -248,7 +248,7 @@ def execute(report_id):
             'LeavesQty': qty
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'TimeInForce', 'OrderQty'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
@@ -258,11 +258,11 @@ def execute(report_id):
             OrderQty=qty,
             Text=text_n,
         )
-        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'TimeInForce', 'OrderQty'])
         #endregion
 
-        #region Cansel order
-        case_id_3 = bca.create_event("Cansel Order", case_id)
+        #region Cancel order
+        case_id_3 = bca.create_event("Cancel Order", case_id)
         # Check BS FIXBSTH2 sent 35=8 on Cancel
         er_5 = {
             'CumQty': '0',

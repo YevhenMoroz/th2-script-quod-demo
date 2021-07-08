@@ -18,19 +18,35 @@ from custom.verifier import Verifier
 logger = getLogger(__name__)
 logger.setLevel(INFO)
 qty = 2000
-limit = 20
-lookup = "CH0012268360_CHF"
+price = 20
+lookup = "PAR"       #CH0012268360_CHF
 ex_destination = "XPAR"
-client = "CLIENT2"
-order_type = "Limit"
+account = 'XPAR_CLIENT2'
+client = 'CLIENT2'
+order_type = 2
+ex_destination_1 = "XPAR"
+extraction_id = "getOrderAnalysisAlgoParameters"
+s_par = '1015'
+side = 2
+instrument = {
+            'Symbol': 'FR0010263202_EUR',
+            'SecurityID': 'FR0010263202',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+tif_day = 0
+currency = 'EUR'
+
 case_name = os.path.basename(__file__)
-report_id = None
+connectivity_buy_side = "fix-bs-310-columbia"
+connectivity_sell_side = "fix-ss-310-columbia-standart"
+connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(base_request):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(str(qty))
-    order_ticket.set_limit(str(limit))
+    order_ticket.set_limit(str(price))
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
 
@@ -59,19 +75,6 @@ def rule_destroyer(list_rules):
     rule_manager = RuleManager()
     for rule in list_rules:
         rule_manager.remove_rule(rule)
-
-def prepared_fe(case_id):
-    session_id = set_session_id()
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
-    username = Stubs.custom_config['qf_trading_fe_user_305']
-    password = Stubs.custom_config['qf_trading_fe_password_305']
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id, work_dir)
-    return  base_request
 
 def check_order_book(ex_id, base_request, case_id):
     act_ob = Stubs.win_act_order_book
@@ -102,7 +105,7 @@ def check_order_book(ex_id, base_request, case_id):
     verifier.set_event_name("Check algo order")
     verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Open', response[ob_sts.name])
-    verifier.compare_values('LmtPrice', str(limit), response[ob_limit_price.name])
+    verifier.compare_values('LmtPrice', str(price), response[ob_limit_price.name])
     verifier.verify()
 
     extraction_id = "getOrderAnalysisAlgoParameters"
@@ -114,11 +117,11 @@ def check_order_book(ex_id, base_request, case_id):
                                                  [verify_ent("Aggressivity", "Aggressivity", '2')]))
 
 
-def execute(reportid):
-    report_id = reportid
+def execute(report_id, session_id):
     case_id = create_event(case_name, report_id)
-    base_request = prepared_fe(case_id)
-    rule_list = rule_creation(limit, client, ex_destination)
+    set_base(session_id, case_id)
+    base_request = get_base_request(session_id, case_id)
+    rule_list = rule_creation()
     create_order(base_request)
     rule_destroyer(rule_list)
     check_order_book("check child", base_request, case_id)

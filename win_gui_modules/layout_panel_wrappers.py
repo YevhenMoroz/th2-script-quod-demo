@@ -53,7 +53,10 @@ class DefaultFXValues:
 
 class OptionOrderTicketRequest:
     def __init__(self, base: EmptyRequest = None):
-        self.request = layout_panel_pb2.OptionOrderTicketRequest(base=base)
+        if base is not None:
+            self.request = layout_panel_pb2.OptionOrderTicketRequest(base=base)
+        else:
+            self.request = layout_panel_pb2.OptionOrderTicketRequest()
 
     def set_default_fx_values(self, values: DefaultFXValues):
         fx_panel = layout_panel_pb2.OptionOrderTicketRequest.DefaultFXValues()
@@ -80,26 +83,6 @@ class OptionOrderTicketRequest:
 
         self.request.defaultFXValues.CopyFrom(fx_panel)
 
-
-    def build(self):
-        return self.request
-
-
-class FXConfigsRequest:
-    def __init__(self, base: EmptyRequest):
-        self.request = layout_panel_pb2.FXConfigsRequest(base=base)
-
-    def set_cumulative_qty(self, value: str):
-        self.request.CumulativeQtyChartPips.value = value
-
-    def set_one_click_mode(self, value: str):
-        self.request.OneClickOrdersMode.value = value
-
-    def set_algo_default_qty(self, value: str):
-        self.request.AlgoDefaultQty.value = value
-
-    def set_headers_prices_format(self, value: str):
-        self.request.HeaderPricesFormat.value = value
 
     def build(self):
         return self.request

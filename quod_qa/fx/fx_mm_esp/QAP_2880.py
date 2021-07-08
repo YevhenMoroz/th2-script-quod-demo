@@ -40,16 +40,19 @@ def execute(report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
         # Preconditions
-        params_sell=CaseParamsSellEsp(client, case_id, side, orderqty1, ordtype, timeinforce, currency, settlcurrency,
-                                      settltype, settldate_wk1, symbol, securitytype_fwd, securityid)
-        md = FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
+        params_sell=CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd,)
+        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
         #Send market data to the HSBC venue EUR/NOK spot
         FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype_spo)).\
             send_market_data_spot()
 
+        params=CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce, currency=currency,
+                                      settlcurrency=settlcurrency, settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd,
+                                      securityid=securityid)
         #Step 1-3
-        params_sell.prepare_md_for_verification(bands, priced=False)
-        md.send_md_request().\
+        params.prepare_md_for_verification(bands, priced=False)
+        md= FixClientSellEsp(params).\
+            send_md_request().\
             verify_md_pending()
         price=md.extruct_filed('Price')
 
@@ -60,7 +63,7 @@ def execute(report_id):
             verify_order_rejected(text)
 
         #Step 5
-        params_sell.order_params['OrderQty']=orderqty2
+        params.orderqty=orderqty2
         md.send_new_order_single(price).\
             verify_order_pending().\
             verify_order_rejected(text)
