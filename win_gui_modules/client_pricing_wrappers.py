@@ -126,8 +126,8 @@ class RatesTileValues(Enum):
     PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.PIPS
     ASK_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.ASK_PIPS
     BID_PIPS = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.BID_PIPS
-    INSTRUMENT = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.INSTRUMENT
-    CLIENT_TIER = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.CLIENT_TIER
+    # INSTRUMENT = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.INSTRUMENT
+    # CLIENT_TIER = cp_operations_pb2.ExtractRatesTileValuesRequest.ExtractedType.CLIENT_TIER
 
 
 class ExtractRatesTileValues:

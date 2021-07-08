@@ -552,16 +552,16 @@ class TableAction:
         action.set_action(check_venue)
         return action
 
-    @staticmethod
-    def extract_cell_value(detail: CellExtractionDetails):
-        extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
-        extract_cell.extractionField.name = detail.name
-        extract_cell.extractionField.colName = detail.col_name
-        extract_cell.extractionField.venueName = detail.venue_name
-        extract_cell.extractionField.intSide = detail.int_side
-        action = TableAction()
-        action.set_action(extract_cell)
-        return action
+    # @staticmethod
+    # def extract_cell_value(detail: CellExtractionDetails):
+    #     extract_cell = ar_operations_pb2.TableAction.ExtractCellValue()
+    #     extract_cell.extractionField.name = detail.name
+    #     extract_cell.extractionField.colName = detail.col_name
+    #     extract_cell.extractionField.venueName = detail.venue_name
+    #     extract_cell.extractionField.intSide = detail.int_side
+    #     action = TableAction()
+    #     action.set_action(extract_cell)
+    #     return action
 
     @staticmethod
     def extract_headers(colIndexes: list):

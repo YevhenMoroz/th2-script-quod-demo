@@ -11,7 +11,7 @@ from win_gui_modules.application_wrappers import CloseApplicationRequest
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303, get_opened_fe
 
 
 class TestCase:
@@ -231,7 +231,8 @@ class TestCase:
     def prepare_frontend(self):
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
-        prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
+        get_opened_fe(self.case_id, self.session_id )
+        # prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
     def create_or_get_rates_tile(self, tile):
         call(self.ar_service.createRatesTile, tile.build())
@@ -314,15 +315,15 @@ class TestCase:
             self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
             self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
 
-            self.save_and_close_fe_workspace()
-            self.prepare_frontend()
-
-            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
-            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
-            self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
+            # self.save_and_close_fe_workspace()
+            # self.prepare_frontend()
+            #
+            # self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
+            # self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
+            # self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
 
             self.set_venue_unhealthy("false")
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-        close_fe(self.case_id, self.session_id)
+        # close_fe(self.case_id, self.session_id)

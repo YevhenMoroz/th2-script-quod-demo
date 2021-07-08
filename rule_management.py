@@ -1,6 +1,7 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
-    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNewOrdSingleExecutionReportTrade, \
-    TemplateNewOrdSingleExecutionReportPendingAndNew
+from th2_grpc_sim_quod.sim_pb2 import (TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule,
+                                       TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule,
+                                       TemplateNewOrdSingleExecutionReportTrade,
+                                       TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateQuodDefMDRRule)
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -145,7 +146,12 @@ class RuleManager:
                 md_entry_px=md_entry_px,
                 symbol=symbol))
 
-    # ------------------------
+    @staticmethod
+    def add_fx_md_to(session: str):
+        return Stubs.simulator.createQuodDefMDRFXRule(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
+    # -----
 
 
 if __name__ == '__main__':

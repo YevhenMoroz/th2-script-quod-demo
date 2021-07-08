@@ -2,7 +2,7 @@ from os.path import abspath, dirname, join
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
-from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
+# from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.middle_office_service import MiddleOfficeOperationsService
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
@@ -24,7 +24,8 @@ class Stubs:
         grpc_router_config_filepath=join(configs_dir, "grpc.json"),
         rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
         mq_router_config_filepath=join(configs_dir, "mq.json"),
-        custom_config_filepath=join(configs_dir, "script-params.json")
+        custom_config_filepath=join(configs_dir, "script-params.json"),
+        prometheus_config_filepath=join(configs_dir, "prometheus.json")
     )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
@@ -39,7 +40,7 @@ class Stubs:
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
     win_act_middle_office_service = factory.grpc_router.get_service(MiddleOfficeOperationsService)
     win_act_cp_service = factory.grpc_router.get_service(ClientPricingOperationsService)
-    act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
+    # act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
     api_service = factory.grpc_router.get_service(RestActService)
 
     # TODO: rename java api act service name
@@ -47,4 +48,4 @@ class Stubs:
 
     custom_config = factory.create_custom_configuration()
     session_id = None
-    frontend_is_open = False
+    frontend_is_open = True

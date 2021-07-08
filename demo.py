@@ -2,10 +2,9 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
-from schemas import rfq_tile_example
 from stubs import Stubs
-from quod_qa.fx import ui_tests
-from quod_qa.eq.Care import QAP_1012
+from test_cases import QAP_1557, QAP_2715, QAP_5
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,7 +15,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' kbrit validate th2 ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
     test_cases = {
@@ -30,14 +29,19 @@ def test_run():
             }
         }
     try:
-        QAP_1012.execute(report_id)
+
+        # QAP_1557.TestCase(report_id).execute()
+        QAP_5.TestCase(report_id).execute()
+        # QAP_2715.TestCase(report_id).execute()
+        # rm = RuleManager()
+        # rm.add_fx_md_to('fix-fh-fx-esp')
+        # rm.print_active_rules()
+
     except Exception:
         logging.error("Error execution",exc_info=True)
    # try:
 #
-    #    rm = RuleManager()
-#
-   #     rm.print_active_rules()
+
 #
     #   ui_tests.execute(report_id)
 
