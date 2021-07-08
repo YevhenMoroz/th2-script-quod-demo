@@ -170,7 +170,7 @@ class RuleManager:
                                                                      trade=trade,
                                                                      price= price))
     @staticmethod
-    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : int ):
+    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : float):
         return Stubs.simulator.createNewOrdSingleIOC(
             request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
