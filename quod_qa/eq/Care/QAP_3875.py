@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 def execute(report_id, session_id):
     case_name = "QAP-3875"
     seconds, nanos = timestamps()  # Store case start time
@@ -63,9 +64,10 @@ def execute(report_id, session_id):
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id("getOrderInfo")
     main_order_details.set_filter(['Order ID', order_id1])
+    main_order_id = ExtractionDetail("order_id", "Order ID")
     main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[order_id1])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
+        extraction_details=[main_order_id])
+    child1_id = ExtractionDetail("Sts1", "Sts")
     sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
         extraction_details=[child1_id])
     sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
@@ -76,16 +78,17 @@ def execute(report_id, session_id):
     request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
+    verifier.compare_values('Sts', 'Open', request['Sts1'])
     verifier.verify()
 
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id("getOrderInfo")
     main_order_details.set_filter(['Order ID', order_id2])
+    main_order_id = ExtractionDetail("order_id", "Order ID")
     main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[order_id2])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
+        extraction_details=[main_order_id])
+    child1_id = ExtractionDetail("Sts1", "Sts")
     sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
         extraction_details=[child1_id])
     sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
@@ -95,17 +98,17 @@ def execute(report_id, session_id):
     request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
+    verifier.compare_values('Sts', 'Open', request['Sts1'])
     verifier.verify()
 
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id("getOrderInfo")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
     main_order_details.set_filter(['Order ID', order_id3])
+    main_order_id = ExtractionDetail("order_id", "Order ID")
     main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[order_id3])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
+        extraction_details=[main_order_id])
+    child1_id = ExtractionDetail("Sts1", "Sts")
     sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
         extraction_details=[child1_id])
     sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
@@ -116,5 +119,5 @@ def execute(report_id, session_id):
     request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
+    verifier.compare_values('Sts', 'Open', request['Sts1'])
     verifier.verify()
