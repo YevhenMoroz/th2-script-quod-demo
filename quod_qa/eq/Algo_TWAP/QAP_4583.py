@@ -56,8 +56,8 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, qty, wld_price)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, 19.99)
+    nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, qty, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
     return [nos_rule, nos_ioc_rule, ocr_rule]
 
@@ -120,13 +120,13 @@ def execute(report_id):
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': price + tick,
+                'MDEntryPx': wld_price,
                 'MDEntrySize': qty,
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': wld_price - tick,
+                'MDEntryPx': price,
                 'MDEntrySize': qty,
                 'MDEntryPositionNo': '1'
             }
@@ -187,7 +187,7 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'WouldPriceOffset',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': '1'
+                    'StrategyParameterValue': '0'
                 }
             ]
         }
