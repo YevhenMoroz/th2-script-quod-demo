@@ -1,3 +1,4 @@
+import time
 from uuid import uuid1
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_dimensions_subwizard import \
     AccountsDimensionsSubWizard
@@ -11,8 +12,8 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 # Draft
 class QAP_2197(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer):
-        super().__init__(web_driver_container, self.__class__.__name__)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.account = f"QAP-2197_{str(uuid1())}"
         self.client = "BROKER"
         self.client_id_source = "Other"
@@ -34,7 +35,6 @@ class QAP_2197(CommonTestCase):
 
         accounts_page = AccountsPage(self.web_driver_container)
         accounts_page.click_new_button()
-
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_id(self.account)
         accounts_wizard.set_ext_id_client(self.account)
