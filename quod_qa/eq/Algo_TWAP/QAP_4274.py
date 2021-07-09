@@ -57,7 +57,8 @@ def rule_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, qty, wld_price)
-    return [nos_rule, nos_ioc_rule]
+    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
+    return [nos_rule, nos_ioc_rule, ocr_rule]
 
 
 def rule_destroyer(list_rules):
