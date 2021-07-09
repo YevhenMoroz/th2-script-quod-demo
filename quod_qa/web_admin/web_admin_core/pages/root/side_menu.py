@@ -7,8 +7,8 @@ from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_groups.client
     ClientGroupsConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook.washbook_constants import WashBookConstants
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook_rules.washbook_rules_constants import \
+from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_constants import WashBookConstants
+from quod_qa.web_admin.web_admin_core.pages.positions.washbook_rules.washbook_rules_constants import \
     WashbookRulesConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.auto_hedger.auto_hedger_constants import \
@@ -131,11 +131,11 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(ClientsConstants.CLIENTS_PAGE_TITLE_XPATH)
 
     def open_washbook_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.WASHBOOK_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR, container_expected_state)
+        self.open_page(RootConstants.WASHBOOK_ITEM_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(WashBookConstants.WASHBOOK_PAGE_TITLE_XPATH)
 
     def open_washbook_rules_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.WASHBOOK_RULES_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR, container_expected_state)
+        self.open_page(RootConstants.WASHBOOK_RULES_ITEM_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(WashbookRulesConstants.WASHBOOK_RULES_PAGE_TITLE_XPATH)
 
     def open_auto_hedger_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):

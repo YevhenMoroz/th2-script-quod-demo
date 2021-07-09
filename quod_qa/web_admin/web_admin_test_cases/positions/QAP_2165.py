@@ -1,8 +1,8 @@
 import time
 from datetime import datetime
 
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook.washbook_page import WashBookPage
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.washbook.washbook_wizard import WashBookWizard
+from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_page import WashBookPage
+from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_wizard import WashBookWizard
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -31,6 +31,7 @@ class QAP_2165(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_washbook_page()
+        time.sleep(2)
         wash_book_main_menu = WashBookPage(self.web_driver_container)
         wash_book_main_menu.click_on_new_button()
         wash_book_wizard = WashBookWizard(self.web_driver_container)
