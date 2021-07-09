@@ -79,14 +79,14 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=None,
-                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None
+                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False
                  ):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(recipient, True, disclose_flag)
+        order_ticket.set_care_order(recipient, recipient_user, disclose_flag)
     order_ticket.set_tif(tif)
     if is_sell:
         order_ticket.sell()
@@ -114,8 +114,16 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     finally:
         rule_manager.remove_rule(nos_rule)
 
-
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None):
+'''
+  instrument ={
+                'Symbol': 'IS0000000001_EUR',
+                'SecurityID': 'IS0000000001',
+                'SecurityIDSource': '4',
+                'SecurityExchange': 'XEUR'
+            }
+'''
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
+                         insrument=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = {
@@ -142,6 +150,8 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             fix_params.pop('Price')
         if no_allocs == None:
             fix_params.pop('NoAllocs')
+        if insrument != None:
+            fix_params.update(Instrument=insrument)
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
@@ -524,9 +534,9 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
 
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] != 'checked':
-            commissions_details.toggle_manual()
+        # response = check_booking_toggle_manual(request)
+        # if response['book.manualCheckboxState'] == 'unchecked':
+        commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
         commissions_details.remove_commissions()

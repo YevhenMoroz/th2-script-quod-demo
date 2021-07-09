@@ -54,9 +54,10 @@ class OrderTicketDetails:
     def submit(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.SUBMIT
 
-    def set_care_order(self, desk: str, partial_desk: bool = False):
+    def set_care_order(self, desk: str, partial_desk: bool = False, disclose_flag=None):
         self.order.careOrderParams.desk = desk
         self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
 
     def add_twap_strategy(self, strategy_type: str) -> TWAPStrategy:
         self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
