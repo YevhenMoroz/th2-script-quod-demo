@@ -80,11 +80,10 @@ def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
     quote_pos = float(quote_pos.replace(",", ""))
     position = float(position.replace(",", ""))
     mtk_px = float(mtk_px)
-    expected_pnl = (position * mtk_px) + quote_pos
-    extracted_pnl = extracted_pnl + ".0"
+    expected_pnl = round(((position * mtk_px) + quote_pos), 1)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Daily MTM Pnl")
-    verifier.compare_values("MTM Pnl", str(expected_pnl), extracted_pnl.replace(",", ""))
+    verifier.compare_values("MTM Pnl", str(expected_pnl), extracted_pnl.replace(",", "")[:-1])
     verifier.verify()
 
 
