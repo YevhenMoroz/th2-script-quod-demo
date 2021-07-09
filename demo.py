@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx import clone
 from quod_qa.fx.fx_mm_esp import QAP_2990, QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
-    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012
+    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078
 from quod_qa.fx.fx_mm_positions import QAP_2500
 from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090, \
     QAP_1755, QAP_2103
@@ -31,6 +31,7 @@ def fx_mm_esp_fix(report_id):
     QAP_2086.execute(report_id)
     QAP_2085.execute(report_id)
     QAP_2079.execute(report_id)
+    QAP_2078.execute(report_id)
     QAP_3841.execute(report_id)
     QAP_1554.execute(report_id)
     QAP_1597.execute(report_id)
@@ -83,14 +84,14 @@ def test_run():
 
         # QAP_3841.execute(report_id)
         # QAP_1518.execute(report_id)
+        QAP_2078.execute(report_id)
 
 
 
 
 
 
-
-        QAP_2966.execute(report_id)
+        # QAP_2966.execute(report_id)
 
 
 
