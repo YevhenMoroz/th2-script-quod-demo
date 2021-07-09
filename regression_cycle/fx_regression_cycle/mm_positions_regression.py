@@ -15,6 +15,7 @@ channels = dict()
 def test_run(parent_id=None):
     report_id = bca.create_event('FX MM Positions regression', parent_id)
     session_id = set_session_id()
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     try:
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
