@@ -138,12 +138,12 @@ def amend_order_via_fix(fix_message, case_id, parametr_list):
         fix_manager_qtwquod = FixManager(connectivity, case_id)
         fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-        response = fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+        fix_manager_qtwquod.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
-    return response
+    return fix_modify_message.get_parameter('Price')
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -169,6 +169,7 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     manual_cross_details.manualCrossValues.CopyFrom(request1)
     response = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     return response
+
 def switch_user(session_id, case_id):
     search_fe_req = FEDetailsRequest()
     search_fe_req.set_session_id(session_id)
