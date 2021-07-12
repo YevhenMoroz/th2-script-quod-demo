@@ -50,6 +50,5 @@ def execute(report_id, session_id):
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -53,11 +53,14 @@ def assign_request(base_request, service, qty, rfq_id):
     base_data.set_filter_dict({"Qty": str(qty)})
     call(service.assignToMe, base_data.build())
 
+
 def estimate_request(base_request, service, rfq_id):
     print('estimate_request')
     base_data = BaseTableDataRequest(base=base_request)
     base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
     call(service.estimate, base_data.build())
+
+
 #
 # def verify_assigned_grid_row(base_request, service, case_id, rfq_id, exp_status, exp_quote_status, qty):
 #     base_data = BaseTableDataRequest(base=base_request)
@@ -91,16 +94,16 @@ def send_rfq(reusable_params, ttl, case_params, case_id, act, rfq_id):
             'OrdType': 'D',
             'ExpireTime': get_expire_time(ttl),
             'TransactTime': (datetime.utcnow().isoformat())}]
-        }
+    }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
     act.sendMessage(
-            bca.convert_to_request(
-                    text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                    ))
+        bca.convert_to_request(
+            text_messages['sendQR'],
+            case_params['TraderConnectivity'],
+            case_id,
+            bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+        ))
 
 
 def send_estimated_quote(base_request, service):
@@ -109,13 +112,13 @@ def send_estimated_quote(base_request, service):
     modify_request.send()
     call(service.modifyAssignedRFQ, modify_request.build())
 
+
 def modify_quote(base_request, service, ask_large, ask_small):
     print('modify_quote')
     modify_request = ModificationRequest(base=base_request)
     modify_request.set_ask_large(ask_large)
     modify_request.set_ask_small(ask_small)
     call(service.modifyAssignedRFQ, modify_request.build())
-
 
 
 def clear_filters(base_request, service):
@@ -143,24 +146,25 @@ def check_quote(rfq_id, reusable_params, verifier, checkpoint_id, case_params, c
         'Currency': 'EUR',
         'Instrument': reusable_params['Instrument'],
         'BidSize': reusable_params['OrderQty']
-        }
+    }
 
     verifier.submitCheckRule(
-            bca.create_check_rule(
-                    text_messages['recQ'],
-                    bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                    checkpoint_id,
-                    case_params['TraderConnectivity'],
-                    case_id
-                    )
-            )
-def execute(report_id, case_params):
+        bca.create_check_rule(
+            text_messages['recQ'],
+            bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
+            checkpoint_id,
+            case_params['TraderConnectivity'],
+            case_id
+        )
+    )
+
+
+def execute(report_id, case_params, session_id):
     # region Preparation
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -177,17 +181,17 @@ def execute(report_id, case_params):
             'Symbol': 'EUR/USD',
             'SecurityType': 'FXSPOT',
             'Product': '4',
-            },
+        },
         'SettlDate': tsd.spo(),
         'SettlType': '2',
         'OrderQty': '21130000'
-        }
+    }
     rfq_id = bca.client_orderid(9)
     # endregion
     try:
         send_rfq(reusable_params, ttl, case_params, case_id, act, rfq_id)
 
-        prepare_fe(case_id, session_id)
+        # prepare_fe(case_id, session_id)
 
         print(f'rfq_id = {rfq_id}')
         rfq_id_fe = extract_unassigned_grid(base_request, service, reusable_params['OrderQty'])
@@ -219,4 +223,4 @@ def execute(report_id, case_params):
             logging.error("Error finalization", exc_info=True)
 
     logger.info("Case {} was executed in {} sec.".format(
-            case_name, str(round(datetime.now().timestamp() - seconds))))
+        case_name, str(round(datetime.now().timestamp() - seconds))))

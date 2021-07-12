@@ -86,7 +86,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
-    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Tenor")
 

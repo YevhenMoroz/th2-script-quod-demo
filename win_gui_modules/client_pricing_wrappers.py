@@ -95,7 +95,6 @@ class PlaceRateTileTableOrderRequest:
     def build(self):
         return self.request
 
-
 class PlaceRatesTileOrderRequest:
     def __init__(self, details: BaseTileDetails = None):
         if details is not None:

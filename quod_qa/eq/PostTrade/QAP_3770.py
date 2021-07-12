@@ -79,7 +79,7 @@ def execute(report_id, session_id):
              'OrderID': '*'}
         ],
         'AllocID': '*',
-        'NetMoney': '*',
+        'NetMoney': '38680.84',
         'BookingType': '*',
         'AllocType': '5',
         'RootSettlCurrAmt': '*',
@@ -137,7 +137,7 @@ def execute(report_id, session_id):
             'CommCurrency': '*',
             'Commission': '38.64'},
         'AllocID': '*',
-        'NetMoney': '*',
+        'NetMoney': '38680.84',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
@@ -165,7 +165,7 @@ def execute(report_id, session_id):
              'OrderID': '*'}
         ],
         'AllocID': '*',
-        'NetMoney': '*',
+        'NetMoney': '38680.84',
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
@@ -174,7 +174,7 @@ def execute(report_id, session_id):
 
         'NoAllocs': [
             {
-                'AllocNetPrice': '*',
+                'AllocNetPrice': '0.78',
                 'AllocAccount': account,
                 'AllocPrice': '0.78',
                 'AllocQty': qty,

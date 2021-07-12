@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3339"
 
     seconds, nanos = timestamps()  # Store case start time
@@ -34,8 +34,8 @@ def execute(report_id):
     price = "40"
     newPrice = "1"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
-    client = "CLIENTSKYLPTOR"
+    lookup = "VETO"
+    client = "CLIENT_FIX_CARE"
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE
@@ -51,6 +51,7 @@ def execute(report_id):
 
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    eq_wrappers.accept_order(lookup, qty, price)
     response = fix_message.pop('response')
     # endregion
     # Amend fix order
@@ -92,10 +93,10 @@ def execute(report_id):
         'ExDestination': '*',
         'GrossTradeAmt': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
     params['OrdStatus'] = '2'
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
