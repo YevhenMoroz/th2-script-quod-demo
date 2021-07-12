@@ -8,17 +8,23 @@ from custom.basic_custom_actions import create_event, timestamps
 
 from stubs import Stubs
 
-from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
-
-from quod_qa.fx.ui_test_ex import extract_error_message_order_ticket
 from quod_qa.wrapper import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+
+def extract_error_message_order_ticket(base_request, order_ticket_service):
+    # extract rates tile table values
+    extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+    extract_errors_request.extract_error_message()
+    result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
+    return result
 
 
 def execute(report_id):
@@ -35,7 +41,7 @@ def execute(report_id):
     stop_price = ["20", "abc"]
     qty = "400"
     client = "HAKKIM"
-    symbol = "RELIANCE"
+    symbol = "T55FD"
     # endregion
 
     # region Open FE
@@ -72,8 +78,8 @@ def execute(report_id):
     # end region
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
-    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (0) negative or zero")
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected", False)
+    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (0) negative or zero", False)
     # endregion
 
     # region Create order via FE according to 2nd step
@@ -95,8 +101,8 @@ def execute(report_id):
     # end region
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
-    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (-99999999) negative or zero")
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected", False)
+    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (-99999999) negative or zero", False)
     # endregion
 
     # region Create order via FE according to 3rd step
@@ -119,8 +125,8 @@ def execute(report_id):
     # end region
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
-    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11605 'StopPrice' (20) greater than 'Price' (10)")
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected", False)
+    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11605 'StopPrice' (20) greater than 'Price' (10)", False)
     # endregion
 
     # region Create order via FE according to 4th step
@@ -143,8 +149,8 @@ def execute(report_id):
     # end region
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected")
-    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (0) negative or zero")
+    eq_wrappers.verify_value(base_request, case_id, "Sts", "Rejected", False)
+    eq_wrappers.verify_value(base_request, case_id, "FreeNotes", "11603 'Price' (0) negative or zero", False)
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
