@@ -42,5 +42,7 @@ def execute(report_id, session_id):
         eq_wrappers.verify_value(base_request, case_id, "GatingRuleName", "QAP-4288(Gr_for_Care)")
         eq_wrappers.verify_value(base_request, case_id, "GatingRuleCondName", "CareDefResult")
         # endregion
+
+        eq_wrappers.cancel_order(base_request)
     except:
         logging.error("Error execution",exc_info=True)
