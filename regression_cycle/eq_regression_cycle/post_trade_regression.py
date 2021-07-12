@@ -22,9 +22,9 @@ def test_run(parent_id=None):
     try:
         QAP_2614.execute(report_id, session_id)
         QAP_2615.execute(report_id, session_id)
-        QAP_2780.execute(report_id, session_id)
         QAP_2697.execute(report_id, session_id)
         QAP_2700.execute(report_id, session_id)
+        QAP_2780.execute(report_id, session_id)
         QAP_3333.execute(report_id, session_id)
         QAP_3344.execute(report_id, session_id)
         QAP_3338.execute(report_id, session_id)

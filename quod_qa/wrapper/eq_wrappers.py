@@ -1,3 +1,5 @@
+import time
+from copy import deepcopy
 from datetime import datetime, timedelta
 
 from th2_grpc_act_gui_quod import middle_office_service, order_book_service
@@ -57,11 +59,9 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
+def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
     try:
-        fix_manager_qtwquod = FixManager(buy_connectivity, case_id)
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OCR(session)
+        fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
         cancel_parms = {
             "ClOrdID": cl_order_id,
             "Account": client,
@@ -73,8 +73,6 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
         fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(rule)
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
@@ -114,6 +112,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     finally:
         rule_manager.remove_rule(nos_rule)
 
+
 '''
   instrument ={
                 'Symbol': 'IS0000000001_EUR',
@@ -122,6 +121,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
                 'SecurityExchange': 'XEUR'
             }
 '''
+
+
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
@@ -161,18 +162,20 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def amend_order_via_fix(case_id, fix_message, parametr_list):
-    fix_manager = FixManager(buy_connectivity, case_id)
+def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
+    fix_manager = FixManager(sell_connectivity, case_id)
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(buy_connectivity)
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
+        rule = rule_manager.add_OrderCancelReplaceRequest(buy_connectivity, venue_client_name, venue,
+                                                          True)
+        fix_modify_message = deepcopy(fix_message)
+        fix_modify_message.change_parameters(param_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(rule)
 
 
@@ -252,7 +255,11 @@ def accept_modify(lookup, qty, price):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
-
+def accept_cancel(lookup, qty, price):
+    try:
+        call(Stubs.win_act.acceptAndCancelChildren, accept_order_request(lookup, qty, price))
+    except Exception:
+        logger.error("Error execution", exc_info=True)
 def direct_loc_order(qty, route):
     try:
         call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))

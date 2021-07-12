@@ -1,6 +1,6 @@
 from custom.basic_custom_actions import timestamps
 from quod_qa.eq.Care import QAP_477, QAP_478, QAP_1012, QAP_1014, QAP_1013, QAP_1016, QAP_1015, QAP_1017, QAP_1020, \
-    QAP_1019
+    QAP_1019, QAP_1021
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -29,6 +29,7 @@ def test_run(parent_id= None):
         QAP_1017.execute(report_id, session_id)
         QAP_1019.execute(report_id, session_id)
         QAP_1020.execute(report_id, session_id)
+        QAP_1021.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
