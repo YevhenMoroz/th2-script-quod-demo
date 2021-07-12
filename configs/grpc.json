@@ -83,8 +83,8 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -98,8 +98,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -113,8 +113,8 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -128,8 +128,8 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -143,8 +143,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -158,8 +158,8 @@
       "service-class": "OrderBookFXServiceService",
       "endpoints": {
         "act_order_book_fx": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -173,8 +173,8 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -188,8 +188,8 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_client_pricing": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -203,8 +203,8 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_middle_office": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -218,8 +218,8 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_dealer_interventions": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -249,58 +249,13 @@
       "endpoints": {
         "simulatorHttp": {
           "host": "10.0.22.22",
-          "port": 31123
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "simulatorHttp"
-        ]
-      }
-    },
-    "Act_Rest": {
-      "service-class": "RestActService",
-      "endpoints": {
-        "act_rest": {
-          "host": "10.0.22.22",
-          "port": 31111
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": [
-          "act_rest"
-        ]
-      }
-    },
-    "Act_Java_Api": {
-      "service-class": "ActService",
-      "endpoints": {
-        "act_java_api": {
-          "host": "10.0.22.22",
-          "port": 31221
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": [
-          "act_java_api"
-        ]
-      }
-    },
-    "Win_Act_Fx_Dealing_Positions": {
-      "service-class": "FxDealingPositionsServiceService",
-      "endpoints": {
-        "act_fx_dealing_positions": {
-          "host": "10.0.22.22",
-          "port": 31284
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": [
-          "act_fx_dealing_positions"
+          "act_layout"
         ]
       }
     }
