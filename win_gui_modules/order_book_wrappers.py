@@ -26,6 +26,9 @@ class ModifyOrderDetails:
         self.modify_order_details.multipleRowSelection = True
         self.modify_order_details.selectedRowCount = selected_row_count
 
+    def amend_by_icon(self):
+        self.modify_order_details.amendByIcon = True
+
     def build(self):
         return self.modify_order_details
 
@@ -49,6 +52,9 @@ class CancelOrderDetails:
 
     def set_cancel_children(self, cancel_children: bool):
         self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def cancel_by_icon(self):
+        self.cancel_order_details.cancelByIcon = True
 
     def set_selected_row_count(self, selected_row_count: int):
         self.cancel_order_details.multipleRowSelection = True
