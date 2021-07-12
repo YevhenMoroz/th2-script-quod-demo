@@ -24,6 +24,9 @@ class OrderTicketDetails:
     def set_client(self, client: str):
         self.order.client = client
 
+    def set_instrument(self, instrument: str):
+        self.order.instrument = instrument
+
     def set_limit(self, limit: str):
         self.order.limit = limit
 

@@ -1,5 +1,5 @@
 from regression_cycle.retail_regression_cycle import care_regression, dma_regression, login_regression, \
-    risk_limits_regression, twap_regression
+    risk_limits_regression, gating_rules_regression, twap_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -21,6 +21,7 @@ def test_run(parent_id=None):
         care_regression.test_run(session_id, report_id)
         dma_regression.test_run(session_id, report_id)
         risk_limits_regression.test_run(session_id, report_id)
+        gating_rules_regression.test_run(session_id, report_id)
         twap_regression.test_run(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -10,18 +10,18 @@ from stubs import Stubs
 
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 from quod_qa.fx.ui_test_ex import extract_error_message_order_ticket
-from quod_qa.wrapper import eq_wrappers
+from quod_qa.wrapper.eq_wrappers import create_order, verify_order_value
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = os.path.basename(__file__)
 
     seconds, nanos = timestamps()  # Store case start time
@@ -40,35 +40,26 @@ def execute(report_id):
 
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
     # endregion
 
     # region Create order via FE according to 1st step
-    eq_wrappers.create_order(base_request, qty[0], client, lookup, order_type, tif,
-                             False, None, price[0], False, False, None)
+    create_order(base_request, qty[0], client, lookup, order_type, tif,
+                 False, None, price[0], None, None, False, False, None, False)
     # endregion
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    verify_order_value(base_request, case_id, "Sts", "Open", False)
     # endregion
 
     # region Create order via FE according to 2nd step
-    eq_wrappers.create_order(base_request, qty[1], client, lookup, order_type, tif,
-                             False, None, price[1], False, False, None)
+    create_order(base_request, qty[1], client, lookup, order_type, tif,
+                 False, None, price[1], None, None, False, False, None, False)
     # endregion
 
     # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    verify_order_value(base_request, case_id, "Sts", "Open", False)
     # endregion
 
     # region Create order via FE according to 3rd step

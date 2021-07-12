@@ -104,15 +104,15 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
 
     order_ticket_service = Stubs.win_act_order_ticket
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
-                                                                             client + "_PARIS", "XPAR", int(price))
-        call(order_ticket_service.placeOrder, new_order_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
+    # try:
+    #     rule_manager = RuleManager()
+    #     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
+    #                                                                          client + "_PARIS", "XPAR", int(price))
+    #     call(order_ticket_service.placeOrder, new_order_details.build())
+    # except Exception:
+    #     logger.error("Error execution", exc_info=True)
+    # finally:
+    #     rule_manager.remove_rule(nos_rule)
 
 '''
   instrument ={
