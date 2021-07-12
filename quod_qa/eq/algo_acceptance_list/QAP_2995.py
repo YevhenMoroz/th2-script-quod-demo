@@ -40,5 +40,7 @@ def execute(report_id, session_id):
         eq_wrappers.verify_value(base_request, case_id, "GatingRuleName", "QAP-2995(Gr_for_DMA)")
         eq_wrappers.verify_value(base_request, case_id, "GatingRuleCondName", "DMADefResult")
         # endregion
+
+        eq_wrappers.cancel_order(base_request)
     except:
         logging.error("Error execution",exc_info=True)
