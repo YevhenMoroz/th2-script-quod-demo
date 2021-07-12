@@ -1,400 +1,114 @@
-import logging
-import os
-from datetime import datetime
-from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
+import time
+from pathlib import Path
 
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
+from custom import basic_custom_actions as bca
+import logging
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
-from copy import deepcopy
-from custom.basic_custom_actions import create_event
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-
-
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-# connectivity = 'fix-ss-308-mercury-standard'
-connectivity = 'fix-qsesp-303'
-account = 'MMCLIENT1'
-qty = 1000000
-client_tier='Bronze'
-instrument='EUR/USD'
+client = 'Palladium1'
+account = 'Palladium1_1'
+side = '1'
+orderqty = '1000000'
+orderqty2 = '2000000'
+ordtype = '2'
+timeinforce = '4'
+currency1 = 'USD'
+currency2 = 'EUR'
+settlcurrency = 'CAD'
+settltype = 'W1'
+symbol1 = 'USD/CAD'
+symbol2 = 'EUR/CAD'
+securitytype_spo = 'FXSPOT'
+securitytype_fwd = 'FXFWD'
+securityidsource = '8'
+securityid1 = 'USD/CAD'
+securityid2 = 'EUR/CAD'
+bands = [1000000, 2000000, 3000000]
+bands_not_published = [2000000, 3000000]
+md = None
+settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d %H:%M:%S')
+settldate1_spo = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d %H:%M:%S')
+settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
+settldate2_spo = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
+
+defaultmdsymbol_spo_1 = 'USD/CAD:SPO:REG:HSBC'
+defaultmdsymbol_spo_2 = 'EUR/CAD:SPO:REG:HSBC'
 
 
-def change_exec(base_request, service):
-    press_ex = ModifyRatesTileRequest(details=base_request)
-    press_ex.press_executable()
-    call(service.modifyRatesTile, press_ex.build())
-
-def selecting_tier(base_request, service):
-    selecting = ModifyRatesTileRequest(details=base_request)
-    selecting.set_client_tier(client_tier)
-    selecting.set_instrument(instrument)
-    call(service.modifyRatesTile, selecting.build())
-
-class TestCase:
-    def __init__(self, report_id):
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
-
-        # Services setup
-        self.fix_act = Stubs.fix_act
-        self.verifier = Stubs.verifier
-        self.common_act = Stubs.win_act
-        self.ob_act = Stubs.win_act_order_book
-        self.cpt_service = Stubs.win_act_cp_service
-
-
-        # Case parameters setup
-        self.case_id = bca.create_event('QAP_1558', report_id)
-        self.session_id = set_session_id()
-        set_base(self.session_id, self.case_id)
-        self.base_request = get_base_request(self.session_id, self.case_id)
-
-        self.case_params = {
-            'Connectivity': connectivity,
-            'MDReqID': bca.client_orderid(10),
-            'ClOrdID': bca.client_orderid(9),
-            'Account': account,
-            'HandlInst': '1',
-            'Side': '1',
-            'OrderQty': qty,
-            'OrdType': '2',
-            # 'Price': 35.002,
-            'TimeInForce': '4',
-            'Currency': 'EUR',
-            'SettlCurrency': 'USD',
-            'SettlType': 0,
-            'SettlDate': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S'),
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT',
-                'SecurityIDSource': '8',
-                'SecurityID': 'EUR/USD',
-                'SecurityExchange': 'XQFX',
-            },
-            'Product': '4',
-        }
-
-        # This parameters can be used for ExecutionReport message
-        self.reusable_order_params = {
-            'Account': self.case_params['Account'],
-            'HandlInst': self.case_params['HandlInst'],
-            'Side': self.case_params['Side'],
-            'TimeInForce': self.case_params['TimeInForce'],
-            'OrdType': self.case_params['OrdType'],
-            'OrderCapacity': 'A',
-            'Currency': self.case_params['Currency'],
-            'Instrument': {
-                'Symbol': self.case_params['Instrument']['Symbol'],
-                'SecurityIDSource': self.case_params['Instrument']['SecurityIDSource'],
-                'SecurityID': self.case_params['Instrument']['SecurityID'],
-                'SecurityExchange': self.case_params['Instrument']['SecurityExchange']
-            }
-        }
-
-        # Last checkpoint. Need in the future for check ExecutionReport via FIX
-        self.last_checkpoint = None
-
-    # FE open method
-    # def prepare_frontend(self):
-    #         user = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         work_dir = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         password = Stubs.custom_config['qf_trading_fe_folder_308']
-    #         if not Stubs.frontend_is_open:
-    #             prepare_fe(self.case_id, self.session_id, work_dir, user, password)
-
-    # Send MarketDataRequest subscribe method
-    def send_md_subscribe(self):
-        md_params = {
-            'SenderSubID': self.case_params['Account'],
-            'MDReqID': self.case_params['MDReqID'],
-            'SubscriptionRequestType': '1',
-            'MarketDepth': '0',
-            'MDUpdateType': '0',
-            'NoMDEntryTypes': [{'MDEntryType': '0'}, {'MDEntryType': '1'}],
-            'NoRelatedSymbols': [
-                {
-                    'Instrument': {
-                        'Symbol': self.case_params['Instrument']['Symbol'],
-                        'SecurityType': self.case_params['Instrument']['SecurityType']
-                    },
-                    'SettlDate': self.case_params['SettlDate'],
-                    'SettlType': self.case_params['SettlType']
-                }
-            ],
-            'Product': self.case_params['Product']
-        }
-
-        subscribe = self.fix_act.placeMarketDataRequestFIX(
-            bca.convert_to_request(
-                'Send MDR (subscribe)',
-                self.case_params['Connectivity'],
-                self.case_id,
-                bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
-            ))
-
-        self.case_params['Price'] = subscribe \
-            .response_messages_list[0].fields['NoMDEntries'] \
-            .message_value.fields['NoMDEntries'].list_value.values[1] \
-            .message_value.fields['MDEntryPx'].simple_value
-
-        print(self.case_params['Price'])
-
-        md_subscribe_response = {
-            'MDReqID': md_params['MDReqID'],
-            'Instrument': {
-                'Symbol': self.case_params['Instrument']['Symbol']
-            },
-            'LastUpdateTime': '*',
-            'NoMDEntries': [
-                {
-                    'SettlType': 0,
-                    'MDEntryPx': '*',
-                    'MDEntryTime': '*',
-                    'MDEntryID': '*',
-                    'MDEntrySize': '*',
-                    'QuoteEntryID': '*',
-                    'MDOriginType': 1,
-                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
-                    'MDQuoteType': 0,
-                    'MDEntryPositionNo': 1,
-                    'MDEntryDate': '*',
-                    'MDEntryType': 0
-                },
-                {
-                    'SettlType': 0,
-                    'MDEntryPx': '*',
-                    'MDEntryTime': '*',
-                    'MDEntryID': '*',
-                    'MDEntrySize': '*',
-                    'QuoteEntryID': '*',
-                    'MDOriginType': 1,
-                    'SettlDate': self.case_params['SettlDate'].split(' ')[0],
-                    'MDQuoteType': 0,
-                    'MDEntryPositionNo': 1,
-                    'MDEntryDate': '*',
-                    'MDEntryType': 1
-                },
-
-            ]
-        }
-
-        self.verifier.submitCheckRule(
-            bca.create_check_rule(
-                'Receive MarketDataSnapshotFullRefresh (pending)',
-                bca.filter_to_grpc('MarketDataSnapshotFullRefresh', md_subscribe_response, ['MDReqID']),
-                subscribe.checkpoint_id,
-                self.case_params['Connectivity'],
-                self.case_id
-            )
-        )
-
-        # Return MarketDataRequest params for unsubscribe in future
-        return md_params
-
-    # Send MarketDataRequest unsubscribe method
-    def send_md_unsubscribe(self, md_params):
-        md_params['SubscriptionRequestType'] = '2'
-
-        self.fix_act.sendMessage(
-            bca.convert_to_request(
-                'Send MDR (unsubscribe)',
-                self.case_params['Connectivity'],
-                self.case_id,
-                bca.message_to_grpc('MarketDataRequest', md_params, self.case_params['Connectivity'])
-            ))
-
-
-
-        # Send FOK order via FIX
-
-    def send_order(self):
-        order_params = {
-            'Account': self.case_params['Account'],
-            'HandlInst': self.case_params['HandlInst'],
-            'Side': self.case_params['Side'],
-            'OrderQty': self.case_params['OrderQty'],
-            'TimeInForce': self.case_params['TimeInForce'],
-            'Price': self.case_params['Price'],
-            'OrdType': self.case_params['OrdType'],
-            'ClOrdID': self.case_params['ClOrdID'],
-            'TransactTime': datetime.utcnow().isoformat(),
-            'SettlType': self.case_params['SettlType'],
-            'SettlDate': self.case_params['SettlDate'],
-            'Instrument': {
-                'Symbol': self.case_params['Instrument']['Symbol'],
-            },
-            'Currency': self.case_params['Currency'],
-            'Product': self.case_params['Product']
-        }
-
-        new_order = self.fix_act.placeOrderFIX(
-            request=bca.convert_to_request(
-                'Send new FOK order', self.case_params['Connectivity'], self.case_id,
-                bca.message_to_grpc('NewOrderSingle', order_params, self.case_params['Connectivity'])
-            ))
-
-        checkpoint = new_order.checkpoint_id
-        pending_er_params = {
-            **self.reusable_order_params,
-            'ExecID': '*',
-            'ClOrdID': order_params['ClOrdID'],
-            'OrderID': new_order.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'LastQty': '0',
-            'QtyType': '0',
-            'OrderQty': order_params['OrderQty'],
-            'Price': order_params['Price'],
-            'SettlCurrency': self.case_params['SettlCurrency'],
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'ExecType': 'A',
-            'NoParty': [{
-                'PartyID': 'gtwquod3',
-                'PartyIDSource': 'D',
-                'PartyRole': '36'
-            }],
-            'LeavesQty': order_params['OrderQty']
-        }
-
-        self.verifier.submitCheckRule(
-            request=bca.create_check_rule(
-                'Execution Report with OrdStatus = Pending',
-                bca.filter_to_grpc('ExecutionReport', pending_er_params, ['ClOrdID', 'OrdStatus']),
-                checkpoint, self.case_params['Connectivity'], self.case_id
-            ),
-            timeout=3000
-        )
-
-        new_er_params = deepcopy(pending_er_params)
-        new_er_params['OrdStatus'] = new_er_params['ExecType']
-        # new_er_params['SettlDate'] = self.case_params['SettlDate'].split(' ')[0]
-        # new_er_params['SettlType'] = self.case_params['SettlType']
-        # new_er_params['ExecRestatementReason'] = '4'
-
-        self.verifier.submitCheckRule(
-            request=bca.create_check_rule(
-                'Execution Report with OrdStatus = Pending New',
-                bca.filter_to_grpc('ExecutionReport', new_er_params, ['ClOrdID', 'OrdStatus']),
-                checkpoint, self.case_params['Connectivity'], self.case_id
-            ),
-            timeout=3000
-        )
-
-        self.last_checkpoint = checkpoint
-
-        # Check order status via FIX and GUI
-
-    def check_rejected(self):
-        er_filled = {
-            **self.reusable_order_params,
-            'ClOrdID': self.case_params['ClOrdID'],
-            'Text': 'not tradeable',
-            'OrderID': '*',
-            'ExecID': '*',
-            'TransactTime': '*',
-            # 'LastSpotRate': self.case_params['Price'],
-            'LastQty': 0,
-            'CumQty': 0,
-            'QtyType': '0',
-            'Price': self.case_params['Price'],
-            'ExecRestatementReason': 4,
-            'OrderQty': self.case_params['OrderQty'],
-            'LastPx': 0,
-            'AvgPx': 0,
-            'OrdStatus': '8',
-            'ExecType': '8',
-            'LeavesQty': '0',
-            'SettlType': self.case_params['SettlType'],
-            'SettlDate': self.case_params['SettlDate'].split(' ')[0],
-            'Currency': self.case_params['Currency'],
-            'SettlCurrency': self.case_params['SettlCurrency'],
-            # 'TradeDate': '*',
-            # 'ExDestination': 'XQFX',
-            # 'GrossTradeAmt': '*',
-            'NoParty': [{
-                'PartyID': 'gtwquod3',
-                'PartyIDSource': 'D',
-                'PartyRole': '36'
-            }]
-        }
-        er_filled['Instrument']['SecurityID'] = self.case_params['Instrument']['SecurityID']
-
-        self.verifier.submitCheckRule(
-            request=bca.create_check_rule(
-                'Execution Report with OrdStatus = Rejected',
-                bca.filter_to_grpc('ExecutionReport', er_filled, ['ClOrdID', 'OrdStatus']),
-                self.last_checkpoint, self.case_params['Connectivity'], self.case_id
-            ),
-            timeout=3000
-        )
-
-        execution_id = bca.client_orderid(4)
-        ob = OrdersDetails()
-        ob.set_default_params(self.base_request)
-        ob.set_extraction_id(execution_id)
-        ob_cl_ord_id = ExtractionDetail("orderBook.clordid", "ClOrdID")
-        ob_tif = ExtractionDetail("orderBook.timeinforce", "TIF")
-        ob_exec_sts = ExtractionDetail("orderBook.sts", "Sts")
-        ob_free_notes = ExtractionDetail("orderBook.freenotes", "FreeNotes")
-        print(ob_free_notes)
-        ob.add_single_order_info(
-            OrderInfo.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts, ob_cl_ord_id, ob_tif, ob_free_notes])))
-        call(self.ob_act.getOrdersDetails, ob.request())
-        call(self.common_act.verifyEntities, verification(execution_id, "checking OrdBook",
-                                                          [verify_ent("OB ClOrdID vs FIX ClOrdID", ob_cl_ord_id.name,
-                                                                      er_filled['ClOrdID']),
-                                                           verify_ent("OB Sts", ob_exec_sts.name, "Rejected"),
-                                                           verify_ent("OB TIF",ob_tif.name,"FillOrKill"),
-                                                           verify_ent("OB FreeNotes", ob_free_notes.name, "not tradeable")]))
-
-
-
-
-
-
-    def execute(self):
-
+def execute(report_id):
+    try:
+        case_name = Path(__file__).name[:-3]
+        case_id = bca.create_event(case_name, report_id)
+        params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                     timeinforce=timeinforce, currency=currency2,
+                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
+                                     symbol=symbol2, securitytype=securitytype_fwd,
+                                     securityid=securityid2, account=account)
+        params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
+        md2 = FixClientSellEsp(params_2)
         try:
 
-            if not Stubs.frontend_is_open:
-                prepare_fe_2(self.case_id, self.session_id)
-            else:
-                get_opened_fe(self.case_id, self.session_id)
+            # Precondition
+            params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate1_spo,
+                                               symbol=symbol1, securitytype=securitytype_spo)
+            params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo,
+                                               symbol=symbol2, securitytype=securitytype_spo)
+            FixClientSellEsp(params_usd_cad).send_md_request().send_md_unsubscribe()
+            FixClientSellEsp(params_eur_cad).send_md_request().send_md_unsubscribe()
+            FixClientBuy(
+                CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)).send_market_data_spot()
+            FixClientBuy(
+                CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)).send_market_data_spot()
 
-            selecting_tier(BaseTileDetails(base=self.base_request), self.cpt_service)
-            change_exec(BaseTileDetails(base=self.base_request), self.cpt_service)
+            # Steps 1-3
+            params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                         timeinforce=timeinforce, currency=currency1,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1,
+                                         symbol=symbol1, securitytype=securitytype_fwd,
+                                         securityid=securityid1)
+            params_1.prepare_md_for_verification(bands, published=False)
+            md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
+            price1 = md1.extruct_filed('Price')
+            text = 'empty book'
+            md1.send_new_order_single(price1). \
+                verify_order_pending(). \
+                verify_order_rejected(text). \
+                send_md_unsubscribe()
 
-            # Step 1
-            market_data_params = self.send_md_subscribe()
-            self.send_order()
-            # Steps 3-4
-            self.check_rejected()
+            # Step 4-5
+            params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                         timeinforce=timeinforce, currency=currency2,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
+                                         symbol=symbol2, securitytype=securitytype_fwd,
+                                         securityid=securityid2, account=account)
+            params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
+            md2 = FixClientSellEsp(params_2)
+            price2 = md2.send_md_request().verify_md_pending().extruct_filed('Price')
+            md2.send_new_order_single(price2). \
+                verify_order_pending(). \
+                verify_order_filled_fwd()
 
-            self.send_md_unsubscribe(market_data_params)
+            # Step 6
+            text = 'not enough quantity in book'
+            params_2.orderqty = orderqty2
+            params_2.set_new_order_single_params()
+            md2.send_new_order_single(price2). \
+                verify_order_pending(). \
+                verify_order_rejected(text)
 
-            change_exec(BaseTileDetails(base=self.base_request), self.cpt_service)
 
-
-
-        except Exception as e:
+        except Exception:
             logging.error('Error execution', exc_info=True)
-
-        # close_fe(self.case_id, self.session_id)
-
-
-
-if __name__ == '__main__':
-    pass
+        finally:
+            md2.send_md_unsubscribe()
+    except Exception:
+        logging.error('Error execution', exc_info=True)

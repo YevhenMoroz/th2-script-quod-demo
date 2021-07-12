@@ -117,17 +117,17 @@ def set_order_ticket_options(option_service, base_request, client):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     option_service = Stubs.win_act_options
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = ["CIT"]
+    case_venue = ["CITI"]
     case_filter_venue = "CITI"
 
     case_qty = 2000000
@@ -135,19 +135,15 @@ def execute(report_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = "Spot"
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
         # Step 1-3
         set_order_ticket_options(option_service, case_base_request, case_client)

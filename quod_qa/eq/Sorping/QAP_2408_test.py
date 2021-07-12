@@ -281,8 +281,8 @@ def execute(report_id):
 
     er_5 = dict(
         er_4,
-        ExecType='A',
-        OrdStatus='A',
+        ExecType='0',
+        OrdStatus='0',
     )
     verifier_310_buy_side.CheckExecutionReport(er_5, responce_new_order_single,key_parameters = ['ExDestination', 'ExecType', 'OrdStatus'],direction='SECOND', case=case_id_3, message_name='ExecutionReport new')
 

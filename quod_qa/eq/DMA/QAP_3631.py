@@ -42,8 +42,8 @@ def execute(report_id):
     # endregion
 
     # region  Create order
-    fix_message=eq_wrappers.create_order_via_fix(case_id, 2, 2, client, 2, qty, 0, price)
-    response=fix_message.pop('response')
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
+    response = fix_message.pop('response')
     # endregion
     # region Complete
     eq_wrappers.complete_order(base_request)
@@ -51,18 +51,37 @@ def execute(report_id):
     # region notify DFD
     eq_wrappers.notify_dfd(base_request)
     # endregion
+
     # Check on ss
     params = {
         'OrderQty': qty,
         'ExecType': '3',
-        'OrdStatus': '1',
-        'Side': 2,
+        'OrdStatus': '0',
+        'Side': 1,
         'Price': price,
         'TimeInForce': 0,
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ExecID': '*',
+        'LastQty': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'SettlDate': '*',
+        'Currency': '*',
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'OrdType': '*',
+        'LastMkt': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'SettlType': '*',
+        'SecondaryOrderID': '*',
+        'NoParty': '*',
+        'Instrument': '*',
     }
-    print(response.response_messages_list[0].fields['ClOrdID'].simple_value)
+
     fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID','ExecType'])
-
+                                         key_parameters=['ClOrdID', 'ExecType'])

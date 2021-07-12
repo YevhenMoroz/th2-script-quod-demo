@@ -4,54 +4,68 @@ from datetime import datetime
 
 from custom import basic_custom_actions as bca
 
+from quod_qa.fx.fx_mm_rfq import QAP_1545
+from rule_management import RuleManager
 from stubs import Stubs
-
-# from rule_management import RuleManager
-
-from quod_qa.RET.Risk_Limits import QAP_4311, QAP_4314, QAP_4306, QAP_4291, QAP_4322, QAP_4300
-from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4307, QAP_4288, QAP_4282
-from quod_qa.RET.Benchmark import QAP_4303, QAP_4293
-from quod_qa.RET.DMA import QAP_4297, QAP_4304, QAP_4310
-from quod_qa.RET.Login import QAP_4325
-from quod_qa.RET.FIX import DMA_FixFE_test, QAP_4301_fix
-
+from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 timeouts = False
+
 channels = dict()
+
+
+def prepare_fe(case_id, session_id):
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+        # ,
+        #          fe_dir='qf_trading_fe_folder_308',
+        #          fe_user='qf_trading_fe_user_308',
+        #          fe_pass='qf_trading_fe_password_308')
+    else:
+        get_opened_fe(case_id, session_id)
 
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' i.kobyliatskyi  tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-
+    s_id = set_session_id()
+    Stubs.frontend_is_open = True
     try:
-        # QAP_4297.execute(report_id)
-        # QAP_4304.execute(report_id)
-        # QAP_4310.execute(report_id)
-        # QAP_4325.execute(report_id)
-        # QAP_4311.execute(report_id)
-        # QAP_4314.execute(report_id)
-        # QAP_4306.execute(report_id)
-        # QAP_4291.execute(report_id)
-        # QAP_4322.execute(report_id)
-        # QAP_4300.execute(report_id)
-        # QAP_4280.execute(report_id)
-        # QAP_4307.execute(report_id)
-        # QAP_4288.execute(report_id)
-        # QAP_4282.execute(report_id)
-        # QAP_4303.execute(report_id)
-        # QAP_4293.execute(report_id)
-        # DMA_FixFE_test.execute(report_id)
-        QAP_4301_fix.execute(report_id)
+        # case_params = {
+        #     'case_id': bca.create_event_id(),
+        #     'TraderConnectivity': 'gtwquod5-fx',
+        #     'Account': 'MMCLIENT1',
+        #     'SenderCompID': 'QUODFX_UAT',
+        #     'TargetCompID': 'QUOD5',
+        #     }
+        case_params = {
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'fix-ss-rfq-314-luna-standard',
+            'Account': 'Iridium1',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD9',
+        }
+
+        prepare_fe(report_id, s_id)
+        # rm = RuleManager()
+        # rm.print_active_rules()
+
+
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+
+    finally:
+        Stubs.win_act.unregister(s_id)
 
 
 if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
+

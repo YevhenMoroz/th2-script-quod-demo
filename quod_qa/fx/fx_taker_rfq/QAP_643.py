@@ -22,7 +22,7 @@ def send_rfq(base_request, service):
 
 def modify_rfq_tile_swap(base_request, service, near_qty, cur1, cur2, near_tenor, far_tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
+    action = ContextAction.create_venue_filter(venues)
     modify_request.add_context_action(action)
     modify_request.set_near_tenor(near_tenor)
     modify_request.set_far_leg_tenor(far_tenor)
@@ -41,7 +41,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue[:-1])
+    rfq_request.set_venue(venue)
     rfq_request.set_action(RFQTileOrderSide.SELL)
     call(service.placeRFQOrder, rfq_request.build())
 
@@ -114,35 +114,30 @@ def check_order_book(base_request, instr_type, act_ob, case_id, currency):
     return response[ob_id.name]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "1M"
     case_far_tenor = "2M"
-    case_venue = ["CIT"]
-    case_filter_venue = "CITI"
+    case_venue = "CITI"
     case_qty = 2000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'FXSwap'
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
@@ -150,19 +145,19 @@ def execute(report_id):
                              case_near_tenor, case_far_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
+
         # Step 3
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 4
-        place_order_venue(base_rfq_details, ar_service, case_filter_venue)
+        place_order_venue(base_rfq_details, ar_service, case_venue)
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                                     case_from_currency)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)

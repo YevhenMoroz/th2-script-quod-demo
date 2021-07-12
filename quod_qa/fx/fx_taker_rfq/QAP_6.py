@@ -54,17 +54,17 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_eur_currency = "EUR"
     case_usd_currency = "USD"
     case_ndf_currency = "PHP"
     case_near_tenor = "Spot"
     case_far_tenor = "1W"
-    case_venue = ["CIT"]
+    case_venue = ["CITI"]
     case_filter_venue = "CITI"
 
     case_qty = 2000000
@@ -74,17 +74,14 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
+        
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
 
@@ -94,7 +91,6 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_0", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
-        cancel_rfq(base_rfq_details, ar_service)
 
         # Step 3
         modify_request.set_from_currency(case_usd_currency)
@@ -112,7 +108,12 @@ def execute(report_id):
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QR_2", case_base_request, ar_service, case_id, quote_sts_new,
                               quote_quote_sts_accepted, case_filter_venue)
-        call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

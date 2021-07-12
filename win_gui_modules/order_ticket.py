@@ -10,7 +10,12 @@ from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipati
 from .common_wrappers import CommissionsDetails, BaseTileDetails
 from enum import Enum
 
+from .utils import call
 
+
+class OrderTicketExtractedValue(Enum):
+    DISCLOSE_FLAG = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISCLOSE_FLAG
+    ERROR_MESSAGE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
 class OrderTicketDetails:
 
     def __init__(self):
@@ -18,9 +23,6 @@ class OrderTicketDetails:
 
     def set_client(self, client: str):
         self.order.client = client
-
-    def set_instrument(self, instrument: str):
-        self.order.instrument = instrument
 
     def set_limit(self, limit: str):
         self.order.limit = limit
@@ -150,59 +152,86 @@ class FXOrderDetails:
     def set_strategy(self, strategy: str):
         self.order.strategy = strategy
 
+    def set_child_strategy(self, childStrategy: str):
+        self.order.childStrategy = childStrategy
+
+    def set_care_order(self, desk: str, partial_desk: bool = False,
+                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
+        self.order.careOrderParams.desk = desk
+        self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
+
     def build(self):
         return self.order
 
 
 class OrderTicketValues(Enum):
+    types = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType
     INSTRUMENT = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.INSTRUMENT
     PRICELARGE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.PRICELARGE
     PRICEPIPS = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.PRICEPIPS
-    # ORDERTYPE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.ORDERTYPE
+    ORDERTYPE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.ORDERTYPE
     QUANTITY = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.QUANTITY
     CLIENT = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.CLIENT
     TIMEINFORCE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.TIMEINFORCE
     SLIPPAGE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.SLIPPAGE
     STOPPRICE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.STOPPRICE
-    # DISPLAYQTY = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.DISPLAYQTY
-
+    ALGO            = types.ALGO
+    STRATEGY        = types.STRATEGY
+    CHILD_STRATEGY  = types.CHILD_STRATEGY
+    IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
+    ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
 
 class ExtractFxOrderTicketValuesRequest:
 
-    def __init__(self, data: BaseTileDetails, extractionId: str = 'extractFXOrderTicketValues'):
+    def __init__(self, data: BaseTileData, extractionId: str = 'extractFXOrderTicketValues'):
         self.request = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest()
         self.request.data.CopyFrom(data)
         self.request.extractionId = extractionId
 
-    def get_instrument(self, unic_id: str):
+    def get_instrument(self, unic_id: str = 'fx_order_ticket.instrument'):
         self.get_extract_value(unic_id, OrderTicketValues.INSTRUMENT)
 
-    def get_price_large(self, unic_id: str):
+    def get_price_large(self, unic_id: str = 'fx_order_ticket.price_large'):
         self.get_extract_value(unic_id, OrderTicketValues.PRICELARGE)
 
-    def get_price_pips(self, unic_id: str):
+    def get_price_pips(self, unic_id: str = 'fx_order_ticket.price_pips'):
         self.get_extract_value(unic_id, OrderTicketValues.PRICEPIPS)
 
-    def get_order_type(self, unic_id: str):
+    def get_order_type(self, unic_id: str = 'fx_order_ticket.order_type'):
         self.get_extract_value(unic_id, OrderTicketValues.ORDERTYPE)
 
-    def get_quantity(self, unic_id: str):
+    def get_quantity(self, unic_id: str = 'fx_order_ticket.quantity'):
         self.get_extract_value(unic_id, OrderTicketValues.QUANTITY)
 
-    def get_display_quantity(self, unic_id: str):
-        self.get_extract_value(unic_id, OrderTicketValues.DISPLAYQTY)
-
-    def get_client(self, unic_id: str):
+    def get_client(self, unic_id: str = 'fx_order_ticket.client'):
         self.get_extract_value(unic_id, OrderTicketValues.CLIENT)
 
-    def get_tif(self, unic_id: str):
+    def get_tif(self, unic_id: str = 'fx_order_ticket.tif'):
         self.get_extract_value(unic_id, OrderTicketValues.TIMEINFORCE)
 
-    def get_slippage(self, unic_id: str):
+    def get_slippage(self, unic_id: str = 'fx_order_ticket.slippage'):
         self.get_extract_value(unic_id, OrderTicketValues.SLIPPAGE)
 
-    def get_stop_price(self, unic_id: str):
+    def get_stop_price(self, unic_id: str = 'fx_order_ticket.stop_price'):
         self.get_extract_value(unic_id, OrderTicketValues.STOPPRICE)
+
+    def get_algo(self, algo: str = 'fx_order_ticket.algo'):
+        self.get_extract_value(algo, OrderTicketValues.ALGO)
+
+    def get_strategy(self, strategy: str = 'fx_order_ticket.strategy'):
+        self.get_extract_value(strategy, OrderTicketValues.STRATEGY)
+
+    def get_child_strategy(self, child_strategy: str = 'fx_order_ticket.child_strategy'):
+        self.get_extract_value(child_strategy, OrderTicketValues.CHILD_STRATEGY)
+
+    def get_is_algo_checked(self, is_algo_checked: str = 'fx_order_ticket.is_algo_checked'):
+        self.get_extract_value(is_algo_checked, OrderTicketValues.IS_ALGO_CHECKED)
+
+
+    def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
+        self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
+
 
     def get_extract_value(self, name: str, field: OrderTicketValues):
         extracted_value = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedValue()
@@ -212,12 +241,6 @@ class ExtractFxOrderTicketValuesRequest:
 
     def build(self):
         return self.request
-
-
-class OrderTicketExtractedValue(Enum):
-    DISCLOSE_FLAG = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISCLOSE_FLAG
-    ERROR_MESSAGE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
-
 
 class ExtractOrderTicketValuesRequest:
 
@@ -237,8 +260,6 @@ class ExtractOrderTicketValuesRequest:
 
     def build(self):
         return self.request
-
-
 class ExtractOrderTicketErrorsRequest:
 
     def __init__(self, base_request, extractionId: str = 'ErrorMessageExtractionID'):
@@ -257,4 +278,16 @@ class ExtractOrderTicketErrorsRequest:
 
     def build(self):
         return self.request
+    def extract_error_message_order_ticket(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+        extract_errors_request.extract_error_message()
+        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
+        print(result)
 
+    def get_disclose_flag_state(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
+        extract_disclose_flag_request.get_disclose_flag_state()
+        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
+        print(result)

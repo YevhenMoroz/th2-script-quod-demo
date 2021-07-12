@@ -119,14 +119,14 @@ def check_value_in_header(base_request, service, case_id, value):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     case_name = Path(__file__).name[:-3]
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "1M"
-    case_venue = ["HSB"]
+    case_venue = ["HSBC"]
     case_filter_venue = "HSBC"
     case_qty = 2000000
     quote_sts_new = 'New'
@@ -134,16 +134,13 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
+
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -162,8 +159,11 @@ def execute(report_id):
         # Step 6
         check_column_spot(base_rfq_details, ar_service, case_id, case_venue)
 
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

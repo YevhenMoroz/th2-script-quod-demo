@@ -65,12 +65,26 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorTest": {
+      "service-class": "TemplateSimulatorServiceTestService",
+      "endpoints": {
+        "simulator_test": {
+          "host": "10.0.22.22",
+          "port": 32314
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["simulator_test"]
+      }
+    },
+
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.24",
-          "port": 32290
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -84,8 +98,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "10.0.22.24",
-          "port": 32290
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -95,12 +109,27 @@
         ]
       }
     },
+    "Win_Act_Order_Ticket_FX": {
+      "service-class": "OrderTicketFxServiceService",
+      "endpoints": {
+        "act_order_ticket_fx": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_ticket_fx"
+        ]
+      }
+    },
     "Win_Act_Fx_Dealing_Positions": {
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.24",
-          "port": 32290
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -114,8 +143,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "10.0.22.24",
-          "port": 32290
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -125,12 +154,27 @@
         ]
       }
     },
+	"Win_Act_Order_Book_FX": {
+      "service-class": "OrderBookFXServiceService",
+      "endpoints": {
+        "act_order_book_fx": {
+          "host": "10.0.22.22",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_fx"
+        ]
+      }
+    },
     "Win_Act_Aggregated_Rates": {
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.24",
-          "port": 32290
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
@@ -143,45 +187,45 @@
     "Win_Act_Client_Pricing": {
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "10.0.22.24",
-          "port": 32290
+        "act_client_pricing": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_client_pricing"
         ]
       }
     },
     "Win_Act_Middle_Office": {
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "10.0.22.24",
-          "port": 32290
+        "act_middle_office": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_middle_office"
         ]
       }
     },
     "Win_Act_Dealer_Intervention": {
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
-        "act_rfq": {
-          "host": "10.0.22.24",
-          "port": 32290
+        "act_dealer_interventions": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {
         "name": "robin",
         "endpoints": [
-          "act_rfq"
+          "act_dealer_interventions"
         ]
       }
     },
@@ -190,7 +234,22 @@
       "endpoints": {
         "act_layout": {
           "host": "10.0.22.24",
-          "port": 32290
+          "port": 32288
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_layout"
+        ]
+      }
+    },
+    "SimulatorHttp": {
+      "service-class": "SimTemplateService",
+      "endpoints": {
+        "simulatorHttp": {
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {

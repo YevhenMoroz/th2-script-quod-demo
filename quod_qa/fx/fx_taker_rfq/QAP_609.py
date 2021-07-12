@@ -107,12 +107,12 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, venu
     return response[ob_quote_id.name]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = "ostronov"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type_ndf = "NDF"
     case_instr_type_fwd = "FXForward"
     case_venue_hsbcr = "HSBCR"
@@ -123,8 +123,8 @@ def execute(report_id):
     case_currency_usd = "USD"
     case_currency_php = "PHP"
     case_currency_cad = "CAD"
-    case_client = "MMCLIENT2"
-    venues_hsb = ["HSB"]
+    case_client = "ASPECT_CITI"
+    venues_hsb = ["HSBC"]
     venues_cit = ["CIT"]
     quote_sts_new = 'New'
     quote_sts_terminated = 'Terminated'
@@ -132,17 +132,12 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details_0 = BaseTileDetails(base=case_base_request, window_index=0)
     base_rfq_details_1 = BaseTileDetails(base=case_base_request, window_index=1)
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -208,7 +203,6 @@ def execute(report_id):
         check_quote_request_b("QRB_5", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue_citir)
         # Step 7
-        cancel_rfq(base_rfq_details_0, ar_service)
 
         # Step 8
         place_order_tob(base_rfq_details_1, ar_service)

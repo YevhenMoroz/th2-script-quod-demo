@@ -1,5 +1,7 @@
 import logging
 import time
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -105,36 +107,31 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty):
     return response[ob_id.name]
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    case_name = "QAP-611"
-    quote_owner = "ostronov"
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_instr_type = "Spot"
     case_venue = "HSBC"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "USD"
     case_to_currency = "PHP"
-    case_client = "MMCLIENT2"
-    venues = ["HSB", "CIT"]
+    case_client = "ASPECT_CITI"
+    venues = ["HSBC", "CITI"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_sts_expired = "Expired"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -161,5 +158,5 @@ def execute(report_id):
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
