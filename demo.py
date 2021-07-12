@@ -48,7 +48,7 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 308"
 
     session_id = set_session_id()
     # rules = rule_creation()
@@ -70,7 +70,7 @@ def test_run():
         #
 
         # # Add scripts
-        QAP_564.execute(report_id ,session_id)
+        QAP_612.execute(report_id, session_id)
         # QAP_710.execute(report_id, session_id)
 
         rule_manager = RuleManager()
