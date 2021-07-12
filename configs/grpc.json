@@ -10,20 +10,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["act_fix"]
-      }
-    },
-    "Act-1": {
-      "service-class": "ActService",
-      "endpoints": {
-        "act_1": {
-          "host": "10.0.22.22",
-          "port": 32134
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": ["act_1"]
+        "endpoints": [
+          "act_fix"
+        ]
       }
     },
     "Check1": {
@@ -36,7 +25,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["check1"]
+        "endpoints": [
+          "check1"
+        ]
       }
     },
     "Simulator": {
@@ -49,7 +40,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator"]
+        "endpoints": [
+          "simulator"
+        ]
       }
     },
     "Simulator2": {
@@ -256,6 +249,36 @@
         "name": "robin",
         "endpoints": [
           "act_layout"
+        ]
+      }
+    },
+    "Act_Rest": {
+      "service-class": "RestActService",
+      "endpoints": {
+        "act_rest": {
+          "host": "10.0.22.22",
+          "port": 31111
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rest"
+        ]
+      }
+    },
+    "Act_Java_Api": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act_java_api": {
+          "host": "10.0.22.22",
+          "port": 31221
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_java_api"
         ]
       }
     }
