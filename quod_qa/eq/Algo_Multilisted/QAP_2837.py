@@ -24,8 +24,9 @@ import quod_qa.wrapper.eq_wrappers
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-qty = 2000
-dec_qty = 1300
+qty = 1300
+dec_qty = 1000
+display_qty = 1100
 price = 20
 lookup = "PAR"       #CH0012268360_CHF
 ex_destination = "XPAR"
@@ -34,11 +35,13 @@ client = 'CLIENT2'
 order_type = 2
 ex_destination_1 = "XPAR"
 report_id = None
+extraction_id = "getOrderAnalysisAlgoParameters"
 s_par = '1015'
-side = 2
+s_trqx = '3416'
+side = 1
 instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
+            'Symbol': 'FR0000121121_EUR',
+            'SecurityID': 'FR0000121121',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -98,7 +101,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-def order(base_request, case_id):
+def order(ex_id, base_request, case_id):
     caseid = bca.create_event('Send order via FIX', case_id)
     # Send_MarkerData
     fix_manager_310 = FixManager(connectivity_sell_side, caseid)
@@ -106,33 +109,36 @@ def order(base_request, case_id):
     fix_verifier_bs = FixVerifier(connectivity_buy_side, caseid)
 
     case_id_0 = bca.create_event("Send Market Data", caseid)
+    market_data1 = [
+        {
+            'MDEntryType': '0',
+            'MDEntryPx': '30',
+            'MDEntrySize': '100000',
+            'MDEntryPositionNo': '1'
+        },
+        {
+            'MDEntryType': '1',
+            'MDEntryPx': '40',
+            'MDEntrySize': '100000',
+            'MDEntryPositionNo': '1'
+        }
+    ]
+    send_market_data(s_par, case_id_0, market_data1)
     market_data2 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': '20',
-                'MDEntrySize': '100',
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-    send_market_dataT(s_par, case_id_0, market_data2)
-
-    market_data3 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-    send_market_data(s_par, case_id_0, market_data3)
+        {
+            'MDEntryType': '0',
+            'MDEntryPx': '30',
+            'MDEntrySize': '100000',
+            'MDEntryPositionNo': '1'
+        },
+        {
+            'MDEntryType': '1',
+            'MDEntryPx': '40',
+            'MDEntrySize': '100000',
+            'MDEntryPositionNo': '1'
+        }
+    ]
+    send_market_data(s_trqx, case_id_0, market_data2)
 
     case_id_1 = bca.create_event("Create Algo Order", caseid)
     new_order_single_params = {
@@ -147,17 +153,20 @@ def order(base_request, case_id):
             'OrderCapacity': 'A',
             'Price': price,
             'Currency': currency,
-            'TargetStrategy': 2,
-                'NoStrategyParameters': [
+            'TargetStrategy': "1008",
+            "DisplayInstruction":{
+                'DisplayQty' : dec_qty
+            },
+            'NoStrategyParameters': [
                 {
-                    'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
-                    'StrategyParameterValue': '30'
+                    'StrategyParameterName': 'AvailableVenues',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
                 },
                 {
-                    'StrategyParameterName': 'Aggressivity',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '2'
+                    'StrategyParameterName': 'AllowMissingPrimary',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
                 }
             ]
         }
@@ -165,18 +174,16 @@ def order(base_request, case_id):
     fix_message_new_order_single.add_random_ClOrdID()
     fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
     fix_message_new_order_single.get_ClOrdID()
-
+    
     time.sleep(2)
 
     #region Modify order
     case_id_3 = bca.create_event("Modify Order", case_id)
     fix_modify_message = deepcopy(fix_message_new_order_single)
-    fix_modify_message.change_parameters({'OrderQty': dec_qty})
+    fix_modify_message.change_parameters({'DisplayInstruction': {'DisplayQty': display_qty}})
     fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     fix_manager_310.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id_3)
 
-    ex_id = "getOrderInfo"
-    
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
     ob = OrdersDetails()
@@ -185,16 +192,19 @@ def order(base_request, case_id):
     call(act_ob.getOrdersDetails, ob.request())
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
     ob_limit_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
+    ob_displ_qty = ExtractionDetail("orderbook.displQty", "DisplQty")
     ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
 
     sub_order_qty = ExtractionDetail("subOrder_lvl_2.id", "Qty")
     sub_order_price = ExtractionDetail("subOrder_lvl_2.lmtprice", "Limit Price")
+    sub_order_displ_qty = ExtractionDetail("subOrder_lvl_2.displQty", "DisplQty")
     sub_order_status = ExtractionDetail("subOrder_lvl_2.status", "Sts")
     sub_order_order_id = ExtractionDetail("subOrder_lvl_2.orderid", "Order ID")
     lvl2_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[sub_order_status,
                                                                                                       sub_order_qty,
                                                                                                       sub_order_price,
+                                                                                                      sub_order_displ_qty,
                                                                                                       sub_order_order_id]))
     lvl2_details = OrdersDetails.create(info=lvl2_info)
 
@@ -203,6 +213,7 @@ def order(base_request, case_id):
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty,
                                                                                  ob_id,
                                                                                  ob_limit_price,
+                                                                                 ob_displ_qty,
                                                                                  ob_sts]),
             sub_order_details=lvl2_details))
 
@@ -212,15 +223,17 @@ def order(base_request, case_id):
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check algo order")
-    verifier.compare_values('Qty', str(dec_qty), response[ob_qty.name].replace(",", ""))
+    verifier.compare_values('Qty', str(qty), response[ob_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Open', response[ob_sts.name])
     verifier.compare_values('LmtPrice', str(price), response[ob_limit_price.name])
+    verifier.compare_values('DisplQty', str(display_qty), response[ob_displ_qty.name].replace(",", ""))
     verifier.verify()
 
     verifier.set_event_name("Check child order")
-    verifier.compare_values('Qty', str(43), response[sub_order_qty.name].replace(",", ""))
+    verifier.compare_values('Qty', str(qty), response[sub_order_qty.name].replace(",", ""))
     verifier.compare_values('Sts', 'Cancelled', response[sub_order_status.name])
     verifier.compare_values('LmtPrice', str(price), response[sub_order_price.name])
+    verifier.compare_values('DisplQty', str(display_qty), response[sub_order_displ_qty.name].replace(",", ""))
     verifier.verify()
 
     extraction_id = "getOrderAnalysisEvents"
@@ -233,20 +246,9 @@ def order(base_request, case_id):
     check_value(vr, "Event 1 Description contains", "event1.desc", "New User's Synthetic Order Received",
                     VerificationDetails.VerificationMethod.CONTAINS)
 
-    check_value(vr, "Events Count", "events.count", "4")
+    check_value(vr, "Events Count", "events.count", "5")
     call(act.verifyEntities, vr)
 
-
-    extraction_id = "getOrderAnalysisAlgoParameters"
-
-    call(act.getOrderAnalysisAlgoParameters,
-         order_analysis_algo_parameters_request(extraction_id, ["Aggressivity", "PercentageVolume"], {"Order ID": response[ob_id.name]}))
-
-    call(act.verifyEntities, verification(extraction_id, "Checking algo parameters",
-                                                 [verify_ent("Aggressivity", "Aggressivity", '2')]))
-
-    call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
-                                                     [verify_ent("PercentageVolume", "PercentageVolume", "30.0")]))
 
     #region Cancel order
     case_id_4 = bca.create_event("Cancel Order", case_id)
@@ -261,7 +263,6 @@ def order(base_request, case_id):
         
     fix_cancel = FixMessage(cancel_parms)
     fix_manager_310.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
-    time.sleep(1)
 
 
 def execute(report_id, session_id):
@@ -270,7 +271,7 @@ def execute(report_id, session_id):
         set_base(session_id, case_id)
         base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
-        order(base_request, case_id)
+        order("getOrderInfo", base_request, case_id)
     except:
         logging.error("Error execution",exc_info=True)
     finally:
