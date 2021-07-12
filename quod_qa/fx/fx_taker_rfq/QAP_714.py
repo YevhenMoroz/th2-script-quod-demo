@@ -1,7 +1,5 @@
 import logging
 from pathlib import Path
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -26,7 +24,7 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
-    modify_request.set_change_currency()
+    modify_request.set_change_currency(True)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -113,10 +111,6 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
@@ -128,7 +122,7 @@ def execute(report_id, session_id):
     quote_sts_new = "New"
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = "Spot"
-    quote_owner = "QA2"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
     case_side_sel = "Sell"
 
     # Create sub-report for case
@@ -151,10 +145,9 @@ def execute(report_id, session_id):
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                                     case_side_sel)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, quote_id)
+
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
