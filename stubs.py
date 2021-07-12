@@ -15,7 +15,7 @@ from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
 from th2_grpc_act_quod.act_fix_service import ActFixService
-from th2_grpc_act_rest_quod.rest_act_service import RestActService
+# from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_http.sim_template_service import SimTemplateService
@@ -53,7 +53,7 @@ class Stubs:
     win_act_options = factory.grpc_router.get_service(LayoutPanelServiceService)
     act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
     win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
-    api_service = factory.grpc_router.get_service(RestActService)
+    # api_service = factory.grpc_router.get_service(RestActService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None
