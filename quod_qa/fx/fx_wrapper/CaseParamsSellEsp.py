@@ -2,8 +2,6 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import get_expire_time
-from quod_qa.fx.fx_wrapper.common import parse_settl_type
 
 
 class CaseParamsSellEsp:
