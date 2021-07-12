@@ -109,8 +109,7 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int,
-                                             delay: int):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
                 request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                                  account=account,
@@ -235,6 +234,16 @@ class RuleManager:
     def add_fx_md_to(session: str):
         return Stubs.simulator.createQuodDefMDRFXRule(
             request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
+        return Stubs.simulator.createMarketNewOrdSingleFOK(
+            request=TemplateMarketNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  price=price
+                                                  ))
 
     # ------------------------
 

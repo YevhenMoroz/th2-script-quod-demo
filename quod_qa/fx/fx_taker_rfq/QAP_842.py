@@ -56,15 +56,13 @@ def execute(report_id, session_id):
         check_qty(base_rfq_details, ar_service, case_id, case_qty0)
         # Step 3
         modify_request.set_quantity(case_qty1)
-        modify_request.set_change_currency(True)
+        modify_request.set_change_currency()
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty1)
         # Step 4
         modify_request.set_quantity(0)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty0)
-
-        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:

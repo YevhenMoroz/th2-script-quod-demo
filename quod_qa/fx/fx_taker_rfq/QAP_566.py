@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -84,6 +85,10 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
 
+    if not Stubs.frontend_is_open:
+        prepare_fe_2(case_id, session_id)
+    else:
+        get_opened_fe(case_id, session_id)
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
@@ -95,11 +100,9 @@ def execute(report_id, session_id):
         # Step 2
         check_value_in_tob(base_rfq_details, ar_service, case_id)
 
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
+
     except Exception:
         logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+

@@ -38,8 +38,6 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
 
-now = datetime.today() - timedelta(hours=3)
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
@@ -86,6 +84,8 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+        
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -212,7 +212,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -261,7 +260,7 @@ def execute(report_id):
         #endregion
         
         #region Cancel Algo Order
-        case_id_4 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Cancel Order
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),

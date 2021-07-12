@@ -24,8 +24,9 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -36,6 +37,10 @@ def get_buy_connectivity():
 
 def get_sell_connectivity():
     return sell_connectivity
+
+
+def get_bo_connectivity():
+    return bo_connectivity
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -110,7 +115,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         rule_manager.remove_rule(nos_rule)
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = {
@@ -123,6 +128,7 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             'Price': price,
             'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
             'TransactTime': datetime.utcnow().isoformat(),
+            'NoAllocs': no_allocs,
             'Instrument': {
                 'Symbol': 'FR0004186856_EUR',
                 'SecurityID': 'FR0004186856',
@@ -131,8 +137,11 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             },
             'Currency': 'EUR',
         }
+        fix_params.update()
         if price == None:
             fix_params.pop('Price')
+        if no_allocs == None:
+            fix_params.pop('NoAllocs')
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
@@ -506,9 +515,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     if exchange_rate_calc is not None:
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] != 'checked':
-            settlement_details.toggle_settlement_date()
+        settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date(settlement_date)
     if pset is not None:
         settlement_details.set_pset(pset)
@@ -517,7 +524,9 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
 
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
-        commissions_details.toggle_manual()
+        response = check_booking_toggle_manual(request)
+        if response['book.manualCheckboxState'] != 'checked':
+            commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
         commissions_details.remove_commissions()
@@ -585,7 +594,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if exchange_rate_calc is not None:
         settlement_details.set_exchange_rate_calc(exchange_rate_calc)
     if settlement_date is not None:
-        # settlement_details.toggle_settlement_date()
+        settlement_details.toggle_settlement_date()
         settlement_details.set_settlement_date(settlement_date)
     if pset is not None:
         settlement_details.set_pset(pset)
@@ -598,7 +607,9 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         fees_details.remove_fees()
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
-        commissions_details.toggle_manual()
+        response = check_booking_toggle_manual(request)
+        if response['book.manualCheckboxState'] != 'checked':
+            commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()

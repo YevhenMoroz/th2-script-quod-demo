@@ -14,8 +14,8 @@ def execute(report_id):
 
 
     MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="515",
-        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
+        symbol="519",
+        connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
 
 
@@ -35,8 +35,8 @@ def execute(report_id):
     }
 
     Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", report_id,
-        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
+        'Send MarketDataIncrementalRefresh', "fix-feed-handler-316-ganymede", report_id,
+        message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-feed-handler-316-ganymede")
     ))
     #
     # # # Вариант 2

@@ -19,7 +19,8 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-qty = 1000
+algo_qty = 1000
+child_qty = 43
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
@@ -28,7 +29,8 @@ text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
 side = 2
-price = 40
+price = 1
+dma_qty = 100
 tif_day = 0
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
@@ -36,7 +38,6 @@ order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
-display_qty = 200
 
 now = datetime.today() - timedelta(hours=3)
 
@@ -110,13 +111,15 @@ def execute(report_id):
         ]
         send_market_data(s_par, case_id_0, market_data1)
 
-        #region Send NewOrderSingle (35=D) first order
-        case_id_1 = bca.create_event("Create first Algo Order", case_id)
-        new_order_single_params = {
+        time.sleep(2)
+
+        #send DMA order
+        case_id_11 = bca.create_event("Create first Algo Order", case_id)
+        new_dma_order_single_params = {
             'Account': client,
-            'HandlInst': 2,
+            'HandlInst': 1,
             'Side': side,
-            'OrderQty': qty,
+            'OrderQty': dma_qty,
             'TimeInForce': tif_day,
             'OrdType': order_type,
             'TransactTime': datetime.utcnow().isoformat(),
@@ -124,15 +127,33 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Price': price,
             'Currency': currency,
-            "DisplayInstruction":{
-                'DisplayQty' : display_qty
-            },
+        }
+        fix_message_new_dma_order_single = FixMessage(new_dma_order_single_params)
+        fix_message_new_dma_order_single.add_random_ClOrdID()
+        responce_new_dma_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_dma_order_single, case=case_id_11)
+
+        time.sleep(2)
+
+        #region Send NewOrderSingle (35=D) first order
+        case_id_1 = bca.create_event("Create first Algo Order", case_id)
+        new_order_single_params = {
+            'Account': client,
+            'HandlInst': 2,
+            'Side': side,
+            'OrderQty': algo_qty,
+            'TimeInForce': tif_day,
+            'OrdType': order_type,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': instrument,
+            'OrderCapacity': 'A',
+            'Price': price,
+            'Currency': currency,
             'TargetStrategy': 2,
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '30.0'
+                    'StrategyParameterType': '11',
+                    'StrategyParameterValue': '30'
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -156,7 +177,7 @@ def execute(report_id):
         #Check that FIXQUODSELL5 sent 35=8 pending new first order
         er_1 ={
             'ExecID': '*',
-            'OrderQty': qty,
+            'OrderQty': algo_qty,
             'NoStrategyParameters': '*',
             'LastQty': '0',
             'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
@@ -168,9 +189,8 @@ def execute(report_id):
             'TimeInForce': tif_day,
             'ExecType': "A",
             'HandlInst': new_order_single_params['HandlInst'],
-            'LeavesQty': qty,
+            'LeavesQty': algo_qty,
             'NoParty': '*',
-            'MaxFloor': display_qty,
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
@@ -201,7 +221,7 @@ def execute(report_id):
             'Account': client,
             'HandlInst': 2,
             'Side': side,
-            'OrderQty': qty,
+            'OrderQty': algo_qty,
             'TimeInForce': tif_day,
             'OrdType': order_type,
             'TransactTime': datetime.utcnow().isoformat(),
@@ -209,15 +229,12 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Price': price,
             'Currency': currency,
-            "DisplayInstruction":{
-                'DisplayQty' : display_qty
-            },
             'TargetStrategy': 2,
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '30.0'
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '30'
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -242,7 +259,7 @@ def execute(report_id):
         #Check that FIXQUODSELL5 sent 35=8 pending new first order
         er_3 ={
             'ExecID': '*',
-            'OrderQty': qty,
+            'OrderQty': algo_qty,
             'NoStrategyParameters': '*',
             'LastQty': '0',
             'OrderID': responce_new_order_single_2.response_messages_list[0].fields['OrderID'].simple_value,
@@ -254,9 +271,8 @@ def execute(report_id):
             'TimeInForce': tif_day,
             'ExecType': "A",
             'HandlInst': new_order_single_params_2['HandlInst'],
-            'LeavesQty': qty,
+            'LeavesQty': algo_qty,
             'NoParty': '*',
-            'MaxFloor': display_qty,
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
@@ -308,7 +324,7 @@ def execute(report_id):
         # Check ss (on FIXQUODSELL5 sent 35=8 on 35=F)
         er_5 = {
         'ExecID': '*',
-        'OrderQty': qty,
+        'OrderQty': algo_qty,
         'NoStrategyParameters': '*',
         'LastQty': '0',
         'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
@@ -323,7 +339,6 @@ def execute(report_id):
         'HandlInst': new_order_single_params['HandlInst'],
         'LeavesQty': '0',
         'NoParty': '*',
-        'MaxFloor': display_qty,
         'CumQty': '0',
         'LastPx': '0',
         'OrdType': order_type,
@@ -368,7 +383,7 @@ def execute(report_id):
         # Check ss (on FIXQUODSELL5 sent 35=8 on 35=F)
         er_5 = {
         'ExecID': '*',
-        'OrderQty': qty,
+        'OrderQty': algo_qty,
         'NoStrategyParameters': '*',
         'LastQty': '0',
         'OrderID': responce_new_order_single_2.response_messages_list[0].fields['OrderID'].simple_value,
@@ -383,7 +398,6 @@ def execute(report_id):
         'HandlInst': new_order_single_params_2['HandlInst'],
         'LeavesQty': '0',
         'NoParty': '*',
-        'MaxFloor': display_qty,
         'CumQty': '0',
         'LastPx': '0',
         'OrdType': order_type,

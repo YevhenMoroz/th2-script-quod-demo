@@ -39,8 +39,6 @@ currency = 'EUR'
 s_par = '1015'
 waves = 4
 
-now = datetime.today() - timedelta(hours=3)
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
@@ -88,6 +86,10 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+        startdate = now.strftime("%Y%m%d-%H:%M:%S")
+        enddate = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -132,12 +134,12 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'StartDate',
                     'StrategyParameterType': '19',
-                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': startdate
                 },
                 {
                     'StrategyParameterName': 'EndDate',
                     'StrategyParameterType': '19',
-                    'StrategyParameterValue': (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+                    'StrategyParameterValue': enddate
                 },
                 {
                     'StrategyParameterName': 'Waves',
@@ -214,7 +216,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -283,7 +284,6 @@ def execute(report_id):
         
         # Check BS (FIXBUYTH2 send 35=8 on Cancel)
         cancel_r_param1 = {
-            'NoParty': '*',
             'Account': account,        
             'OrderQty': int(qty / n_waves),
             'OrdType': order_type,
@@ -291,7 +291,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -338,7 +337,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -405,7 +403,6 @@ def execute(report_id):
         
         # Check BS (FIXBUYTH2 send 35=8 on Cancel)
         cancel_r_param2 = {
-            'NoParty': '*',
             'Account': account,        
             'OrderQty': int(qty / n_waves),
             'OrdType': order_type,
@@ -413,7 +410,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -460,7 +456,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -527,7 +522,6 @@ def execute(report_id):
         
         # Check BS (FIXBUYTH2 send 35=8 on Cancel)
         cancel_r_param3 = {
-            'NoParty': '*',
             'Account': account,        
             'OrderQty': int(qty / n_waves),
             'OrdType': order_type,
@@ -535,7 +529,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -582,7 +575,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -650,7 +642,6 @@ def execute(report_id):
         
         # Check BS (FIXBUYTH2 send 35=8 on Cancel)
         cancel_r_param1 = {
-            'NoParty': '*',
             'Account': account,        
             'OrderQty': qty,
             'OrdType': order_type,
@@ -658,7 +649,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'OrderID': '*',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'Currency': currency,
@@ -694,7 +684,7 @@ def execute(report_id):
         #endregion
 
         #region Cancel Algo Order
-        case_id_6 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_6 = bca.create_event("Cancel Algo Order", case_id)
         # Check SS (on FIXQUODSELL5 sent 35=8 Slice 4)
         cancel_param = {
         'ExecID': '*',

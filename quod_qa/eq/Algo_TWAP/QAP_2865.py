@@ -17,13 +17,13 @@ from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
 from custom.verifier import Verifier
 import quod_qa.wrapper.eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-now = datetime.today() - timedelta(hours=3)
 qty = 200
 price = 1
 lookup = "PAR"       #CH0012268360_CHF
@@ -52,6 +52,8 @@ connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(case_id):
+    now = datetime.today() - timedelta(hours=3)
+    
     caseid = bca.create_event('Send Order via FIX', case_id)
         # Send_MarkerData
     fix_manager_310 = FixManager(connectivity_sell_side, caseid)
@@ -214,7 +216,7 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
                                                                                  ob_limit_price,
                                                                                  ob_sts])))
 
-    response = call(act_ob.getOrdersDetails, ob.request())
+    call(act_ob.getOrdersDetails, ob.request())
 
 
     # region extraction Child order details
@@ -261,26 +263,28 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
                                                   verify_ent("Child Order Qty - 3", child3_order_qty.name, "100"),
                                                   verify_ent("Child Order Qty - 4", child4_order_qty.name, "200")]))
     # end region
+    ob.set_filter(['ClOrdID', str(cl_ord)])
+    response = call(act_ob.getOrdersDetails, ob.request())
 
     call(act.getOrderAnalysisEvents,
          create_order_analysis_events_request(extraction_id, {"Order ID": response[ob_id.name]}))
-
     
-    call(act.verifyEntities, verification(extraction_id, "verifyEntities",
-                                                 [verify_ent("Narratives", "Narrative", 'To comply with quantity constraints, changing slice duration from 60 sec to 71 sec')]))
 
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    call(act_ob.cancelOrder, cancel_order_details.build())
+    vr = create_verification_request("checking order events", extraction_id, extraction_id)
 
-def execute(reportid):
+    check_value(vr, "Event 1 Desc contains", "event1.desc", "To comply with quantity constraints, changing slice duration from 60 sec to ",
+                    VerificationDetails.VerificationMethod.CONTAINS)
+    
+    call(act.verifyEntities, vr)
+
+def execute(report_id, session_id):
     try:
-        report_id = reportid
         case_id = create_event(case_name, report_id)
-        base_request = prepared_fe(case_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
         cl_ord = create_order(case_id)
-        check_order_book("before_order_details", base_request, case_id, cl_ord)
+        check_order_book("before_order_details", base_request, case_id, cl_ord)  #getOrdersDetails
     except:
         logging.error("Error execution",exc_info=True)
     finally:
