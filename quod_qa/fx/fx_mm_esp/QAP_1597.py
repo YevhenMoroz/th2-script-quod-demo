@@ -16,20 +16,19 @@ side = '1'
 orderqty = 1
 ordtype = '2'
 timeinforce = '4'
-currency= 'EUR'
+currency = 'EUR'
 settlcurrency = 'USD'
-settltype=0
-symbol='EUR/XXX'
-securitytype='FXSPOT'
-securityidsource='8'
-securityid='EUR/USD'
-bands=[1000000,2000000,3000000]
-ord_status='Filled'
-md=None
+settltype = 0
+symbol = 'EUR/XXX'
+securitytype = 'FXSPOT'
+securityidsource = '8'
+securityid = 'EUR/USD'
+bands = [1000000, 2000000, 3000000]
+ord_status = 'Filled'
+md = None
 settldate = spo()
-text='unknown instrument'
-defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
-
+text = 'no active client tier'
+defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
 
 
 def execute(report_id):
@@ -37,11 +36,13 @@ def execute(report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
 
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
-                                   securityidsource=securityidsource, securityid=securityid,account=account)
-        md = FixClientSellEsp(params).\
-            send_md_request().\
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                   timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype,
+                                   settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                   securityidsource=securityidsource, securityid=securityid, account=account)
+        md = FixClientSellEsp(params). \
+            send_md_request(). \
             verify_md_rejected(text)
 
 
@@ -49,6 +50,3 @@ def execute(report_id):
         logging.error('Error execution', exc_info=True)
     finally:
         md.send_md_unsubscribe()
-
-
-

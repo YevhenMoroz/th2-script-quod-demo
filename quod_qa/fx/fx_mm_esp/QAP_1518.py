@@ -33,13 +33,8 @@ def execute(report_id):
     try:
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
-        params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                     timeinforce=timeinforce, currency=currency,
-                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate,
-                                     symbol=symbol, securitytype=securitytype,
-                                     securityid=securityid, account=account)
-        md_1 = FixClientSellEsp(params_1)
         try:
+
             # Preconditions
             params_0 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency,
@@ -53,18 +48,23 @@ def execute(report_id):
             time.sleep(5)
 
             # Step 1
-
+            params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
+                                         timeinforce=timeinforce, currency=currency,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate,
+                                         symbol=symbol, securitytype=securitytype,
+                                         securityid=securityid, account=account)
+            md_1 = FixClientSellEsp(params_1)
             params_1.prepare_md_for_verification(bands)
             md_1.send_md_request(). \
                 verify_md_pending()
             price = md_1.extruct_filed('Price')
             # Step 2-5
-            md_1.send_new_order_single(price) \
-                .verify_order_pending() \
-                .verify_order_new() \
-                .verify_order_filled()
+            md_1.send_new_order_single(price)
+            md_1.verify_order_pending()
+            md_1.verify_order_new()
+            md_1.verify_order_filled(spot_s_d=settldate)
 
-        except Exception:
+        except Exception as e:
             logging.error('Error execution', exc_info=True)
         finally:
             md_1.send_md_unsubscribe()
