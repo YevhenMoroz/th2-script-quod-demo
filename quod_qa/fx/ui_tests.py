@@ -17,7 +17,7 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ESPTileOrderSide, MoveESPOrdedrTicketRequest)
 from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
                                                      PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
-                                                     ExtractRatesTileTableValuesRequest)
+                                                     ExtractRatesTileTableValuesRequest, GetCPRTPColors)
 from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
@@ -308,23 +308,23 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     order_ticket.set_price_large('1.23')
     order_ticket.set_price_pips('456')
     order_ticket.set_qty('1150000')
-    order_ticket.set_client('ASPECT_CITI')
+    # order_ticket.set_client('ASPECT_CITI')
     order_ticket.set_tif('FillOrKill')
     order_ticket.set_slippage('2.5')
     order_ticket.set_order_type('Limit')
     order_ticket.set_stop_price('1.3')
     # order_ticket.set_custom_algo_check_box()
-    order_ticket.set_custom_algo('Quod VWAP')
-    order_ticket.set_strategy('Quod VWAP Default')
-    order_ticket.set_child_strategy('test')
+    # order_ticket.set_custom_algo('Quod VWAP')
+    # order_ticket.set_strategy('Quod VWAP Default')
+    # order_ticket.set_child_strategy('test')
     # order_ticket.set_care_order('QA3 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
     # order_ticket.set_care_order('Text Aspect Desk of Traders (CN)', False)#Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
 
     order_ticket.set_place()
-    order_ticket.set_pending()
-    order_ticket.set_keep_open()
+    # order_ticket.set_pending()
+    # order_ticket.set_keep_open()
 
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
+    new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
     call(order_ticket_service.placeFxOrder, new_order_details.build())
 
 
@@ -632,6 +632,13 @@ def check_tile_value(base_request, service, row):
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
     print(response)
 
+
+def extract_color_from_pricing_button(base_tile_data, cp_service, x,y):
+    requests = GetCPRTPColors(base_tile_data = base_tile_data)
+    requests.get_pricing_btn_pixel_color(x,y)
+    result = call(cp_service.getCPRatesTileColors, requests.build())
+    print(result)
+
 def execute(report_id, session_id):
 
     common_act = Stubs.win_act
@@ -660,14 +667,7 @@ def execute(report_id, session_id):
     dealer_interventions_service = Stubs.win_act_dealer_intervention_service
 
     # endregion
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-        # ,
-        #          fe_dir='qf_trading_fe_folder_308',
-        #          fe_user='qf_trading_fe_user_308',
-        #          fe_pass='qf_trading_fe_password_308')
-    else:
-        get_opened_fe(case_id, session_id)
+
 
     try:
 
@@ -720,7 +720,7 @@ def execute(report_id, session_id):
 
         # region ClientPricing
         # extract_cp_rates_panel(base_details,cp_service)
-        check_tile_value(base_tile_details, cp_service,1 )
+        # check_tile_value(base_tile_details, cp_service,1 )
         # select_rows(base_tile_details, [1, 2, 4], cp_service)
         # print('Sleeping')
         # time.sleep(5)
@@ -728,7 +728,11 @@ def execute(report_id, session_id):
         # deselect_rows(base_tile_details,cp_service)
         # row = 2
         # open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # for i in range(0, 10):
+        # for j in range(100,110):
+        #     print(j,end=" ")
+        # extract_color_from_pricing_button(base_tile_data, cp_service,89, 0)
         # endregion
 
         # region Dealer Intervention
