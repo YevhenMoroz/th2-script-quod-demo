@@ -31,11 +31,10 @@ def prepare_fe(case_id, session_id):
         get_opened_fe(case_id, session_id)
 
 
-def extract_unassigned_grid(base_request, service, qty, row=1):
+def extract_unassigned_grid(base_request, service):
     base_data = BaseTableDataRequest(base=base_request)
     base_data.set_filter_dict({"Status": "New"})
-    base_data.set_filter_dict({"Qty": str(qty)})
-    base_data.set_row_number(row)
+    base_data.set_row_number(1)
 
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_request.set_extraction_id("ExtractionId")
@@ -56,69 +55,33 @@ def estimate_first_request(base_request, service):
     call(service.estimate, base_data.build())
 
 
-def verify_prices_estimated(base_request, service, case_id):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+def reject_rfq(base_request, service):
+    modify_request = ModificationRequest(base=base_request)
+    modify_request.reject()
+    call(service.modifyAssignedRFQ, modify_request.build())
+
+
+def verify_assigned_grid_row(base_request, service, case_id, rfq_id):
+    base_data = BaseTableDataRequest(base=base_request)
+
+    base_data.set_row_number(1)
+    base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
+
+    extraction_request = ExtractionDetailsRequest(base_data)
     extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
+                                               ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
 
-    response = call(service.getRFQDetails, extraction_request.build())
-
+    response = call(service.getAssignedRFQDetails, extraction_request.build())
     print(response)
     ver = Ver(case_id)
-    ver.set_event_name("Check Price Estimation")
-    ver.compare_values('Status', '0.0', response["rfqDetails.askPriceLarge"], VerificationMethod.NOT_EQUALS)
-    ver.compare_values('QuoteStatus', '000', response["rfqDetails.askPricePips"], VerificationMethod.NOT_EQUALS)
+    ver.set_event_name("Check Assigned Grid")
+    ver.compare_values('Status', "Rejected", response["dealerIntervention.Status"])
+    ver.compare_values('QuoteStatus', "", response["dealerIntervention.QuoteStatus"])
     ver.verify()
 
 
-def send_rfq(reusable_params, ttl, case_params, case_id, act):
-    print('quote sent')
-    rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{
-            **reusable_params,
-            'Currency': 'EUR',
-            'QuoteType': '1',
-            'OrderQty': reusable_params['OrderQty'],
-            'OrdType': 'D',
-            'ExpireTime': get_expire_time(ttl),
-            'TransactTime': (datetime.utcnow().isoformat())}]
-        }
-    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
-
-    act.sendMessage(
-            bca.convert_to_request(
-                    text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                    ))
-
-
-def send_estimated_quote(base_request, service):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.send()
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-
-def clear_filters(base_request, service):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_row_number(1)
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_clear_flag()
-    # call(service.getAssignedRFQDetails, extraction_request.build())
-    call(service.getUnassignedRFQDetails, extraction_request.build())
-
-
-def clear_prices(base_request, service):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.set_ask_large('0.0')
-    modify_request.set_ask_small('000')
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-
-def execute(report_id, case_params,session_id):
+def execute(report_id, case_params, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
@@ -139,22 +102,43 @@ def execute(report_id, case_params,session_id):
             },
         'SettlDate': tsd.spo(),
         'SettlType': '0',
-        'OrderQty': '58000000'
+        'OrderQty': '25000000'
         }
 
     try:
-        send_rfq(reusable_params, ttl, case_params, case_id, act)
+        # region send rfq
+        rfq_params = {
+            'QuoteReqID': bca.client_orderid(9),
+            'NoRelatedSymbols': [{
+                **reusable_params,
+                'Currency': 'EUR',
+                'QuoteType': '1',
+                'OrderQty': reusable_params['OrderQty'],
+                'OrdType': 'D',
+                'ExpireTime': get_expire_time(ttl),
+                'TransactTime': (datetime.utcnow().isoformat())}]
+            }
+        logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
+        send_rfq = act.sendMessage(
+                bca.convert_to_request(
+                        text_messages['sendQR'],
+                        case_params['TraderConnectivity'],
+                        case_id,
+                        bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+                        ))
+        # endregion
 
-        extract_unassigned_grid(base_request, service, reusable_params['OrderQty'])
+        rfq_id = extract_unassigned_grid(base_request, service)
 
         assign_firs_request(base_request, service)
 
-        clear_prices(base_request, service)
-
         estimate_first_request(base_request, service)
 
-        verify_prices_estimated(base_request, service, case_id)
+        reject_rfq(base_request, service)
+
+        verify_assigned_grid_row(base_request, service, case_id, rfq_id)
+
 
 
     except Exception as e:
@@ -162,9 +146,16 @@ def execute(report_id, case_params,session_id):
 
     finally:
         try:
-            clear_filters(base_request, service)
+            # region Clear Filters
+            base_data = BaseTableDataRequest(base=base_request)
+            base_data.set_row_number(1)
+            extraction_request = ExtractionDetailsRequest(base_data)
+            extraction_request.set_clear_flag()
+            call(service.getAssignedRFQDetails, extraction_request.build())
+            call(service.getUnassignedRFQDetails, extraction_request.build())
+            # endregion
         except Exception:
-            logging.error("Error finalization", exc_info=True)
+            logging.error("Error execution", exc_info=True)
 
     logger.info("Case {} was executed in {} sec.".format(
             case_name, str(round(datetime.now().timestamp() - seconds))))

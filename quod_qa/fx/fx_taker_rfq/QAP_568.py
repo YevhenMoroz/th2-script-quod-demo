@@ -21,14 +21,15 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, venues):
+def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venue):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
-    modify_request.add_context_action(action)
-    modify_request.set_near_tenor(tenor)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
+    modify_request.set_near_tenor(tenor)
+    modify_request.set_client(client)
+    action = ContextAction.create_venue_filter(venue)
+    modify_request.add_context_action(action)
     call(service.modifyRFQTile, modify_request.build())
 
 
@@ -118,6 +119,7 @@ def set_order_ticket_options(option_service, base_request, client):
 
 
 def execute(report_id, session_id):
+    common_act = Stubs.win_act
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     option_service = Stubs.win_act_options
@@ -127,8 +129,7 @@ def execute(report_id, session_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = ["CITI"]
-    case_filter_venue = "CITI"
+    case_venue = "CITI"
 
     case_qty = 2000000
     quote_sts_new = "New"
@@ -150,10 +151,10 @@ def execute(report_id, session_id):
         # Step 4
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
-                        case_near_tenor, case_venue)
+                        case_client, case_near_tenor, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,

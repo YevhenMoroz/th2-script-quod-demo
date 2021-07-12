@@ -57,6 +57,7 @@ class FixClientSellEsp():
     #Send New Order Single
     def send_new_order_single(self,price,qty=''):
         tif = prepeare_tif(self.case_params_sell_esp.timeinforce)
+        self.case_params_sell_esp.set_new_order_single_params()
         self.case_params_sell_esp.order_params['Price'] = price
         if qty!='':
             self.case_params_sell_esp.order_params['OrderQty'] = qty
@@ -161,13 +162,15 @@ class FixClientSellEsp():
         )
         return self
 
-    def verify_order_filled(self,price='', qty=''):
+    def verify_order_filled(self,price='', qty='', spot_s_d=''):
         self.case_params_sell_esp.prepare_order_filled_report()
         self.case_params_sell_esp.order_filled['Price']=self.price
         self.case_params_sell_esp.order_filled['LastPx']=self.price
         self.case_params_sell_esp.order_filled['AvgPx']=self.price
         self.case_params_sell_esp.order_filled['LastSpotRate']=self.price
         self.case_params_sell_esp.order_filled['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        if spot_s_d!='':
+            self.case_params_sell_esp.order_filled['SpotSettlDate'] = spot_s_d
 
 
         self.verifier.submitCheckRule(
