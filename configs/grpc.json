@@ -102,7 +102,6 @@
         ]
       }
     },
-    "Win_Act_Order_Book": {
     "Win_Act_Order_Ticket_FX": {
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
@@ -280,21 +279,6 @@
         "name": "robin",
         "endpoints": [
           "act_java_api"
-        ]
-      }
-    },
-    "Win_Act_Fx_Dealing_Positions": {
-      "service-class": "FxDealingPositionsServiceService",
-      "endpoints": {
-        "act_fx_dealing_positions": {
-          "host": "10.0.22.22",
-          "port": 31284
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": [
-          "act_fx_dealing_positions"
         ]
       }
     }
