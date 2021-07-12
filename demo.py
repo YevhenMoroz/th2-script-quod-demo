@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import convert_to_request, message_to_grpc
+from quod_qa.eq import MD_test_3, MD_test
 
-from quod_qa.fx.fx_mm_rfq import QAP_1545
-from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id
 
@@ -29,37 +29,44 @@ def prepare_fe(case_id, session_id):
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('Ziuban tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    s_id = set_session_id()
     Stubs.frontend_is_open = True
     try:
-        # case_params = {
-        #     'case_id': bca.create_event_id(),
-        #     'TraderConnectivity': 'gtwquod5-fx',
-        #     'Account': 'MMCLIENT1',
-        #     'SenderCompID': 'QUODFX_UAT',
-        #     'TargetCompID': 'QUOD5',
-        #     }
-        case_params = {
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'fix-ss-rfq-314-luna-standard',
-            'Account': 'Iridium1',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD9',
+
+
+        # MD_test_3.execute(report_id)
+        # MD_test.execute(report_id)
+
+        params = {
+            "OrderID": "test_1",
+            "ExecID": "test_1",
+            "CumQty": "0",
+            "ExecType": "A",
+            "OrdStatus": "A",
+            "AvgPx": "0",
+            "Text": "Pending New status",
+            "LeavesQty": 10,
+            "Price": 20,
+            "Account": "XPAR_CLIENT1",
+            "ExDestination": "XPAR",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Side": "1",
+            "ClOrdID": "123456",
+            "OrdType": "2",
+            "OrderQty": "100",
+            "TimeInForce": "0",
+            "OrigClOrdID": "123456"
         }
-
-        prepare_fe(report_id, s_id)
-        # rm = RuleManager()
-        # rm.print_active_rules()
-
-
-
+        Stubs.fix_act.sendMessage(request=convert_to_request(
+            'Send ExecutionReport',
+            "fix-buy-side-316-ganymede",
+            report_id,
+            message_to_grpc('ExecutionReport', params, "fix-buy-side-316-ganymede")
+        ))
     except Exception:
         logging.error("Error execution", exc_info=True)
 
-    finally:
-        Stubs.win_act.unregister(s_id)
 
 
 if __name__ == '__main__':
