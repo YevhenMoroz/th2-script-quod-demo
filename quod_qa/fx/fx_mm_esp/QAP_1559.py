@@ -21,27 +21,28 @@ orderqty = '1000000'
 orderqty2 = '2000000'
 ordtype = '2'
 timeinforce = '4'
-currency1= 'USD'
-currency2= 'EUR'
+currency1 = 'USD'
+currency2 = 'EUR'
 settlcurrency = 'CAD'
-settltype='W2'
-symbol1='USD/CAD'
-symbol2='EUR/CAD'
-securitytype_spo= 'FXSPOT'
-securitytype_fwd= 'FXFWD'
-securityidsource='8'
-securityid1='USD/CAD'
-securityid2='EUR/CAD'
-bands=[1000000,2000000,3000000]
+settltype = 'W2'
+symbol1 = 'USD/CAD'
+symbol2 = 'EUR/CAD'
+securitytype_spo = 'FXSPOT'
+securitytype_fwd = 'FXFWD'
+securityidsource = '8'
+securityid1 = 'USD/CAD'
+securityid2 = 'EUR/CAD'
+bands = [1000000, 2000000, 3000000]
 bands_not_priced = [2000000, 3000000]
-md=None
+md = None
 settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=11)).date().strftime('%Y%m%d %H:%M:%S')
 settldate1_spo = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d %H:%M:%S')
 settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y%m%d %H:%M:%S')
 settldate2_spo = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
 
-defaultmdsymbol_spo_1='USD/CAD:SPO:REG:HSBC'
-defaultmdsymbol_spo_2='EUR/CAD:SPO:REG:HSBC'
+defaultmdsymbol_spo_1 = 'USD/CAD:SPO:REG:HSBC'
+defaultmdsymbol_spo_2 = 'EUR/CAD:SPO:REG:HSBC'
+
 
 def execute(report_id):
     try:

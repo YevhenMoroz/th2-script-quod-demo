@@ -414,11 +414,6 @@ class TestCase:
 
         try:
 
-            # if not Stubs.frontend_is_open:
-            #     prepare_fe_2(self.case_id, self.session_id)
-            # else:
-            #     get_opened_fe(self.case_id, self.session_id)
-
             # Step 1
             market_data_params = self.send_md_subscribe()
             self.send_order()

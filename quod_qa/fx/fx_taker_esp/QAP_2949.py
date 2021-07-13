@@ -91,7 +91,7 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
 
     ar_service = Stubs.win_act_aggregated_rates_service
@@ -108,14 +108,10 @@ def execute(report_id, session_id):
     ord_type = "Limit"
     tif = "Day"
     stop_price = "1.1"
-    venue="JPM"
+    venue = "JPM"
     owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-        else:
-            get_opened_fe(case_id, session_id)
         # Step 1
         create_or_get_rates_tile(base_esp_details, ar_service)
         modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor, venue)

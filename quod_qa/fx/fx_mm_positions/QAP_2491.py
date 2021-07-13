@@ -88,7 +88,9 @@ def check_avg_price(case_id, quote_pos, position, avg_price):
 
 
 def check_daily_avg_price(case_id, daily_mtm_pos, position, mtm_avg_price):
-    expected_mtm_avg_price = float(daily_mtm_pos.replace(",", "")) / float(position.replace(",", ""))
+    daily_mtm_pos = float(daily_mtm_pos.replace(",", ""))
+    position = float(position.replace(",", ""))
+    expected_mtm_avg_price = daily_mtm_pos / position
     verifier = Verifier(case_id)
     verifier.set_event_name("Check daily AVG price")
     verifier.compare_values("AVG Price", str(abs(round(expected_mtm_avg_price, 8))), mtm_avg_price)

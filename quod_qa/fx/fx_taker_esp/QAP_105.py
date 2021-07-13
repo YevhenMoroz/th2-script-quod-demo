@@ -4,11 +4,11 @@ from pathlib import Path
 import timestring
 
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import m1_front_end
+from custom.tenor_settlement_date import m1_front_end, spo_front_end, wk1_front_end, y1_front_end, wk3_front_end
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, \
-    ExtractRatesTileDataRequest
+     ExtractRatesTileDataRequest
 from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -22,25 +22,22 @@ def create_or_get_rates_tile(base_request, service):
 
 
 def modify_rates_tile(base_request, service, from_c, to_c, tenor):
+
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_instrument(from_c, to_c, tenor)
     call(service.modifyRatesTile, modify_request.build())
 
 
-def open_aggregated_rates(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    add_agr_rates = ContextActionRatesTile.add_aggregated_rates(details=base_request)
-    modify_request.add_context_actions([add_agr_rates])
-    call(service.modifyRatesTile, modify_request.build())
-
-
 def check_esp_tile(base_request, service, case_id, instrument, date):
+
     extraction_value = ExtractRatesTileDataRequest(details=base_request)
     extraction_id = bca.client_orderid(4)
     extraction_value.set_extraction_id(extraction_id)
     extraction_value.extract_instrument("ratesTile.instrument")
     extraction_value.extract_tenor("ratesTile.date")
+
     response = call(service.extractRatesTileValues, extraction_value.build())
+
     extracted_instrument = response["ratesTile.instrument"]
     extracted_tenor_date = response["ratesTile.date"]
     extracted_tenor_date = timestring.Date(extracted_tenor_date)
@@ -52,53 +49,49 @@ def check_esp_tile(base_request, service, case_id, instrument, date):
     verifier.verify()
 
 
-def check_pts(base_request, service, case_id):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTileAsk.Pts", "Pts"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTileBid.Pts", "Pts"))
-    response = call(service.extractESPAggrRatesTableValues, extract_table_request.build())
-
-    ask_pts = response["rateTileAsk.Pts"]
-    bid_pts = response["rateTileBid.Pts"]
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check pts")
-    verifier.compare_values("Ask pts", "0.000", ask_pts, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Bid pts", "0.000", bid_pts, VerificationMethod.NOT_EQUALS)
-
-    verifier.verify()
-
-
 def execute(report_id, session_id):
+
     case_name = Path(__file__).name[:-3]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_base_request = get_base_request(session_id, case_id)
     base_esp_details = BaseTileDetails(base=case_base_request)
 
+    # Instrument setup
     from_curr = "EUR"
     to_curr = "USD"
-    tenor = "3W"
+
+    # Tenors front end
+    spot = spo_front_end()
+    wk1 = wk1_front_end()
+    wk3 = wk3_front_end()
     m1 = m1_front_end()
-    instrument = from_curr + "/" + to_curr + "-" + tenor
+    y1 = y1_front_end()
+
+    tenors_dict = {
+        'Spot': spot,
+        '1W': wk1,
+        '3W': wk3,
+        '1M': m1,
+        '1Y': y1
+    }
 
     try:
+
         # Step 1
         create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
-        # Step 2
-        check_esp_tile(base_esp_details, ar_service, case_id, instrument, m1)
-        # Step 3
-        open_aggregated_rates(base_esp_details, ar_service)
-        check_pts(base_esp_details, ar_service, case_id)
+
+        # Step 2-6 Checking data format for tenors
+
+        for tenor, tenor_front_end in tenors_dict.items():
+            instrument = from_curr + "/" + to_curr + "-" + tenor
+            modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
+            check_esp_tile(base_esp_details, ar_service, case_id, instrument, tenor_front_end)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
