@@ -1,5 +1,4 @@
 from os.path import abspath, dirname, join
-
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
@@ -9,6 +8,7 @@ from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerI
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 # from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
+from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.middle_office_service import MiddleOfficeOperationsService
 from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceService
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
@@ -18,7 +18,13 @@ from th2_grpc_act_quod.act_fix_service import ActFixService
 from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
+from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
+# from th2_grpc_sim_quod.template_simulator_test_service import TemplateSimulatorTestService
+from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 from th2_grpc_sim_http.sim_template_service import SimTemplateService
+from th2_grpc_act_rest_quod.rest_act_service import RestActService
+from th2_grpc_act_java_api_quod.act_service import ActService
+
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 
@@ -55,6 +61,8 @@ class Stubs:
     act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
     win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
     api_service = factory.grpc_router.get_service(RestActService)
+    # TODO: rename java api act service name
+    act_java_api = factory.grpc_router.get_service(ActService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None

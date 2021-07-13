@@ -596,7 +596,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor(self, name: str):
+    def extract_tenor_date(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
@@ -703,15 +703,19 @@ class PlaceRFQRequest:
         return self.__request_details
 
 # TODO: quod - refactor
-# @dataclass
-# class ESPExtractionDetails:
-#     name: str
-#
-#
-# class ExtractedType(Enum):
-#     price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
-#     price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
-#     qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+@dataclass
+class ESPExtractionDetails:
+    name: str
+
+
+class ExtractedType(Enum):
+    price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
+    price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
+    qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+    instrument = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.INSTRUMENT
+    order_type = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.ORDER_TYPE
+    time_in_force = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.TIME_IN_FORCE
+    side_button = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.SIDE_BUTTON
 
 
 class PlaceESPOrder:
@@ -735,31 +739,41 @@ class PlaceESPOrder:
 
     # TODO: quod - refactor: remove extraction method from Place ESPOrder action
     #
+    def close_ticket(self, close: bool):
+        self.__request_details.closeTicketWindow = close
 
-    #
-    # def close_ticket(self, close: bool):
-    #     self.__request_details.closeTicketWindow = close
-    #
-    # def extract_quantity(self, name: str):
-    #     self.extract_value(ExtractedType.qty, name)
-    #
-    # def extract_large(self, name: str):
-    #     self.extract_value(ExtractedType.price_large, name)
-    #
-    # def extract_pips(self, name: str):
-    #     self.extract_value(ExtractedType.price_pips, name)
-    #
-    # def extract_value(self, field: ExtractedType, name: str):
-    #     extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
-    #     extracted_value.type = field.value
-    #     extracted_value.name = name
-    #     self.__request_details.extractedValues.append(extracted_value)
+    def extract_quantity(self, name: str):
+        self.extract_value(ExtractedType.qty, name)
+
+    def extract_large(self, name: str):
+        self.extract_value(ExtractedType.price_large, name)
+
+    def extract_pips(self, name: str):
+        self.extract_value(ExtractedType.price_pips, name)
+
+    def extract_instrument(self, name: str):
+        self.extract_value(ExtractedType.instrument, name)
+
+    def extract_order_type(self, name: str):
+        self.extract_value(ExtractedType.order_type, name)
+
+    def extract_time_in_force(self, name: str):
+        self.extract_value(ExtractedType.time_in_force, name)
+
+    def extract_side_button(self, name: str):
+        self.extract_value(ExtractedType.side_button, name)
+
+    def extract_value(self, field: ExtractedType, name: str):
+        extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request_details.extractedValues.append(extracted_value)
 
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
 
 
-class MoveESPOrdedrTicketRequest:
+class MoveESPOrderTicketRequest:
     def __init__(self, base: EmptyRequest = None):
         self.base = base
         self.request = ar_operations_pb2.MoveESPOrderTicketRequest()

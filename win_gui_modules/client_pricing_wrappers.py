@@ -1,6 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
@@ -242,6 +243,10 @@ class ExtractRatesTileTableValuesRequest:
         var.name = detail.name
         var.colName = detail.column_name
 
+    def check_venue_to_present(self, venue):
+        self.request.checkVenueToPresent = True
+        self.request.venueToCheck = venue
+
     def build(self):
         return self.request
 
@@ -280,3 +285,33 @@ class GetCPRTPColors:
 
     def build(self):
         return self.request
+
+class ExtractClientGridValues:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self.place_order_request = cp_operations_pb2.ClientPriceGridDetails(base=base)
+        else:
+            self.place_order_request = cp_operations_pb2.ClientPriceGridDetails()
+
+    def set_details(self, details: BaseTileDetails):
+        self.place_order_request.data.CopyFrom(details.build())
+
+    def set_client_tier(self, client_tier):
+        self.place_order_request.clientTier = client_tier
+
+    def set_instr_symbol(self, instr_symbol):
+        self.place_order_request.instrSymbol = instr_symbol
+
+    def set_client_price_columns(self, client_price_columns):
+        for client_price_column in client_price_columns:
+            self.place_order_request.clientPriceColumns.append(client_price_column)
+
+    def set_extract_bands(self):
+        self.place_order_request.extractBands = True
+
+    def set_bands_columns(self, bands_columns: list):
+        for bands_column in bands_columns:
+            self.place_order_request.bandsColumns.append(bands_column)
+
+    def build(self):
+        return self.place_order_request
