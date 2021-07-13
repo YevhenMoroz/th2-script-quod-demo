@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from custom.verifier import Verifier, VerificationMethod
+from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
@@ -101,7 +102,7 @@ def execute(report_id, session_id):
     client_tier = "Silver"
     pips = "20"
     mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection303(
+        "MDReqID": simulator.getMDRefIDForConnection314(
             request=RequestMDRefID(
                 symbol="EUR/USD:SPO:REG:HSBC",
                 connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,

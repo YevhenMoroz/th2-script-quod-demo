@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
@@ -14,6 +15,34 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+
+def cancel_quote(quote_req_id, verifier, checkpoint_id, connectivity, case_id):
+    quote_cancel_params = {
+        'QuoteReqID': quote_req_id,
+        'QuoteCancelType': '5',
+        'NoQuoteEntries': [{
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'SecurityType': 'FXSPOT'
+            },
+        },
+        ],
+        'QuoteID': '*'
+    }
+
+
+def send_rfq(rfq_params, act, connectivity, case_id):
+    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
+
+    send_rfq = act.placeQuoteFIX(
+        bca.convert_to_request(
+            text_messages['sendQR'],
+            connectivity,
+            case_id,
+            bca.message_to_grpc('QuoteRequest', rfq_params, connectivity)
+        ))
+    return send_rfq
 
 
 def execute(report_id, case_params):
@@ -30,10 +59,10 @@ def execute(report_id, case_params):
     case_id = bca.create_event(case_name, report_id)
 
     mdu_params_fwd = {
-        "MDReqID": simulator.getMDRefIDForConnection303(
+        "MDReqID": simulator.getMDRefIDForConnection314(
             request=RequestMDRefID(
                 symbol="EUR/USD:FXF:WK1:CITI", connection_id=ConnectionID(
-                    session_alias="fix-fh-fx-esp"))).MDRefID,
+                    session_alias="fix-fh-314-luna"))).MDRefID,
         # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
         "MDReportID": "3",
         # "MDTime": "TBU",
@@ -81,10 +110,10 @@ def execute(report_id, case_params):
         ))
 
     mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection303(
+        "MDReqID": simulator.getMDRefIDForConnection314(
             request=RequestMDRefID(
                 symbol="EUR/USD:SPO:REG:HSBC", connection_id=ConnectionID(
-                    session_alias="fix-fh-fx-esp"))).MDRefID,
+                    session_alias="fix-fh-314-luna"))).MDRefID,
         # "MDReqID": "EUR/USD:FXF:WK1:HSBC",
         "MDReportID": "3",
         # "MDTime": "TBU",
@@ -172,14 +201,14 @@ def execute(report_id, case_params):
     }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
-    send_rfq = act.placeQuoteFIX(
-        bca.convert_to_request(
-            'Send QuoteRequest',
-            case_params['TraderConnectivity'],
-            case_id,
-            bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-        ))
-
+    # send_rfq = act.placeQuoteFIX(
+    #     bca.convert_to_request(
+    #         'Send QuoteRequest',
+    #         case_params['TraderConnectivity'],
+    #         case_id,
+    #         bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+    #     ))
+    rfq = send_rfq(rfq_params, act, case_params['TraderConnectivity'], case_id)
     quote_params = {
         'Account': case_params['Account'],
         'Instrument': {
@@ -238,188 +267,190 @@ def execute(report_id, case_params):
         bca.create_check_rule(
             'Receive Quote message',
             bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-            send_rfq.checkpoint_id,
+            rfq.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
         )
     )
 
-    order_params = {
-        'Account': case_params['Account'],
-        'Side': 2,
-        'Instrument': {
-            'Symbol': instrument,
-            'SecurityType': 'FXSWAP',
-            'Product': 4
-        },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0',
-        'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
-        'ClOrdID': bca.client_orderid(9),
-        'OrdType': 'D',
-        'TransactTime': (datetime.utcnow().isoformat()),
-        'OrderQty': '1000000',
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        # 'Product': 4,
-        'TimeInForce': 4,
-        # 'NoLegs': [
-        #     {
-        #         'InstrumentLeg': {
-        #             'LegSymbol': instrument,
-        #             'LegSecurityType': 'FXSPOT'
-        #         },
-        #         'LegSide': 1,
-        #         'LegSettlType': 0,
-        #         'LegSettlDate': tsd.spo(),
-        #         'LegOrderQty': 1000000
-        #     },
-        #     {
-        #         'InstrumentLeg': {
-        #             'LegSymbol': instrument,
-        #             'LegSecurityType': 'FXFWD'
-        #         },
-        #         'LegSide': 2,
-        #         'LegSettlType': '1W',
-        #         'LegSettlDate': tsd.wk1(),
-        #         'LegOrderQty': 1000000
-        #     },
-        # ]
-    }
+    # order_params = {
+    #     'Account': case_params['Account'],
+    #     'Side': 2,
+    #     'Instrument': {
+    #         'Symbol': instrument,
+    #         'SecurityType': 'FXSWAP',
+    #         'Product': 4
+    #     },
+    #     'SettlDate': tsd.spo(),
+    #     'SettlType': '0',
+    #     'QuoteID': rfq.response_messages_list[0].fields['QuoteID'],
+    #     'ClOrdID': bca.client_orderid(9),
+    #     'OrdType': 'D',
+    #     'TransactTime': (datetime.utcnow().isoformat()),
+    #     'OrderQty': '1000000',
+    #     'Price': rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     # 'Product': 4,
+    #     'TimeInForce': 4,
+    #     # 'NoLegs': [
+    #     #     {
+    #     #         'InstrumentLeg': {
+    #     #             'LegSymbol': instrument,
+    #     #             'LegSecurityType': 'FXSPOT'
+    #     #         },
+    #     #         'LegSide': 1,
+    #     #         'LegSettlType': 0,
+    #     #         'LegSettlDate': tsd.spo(),
+    #     #         'LegOrderQty': 1000000
+    #     #     },
+    #     #     {
+    #     #         'InstrumentLeg': {
+    #     #             'LegSymbol': instrument,
+    #     #             'LegSecurityType': 'FXFWD'
+    #     #         },
+    #     #         'LegSide': 2,
+    #     #         'LegSettlType': '1W',
+    #     #         'LegSettlDate': tsd.wk1(),
+    #     #         'LegOrderQty': 1000000
+    #     #     },
+    #     # ]
+    # }
 
-    send_order = act.placeOrderFIX(
-        bca.convert_to_request(
-            'Send NewOrderSingle',
-            case_params['TraderConnectivity'],
-            case_id,
-            bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
-        ))
-
-    er_pending_params = {
-        'Side': order_params['Side'],
-        'Account': reusable_params['Account'],
-        'ClOrdID': order_params['ClOrdID'],
-        'OrderQty': order_params['OrderQty'],
-        'LeavesQty': order_params['OrderQty'],
-        'TimeInForce': order_params['TimeInForce'],
-        'OrdType': order_params['OrdType'],
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
-        'NoParty': [
-            {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
-        ],
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityIDSource': 8,
-            'SecurityID': 'EUR/USD',
-            'SecurityExchange': 'XQFX',
-            'Product': 4,
-        },
-        'SettlCurrency': 'USD',
-        'Currency': 'EUR',
-        'HandlInst': 1,
-        'AvgPx': 0,
-        'QtyType': 0,
-        'LastQty': 0,
-        'CumQty': 0,
-        'LastPx': 0,
-        'OrdStatus': 'A',
-        'ExecType': 'A',
-        'ExecID': '*',
-        'TransactTime': '*',
-        'OrderCapacity': 'A'
-    }
-
-    verifier.submitCheckRule(
-        bca.create_check_rule(
-            'Receive ExecutionReport (pending)',
-            bca.filter_to_grpc('ExecutionReport', er_pending_params, ['ClOrdID', 'OrdStatus', 'ExecType']),
-            send_order.checkpoint_id,
-            case_params['TraderConnectivity'],
-            case_id
-        )
-    )
-
-    er_filled_params = {
-        'Side': reusable_params['Side'],
-        'Account': reusable_params['Account'],
-        'SettlDate': reusable_params['SettlDate'],
-        'TradeDate': datetime.utcnow().strftime('%Y%m%d'),
-        'SettlType': reusable_params['SettlType'],
-        'ClOrdID': order_params['ClOrdID'],
-        'OrderQty': order_params['OrderQty'],
-        'LeavesQty': 0,
-        'TimeInForce': order_params['TimeInForce'],
-        'OrdType': order_params['OrdType'],
-        'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
-        'NoParty': [
-            {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
-        ],
-        'Instrument': {
-            'SecurityType': 'FXSPOT',
-            'Symbol': 'EUR/USD',
-            'SecurityIDSource': 8,
-            'SecurityID': 'EUR/USD',
-            'SecurityExchange': 'XQFX'
-        },
-        'SettlCurrency': 'USD',
-        'Currency': 'EUR',
-        'HandlInst': 1,
-        'AvgPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        'QtyType': 0,
-        'LastQty': order_params['OrderQty'],
-        'CumQty': order_params['OrderQty'],
-        'LastPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
-        'OrdStatus': 2,
-        'ExecType': 'F',
-        'ExecID': '*',
-        'TransactTime': '*'
-    }
-
-    verifier.submitCheckRule(
-        bca.create_check_rule(
-            'Receive ExecutionReport (filled)',
-            bca.filter_to_grpc('ExecutionReport', er_filled_params),
-            send_order.checkpoint_id,
-            case_params['TraderConnectivity'],
-            case_id
-            # ['ClOrdID', 'OrdStatus', 'ExecType']
-        )
-    )
+    cancel_quote(rfq_params['QuoteReqID'], verifier, rfq.checkpoint_id,
+                 case_params['TraderConnectivity'], case_id)
+    # send_order = act.placeOrderFIX(
+    #     bca.convert_to_request(
+    #         'Send NewOrderSingle',
+    #         case_params['TraderConnectivity'],
+    #         case_id,
+    #         bca.message_to_grpc('NewOrderSingle', order_params, case_params['TraderConnectivity'])
+    #     ))
+    #
+    # er_pending_params = {
+    #     'Side': order_params['Side'],
+    #     'Account': reusable_params['Account'],
+    #     'ClOrdID': order_params['ClOrdID'],
+    #     'OrderQty': order_params['OrderQty'],
+    #     'LeavesQty': order_params['OrderQty'],
+    #     'TimeInForce': order_params['TimeInForce'],
+    #     'OrdType': order_params['OrdType'],
+    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
+    #     'NoParty': [
+    #         {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
+    #     ],
+    #     'Instrument': {
+    #         'Symbol': 'EUR/USD',
+    #         'SecurityIDSource': 8,
+    #         'SecurityID': 'EUR/USD',
+    #         'SecurityExchange': 'XQFX',
+    #         'Product': 4,
+    #     },
+    #     'SettlCurrency': 'USD',
+    #     'Currency': 'EUR',
+    #     'HandlInst': 1,
+    #     'AvgPx': 0,
+    #     'QtyType': 0,
+    #     'LastQty': 0,
+    #     'CumQty': 0,
+    #     'LastPx': 0,
+    #     'OrdStatus': 'A',
+    #     'ExecType': 'A',
+    #     'ExecID': '*',
+    #     'TransactTime': '*',
+    #     'OrderCapacity': 'A'
+    # }
+    #
+    # verifier.submitCheckRule(
+    #     bca.create_check_rule(
+    #         'Receive ExecutionReport (pending)',
+    #         bca.filter_to_grpc('ExecutionReport', er_pending_params, ['ClOrdID', 'OrdStatus', 'ExecType']),
+    #         send_order.checkpoint_id,
+    #         case_params['TraderConnectivity'],
+    #         case_id
+    #     )
+    # )
+    #
+    # er_filled_params = {
+    #     'Side': reusable_params['Side'],
+    #     'Account': reusable_params['Account'],
+    #     'SettlDate': reusable_params['SettlDate'],
+    #     'TradeDate': datetime.utcnow().strftime('%Y%m%d'),
+    #     'SettlType': reusable_params['SettlType'],
+    #     'ClOrdID': order_params['ClOrdID'],
+    #     'OrderQty': order_params['OrderQty'],
+    #     'LeavesQty': 0,
+    #     'TimeInForce': order_params['TimeInForce'],
+    #     'OrdType': order_params['OrdType'],
+    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     'OrderID': send_order.response_messages_list[0].fields['OrderID'].simple_value,
+    #     'NoParty': [
+    #         {'PartyRole': 36, 'PartyID': 'gtwquod5', 'PartyIDSource': 'D'}
+    #     ],
+    #     'Instrument': {
+    #         'SecurityType': 'FXSPOT',
+    #         'Symbol': 'EUR/USD',
+    #         'SecurityIDSource': 8,
+    #         'SecurityID': 'EUR/USD',
+    #         'SecurityExchange': 'XQFX'
+    #     },
+    #     'SettlCurrency': 'USD',
+    #     'Currency': 'EUR',
+    #     'HandlInst': 1,
+    #     'AvgPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     'QtyType': 0,
+    #     'LastQty': order_params['OrderQty'],
+    #     'CumQty': order_params['OrderQty'],
+    #     'LastPx': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     'OrdStatus': 2,
+    #     'ExecType': 'F',
+    #     'ExecID': '*',
+    #     'TransactTime': '*'
+    # }
+    #
+    # verifier.submitCheckRule(
+    #     bca.create_check_rule(
+    #         'Receive ExecutionReport (filled)',
+    #         bca.filter_to_grpc('ExecutionReport', er_filled_params),
+    #         send_order.checkpoint_id,
+    #         case_params['TraderConnectivity'],
+    #         case_id
+    #         # ['ClOrdID', 'OrdStatus', 'ExecType']
+    #     )
+    # )
 
     # GUI block
-    common_act = Stubs.win_act
-    ob_act = Stubs.win_act_order_book
-    session_id = set_session_id()
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-
-    prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
-                  Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
-
-    execution_id = bca.client_orderid(4)
-    ob = OrdersDetails()
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob_qty = ExtractionDetail('orderBook.qty', 'Qty')
-    ob_ord_type = ExtractionDetail('orderBook.ordtype', 'OrdType')
-    ob_currency = ExtractionDetail('orderBook.currency', 'Currency')
-    ob_side = ExtractionDetail('orderBook.side', 'Side')
-    order_info = OrderInfo.create(
-        action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty, ob_ord_type,
-                                                                             ob_currency, ob_side]))
-    ob.add_single_order_info(
-        order_info)
-    call(ob_act.getOrdersDetails, ob.request())
-
-    call(common_act.verifyEntities,
-         verification(execution_id, 'checking OB',
-                      [verify_ent('OB Qty', ob_qty.name, '1,000,000'),
-                       verify_ent('OB OrdType', ob_ord_type.name, 'PreviouslyQuoted'),
-                       verify_ent('OB Currency', ob_currency.name, 'EUR'),
-                       verify_ent('OB Side', ob_side.name, 'Buy')]))
-
-    close_fe(case_id, session_id)
+    # common_act = Stubs.win_act
+    # ob_act = Stubs.win_act_order_book
+    # session_id = set_session_id()
+    # set_base(session_id, case_id)
+    # base_request = get_base_request(session_id, case_id)
+    #
+    # prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
+    #               Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
+    #
+    # execution_id = bca.client_orderid(4)
+    # ob = OrdersDetails()
+    # ob.set_default_params(base_request)
+    # ob.set_extraction_id(execution_id)
+    # ob_qty = ExtractionDetail('orderBook.qty', 'Qty')
+    # ob_ord_type = ExtractionDetail('orderBook.ordtype', 'OrdType')
+    # ob_currency = ExtractionDetail('orderBook.currency', 'Currency')
+    # ob_side = ExtractionDetail('orderBook.side', 'Side')
+    # order_info = OrderInfo.create(
+    #     action=ExtractionAction.create_extraction_action(extraction_details=[ob_qty, ob_ord_type,
+    #                                                                          ob_currency, ob_side]))
+    # ob.add_single_order_info(
+    #     order_info)
+    # call(ob_act.getOrdersDetails, ob.request())
+    #
+    # call(common_act.verifyEntities,
+    #      verification(execution_id, 'checking OB',
+    #                   [verify_ent('OB Qty', ob_qty.name, '1,000,000'),
+    #                    verify_ent('OB OrdType', ob_ord_type.name, 'PreviouslyQuoted'),
+    #                    verify_ent('OB Currency', ob_currency.name, 'EUR'),
+    #                    verify_ent('OB Side', ob_side.name, 'Buy')]))
+    #
+    # close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
