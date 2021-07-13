@@ -14,7 +14,7 @@ from win_gui_modules.aggregated_rates_wrappers import (RFQTileOrderSide, PlaceRF
                                                        ContextActionRatesTile, ModifyRFQTileRequest, ContextAction,
                                                        TableActionsRequest, TableAction, CellExtractionDetails,
                                                        ExtractRFQTileValues, ExtractRatesTileDataRequest, PlaceESPOrder,
-                                                       ESPTileOrderSide, MoveESPOrdedrTicketRequest)
+                                                       ESPTileOrderSide, MoveESPOrderTicketRequest)
 from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
                                                      PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
                                                      ExtractRatesTileTableValuesRequest, GetCPRTPColors)
