@@ -311,32 +311,30 @@ class TestCase:
         try:
             self.set_venue_unhealthy("true")
             # self.prepare_frontend()
-            time.sleep(5)
             self.check_venue_status(self.venue, 'unhealthy')
-            # self.create_or_get_rates_tile(self.tile_1)
-            # self.check_unhealthy_venues(self.tile_1)
-            # self.check_unhealthy_venues(self.tile_2)
-            #
-            # self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'false')
-            # self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.EQUALS)
-            # self.check_venues_in_esp_table(self.tile_1, self.venue, 'false')
-            #
-            # self.check_unhealthy_venues(self.tile_1)
-            # self.check_unhealthy_venues(self.tile_2)
-            #
-            # self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
-            # self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
-            # self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
-            #
-            # self.save_and_close_fe_workspace()
-            # self.prepare_frontend()
-            #
-            # self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
-            # self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
-            # self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
+            self.create_or_get_rates_tile(self.tile_1)
+            self.check_unhealthy_venues(self.tile_1)
+            self.check_unhealthy_venues(self.tile_2)
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'false')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'false')
+
+            self.check_unhealthy_venues(self.tile_1)
+            self.check_unhealthy_venues(self.tile_2)
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
+
+            self.save_and_close_fe_workspace()
+            self.prepare_frontend()
+
+            self.check_venues_in_order_ticket(self.tile_1, self.venue + 'C', 'true')
+            self.check_venues_in_dve(self.tile_2, self.venue, VerificationMethod.NOT_EQUALS)
+            self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
 
             self.set_venue_unhealthy("false")
-            time.sleep(5)
             self.check_venue_status(self.venue, 'healthy')
 
         except Exception as e:
