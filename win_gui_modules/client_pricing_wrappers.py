@@ -76,7 +76,7 @@ class RatesTileTableOrdSide(Enum):
     Sides = cp_operations_pb2.PlaceRatesTileOrderRequest.Side
     # The buy and sell side have been reversed because act confused them
     SELL = Sides.BUY
-    BUY= Sides.SELL
+    BUY = Sides.SELL
 
 
 class PlaceRateTileTableOrderRequest:
@@ -88,6 +88,7 @@ class PlaceRateTileTableOrderRequest:
 
     def build(self):
         return self.request
+
 
 class PlaceRatesTileOrderRequest:
     def __init__(self, details: BaseTileDetails = None):
@@ -221,7 +222,7 @@ class ExtractRatesTileTableValuesRequest:
         self.request.rowNumber = row_number
 
     def is_tiered(self, is_trade: bool):
-        self.request.isTrade  = is_trade
+        self.request.isTrade = is_trade
 
     def set_bid_extraction_fields(self, extractions_fields: list):
         for extraction_field in extractions_fields:
@@ -263,6 +264,19 @@ class DeselectRowsRequest:
     def __init__(self, details: BaseTileDetails):
         if details is not None:
             self.request = cp_operations_pb2.SelectRequest(data=details.build())
+
+    def build(self):
+        return self.request
+
+
+class GetCPRTPColors:
+
+    def __init__(self, base_tile_data: BaseTileData):
+        self.request = cp_operations_pb2.GetCPRTPColors(base=base_tile_data)
+
+    def get_pricing_btn_pixel_color(self, x: int, y: int):
+        element = cp_operations_pb2.GetCPRTPColors.Elements(type = cp_operations_pb2.GetCPRTPColors.ExtractableElements.PRICING_BUTTON,x = x, y = y)
+        self.request.elements.append(element)
 
     def build(self):
         return self.request
