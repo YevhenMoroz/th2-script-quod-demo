@@ -64,8 +64,8 @@ def test_run():
         prepare_fe(report_id,s_id)
 
 
-        ui_tests.execute(report_id, s_id)
-        # QAP_2715.TestCase(report_id,s_id).execute( )
+        # ui_tests.execute(report_id, s_id)
+        QAP_2715.TestCase(report_id,s_id).execute( )
         # QAP_2066.execute(report_id, case_params, s_id)
 
 
