@@ -306,11 +306,13 @@ def cancel_order(request):
         logger.error("Error execution", exc_info=True)
 
 
-def split_limit_order(request, qty, type, price):
+def split_limit_order(request, qty, type, price,display_qty=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
     order_split_limit.set_order_type(type)
     order_split_limit.set_limit(price)
+    if display_qty is not None:
+        order_split_limit.set_display_qty(display_qty)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_split_limit)
