@@ -1,5 +1,6 @@
 import logging
 
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
 from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
 
 from custom.verifier import Verifier, VerificationMethod
@@ -233,6 +234,18 @@ class TestCase:
         password = Stubs.custom_config['qf_trading_fe_password_303']
         prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
 
+    def check_venue_status(self, venue, status):
+        request = VenueStatusesRequest(base=self.base_request, filter={"Short Name": venue})
+        result = call(self.common_act.checkVenueStatuses, request)
+        if '#E23642' in result['colors']:
+            result = 'unhealthy'
+        elif '#E2E9E5' in result['colors']:
+            result = 'healthy'
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name(f"Check {venue} in Venue Status")
+        verifier.compare_values("Checked", result, status)
+        verifier.verify()
+
     def create_or_get_rates_tile(self, tile):
         call(self.ar_service.createRatesTile, tile.build())
 
@@ -298,6 +311,7 @@ class TestCase:
         try:
             self.set_venue_unhealthy("true")
             self.prepare_frontend()
+            self.check_venue_status(self.venue, 'unhealthy')
 
             self.create_or_get_rates_tile(self.tile_1)
             self.check_unhealthy_venues(self.tile_1)
@@ -322,6 +336,7 @@ class TestCase:
             self.check_venues_in_esp_table(self.tile_1, self.venue, 'true')
 
             self.set_venue_unhealthy("false")
+            self.check_venue_status(self.venue, 'healthy')
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
