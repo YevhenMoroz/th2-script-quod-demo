@@ -5,7 +5,7 @@ from th2_grpc_sim_quod.sim_pb2 import (TemplateQuodNOSRule, TemplateQuodOCRRRule
                                        TemplateNewOrdSingleFOK,
                                        TemplateNewOrdSingleIOC, TemplateNewOrdSingleMarket,
                                        TemplateOrderCancelReplaceExecutionReport,
-                                       TemplateQuodDefMDRRule)
+                                       TemplateQuodDefMDRRule, TemplateMarketNewOrdSingleFOK)
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
