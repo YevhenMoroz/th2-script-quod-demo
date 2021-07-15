@@ -207,7 +207,6 @@ def execute(report_id):
             SettlDate='*',
             ExecRestatementReason='*',
         )
-        er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
