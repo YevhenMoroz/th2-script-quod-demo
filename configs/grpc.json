@@ -243,6 +243,21 @@
           "act_layout"
         ]
       }
-    }
+    },
+    "Win_Act_Trades_Service": {
+ "service-class": "TradesServiceService",
+ "endpoints": {
+ "win_wct_trades_service": {
+ "host": "localhost",
+ "port": 8080
+ }
+ },
+ "strategy": {
+ "name": "robin",
+ "endpoints": [
+ "win_wct_trades_service"
+ ]
+ }
+}
   }
 }

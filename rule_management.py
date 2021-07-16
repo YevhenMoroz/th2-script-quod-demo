@@ -239,6 +239,11 @@ class RuleManager:
 if __name__ == '__main__':
     rule_manager = RuleManager()
     #rule_manager.add_MarketNewOrdSingle_FOK("fix-bs-310-columbia", 'CLIENTYMOROZ_PARIS', "XPAR", True,5)
+    #rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",'MOClient_PARIS',"VETO",float(10))
+    #rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
+         #                                                      'MOClient_EUREX', "XEUR", float(10))
+    rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard",
+                                                               'MOClient_EUREX', "XEUR",True)
     #rule_manager.remove_rules_by_id_range(485,571)
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()

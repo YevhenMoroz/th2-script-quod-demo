@@ -39,6 +39,7 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
+    '''
     # region create 1 CO order
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id1 = eq_wrappers.get_order_id(base_request)
@@ -54,38 +55,19 @@ def execute(report_id, session_id):
     order_id3 = eq_wrappers.get_order_id(base_request)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-
+   
     # region DirectChildCare these orders
-    eq_wrappers.direct_child_care_order('100', 'ChiX direct access', recipient='vskulinec', count=3)
+    eq_wrappers.direct_child_care_order('100', 'ChiX direct access', recipient=Stubs.custom_config['qf_trading_fe_user']
+                                        , count=3)
     # endregion
-
+     '''
+    order_id1 = eq_wrappers.get_order_id(base_request) #######
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id("getOrderInfo")
-    main_order_details.set_filter(['Order ID', order_id1])
     main_order_extraction_action = ExtractionAction.create_extraction_action(
         extraction_details=[order_id1])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child1_id])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
-    verifier.verify()
-
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("getOrderInfo")
-    main_order_details.set_filter(['Order ID', order_id2])
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[order_id2])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
+    child1_id = ExtractionDetail("child_ord_sts", "Sts")
     sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
         extraction_details=[child1_id])
     sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
@@ -94,27 +76,6 @@ def execute(report_id, session_id):
         OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
     request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
-    verifier.verify()
-
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("getOrderInfo")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    main_order_details.set_filter(['Order ID', order_id3])
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[order_id3])
-    child1_id = ExtractionDetail("lvl_1.id", "Sts")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child1_id])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('Sts', 'Open', request['Sts'])
+    verifier.set_event_name("Checking child_ord_id")
+    verifier.compare_values("Status", "Open", request["child_ord_sts"])
     verifier.verify()

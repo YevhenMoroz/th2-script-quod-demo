@@ -1,3 +1,4 @@
+from custom.basic_custom_actions import timestamps
 from quod_qa.eq.DMA import QAP_2005
 from stubs import Stubs
 import logging
@@ -13,12 +14,15 @@ timeouts = False
 channels = dict()
 
 def test_run(parent_id= None):
-    report_id = bca.create_event('dma ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+    report_id = bca.create_event('DMA ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
     session_id = set_session_id()
+    seconds, nanos = timestamps()  # Store case start time
     try:
         QAP_2005.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        logger.info(f"DMA regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 
 
 

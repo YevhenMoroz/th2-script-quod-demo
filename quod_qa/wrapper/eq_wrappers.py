@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
+from th2_grpc_act_gui_quod.trades_pb2 import MatchDetails, ModifyTradesDetails
+
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -22,7 +24,8 @@ from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request, direct_moc_request, direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails
+    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
+    MenuItemDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -255,11 +258,14 @@ def accept_modify(lookup, qty, price):
     except Exception:
         logger.error("Error execution", exc_info=True)
 
+
 def accept_cancel(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptAndCancelChildren, accept_order_request(lookup, qty, price))
     except Exception:
         logger.error("Error execution", exc_info=True)
+
+
 def direct_loc_order(qty, route):
     try:
         call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
@@ -306,7 +312,7 @@ def cancel_order(request):
         logger.error("Error execution", exc_info=True)
 
 
-def split_limit_order(request, qty, type, price,display_qty=None):
+def split_limit_order(request, qty, type, price, display_qty=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
     order_split_limit.set_order_type(type)
@@ -319,6 +325,23 @@ def split_limit_order(request, qty, type, price,display_qty=None):
 
     try:
         call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def split_order(request, qty, price=None, display_qty=None):
+    order_split = OrderTicketDetails()
+    order_split.set_quantity(qty)
+    if price is not None:
+        order_split.set_limit(price)
+    if display_qty is not None:
+        order_split.set_display_qty(display_qty)
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(request)
+    amend_order_details.set_order_details(order_split)
+
+    try:
+        call(Stubs.win_act_order_book.splitOrder, amend_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -815,5 +838,38 @@ def check_error_in_book(request):
 
 
 def re_order_leaves(request, is_sall=False):
-    base_orders_details = BaseOrdersDetails(request)
-    call(Stubs.win_act_order_book.reOrderLeaves, base_orders_details.build())
+    order_ticket = OrderTicketDetails()
+    if is_sall:
+        order_ticket.sell()
+    else:
+        order_ticket.buy()
+    new_order_details = NewOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(request)
+    call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
+
+
+def is_menu_item_present(request, menu_item, selected_rows, extract_Id, filter):
+    menu_item_details = MenuItemDetails(request)
+    menu_item_details.set_menu_item(menu_item)
+    #menu_item_details.set_selected_rows(selected_rows)
+    menu_item_details.set_extraction_Id(extract_Id)
+    menu_item_details.set_filter(filter)
+    try:
+        call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
+    match_details = MatchDetails()
+    # if order_filter_list is not None:  #example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
+    # match_details.set_filter()
+    match_details.set_qty_to_match(qty_to_match)
+    # match_details.click_cancel()
+    match_details.click_match()
+    trades_order_details = ModifyTradesDetails(match_details=match_details)
+    trades_order_details.set_default_params(request)
+    if trades_filter_list is not None:
+        trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
+    call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
