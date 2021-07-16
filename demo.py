@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from examples import example_java_api
 from quod_qa.eq.Algo_Multilisted import QAP_3429, QAP_3134, QAP_2476, QAP_2837, QAP_3058, QAP_1967, QAP_1966, QAP_1963, \
     QAP_1962, QAP_1958, QAP_1957, QAP_1954, QAP_1983, QAP_1984, QAP_2068, QAP_1953, QAP_3021, QAP_2982, QAP_1986, \
     QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, \
@@ -34,15 +35,16 @@ def test_run():
     report_id = bca.create_event('srublyov tests ')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        session_id = set_session_id()
-        if not Stubs.frontend_is_open:
-            prepare_fe(report_id, session_id, work_dir, username, password)
-        else:
-            get_opened_fe(report_id, session_id, work_dir)
+        # session_id = set_session_id()
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe(report_id, session_id, work_dir, username, password)
+        # else:
+        #     get_opened_fe(report_id, session_id, work_dir)
 
+        example_java_api.TestCase(report_id).execute()
         # QAP_1324.execute(report_id, session_id)
         # QAP_1750.execute(report_id, session_id)
-        QAP_2837.execute(report_id, session_id)
+        # QAP_2837.execute(report_id, session_id)
         # QAP_2838.execute(report_id, session_id)
         # QAP_1810.execute(report_id)
 
