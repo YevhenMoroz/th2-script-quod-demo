@@ -16,11 +16,7 @@ class TestCase:
 
     def send_nos(self):
         nos_params = {
-            # 'AuthenticationBlock': {
-            #     'UserID': "",
-            #     'RoleID': 'HeadOfSaleDealer',
-            #     'SessionKey': 00000000000
-            # },
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
             'NewOrderSingleBlock': {
                 'ListingList': {
                     'ListingBlock': [
@@ -42,7 +38,7 @@ class TestCase:
                 'ExecutionOnly': 'No',
                 'ClientInstructionsOnly': 'No',
                 'BookingType': 'RegularBooking',
-                'OrdQty': 100.000000000,
+                'OrdQty': 121.000000000,
                 'AccountGroupID': 'CLIENT1',
                 'InstrID': '5XRAA7DXZg14IOkuNrAfsg',
                 'ExecutionPolicy': 'DMA',
