@@ -24,10 +24,11 @@ class NewOrderDetails:
 
 class NewFxOrderDetails:
 
-    def __init__(self, base_request, order_details: FXOrderDetails):
+    def __init__(self, base_request, order_details: FXOrderDetails, isMM: bool = False):
         self.new_fx_oder_details = order_ticket_fx_pb2.NewFxOrderDetails()
         self.new_fx_oder_details.base.CopyFrom(base_request)
         self.new_fx_oder_details.fxOrderDetails.CopyFrom(order_details.build())
+        self.new_fx_oder_details.isMM = isMM
 
     def build(self):
         return self.new_fx_oder_details
