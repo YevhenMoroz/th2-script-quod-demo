@@ -22,3 +22,18 @@ class LoginPage(CommonPage):
 
     def check_is_login_successful(self):
         self.find_by_css_selector(RootConstants.HEADER_CONTAINER_CSS_SELECTOR)
+
+    def check_is_web_admin_preloaded(self):
+        """
+         this method takes the title from the loaded web page, if the title text is taken by xPass, it will return true
+        """
+        if self.find_by_xpath("//*[text()='System Administration - ']").text == 'System Administration -':
+            return True
+        else:
+            return 'Page is not preloaded'
+
+    def login_to_web_admin(self, login, password):
+        self.set_login(login)
+        self.set_password(password)
+        self.click_login_button()
+        self.check_is_login_successful()
