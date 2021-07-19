@@ -55,6 +55,9 @@ class Stubs:
     win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
     api_service = factory.grpc_router.get_service(RestActService)
 
+    # TODO: rename java api act service name
+    act_java_api = factory.grpc_router.get_service(ActService)
+
     custom_config = factory.create_custom_configuration()
     session_id = None
     frontend_is_open = True

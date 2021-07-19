@@ -35,6 +35,7 @@ class TestCase:
         login_response = self.act_java_api.sendMessage(
             request=ActJavaSubmitMessageRequest(
                 message=bca.message_to_grpc('Order_Login', login_message, self.connectivity)))
+        print(login_response)
 
     def send_nos_old(self):
         cl_ord_id = bca.client_orderid(9)
@@ -49,7 +50,7 @@ class TestCase:
                 'TimeInForce': 'Day',
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'ClientAccountGroupID': 'TEST2',
-                'OrdQty': 100,
+                'OrdQty': 777,
                 'InstrumentBlock': {
                     'InstrSymbol': 'FR0010263202_EUR',
                     'SecurityID': 'FR0010263202',
@@ -90,7 +91,7 @@ class TestCase:
                 'ExecutionOnly': 'No',
                 'ClientInstructionsOnly': 'No',
                 'BookingType': 'RegularBooking',
-                'OrdQty': 100.000000000,
+                'OrdQty': 777.000000000,
                 'AccountGroupID': 'CLIENT1',
                 'InstrID': '5XRAA7DXZg14IOkuNrAfsg',
                 'ExecutionPolicy': 'DMA',
@@ -101,14 +102,18 @@ class TestCase:
         print(ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
 
-        self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
+        response= self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
+
+        print(f' response sendMessage = {response}')
+
 
     # Main method
     def execute(self):
+
         self.send_login()
-        # self.send_nos_old()
         # self.send_nos_new()
+        self.send_nos_old()
 
 
 if __name__ == '__main__':
