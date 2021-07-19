@@ -72,7 +72,7 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_venue_hsbcr = "HSBCR"
     case_qty = 1000000
     case_near_date = 2
