@@ -41,7 +41,7 @@ def test_run():
         # else:
         #     get_opened_fe(report_id, session_id, work_dir)
 
-        example_java_api.TestCase(report_id).execute()
+        # example_java_api.TestCase(report_id).execute()
         # QAP_1324.execute(report_id, session_id)
         # QAP_1750.execute(report_id, session_id)
         # QAP_2837.execute(report_id, session_id)
