@@ -42,7 +42,7 @@ class TestCase:
                 'ExecutionOnly': 'No',
                 'ClientInstructionsOnly': 'No',
                 'BookingType': 'RegularBooking',
-                'OrdQty': 100.000000000,
+                'OrdQty': 666.000000000,
                 'AccountGroupID': 'CLIENT1',
                 'InstrID': '5XRAA7DXZg14IOkuNrAfsg',
                 'ExecutionPolicy': 'DMA',
@@ -56,7 +56,7 @@ class TestCase:
         response= self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
 
-        print(f' response sendMessage = {response}')
+        print(f'*********** response sendMessage = {response}************')
 
 
     # Main method
