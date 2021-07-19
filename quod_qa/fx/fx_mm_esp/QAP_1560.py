@@ -1,7 +1,6 @@
 import logging
 from pathlib import Path
 from custom.verifier import Verifier, VerificationMethod
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
