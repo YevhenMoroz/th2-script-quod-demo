@@ -1,10 +1,9 @@
 import logging
-from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, get_base_request
+from win_gui_modules.utils import get_base_request
 
 
 logger = logging.getLogger(__name__)
@@ -12,21 +11,19 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1028"
-
     # region Declarations
     qty = "900"
     price = "40"
     lookup = "VETO"
-    client = "CLIENTYMOROZ"
+    client = "CLIENT_FIX_CARE"
     desk = "Desk of Dealers 3 (CL)"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     username2 = Stubs.custom_config['qf_trading_fe_user2']
     password2 = Stubs.custom_config['qf_trading_fe_password2']
-    session_id = set_session_id()
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     case_id = create_event(case_name, report_id)
