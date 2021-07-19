@@ -104,15 +104,9 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
 
     order_ticket_service = Stubs.win_act_order_ticket
-    # try:
-    #     rule_manager = RuleManager()
-    #     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
-    #                                                                          client + "_PARIS", "XPAR", int(price))
-    #     call(order_ticket_service.placeOrder, new_order_details.build())
-    # except Exception:
-    #     logger.error("Error execution", exc_info=True)
-    # finally:
-    #     rule_manager.remove_rule(nos_rule)
+
+    call(order_ticket_service.placeOrder, new_order_details.build())
+
 
 '''
   instrument ={
@@ -122,13 +116,13 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
                 'SecurityExchange': 'XEUR'
             }
 '''
+
+
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                             "XPAR_" + client, "XPAR", int(price))
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+        fix_manager = FixManager(sell_connectivity, case_id)
 
         fix_params = {
             'Account': client,
@@ -147,6 +141,13 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
                 'SecurityIDSource': '4',
                 'SecurityExchange': 'XPAR'
             },
+            # 'Instrument': {
+            #     'Symbol': 'IS0000000001_EUR',
+            #     'SecurityID': 'ISI1',
+            #     'SecurityIDSource': '4',
+            #     'SecurityExchange': 'XEUR'
+            # },
+
             'Currency': 'EUR',
         }
         fix_params.update()
@@ -155,6 +156,7 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         if no_allocs == None:
             fix_params.pop('NoAllocs')
         if insrument != None:
+            fix_params.pop('Instrument')
             fix_params.update(Instrument=insrument)
         fix_message = FixMessage(fix_params)
         fix_message.add_random_ClOrdID()
@@ -163,12 +165,10 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
 
 
 def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
-    fix_manager_qtwquod = FixManager(connectivity, case_id)
+    fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
     cancel_parms = {
         "ClOrdID": order_id,
         "Account": client,
@@ -178,6 +178,7 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     }
     fix_cancel = FixMessage(cancel_parms)
     fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+
 
 def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(buy_connectivity, case_id)
@@ -215,7 +216,6 @@ def amend_order(request, client=None, qty=None, price=None, account=None):
         logger.error("Error execution", exc_info=True)
     finally:
         rule_manager.remove_rule(rule)
-    return fix_modify_message.get_parameter('Price')
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):
@@ -329,6 +329,21 @@ def split_limit_order(request, qty, type, price):
 
     try:
         call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def split_order(request, qty, type, price):
+    order_split = OrderTicketDetails()
+    order_split.set_quantity(qty)
+    order_split.set_order_type(type)
+    order_split.set_limit(price)
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(request)
+    amend_order_details.set_order_details(order_split)
+
+    try:
+        call(Stubs.win_act_order_book.splitOrder, amend_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
 
