@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 from dataclasses import dataclass
 
 from th2_grpc_act_gui_quod import layout_panel_pb2
@@ -12,7 +14,7 @@ class WorkspaceModificationRequest:
         self.ws_modify_request.base.CopyFrom(base_request)
 
     def set_path(self, path: str):
-        self.ws_modify_request.path = path
+        self.ws_modify_request.Sides = path
 
     def set_filename(self, filename: str):
         self.ws_modify_request.fileName = filename
@@ -28,7 +30,15 @@ class WorkspaceModificationRequest:
 
 
 @dataclass
+class CustomCurrencySlippage:
+    instrument: str= ''
+    dmaSlippage: str= ''
+    algoSlippage: str= ''
+    removeRowNumber: str = 0
+
+@dataclass
 class DefaultFXValues:
+    custom_currency_slippage_list : list
     AggressiveOrderType: str = ''
     AggressiveTIF: str = ''
     AggressiveStrategyType: str = ''
@@ -43,13 +53,9 @@ class DefaultFXValues:
     DMASlippage: str = ''
     Client: str = ''
 
-
 class OptionOrderTicketRequest:
     def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self.request = layout_panel_pb2.OptionOrderTicketRequest(base=base)
-        else:
-            self.request = layout_panel_pb2.OptionOrderTicketRequest()
+        self.request = layout_panel_pb2.OptionOrderTicketRequest(base=base)
 
     def set_default_fx_values(self, values: DefaultFXValues):
         fx_panel = layout_panel_pb2.OptionOrderTicketRequest.DefaultFXValues()
@@ -66,7 +72,36 @@ class OptionOrderTicketRequest:
         fx_panel.AlgoSlippage.value = values.AlgoSlippage
         fx_panel.DMASlippage.value = values.DMASlippage
         fx_panel.Client.value = values.Client
+
+        for customSlipage in values.custom_currency_slippage_list:
+            cp = fx_panel.customCurrencySlippage.add()
+            cp.instrument = customSlipage.instrument
+            cp.dmaSlippage = customSlipage.dmaSlippage
+            cp.algoSlippage = customSlipage.algoSlippage
+            cp.removeRowNumber = customSlipage.removeRowNumber
+
         self.request.defaultFXValues.CopyFrom(fx_panel)
+
+
+    def build(self):
+        return self.request
+
+
+class FXConfigsRequest:
+    def __init__(self, base: EmptyRequest):
+        self.request = layout_panel_pb2.FXConfigsRequest(base=base)
+
+    def set_cumulative_qty(self, value: str):
+        self.request.CumulativeQtyChartPips.value = value
+
+    def set_one_click_mode(self, value: str):
+        self.request.OneClickOrdersMode.value = value
+
+    def set_algo_default_qty(self, value: str):
+        self.request.AlgoDefaultQty.value = value
+
+    def set_headers_prices_format(self, value: str):
+        self.request.HeaderPricesFormat.value = value
 
     def build(self):
         return self.request

@@ -23,21 +23,19 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-def execute(report_id):
+
+def execute(report_id, session_id):
     case_name = "QAP-1070"
 
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "800"
-    newQty = "100"
     price = "10"
     newPrice = "1"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
-    client = "CLIENT1"
+    lookup = "VETO"
+    client = "CLIENT_FIX_CARE"
     # endregion
     # region Open FE
 
@@ -48,37 +46,22 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id,report_id,case_id, work_dir,username,password)
+    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregionA
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    param_list={'Price': newPrice}
-    #Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
-    #region
+    response = fix_message.pop('response')
+    fix_message1 = FixMessage(fix_message)
+    param_list = {'Price': newPrice}
+    # Amend fix order
+
+    eq_wrappers.amend_order_via_fix(case_id, fix_message1, param_list)
+    # region
 
     # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, price)
+    eq_wrappers.accept_modify(lookup, qty, newPrice)
     # endregion
 
-    #region CheckOrder
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    request = call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Price", order_price.name, newPrice)
-                                                  ]))
-    #endregion
+    # region CheckOrder
+    eq_wrappers.verify_order_value(base_request, case_id, 'Limit Price', '1', False)
+    # endregion

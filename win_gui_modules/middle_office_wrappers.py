@@ -38,6 +38,7 @@ class ExtractionField(Enum):
     EXCHANGE_RATE = middle_office_pb2.ExtractionDetails.ExtractionField.EXCHANGE_RATE
     SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.SETTLEMENT_TYPE
     BLOCK_SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.BLOCK_SETTLEMENT_TYPE
+    IS_MANUAL_TOGGLED = middle_office_pb2.ExtractionDetails.ExtractionField.IS_MANUAL_TOGGLED
 
 
 class ExtractionDetails:
@@ -70,6 +71,9 @@ class ExtractionDetails:
 
     def extract_exchange_rate(self, name: str):
         self.extract_value(ExtractionField.EXCHANGE_RATE, name)
+
+    def extract_manual_checkbox_state(self, name: str):
+        self.extract_value(ExtractionField.IS_MANUAL_TOGGLED, name)
 
     def extract_settlement_type(self, name: str):
         self.extract_value(ExtractionField.SETTLEMENT_TYPE, name)
@@ -145,6 +149,9 @@ class OrderDetails:
     def set_order_number(self, number: int):
         self.request.orderNumber = number
 
+    def clear_filter(self):
+        self.request.clearAllocationFilter = True
+
     def add_extraction_detail(self, detail: ExtractionDetail):
         var = self.request.extractionDetails.add()
         var.name = detail.name
@@ -200,6 +207,21 @@ class FeesDetails:
 
     def remove_fees(self):
         self.request.removeFees = True
+
+    def add_fees(self, feeType: str= None, basis: str = None, rate: str = None, amount: str = None, currency: str = None, category: str = None):
+        var = self.request.feesTabTableParams.add()
+        if feeType is not None:
+            var.feeType = feeType
+        if basis is not None:
+            var.basis = basis
+        if rate is not None:
+            var.rate = rate
+        if amount is not None:
+            var.amount = amount
+        if currency is not None:
+            var.currency = currency
+        if category is not None:
+            var.category = category
 
 
 class MiscDetails:

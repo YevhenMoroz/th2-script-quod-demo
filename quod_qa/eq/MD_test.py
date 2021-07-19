@@ -16,22 +16,22 @@ def execute(report_id):
     simulator = Stubs.simulator
 
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="734",
-        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
+        symbol="953",
+        connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
     mdir_params_bid = {
         'MDReqID': MDRefID,
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '19',
+                'MDEntrySize': '1000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
+                'MDEntryPx': '19.99',
+                'MDEntrySize': '1000',
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -60,35 +60,35 @@ def execute(report_id):
 
     Stubs.fix_act.sendMessage(request=convert_to_request(
         'Send MarketDataSnapshotFullRefresh',
-        "fix-fh-310-columbia",
+        "fix-feed-handler-316-ganymede",
         report_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-fh-310-columbia")
+        message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-feed-handler-316-ganymede")
     ))
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="3416",
-        connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
-    )).MDRefID
-    mdir_params_bid = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        "fix-fh-310-columbia",
-        report_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-fh-310-columbia")
-    ))
+    # MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    #     symbol="3416",
+    #     connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
+    # )).MDRefID
+    # mdir_params_bid = {
+    #     'MDReqID': MDRefID,
+    #     'NoMDEntries': [
+    #         {
+    #             'MDEntryType': '0',
+    #             'MDEntryPx': '30',
+    #             'MDEntrySize': '100000',
+    #             'MDEntryPositionNo': '1'
+    #         },
+    #         {
+    #             'MDEntryType': '1',
+    #             'MDEntryPx': '40',
+    #             'MDEntrySize': '100000',
+    #             'MDEntryPositionNo': '1'
+    #         }
+    #     ]
+    # }
+    #
+    # Stubs.fix_act.sendMessage(request=convert_to_request(
+    #     'Send MarketDataSnapshotFullRefresh',
+    #     "fix-fh-310-columbia",
+    #     report_id,
+    #     message_to_grpc('MarketDataSnapshotFullRefresh', mdir_params_bid, "fix-fh-310-columbia")
+    # ))

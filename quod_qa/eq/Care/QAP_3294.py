@@ -1,19 +1,9 @@
 import logging
 from datetime import datetime
-
-from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, ModifyOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
-import time
+from win_gui_modules.utils import set_session_id, get_base_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -46,27 +36,27 @@ def execute(report_id):
     # endregion
 
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
     # region Execute
     eq_wrappers.manual_execution(base_request, qty, price)
     # endregion
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "ExecSts", "Filled")
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
     # endregion
     # region Complete
     eq_wrappers.complete_order(base_request)
     # endregion
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "DoneForDay", "ReadyToBook")
-    eq_wrappers.verify_value(base_request, case_id, "PostTradeStatus", "Yes")
+    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "ReadyToBook")
+    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Yes")
     # endregion
     # region Un-Complete
     eq_wrappers.un_complete_order(base_request)
     # end region
 
     # region Check value
-    eq_wrappers.verify_value(base_request, case_id, "DoneForDay", "")
-    eq_wrappers.verify_value(base_request, case_id, "PostTradeStatus", "")
+    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "")
+    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "")
     # endregion
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

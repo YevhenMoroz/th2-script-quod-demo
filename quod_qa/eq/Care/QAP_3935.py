@@ -37,7 +37,7 @@ def execute(report_id):
     newPrice = "1"
     time = datetime.utcnow().isoformat()
     lookup = "VETO"
-    client = "CLIENTSKYLPTOR"
+    client = "CLIENT_FIX_CARE"
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE
@@ -55,6 +55,6 @@ def execute(report_id):
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
     # verify washbook
-    eq_wrappers.verify_value(base_request, case_id, 'Wash Book', 'DefaultWashBook')
+    eq_wrappers.verify_order_value(base_request, case_id, 'Wash Book', 'DefaultWashBook')
     # endregion
 
