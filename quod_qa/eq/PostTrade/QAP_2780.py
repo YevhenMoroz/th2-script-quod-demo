@@ -11,34 +11,32 @@ from rule_management import RuleManager
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-2780"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "40"
-    client = "CLIENTYMOROZ"
+    client = "MOClient"
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create DMA
-    connectivity_buy_side = "fix-bs-310-columbia"
     rule_manager = RuleManager()
-    trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, client+"_PARIS", "XPAR",
+    trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(), client+"_PARIS", "XPAR",
                                                                    int(price), int(qty), 0)
     fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 1, price)
     response = fix_message.pop('response')
     rule_manager.remove_rule(trade_rule)
     # endregion
     # region Verify
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_buy = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     params = {
         'Account': client,
         'OrderQty': qty,
@@ -72,11 +70,11 @@ def execute(report_id):
         'SecondaryOrderID': '*',
         'SettlDate': '*',
         'LastMkt': '*',
-        'ChildOrderID': '*',
+        'SettlType': '*',
         'ExDestination': '*',
         'GrossTradeAmt': '*',
     }
-    fix_verifier_ss.CheckExecutionReport(params,response)
+    fix_verifier_buy.CheckExecutionReport(params,response)
 
     # endregion
     # region Book

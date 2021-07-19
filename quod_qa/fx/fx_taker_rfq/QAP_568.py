@@ -128,8 +128,7 @@ def execute(report_id, session_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
-    case_venue = ["CITI"]
-    case_filter_venue = "CITI"
+    case_venue = "CITI"
 
     case_qty = 2000000
     quote_sts_new = "New"
@@ -151,10 +150,10 @@ def execute(report_id, session_id):
         # Step 4
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency, case_to_currency,
-                        case_near_tenor, case_venue)
+                        case_client, case_near_tenor, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b(case_base_request, ar_service, case_id,
-                              quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
+                              quote_sts_new, quote_quote_sts_accepted, case_venue)
         # Step 5
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
