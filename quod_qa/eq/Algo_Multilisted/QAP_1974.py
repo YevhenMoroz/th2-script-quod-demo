@@ -165,6 +165,7 @@ def execute(report_id):
 
         #Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 ={
+            'Account': client,
             'ExecID': '*',
             'OrderQty': qty,
             'NoStrategyParameters': '*',
@@ -201,6 +202,7 @@ def execute(report_id):
             SettlDate='*',
             ExecRestatementReason='*',
         )
+        er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
 
@@ -362,7 +364,7 @@ def execute(report_id):
             'Instrument': instrument,
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
-        fix_verifier_ss.CheckExecutionReport(er_8, responce_cancel, case=case_id_4, message_name="SS FIXSELLQUOD5 send 35=8 Cancel")
+        fix_verifier_ss.CheckExecutionReport(er_8, responce_cancel, case=case_id_4, message_name="SS FIXSELLQUOD5 send 35=8 Cancel", key_parameters=['OrderQty', 'TimeInForce', 'Price', 'CumQty', 'OrdStatus', 'ExecType'])
         #endregion
         
         time.sleep(1)
