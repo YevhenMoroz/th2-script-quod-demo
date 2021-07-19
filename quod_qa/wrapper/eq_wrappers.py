@@ -1,8 +1,12 @@
+import time
+from copy import deepcopy
 from datetime import datetime, timedelta
 
 from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
+from th2_grpc_act_gui_quod.trades_pb2 import MatchDetails, ModifyTradesDetails
+
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -20,7 +24,8 @@ from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request, direct_moc_request, direct_loc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails
+    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
+    MenuItemDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -57,11 +62,9 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
+def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
     try:
-        fix_manager_qtwquod = FixManager(buy_connectivity, case_id)
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OCR(session)
+        fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
         cancel_parms = {
             "ClOrdID": cl_order_id,
             "Account": client,
@@ -73,8 +76,6 @@ def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client,
         fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(rule)
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
@@ -114,6 +115,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     # finally:
     #     rule_manager.remove_rule(nos_rule)
 
+
 '''
   instrument ={
                 'Symbol': 'IS0000000001_EUR',
@@ -122,6 +124,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
                 'SecurityExchange': 'XEUR'
             }
 '''
+
+
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
@@ -179,18 +183,20 @@ def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
     fix_cancel = FixMessage(cancel_parms)
     fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
-def amend_order_via_fix(case_id, fix_message, parametr_list):
-    fix_manager = FixManager(buy_connectivity, case_id)
+def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
+    fix_manager = FixManager(sell_connectivity, case_id)
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(buy_connectivity)
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
+        rule = rule_manager.add_OrderCancelReplaceRequest(buy_connectivity, venue_client_name, venue,
+                                                          True)
+        fix_modify_message = deepcopy(fix_message)
+        fix_modify_message.change_parameters(param_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(rule)
 
 
@@ -272,6 +278,13 @@ def accept_modify(lookup, qty, price):
         logger.error("Error execution", exc_info=True)
 
 
+def accept_cancel(lookup, qty, price):
+    try:
+        call(Stubs.win_act.acceptAndCancelChildren, accept_order_request(lookup, qty, price))
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
 def direct_loc_order(qty, route):
     try:
         call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
@@ -303,7 +316,7 @@ def reject_order(lookup, qty, price):
 
 def direct_order(lookup, qty, price, qty_percent):
     try:
-        call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
+        call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -318,17 +331,36 @@ def cancel_order(request):
         logger.error("Error execution", exc_info=True)
 
 
-def split_limit_order(request, qty, type, price):
+def split_limit_order(request, qty, type, price, display_qty=None):
     order_split_limit = OrderTicketDetails()
     order_split_limit.set_quantity(qty)
     order_split_limit.set_order_type(type)
     order_split_limit.set_limit(price)
+    if display_qty is not None:
+        order_split_limit.set_display_qty(display_qty)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_split_limit)
 
     try:
         call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def split_order(request, qty, price=None, display_qty=None):
+    order_split = OrderTicketDetails()
+    order_split.set_quantity(qty)
+    if price is not None:
+        order_split.set_limit(price)
+    if display_qty is not None:
+        order_split.set_display_qty(display_qty)
+    amend_order_details = ModifyOrderDetails()
+    amend_order_details.set_default_params(request)
+    amend_order_details.set_order_details(order_split)
+
+    try:
+        call(Stubs.win_act_order_book.splitOrder, amend_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -825,5 +857,38 @@ def check_error_in_book(request):
 
 
 def re_order_leaves(request, is_sall=False):
-    base_orders_details = BaseOrdersDetails(request)
-    call(Stubs.win_act_order_book.reOrderLeaves, base_orders_details.build())
+    order_ticket = OrderTicketDetails()
+    if is_sall:
+        order_ticket.sell()
+    else:
+        order_ticket.buy()
+    new_order_details = NewOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(request)
+    call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
+
+
+def is_menu_item_present(request, menu_item, selected_rows, extract_Id, filter):
+    menu_item_details = MenuItemDetails(request)
+    menu_item_details.set_menu_item(menu_item)
+    #menu_item_details.set_selected_rows(selected_rows)
+    menu_item_details.set_extraction_Id(extract_Id)
+    menu_item_details.set_filter(filter)
+    try:
+        call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
+    match_details = MatchDetails()
+    # if order_filter_list is not None:  #example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
+    # match_details.set_filter()
+    match_details.set_qty_to_match(qty_to_match)
+    # match_details.click_cancel()
+    match_details.click_match()
+    trades_order_details = ModifyTradesDetails(match_details=match_details)
+    trades_order_details.set_default_params(request)
+    if trades_filter_list is not None:
+        trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
+    call(Stubs.win_act_trades.manualMatch, trades_order_details.build())

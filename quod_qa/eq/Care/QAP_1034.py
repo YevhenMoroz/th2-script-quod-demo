@@ -5,6 +5,7 @@ from datetime import datetime
 
 from th2_grpc_act_gui_quod import order_ticket_service
 
+from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 
@@ -23,8 +24,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1034"
     seconds, nanos = timestamps()  # Store case start time
 
@@ -36,13 +36,11 @@ def execute(report_id):
     price = "10"
     newPrice = "1"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
-    client = "CLIENT1"
+    lookup = "VETO"
+    client = "CLIENT_FIX_CARE"
     # endregion
     # region Open FE
-
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -57,32 +55,10 @@ def execute(report_id):
     # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                             "XPAR_" + client, "XPAR", 20)
-        connectivity = 'gtwquod5'
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
-        fix_params = {
-            'Account': client,
-            'HandlInst': "3",
-            'Side': "2",
-            'OrderQty': qty,
-            'TimeInForce': "0",
-            'OrdType': 2,
-            'Price': price,
-            'TransactTime': time,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
-        }
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + "_PARIS", "XPAR", 20)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+        fix_message.pop("response")
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -90,54 +66,28 @@ def execute(report_id):
 
     # endregion
     # region Accept CO
-    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
+    eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-    #region Send OrderCancelReplaceRequest
-    fix_modify_message: FixMessage = deepcopy(fix_message)
-    fix_modify_message.change_parameters({'Price': newPrice, 'OrderQty': newQty})
-
-    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-    amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    # region Send OrderCancelReplaceRequest
+    fix_message = FixMessage(fix_message)
+    params = {'Price': newPrice, 'OrderQty': newQty}
+    eq_wrappers.amend_order_via_fix(case_id, fix_message, params, client + "_PARIS")
     # endregion
     # region Accept CO
-    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
+    eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
     # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_id
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Qty", order_qty.name, newQty),
-                                                  verify_ent("LmtPrice", order_price.name, newPrice)]))
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Qty", newQty)
+    eq_wrappers.verify_order_value(base_request, case_id, "Limit Price", newPrice)
     # endregion
     # region Cancelling order
-    request = call(act.getOrdersDetails, order_details.request())
-    order_id = request[order_id.name]
-    cancel_order_details = CancelOrderDetails()
-    cancel_order_details.set_default_params(base_request)
-    cancel_order_details.set_filter(["Order ID", order_id])
-    cancel_order_details.set_cancel_children(True)
-    call(act.cancelOrder, cancel_order_details.build())
+    cl_order_id = eq_wrappers.get_cl_order_id(base_request)
+    eq_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
+    eq_wrappers.accept_cancel(lookup, qty, price)
     # endregion
     # region Check values after Cancel
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Cancelled")
-                                                  ]))
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Cancelled")
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
