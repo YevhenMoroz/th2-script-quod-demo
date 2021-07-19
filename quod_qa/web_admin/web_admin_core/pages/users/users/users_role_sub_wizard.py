@@ -14,7 +14,7 @@ class UsersRoleSubWizard(CommonPage):
         return self.get_text_by_xpath(UsersConstants.ROLE_ID_AT_ROLE_SUB_WIZARD)
 
     def set_desks(self, value: tuple):
-        result = tuple(self.set_checkbox_list(UsersConstants.ROLE_ID_AT_ROLE_SUB_WIZARD, value))
+        result = self.set_checkbox_list(UsersConstants.DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD, value)
         for item in range(len(result)):
             self.find_by_xpath(result[item]).click()
 

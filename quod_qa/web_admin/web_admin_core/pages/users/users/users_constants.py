@@ -1,7 +1,9 @@
 class UsersConstants:
     USERS_PAGE_TITLE_XPATH = "//*[@href='#/pages/users/view']//*[text()='Users']"
+    USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
+    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     DISABLED_MESSAGE = "//*[@class='title subtitle']"
-
+    RECORD_EXIST_EXCEPTION  = "//*[text()='Such a record already exists']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"
@@ -67,7 +69,7 @@ class UsersConstants:
     EXT_ID_VENUE_AT_LOGIN_SUB_WIZARD ='//*[text()="Ext ID Venue"]/preceding-sibling::input'
     EXT_ENTITLEMENT_AT_LOGIN_SUB_WIZARD ='//*[text()="Ext Entitlement Key"]/preceding-sibling::input'
     PIN_CODE_AT_LOGIN_SUB_WIZARD ='//*[text()="PIN Code *"]/preceding-sibling::input'
-    PASSWORD_AT_LOGIN_SUB_WIZARD ='//*[text()="Password Expiration"]/preceding-sibling::input'
+    PASSWORD_AT_LOGIN_SUB_WIZARD ='//*[text()="Password *"]/preceding-sibling::input'
     PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD ='//*[text()="Password Expiration"]/preceding-sibling::input'
     COUNTERPART_AT_LOGIN_SUB_WIZARD ='//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD ='//*[text()="Manage"]'
@@ -93,7 +95,7 @@ class UsersConstants:
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role ID *"]/preceding-sibling::input'
     ROLE_ID_AFTER_SAVED_XPATH = "//*[@class='app-input-placeholder disabled-input']"
     DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD = '//*[@class="cdk-overlay-pane"]//*[text()="{}"]'
-    DESKS_AT_ROLE_SUB_WIZARD ="//*[text()='Desks *']/preceding-sibling::button"
+    DESKS_AT_ROLE_SUB_WIZARD ="//*[text()='Desks *']/parent::div//button"
     LOCATION_AT_ROLE_SUB_WIZARD ='//*[text()="Location"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD ='//*[text()="Group"]/preceding-sibling::input'
     PERM_ROLE_AT_ROLE_SUB_WIZARD='//*[text()="Perm Role"]/preceding-sibling::input'

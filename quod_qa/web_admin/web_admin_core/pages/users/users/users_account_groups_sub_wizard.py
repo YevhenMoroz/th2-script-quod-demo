@@ -41,8 +41,8 @@ class UsersAccountGroupsSubWizard(CommonPage):
     def set_type_filter(self, value):
         self.set_text_by_xpath(UsersConstants.TYPE_FILTER_AT_ACCOUNT_GROUPS_SUB_WIZARD, value)
 
-
-
+    def is_such_record_already_exist(self):
+        return self.find_by_xpath(UsersConstants.RECORD_EXIST_EXCEPTION).text == "Such a record already exists"
 
 
 

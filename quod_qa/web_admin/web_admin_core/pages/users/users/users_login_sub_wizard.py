@@ -9,6 +9,12 @@ class UsersLoginSubWizard(CommonPage):
 
     # get and set
 
+    def set_user_id(self, value):
+        self.set_text_by_xpath(UsersConstants.USER_ID_AT_LOGIN_SUB_WIZARD, value)
+
+    def set_password(self, value):
+        self.set_text_by_xpath(UsersConstants.PASSWORD_AT_LOGIN_SUB_WIZARD, value)
+
     def set_ext_id_client(self, value):
         self.set_text_by_xpath(UsersConstants.EXT_ID_CLIENT_AT_LOGIN_SUB_WIZARD, value)
 
@@ -28,7 +34,7 @@ class UsersLoginSubWizard(CommonPage):
         self.get_text_by_xpath(UsersConstants.EXT_ENTITLEMENT_AT_LOGIN_SUB_WIZARD)
 
     def set_password_expiration(self, value):
-        self.set_text_by_xpath(UsersConstants.PASSWORD_AT_LOGIN_SUB_WIZARD, value)
+        self.set_text_by_xpath(UsersConstants.PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD, value)
 
     def get_password_expiration(self):
         return self.get_text_by_xpath(UsersConstants.PASSWORD_AT_LOGIN_SUB_WIZARD)
@@ -39,7 +45,7 @@ class UsersLoginSubWizard(CommonPage):
     def get_counterpart(self):
         return self.get_text_by_xpath(UsersConstants.COUNTERPART_AT_LOGIN_SUB_WIZARD)
 
-    #checkboxes
+    # checkboxes
     def set_generate_pin_code_checkbox(self):
         self.find_by_xpath(UsersConstants.GENERATE_PIN_CODE_CHECKBOX_AT_LOGIN_SUB_WIZARD).click()
 
@@ -73,35 +79,3 @@ class UsersLoginSubWizard(CommonPage):
     # click on
     def click_on_manage_button(self):
         self.find_by_xpath(UsersConstants.MANAGE_AT_LOGIN_SUB_WIZARD).click()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

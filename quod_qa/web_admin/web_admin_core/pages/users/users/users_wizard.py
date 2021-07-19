@@ -9,6 +9,10 @@ class UsersWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
+    def click_on_logout_button(self):
+        self.find_by_xpath(UsersConstants.USER_ICON_AT_RIGHT_CORNER).click()
+        self.find_by_xpath(UsersConstants.LOGOUT_BUTTON_XPATH).click()
+
     def click_on_save_changes(self):
         self.find_by_xpath(UsersConstants.SAVE_CHANGES_BUTTON).click()
 

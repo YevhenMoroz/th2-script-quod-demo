@@ -20,10 +20,10 @@ class RunOthers:
         self.web_driver_container = web_driver_container
 
     def execute(self):
-        # QAP_800(self.web_driver_container, self.second_lvl_id).run()
+        QAP_800(self.web_driver_container, self.second_lvl_id).run()
         # QAP_801(self.web_driver_container, self.second_lvl_id).run()
         # QAP_802(self.web_driver_container, self.second_lvl_id).run()
         # QAP_1738(self.web_driver_container, self.second_lvl_id).run()
-        QAP_1741(self.web_driver_container, self.second_lvl_id).run()
+        # QAP_1741(self.web_driver_container, self.second_lvl_id).run()
         # QAP_1739(self.web_driver_container, self.second_lvl_id).run() #don't work block in filter venue
         # QAP_1831(self.web_driver_container, self.second_lvl_id).run()
