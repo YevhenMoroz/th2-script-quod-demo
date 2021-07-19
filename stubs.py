@@ -30,7 +30,6 @@ from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSi
 
 
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
->>>>>>>>> Temporary merge branch 2
 
 
 class Stubs:
