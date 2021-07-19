@@ -26,6 +26,9 @@ class ModifyOrderDetails:
         self.modify_order_details.multipleRowSelection = True
         self.modify_order_details.selectedRowCount = selected_row_count
 
+    def amend_by_icon(self):
+        self.modify_order_details.amendByIcon = True
+
     def build(self):
         return self.modify_order_details
 
@@ -73,6 +76,9 @@ class CancelOrderDetails:
 
     def set_cancel_children(self, cancel_children: bool):
         self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def cancel_by_icon(self):
+        self.cancel_order_details.cancelByIcon = True
 
     def set_selected_row_count(self, selected_row_count: int):
         self.cancel_order_details.multipleRowSelection = True
@@ -413,6 +419,29 @@ class ExecutionsDetails:
         self.request.settlementDateOffset = offset
 
 
+class MenuItemDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.MenuItemDetails(base=base)
+        else:
+            self._request = order_book_pb2.MenuItemDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_menu_item(self, menu_item: str):
+        self._request.menuItem = menu_item
+
+    def set_selected_rows(self, selected_rows: [int]):
+        self._request.selectedRows = selected_rows
+
+    def set_extraction_Id(self, extraction_Id: str):
+        self._request.extractionId = extraction_Id
+
+    def build(self):
+        return self._request
+
+
 class ManualExecutingDetails:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -426,7 +455,7 @@ class ManualExecutingDetails:
     def set_filter(self, table_filter: dict):
         self._request.filter.update(table_filter)
 
-    def set_row_number(self, row_number: int):
+    def set_row_number(self, row_number: (int)):
         self._request.rowNumber = row_number
 
     def add_executions_details(self) -> ExecutionsDetails:
@@ -456,6 +485,7 @@ class CompleteOrdersDetails:
 
     def build(self):
         return self._request
+
 
 # Use for ReOrder Action and ReOrder Leaves Action
 class BaseOrdersDetails:

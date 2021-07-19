@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 
+from dataclasses import dataclass
+
 from th2_grpc_act_gui_quod import layout_panel_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
