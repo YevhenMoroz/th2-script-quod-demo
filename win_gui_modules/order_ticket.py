@@ -281,16 +281,3 @@ class ExtractOrderTicketErrorsRequest:
 
     def build(self):
         return self.request
-    def extract_error_message_order_ticket(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
-        extract_errors_request.extract_error_message()
-        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
-        print(result)
-
-    def get_disclose_flag_state(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
-        extract_disclose_flag_request.get_disclose_flag_state()
-        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
-        print(result)
