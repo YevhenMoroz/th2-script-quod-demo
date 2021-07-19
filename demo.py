@@ -7,7 +7,7 @@ from quod_qa.fx.fx_mm_esp import QAP_1560, QAP_2825, QAP_2555, QAP_2038, QAP_159
     QAP_2796, QAP_1536, QAP_2037, QAP_2072, QAP_2523, QAP_3045, QAP_1589, QAP_1643_wip
 from quod_qa.fx.fx_mm_positions import QAP_2505, QAP_2378, QAP_2491, QAP_2492, QAP_2494, QAP_2496, QAP_2497, \
     QAP_1897, QAP_1898, QAP_2506, QAP_2508, QAP_2500, QAP_2779, QAP_2501_WIP, QAP_3484
-from quod_qa.fx.fx_mm_rfq import QAP_1746
+from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, QAP_1755, QAP_1540, QAP_1563
 from quod_qa.fx.fx_taker_esp import QAP_833, QAP_1115, QAP_110, QAP_231, QAP_1591, QAP_492, QAP_105, QAP_851
 from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
     QAP_573, QAP_574, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, \
@@ -19,7 +19,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, Q
 from rule_management import RuleManager
 
 from stubs import Stubs
-from test_cases import QAP_1552
+from test_cases import QAP_1552, QAP_2143
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -48,7 +48,7 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 308"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
 
     session_id = set_session_id()
     # rules = rule_creation()
