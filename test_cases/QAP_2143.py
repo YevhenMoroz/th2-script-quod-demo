@@ -3,7 +3,6 @@ from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
@@ -15,34 +14,6 @@ from win_gui_modules.wrappers import set_base, verification, verify_ent
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-
-
-def cancel_quote(quote_req_id, verifier, checkpoint_id, connectivity, case_id):
-    quote_cancel_params = {
-        'QuoteReqID': quote_req_id,
-        'QuoteCancelType': '5',
-        'NoQuoteEntries': [{
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-            },
-        },
-        ],
-        'QuoteID': '*'
-    }
-
-
-def send_rfq(rfq_params, act, connectivity, case_id):
-    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
-
-    send_rfq = act.placeQuoteFIX(
-        bca.convert_to_request(
-            text_messages['sendQR'],
-            connectivity,
-            case_id,
-            bca.message_to_grpc('QuoteRequest', rfq_params, connectivity)
-        ))
-    return send_rfq
 
 
 def execute(report_id, case_params):
@@ -201,14 +172,14 @@ def execute(report_id, case_params):
     }
     logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
-    # send_rfq = act.placeQuoteFIX(
-    #     bca.convert_to_request(
-    #         'Send QuoteRequest',
-    #         case_params['TraderConnectivity'],
-    #         case_id,
-    #         bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-    #     ))
-    rfq = send_rfq(rfq_params, act, case_params['TraderConnectivity'], case_id)
+    send_rfq = act.placeQuoteFIX(
+        bca.convert_to_request(
+            'Send QuoteRequest',
+            case_params['TraderConnectivity'],
+            case_id,
+            bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+        ))
+
     quote_params = {
         'Account': case_params['Account'],
         'Instrument': {
@@ -267,7 +238,7 @@ def execute(report_id, case_params):
         bca.create_check_rule(
             'Receive Quote message',
             bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-            rfq.checkpoint_id,
+            send_rfq.checkpoint_id,
             case_params['TraderConnectivity'],
             case_id
         )
@@ -283,12 +254,12 @@ def execute(report_id, case_params):
     #     },
     #     'SettlDate': tsd.spo(),
     #     'SettlType': '0',
-    #     'QuoteID': rfq.response_messages_list[0].fields['QuoteID'],
+    #     'QuoteID': send_rfq.response_messages_list[0].fields['QuoteID'],
     #     'ClOrdID': bca.client_orderid(9),
     #     'OrdType': 'D',
     #     'TransactTime': (datetime.utcnow().isoformat()),
     #     'OrderQty': '1000000',
-    #     'Price': rfq.response_messages_list[0].fields['OfferPx'].simple_value,
+    #     'Price': send_rfq.response_messages_list[0].fields['OfferPx'].simple_value,
     #     # 'Product': 4,
     #     'TimeInForce': 4,
     #     # 'NoLegs': [
@@ -314,9 +285,7 @@ def execute(report_id, case_params):
     #     #     },
     #     # ]
     # }
-
-    cancel_quote(rfq_params['QuoteReqID'], verifier, rfq.checkpoint_id,
-                 case_params['TraderConnectivity'], case_id)
+    #
     # send_order = act.placeOrderFIX(
     #     bca.convert_to_request(
     #         'Send NewOrderSingle',
@@ -417,16 +386,16 @@ def execute(report_id, case_params):
     #         # ['ClOrdID', 'OrdStatus', 'ExecType']
     #     )
     # )
-
-    # GUI block
+    #
+    # # GUI block
     # common_act = Stubs.win_act
     # ob_act = Stubs.win_act_order_book
     # session_id = set_session_id()
     # set_base(session_id, case_id)
     # base_request = get_base_request(session_id, case_id)
     #
-    # prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
-    #               Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
+    # # prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
+    # #               Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
     #
     # execution_id = bca.client_orderid(4)
     # ob = OrdersDetails()
@@ -449,7 +418,7 @@ def execute(report_id, case_params):
     #                    verify_ent('OB OrdType', ob_ord_type.name, 'PreviouslyQuoted'),
     #                    verify_ent('OB Currency', ob_currency.name, 'EUR'),
     #                    verify_ent('OB Side', ob_side.name, 'Buy')]))
-    #
+
     # close_fe(case_id, session_id)
 
     logger.info("Case {} was executed in {} sec.".format(

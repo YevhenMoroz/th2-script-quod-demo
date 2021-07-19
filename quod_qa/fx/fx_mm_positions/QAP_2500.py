@@ -53,7 +53,7 @@ def place_order(base_request, service, qty, slippage, client):
     order_ticket.set_client(client)
     order_ticket.set_slippage(slippage)
     order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
+    new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
     call(service.placeFxOrder, new_order_details.build())
 
 
