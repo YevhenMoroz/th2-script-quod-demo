@@ -10,7 +10,6 @@ from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipati
 from .common_wrappers import CommissionsDetails, BaseTileDetails
 from enum import Enum
 
-from .utils import call
 
 
 class OrderTicketExtractedValue(Enum):
@@ -43,7 +42,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-        self.order.account = account
+        self.order.client = account
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
@@ -74,7 +73,7 @@ class OrderTicketDetails:
         self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
         self.order.algoOrderParams.strategyType = strategy_type
         self.order.algoOrderParams.quodParticipationStrategyParams.CopyFrom(
-                order_ticket_pb2.QuodParticipationStrategyParams())
+            order_ticket_pb2.QuodParticipationStrategyParams())
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
 
     def set_care_order(self, desk: str, partial_desk: bool = False,
@@ -176,11 +175,12 @@ class OrderTicketValues(Enum):
     TIMEINFORCE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.TIMEINFORCE
     SLIPPAGE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.SLIPPAGE
     STOPPRICE = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedType.STOPPRICE
-    ALGO            = types.ALGO
-    STRATEGY        = types.STRATEGY
-    CHILD_STRATEGY  = types.CHILD_STRATEGY
+    ALGO = types.ALGO
+    STRATEGY = types.STRATEGY
+    CHILD_STRATEGY = types.CHILD_STRATEGY
     IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
     ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
+
 
 class ExtractFxOrderTicketValuesRequest:
 
@@ -228,10 +228,8 @@ class ExtractFxOrderTicketValuesRequest:
     def get_is_algo_checked(self, is_algo_checked: str = 'fx_order_ticket.is_algo_checked'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.IS_ALGO_CHECKED)
 
-
     def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
-
 
     def get_extract_value(self, name: str, field: OrderTicketValues):
         extracted_value = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedValue()
@@ -241,53 +239,3 @@ class ExtractFxOrderTicketValuesRequest:
 
     def build(self):
         return self.request
-
-class ExtractOrderTicketValuesRequest:
-
-    def __init__(self, base_request, extractionId: str = 'extractOrderTicketValues'):
-        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
-        self.request.base.CopyFrom(base_request)
-        self.request.extractionId = extractionId
-
-    def get_disclose_flag_state(self):
-        self.get_extract_value(OrderTicketExtractedValue.DISCLOSE_FLAG)
-
-    def get_extract_value(self, field: OrderTicketExtractedValue):
-        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-        extracted_value.type = field.value
-        extracted_value.name = "Disclose flag state extraction"
-        self.request.extractedValues.append(extracted_value)
-
-    def build(self):
-        return self.request
-class ExtractOrderTicketErrorsRequest:
-
-    def __init__(self, base_request, extractionId: str = 'ErrorMessageExtractionID'):
-        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
-        self.request.base.CopyFrom(base_request)
-        self.request.extractionId = extractionId
-
-    def extract_error_message(self):
-        self.get_extract_value(OrderTicketExtractedValue.ERROR_MESSAGE)
-
-    def get_extract_value(self, field: OrderTicketExtractedValue):
-        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
-        extracted_value.type = field.value
-        extracted_value.name = "ErrorMessage"
-        self.request.extractedValues.append(extracted_value)
-
-    def build(self):
-        return self.request
-    def extract_error_message_order_ticket(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
-        extract_errors_request.extract_error_message()
-        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
-        print(result)
-
-    def get_disclose_flag_state(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
-        extract_disclose_flag_request.get_disclose_flag_state()
-        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
-        print(result)
