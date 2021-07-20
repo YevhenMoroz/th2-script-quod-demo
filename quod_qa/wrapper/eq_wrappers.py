@@ -22,7 +22,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request, direct_moc_request, direct_loc_request_correct
+    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
     MenuItemDetails
@@ -275,7 +275,7 @@ def direct_loc_order(qty, route):
 
 def direct_moc_order(qty, route):
     try:
-        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
+        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route,))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -566,8 +566,8 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
 
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
-        # response = check_booking_toggle_manual(request)
-        # if response['book.manualCheckboxState'] == 'unchecked':
+        response = check_booking_toggle_manual(request)
+        #if response['book.manualCheckboxState'] == 'unchecked':
         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
@@ -650,8 +650,8 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
         response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] != 'checked':
-            commissions_details.toggle_manual()
+        #if response['book.manualCheckboxState'] != 'checked':
+            #commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
