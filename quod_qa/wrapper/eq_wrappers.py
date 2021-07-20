@@ -849,14 +849,13 @@ def re_order_leaves(request, is_sall=False):
     call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
 
 
-def is_menu_item_present(request, menu_item, selected_rows, extract_Id, filter):
+def is_menu_item_present(request, menu_item, filter=None):
     menu_item_details = MenuItemDetails(request)
     menu_item_details.set_menu_item(menu_item)
-    #menu_item_details.set_selected_rows(selected_rows)
-    menu_item_details.set_extraction_Id(extract_Id)
-    menu_item_details.set_filter(filter)
+    if filter is not None:
+        menu_item_details.set_filter(filter)
     try:
-        call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
+        return call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
 
