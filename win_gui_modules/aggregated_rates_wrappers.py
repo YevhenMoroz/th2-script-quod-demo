@@ -684,9 +684,6 @@ class ESPTileOrderSide(Enum):
     # buy and sell is top of book pips
     BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
     SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
-    # bid and ask btns
-    BID_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.BID_BTN
-    ASK_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.ASK_BTN
 
 
 class PlaceRFQRequest:
