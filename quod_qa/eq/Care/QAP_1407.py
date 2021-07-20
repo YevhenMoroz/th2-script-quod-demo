@@ -29,7 +29,7 @@ def execute(report_id, session_id):
     act = Stubs.win_act_order_book
     qty = "900"
     price = "20"
-    client = "CLIENT_FIX_CARE1"
+    client = "CLIENT_FIX_CARE"
     lookup = "VETO"
     order_type = "Limit"
 
