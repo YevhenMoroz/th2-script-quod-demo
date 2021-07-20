@@ -52,5 +52,4 @@ def execute(report_id, session_id):
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
     '''
-    # eq_wrappers.manual_match(base_request,str(int(int(qty)/2)))
-    eq_wrappers.is_menu_item_present(base_request, "Splitvc", 1, "Spliteww", {"Order ID": "CO1210715134510139001"})
+    eq_wrappers.manual_match(base_request,qty,["Order ID", "CO1210720142200070001"], ["ExecID", "EX1210720142144081001"])

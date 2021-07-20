@@ -5,8 +5,6 @@ from datetime import datetime, timedelta
 from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
-from th2_grpc_act_gui_quod.trades_pb2 import MatchDetails, ModifyTradesDetails
-
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
@@ -20,6 +18,7 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrde
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
@@ -202,6 +201,7 @@ def amend_order(request, client=None, qty=None, price=None, account=None):
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(rule)
 
 
@@ -862,8 +862,371 @@ def is_menu_item_present(request, menu_item, filter=None):
 
 def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
     match_details = MatchDetails()
-    # if order_filter_list is not None:  #example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
-    # match_details.set_filter()
+    match_details.set_qty_to_match(qty_to_match)
+    # match_details.click_cancel()
+    match_details.click_match()
+    trades_order_details = ModifyTradesDetails(match_details=match_details)
+    trades_order_details.set_default_params(request)
+    if order_filter_list is not None:
+        match_details.set_filter()
+    if trades_filter_list is not None:
+        trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
+    call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
+
+
+def approve_block(request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_booking_toggle_manual(base_request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=base_request)
+    modify_request.add_commissions_details()
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
+    return call(middle_office_service.bookOrder, modify_request.build())
+
+
+def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
+               settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
+               settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
+               fees_basis=None,
+               fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
+               remove_fees=False):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    ticket_details = modify_request.add_ticket_details()
+    ticket_details.set_client(client)
+    ticket_details.set_net_gross_ind(net_gross_ind)
+    ticket_details.set_agreed_price(agreed_price)
+    if trade_date is not None:
+        ticket_details.set_trade_date(trade_date)
+    if give_up_broker is not None:
+        ticket_details.set_give_up_broker(give_up_broker)
+
+    settlement_details = modify_request.add_settlement_details()
+    if settlement_type is not None:
+        settlement_details.set_settlement_type(settlement_type)
+    if settlement_currency is not None:
+        settlement_details.set_settlement_currency(settlement_currency)
+    if exchange_rate is not None:
+        settlement_details.set_exchange_rate(exchange_rate)
+    if exchange_rate_calc is not None:
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    if settlement_date is not None:
+        settlement_details.toggle_settlement_date()
+        settlement_details.set_settlement_date(settlement_date)
+    if pset is not None:
+        settlement_details.set_pset(pset)
+    if toggle_recompute is not False:
+        settlement_details.toggle_recompute()
+
+    commissions_details = modify_request.add_commissions_details()
+    if comm_basis is not None:
+        response = check_booking_toggle_manual(request)
+        #if response['book.manualCheckboxState'] == 'unchecked':
+        commissions_details.toggle_manual()
+        commissions_details.add_commission(comm_basis, comm_rate)
+    if remove_commission:
+        commissions_details.remove_commissions()
+    fees_details = modify_request.add_fees_details()
+    if fees_basis is not None:
+        fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
+    if remove_fees:
+        fees_details.remove_fees()
+
+    if misc_arr is not None:
+        misc_details = modify_request.add_misc_details()
+        misc_details.set_bo_field_1(misc_arr[0])
+        misc_details.set_bo_field_2(misc_arr[1])
+        misc_details.set_bo_field_3(misc_arr[2])
+        misc_details.set_bo_field_4(misc_arr[3])
+        misc_details.set_bo_field_5(misc_arr[4])
+
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.settlementType")
+    extraction_details.extract_settlement_type("book.exchangeRate")
+    try:
+        response = call(middle_office_service.bookOrder, modify_request.build())
+        return response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
+                settlement_type=None,
+                settlement_currency=None, exchange_rate=None, exchange_rate_calc=None, settlement_date=None, pset=None,
+                comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None, fee_type=None, fee_category=None,
+                misc_arr: [] = None, remove_commissions=False, remove_fees=False):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+
+    ticket_details = modify_request.add_ticket_details()
+    if net_gross_ind is not None:
+        ticket_details.set_net_gross_ind(net_gross_ind)
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
+    if trade_date is not None:
+        ticket_details.set_trade_date(trade_date)
+    if give_up_broker is not None:
+        ticket_details.set_give_up_broker(give_up_broker)
+    if net_gross_ind is not None:
+        ticket_details.set_net_gross_ind(net_gross_ind)
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
+
+    settlement_details = modify_request.add_settlement_details()
+    if settlement_type is not None:
+        settlement_details.set_settlement_currency(settlement_type)
+    if settlement_currency is not None:
+        settlement_details.set_settlement_currency(settlement_currency)
+    if exchange_rate is not None:
+        settlement_details.set_exchange_rate(exchange_rate)
+    if exchange_rate_calc is not None:
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    if settlement_date is not None:
+        settlement_details.toggle_settlement_date()
+        settlement_details.set_settlement_date(settlement_date)
+    if pset is not None:
+        settlement_details.set_pset(pset)
+
+    if remove_commissions:
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.remove_commissions()
+    if remove_fees:
+        fees_details = modify_request.add_fees_details()
+        fees_details.remove_fees()
+    if comm_basis and comm_rate is not None:
+        commissions_details = modify_request.add_commissions_details()
+        response = check_booking_toggle_manual(request)
+        #if response['book.manualCheckboxState'] != 'checked':
+            #commissions_details.toggle_manual()
+        commissions_details.add_commission(comm_basis, comm_rate)
+    if fees_basis and fees_rate is not None:
+        fees_details = modify_request.add_fees_details()
+        fees_details.add_fees(fee_type, fees_basis, fees_rate, category=fee_category)
+
+    if misc_arr is not None:
+        misc_details = modify_request.add_misc_details()
+        misc_details.set_bo_field_1(misc_arr[0])
+        misc_details.set_bo_field_2(misc_arr[1])
+        misc_details.set_bo_field_3(misc_arr[2])
+        misc_details.set_bo_field_4(misc_arr[3])
+        misc_details.set_bo_field_5(misc_arr[4])
+
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId", )
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.settlementType")
+    extraction_details.extract_settlement_type("book.exchangeRate")
+
+    try:
+        return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def unbook_order(request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(middle_office_service.unBookOrder, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def allocate_order(request, arr_allocation_param: []):
+    modify_request = ModifyTicketDetails(base=request)
+
+    allocations_details = modify_request.add_allocations_details()
+    '''
+    example of arr_allocation_param:
+   param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
+           {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
+    '''
+    for i in arr_allocation_param:
+        allocations_details.add_allocation_param(i)
+    '''
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.exchangeRate")
+    '''
+    try:
+        response = call(Stubs.win_act_middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
+        return response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def amend_allocate(request, account=None, agreed_price=None, settlement_currency=None, exchange_rate=None,
+                   exchange_rate_calc=None,
+                   settlement_date=None, pset=None, comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None,
+                   fee_type=None, fee_category=None, misc_arr: [] = None, remove_commissions=False, remove_fees=False):
+    modify_request = ModifyTicketDetails(base=request)
+    amend_allocations_details = modify_request.add_amend_allocations_details()
+    ticket_details = modify_request.add_ticket_details()
+    if account is not None:
+        amend_allocations_details.set_allocations_filter({"Account ID": account})
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
+    settlement_details = modify_request.add_settlement_details()
+    if settlement_currency is not None:
+        settlement_details.set_settlement_currency(settlement_currency)
+    if exchange_rate is not None:
+        settlement_details.set_exchange_rate(exchange_rate)
+    if exchange_rate_calc is not None:
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    if settlement_date is not None:
+        settlement_details.set_settlement_date(settlement_date)
+    if pset is not None:
+        settlement_details.set_pset(pset)
+
+    if remove_commissions:
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.remove_commissions()
+    if remove_fees:
+        fees_details = modify_request.add_fees_details()
+        fees_details.remove_fees()
+    if comm_basis and comm_rate is not None:
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.toggle_manual()
+        commissions_details.add_commission(comm_basis, comm_rate)
+    if fees_basis and fees_rate is not None:
+        fees_details = modify_request.add_fees_details()
+        fees_details.add_fees(fee_type, fees_basis, fees_rate, category=fee_category)
+
+    if misc_arr is not None:
+        misc_details = modify_request.add_misc_details()
+        misc_details.set_bo_field_1(misc_arr[0])
+        misc_details.set_bo_field_2(misc_arr[1])
+        misc_details.set_bo_field_3(misc_arr[2])
+        misc_details.set_bo_field_4(misc_arr[3])
+        misc_details.set_bo_field_5(misc_arr[4])
+    '''
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.exchangeRate")
+    '''
+    try:
+        return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def unallocate_order(request):
+    modify_request = ModifyTicketDetails(base=request)
+    try:
+        call(Stubs.win_act_middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_in_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_out_order(request):
+    order_book_obj = ModifyOrderDetails()
+    order_book_obj.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def view_orders_for_block(request, count: int):
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request = ViewOrderExtractionDetails(base=request)
+    lenght = "middleOffice.viewOrdersCount"
+    extract_request.extract_length(lenght)
+    arr_response = []
+    for i in range(1, count + 1):
+        order_details = extract_request.add_order_details()
+        order_details.set_order_number(i)
+        dma_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
+        order_details.add_extraction_detail(dma_order_id_view)
+    try:
+        arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
+        return arr_response
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def check_error_in_book(request):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(request)
+    modify_request.set_partial_error_message("qwerty")
+    try:
+        error = call(middle_office_service.bookOrder, modify_request.build())
+        return error
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def re_order_leaves(request, is_sall=False):
+    order_ticket = OrderTicketDetails()
+    if is_sall:
+        order_ticket.sell()
+    else:
+        order_ticket.buy()
+    new_order_details = NewOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(request)
+    call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
+
+
+def is_menu_item_present(request, menu_item, filter=None):
+    menu_item_details = MenuItemDetails(request)
+    menu_item_details.set_menu_item(menu_item)
+    if filter is not None:
+        menu_item_details.set_filter(filter)
+    try:
+        return call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+
+
+def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
+    match_details = MatchDetails()
+    if order_filter_list is not None:  #example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
+        match_details.set_filter(order_filter_list)
     match_details.set_qty_to_match(qty_to_match)
     # match_details.click_cancel()
     match_details.click_match()
