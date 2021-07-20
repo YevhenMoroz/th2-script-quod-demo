@@ -211,7 +211,6 @@ def execute(report_id, session_id):
         place_order(case_base_request, order_ticket_service)
         # Step 2-3
         order_info = check_order_book(case_base_request, ob_service, case_id, owner, qty, "Open", price_extracted)
-        print(order_info)
         # Step 4
         amend_order(ob_fx_service, case_base_request, "qty")
         check_child_book(case_base_request, ob_service, case_id, order_info[1])
