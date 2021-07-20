@@ -2,8 +2,9 @@ class UsersConstants:
     USERS_PAGE_TITLE_XPATH = "//*[@href='#/pages/users/view']//*[text()='Users']"
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
-    DISABLED_MESSAGE = "//*[@class='title subtitle']"
+    DISABLED_ENABLED_SUCCESSFUL_MESSAGE = "//*[@class='title subtitle']"
     RECORD_EXIST_EXCEPTION  = "//*[text()='Such a record already exists']"
+    INCORRECT_OR_MISSING_VALUES_EXCEPTION = "//*[text()='Incorrect or missing values']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"

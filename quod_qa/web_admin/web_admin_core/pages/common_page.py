@@ -129,5 +129,8 @@ class CommonPage:
 
         return os.path.join(download_directory, files.pop(0))
 
-
-
+    def is_field_enabled(self, xpath):
+        if self.find_by_xpath(xpath).is_enabled():
+            return True
+        else:
+            return False

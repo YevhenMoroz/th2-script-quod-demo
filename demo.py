@@ -140,7 +140,7 @@ def test_run():
         # QAP_3027.execute(report_id)
         # QAP_3028.execute(report_id)
         # QAP_3058.execute(report_id)
-        # QAP_3134.execute(report_id)
+        QAP_3134.execute(report_id)
         # endregion
     except Exception:
         logging.error("Error execution", exc_info=True)
