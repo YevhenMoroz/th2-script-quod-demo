@@ -41,8 +41,8 @@ def test_run():
     # RunPositions(web_driver_container, report_id).execute()
     # RunClientsAccounts(web_driver_container, report_id).execute()
     # RunOthers(web_driver_container,report_id).execute()
-    # RunOrderManagement(web_driver_container, report_id).execute()
-    RunUsers(web_driver_container, report_id).execute()
+    RunOrderManagement(web_driver_container, report_id).execute()
+    # RunUsers(web_driver_container, report_id).execute()
 
 
 if __name__ == '__main__':
