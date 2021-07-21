@@ -1,16 +1,25 @@
 from google.protobuf.empty_pb2 import Empty
-
+import grpc
 from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import *
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim.sim_pb2 import *
-
+from th2_grpc_sim import sim_pb2_grpc as core
 # start rule
 simulator = Stubs.simulator
 
-# OCR = simulator.createQuodOCRRule(
-#     request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
+NOS = simulator.createQuodNOSRule(
+      request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx'), account="TRQX_CLIENT1" ))
+
+
+OCR = simulator.createQuodOCRRule(
+    request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+
+OCRR = simulator.createQuodOCRRRule(
+    request=TemplateQuodOCRRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx'), trade=False))
+
+
 # #
 # NOS = simulator.createQuodNOSRule(
 #     request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
