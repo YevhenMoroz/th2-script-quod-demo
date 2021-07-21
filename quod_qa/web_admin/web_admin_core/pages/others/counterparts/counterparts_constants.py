@@ -9,7 +9,7 @@ class CounterpartsConstants:
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
-    CANCEL_BUTTON_XPATH ='//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
 
     # ----------------COUNTERPARTS WIZARD---------------
@@ -38,10 +38,10 @@ class CounterpartsConstants:
     EXT_ID_CLIENT_FILTER_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[contains(@class,"clientSubCounterpartID ")]//*[@placeholder="Filter"]'
     PARTY_SUB_ID_TYPE_FILTER_AT_SUB_TYPE_XPATH = '//*[contains(@class,"partySubIDType")]//*[@placeholder="Filter"]'
     # --Values--
-    NAME_VALUE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*//td[2]//div[@class="ng-star-inserted"]'
-    PARTY_ID_VALUE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*//td[3]//div[@class="ng-star-inserted"]'
-    EXT_ID_VALUE_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*//td[4]//div[@class="ng-star-inserted"]'
-    PARTY_SUB_ID_VALUE_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*//td[5]//div[@class="ng-star-inserted"]'
+    NAME_VALUE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[text()=" Sub counterparts "]/parent::*[@class="expanded"]//td[2]//div[@class="ng-star-inserted"]'
+    PARTY_ID_VALUE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[text()=" Sub counterparts "]/parent::*[@class="expanded"]//td[3]//div[@class="ng-star-inserted"]'
+    EXT_ID_VALUE_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[text()=" Sub counterparts "]/parent::*[@class="expanded"]//td[4]//div[@class="ng-star-inserted"]'
+    PARTY_SUB_ID_VALUE_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[text()=" Sub counterparts "]/parent::*[@class="expanded"]//td[5]//div[@class="ng-star-inserted"]'
 
     # ----------PARTY_ROLES_TAB---------
     PLUS_BUTTON_AT_PARTY_ROLES_TAB_XPATH = '//nb-accordion//nb-accordion-item[3]//*[@class="nb-plus"]'
@@ -59,9 +59,9 @@ class CounterpartsConstants:
     PARTY_ROLE_QUALIFIER_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"partyRoleQualifier")]//*[@placeholder="Filter"]'
     VENUE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"venue ")]//*[@placeholder="Filter"]'
     # --Values--
-    PARTY_ID_SOURCE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[2]//div[@class="ng-star-inserted"]'
-    VENUE_COUNTERPART_ID_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[3]//div[@class="ng-star-inserted"]'
-    PARTY_ROLE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[4]//div[@class="ng-star-inserted"]'
-    EXT_ID_CLIENT_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[5]//div[@class="ng-star-inserted"]'
-    PARTY_ROLE_QUALIFIER_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[6]//div[@class="ng-star-inserted"]'
-    VENUE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*//td[7]//custom-view-component[@class="ng-star-inserted"]'
+    PARTY_ID_SOURCE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[2]//div[@class="ng-star-inserted"]'
+    VENUE_COUNTERPART_ID_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[3]//div[@class="ng-star-inserted"]'
+    PARTY_ROLE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[4]//div[@class="ng-star-inserted"]'
+    EXT_ID_CLIENT_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[5]//div[@class="ng-star-inserted"]'
+    PARTY_ROLE_QUALIFIER_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[6]//div[@class="ng-star-inserted"]'
+    VENUE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[7]//custom-view-component[@class="ng-star-inserted"]'

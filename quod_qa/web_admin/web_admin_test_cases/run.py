@@ -6,7 +6,7 @@ from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDrive
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.run_client_accounts import RunClientsAccounts
 from quod_qa.web_admin.web_admin_test_cases.general.run_general import RunGeneral
 from quod_qa.web_admin.web_admin_test_cases.order_management.run_order_management import RunOrderManagement
-from quod_qa.web_admin.web_admin_test_cases.other.run_other import RunOthers
+from quod_qa.web_admin.web_admin_test_cases.others.run_other import RunOthers
 from quod_qa.web_admin.web_admin_test_cases.positions.run_positions import RunPositions
 from quod_qa.web_admin.web_admin_test_cases.users.run_users import RunUsers
 from stubs import Stubs
@@ -40,8 +40,8 @@ def test_run():
     web_driver_container = WebDriverContainer()
     # RunPositions(web_driver_container, report_id).execute()
     # RunClientsAccounts(web_driver_container, report_id).execute()
-    # RunOthers(web_driver_container,report_id).execute()
-    RunOrderManagement(web_driver_container, report_id).execute()
+    RunOthers(web_driver_container,report_id).execute()
+    # RunOrderManagement(web_driver_container, report_id).execute()
     # RunUsers(web_driver_container, report_id).execute()
 
 
