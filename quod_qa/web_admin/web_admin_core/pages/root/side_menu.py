@@ -32,7 +32,7 @@ from quod_qa.web_admin.web_admin_core.pages.order_management.execution_strategie
 from quod_qa.web_admin.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
     OrderManagementRulesConstants
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
-from quod_qa.web_admin.web_admin_core.pages.others.institutions.institutions_constants import InstitutionsConstants
+from quod_qa.web_admin.web_admin_core.pages.institution.institution.institutions_constants import InstitutionsConstants
 from quod_qa.web_admin.web_admin_core.pages.others.market_data_source.market_data_source_constants import \
     MarketDataSourceConstants
 from quod_qa.web_admin.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
