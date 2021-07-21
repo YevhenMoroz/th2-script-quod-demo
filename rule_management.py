@@ -5,7 +5,8 @@ from th2_grpc_sim_quod.sim_pb2 import (TemplateQuodNOSRule, TemplateQuodOCRRRule
                                        TemplateNewOrdSingleFOK,
                                        TemplateNewOrdSingleIOC, TemplateNewOrdSingleMarket,
                                        TemplateOrderCancelReplaceExecutionReport,
-                                       TemplateQuodDefMDRRule)
+                                       TemplateQuodDefMDRRule, TemplateMarketNewOrdSingleFOK,
+                                       TemplateNewOrdSingleExecutionReportReject)
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -245,6 +246,14 @@ class RuleManager:
                                                   price=price
                                                   ))
 
+    @staticmethod
+    def add_NewOrderSingle_ExecutionReport_Reject(session: str, account: str, ex_destination: str, price: float):
+        return Stubs.simulator.createNewOrdSingleExecutionReportReject(
+            request=TemplateNewOrdSingleExecutionReportReject(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  exdestination=ex_destination,
+                                                  price=price
+                                                  ))
     # ------------------------
 
 
