@@ -28,8 +28,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -275,7 +275,7 @@ def direct_loc_order(qty, route):
 
 def direct_moc_order(qty, route):
     try:
-        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route,))
+        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route, ))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -567,7 +567,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
         response = check_booking_toggle_manual(request)
-        #if response['book.manualCheckboxState'] == 'unchecked':
+        # if response['book.manualCheckboxState'] == 'unchecked':
         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
@@ -650,8 +650,8 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
         response = check_booking_toggle_manual(request)
-        #if response['book.manualCheckboxState'] != 'checked':
-            #commissions_details.toggle_manual()
+        # if response['book.manualCheckboxState'] != 'checked':
+        # commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
@@ -930,7 +930,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
         response = check_booking_toggle_manual(request)
-        #if response['book.manualCheckboxState'] == 'unchecked':
+        # if response['book.manualCheckboxState'] == 'unchecked':
         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
@@ -1013,8 +1013,8 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
         response = check_booking_toggle_manual(request)
-        #if response['book.manualCheckboxState'] != 'checked':
-            #commissions_details.toggle_manual()
+        # if response['book.manualCheckboxState'] != 'checked':
+        # commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
@@ -1225,7 +1225,7 @@ def is_menu_item_present(request, menu_item, filter=None):
 
 def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
     match_details = MatchDetails()
-    if order_filter_list is not None:  #example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
+    if order_filter_list is not None:  # example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
         match_details.set_filter(order_filter_list)
     match_details.set_qty_to_match(qty_to_match)
     # match_details.click_cancel()
@@ -1235,3 +1235,21 @@ def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_li
     if trades_filter_list is not None:
         trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
     call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
+
+
+def get_2nd_lvl_detail(request, column_name):
+    main_order_details = OrdersDetails()
+    main_order_details.set_default_params(request)
+    main_order_details.set_extraction_id("getOrderInfo")
+    main_order_id = ExtractionDetail("order_id", "Order ID")
+    main_order_extraction_action = ExtractionAction.create_extraction_action(
+        extraction_details=[main_order_id])
+    lvl_2_detail = ExtractionDetail("lvl_2", column_name)
+    lvl2ext_action = ExtractionAction.create_extraction_action(
+        extraction_details=[lvl_2_detail])
+    lvl_2_info = OrderInfo.create(actions=[lvl2ext_action])
+    sub_order_details = OrdersDetails.create(order_info_list=[lvl_2_info])
+    main_order_details.add_single_order_info(
+        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
+    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
+    return request["lvl_2"]

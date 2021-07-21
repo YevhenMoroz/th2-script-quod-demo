@@ -16,7 +16,6 @@ timeouts = True
 
 def execute(report_id, session_id):
     case_name = "QAP-3910"
-
     # region Declarations
     qty = "900"
     price = "20"
@@ -32,10 +31,7 @@ def execute(report_id, session_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    '''
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty), 0)
-    eq_wrappers.accept_order(lookup, qty, price)
-    co_order = eq_wrappers.get_order_id(base_request)
+    # region create & trade DMA
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
@@ -44,12 +40,24 @@ def execute(report_id, session_id):
                                                                       client + '_PARIS', 'XPAR',
                                                                       float(price), int(qty), 1)
         eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
-        dma_order = eq_wrappers.get_order_id(base_request)
+        eq_wrappers.get_order_id(base_request)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
         time.sleep(1)
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
-    '''
-    eq_wrappers.manual_match(base_request,qty,["Order ID", "CO1210720142200070001"], ["ExecID", "EX1210720142144081001"])
+    exec_id = eq_wrappers.get_2nd_lvl_detail(base_request, "ExecID")
+    # endregion
+    # region create CO
+    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, int(qty), 0)
+    eq_wrappers.accept_order(lookup, qty, price)
+    co_order = eq_wrappers.get_order_id(base_request)
+    # endregion
+    # region Manual Match
+    eq_wrappers.manual_match(base_request, qty, ["OrderId", co_order], ["ExecID", exec_id])
+    # endregion
+    # region Verify
+    eq_wrappers.verify_order_value(base_request, case_id, "UnmatchedQty", "0")
+    eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled")
+    # endregion

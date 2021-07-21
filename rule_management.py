@@ -8,6 +8,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
+from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
 from google.protobuf.empty_pb2 import Empty
 
@@ -241,9 +242,14 @@ if __name__ == '__main__':
     #rule_manager.add_MarketNewOrdSingle_FOK("fix-bs-310-columbia", 'CLIENTYMOROZ_PARIS', "XPAR", True,5)
     #rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",'MOClient_PARIS',"VETO",float(10))
     #rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
-         #                                                      'MOClient_EUREX', "XEUR", float(10))
-    rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard",
-                                                               'MOClient_EUREX', "XEUR",True)
+      #                                                         'MOClient_EUREX', "XEUR", float(10))
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                         'CLIENTYMOROZ_EUREX', "XEUR", float(10))
+    nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                   'CLIENTYMOROZ_EUREX', 'XEUR',
+                                                                  float(10), 900, 1)
+    #rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard",
+       #                                                        'MOClient_EUREX', "XEUR",True)
     #rule_manager.remove_rules_by_id_range(485,571)
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
