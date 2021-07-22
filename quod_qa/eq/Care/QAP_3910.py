@@ -41,7 +41,6 @@ def execute(report_id, session_id):
                                                                       client + '_PARIS', 'XPAR',
                                                                       float(price), int(qty), 1)
         eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
-        eq_wrappers.get_order_id(base_request)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
