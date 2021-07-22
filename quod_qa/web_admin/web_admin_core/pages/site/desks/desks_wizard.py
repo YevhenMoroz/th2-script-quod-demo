@@ -1,5 +1,5 @@
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
-from quod_qa.web_admin.web_admin_core.pages.institution.desks.desks_constants import DesksConstants
+from quod_qa.web_admin.web_admin_core.pages.site.desks.desks_constants import DesksConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 

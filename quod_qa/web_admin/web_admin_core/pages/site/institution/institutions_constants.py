@@ -1,5 +1,5 @@
 class InstitutionsConstants:
-    INSTITUTIONS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='institution ']"
+    INSTITUTIONS_PAGE_TITLE_XPATH = "//span[@ class ='menu-title ng-tns-c76-89'][text()='site']"
 
     INSTITUTION_NAME_XPATH = "//*[text()='Institution Name *']/preceding-sibling::input"
     LEI_XPATH = "//*[text()='LEI']/preceding-sibling::input"
