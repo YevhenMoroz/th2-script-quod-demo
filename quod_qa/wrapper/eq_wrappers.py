@@ -104,15 +104,15 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
 
     order_ticket_service = Stubs.win_act_order_ticket
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
-                                                                             client + "_PARIS", "XPAR", int(price))
-        call(order_ticket_service.placeOrder, new_order_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
+    # try:
+    #     rule_manager = RuleManager()
+    #     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
+    #                                                                          client + "_PARIS", "XPAR", int(price))
+    #     call(order_ticket_service.placeOrder, new_order_details.build())
+    # except Exception:
+    #     logger.error("Error execution", exc_info=True)
+    # finally:
+    #     rule_manager.remove_rule(nos_rule)
 
 
 '''
@@ -128,7 +128,11 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
-        fix_manager = FixManager(sell_connectivity, case_id)
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
+                                                                             "XPAR_" + client, "XPAR", int(price))
+        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+
         fix_params = {
             'Account': client,
             'HandlInst': handl_inst,
@@ -162,7 +166,21 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         return fix_params
     except Exception:
         logger.error("Error execution", exc_info=True)
+    finally:
+        rule_manager.remove_rule(nos_rule)
 
+
+def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
+    fix_manager_qtwquod = FixManager(connectivity, case_id)
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": side,
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
 def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
     fix_manager = FixManager(sell_connectivity, case_id)
@@ -203,6 +221,7 @@ def amend_order(request, client=None, qty=None, price=None, account=None):
     finally:
         time.sleep(1)
         rule_manager.remove_rule(rule)
+    return fix_modify_message.get_parameter('Price')
 
 
 def manual_cross_orders(request, qty, price, list, last_mkt):

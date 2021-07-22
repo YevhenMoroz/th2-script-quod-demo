@@ -9,8 +9,6 @@ from custom.tenor_settlement_date import get_expire_time
 from custom.verifier import Verifier as Ver, Verifier, VerificationMethod
 from quod_qa.fx.default_params_fx import text_messages
 from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
-                                                          ExtractionDetailsRequest, RFQExtractionDetailsRequest)
 from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
 from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
 from win_gui_modules.wrappers import set_base
@@ -117,13 +115,12 @@ def check_ord_reject_fe(base_request, ob_service,case_id,order,  exp_ord):
 
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params, session_id):
     # region Preparation
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -159,7 +156,7 @@ def execute(report_id, case_params):
 
         verify_ord_reject_fix(case_id, order, incorrect_qty)
 
-        prepare_fe(case_id,session_id)
+        # prepare_fe(case_id,session_id)
 
         check_ord_reject_fe(base_request, ob_service, case_id, order, expected_free_notes)
         #

@@ -12,7 +12,6 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,9 +27,11 @@ securityid = 'EUR/USD'
 bands = [1000000,5000000,10000000]
 md = None
 settldate_spo= tsd.spo()
-settldate_mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S')
+# settldate_mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S')
+settldate_mo1 = tsd.m1()
 spo = tsd.spo()
-mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S').split(' ')[0]
+# mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S').split(' ')[0]
+mo1 = tsd.m1()
 fwd_pts_offer = '0.0000101'
 fwd_pts_bid = '-0.0000099'
 

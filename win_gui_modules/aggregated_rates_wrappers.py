@@ -741,8 +741,7 @@ class PlaceESPOrder:
 
     # TODO: quod - refactor: remove extraction method from Place ESPOrder action
     #
-    # def top_of_book(self, check: bool):
-    #     self.__request_details.topOfBook = check
+
     #
     # def close_ticket(self, close: bool):
     #     self.__request_details.closeTicketWindow = close

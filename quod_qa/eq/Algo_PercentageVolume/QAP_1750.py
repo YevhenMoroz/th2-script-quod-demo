@@ -1,7 +1,7 @@
 import os
 import logging
 from custom import basic_custom_actions as bca
-from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction, CancelOrderDetails
 from win_gui_modules.wrappers import *
 from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 import time
@@ -46,77 +46,7 @@ connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
 connectivity_fh = 'fix-fh-310-columbia'
 
-report_id = None
-
-
-def create_order(base_request, case_id):
-    case_id_0 = bca.create_event("Send Market Data", case_id)
-
-    market_data2 = [
-        {
-            'MDUpdateAction': '0',
-            'MDEntryType': '2',
-            'MDEntryPx': '1',
-            'MDEntrySize': '200',
-            'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-            'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-        }
-    ]
-    send_market_dataT(s_par, case_id_0, market_data2)
-
-    market_data3 = [
-        {
-            'MDEntryType': '0',
-            'MDEntryPx': '0',
-            'MDEntrySize': '0',
-            'MDEntryPositionNo': '1'
-        },
-        {
-            'MDEntryType': '1',
-            'MDEntryPx': '0',
-            'MDEntrySize': '0',
-            'MDEntryPositionNo': '1'
-        }
-    ]
-    send_market_data(s_par, case_id_0, market_data3)
-
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_quantity(str(qty))
-    order_ticket.set_limit(str(price))
-    order_ticket.set_client(client)
-    order_ticket.set_order_type(order_type)
-
-    vol_strategy = order_ticket.add_quod_participation_strategy("Quod Participation")
-    #vol_strategy.set_start_date("Now")
-    vol_strategy.set_percentage_volume('30')
-    vol_strategy.set_aggressivity("Neutral")
-
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-
-
-    order_ticket_service = Stubs.win_act_order_ticket
-    call(order_ticket_service.placeOrder, new_order_details.build())
-
-    case_id_0 = bca.create_event("Send Market Data", case_id)
-
-    market_data3 = [
-        {
-            'MDEntryType': '0',
-            'MDEntryPx': '1',
-            'MDEntrySize': '186',
-            'MDEntryPositionNo': '1'
-        },
-        {
-            'MDEntryType': '1',
-            'MDEntryPx': '0',
-            'MDEntrySize': '0',
-            'MDEntryPositionNo': '1'
-        }
-    ]
-    send_market_data(s_par, case_id_0, market_data3)
+report_id = None   
 
 def rule_creation():
     rule_manager = RuleManager()
@@ -165,43 +95,104 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
         message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
     ))
 
-
-def prepared_fe(case_id):
-    session_id = set_session_id()
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id, work_dir)
-    return  base_request
-
-def check_order_book(ex_id, base_request, case_id):
-        time.sleep(3)
+def order(base_request, case_id):
         ob_act = Stubs.win_act_order_book
+        act = Stubs.win_act
+        case_id_0 = bca.create_event("Send Market Data", case_id)
+
+        market_data2 = [
+            {
+                'MDUpdateAction': '0',
+                'MDEntryType': '2',
+                'MDEntryPx': '1',
+                'MDEntrySize': '200',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+            }
+        ]
+        send_market_dataT(s_par, case_id_0, market_data2)
+
+        market_data3 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data3)
+
+        order_ticket = OrderTicketDetails()
+        order_ticket.set_quantity(str(qty))
+        order_ticket.set_limit(str(price))
+        order_ticket.set_client(client)
+        order_ticket.set_order_type(order_type)
+
+        vol_strategy = order_ticket.add_quod_participation_strategy("Quod Participation")
+        #vol_strategy.set_start_date("Now")
+        vol_strategy.set_percentage_volume('30')
+        vol_strategy.set_aggressivity("Neutral")
+
+        new_order_details = NewOrderDetails()
+        new_order_details.set_lookup_instr(lookup)
+        new_order_details.set_order_details(order_ticket)
+        new_order_details.set_default_params(base_request)
+
+
+        order_ticket_service = Stubs.win_act_order_ticket
+        call(order_ticket_service.placeOrder, new_order_details.build())
+
+        case_id_0 = bca.create_event("Send Market Data", case_id)
+
+        market_data3 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '186',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data3)
+
+        time.sleep(3)
 
         order_info_extraction = "getOrderInfo"
 
         main_order_details = OrdersDetails()
         main_order_details.set_default_params(base_request)
         main_order_details.set_extraction_id(order_info_extraction)
-        main_order_details.set_filter(["Owner", Stubs.custom_config['qf_trading_fe_user']])
-        main_order_id = ExtractionDetail("order_id", "Order ID")
+        call(ob_act.getOrdersDetails, main_order_details.request())
+
+        main_order_qty = ExtractionDetail("orderbook.qty", "Qty")
+        main_order_lmt_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
+        main_order_id = ExtractionDetail("orderBook.orderid", "Order ID")
+        main_order_sts = ExtractionDetail("orderBook.sts", "Sts")
 
         main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_id])
+            extraction_details=[main_order_qty, main_order_lmt_price, main_order_id, main_order_sts])
         
         main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
 
+        response = call(ob_act.getOrdersDetails, main_order_details.request())
+
+        order_id = response[main_order_id.name]
+        main_order_details.set_filter(['Order ID', order_id])
         call(ob_act.getOrdersDetails, main_order_details.request())
 
-        
         order_amend = OrderTicketDetails()
         vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
-        vol_stategy.set_start_date('Now')
         vol_stategy.set_percentage_volume('40')
 
         amend_order_details = ModifyOrderDetails()
@@ -216,7 +207,7 @@ def check_order_book(ex_id, base_request, case_id):
             {
                 'MDEntryType': '0',
                 'MDEntryPx': '1',
-                'MDEntrySize': '143',
+                'MDEntrySize': '100',
                 'MDEntryPositionNo': '1'
             },
             {
@@ -228,52 +219,66 @@ def check_order_book(ex_id, base_request, case_id):
         ]
         send_market_data(s_par, case_id_1, market_data4)
 
+        market_data5 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '100',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_1, market_data5)
 
-        child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-        child1_qty = ExtractionDetail("subOrder_lvl_1.qty", "Qty")
-        child1_sts = ExtractionDetail("subOrder_lvl_1.sts", "Sts")
-        child1_price = ExtractionDetail("subOrder_lvl_1.lmtprice", "Limit Price")
-        sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-            extraction_details=[child1_id, child1_qty, child1_sts, child1_price])
-        sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
+        after_order_details_id = "afterTWAPAlgo_order_details"     
 
-        child2_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-        child2_qty = ExtractionDetail("subOrder_lvl_1.qty", "Qty")
-        child2_sts = ExtractionDetail("subOrder_lvl_1.sts", "Sts")
-        child2_price = ExtractionDetail("subOrder_lvl_1.lmtprice", "Limit Price")
-        sub_lvl1_2_ext_action1 = ExtractionAction.create_extraction_action(
-            extraction_details=[child2_id, child2_qty, child2_sts, child2_price])
-        sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action1])
+        sub_order1_qty = ExtractionDetail("subOrder1.qty", "Qty")
+        sub_order2_qty = ExtractionDetail("subOrder2.qty", "Qty")
+        sub_order3_qty = ExtractionDetail("subOrder3.qty", "Qty")
 
-        sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
+        sub_order_details = OrdersDetails()
+        sub_order_details.add_single_order_info(OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order1_qty)))
+        sub_order_details.add_single_order_info(OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order2_qty)))
+        sub_order_details.add_single_order_info(OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order3_qty)))
+            
+        length_name = "subOrders.length"
+        sub_order_details.extract_length(length_name)
 
-        main_order_details.add_single_order_info(
-            OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-        child_response = call(ob_act.getOrdersDetails, main_order_details.request())
+        main_order_info = OrderInfo.create(sub_order_details=sub_order_details)
 
-        verifier = Verifier(case_id)
+        main_order_details = OrdersDetails()
+        main_order_details.set_default_params(base_request)
+        main_order_details.set_extraction_id(after_order_details_id)
+        main_order_details.set_filter(["Order ID", order_id])
+        main_order_details.add_single_order_info(main_order_info)
 
-        verifier.set_event_name("Check child order 1")
-        verifier.compare_values('Qty', str(child_qty_1), child_response[child1_qty.name].replace(",", ""))
-        verifier.compare_values('Sts', 'Open', child_response[child1_sts.name])
-        verifier.compare_values('Limit Price', str(price), child_response[child1_price.name])
-        verifier.verify()
+        call(ob_act.getOrdersDetails, main_order_details.request())
 
-        verifier.set_event_name("Check child order 2")
-        verifier.compare_values('Qty', str(child_qty_2), child_response[child2_qty.name].replace(",", ""))
-        verifier.compare_values('Sts', 'Open', child_response[child2_sts.name])
-        verifier.compare_values('Limit Price', str(price), child_response[child2_price.name])
-        verifier.verify()
+        call(act.verifyEntities, verification(after_order_details_id, "checking child orders",
+                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, str(child_qty_1)),
+                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, str(child_qty_2)),
+                                                      verify_ent("Sub order 3 qty", sub_order3_qty.name, str(child_qty_3)),
+                                                      verify_ent("Sub order count", length_name, "3")]))
 
+        cancel_order_details = CancelOrderDetails()
+        cancel_order_details.set_default_params(base_request)
+        call(ob_act.cancelOrder, cancel_order_details.build())
 
-def execute(reportid):
+def execute(report_id, session_id):
     try:
-        report_id = reportid
         case_id = create_event(case_name, report_id)
-        base_request = prepared_fe(case_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
-        create_order(base_request, case_id)
-        check_order_book("Test_FE_id", base_request, case_id)        
+        order(base_request, case_id)        
     except:
         logging.error("Error execution",exc_info=True)
     finally:

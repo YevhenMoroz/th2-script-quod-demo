@@ -3,7 +3,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest, \
+    DeselectRowsRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
@@ -25,6 +26,17 @@ def select_line(base_request, service, line):
     modify_request = SelectRowsRequest(details=base_request)
     modify_request.set_row_numbers(line)
     call(service.selectRows, modify_request.build())
+
+
+def deselect_line(base_request, service):
+    modify_request = DeselectRowsRequest(details=base_request)
+    call(service.deselectRows, modify_request.build())
+
+
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
 
 
 def modify_spread(base_request, service, *args):
@@ -144,7 +156,7 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rates_tile(base_details, cp_service)
         modify_rates_tile(base_details, cp_service, instrument, client_tier, pips)
-        select_line(base_details, cp_service, 2)
+        select_line(base_details, cp_service, [2])
         # Step 2
         spread_before = check_spread(base_details, cp_service, case_id)
         # Step 3
@@ -180,6 +192,10 @@ def execute(report_id, session_id):
         ask_after = check_ask(base_details, cp_service)
         bid_after = check_bid(base_details, cp_service)
         compare_prices(case_id, ask_before, bid_before, ask_after, bid_after, pips)
+
+        deselect_line(base_details, cp_service)
+        use_default(base_details, cp_service)
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)

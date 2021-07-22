@@ -24,6 +24,9 @@ class OrderTicketDetails:
     def set_client(self, client: str):
         self.order.client = client
 
+    def set_instrument(self, instrument: str):
+        self.order.instrument = instrument
+
     def set_limit(self, limit: str):
         self.order.limit = limit
 
@@ -43,7 +46,7 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-        self.order.account = account
+         self.order.account = account
 
     def set_display_qty(self, display_qty: str):
         self.order.displayQty = display_qty

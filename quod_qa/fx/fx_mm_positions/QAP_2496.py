@@ -81,7 +81,7 @@ def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
     expected_pnl = (position * mtk_px + quote_pos) / mtk_px
     verifier = Verifier(case_id)
     verifier.set_event_name("Check MTM Pnl USD")
-    verifier.compare_values("MTM Pnl USD", str(round(expected_pnl, 2)), extracted_pnl.replace(",", ""))
+    verifier.compare_values("MTM Pnl USD", str(round(expected_pnl, 1)), extracted_pnl.replace(",", "")[:-1])
     verifier.verify()
 
 
