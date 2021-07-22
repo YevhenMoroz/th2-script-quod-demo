@@ -177,7 +177,7 @@ def execute(report_id, session_id):
             .send_md_request() \
             .prepare_md_response(bands) \
             .verify_md_pending()
-        price1 = md.extruct_filed('price')
+        price1 = md.extract_filed('price')
 
         # Step 2
         create_or_get_rates_tile(base_details, cp_service)
@@ -193,7 +193,7 @@ def execute(report_id, session_id):
             .send_md_request() \
             .prepare_md_response(bands) \
             .verify_md_pending()
-        price2 = md.extruct_filed('price')
+        price2 = md.extract_filed('price')
         # Step 4
         use_default(base_details, cp_service)
         ask_after_default = check_ask(base_details, cp_service)

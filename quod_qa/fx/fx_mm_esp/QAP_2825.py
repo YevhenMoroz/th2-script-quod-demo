@@ -179,7 +179,7 @@ def execute(report_id, session_id):
         md.md_subscribe_response['NoMDEntries'][0]['MDEntryPx'] = '1.19596'
         md.md_subscribe_response['NoMDEntries'][1]['MDEntryPx'] = '1.1961'
         md.verify_md_pending()
-        price1 = md.extruct_filed('price')
+        price1 = md.extract_filed('price')
         md.send_md_unsubscribe()
 
         # Step 2
@@ -207,7 +207,7 @@ def execute(report_id, session_id):
         md2.md_subscribe_response['NoMDEntries'][4]['MDEntryPx'] = '1.19396'
         md2.md_subscribe_response['NoMDEntries'][5]['MDEntryPx'] = '1.1981'
         md2.verify_md_pending()
-        price2 = md2.extruct_filed('price',5)
+        price2 = md2.extract_filed('price', 5)
         # Step 4
         compare_prices_from_fix_not_eq(case_id, price1, price2)
         compare_prices_from_fix_eq(case_id, ask_after, price2)
