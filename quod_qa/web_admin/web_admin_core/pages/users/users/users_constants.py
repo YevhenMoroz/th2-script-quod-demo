@@ -95,7 +95,7 @@ class UsersConstants:
     # Role
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role ID *"]/preceding-sibling::input'
     ROLE_ID_AFTER_SAVED_XPATH = "//*[@class='app-input-placeholder disabled-input']"
-    DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD = '//*[@class="cdk-overlay-pane"]//*[text()="{}"]'
+    DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD = '//*[@class="cdk-overlay-container"]//*[text()="{}"]'
     DESKS_AT_ROLE_SUB_WIZARD ="//*[text()='Desks *']/parent::div//button"
     LOCATION_AT_ROLE_SUB_WIZARD ='//*[text()="Location"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD ='//*[text()="Group"]/preceding-sibling::input'
@@ -104,15 +104,15 @@ class UsersConstants:
 
 
     # Account groups sub wizard
-    PLUS_BUTTON_AT_ACCOUNT_GROUPS_SUB_WIZARD = '//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
-    CHECKMARK_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CANCEL_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
-    EDIT_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
-    DELETE_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
-    CLIENT_AT_ACCOUNT_GROUPS_SUB_WIZARD = '//*[@placeholder = "Client *"]'
-    TYPE_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[@placeholder = "Type *"]'
-    CLIENT_FILTER_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
-    TYPE_FILTER_AT_ACCOUNT_GROUPS_SUB_WIZARD ="//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
+    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
+    CHECKMARK_AT_CLIENT_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
+    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
+    EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
+    DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
+    CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
+    TYPE_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Type *"]'
+    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
+    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = "//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
 
 
     # Venue trader
