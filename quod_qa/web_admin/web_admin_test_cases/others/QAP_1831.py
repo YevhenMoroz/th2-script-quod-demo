@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -17,7 +19,7 @@ class QAP_1831(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.name = "qap 1831"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.default_scenario = "Custom one"
 
     def precondition(self):
@@ -44,7 +46,6 @@ class QAP_1831(CommonTestCase):
         strategy_type_sub_wizard.click_on_default_scenario()
         strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
         time.sleep(2)
-        # strategy_type_sub_wizard.click_on_default_scenario()
         routes_wizard.click_on_save_changes()
         time.sleep(2)
         routes_main_menu.set_name_at_filter(self.name)

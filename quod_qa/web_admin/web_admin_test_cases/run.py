@@ -1,6 +1,7 @@
 import logging
 import time
 from datetime import datetime
+from datetime import timedelta
 
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.run_client_accounts import RunClientsAccounts
@@ -31,6 +32,7 @@ test_cases = {
 
 # NOTE: for now the following code is using only to check implementation of pages. It will be updated in the future
 def test_run():
+    start_time = time.monotonic()
     # Generation ID and time for test run
     report_id = bca.create_event(f'{Stubs.custom_config["web_admin_login"]} tests '
                                  + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
@@ -40,9 +42,13 @@ def test_run():
     web_driver_container = WebDriverContainer()
     # RunPositions(web_driver_container, report_id).execute()
     # RunClientsAccounts(web_driver_container, report_id).execute()
-    RunOthers(web_driver_container,report_id).execute()
+
+    # print(timedelta(seconds=end_time - start_time))
+    RunOthers(web_driver_container, report_id).execute()
     # RunOrderManagement(web_driver_container, report_id).execute()
     # RunUsers(web_driver_container, report_id).execute()
+    end_time = time.monotonic()
+    print("~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
 
 if __name__ == '__main__':

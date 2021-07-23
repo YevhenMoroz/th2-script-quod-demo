@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -19,7 +21,7 @@ class QAP_800(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.name_at_values_tab = "testName11"
+        self.name_at_values_tab = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name_at_sub_counterparts = "data"
         self.party_id = "12"
         self.ext_id_client = "3"

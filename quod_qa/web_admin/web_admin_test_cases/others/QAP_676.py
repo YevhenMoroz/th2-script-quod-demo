@@ -1,6 +1,9 @@
+import random
+import string
 import time
 import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -20,7 +23,7 @@ class QAP_676(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.name_at_values_tab = "test676"
+        self.name_at_values_tab = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name_at_sub_counterparts = "data"
         self.party_id = "12"
         self.ext_id_client = "3"
@@ -121,5 +124,7 @@ class QAP_676(CommonTestCase):
             time.sleep(1)
             counterparts_main_menu.click_on_delete_and_confirmation(True)
         except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
 

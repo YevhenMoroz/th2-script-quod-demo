@@ -1,6 +1,3 @@
-from idlelib import browser
-
-from selenium.webdriver.support.select import Select
 
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.others.routes.routes_constants import RoutesConstants

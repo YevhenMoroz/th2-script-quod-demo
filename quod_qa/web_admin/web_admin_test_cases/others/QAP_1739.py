@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -16,7 +18,7 @@ class QAP_1739(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.name = "qap 1739"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.first_venue = "EURONEXT AMSTERDAM"
         self.second_venue = "BAML"
 
@@ -32,7 +34,9 @@ class QAP_1739(CommonTestCase):
         routes_main_menu = RoutesPage(self.web_driver_container)
         routes_main_menu.click_on_new_button()
         routes_wizard = RoutesWizard(self.web_driver_container)
+        time.sleep(2)
         routes_wizard.set_name_at_values_tab(self.name)
+        time.sleep(2)
         # routes_wizard.click_on_save_changes()
         venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
         # create two new venues
@@ -57,6 +61,7 @@ class QAP_1739(CommonTestCase):
             routes_wizard = RoutesWizard(self.web_driver_container)
             routes_wizard.click_on_save_changes()
             routes_main_menu = RoutesPage(self.web_driver_container)
+            time.sleep(2)
             routes_main_menu.set_name_at_filter(self.name)
             time.sleep(2)
             self.verify("After saved", self.name, routes_main_menu.get_name_value())

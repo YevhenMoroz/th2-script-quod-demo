@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -14,7 +16,7 @@ class QAP_1741(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.name = "newName"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_name = "qap 1741"
 
     def precondition(self):
