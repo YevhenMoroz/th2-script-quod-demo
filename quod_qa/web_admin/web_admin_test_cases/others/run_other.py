@@ -1,4 +1,4 @@
-import time
+import traceback
 
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1738 import QAP_1738
@@ -21,11 +21,15 @@ class RunOthers:
         self.web_driver_container = web_driver_container
 
     def execute(self):
-        # QAP_800(self.web_driver_container, self.second_lvl_id).run()
-        # QAP_801(self.web_driver_container, self.second_lvl_id).run()
-        # QAP_802(self.web_driver_container, self.second_lvl_id).run()
-        # QAP_1738(self.web_driver_container, self.second_lvl_id).run()
-        # QAP_1741(self.web_driver_container, self.second_lvl_id).run()
-        # QAP_1739(self.web_driver_container, self.second_lvl_id).run() #don't work block in filter venue
-        # QAP_1831(self.web_driver_container, self.second_lvl_id).run()
-        QAP_676(self.web_driver_container, self.second_lvl_id).run()
+        try:
+            QAP_676(self.web_driver_container, self.second_lvl_id).run()
+            QAP_800(self.web_driver_container, self.second_lvl_id).run()
+            QAP_801(self.web_driver_container, self.second_lvl_id).run()
+            QAP_802(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1738(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1739(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1741(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1831(self.web_driver_container, self.second_lvl_id).run()
+            print("--RunOthers finished--")
+        except Exception:
+            print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

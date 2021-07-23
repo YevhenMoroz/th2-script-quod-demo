@@ -1,5 +1,7 @@
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_wizard import CounterpartsWizard
@@ -10,8 +12,9 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 
 class QAP_802(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer,second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__,second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.name = "zzz"
 
     def precondition(self):
@@ -29,22 +32,23 @@ class QAP_802(CommonTestCase):
         counterparts_wizard.set_name_value_at_values_tab(self.name)
         counterparts_wizard.click_on_save_changes()
         counterparts_main_menu.click_on_more_actions()
-        counterparts_main_menu.click_on_delete()
-        time.sleep(1)
-        counterparts_main_menu.click_on_cancel()
+        counterparts_main_menu.click_on_delete_and_confirmation(False)
         time.sleep(1)
         counterparts_main_menu.set_name_filter_value(self.name)
         time.sleep(2)
         counterparts_main_menu.click_on_more_actions()
-        counterparts_main_menu.click_on_delete()
-        time.sleep(1)
-        counterparts_main_menu.click_on_ok_xpath()
+        counterparts_main_menu.click_on_delete_and_confirmation(True)
 
     def test_context(self):
-        self.precondition()
-        time.sleep(3)
-        counterparts_main_menu = CounterpartsPage(self.web_driver_container)
-        counterparts_main_menu.set_name_filter_value(self.name)
-        time.sleep(2)
-        self.verify("After deleted", "TimeoutException",
-                    counterparts_main_menu.check_that_name_value_row_is_not_exist())
+        try:
+            self.precondition()
+            time.sleep(3)
+            counterparts_main_menu = CounterpartsPage(self.web_driver_container)
+            counterparts_main_menu.set_name_filter_value(self.name)
+            time.sleep(2)
+            self.verify("After deleted", "TimeoutException",
+                        counterparts_main_menu.check_that_name_value_row_is_not_exist())
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

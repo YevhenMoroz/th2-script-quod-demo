@@ -1,3 +1,7 @@
+from idlelib import browser
+
+from selenium.webdriver.support.select import Select
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -23,3 +27,6 @@ class RoutesStrategyTypeSubWizard(CommonPage):
 
     def click_on_strategy_type_at_strategy_type_tab(self):
         self.find_by_xpath(RoutesConstants.STRATEGY_TYPE_AT_STRATEGY_TYPE_TAB_XPATH).click()
+
+    def click_on_default_scenario(self):
+        self.find_by_xpath(RoutesConstants.DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH).click()
