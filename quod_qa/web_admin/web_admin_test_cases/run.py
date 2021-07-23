@@ -44,11 +44,12 @@ def test_run():
     # RunClientsAccounts(web_driver_container, report_id).execute()
 
     # print(timedelta(seconds=end_time - start_time))
-    RunOthers(web_driver_container, report_id).execute()
-    # RunOrderManagement(web_driver_container, report_id).execute()
+    # RunOthers(web_driver_container, report_id).execute()
+    RunOrderManagement(web_driver_container, report_id).execute()
     # RunUsers(web_driver_container, report_id).execute()
     end_time = time.monotonic()
-    print("~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+    print("Test cases completed\n" +
+          "~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
 
 if __name__ == '__main__':
