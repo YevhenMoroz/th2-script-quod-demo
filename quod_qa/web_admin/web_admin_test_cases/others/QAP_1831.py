@@ -58,7 +58,7 @@ class QAP_1831(CommonTestCase):
             self.verify("New Default Scenario after saved", self.default_scenario,
                         routes_main_menu.get_default_strategy_type_value())
             routes_main_menu.click_on_more_actions()
-            expected_pdf_content = ['qap 1831', "Custom one"]
+            expected_pdf_content = [self.name, "Custom one"]
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         routes_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
             routes_main_menu.click_on_more_actions()
