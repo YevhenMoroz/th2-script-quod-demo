@@ -60,6 +60,19 @@ class FixClientSellRfq():
             ))
         return self
 
+    def send_request_for_quote_swap_no_reply(self):
+        self.case_params_sell_rfq.prepare_rfq_params_swap()
+        print('SWAP RFQ ', self.case_params_sell_rfq.rfq_params_swap)
+        self.quote = self.fix_act.sendMessage(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params_swap,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
     def send_quote_cancel(self):
         self.case_params_sell_rfq.set_quote_cancel_params()
         self.case_params_sell_rfq.quote_cancel['QuoteID']=self.case_params_sell_rfq.quote_params['QuoteID']
