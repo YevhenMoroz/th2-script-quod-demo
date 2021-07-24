@@ -64,7 +64,7 @@ def execute(report_id, session_id):
 
     try:
         # Step 1
-        pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        # pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
 
         # Step 2
         rfq = FixClientSellRfq(
@@ -78,9 +78,9 @@ def execute(report_id, session_id):
             verify_order_pending(). \
             verify_order_filled_fwd()
 
-        position = float(order_qty)
-        position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        compare_position(case_id, pos_before, position, position_after)
+        # position = float(order_qty)
+        # position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        # compare_position(case_id, pos_before, position, position_after)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
