@@ -528,6 +528,10 @@ def set_value_di_panel(base_request, dealer_interventions_service):
 
     call(dealer_interventions_service.modifyAssignedRFQ, modify_request.build())
 
+def close_dmi_window(base_request, dealer_interventions_service):
+
+    call(dealer_interventions_service.closeWindow, base_request)
+
 
 def place_esp_by_bid_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
@@ -848,6 +852,7 @@ def execute(report_id, session_id):
         # region Dealer Intervention
         # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
+        close_dmi_window(base_request, dealer_interventions_service)
         # endregion
 
         # region example of Drab&Drop
