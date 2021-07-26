@@ -53,7 +53,7 @@ def place_order(base_request, service, qty, slippage, client):
     order_ticket.set_client(client)
     order_ticket.set_slippage(slippage)
     order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
+    new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
     call(service.placeFxOrder, new_order_details.build())
 
 
@@ -123,7 +123,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("BidPx")
+        price = rfq.extract_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending()
         rfq.verify_order_filled(price=price)
@@ -138,7 +138,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("OfferPx")
+        price = rfq.extract_filed("OfferPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled()
@@ -154,7 +154,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("OfferPx")
+        price = rfq.extract_filed("OfferPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled()

@@ -136,7 +136,7 @@ def execute(report_id, session_id):
     slippage = "2"
     qty_2m = "2000000"
     qty_5m = "5000000"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
     date_spo = ndf_spo_front_end()
     date_spo = datetime.strptime(date_spo, '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y')
     date_wk1 = ndf_wk1_front_end()

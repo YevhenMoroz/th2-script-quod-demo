@@ -94,7 +94,7 @@ def execute(report_id, session_id):
     slippage = "1"
     instrument_type = "Spot"
     qty = "1000000"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     try:
         # Step 1

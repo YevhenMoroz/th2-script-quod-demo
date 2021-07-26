@@ -51,7 +51,7 @@ def execute(report_id):
         md = FixClientSellEsp(params).\
             send_md_request().\
             verify_md_pending()
-        price= md.extruct_filed('Price')
+        price= md.extract_filed('Price')
 
         new_price = round(float(price)-0.1,5)
         # text='order price ({0}) lower than offer ({1})'.format(new_price, price)

@@ -70,7 +70,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("OfferPx")
+        price = rfq.extract_filed("OfferPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled_fwd()
@@ -84,7 +84,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("OfferPx")
+        price = rfq.extract_filed("OfferPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled_fwd()
