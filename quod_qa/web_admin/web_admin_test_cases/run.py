@@ -42,7 +42,6 @@ def test_run():
     web_driver_container = WebDriverContainer()
     # RunPositions(web_driver_container, report_id).execute()
     # RunClientsAccounts(web_driver_container, report_id).execute()
-
     # print(timedelta(seconds=end_time - start_time))
     # RunOthers(web_driver_container, report_id).execute()
     RunOrderManagement(web_driver_container, report_id).execute()

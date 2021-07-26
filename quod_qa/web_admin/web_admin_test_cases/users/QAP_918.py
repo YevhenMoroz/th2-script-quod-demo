@@ -11,7 +11,7 @@ from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import User
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
-
+#TODO: Must be edit context in Jira (for assignements tab)
 class QAP_918(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
@@ -37,13 +37,14 @@ class QAP_918(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+
         self.precondition()
         users_wizard = UsersWizard(self.web_driver_container)
         self.verify("After click on save changes with empty values", "Incorrect or missing values",
                     users_wizard.get_incorrect_or_missing_values_exception())
         users_role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
         users_role_sub_wizard.set_role_id(self.role_id_first_input)
-        time.sleep(2)
+        time.sleep(3)
         self.verify("After set RoleID to HeadOfInstitution, desk field is disabled", False,
                     users_role_sub_wizard.is_field_enabled(UsersConstants.DESKS_AT_ROLE_SUB_WIZARD))
         self.verify("After set RoleID to HeadOfInstitution,  location field is disabled", False,
