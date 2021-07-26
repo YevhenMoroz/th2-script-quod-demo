@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2
@@ -38,11 +39,11 @@ def press_executable(base_request, service):
     call(service.modifyRatesTile, modify_request.build())
 
 
-def check_quote_request_b(base_request, service, case_id, status, auto_q, qty):
+def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
     qrb = QuoteDetailsRequest(base=base_request)
     extraction_id = bca.client_orderid(4)
     qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty])
+    qrb.set_filter(["Qty", qty, "CreationTime", creation_time])
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
     qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
@@ -110,6 +111,8 @@ def execute(report_id, session_id):
     side = ""
     leg1_side = "1"
     leg2_side = "2"
+    today = date.today()
+    today = today.today().strftime('%m/%d/%Y')
 
     try:
         # Step 1
@@ -131,7 +134,7 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_swap_no_reply()
         # Step 3
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty)
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
         # Step 4
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
         close_dmi_window(case_base_request, dealer_service)
