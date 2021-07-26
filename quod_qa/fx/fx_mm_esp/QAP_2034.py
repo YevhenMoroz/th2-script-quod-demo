@@ -7,7 +7,7 @@ from quod_qa.common_tools import round_decimals_up
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
+from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ModifyRatesTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
@@ -31,6 +31,12 @@ def modify_esp_tile(base_request, service, from_c, to_c, tenor, venue):
 
 def create_or_get_pricing_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
+
+
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
 
 
 def modify_pricing_tile(base_request, service, instrument, client):
@@ -123,7 +129,12 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
 
     expected_bid_pts = bid_pts * (1 - (bid_base / 100))
     expected_ask_pts = ask_pts * (1 + (ask_base / 100))
-
+    print(bid_pts_mm)
+    print(ask_pts_mm)
+    print(bid_pts)
+    print(ask_pts)
+    print(expected_bid_pts)
+    print(expected_ask_pts)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Pts in Pricing tile")
     verifier.compare_values("Bid pts", str(round(expected_bid_pts, 3)), str(bid_pts_mm))
@@ -136,7 +147,7 @@ def check_column_pts(base_request, service, case_id, bid_pts, ask_pts, bid_base,
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
 
     cp_service = Stubs.win_act_cp_service
@@ -148,7 +159,7 @@ def execute(report_id, session_id):
     from_curr = "EUR"
     to_curr = "JPY"
     tenor = "1W"
-    venue = "HSBC"
+    venue = "HSB"
     instrument = "EUR/JPY-1W"
     client_tier = "Silver"
 
@@ -173,6 +184,8 @@ def execute(report_id, session_id):
 
         check_price_on_pricing_tile(case_id, price_mm[0], spot_mm[0], pts_mm[0])
         check_price_on_pricing_tile(case_id, price_mm[1], spot_mm[1], pts_mm[1])
+
+        use_default(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

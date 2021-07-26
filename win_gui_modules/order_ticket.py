@@ -10,7 +10,6 @@ from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipati
 from .common_wrappers import CommissionsDetails, BaseTileDetails
 from enum import Enum
 
-from .utils import call
 
 
 class OrderTicketExtractedValue(Enum):
@@ -81,7 +80,7 @@ class OrderTicketDetails:
         self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
         self.order.algoOrderParams.strategyType = strategy_type
         self.order.algoOrderParams.quodParticipationStrategyParams.CopyFrom(
-                order_ticket_pb2.QuodParticipationStrategyParams())
+            order_ticket_pb2.QuodParticipationStrategyParams())
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
 
     def set_care_order(self, desk: str, partial_desk: bool = False,
@@ -189,6 +188,7 @@ class OrderTicketValues(Enum):
     IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
     ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
 
+
 class ExtractFxOrderTicketValuesRequest:
 
     def __init__(self, data: BaseTileData, extractionId: str = 'extractFXOrderTicketValues'):
@@ -234,7 +234,6 @@ class ExtractFxOrderTicketValuesRequest:
 
     def get_is_algo_checked(self, is_algo_checked: str = 'fx_order_ticket.is_algo_checked'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.IS_ALGO_CHECKED)
-
 
     def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
@@ -285,16 +284,3 @@ class ExtractOrderTicketErrorsRequest:
 
     def build(self):
         return self.request
-    def extract_error_message_order_ticket(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
-        extract_errors_request.extract_error_message()
-        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
-        print(result)
-
-    def get_disclose_flag_state(base_request, order_ticket_service):
-        # extract rates tile table values
-        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
-        extract_disclose_flag_request.get_disclose_flag_state()
-        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
-        print(result)

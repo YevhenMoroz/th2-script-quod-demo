@@ -58,7 +58,7 @@ def execute(report_id):
         md = FixClientSellEsp(params).\
             send_md_request().\
             verify_md_pending()
-        price=md.extruct_filed('Price')
+        price=md.extract_filed('Price')
 
         #Step 4
 

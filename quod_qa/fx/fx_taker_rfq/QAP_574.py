@@ -121,7 +121,7 @@ def execute(report_id, session_id):
 
     case_name = Path(__file__).name[:-3]
     # case params
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "FXForward"
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"

@@ -39,7 +39,8 @@ def test_run(parent_id=None):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        close_fe(report_id, session_id)
+        Stubs.win_act.unregister(session_id)
+        # close_fe(report_id, session_id)
 
 
 if __name__ == '__main__':

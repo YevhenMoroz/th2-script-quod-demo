@@ -1,7 +1,5 @@
 from dataclasses import dataclass, field
 
-from dataclasses import dataclass
-
 from th2_grpc_act_gui_quod import layout_panel_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
@@ -14,7 +12,7 @@ class WorkspaceModificationRequest:
         self.ws_modify_request.base.CopyFrom(base_request)
 
     def set_path(self, path: str):
-        self.ws_modify_request.Sides = path
+        self.ws_modify_request.path = path
 
     def set_filename(self, filename: str):
         self.ws_modify_request.fileName = filename

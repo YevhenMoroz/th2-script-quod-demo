@@ -1,4 +1,5 @@
 import math
+from datetime import datetime
 
 
 def round_decimals_up(number: float, decimals: int):
@@ -29,3 +30,13 @@ def round_decimals_down(number: float, decimals: int):
 
     factor = 10 ** decimals
     return math.floor(number * factor) / factor
+
+
+def random_qty(number: int):
+    """
+    generate random number with length -> number
+    """
+    now = datetime.now()
+    timestamp = str(datetime.timestamp(now))
+    qty = timestamp.replace(".", "")[-number:]
+    return qty
