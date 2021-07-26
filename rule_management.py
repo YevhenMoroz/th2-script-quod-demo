@@ -108,7 +108,7 @@ class RuleManager:
                                                                tradedQty=traded_qty,
                                                                delay= delay))
 
-    
+
     @staticmethod
     def add_NewOrdSingleExecutionReportTradeByOrdQty(session: str, account: str, exdestination : str, price: float, traded_price: float, qty: int, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQty(
@@ -141,9 +141,7 @@ class RuleManager:
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
         return Stubs.simulator.createQuodNOSRule(
-                request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
-
-
+            request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
     @staticmethod
     def add_OCR(session: str):

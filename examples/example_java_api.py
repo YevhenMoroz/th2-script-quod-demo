@@ -16,11 +16,7 @@ class TestCase:
 
     def send_nos(self):
         nos_params = {
-            # 'AuthenticationBlock': {
-            #     'UserID': "",
-            #     'RoleID': 'HeadOfSaleDealer',
-            #     'SessionKey': 00000000000
-            # },
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
             'NewOrderSingleBlock': {
                 'ListingList': {
                     'ListingBlock': [
