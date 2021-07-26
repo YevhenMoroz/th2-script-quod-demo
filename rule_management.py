@@ -1,26 +1,16 @@
-from th2_grpc_sim_quod.sim_pb2 import (TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule,
-                                       TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule,
-                                       TemplateNewOrdSingleExecutionReportTrade,
-                                       TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateOrderCancelRequest,
-                                       TemplateNewOrdSingleFOK,
-                                       TemplateNewOrdSingleIOC, TemplateNewOrdSingleMarket,
-                                       TemplateOrderCancelReplaceExecutionReport,
-                                       TemplateQuodDefMDRRule)
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 from stubs import Stubs
 from google.protobuf.empty_pb2 import Empty
 
-import grpc
-from th2_grpc_sim import sim_pb2_grpc as core_test
-
 
 class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8,9]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -109,15 +99,27 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int,
-                                             delay: int):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int, delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
-                request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
-                                                                 account=account,
-                                                                 venue=venue,
-                                                                 price=price,
-                                                                 tradedQty=traded_qty,
-                                                                 delay=delay))
+            request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
+                                                               account=account,
+                                                               venue=venue,
+                                                               price=price,
+                                                               tradedQty=traded_qty,
+                                                               delay= delay))
+
+
+    @staticmethod
+    def add_NewOrdSingleExecutionReportTradeByOrdQty(session: str, account: str, exdestination : str, price: float, traded_price: float, qty: int, traded_qty: int, delay: int):
+        return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQty(
+            request=TemplateNewOrdSingleExecutionReportTradeByOrdQty(connection_id=ConnectionID(session_alias=session),
+                                                               account=account,
+                                                               exdestination=exdestination,
+                                                               price=price,
+                                                               traded_price=traded_price,
+                                                               qty=qty,
+                                                               traded_qty=traded_qty,
+                                                               delay= delay))
 
     @staticmethod
     def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: float):
@@ -139,7 +141,7 @@ class RuleManager:
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
         return Stubs.simulator.createQuodNOSRule(
-                request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
+            request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
     @staticmethod
     def add_OCR(session: str):
@@ -158,18 +160,8 @@ class RuleManager:
                                                  TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_RFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQRule(request=
-                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
-
-    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
-                                                      TemplateQuodRFQTRADERule(connection_id=
-                                                                               ConnectionID(session_alias=session)))
-    @staticmethod
-    def add_TRFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
                                                                                ConnectionID(session_alias=session)))
 
@@ -223,24 +215,40 @@ class RuleManager:
                                                                   trade=trade
                                                                   ))
 
-    # @staticmethod
-    # def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
-    #     return Stubs.simulator.createOrderCancelReplaceRequest(
-    #         request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
-    #                                                   account=account,
-    #                                                   exdestination=exdestination,
-    #                                                   modify=modify
-    #                                         ))
     @staticmethod
-    def add_fx_md_to(session: str):
-        return Stubs.simulator.createQuodDefMDRFXRule(
-            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+        return Stubs.simulator.createOrderCancelReplaceRequest(
+            request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
+                                                      account=account,
+                                                      exdestination=exdestination,
+                                                      modify=modify
+                                            ))
 
+
+    @staticmethod
+    def add_NewOrderSingle_ExecutionReport_Reject(session: str, account: str, ex_destination: str, price: float):
+        return Stubs.simulator.createNewOrdSingleExecutionReportReject(
+            request=TemplateNewOrdSingleExecutionReportReject(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  exdestination=ex_destination,
+                                                  price=price
+                                                  ))
+
+
+    @staticmethod
+    def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
+        return Stubs.simulator.createMarketNewOrdSingleFOK(
+            request=TemplateMarketNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  price=price
+                                                  ))
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_rule_by_id()
+    #rule_manager.remove_rule_by_id()
     rule_manager.print_active_rules()
-    # rule_manager.remove_all_rules()
+    #rule_manager.remove_all_rules()

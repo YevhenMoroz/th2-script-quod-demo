@@ -59,7 +59,7 @@ def execute(report_id):
                                  bid_spot_rate=bid_spot_rate,offer_spot_rate= offer_spot_rate,offer_size=orderqty, bid_size=orderqty)
 
         # Step 3-4
-        bid_px = rfq.extruct_filed('BidPx')
+        bid_px = rfq.extract_filed('BidPx')
         rfq.send_new_order_single(bid_px,side=side)
         rfq.verify_order_pending(side=side)
         # rfq.verify_order_new()

@@ -130,13 +130,13 @@ def compare_position(case_id, pos_before, pos_after):
     verifier.verify()
 
 
-def execute(report_id, session_id):
+def execute(report_id,session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     pos_service = Stubs.act_fx_dealing_positions
 
     case_name = Path(__file__).name[:-3]
-    case_client = "ASPECT_CITI"
+    case_client = "ASPECT_CITI1"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_near_tenor = "Spot"
@@ -149,7 +149,7 @@ def execute(report_id, session_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = "Spot"
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)

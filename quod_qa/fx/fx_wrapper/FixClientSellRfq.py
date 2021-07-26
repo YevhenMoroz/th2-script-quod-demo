@@ -60,6 +60,19 @@ class FixClientSellRfq():
             ))
         return self
 
+    def send_request_for_quote_swap_no_reply(self):
+        self.case_params_sell_rfq.prepare_rfq_params_swap()
+        print('SWAP RFQ ', self.case_params_sell_rfq.rfq_params_swap)
+        self.quote = self.fix_act.sendMessage(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params_swap,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
     def send_quote_cancel(self):
         self.case_params_sell_rfq.set_quote_cancel_params()
         self.case_params_sell_rfq.quote_cancel['QuoteID']=self.case_params_sell_rfq.quote_params['QuoteID']
@@ -123,7 +136,7 @@ class FixClientSellRfq():
         return self
 
     # Extract filed by name
-    def extruct_filed(self, field):
+    def extract_filed(self, field):
         extract_value = self.quote.response_messages_list[0].fields[field].simple_value
         return extract_value
 
@@ -134,7 +147,7 @@ class FixClientSellRfq():
     # Check Market Data respons was received
     def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''):
         self.case_params_sell_rfq.prepare_quote_report()
-        self.quote_id=self.extruct_filed('QuoteID')
+        self.quote_id=self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.quote_id
         # self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
@@ -177,7 +190,7 @@ class FixClientSellRfq():
     def verify_quote_pending_swap(self,offer_swap_points='',bid_swap_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''
                                   , leg_of_fwd_p='', leg_bid_fwd_p=''):
         self.case_params_sell_rfq.prepare_quote_report_swap()
-        self.quote_id=self.extruct_filed('QuoteID')
+        self.quote_id=self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap['QuoteMsgID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap.pop('Account')

@@ -29,7 +29,7 @@ text_c='order canceled'
 text_f='Fill'
 text_ret = 'reached end time'
 text_s = 'sim work'
-side = 2
+side = 1
 price = 20
 tif_day = 0
 ex_destination_1 = "XPAR"
@@ -39,8 +39,6 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
 waves = 2
-
-now = datetime.today() - timedelta(hours=3)
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
@@ -88,6 +86,8 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+        
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -216,7 +216,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -263,7 +262,7 @@ def execute(report_id):
 
         
         #region Cancel Algo Order
-        case_id_3 = bca.create_event("Cansel Algo Order", case_id)
+        case_id_3 = bca.create_event("Cancel Algo Order", case_id)
 
         cancel_parms = {
         "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
@@ -285,7 +284,7 @@ def execute(report_id):
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
         fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_3, message_name='SS FIXSELLQUOD5 sent 35=F Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
-
+        time.sleep(3)
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_5 = {
             'CumQty': '0',

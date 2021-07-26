@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1722"
     seconds, nanos = timestamps()
     case_id = create_event(case_name, report_id)
@@ -32,7 +32,6 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     recipient = 'Desk of SalesDealers 1 (CL)'
     # endregion

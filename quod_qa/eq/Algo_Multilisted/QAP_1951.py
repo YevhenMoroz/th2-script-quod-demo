@@ -221,7 +221,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -297,7 +296,7 @@ def execute(report_id):
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID(),
         }
-        fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'ClOrdID',  'OrigClOrdID'])
+        fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['TimeInForce', 'OrderQty', 'Price'])
 
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_5 = {
@@ -361,7 +360,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': dec_price,
             'SettlDate': '*',
@@ -444,9 +442,9 @@ def execute(report_id):
 
         time.sleep(3)
 
-        #region Cansel order
-        case_id_4 = bca.create_event("Cansel Order", case_id)
-        # Cansel order
+        #region Cancel order
+        case_id_4 = bca.create_event("Cancel Order", case_id)
+        # Cancel order
         cancel_parms = {
             "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
             "Account": fix_message_new_order_single.get_parameter('Account'),

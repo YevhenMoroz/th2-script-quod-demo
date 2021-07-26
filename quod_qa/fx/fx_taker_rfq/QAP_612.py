@@ -24,7 +24,7 @@ def send_rfq(base_request, service):
 
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
+    action = ContextAction.create_venue_filter(venues)
     modify_request.add_context_action(action)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
@@ -34,15 +34,15 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venue
     call(service.modifyRFQTile, modify_request.build())
 
 
-def check_value_in_column(exec_id, base_request, service, case_id):
+def check_value_in_column(exec_id, base_request, service, case_id, venue):
     table_actions_request = TableActionsRequest(details=base_request)
     table_actions_request.set_extraction_id(exec_id)
     extract_value = ExtractRFQTileValues(details=base_request)
     extract_value.set_extraction_id(exec_id)
     extract_value.extract_best_bid_large("ar_rfq.extract_best_bid_large")
-    extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", "HSB", 0))
-    extract2 = TableAction.extract_cell_value(CellExtractionDetails("SP_Sell", "SP", "HSB", 0))
-    extract3 = TableAction.extract_cell_value(CellExtractionDetails("1W_Sell", "1W", "HSB", 0))
+    extract1 = TableAction.extract_cell_value(CellExtractionDetails("PtsSell", "Pts", venue, 0))
+    extract2 = TableAction.extract_cell_value(CellExtractionDetails("SP_Sell", "SP", venue, 0))
+    extract3 = TableAction.extract_cell_value(CellExtractionDetails("1W_Sell", "1W", venue, 0))
 
     table_actions_request.add_actions([extract1, extract2, extract3])
     response = call(service.processTableActions, table_actions_request.build())
@@ -85,7 +85,7 @@ def execute(report_id, session_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
-    venues = ["HSBC"]
+    venues = "HSBC"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -103,7 +103,7 @@ def execute(report_id, session_id):
         # Step 2
         send_rfq(base_rfq_details, ar_service)
         cancel_rfq(base_rfq_details, ar_service)
-        check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id)
+        check_value_in_column("ChWK1_0", base_rfq_details, ar_service, case_id, venues)
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:

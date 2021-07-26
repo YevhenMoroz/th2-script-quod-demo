@@ -31,7 +31,7 @@ def place_order_tob(base_request, service):
 
 def place_order_venue(base_request, service, venue):
     rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue[0])
+    rfq_request.set_venue(venue)
     rfq_request.set_action(RFQTileOrderSide.BUY)
     call(service.placeRFQOrder, rfq_request.build())
 
@@ -105,7 +105,7 @@ def check_quote_book(base_request, service, case_id, owner, quote_id):
 
 def modify_rfq_tile(base_request, service, qty, cur1, cur2, date, client, venues):
     modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
+    action = ContextAction.create_venue_filter(venues)
     modify_request.add_context_action(action)
     modify_request.set_settlement_date(date)
     modify_request.set_quantity(qty)
@@ -121,14 +121,13 @@ def execute(report_id, session_id):
 
     case_name = Path(__file__).name[:-3]
     # case params
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "FXForward"
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_date = bca.get_t_plus_date(5)
-    case_venue = ["HSBC"]
-    case_filter_venue = "HSBC"
+    case_venue = "CITI"
     case_qty = 2000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
@@ -149,7 +148,7 @@ def execute(report_id, session_id):
         send_rfq(base_rfq_details, ar_service)
         # Step 2
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
-                              quote_quote_sts_accepted, case_filter_venue)
+                              quote_quote_sts_accepted, case_venue)
         place_order_tob(base_rfq_details, ar_service)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)
@@ -158,7 +157,7 @@ def execute(report_id, session_id):
         send_rfq(base_rfq_details, ar_service)
         # Step 4
         check_quote_request_b(case_base_request, ar_service, case_id, quote_sts_new,
-                              quote_quote_sts_accepted, case_filter_venue)
+                              quote_quote_sts_accepted, case_venue)
         place_order_venue(base_rfq_details, ar_service, case_venue)
         quote_id = check_order_book(case_base_request, act_ob, case_id,
                                     case_qty, case_instr_type)

@@ -86,7 +86,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty, teno
     ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
     ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
-    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
     ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
     ob_tenor = ExtractionDetail("orderBook.nearlegtenor", "Tenor")
 
@@ -126,7 +126,7 @@ def execute(report_id, session_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "Spot"
     case_filter_venue = "HSBC"
     case_qty = 1000000

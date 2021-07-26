@@ -103,7 +103,7 @@ def check_ord_reject_fe(base_request, ob_service, case_id, order, exp_ord):
     ob.set_default_params(base_request)
     ob.set_extraction_id('ex_id')
     ob.set_filter(['ClOrdID', str(order.response_messages_list[0].fields['ClOrdID'].simple_value)])
-    fre_notes = ExtractionDetail("orderBook.LmtPrice", "LmtPrice")
+    fre_notes = ExtractionDetail("orderBook.LmtPrice", "Limit Price")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
     ob_exec_sts = ExtractionDetail("orderBook.ExecSts", "ExecSts")
 
@@ -122,13 +122,12 @@ def check_ord_reject_fe(base_request, ob_service, case_id, order, exp_ord):
     verifier.verify()
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params, session_id):
     # region Preparation
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -161,7 +160,6 @@ def execute(report_id, case_params):
 
         verify_ord_reject_fix(case_id, order, reusable_params, quote)
 
-        prepare_fe(case_id,session_id)
 
         check_ord_reject_fe(base_request, ob_service, case_id, order, expected_price)
 

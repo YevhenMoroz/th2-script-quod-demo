@@ -4,7 +4,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
+from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
@@ -23,9 +24,11 @@ def send_rfq(base_request, service):
     call(service.sendRFQOrder, base_request.build())
 
 
-def modify_order(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client):
+def modify_order(base_request, service, qty, cur1, cur2, near_tenor, far_tenor, client, venue):
     modify_request = ModifyRFQTileRequest(details=base_request)
     modify_request.set_quantity(qty)
+    action = ContextAction.create_venue_filter(venue)
+    modify_request.add_context_action(action)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
     modify_request.set_near_tenor(near_tenor)
@@ -125,7 +128,7 @@ def execute(report_id, session_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "FXSwap"
     case_venue = "HSBC"
     case_qty = 1000000
@@ -150,7 +153,7 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_order(base_rfq_details, ar_service, case_qty, case_from_currency,
-                     case_to_currency, case_near_tenor, case_far_tenor, case_client)
+                     case_to_currency, case_near_tenor, case_far_tenor, case_client, case_venue)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)

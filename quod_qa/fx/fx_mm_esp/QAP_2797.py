@@ -54,7 +54,7 @@ def execute(report_id):
                                    securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price= md.extruct_filed('Price')
+        price= md.extract_filed('Price')
         text='not enough quantity in book'
         params.orderqty=new_orderqty
         params.set_new_order_single_params()

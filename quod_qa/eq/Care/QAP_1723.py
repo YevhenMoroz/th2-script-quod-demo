@@ -16,14 +16,13 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
-    case_name = "QAP-2550"
+def execute(report_id, session_id):
+    case_name = "QAP-1723"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     qty = "800"
-    client = "CLIENTSKYLPTOR"
+    client = "CLIENT_VSKULINEC"
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # endregion
@@ -33,8 +32,9 @@ def execute(report_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # region Create CO order
-    eq_wrappers.create_order(base_request, qty, client, 'VETO', 'Limit', 'Day', True, 'vskulinec','50', False, False,
-                             False, DiscloseFlagEnum.REALTIME, None)
+    eq_wrappers.create_order(base_request, qty, client, 'VETO', 'Limit', 'Day', True, 'vskulinec', '50', None, None,
+                             False
+                             , DiscloseFlagEnum.REALTIME, None)
     # endregion
     # region check value disclose flag in orderbook
     eq_wrappers.verify_order_value(base_request, case_id, 'DiscloseExec', 'R')

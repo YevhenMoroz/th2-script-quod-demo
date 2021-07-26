@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 import time
-from quod_qa.wrapper import eq_wrappers
+#from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
 from stubs import Stubs

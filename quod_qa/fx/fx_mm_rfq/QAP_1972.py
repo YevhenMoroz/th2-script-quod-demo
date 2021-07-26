@@ -111,11 +111,10 @@ def extract_assigned_grid(base_request, service, row, qty):
     return call(service.getAssignedRFQDetails, extraction_request.build())
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -140,8 +139,6 @@ def execute(report_id, case_params):
         send_rfq(reusable_params, ttl, case_params, case_id, act)
         send_rfq(reusable_params, ttl, case_params, case_id, act)
         # endregion
-
-        prepare_fe(case_id, session_id)
 
         rfq_id1 = extract_unassigned_grid(base_request, service, 1, reusable_params['OrderQty'])
         rfq_id2 = extract_unassigned_grid(base_request, service, 2, reusable_params['OrderQty'])

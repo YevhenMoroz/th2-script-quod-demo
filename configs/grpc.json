@@ -243,6 +243,66 @@
           "act_layout"
         ]
       }
+    },
+    "Win_Act_Trades_Service": {
+ "service-class": "TradesServiceService",
+ "endpoints": {
+ "win_wct_trades_service": {
+          "host": "10.0.22.22",
+          "port": 32223
+ }
+ },
+ "strategy": {
+ "name": "robin",
+ "endpoints": [
+ "win_wct_trades_service"
+ ]
+ }
+},
+    "SimulatorHttp": {
+      "service-class": "SimTemplateService",
+      "endpoints": {
+        "simulatorHttp": {
+          "host": "10.0.22.22",
+          "port": 31123
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "simulatorHttp"
+        ]
+      }
+    },
+    "Act_Rest": {
+      "service-class": "RestActService",
+      "endpoints": {
+        "act_rest": {
+          "host": "10.0.22.22",
+          "port": 31111
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_rest"
+        ]
+      }
+    },
+    "Act_Java_Api": {
+      "service-class": "ActService",
+      "endpoints": {
+        "act_java_api": {
+          "host": "10.0.22.22",
+          "port": 31221
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_java_api"
+        ]
+      }
     }
   }
 }

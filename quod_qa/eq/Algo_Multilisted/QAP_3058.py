@@ -152,6 +152,7 @@ def execute(report_id):
 
         # Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 = dict(
+            Account=account,
             ExecID='*',
             OrderQty=qty,
             LastQty=0,
@@ -177,6 +178,7 @@ def execute(report_id):
             NoParty='*',
             NoStrategyParameters='*'
         )
+        verifier_310_sell_side.CheckExecutionReport(er_1, responce, case=case_id_2, message_name="Check PendingNew and New")
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -186,8 +188,8 @@ def execute(report_id):
             SettlDate='*',
             ExecRestatementReason='*',
         )
-
-        verifier_310_sell_side.CheckExecutionReportSequence([er_1, er_2], responce, case=case_id_2, message_name="Check PendingNew and New")
+        er_2.pop('Account')
+        verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2, message_name="Check PendingNew and New")
 
         # Send MD
         case_id_3 = bca.create_event("Send MarketData", case_id)
@@ -236,7 +238,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': 'A',
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'SettlDate': '*',
             'Currency': 'EUR',
             'TimeInForce': time_in_force,

@@ -23,8 +23,8 @@ def execute(report_id):
     common_act = Stubs.win_act
     qty = "800"
     price = "40"
-    client = "CLIENTSKYLPTOR"
-    lookup = "PROL"
+    client = "CLIENT_FOR_CARE"
+    lookup = "VETO"
     last_mkt = 'DASI'
     case_id = create_event(case_name, report_id)
     session_id = set_session_id()
@@ -44,7 +44,7 @@ def execute(report_id):
     eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
 
     # region manual_cross
-    eq_wrappers.manual_cross_orders(base_request, '100000', price, (1, 2), last_mkt)
+    eq_wrappers.manual_cross_orders(base_request, '900', price, (1, 2), last_mkt)
     # endregion
     # region check order1
     eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')

@@ -47,7 +47,7 @@ def execute(report_id):
         rfq.verify_quote_pending(bid_size=orderqty, bid_px=bid_px_expected, bid_spot_rate=bid_px_expected)
 
         # Step 3-4
-        bid_px = rfq.extruct_filed('BidPx')
+        bid_px = rfq.extract_filed('BidPx')
         rfq.send_new_order_single(bid_px)
         rfq.verify_order_pending()
         # rfq.verify_order_new()

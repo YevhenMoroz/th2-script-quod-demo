@@ -44,6 +44,15 @@ class LoginDetailsRequest:
     def set_login_window_name(self, login_window_name: str):
         self.login_details.loginWindowName = login_window_name
 
+    def is_error_expected(self, is_error_expected: bool):
+        self.login_details.isErrorExpected = is_error_expected
+
+    def set_extraction_id(self, extraction_id: str):
+        self.login_details.extractionId = extraction_id
+
+    def close_login_windows(self):
+        self.login_details.closeLoginWindow = True
+
     def build(self):
         return self.login_details
 

@@ -19,12 +19,11 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -70,16 +69,6 @@ def execute(report_id, case_params):
         # endregion
 
         # region  prepare fe
-        Stubs.frontend_is_open = True
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(case_id, session_id)
-            # ,
-            #          fe_dir='qf_trading_fe_folder_308',
-            #          fe_user='qf_trading_fe_user_308',
-            #          fe_pass='qf_trading_fe_password_308')
-        else:
-            get_opened_fe(case_id, session_id)
-        # #endregion
 
         # region Extract RFQ ID
         base_data = BaseTableDataRequest(base=base_request)

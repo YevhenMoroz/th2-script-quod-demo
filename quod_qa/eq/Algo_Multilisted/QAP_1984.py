@@ -91,6 +91,7 @@ def execute(report_id):
     responce = fix_manager.Send_NewOrderSingle_FixMessage(fix_message_multilisting, case=case_id_1)
 
     er_1 = dict(
+        Account=account,
         ExecID='*',
         OrderQty=qty,
         LastQty=0,
@@ -128,6 +129,7 @@ def execute(report_id):
         SettlDate='*',
         ExecRestatementReason='*',
     )
+    er_2.pop('Account')
     fix_verifier_sell_side.CheckExecutionReport(er_2, responce, case=case_id_1,
                                                 message_name='FIXQUODSELL5 sent 35=8 new')
 
@@ -186,7 +188,6 @@ def execute(report_id):
         'ClOrdID': '*',
         'OrderCapacity': 'A',
         'TransactTime': '*',
-        'ChildOrderID': '*',
         'SettlDate': '*',
         'Currency': 'EUR',
         'TimeInForce': time_in_force,
@@ -269,10 +270,9 @@ def execute(report_id):
         'Instrument': '*',
         'StopPx': stop_price,
         'NoStrategyParameters': '*',
-        'LastMkt': ex_destination_1,
-        'Text': '*'
+        'OrigClOrdID': fix_message_multilisting.get_ClOrdID(),
     }
 
-    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce_cancel, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrdStatus', 'ExecType', 'ClOrdID', 'TimeInForce'])
+    fix_verifier_sell_side.CheckExecutionReport(cancel_er_params, responce, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrdStatus', 'ExecType', 'TimeInForce'])
     time.sleep(5)
     rule_destroyer(list_rules)

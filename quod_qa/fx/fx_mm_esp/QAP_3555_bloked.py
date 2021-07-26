@@ -45,9 +45,9 @@ def execute(report_id):
         md.set_md_params()\
             .send_md_request()
         md.verify_md_pending(bands)
-        price = md.extruct_filed('Price', 0)
-        mdEntryPx1=md.extruct_filed('MDEntryID',0)
-        mdEntryPx2=md.extruct_filed('MDEntryID',1)
+        price = md.extract_filed('Price', 0)
+        mdEntryPx1=md.extract_filed('MDEntryID', 0)
+        mdEntryPx2=md.extract_filed('MDEntryID', 1)
         time.sleep(5)
 
 

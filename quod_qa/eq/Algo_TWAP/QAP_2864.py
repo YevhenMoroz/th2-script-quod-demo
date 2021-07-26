@@ -23,7 +23,6 @@ import quod_qa.wrapper.eq_wrappers
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-now = datetime.today() - timedelta(hours=3)
 qty = 200
 price = 1
 lookup = "PAR"       #CH0012268360_CHF
@@ -33,14 +32,13 @@ client = 'CLIENT2'
 order_type = 2
 ex_destination_1 = "XPAR"
 report_id = None
-extraction_id = "getOrderAnalysisEvents"
 before_order_details_id = "beforeTWAPAlgo_order_details"
 after_order_details_id = "afterTWAPAlgo_order_details"
-s_par = '1015'
+s_par = '982'
 side = 2
 instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
+            'Symbol': 'FR0000044448_EUR',
+            'SecurityID': 'FR0000044448',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -54,6 +52,8 @@ connectivity_fh = 'fix-fh-310-columbia'
 
 
 def create_order(case_id):
+    now = datetime.today() - timedelta(hours=3)
+    
     caseid = bca.create_event('Send Order via FIX', case_id)
         # Send_MarkerData
     fix_manager_310 = FixManager(connectivity_sell_side, caseid)
@@ -182,23 +182,9 @@ def rule_destroyer(list_rules):
     for rule in list_rules:
         rule_manager.remove_rule(rule)
 
-def prepared_fe(case_id):
-    session_id = set_session_id()
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id, work_dir)
-    return  base_request
-
 def check_order_book(ex_id, base_request, case_id, cl_ord):
     act_ob = Stubs.win_act_order_book
     act = Stubs.win_act
-    ob = OrdersDetails()
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(before_order_details_id)
@@ -248,26 +234,27 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     call(act_ob.getOrdersDetails, main_order_details.request())
 
     call(act.verifyEntities, verification(after_order_details_id, "checking child orders",
-                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, "200"),
-                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, "150"),
+                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, "50"),
+                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, "50"),
                                                       verify_ent("Sub order 3 qty", sub_order3_qty.name, "100"),
-                                                      verify_ent("Sub order 4 qty", sub_order4_qty.name, "50"),
+                                                      verify_ent("Sub order 4 qty", sub_order4_qty.name, "200"),
                                                       verify_ent("Sub order count", length_name, "4")]))
 
     extraction_id = "getOrderAnalysisAlgoParameters"
 
     call(act.getOrderAnalysisAlgoParameters,
             order_analysis_algo_parameters_request(extraction_id, ["Waves"], {"Order ID": request["order_id"]}))
+    time.sleep(20)
     call(act.verifyEntities, verification(extraction_id, "checking algo parameters",
                                                      [verify_ent("Waves", "Waves", "4")]))
-def execute(reportid):
+def execute(report_id, session_id):
     try:
-        report_id = reportid
         case_id = create_event(case_name, report_id)
-        base_request = prepared_fe(case_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
         rule_list = rule_creation()
         cl_ord = create_order(case_id)
-        check_order_book("before_order_details", base_request, case_id, cl_ord)
+        check_order_book("before_order_details", base_request, case_id, cl_ord)  #
     except:
         logging.error("Error execution",exc_info=True)
     finally:
