@@ -25,9 +25,12 @@ def test_run(parent_id= None):
         else:
             get_opened_fe(report_id, session_id, work_dir)
             
-        QAP_2837.execute(report_id, session_id)
         QAP_2839.execute(report_id, session_id)
         QAP_2842.execute(report_id, session_id)
+        QAP_2994.execute(report_id, session_id)
+        QAP_2995.execute(report_id, session_id)
+        QAP_2996.execute(report_id, session_id)
+        QAP_2997.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

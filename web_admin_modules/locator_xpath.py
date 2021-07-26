@@ -107,9 +107,9 @@ logout_btn = '//*[@href="#/auth/logout"]'
 
 table_headers = '//*[@ref="eHeaderContainer"]/*[@class="ag-header-row"]'
 table_filter_names = f'{table_headers}[1]/*'
-table_filter_inputs = f'{table_headers}[2]/*'
+table_filter_inputs = f'{table_headers}[3]/*'
 table_row_container = '//*[@ref="eCenterContainer"]'
 table_row = './*[@role="row"]'
-filter_input = '//input[@ref="eFloatingFilterText"]'
+filter_input = '//span[@class="ag-group-value"]'
 
 actions_btn = '//*[@data-name="more-vertical"]'

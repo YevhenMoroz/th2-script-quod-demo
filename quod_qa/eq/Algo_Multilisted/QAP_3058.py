@@ -152,6 +152,7 @@ def execute(report_id):
 
         # Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 = dict(
+            Account=account,
             ExecID='*',
             OrderQty=qty,
             LastQty=0,
@@ -187,7 +188,7 @@ def execute(report_id):
             SettlDate='*',
             ExecRestatementReason='*',
         )
-
+        er_2.pop('Account')
         verifier_310_sell_side.CheckExecutionReport(er_2, responce, case=case_id_2, message_name="Check PendingNew and New")
 
         # Send MD

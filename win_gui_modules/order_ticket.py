@@ -47,6 +47,9 @@ class OrderTicketDetails:
     def set_account(self, account: str):
          self.order.account = account
 
+    def set_display_qty(self, display_qty: str):
+        self.order.displayQty = display_qty
+
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
 

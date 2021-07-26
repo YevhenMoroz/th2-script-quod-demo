@@ -1,9 +1,10 @@
 import logging
 import os
+import time
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 
-from quod_qa.wrapper.eq_wrappers import buy_connectivity
+from quod_qa.wrapper.eq_wrappers import buy_connectivity, sell_connectivity
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 
@@ -35,9 +36,9 @@ def execute(report_id, session_id):
     qty = "900"
     price = 20
     price2 = 19
-    client = 'CLIENT1'
+    client = 'CLIENT_FIX_CARE'
     expireDate = date.today() + timedelta(2)
-    time = datetime.utcnow().isoformat()
+
     # endregion
 
     # region Open FE
@@ -47,49 +48,57 @@ def execute(report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    # eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             'XPAR_' + client, 'XPAR', price)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
+                                                                             client + "_PARIS", 'XPAR', price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
     except:
         rule_manager.remove_rule(nos_rule)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
     # endregion
 
     response = fix_message.pop('response')
-    fix_message1=FixMessage(fix_message)
-    fix_manager = FixManager(buy_connectivity, case_id)
+    fix_message1 = FixMessage(fix_message)
+    fix_manager = FixManager(sell_connectivity, case_id)
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(eq_wrappers.get_buy_connectivity())
+        rule = rule_manager.add_OrderCancelReplaceRequest(eq_wrappers.get_buy_connectivity(), client + "_PARIS", "XPAR",
+                                                          True)
         fix_modify_message = deepcopy(fix_message1)
-        fix_modify_message.change_parameters({'Price': 3})
+        fix_modify_message.change_parameters({'Price': price2})
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(rule)
     # endregion
+    cl_order_id = response.response_messages_list[0].fields['ClOrdID'].simple_value
     params = {
-        'OrderQty': qty,
-        'ExecType': '4',
-        'OrdStatus': '4',
-        'Side': 2,
-        'TimeInForce': 6,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
+        'ExecType': '5',
+        'OrdStatus': '0',
+        'Side': '2',
+        'TimeInForce': '0',
+        'ClOrdID': cl_order_id,
+        'OrigClOrdID': cl_order_id,
+        'OrderQtyData': {'OrderQty': qty},
         'ExecID': '*',
         'LastQty': '*',
         'OrderID': '*',
+        'ExecBroker': '*',
+        'Price': price2,
+        'QuodTradeQualifier': '*',
+        'BookID': '*',
         'TransactTime': '*',
-        'Text': '*',
+        'Text': 'order replaced',
         'AvgPx': '*',
         'SettlDate': '*',
         'Currency': '*',
@@ -106,49 +115,52 @@ def execute(report_id, session_id):
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType'])
+    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
     # region Cancelling order
-    # try:
-    #     rule_manager = RuleManager()
-    #     nos_rule_amend = rule_manager.add_OCR(eq_wrappers.get_buy_connectivity())
-    #     eq_wrappers.cancel_order_via_fix(case_id, session_id, eq_wrappers.get_cl_order_id(base_request),
-    #                                      str(int(eq_wrappers.get_cl_order_id(base_request)) + 1), client, 1)
-    # except:
-    #     rule_manager.remove_rule(nos_rule_amend)
-    # # endregion
-    # params = {
-    #     'OrderQty': qty,
-    #     'ExecType': '4',
-    #     'OrdStatus': '4',
-    #     'Side': 2,
-    #     'TimeInForce': 6,
-    #     'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-    #     'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
-    #     'ExecID': '*',
-    #     'LastQty': '*',
-    #     'OrderID': '*',
-    #     'TransactTime': '*',
-    #     'Text': '*',
-    #     'AvgPx': '*',
-    #     'SettlDate': '*',
-    #     'Currency': '*',
-    #     'HandlInst': '*',
-    #     'LeavesQty': '*',
-    #     'CumQty': '*',
-    #     'LastPx': '*',
-    #     'OrdType': '*',
-    #     'LastMkt': '*',
-    #     'OrderCapacity': '*',
-    #     'QtyType': '*',
-    #     'SettlType': '*',
-    #     'SecondaryOrderID': '*',
-    #     'NoParty': '*',
-    #     'Instrument': '*',
-    # }
-    # fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    # fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-    #                                      key_parameters=['ClOrdID', 'ExecType'])
-    #
-    # logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    try:
+        rule = rule_manager.add_OrderCancelRequest(eq_wrappers.get_sell_connectivity(), client + "_PARIS",
+                                                   "XPAR", True)
+        eq_wrappers.cancel_order_via_fix(case_id, eq_wrappers.get_buy_connectivity(), cl_order_id, cl_order_id, client,
+                                         1)
+    finally:
+        time.sleep(1)
+        rule_manager.remove_rule(rule)
+    # endregion
+    params = {
+        'OrderQtyData': {'OrderQty': qty},
+        'ExecType': '4',
+        'OrdStatus': '4',
+        'Side': '2',
+        'TimeInForce': '0',
+        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'OrigClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ExecID': '*',
+        'QuodTradeQualifier': '*',
+        'BookID': '*',
+        'LastQty': '*',
+        'ExecBroker': '*',
+        'OrderID': '*',
+        'Price': price2,
+        'TransactTime': '*',
+        'Text': 'order canceled',
+        'AvgPx': '*',
+        'SettlDate': '*',
+        'Currency': '*',
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'OrdType': '*',
+        'LastMkt': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'SettlType': '*',
+        'SecondaryOrderID': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+    }
+    fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
+
+    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

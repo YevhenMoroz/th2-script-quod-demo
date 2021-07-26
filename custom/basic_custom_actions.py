@@ -94,7 +94,9 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                         }
                     )
                 )
-            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF', 'venuePhaseSessionPegPriceType', 'venueOrdCapacity']:
+            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
+                         'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
+                         'ListingBlock']:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
                         message_value=(message_to_grpc(tag, group, session_alias)))
@@ -118,7 +120,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
-            id=MessageID(connection_id=ConnectionID(session_alias=session_alias))
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
         ),
         fields=content
     )
@@ -226,32 +228,21 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
             )
         elif isinstance(content[tag], list):
-            if tag == "PartiesBlock":
-                for group in content[tag]:
-                    content[tag][content[tag].index(group)] = ValueFilter(
-                        message_filter=filter_to_grpc(tag, group)
-                    )
-                content[tag] = ValueFilter(
-                    list_filter=ListValueFilter(
-                        values=content[tag]
-                    )
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=filter_to_grpc(tag, group)
                 )
-            else:
-                for group in content[tag]:
-                    content[tag][content[tag].index(group)] = ValueFilter(
-                        message_filter=filter_to_grpc(tag, group)
-                    )
-                content[tag] = ValueFilter(
-                    message_filter=MessageFilter(
-                        fields={
-                            tag: ValueFilter(
-                                list_filter=ListValueFilter(
-                                    values=content[tag]
-                                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
                             )
-                        }
-                    )
+                        )
+                    }
                 )
+            )
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
