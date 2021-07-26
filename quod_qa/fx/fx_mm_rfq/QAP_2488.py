@@ -121,6 +121,7 @@ def execute(report_id, session_id):
         quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_5m, today)
         # Step 4
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
+        close_dmi_window(case_base_request, dealer_service)
         # Step 5
         params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1m, symbol=symbol,
                                    securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
@@ -132,8 +133,8 @@ def execute(report_id, session_id):
         rfq.verify_quote_pending()
         check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_1m, today)
         time.sleep(120)
-        check_quote_request_b(case_base_request, ar_service, case_id, "Terminated", "Yes", qty_1m, today)
-        close_dmi_window(case_base_request, dealer_service)
+        check_quote_request_b(case_base_request, ar_service, case_id, "Expired", "Yes", qty_1m, today)
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)

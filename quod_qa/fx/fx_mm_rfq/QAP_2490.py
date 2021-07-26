@@ -1,6 +1,8 @@
 import logging
 from datetime import date
 from pathlib import Path
+from random import randint
+
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2
 from custom.verifier import Verifier
@@ -48,7 +50,7 @@ def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, c
     qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
     qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
     qr_near_leg_qty = ExtractionDetail("quoteRequestBook.nearQty", "NearLegQty")
-    qr_far_leg_qty = ExtractionDetail("quoteRequestBook.farQty", "NearFarQty")
+    qr_far_leg_qty = ExtractionDetail("quoteRequestBook.farQty", "FarLegQty")
     qrb.add_extraction_details([qrb_status, qrb_auto_quoting, qr_id, qr_near_leg_qty, qr_far_leg_qty])
     response = call(service.getQuoteRequestBookDetails, qrb.request())
 
@@ -56,8 +58,8 @@ def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, c
     verifier.set_event_name("Check QuoteRequest book")
     verifier.compare_values("Status", status, response[qrb_status.name])
     verifier.compare_values("AutomaticQuoting", auto_q, response[qrb_auto_quoting.name])
-    verifier.compare_values("Near leg qty", qty, response[qr_near_leg_qty.name].replace(",", "")[:-3])
-    verifier.compare_values("Far leg qty", qty, response[qr_far_leg_qty.name].replace(",", "")[:-3])
+    verifier.compare_values("Near leg qty", qty, response[qr_near_leg_qty.name].replace(",", ""))
+    verifier.compare_values("Far leg qty", qty, response[qr_far_leg_qty.name].replace(",", ""))
     verifier.verify()
     quote_id = response[qr_id.name]
     return quote_id
@@ -97,7 +99,7 @@ def execute(report_id, session_id):
     instrument = "GBP/USD-1W"
     client_tier = "Iridium1"
     account = "Iridium1_1"
-    qty = "1000000"
+    qty = str(randint(1000000, 2000000))
     symbol = "GBP/USD"
     security_type_swap = "FXSWAP"
     security_type = "FXFWD"
