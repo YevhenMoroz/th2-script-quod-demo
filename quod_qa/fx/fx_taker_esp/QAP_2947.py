@@ -102,7 +102,7 @@ def execute(report_id, session_id):
     ord_type = "Limit"
     tif = "Day"
     stop_price = "1.1"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     try:
         # Step 1

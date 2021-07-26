@@ -157,6 +157,26 @@ class ContextActionRatesTile:
             self.request.filterTopOfBooksVenue.CopyFrom(action)
         elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.ClickContextActionType):
             self.request.clickContextActionType.CopyFrom(action)
+        elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterSyntheticCombinations):
+            self.request.filterSyntheticCombinations.CopyFrom(action)
+
+    @staticmethod
+    def filter_synthetic_combination(currenc_pair: str):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterSyntheticCombinations()
+        action.currencyPair.append(currenc_pair)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+    @staticmethod
+    def filter_synthetic_combinations(currency_pair_list: list):
+        action = ar_operations_pb2.ContextActionRatesTile.FilterSyntheticCombinations()
+        for currenc_pair in currency_pair_list:
+            action.currencyPair.append(currenc_pair)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
 
     def build(self):
         return self.request
@@ -333,10 +353,7 @@ class ModifyRFQTileRequest:
 
 class ModifyRatesTileRequest:
     def __init__(self, details: BaseTileDetails = None):
-        if details is not None:
-            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest(data=details.build())
-        else:
-            self.modify_request = ar_operations_pb2.ModifyRatesTileRequest()
+        self.modify_request = ar_operations_pb2.ModifyRatesTileRequest(data=details.build())
 
     def set_details(self, details: BaseTileDetails):
         self.modify_request.data.CopyFrom(details.build())
@@ -602,7 +619,7 @@ class ExtractRatesTileDataRequest:
     def extract_instrument(self, name: str):
         self.extract_value(RatesTileValues.INSTRUMENT, name)
 
-    def extract_tenor(self, name: str):
+    def extract_tenor_date(self, name: str):
         self.extract_value(RatesTileValues.TENOR_DATE, name)
 
     def extract_quantity(self, name: str):
@@ -673,10 +690,10 @@ class TableActionsRequest:
     def build(self):
         return self.request
 
-# The buy and sell side have been reversed because act confused them
+
 class RFQTileOrderSide(Enum):
-    BUY = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
-    SELL = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
+    BUY = ar_operations_pb2.RFQTileOrderDetails.Action.BUY
+    SELL = ar_operations_pb2.RFQTileOrderDetails.Action.SELL
 
 
 # The buy and sell side have been reversed because act confused them
@@ -684,9 +701,6 @@ class ESPTileOrderSide(Enum):
     # buy and sell is top of book pips
     BUY = ar_operations_pb2.ESPTileOrderDetails.Action.SELL
     SELL = ar_operations_pb2.ESPTileOrderDetails.Action.BUY
-    # bid and ask btns
-    BID_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.BID_BTN
-    ASK_BTN = ar_operations_pb2.ESPTileOrderDetails.Action.ASK_BTN
 
 
 class PlaceRFQRequest:
@@ -709,15 +723,19 @@ class PlaceRFQRequest:
         return self.__request_details
 
 # TODO: quod - refactor
-# @dataclass
-# class ESPExtractionDetails:
-#     name: str
-#
-#
-# class ExtractedType(Enum):
-#     price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
-#     price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
-#     qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+@dataclass
+class ESPExtractionDetails:
+    name: str
+
+
+class ExtractedType(Enum):
+    price_pips = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_PIPS
+    price_large = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.PRICE_LARGE_VALUE
+    qty = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.QUANTITY
+    instrument = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.INSTRUMENT
+    order_type = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.ORDER_TYPE
+    time_in_force = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.TIME_IN_FORCE
+    side_button = ar_operations_pb2.ESPTileOrderDetails.ExtractedType.SIDE_BUTTON
 
 
 class PlaceESPOrder:
@@ -739,33 +757,11 @@ class PlaceESPOrder:
     def top_of_book(self, check: bool = True):
         self.__request_details.topOfBook = check
 
-    # TODO: quod - refactor: remove extraction method from Place ESPOrder action
-    #
-
-    #
-    # def close_ticket(self, close: bool):
-    #     self.__request_details.closeTicketWindow = close
-    #
-    # def extract_quantity(self, name: str):
-    #     self.extract_value(ExtractedType.qty, name)
-    #
-    # def extract_large(self, name: str):
-    #     self.extract_value(ExtractedType.price_large, name)
-    #
-    # def extract_pips(self, name: str):
-    #     self.extract_value(ExtractedType.price_pips, name)
-    #
-    # def extract_value(self, field: ExtractedType, name: str):
-    #     extracted_value = ar_operations_pb2.ESPTileOrderDetails.ExtractedValue()
-    #     extracted_value.type = field.value
-    #     extracted_value.name = name
-    #     self.__request_details.extractedValues.append(extracted_value)
-
     def build(self) -> ar_operations_pb2.ESPTileOrderDetails:
         return self.__request_details
 
 
-class MoveESPOrdedrTicketRequest:
+class MoveESPOrderTicketRequest:
     def __init__(self, base: EmptyRequest = None):
         self.base = base
         self.request = ar_operations_pb2.MoveESPOrderTicketRequest()

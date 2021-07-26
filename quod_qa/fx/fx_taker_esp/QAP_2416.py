@@ -99,7 +99,7 @@ def execute(report_id, session_id):
     tenor = "Spot"
 
     client = "ASPECT_CITI"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     try:
         # Step 1-2

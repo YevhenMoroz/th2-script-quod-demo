@@ -122,7 +122,7 @@ def execute(report_id, session_id):
     agr_str = "Hedging_test"
     agr_child_str = "Hedging_Test"
     client = "ASPECT_CITI"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     single_click = "SingleClick"
     double_click = "DoubleClick"

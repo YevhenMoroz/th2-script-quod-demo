@@ -55,7 +55,7 @@ def execute(report_id):
         md = FixClientSellEsp(params).\
             send_md_request().\
             verify_md_pending()
-        price= md.extruct_filed('Price')
+        price= md.extract_filed('Price')
 
         text='11734 \'TradeDate\' ({0}) is later than \'SettlDate\' ({1}) / 11697 No listing found for order with currency EUR'.\
             format(settldate_report,new_settldate_report)

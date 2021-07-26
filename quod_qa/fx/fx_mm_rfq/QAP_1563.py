@@ -103,7 +103,7 @@ def check_ord_reject_fe(base_request, ob_service, case_id, order, exp_ord):
     ob.set_default_params(base_request)
     ob.set_extraction_id('ex_id')
     ob.set_filter(['ClOrdID', str(order.response_messages_list[0].fields['ClOrdID'].simple_value)])
-    fre_notes = ExtractionDetail("orderBook.LmtPrice", "LmtPrice")
+    fre_notes = ExtractionDetail("orderBook.LmtPrice", "Limit Price")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
     ob_exec_sts = ExtractionDetail("orderBook.ExecSts", "ExecSts")
 

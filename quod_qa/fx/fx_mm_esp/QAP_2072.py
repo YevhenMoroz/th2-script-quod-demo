@@ -18,6 +18,12 @@ def create_or_get_rates_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
 
 
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
+
+
 def modify_rates_tile(base_request, service, instrument, client):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_client_tier(client)
@@ -61,6 +67,8 @@ def execute(report_id, session_id):
 
         check_base(base_details, cp_service, case_id, 1, "0.1")
         check_base(base_details, cp_service, case_id, 2, "0")
+
+        use_default(base_details, cp_service)
 
 
     except Exception:
