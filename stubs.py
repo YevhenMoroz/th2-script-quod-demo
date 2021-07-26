@@ -14,6 +14,7 @@ from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceServic
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
+from th2_grpc_act_gui_quod.trades_service import TradesServiceService
 from th2_grpc_act_quod.act_fix_service import ActFixService
 from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_check1.check1_service import Check1Service
@@ -51,7 +52,7 @@ class Stubs:
     core = factory.grpc_router.get_service(SimService)
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)
-    win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
+    win_act_trades = factory.grpc_router.get_service(TradesServiceService)
     win_act_order_ticket = factory.grpc_router.get_service(OrderTicketServiceService)
     win_act_order_ticket_fx = factory.grpc_router.get_service(OrderTicketFxServiceService)
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
