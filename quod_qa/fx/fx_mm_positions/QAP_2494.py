@@ -14,7 +14,7 @@ from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, 
     PositionsInfo, ExtractionPositionsAction
 from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 
@@ -83,7 +83,7 @@ def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
     expected_pnl = round(((position * mtk_px) + quote_pos), 1)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Daily MTM Pnl")
-    verifier.compare_values("MTM Pnl", str(expected_pnl), extracted_pnl.replace(",", "")[:-1])
+    verifier.compare_values("MTM Pnl", str(expected_pnl)[:-2], extracted_pnl.replace(",", ""))
     verifier.verify()
 
 
