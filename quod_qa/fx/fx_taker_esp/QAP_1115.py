@@ -89,7 +89,7 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     case_base_request = get_base_request(session_id, case_id)
     base_esp_details = BaseTileDetails(base=case_base_request)
@@ -107,6 +107,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

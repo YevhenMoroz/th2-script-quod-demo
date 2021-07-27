@@ -49,7 +49,7 @@ def place_order(base_request, service, qty, slippage, client):
     order_ticket.set_client(client)
     order_ticket.set_slippage(slippage)
     order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
+    new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
     call(service.placeFxOrder, new_order_details.build())
 
 
@@ -162,6 +162,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

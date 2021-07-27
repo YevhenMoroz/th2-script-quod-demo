@@ -12,17 +12,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-3343"
     case_id = create_event(case_name, report_id)
     # region Declarations
-    qty = "800"
+    qty = "900"
     price = "3"
     client = "MOClient"
+    account1 = "MOClient_SA1"
+    account2 = "MOClient_SA2"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
@@ -31,11 +32,11 @@ def execute(report_id):
     # # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-317ganymede-standard',
-                                                                             'MO_Client_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-buy-317ganymede-standard',
-                                                                      'MO_Client_PARIS', 'XPAR', 3,
-                                                                      800, 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client+'_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                       client+'_PARIS', 'XPAR', int(price),
+                                                                      int(qty), 1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -57,24 +58,21 @@ def execute(report_id):
     eq_wrappers.approve_block(base_request)
     eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'Accepted')
     eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Matched')
-    responce_allocation = eq_wrappers.allocate_order(base_request, [{"Security Account": "MOClient_SA1",
-                                                                   "Alloc Qty": "400"},
-                                              {"Security Account": "MOClient_SA2", "Alloc Qty": "400"}])
-    print(responce_allocation)
+    responce_allocation = eq_wrappers.allocate_order(base_request, [{"Security Account": account1,
+                                                                   "Alloc Qty": str(int(int(qty)/2))},
+                                              {"Security Account": account2, "Alloc Qty": str(int(int(qty)/2))}])
     params = {
-        # 'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'AllocQty': 400,
-        'AllocAccount': 'MOClient_SA1',
+        'AllocQty': str(int(int(qty)/2)),
+        'AllocAccount': account1,
         'SettlCurrFxRateCalc':'M',
         'SettlCurrFxRate' : '1',
         'SettlCurrency':'UAH',
         'SettlCurrAmt': '*',
         'ConfirmType': 2,
         'Side': '*',
-        'Account': 'MOClient',
         'Currency': '*',
         'NoParty': '*',
         'Instrument': '*',
@@ -82,7 +80,6 @@ def execute(report_id):
         'SettlDate': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
-        # 'NoRootMiscFeesList': '*',
         'MatchStatus': '*',
         'ConfirmStatus': '*',
         'QuodTradeQualifier': '*',
@@ -91,45 +88,28 @@ def execute(report_id):
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
              'OrderID': '*'}
         ],
-        'AllocInstructionMiscBlock1':
-            {
-                'BOMiscField4': 'TH2TH2TH2',
-                'BOMiscField3': '4',
-                'BOMiscField2': '3',
-                'BOMiscField1': '2',
-                'BOMiscField0': '1',
-
-            },
+        'AllocInstructionMiscBlock1':'*',
         'AllocID': '*',
         'NetMoney': '*',
-        # 'BookingType': '*',
-        # 'AllocType': '*',
-        # 'RootSettlCurrAmt': '*',
-        # 'AllocTransType': '1',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'CommissionData': '*',
-        # 'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders', 'AllocAccount'])
     params = {
-        # 'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'AllocQty': 400,
-        'AllocAccount': 'MOClient_SA2',
+        'AllocQty': str(int(int(qty)/2)),
         'ConfirmType': 2,
         'SettlCurrFxRateCalc': 'M',
         'SettlCurrFxRate': '1',
         'SettlCurrency': 'UAH',
         'SettlCurrAmt': '*',
         'Side': '*',
-        'Account': 'MOClient',
+        'Account': client,
         'Currency': '*',
         'NoParty': '*',
         'Instrument': '*',
@@ -137,7 +117,6 @@ def execute(report_id):
         'SettlDate': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
-        # 'NoRootMiscFeesList': '*',
         'MatchStatus': '*',
         'ConfirmStatus': '*',
         'QuodTradeQualifier': '*',
@@ -146,36 +125,20 @@ def execute(report_id):
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
              'OrderID': '*'}
         ],
-        'AllocInstructionMiscBlock1':
-            {
-                'BOMiscField4': 'TH2TH2TH2',
-                'BOMiscField3': '4',
-                'BOMiscField2': '3',
-                'BOMiscField1': '2',
-                'BOMiscField0': '1',
-
-            },
+        'AllocInstructionMiscBlock1':'*',
         'AllocID': '*',
         'NetMoney': '*',
-        # 'BookingType': '*',
-        # 'AllocType': '*',
-        # 'RootSettlCurrAmt': '*',
-        # 'AllocTransType': '1',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'CommissionData': '*',
-        # 'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders', 'AllocAccount'])
     params = {
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
-        'Account': 'MOClient',
+        'Account': client,
         'AvgPx': '*',
         'Side': '*',
         'Currency': '*',
@@ -185,9 +148,6 @@ def execute(report_id):
         'SettlDate': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
-        # 'NoRootMiscFeesList': '*',
-        # 'MatchStatus': '*',
-        # 'ConfirmStatus': '*',
         'QuodTradeQualifier': '*',
         'BookID': 'DMA Washbook',
         'NoOrders': [
@@ -202,19 +162,13 @@ def execute(report_id):
         'AllocTransType': '0',
         'RootSettlCurrency': 'UAH',
         'ReportedPx': '*',
-        # 'CpctyConfGrp': '*',
-        # 'ConfirmTransType': '*',
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'CommissionData': '*',
-        # 'NoMiscFees': '*',
-        # 'ConfirmID': '*',
         'NoAllocs': [
             {
                 'AllocSettlCurrAmt': '*',
                 'AllocNetPrice': '*',
-                'AllocAccount': 'MOClient_SA1',
+                'AllocAccount': account1,
                 'AllocPrice': '3',
-                'AllocQty': 400,
+                'AllocQty':str(int(int(qty)/2)),
                 'AllocSettlCurrency':'UAH',
                 'SettlCurrAmt': '*',
                 'SettlCurrFxRate':'1',
@@ -225,9 +179,9 @@ def execute(report_id):
             {
                 'AllocSettlCurrAmt': '*',
                 'AllocNetPrice': '*',
-                'AllocAccount': 'MOClient_SA2',
+                'AllocAccount': account2,
                 'AllocPrice': '3',
-                'AllocQty': 400,
+                'AllocQty': str(int(int(qty)/2)),
                 'AllocSettlCurrency': 'UAH',
                 'SettlCurrAmt': '*',
                 'SettlCurrFxRate': '1',
@@ -235,16 +189,7 @@ def execute(report_id):
                 'SettlCurrency': 'UAH'
             }
         ],
-        'AllocInstructionMiscBlock1':
-            {
-                'BOMiscField4': 'TH2TH2TH2',
-                'BOMiscField3': '4',
-                'BOMiscField2': '3',
-                'BOMiscField1': '2',
-                'BOMiscField0': '1',
-
-            },
+        'AllocInstructionMiscBlock1':'*'
 
     }
-    fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType','AllocTransType'])

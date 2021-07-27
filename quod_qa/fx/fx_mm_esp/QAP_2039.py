@@ -5,7 +5,7 @@ from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
+from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ModifyRatesTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
@@ -28,6 +28,12 @@ def modify_esp_tile(base_request, service, from_c, to_c, tenor, venue):
 
 def create_or_get_pricing_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
+
+
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
 
 
 def modify_pricing_tile(base_request, service, instrument, client):
@@ -111,7 +117,7 @@ def execute(report_id, session_id):
     from_curr = "AUD"
     to_curr = "CAD"
     tenor = "Spot"
-    venue = "HSBC"
+    venue = "HSB"
     instrument = "AUD/CAD-Spot"
     client_tier = "Silver"
 
@@ -133,8 +139,11 @@ def execute(report_id, session_id):
         check_bid_price(case_id, esp_price[0], pricing_tile_price[0], base[0])
         check_ask_price(case_id, esp_price[1], pricing_tile_price[1], base[1])
 
+        use_default(base_details, cp_service)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tiles

@@ -81,12 +81,11 @@ def verify_assigned_grid_row(base_request, service, case_id, rfq_id):
     ver.verify()
 
 
-def execute(report_id, case_params):
+def execute(report_id, case_params, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     act = Stubs.fix_act
     verifier = Stubs.verifier
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     seconds, nanos = bca.timestamps()  # Store case start time
@@ -129,8 +128,6 @@ def execute(report_id, case_params):
                         bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
                         ))
         # endregion
-
-        prepare_fe(case_id, session_id)
 
         rfq_id = extract_unassigned_grid(base_request, service)
 

@@ -54,7 +54,7 @@ def execute(report_id):
                                    securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price = md.extruct_filed('Price')
+        price = md.extract_filed('Price')
         md.send_new_order_single(price).verify_order_rejected(text)
 
 

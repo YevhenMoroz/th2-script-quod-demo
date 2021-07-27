@@ -28,11 +28,8 @@ client = "KEPLER"
 order_type = "Limit"
 case_name = os.path.basename(__file__)
 connectivity_feed_handler = "fix-fh-310-columbia"
-# connectivity_feed_handler = "fix-feed-handler-316-ganymede"
 connectivity_buy_side = "fix-bs-310-columbia"
-# connectivity_buy_side = "fix-buy-side-316-ganymede"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
-# connectivity_sell_side = "fix-sell-side-316-ganymede"
 QDL2_id = "9400000038"
 QDL1_id = "9400000036"
 
@@ -98,7 +95,7 @@ def execute(report_id):
                 'MDEntryPositionNo': '1'
             }
         ]
-    # send_MD(QDL1_id, case_id_1, market_data1)
+    send_MD(QDL1_id, case_id_1, market_data1)
     market_data2 = [
         {
             'MDEntryType': '0',
@@ -113,7 +110,7 @@ def execute(report_id):
             'MDEntryPositionNo': '1'
         }
     ]
-    # send_MD(QDL2_id, case_id_1, market_data2)
+    send_MD(QDL2_id, case_id_1, market_data2)
     fix_manager_310 = FixManager(connectivity_sell_side, case_id)
     verifier_310_sell_side = FixVerifier(connectivity_sell_side, case_id)
     verifier_310_buy_side = FixVerifier(connectivity_buy_side, case_id)

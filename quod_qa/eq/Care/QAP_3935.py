@@ -37,7 +37,7 @@ def execute(report_id):
     newPrice = "1"
     time = datetime.utcnow().isoformat()
     lookup = "VETO"
-    client = "CLIENTSKYLPTOR"
+    client = "CLIENT_FIX_CARE"
     # endregion
     list_param = {'qty': qty, 'Price': newPrice}
     # region Open FE

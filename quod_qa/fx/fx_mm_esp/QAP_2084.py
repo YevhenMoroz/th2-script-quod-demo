@@ -5,10 +5,8 @@ from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
-from quod_qa.fx.fx_wrapper.NewOrderSingle import NewOrderSingle
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
@@ -55,7 +53,7 @@ def execute(report_id):
                                    securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price= md.extruct_filed('Price')
+        price= md.extract_filed('Price')
 
         text='not enough quantity in book'
         params.orderqty=new_orderqty

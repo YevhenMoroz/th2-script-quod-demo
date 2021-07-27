@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-1015"
     seconds, nanos = timestamps()  # Store case start time
 
@@ -30,13 +30,12 @@ def execute(report_id):
     act = Stubs.win_act_order_book
     qty = "900"
     price = "20"
-    client = "CLIENT1"
-    lookup = "PROL"
+    client = "CLIENT_FIX_CARE"
+    lookup = "VETO"
     order_type = "Limit"
 
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    session_id = set_session_id()
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     init_event = create_event("Initialization", parent_id=report_id)
@@ -61,21 +60,7 @@ def execute(report_id):
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
     # endregion
     # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Sent"),
-                                                  ]))
-
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
     # endregion
     # region switch to user2
     eq_wrappers.switch_user(session_id2, case_id)
@@ -84,14 +69,7 @@ def execute(report_id):
     eq_wrappers.reject_order(lookup, qty, price)
     # endregion
     # region Check values in OrderBook after Accept
-    set_base(session_id, case_id)
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                     [verify_ent("Order Status", order_status.name, "Rejected")]))
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Rejected")
     # endregion
-
     close_fe(case_id, session_id2)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

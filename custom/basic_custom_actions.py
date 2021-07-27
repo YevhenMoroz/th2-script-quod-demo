@@ -94,6 +94,13 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                         }
                     )
                 )
+            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
+                         'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
+                         'ListingBlock']:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag, group, session_alias)))
+                content[tag] = Value(list_value=ListValue(values=content[tag]))
             else:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
@@ -113,7 +120,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
-            id=MessageID(connection_id=ConnectionID(session_alias=session_alias))
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
         ),
         fields=content
     )
@@ -334,7 +341,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None) -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": "ERROR"}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -348,8 +355,8 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     event = Event(
         id=event_id,
         name=event_name,
-        status='SUCCESS',
-        body=b"",
+        status=status,
+        body=bytes(body, 'utf8'),
         start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
         # end_timestamp=current_timestamp,
         parent_id=parent_id)

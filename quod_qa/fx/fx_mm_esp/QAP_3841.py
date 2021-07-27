@@ -4,10 +4,8 @@ from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
-from quod_qa.fx.fx_wrapper.NewOrderSingle import NewOrderSingle
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
@@ -57,7 +55,7 @@ def execute(report_id):
         md = FixClientSellEsp(params).\
             send_md_request().\
             verify_md_pending()
-        price= md.extruct_filed('Price')
+        price= md.extract_filed('Price')
 
         text='11734 \'TradeDate\' ({0}) is later than \'SettlDate\' ({1}) / 11697 No listing found for order with currency EUR'.\
             format(settldate_report,new_settldate_report)

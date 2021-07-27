@@ -8,7 +8,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe303, close_fe, call
+from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -394,8 +394,8 @@ def execute(report_id, case_params):
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 
-    prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
-                  Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
+    # prepare_fe303(case_id, session_id, Stubs.custom_config['qf_trading_fe_folder_303'],
+    #               Stubs.custom_config['qf_trading_fe_user_303'], Stubs.custom_config['qf_trading_fe_password_303'])
 
     execution_id = bca.client_orderid(4)
     ob = OrdersDetails()

@@ -52,10 +52,10 @@ def execute(report_id):
                                       settltype, settldate_wk1, symbol, securitytype_fwd, securityid,account=account)
         params.prepare_md_for_verification(bands, priced=False, which_bands_not_pr=bands_not_priced)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price=md.extruct_filed('Price')
+        price=md.extract_filed('Price')
 
         #Step 4
-        fwd_p = md.extruct_filed('MDEntryForwardPoints',1)
+        fwd_p = md.extract_filed('MDEntryForwardPoints', 1)
         last_spot_rate=str(round((float(price)-float(fwd_p)),5))
         md.send_new_order_single(price).verify_order_pending().verify_order_new().\
             verify_order_filled_fwd(price,fwd_point=fwd_p,last_spot_rate=last_spot_rate)

@@ -140,11 +140,11 @@ def execute(report_id, session_id):
         order_id = check_order_book(case_base_request, ob_act)
         # Step 2
         click_checkboxes(base_rfq_details, ar_service, case_left_checkbox)
-        place_order_tob(base_rfq_details, ar_service, case_side_buy)
+        place_order_tob(base_rfq_details, ar_service, case_side_sell)
         compare_order(case_base_request, ob_act, case_id, order_id)
         # Step 3
         click_checkboxes(base_rfq_details, ar_service, case_right_checkbox)
-        place_order_tob(base_rfq_details, ar_service, case_side_sell)
+        place_order_tob(base_rfq_details, ar_service, case_side_buy)
         compare_order(case_base_request, ob_act, case_id, order_id)
 
         # Close tile
@@ -152,3 +152,4 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

@@ -215,7 +215,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -263,7 +262,7 @@ def execute(report_id):
         #endregion
 
 
-        #region Cansel order
+        #region Cancel order
         case_id_3 = bca.create_event("Filled Order", case_id)
         # Check that FIXBUYTH2 sent 35=8 Filled
         er_5 = {

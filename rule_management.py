@@ -20,7 +20,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8,9]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -235,6 +235,16 @@ class RuleManager:
     def add_fx_md_to(session: str):
         return Stubs.simulator.createQuodDefMDRFXRule(
             request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
+        return Stubs.simulator.createMarketNewOrdSingleFOK(
+            request=TemplateMarketNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  price=price
+                                                  ))
 
     # ------------------------
 

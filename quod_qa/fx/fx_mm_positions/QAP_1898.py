@@ -63,6 +63,16 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
 
     try:
+        rfq = FixClientSellRfq(
+            CaseParamsSellRfq(client, case_id, side=side, orderqty=order_qty, symbol=symbol, securitytype=security_type,
+                              settldate=settle_date,
+                              settltype=settle_type, currency=currency, account=account)). \
+            send_request_for_quote(). \
+            verify_quote_pending()
+        price = rfq.extract_filed("BidPx")
+        rfq.send_new_order_single(price). \
+            verify_order_pending(). \
+            verify_order_filled_fwd()
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
 
@@ -73,7 +83,7 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("BidPx")
+        price = rfq.extract_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled_fwd()
@@ -84,3 +94,4 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

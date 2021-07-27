@@ -23,7 +23,7 @@ text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
 text_f='Fill'
-text_s = 'sim work'
+text_s = 'Canceled'
 text_nlf = 'no liquidity found'
 side = 1
 price = 40
@@ -188,7 +188,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '0',
             'Price': price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
@@ -203,7 +202,6 @@ def execute(report_id):
             OrdStatus='0',
             SettlDate='*',
             ExecRestatementReason='*',
-            SettlType='*'
         )
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         #endregion
@@ -220,7 +218,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
-            'ChildOrderID': '*',
             'Side': side,
             'Price': price,
             'SettlDate': '*',
@@ -315,7 +312,6 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
             'ExecRestatementReason': '*',
-            'SettlType': '*',
             'Price': price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument,

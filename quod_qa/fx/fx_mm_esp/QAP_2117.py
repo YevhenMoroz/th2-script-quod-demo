@@ -45,6 +45,12 @@ def press_executable(base_request, service):
     call(service.modifyRatesTile, modify_request.build())
 
 
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
+
+
 def place_order(base_request, service, client, slippage, qty):
     place_request = PlaceRatesTileOrderRequest(details=base_request)
     place_request.set_slippage(slippage)
@@ -98,7 +104,7 @@ def execute(report_id, session_id):
     instrument_type = "Spot"
     qty_1m = "1000000"
     qty_2m = "2000000"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
     empty_free_notes = ""
     pricing_off = "not active"
     executable_off = "not tradeable"
@@ -150,8 +156,11 @@ def execute(report_id, session_id):
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
                          qty_2m, owner, client, empty_free_notes, sts_term)
 
+        use_default(base_details, cp_service)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

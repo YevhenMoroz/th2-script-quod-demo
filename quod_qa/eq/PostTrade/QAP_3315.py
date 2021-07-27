@@ -12,18 +12,17 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id,session_id):
     case_name = "QAP-3315"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "40"
-    client = "CLIENTYMOROZ"
-    account = "YM_client_SA1"
+    client = "MOClient"
+    account = "MOClient_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
 
@@ -32,7 +31,7 @@ def execute(report_id):
     # endregion
 
     # region Create DMA
-    connectivity_buy_side = "fix-bs-eq-paris"
+    connectivity_buy_side = eq_wrappers.get_buy_connectivity()
     rule_manager = RuleManager()
     try:
         rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, client + "_PARIS",
@@ -54,6 +53,7 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
     eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
     params = {
+        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
@@ -65,8 +65,8 @@ def execute(report_id):
         'header': '*',
         'SettlDate': '*',
         'LastMkt': '*',
+        'BookID': '*',
         'GrossTradeAmt': '*',
-        'NoRootMiscFeesList': '*',
         'QuodTradeQualifier': '*',
         'NoOrders': [
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
@@ -74,17 +74,16 @@ def execute(report_id):
         ],
         'AllocID': '*',
         'NetMoney': '*',
+        'AllocInstructionMiscBlock1': '*',
         'BookingType': '*',
         'AllocType': '*',
         'RootSettlCurrAmt': '*',
-        'RootOrClientCommission': '*',
         'AllocTransType': '0',
         'ReportedPx': '*',
-        'RootOrClientCommissionCurrency': '*',
 
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders'])
+    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders'])
     # endregion
     # region Approve
     eq_wrappers.approve_block(base_request)
@@ -104,10 +103,12 @@ def execute(report_id):
         'Side': '*',
         'Currency': '*',
         'NoParty': '*',
+        'BookID': '*',
         'Instrument': '*',
         'header': '*',
         'SettlDate': '*',
         'LastMkt': '*',
+        'AllocInstructionMiscBlock1': '*',
         'GrossTradeAmt': '*',
         'MatchStatus': '*',
         'ConfirmStatus': '*',
@@ -121,20 +122,20 @@ def execute(report_id):
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
-        'CommissionData': '*',
-        'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
-    fix_verifier_ss.CheckConfirmation(params, response, ['AllocAccount', 'NoOrders'])
+    fix_verifier_bo.CheckConfirmation(params, response, ['AllocAccount', 'NoOrders'])
 
     params = {
+        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
         'Side': '*',
+        'AllocInstructionMiscBlock1': '*',
         'Currency': '*',
+        'BookID': '*',
         'NoParty': '*',
         'Instrument': '*',
         'header': '*',
@@ -169,8 +170,7 @@ def execute(report_id):
             }
         ],
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
+    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
     # endregion
     # region Un-allocate
     eq_wrappers.unallocate_order(base_request)

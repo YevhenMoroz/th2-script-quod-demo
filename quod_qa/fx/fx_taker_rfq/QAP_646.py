@@ -108,7 +108,7 @@ def check_order_book(ex_id, base_request, instr_type, act_ob, case_id, qty):
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
 
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "FXSwap"
     case_qty1 = 1000000
     case_qty2 = 11
@@ -170,3 +170,4 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

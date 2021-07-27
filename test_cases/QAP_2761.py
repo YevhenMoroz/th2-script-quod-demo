@@ -10,7 +10,8 @@ from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOr
 from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
+    ExtractRatesTileValues
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
@@ -91,13 +92,13 @@ class TestCase:
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.12618,
-                    "MDEntrySize": qty+2000000,
+                    "MDEntrySize": qty + 2000000,
                     "MDEntryPositionNo": 2,
                 },
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.12592,
-                    "MDEntrySize": qty+8000000,
+                    "MDEntrySize": qty + 8000000,
                     "MDEntryPositionNo": 3,
                 },
                 {
@@ -109,13 +110,13 @@ class TestCase:
                 {
                     "MDEntryType": "1",
                     "MDEntryPx": 1.12795,
-                    "MDEntrySize": qty+2000000,
+                    "MDEntrySize": qty + 2000000,
                     "MDEntryPositionNo": 2,
                 },
                 {
                     "MDEntryType": "1",
                     "MDEntryPx": 1.12827,
-                    "MDEntrySize": qty+8000000,
+                    "MDEntrySize": qty + 8000000,
                     "MDEntryPositionNo": 3,
                 },
             ]
@@ -137,7 +138,22 @@ class TestCase:
         modify_request.set_quantity(qty)
         call(self.ar_service.modifyRatesTile, modify_request.build())
 
-    def check_order_ticket(self, qty, side):
+    def Check_rates_tile_table_values(self, row, bid, ask):
+        extract_table_request = ExtractRatesTileTableValuesRequest(details=self.base_details)
+        extract_table_request.set_extraction_id("extrId1")
+        extract_table_request.set_row_number(row)
+        extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.AskPx", "Px"))
+        extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.BidPx", "Px"))
+        data_table = call(self.ar_service.extractESPAggrRatesTableValues, extract_table_request.build())
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name("Checking RatesTile Details")
+        verifier.compare_values("best bid", data_table["rateTile.BidPx"], bid)
+        verifier.compare_values("best ask", data_table["rateTile.AskPx"], ask)
+        verifier.verify()
+
+        return data_table
+
+    def check_order_ticket(self, qty, side, check):
         ticket = 'OrderTicket'
         esp_request = PlaceESPOrder(details=self.base_details)
         if side == 'buy':
@@ -146,30 +162,36 @@ class TestCase:
             esp_request.set_action(ESPTileOrderSide.SELL)
         esp_request.top_of_book(True)
         esp_request.close_ticket(True)
-        tick_qty = esp_request.extract_quantity(f'{ticket}.qty')
-        esp_request.extract_large(f'{ticket}.large')
+        esp_request.extract_quantity(f'{ticket}.qty')
+        #esp_request.extract_large(f'{ticket}.large')
         esp_request.extract_pips(f'{ticket}.pips')
         result = call(self.ar_service.placeESPOrder, esp_request.build())
-        #
-        #
-        # cust_verifier = Verifier(self.case_id)
-        # cust_verifier.set_event_name('Checking OrderTicket for ' + side + ' side and Qty: ' + qty)
-        # cust_verifier.compare_values('OrderTicket Qty', qty, result[tick_qty])
-        # cust_verifier.verify()
+
+        cust_verifier = Verifier(self.case_id)
+        cust_verifier.set_event_name('Checking OrderTicket for ' + side + ' side and Qty: ' + qty)
+        cust_verifier.compare_values('OrderTicket pips', check, result[f'{ticket}.pips'])
+        qty = qty[:-6] + ',' + qty[-6:-3] + ',' + qty[-3:]
+        cust_verifier.compare_values('OrderTicket Qty', qty, result[f'{ticket}.qty'])
+        cust_verifier.verify()
         for k in result:
             print(f'{k} = {result[k]}')
 
     # Main method
     def execute(self):
         try:
-            qty_1 = '1000000'
+            qty_1 = '2000000'
+            qty_2 = '7000000'
             self.prepare_frontend()
             self.create_or_get_rates_tile()
-            # self.send_market_data(1000000)
+            self.send_market_data(1000000)
+            self.Check_rates_tile_table_values(1, "734", "784")
+            ask = self.Check_rates_tile_table_values(2, "618", "795")["rateTile.AskPx"]
+            bid = self.Check_rates_tile_table_values(3, "592", "827")["rateTile.BidPx"]
             self.modify_rates_tile(qty_1)
-            self.check_order_ticket(qty_1, 'buy')
-            # self.send_market_data(5000000)
-            # self.send_market_data(7000000)
+            self.check_order_ticket(qty_1, 'buy', ask)
+            self.modify_rates_tile(qty_2)
+            self.check_order_ticket(qty_2, 'sell', bid)
+
         except Exception as e:
             logging.error('Error execution', exc_info=True)
         close_fe(self.case_id, self.session_id)

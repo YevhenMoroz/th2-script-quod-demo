@@ -12,31 +12,30 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3337"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "50"
-    client = "CLIENTYMOROZ"
-    account = "CLIENT_YMOROZ_SA1"
+    client = "MOClient"
+    account = "MOClient_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    # region Create CO
+    # region Create Order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-317ganymede-standard',
-                                                                             'CLIENTYMOROZ_PARIS', "XPAR", int(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-buy-317ganymede-standard',
-                                                                      'CLIENTYMOROZ_PARIS', 'XPAR',
-                                                                     int(price), int(qty), 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR',
+                                                                      int(price), int(qty), 1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
@@ -80,7 +79,6 @@ def execute(report_id):
     eq_wrappers.verify_allocate_value(base_request, case_id, "Status", "Canceled", account)
     eq_wrappers.verify_allocate_value(base_request, case_id, "Match Status", "Unmatched", account)
     params = {
-        'Account': client,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
@@ -92,7 +90,8 @@ def execute(report_id):
         'NoParty': '*',
         'Instrument': '*',
         'header': '*',
-        'AllocInstructionMiscBlock1':'*',
+        'BookID': '*',
+        'AllocInstructionMiscBlock1': '*',
         'SettlDate': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
@@ -108,11 +107,9 @@ def execute(report_id):
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '2',
-        'CommissionData': '*',
-        'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_bo = FixVerifier('fix-sell-317-backoffice', case_id)
+    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckConfirmation(params, response, ['NoOrders', 'ConfirmTransType'])
     # endregion
     # region UnBook
@@ -129,6 +126,7 @@ def execute(report_id):
         'AvgPx': '*',
         'Side': '*',
         'Currency': '*',
+        'BookID': '*',
         'NoParty': '*',
         'Instrument': '*',
         'header': '*',
@@ -154,31 +152,22 @@ def execute(report_id):
                 'AllocAccount': account,
                 'AllocPrice': price,
                 'AllocQty': qty,
-                'NoMiscFees': [
-                    {
-                        'MiscFeeAmt': '*',
-                        'MiscFeeCurr': '*',
-                        'MiscFeeType': '*',
-                    }
-                ]
+                'NoMiscFees': '*'
             }
         ],
     }
     fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
     params = {
         'Account': client,
-        'RootCommTypeClCommBasis': '*',
-        'NoRootMiscFeesList': '*',
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
         'Side': '*',
         'Currency': '*',
+        'BookID': '*',
         'AllocInstructionMiscBlock1': '*',
         'NoParty': '*',
-        'RootOrClientCommission': '*',
-        'RootOrClientCommissionCurrency': '*',
         'Instrument': '*',
         'header': '*',
         'SettlDate': '*',

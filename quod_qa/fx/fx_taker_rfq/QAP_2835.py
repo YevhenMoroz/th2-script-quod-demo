@@ -134,13 +134,13 @@ def execute(report_id, session_id):
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_tenor = "Spot"
-    case_venue = ["HSBC"]
-    case_filter_venue = "HSBC"
+    case_venue = ["CITI"]
+    case_filter_venue = "CITI"
     case_qty = 10000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'Spot'
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -166,6 +166,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile
