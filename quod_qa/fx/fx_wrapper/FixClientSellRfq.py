@@ -11,8 +11,8 @@ class FixClientSellRfq():
     case_params_sell_rfq = None
     new_order = None
     quote_response = None
-    price =''
-    quote_id=''
+    price = ''
+    quote_id = ''
 
     def __init__(self, case_params_sell_rfq):
         self.case_params_sell_rfq = case_params_sell_rfq
@@ -22,7 +22,7 @@ class FixClientSellRfq():
     # Send RFQ
     def send_request_for_quote(self):
         self.case_params_sell_rfq.prepare_rfq_params()
-        print('RFQ' , self.case_params_sell_rfq.rfq_params)
+        print('RFQ', self.case_params_sell_rfq.rfq_params)
         self.quote = self.fix_act.placeQuoteFIX(
             bca.convert_to_request(
                 'Send Request For Quote',
@@ -35,7 +35,7 @@ class FixClientSellRfq():
 
     def send_request_for_quote_no_reply(self):
         self.case_params_sell_rfq.prepare_rfq_params()
-        print('RFQ' , self.case_params_sell_rfq.rfq_params)
+        print('RFQ', self.case_params_sell_rfq.rfq_params)
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Request For Quote',
@@ -75,7 +75,7 @@ class FixClientSellRfq():
 
     def send_quote_cancel(self):
         self.case_params_sell_rfq.set_quote_cancel_params()
-        self.case_params_sell_rfq.quote_cancel['QuoteID']=self.case_params_sell_rfq.quote_params['QuoteID']
+        self.case_params_sell_rfq.quote_cancel['QuoteID'] = self.case_params_sell_rfq.quote_params['QuoteID']
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send QuoteCancel',
@@ -87,14 +87,16 @@ class FixClientSellRfq():
         return self
 
     # Send New Order Single
-    def send_new_order_single(self, price, side=''):
+    def send_new_order_single(self, price, side='', quote_id=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
         self.price = price
         self.case_params_sell_rfq.order_params['Price'] = self.price
         self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
-        if side!='':
+        if quote_id != '':
+            self.case_params_sell_rfq.order_params['QuoteID'] = quote_id
+        if side != '':
             self.case_params_sell_rfq.order_params['Side'] = side
-        print('Send an order', self.case_params_sell_rfq.order_params)
+        print('Send an order    ', self.case_params_sell_rfq.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
@@ -109,16 +111,17 @@ class FixClientSellRfq():
         self.price = price
         self.case_params_sell_rfq.order_multi_leg_params['Price'] = self.price
 
-        if price=='':
+        if price == '':
             self.case_params_sell_rfq.order_multi_leg_params.pop('Price')
         self.case_params_sell_rfq.order_multi_leg_params['QuoteID'] = self.quote_id
-        if side!='':
+        if side != '':
             self.case_params_sell_rfq.order_multi_leg_params['Side'] = side
         print('Send an order', self.case_params_sell_rfq.order_multi_leg_params)
 
         self.new_order = self.fix_act.placeOrderMultilegFIX(
             request=bca.convert_to_request(
-                'Send new order multi leg ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
+                'Send new order multi leg ' + tif, self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
                 bca.message_to_grpc('NewOrderMultileg', self.case_params_sell_rfq.order_multi_leg_params,
                                     self.case_params_sell_rfq.connectivityRFQ)
             ))
@@ -140,40 +143,41 @@ class FixClientSellRfq():
         extract_value = self.quote.response_messages_list[0].fields[field].simple_value
         return extract_value
 
-
-
     # VERIFICATION
 
     # Check Market Data respons was received
-    def verify_quote_pending(self,offer_forward_points='',bid_forward_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''):
+    def verify_quote_pending(self, offer_forward_points='', bid_forward_points='', bid_size='', offer_size='',
+                             offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate=''):
         self.case_params_sell_rfq.prepare_quote_report()
-        self.quote_id=self.extract_filed('QuoteID')
+        self.quote_id = self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params['QuoteMsgID'] = self.quote_id
         # self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
         self.case_params_sell_rfq.quote_params.pop('Account')
-        self.case_params_sell_rfq.quote_params['SettlType'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
-        self.case_params_sell_rfq.quote_params['SettlDate'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
+        self.case_params_sell_rfq.quote_params['SettlType'] = \
+        self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
+        self.case_params_sell_rfq.quote_params['SettlDate'] = \
+        self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
         if 'Side' in self.case_params_sell_rfq.quote_params.keys() == False:
             self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
             self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
             self.case_params_sell_rfq.quote_params['BidPx'] = '*'
             self.case_params_sell_rfq.quote_params['BidSize'] = '*'
-        if offer_forward_points!='':
+        if offer_forward_points != '':
             self.case_params_sell_rfq.quote_params['OfferForwardPoints'] = offer_forward_points
-        if bid_forward_points!='':
+        if bid_forward_points != '':
             self.case_params_sell_rfq.quote_params['BidForwardPoints'] = bid_forward_points
-        if bid_size!='':
+        if bid_size != '':
             self.case_params_sell_rfq.quote_params['BidSize'] = bid_size
-        if offer_size!='':
+        if offer_size != '':
             self.case_params_sell_rfq.quote_params['OfferSize'] = offer_size
-        if offer_px!='':
+        if offer_px != '':
             self.case_params_sell_rfq.quote_params['OfferPx'] = offer_px
-        if bid_px!='':
+        if bid_px != '':
             self.case_params_sell_rfq.quote_params['BidPx'] = bid_px
-        if bid_spot_rate!='':
+        if bid_spot_rate != '':
             self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
-        if offer_spot_rate!='':
+        if offer_spot_rate != '':
             self.case_params_sell_rfq.quote_params['OfferSpotRate'] = offer_spot_rate
 
         self.verifier.submitCheckRule(
@@ -183,34 +187,34 @@ class FixClientSellRfq():
                 self.quote.checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id
-                                  )
+            )
         )
         return self
 
-    def verify_quote_pending_swap(self,offer_swap_points='',bid_swap_points='', bid_size='',offer_size='', offer_px='',bid_px='', bid_spot_rate='', offer_spot_rate=''
+    def verify_quote_pending_swap(self, offer_swap_points='', bid_swap_points='', bid_size='', offer_size='',
+                                  offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate=''
                                   , leg_of_fwd_p='', leg_bid_fwd_p=''):
         self.case_params_sell_rfq.prepare_quote_report_swap()
-        self.quote_id=self.extract_filed('QuoteID')
+        self.quote_id = self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap['QuoteMsgID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap.pop('Account')
-        if leg_of_fwd_p!='':
-            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegOfferForwardPoints'] =leg_of_fwd_p
-        if leg_bid_fwd_p!='':
-            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegBidForwardPoints'] =leg_bid_fwd_p
-        if bid_size!='':
-            self.case_params_sell_rfq.quote_params_swap['BidSize'] =bid_size
-        if offer_size!='':
-            self.case_params_sell_rfq.quote_params_swap['OfferSize'] =offer_size
-        if offer_swap_points!='':
-            self.case_params_sell_rfq.quote_params_swap['OfferSwapPoints'] =offer_swap_points
-        if bid_swap_points!='':
-            self.case_params_sell_rfq.quote_params_swap['BidSwapPoints'] =bid_swap_points
-        if offer_px!='':
-            self.case_params_sell_rfq.quote_params_swap['OfferPx'] =offer_px
-        if bid_px!='':
-            self.case_params_sell_rfq.quote_params_swap['BidPx'] =bid_px
-
+        if leg_of_fwd_p != '':
+            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegOfferForwardPoints'] = leg_of_fwd_p
+        if leg_bid_fwd_p != '':
+            self.case_params_sell_rfq.quote_params_swap['NoLegs'][1]['LegBidForwardPoints'] = leg_bid_fwd_p
+        if bid_size != '':
+            self.case_params_sell_rfq.quote_params_swap['BidSize'] = bid_size
+        if offer_size != '':
+            self.case_params_sell_rfq.quote_params_swap['OfferSize'] = offer_size
+        if offer_swap_points != '':
+            self.case_params_sell_rfq.quote_params_swap['OfferSwapPoints'] = offer_swap_points
+        if bid_swap_points != '':
+            self.case_params_sell_rfq.quote_params_swap['BidSwapPoints'] = bid_swap_points
+        if offer_px != '':
+            self.case_params_sell_rfq.quote_params_swap['OfferPx'] = offer_px
+        if bid_px != '':
+            self.case_params_sell_rfq.quote_params_swap['BidPx'] = bid_px
 
         # self.case_params_sell_rfq.quote_params_swap['SettlType'] = '*'
         # self.case_params_sell_rfq.quote_params['SettlDate'] = '*'
@@ -220,7 +224,6 @@ class FixClientSellRfq():
         #     self.case_params_sell_rfq.quote_params['BidPx'] = '*'
         #     self.case_params_sell_rfq.quote_params['BidSize'] = '*'
 
-
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
@@ -228,7 +231,7 @@ class FixClientSellRfq():
                 self.quote.checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id
-                                  )
+            )
         )
         return self
 
@@ -245,8 +248,7 @@ class FixClientSellRfq():
         )
         return self
 
-
-    def verify_order_pending(self, price='', qty='',side=''):
+    def verify_order_pending(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending['Price'] = self.price
         if price != '':
@@ -255,42 +257,44 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
             self.case_params_sell_rfq.order_pending['OrderID'] = self.new_order.response_messages_list[0].fields[
-            'OrderID'].simple_value
-        if side!='':
+                'OrderID'].simple_value
+        if side != '':
             self.case_params_sell_rfq.order_pending['Side'] = side
 
-        print('pending',self.case_params_sell_rfq.order_pending)
+        print('pending', self.case_params_sell_rfq.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Pending',
-                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending, ['ClOrdID', 'OrdStatus']),
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending,
+                                   ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
         return self
 
-    def verify_order_pending_swap(self, price='', qty='',side=''):
+    def verify_order_pending_swap(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending.pop('Price')
         if qty != '':
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
             self.case_params_sell_rfq.order_pending['OrderID'] = self.new_order.response_messages_list[0].fields[
-            'OrderID'].simple_value
+                'OrderID'].simple_value
         self.case_params_sell_rfq.order_pending['Side'] = self.case_params_sell_rfq.leg2_side
         # if 'Side' in self.case_params_sell_rfq.quote_params_swap.keys():
         #     pass
         # if side!='':
         #     self.case_params_sell_rfq.order_pending['Side'] = side
 
-        print('pending',self.case_params_sell_rfq.order_pending)
+        print('pending', self.case_params_sell_rfq.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Pending',
-                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending, ['ClOrdID', 'OrdStatus']),
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_pending,
+                                   ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
@@ -318,14 +322,14 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['SpotSettlDate'] = '*'
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
-        if side!='':
+        if side != '':
             self.case_params_sell_rfq.order_filled['Side'] = side
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
         self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
-        print('filled',self.case_params_sell_rfq.order_filled)
+        print('filled', self.case_params_sell_rfq.order_filled)
 
-        print('custom',self.case_params_sell_rfq.order_filled)
+        print('custom', self.case_params_sell_rfq.order_filled)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SPOT',
@@ -336,15 +340,15 @@ class FixClientSellRfq():
         )
         return self
 
-
-    def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate='',side=''):
+    def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate='', side=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = '*'
         self.case_params_sell_rfq.order_filled['Price'] = self.price
-        self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
+            'OrderID'].simple_value
         self.case_params_sell_rfq.order_filled['LastForwardPoints'] = '*'
         if price != '':
             self.case_params_sell_rfq.order_filled['Price'] = price
@@ -354,10 +358,10 @@ class FixClientSellRfq():
         if fwd_point != '':
             self.case_params_sell_rfq.order_filled['LastSpotRate'] = last_spot_rate
             self.case_params_sell_rfq.order_filled['LastForwardPoints'] = fwd_point
-        if side!='':
+        if side != '':
             self.case_params_sell_rfq.order_filled['Side'] = side
 
-        print('Filled',self.case_params_sell_rfq.order_filled)
+        print('Filled', self.case_params_sell_rfq.order_filled)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled FORWARD',
@@ -368,7 +372,6 @@ class FixClientSellRfq():
         )
         return self
 
-
     def verify_order_rejected(self, text='', price='', qty=''):
         self.case_params_sell_rfq.prepare_order_rejected_report()
         self.case_params_sell_rfq.order_rejected['OrderID'] = self.new_order.response_messages_list[0].fields[
@@ -377,16 +380,17 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_rejected['Text'] = text
         if qty != '':
             self.case_params_sell_rfq.order_rejected['OrderQty'] = qty
+        print('Data for rejection        ',  self.case_params_sell_rfq.order_rejected)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',
-                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_rejected, ['ClOrdID', 'OrdStatus']),
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_rejected,
+                                   ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),
             timeout=3000
         )
         return self
-
 
     def verify_order_algo_rejected(self, text):
         self.case_params_sell_rfq.prepare_order_algo_rejected_report()
@@ -394,12 +398,12 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_algo_rejected['Text'] = text
 
         self.verifier.submitCheckRule(
-        request=bca.create_check_rule(
-            'Execution Report with OrdStatus = Rejected',
-            bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_algo_rejected,
-                               ['ClOrdID', 'OrdStatus']),
-            self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
-        ),
+            request=bca.create_check_rule(
+                'Execution Report with OrdStatus = Rejected',
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_algo_rejected,
+                                   ['ClOrdID', 'OrdStatus']),
+                self.checkpoint, self.case_params_sell_rfq.connectivityESP, self.case_params_sell_rfq.case_id
+            ),
             timeout=3000
         )
         return self
