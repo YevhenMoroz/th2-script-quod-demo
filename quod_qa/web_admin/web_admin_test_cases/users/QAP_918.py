@@ -1,25 +1,24 @@
 import time
+import traceback
 
-from selenium.common.exceptions import TimeoutException
-
+from selenium.common.exceptions import TimeoutException, ElementNotInteractableException
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.pages.users.users.users_constants import UsersConstants
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
-from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
-#TODO: Must be edit context in Jira (for assignements tab)
+
 class QAP_918(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.role_id_first_input = "HeadOfInstitution"
-        self.role_id_second_input = "HeadOfLocation"
         self.desks = ("Desk Market Marking FX", "Desk of Dealers 1")
 
     def precondition(self):
@@ -32,45 +31,32 @@ class QAP_918(CommonTestCase):
         users_page = UsersPage(self.web_driver_container)
         users_page.click_on_new_button()
         time.sleep(2)
-        users_wizard = UsersWizard(self.web_driver_container)
-        users_wizard.click_on_save_changes()
-        time.sleep(2)
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.click_on_desks()
+        assignments_tab.set_desks(self.desks)
 
     def test_context(self):
-
-        self.precondition()
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
         users_wizard = UsersWizard(self.web_driver_container)
-        self.verify("After click on save changes with empty values", "Incorrect or missing values",
-                    users_wizard.get_incorrect_or_missing_values_exception())
-        users_role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
-        users_role_sub_wizard.set_role_id(self.role_id_first_input)
-        time.sleep(3)
-        self.verify("After set RoleID to HeadOfInstitution, desk field is disabled", False,
-                    users_role_sub_wizard.is_field_enabled(UsersConstants.DESKS_AT_ROLE_SUB_WIZARD))
-        self.verify("After set RoleID to HeadOfInstitution,  location field is disabled", False,
-                    users_role_sub_wizard.is_field_enabled(UsersConstants.LOCATION_AT_ROLE_SUB_WIZARD))
-        users_role_sub_wizard.set_role_id(self.role_id_second_input)
-        time.sleep(2)
-        self.verify("After set RoleID to HeadOfLocation, desk field is disabled", False,
-                    users_role_sub_wizard.is_field_enabled(UsersConstants.DESKS_AT_ROLE_SUB_WIZARD))
-        self.verify("After set RoleID to HeadOfLocation,  location field is enabled", True,
-                    users_role_sub_wizard.is_field_enabled(UsersConstants.LOCATION_AT_ROLE_SUB_WIZARD))
-        # step 5, 6
+        expected_pdf_content = self.desks
         try:
-            users_role_sub_wizard.set_group("something")
-            users_role_sub_wizard.set_perm_role("something")
-            users_role_sub_wizard.set_perm_op("something")
-            users_role_sub_wizard.set_location("something")
-            users_role_sub_wizard.set_desks(tuple("something"))
-        except TimeoutException as e:
-            exception = e.__class__.__name__
-            self.verify("Verify that group, perm role, perm op, location, "
-                        "desks field cannot kept text manually", "TimeoutException", exception)
-        finally:
-            # step 7
-            users_role_sub_wizard.set_role_id("BuySideClient")
-            time.sleep(2)
-            users_role_sub_wizard.click_on_desks()
-            users_role_sub_wizard.set_desks(self.desks)
-            self.verify("Verify that location is disabled when desks selected, ",
-                        False, users_role_sub_wizard.is_field_enabled(UsersConstants.LOCATION_AT_ROLE_SUB_WIZARD))
+            self.precondition()
+            try:
+                assignments_tab.set_location("test")
+            except ElementNotInteractableException as e:
+                error_name = e.__class__.__name__
+                self.verify("after select desks, location; zone; institution are disabled ",
+                            "ElementNotInteractableException",
+                            error_name)
+
+            try:
+                self.verify("after click on download PDF button", True,
+                            users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            except IndexError as e:
+                print(e.__class__.__name__)
+                self.verify("Download button is deactivated", True, False)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
