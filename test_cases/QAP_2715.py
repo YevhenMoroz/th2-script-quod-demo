@@ -3,7 +3,6 @@ import logging
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
 from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
 
-from custom.basic_custom_actions import wrap_message
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
@@ -224,7 +223,7 @@ class TestCase:
         }
         nos_response = self.api.sendMessage(
             request=SubmitMessageRequest(
-                message=wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa303'),
+                message=bca.wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa303'),
                 parent_event_id=self.case_id)
         )
         # print(wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa303'))
@@ -341,4 +340,4 @@ class TestCase:
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-        # close_fe(self.case_id, self.session_id)
+        close_fe(self.case_id, self.session_id)
