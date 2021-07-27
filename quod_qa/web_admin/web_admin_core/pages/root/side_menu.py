@@ -8,7 +8,7 @@ from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_groups.client
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
 from quod_qa.web_admin.web_admin_core.pages.site.desks.desks_constants import DesksConstants
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_constants import WashBookConstants
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_constants import WashBookConstants
 from quod_qa.web_admin.web_admin_core.pages.positions.washbook_rules.washbook_rules_constants import \
     WashbookRulesConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage

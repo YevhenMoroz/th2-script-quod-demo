@@ -1,6 +1,6 @@
 import time
 
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_constants import WashBookConstants
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_constants import WashBookConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 

@@ -35,7 +35,7 @@ def execute(report_id):
     # region verify value
     eq_wrappers.verify_order_value(base_request, case_id, 'Account ID', 'TestAccount')
     # endregion
-    # create order with washbook
+    # create order with wash_books
     eq_wrappers.create_order(base_request, qty, client, 'XPAR', 'Limit', 'Day', False, 'CLIENTYMOROZ', '50', True,
                              False, False)
     # region verify value
