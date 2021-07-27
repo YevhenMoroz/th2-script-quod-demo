@@ -53,3 +53,9 @@ class AccountsPage(CommonPage):
 
         popup.click()
         return text
+
+    def get_clearing_account_type(self):
+        return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE).text
+
+    def get_client(self):
+        return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLIENT).text
