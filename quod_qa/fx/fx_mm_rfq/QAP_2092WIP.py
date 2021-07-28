@@ -48,7 +48,7 @@ def execute(report_id, session_id):
 
         quote_id = bca.client_orderid(20)
         offer_px = rfq.extract_filed("OfferPx")
-        rfq.send_new_order_single(price=offer_px, side=side, quote_id=quote_id).verify_quote_pending()
+        rfq.send_new_order_single(price=offer_px, side=side, quote_id=quote_id)
         rfq.verify_order_rejected()
         # rfq.verify_order_filled()
 
