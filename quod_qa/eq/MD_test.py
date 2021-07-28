@@ -16,7 +16,7 @@ def execute(report_id):
     simulator = Stubs.simulator
 
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="953",
+        symbol="1085",
         connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
     mdir_params_bid = {
@@ -26,13 +26,29 @@ def execute(report_id):
                 'MDEntryType': '0',
                 'MDEntryPx': '19',
                 'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
+                'MDEntryPositionNo': '1',
+                # 'TradingSessionSubID': '6',
             },
             {
                 'MDEntryType': '1',
                 'MDEntryPx': '19.99',
                 'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1'
+                'MDEntryPositionNo': '1',
+                # 'TradingSessionSubID': '6'
+            },
+            {
+                'MDEntryType': '4',
+                'MDEntryPx': '19.99',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1',
+                # 'TradingSessionSubID': '6'
+            },
+            {
+                'MDEntryType': '5',
+                'MDEntryPx': '19.99',
+                'MDEntrySize': '1000',
+                'MDEntryPositionNo': '1',
+                # 'TradingSessionSubID': '6'
             }
         ]
     }
