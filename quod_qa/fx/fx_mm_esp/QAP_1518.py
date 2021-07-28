@@ -57,7 +57,7 @@ def execute(report_id):
             params_1.prepare_md_for_verification(bands)
             md_1.send_md_request(). \
                 verify_md_pending()
-            price = md_1.extruct_filed('Price')
+            price = md_1.extract_filed('Price')
             # Step 2-5
             md_1.send_new_order_single(price)
             md_1.verify_order_pending()

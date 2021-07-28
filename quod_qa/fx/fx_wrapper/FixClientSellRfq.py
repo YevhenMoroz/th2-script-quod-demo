@@ -87,22 +87,24 @@ class FixClientSellRfq():
         return self
 
     # Send New Order Single
-    def send_new_order_single(self, price, side='', quot_id=''):
+    def send_new_order_single(self, price, side='', quote_id=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
         self.price = price
         self.case_params_sell_rfq.order_params['Price'] = self.price
         self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
-        if quot_id!='':
-            self.case_params_sell_rfq.order_params['QuoteID'] = quot_id
+        if quote_id!='':
+            self.case_params_sell_rfq.order_params['QuoteID'] = quote_id
         if side!='':
             self.case_params_sell_rfq.order_params['Side'] = side
         print('Send an order', self.case_params_sell_rfq.order_params)
+
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell_rfq.order_params,
                                     self.case_params_sell_rfq.connectivityRFQ)
             ))
+        # return self.new_order.checkpoint_id
         return self
 
     # Send New Order Multi LEg
@@ -177,7 +179,7 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
         if offer_spot_rate!='':
             self.case_params_sell_rfq.quote_params['OfferSpotRate'] = offer_spot_rate
-
+        print('RFQ pending parameters: ', self.case_params_sell_rfq.quote_params)
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
@@ -372,14 +374,18 @@ class FixClientSellRfq():
         return self
 
 
-    def verify_order_rejected(self, text='', price='', qty=''):
-        self.case_params_sell_rfq.prepare_order_rejected_report()
+    def verify_order_rejected(self, text='', price='', qty='',side = ''):
+        self.case_params_sell_rfq.prepare_order_rejected_report_rfq()
         self.case_params_sell_rfq.order_rejected['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
         self.case_params_sell_rfq.order_rejected['Price'] = self.price
         self.case_params_sell_rfq.order_rejected['Text'] = text
         if qty != '':
             self.case_params_sell_rfq.order_rejected['OrderQty'] = qty
+        if side != '':
+            self.case_params_sell_rfq.order_rejected['Side'] = side
+        print ('Order report for REJECTION ', self.case_params_sell_rfq.order_rejected)
+        self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',

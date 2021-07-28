@@ -183,7 +183,7 @@ def execute(report_id, session_id):
             md = FixClientSellEsp(params_sell). \
                 send_md_request(). \
                 verify_md_pending()
-            price = md.extruct_filed('Price', 3)
+            price = md.extract_filed('Price', 3)
             ordqty = threshold
             print('Order QTY that is sent from FIX ',  ordqty)
             md.send_new_order_single(price, ordqty, 'Send New Order Single BUY SIDE to trigger Auto Hedger'). \

@@ -4,7 +4,7 @@ from datetime import date
 from pathlib import Path
 from random import randint
 
-from custom import basic_custom_actions as bca
+from custom import basic_custom_actions as bca, verifier
 from custom.tenor_settlement_date import wk1, spo
 from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
@@ -32,16 +32,15 @@ def execute(report_id, session_id):
     settle_date = spo()
     settle_type = 0
     currency = "GBP"
-    side="1"
+    side = "1"
     qty = str(randint(1000000, 2000000))
 
     try:
         # Step 1
         # Step 2
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
+        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol, securityid=symbol,
                                    securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
+                                   currency=currency,account=client_tier)
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
         rfq.verify_quote_pending()
@@ -49,8 +48,9 @@ def execute(report_id, session_id):
         quote_id = bca.client_orderid(20)
         offer_px = rfq.extract_filed("OfferPx")
         rfq.send_new_order_single(price=offer_px, side=side, quote_id=quote_id)
-        rfq.verify_order_rejected()
-        # rfq.verify_order_filled()
+        text = 'not a live quote entry'
+        rfq.verify_order_rejected(text=text, side=side)
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -87,7 +87,7 @@ class FixClientSellEsp():
         return self
 
     #Extract filed by name
-    def extruct_filed(self, field, band_number=1):
+    def extract_filed(self, field, band_number=1):
         if field.lower()=='price':
             self.price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
@@ -244,7 +244,7 @@ class FixClientSellEsp():
         return self
 
     def verify_order_rejected(self,text='',price='', qty=''):
-        self.case_params_sell_esp.prepare_order_rejected_report()
+        self.case_params_sell_esp.prepare_order_rejected_report_rfq()
         self.case_params_sell_esp.order_rejected['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         self.case_params_sell_esp.order_rejected['Price']=self.price
         self.case_params_sell_esp.order_rejected['Text']=text
