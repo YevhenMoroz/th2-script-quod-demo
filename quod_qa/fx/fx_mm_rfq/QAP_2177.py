@@ -5,77 +5,8 @@ from random import randint
 
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2
-from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
-
-
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
-
-
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def press_executable(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_executable()
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty, "CreationTime", creation_time])
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
-    qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
-    qr_near_leg_qty = ExtractionDetail("quoteRequestBook.nearQty", "NearLegQty")
-    qr_far_leg_qty = ExtractionDetail("quoteRequestBook.farQty", "FarLegQty")
-    qrb.add_extraction_details([qrb_status, qrb_auto_quoting, qr_id, qr_near_leg_qty, qr_far_leg_qty])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Status", status, response[qrb_status.name])
-    verifier.compare_values("AutomaticQuoting", auto_q, response[qrb_auto_quoting.name])
-    verifier.compare_values("Near leg qty", qty, response[qr_near_leg_qty.name].replace(",", ""))
-    verifier.compare_values("Far leg qty", qty, response[qr_far_leg_qty.name].replace(",", ""))
-    verifier.verify()
-    quote_id = response[qr_id.name]
-    return quote_id
-
-
-def check_dealer_intervention(base_request, service, case_id, quote_id):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Id": quote_id})
-
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_id = bca.client_orderid(8)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
-
-    response = call(service.getUnassignedRFQDetails, extraction_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check quote request in DI")
-    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
-
-
-def close_dmi_window(base_request, dealer_interventions_service):
-    call(dealer_interventions_service.closeWindow, base_request)
 
 
 def execute(report_id):
