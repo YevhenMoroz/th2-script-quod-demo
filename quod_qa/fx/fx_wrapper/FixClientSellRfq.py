@@ -87,11 +87,13 @@ class FixClientSellRfq():
         return self
 
     # Send New Order Single
-    def send_new_order_single(self, price, side=''):
+    def send_new_order_single(self, price, side='', quot_id=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
         self.price = price
         self.case_params_sell_rfq.order_params['Price'] = self.price
         self.case_params_sell_rfq.order_params['QuoteID'] = self.quote_id
+        if quot_id!='':
+            self.case_params_sell_rfq.order_params['QuoteID'] = quot_id
         if side!='':
             self.case_params_sell_rfq.order_params['Side'] = side
         print('Send an order', self.case_params_sell_rfq.order_params)
@@ -273,7 +275,8 @@ class FixClientSellRfq():
 
     def verify_order_pending_swap(self, price='', qty='',side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
-        self.case_params_sell_rfq.order_pending.pop('Price')
+        # self.case_params_sell_rfq.order_pending.pop('Price')
+        self.case_params_sell_rfq.order_pending['Price'] = price
         if qty != '':
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty

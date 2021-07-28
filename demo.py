@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx import clone, SendMD
+from quod_qa.fx.fx_mm_autohedging import QAP_2290
+
 from quod_qa.fx.fx_mm_esp import QAP_2990, QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
     QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078
@@ -12,7 +14,7 @@ from quod_qa.fx.fx_taker_esp import QAP_404
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,7 +24,6 @@ timeouts = False
 channels = dict()
 
 def fx_mm_esp_fix(report_id):
-    pass
     QAP_1518.execute(report_id)
     QAP_1558.execute(report_id)
     QAP_1559.execute(report_id)
@@ -66,6 +67,7 @@ def test_run():
     report_id = bca.create_event('KKL    ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     logger.info(f"Root event was created (id = {report_id.id})")
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
 
 
     test_cases = {
@@ -75,77 +77,43 @@ def test_run():
         'SenderCompID': 'QUODFX_UAT',
         'TargetCompID': 'QUOD5',
     }
+
     session_id=set_session_id()
     try:
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
         # QAP_2089.execute(report_id)
         # QAP_2500.execute(report_id,session_id)
+
         # QAP_2103.execute(report_id)
+
         # QAP_3841.execute(report_id)
         # QAP_1898.execute(report_id, session_id)
         # QAP_2089.execute(report_id)
         # QAP_3841.execute(report_id)
         # QAP_1518.execute(report_id)
         # QAP_404.execute(report_id)
-        SendMD.execute(report_id)
-
-
-
-
-
-
-        # QAP_2966.execute(report_id)
-
-
-
-
-        # QAP_1518.execute(report_id)
-        #
-        # QAP_1558.execute(report_id)
-
-        # clone.execute(report_id)
-        # test.execute(report_id)
         # SendMD.execute(report_id)
-        # QAP_2750.execute(report_id)
-        # QAP_1560.execute(report_id)
-        # QAP_2825.execute(report_id)
 
-        # QAP_1012.execute(report_id)
-        # not_ready_QAP_1597.TestCase(report_id).execute()
-        # frommeth.execute(report_id)
-        # test.execute(report_id)
-        # QAP_2082.TestCase(report_id).execute()
-        # QAP_1520.TestCase(report_id).execute()
+        QAP_2290.execute(report_id,session_id)
 
 
 
 
-        # QAP_2797.TestCase(report_id).execute()
 
-        # QAP_2956.execute('QAP-2956', report_id, test_cases['QAP-2956'])
-        # QAP_1746.execute(report_id, test_cases['RFQ_example'])
-        # TEST_QAP_2000.execute(report_id)
-        # QAP_585.execute(report_id)
-        # QAP_568.execute(report_id)
-        # QAP_569.execute(report_id)
-        # QAP_570.execute(report_id)
-        # testing.execute(report_id)
-        # QAP_574.execute(report_id)
-        # QAP_578.execute(report_id)
-        # QAP_579.execute(report_id)
-        # QAP_580.execute(report_id)
-
-        # rfq_tile_example.execute(report_id)
         #
-        rm = RuleManager()
+        # rm = RuleManager()
         # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        rm.print_active_rules()
+        # rm.print_active_rules()
         # rm.remove_rule_by_id()
 
 
     except Exception:
-        logging.error("Error execution",exc_info=True)
-   # try:
-#
+        logging.error("Error execution", exc_info=True)
+    finally:
+        Stubs.win_act.unregister(session_id)
 
 #
    #     rm.print_active_rules()

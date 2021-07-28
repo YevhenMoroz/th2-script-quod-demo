@@ -11,10 +11,13 @@ class FixClientBuy():
         self.case_params_buy=case_params_buy
 
 
-    def send_market_data_spot(self):
+    def send_market_data_spot(self, even_name_custom=''):
+        even_name = 'Send Market Data SPOT'
+        if even_name_custom!='':
+            even_name=even_name_custom
         self.fix_act.sendMessage(
             bca.convert_to_request(
-                'Send Market Data SPOT',
+                even_name,
                 self.case_params_buy.connectivity,
                 self.case_params_buy.case_id,
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', self.case_params_buy.market_d_params_spot,
