@@ -1,6 +1,8 @@
 import logging
 from datetime import date
 from pathlib import Path
+from random import randint
+
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1
 from custom.verifier import Verifier
@@ -86,7 +88,7 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "GBP/USD-1W"
     client_tier = "Iridium1"
-    qty = "1000324"
+    qty = str(randint(1000000, 2000000))
     symbol = "GBP/USD"
     security_type_fwd = "FXFWD"
     settle_date = wk1()
@@ -115,6 +117,7 @@ def execute(report_id, session_id):
         close_dmi_window(case_base_request, dealer_service)
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

@@ -133,10 +133,11 @@ def execute(report_id, session_id):
         rfq.verify_quote_pending()
         check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_1m, today)
         time.sleep(120)
-        check_quote_request_b(case_base_request, ar_service, case_id, "Terminated", "Yes", qty_1m, today)
+        check_quote_request_b(case_base_request, ar_service, case_id, "Expired", "Yes", qty_1m, today)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile
