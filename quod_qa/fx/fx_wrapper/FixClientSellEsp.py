@@ -25,6 +25,7 @@ class FixClientSellEsp():
         self.case_params_sell_esp.md_params['SubscriptionRequestType'] = '1'
         if event_name_custom!='':
             event_name=event_name_custom
+        print('Market Data request parameters: ',self.case_params_sell_esp.md_params)
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(
             bca.convert_to_request(
                 event_name,
@@ -90,16 +91,19 @@ class FixClientSellEsp():
             self.price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryPx'].simple_value
+            print('Extracted price: ', self.price)
             return self.price
         elif field.lower()=='mdentryid':
             mdEntryId = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryID'].simple_value
+            print('Extracted MD Entry ID: ', mdEntryId)
             return mdEntryId
         elif field.lower()=='mdentryforwardpoints':
             mdentryforwardpoints = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryForwardPoints'].simple_value
+            print('Extracted forward points: ', mdentryforwardpoints)
             return mdentryforwardpoints
 
 
@@ -154,13 +158,15 @@ class FixClientSellEsp():
         )
         return self
 
-    def verify_order_new(self,qty=''):
+    def verify_order_new(self,price='',qty=''):
         self.case_params_sell_esp.prepare_order_new_report()
         self.case_params_sell_esp.order_new['Price']=self.price
         self.case_params_sell_esp.order_new['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         if qty !='':
             self.case_params_sell_esp.order_new['OrderQty']=qty
             self.case_params_sell_esp.order_new['LeavesQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_new['Price'] = price
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
@@ -184,6 +190,12 @@ class FixClientSellEsp():
             self.case_params_sell_esp.order_filled['OrderQty']=qty
             self.case_params_sell_esp.order_filled['LastQty']=qty
             self.case_params_sell_esp.order_filled['CumQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_filled['Price'] = price
+            self.case_params_sell_esp.order_filled['LastPx'] = self.price
+            self.case_params_sell_esp.order_filled['AvgPx'] = self.price
+            self.case_params_sell_esp.order_filled['LastSpotRate'] = self.price
+
 
 
         self.verifier.submitCheckRule(

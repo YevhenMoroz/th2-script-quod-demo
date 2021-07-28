@@ -84,6 +84,10 @@ def test_run():
             prepare_fe_2(report_id, session_id)
         else:
             get_opened_fe(report_id, session_id)
+
+
+
+
         # QAP_2089.execute(report_id)
         # QAP_2500.execute(report_id,session_id)
 

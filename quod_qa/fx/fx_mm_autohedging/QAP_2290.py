@@ -163,9 +163,9 @@ def execute(report_id, session_id):
 
         try:
             # Preconditions
-            call(cp_service.createRatesTile, base_details.build())
-            modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-            call(cp_service.closeRatesTile, base_details.build())
+            # call(cp_service.createRatesTile, base_details.build())
+            # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+            # call(cp_service.closeRatesTile, base_details.build())
 
             # Send market data to the HSBC venue EUR/USD spot
             FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
@@ -175,14 +175,6 @@ def execute(report_id, session_id):
             set_send_hedge_order("true", case_id)
 
             # Step 2
-            initial_position = 0
-            try:
-                initial_position = get_dealing_positions_details(pos_service, case_base_request, symbol, client,
-                                                                 "Position")
-                print('Initial Position = ' + str(initial_position))
-            except Exception as e:
-                print('Initial Position = ' + str(initial_position))
-            assert initial_position < threshold
             params_sell = CaseParamsSellEsp(client, case_id, side=side, ordtype=ordtype, timeinforce=timeinforce,
                                             currency=currency, settlcurrency=settlcurrency, settltype=settltype,
                                             settldate=settldate, symbol=symbol, securitytype=securitytype,
@@ -191,9 +183,9 @@ def execute(report_id, session_id):
             md = FixClientSellEsp(params_sell). \
                 send_md_request(). \
                 verify_md_pending()
-            price = md.extruct_filed('Price')
-            ordqty = threshold - initial_position
-            print('Order QTY that is sent from FIX ' + str(ordqty))
+            price = md.extruct_filed('Price', 3)
+            ordqty = threshold
+            print('Order QTY that is sent from FIX ',  ordqty)
             md.send_new_order_single(price, ordqty, 'Send New Order Single BUY SIDE to trigger Auto Hedger'). \
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
@@ -209,7 +201,10 @@ def execute(report_id, session_id):
                                                case_base_request, ob_act, threshold, status_cnld)
 
             # Step 4
-            md.send_new_order_single(price, ordqty).verify_order_pending().verify_order_new().verify_order_filled()
+            md.send_new_order_single(price, ordqty, 'Send New Order Single BUY SIDE to check AH is not sent').\
+                verify_order_pending(ordqty=ordqty).\
+                verify_order_new(ordqty=ordqty).\
+                verify_order_filled(ordqty=ordqty)
             order_id_after = check_order_book("Check AH in Order book is the same", case_id, case_base_request, ob_act,
                                               threshold, status_cnld)
 
@@ -219,10 +214,14 @@ def execute(report_id, session_id):
                                             currency=currency, settlcurrency=settlcurrency, settltype=settltype,
                                             settldate=settldate, symbol=symbol, securitytype=securitytype,
                                             securityid=securityid, account=account)
-            md.send_new_order_single(price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger'). \
-                verify_order_pending(qty=ordqty). \
-                verify_order_new(qty=ordqty). \
-                verify_order_filled(qty=ordqty)
+            md1= FixClientSellEsp(params_sell)
+            sell_price = '1.19594'
+            ordqty += threshold
+            md1.send_new_order_single(sell_price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger'). \
+                verify_order_pending(price=sell_price, qty=ordqty). \
+                verify_order_new(price=sell_price,qty=ordqty). \
+                verify_order_filled(price=sell_price,qty=ordqty)
+            time.sleep(2)
 
         except Exception as e:
             logging.error('Error execution', exc_info=True)
