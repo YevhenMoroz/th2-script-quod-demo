@@ -44,6 +44,7 @@ def execute(report_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_swap()
+        rfq.verify_quote_pending_swap()
         # Step 3
         rfq.send_quote_cancel()
 
