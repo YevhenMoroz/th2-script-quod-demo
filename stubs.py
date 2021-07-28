@@ -11,7 +11,7 @@ from th2_grpc_act_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
-# from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
+from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
@@ -38,7 +38,7 @@ class Stubs:
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
     simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
-    # test_sim = factory.grpc_router.get_service(TemplateSimulatorServiceTestService)
+    test_sim = factory.grpc_router.get_service(TemplateSimulatorServiceTestService)
     # simulator_http = factory.grpc_router.get_service(SimTemplateService)
     simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)
