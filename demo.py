@@ -80,11 +80,11 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
-
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
+        QAP_1518.execute(report_id)
 
 
 
@@ -101,7 +101,7 @@ def test_run():
         # QAP_404.execute(report_id)
         # SendMD.execute(report_id)
 
-        QAP_2290.execute(report_id,session_id)
+        # QAP_2290.execute(report_id,session_id)
 
 
 
