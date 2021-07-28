@@ -264,13 +264,13 @@ class CaseParamsSellEsp:
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
-        self.order_pending['Account'] = self.order_params['Account']
+        # self.order_pending['Account'] = self.order_params['Account']
 
     # Prepera order new report
     def prepare_order_new_report(self):
         self.set_order_exec_rep_params()
         self.order_new = self.order_exec_report
-        self.order_new['Account'] = self.client
+        # self.order_new['Account'] = self.client
         self.order_new['OrdStatus'] = '0'
         self.order_new['ExecType'] = '0'
         self.order_new['SettlDate'] = self.settldate.split(' ')[0]

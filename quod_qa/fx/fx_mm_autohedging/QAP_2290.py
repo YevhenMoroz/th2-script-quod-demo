@@ -202,9 +202,9 @@ def execute(report_id, session_id):
 
             # Step 4
             md.send_new_order_single(price, ordqty, 'Send New Order Single BUY SIDE to check AH is not sent').\
-                verify_order_pending(ordqty=ordqty).\
-                verify_order_new(ordqty=ordqty).\
-                verify_order_filled(ordqty=ordqty)
+                verify_order_pending(qty=ordqty).\
+                verify_order_new(qty=ordqty).\
+                verify_order_filled(qty=ordqty)
             order_id_after = check_order_book("Check AH in Order book is the same", case_id, case_base_request, ob_act,
                                               threshold, status_cnld)
 
@@ -217,10 +217,12 @@ def execute(report_id, session_id):
             md1= FixClientSellEsp(params_sell)
             sell_price = '1.19594'
             ordqty += threshold
-            md1.send_new_order_single(sell_price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger'). \
+            md1.send_new_order_single(sell_price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger '). \
                 verify_order_pending(price=sell_price, qty=ordqty). \
                 verify_order_new(price=sell_price,qty=ordqty). \
                 verify_order_filled(price=sell_price,qty=ordqty)
+            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            compare_position("Compare position is equal to 0", case_id, '0', actual_pos)
             time.sleep(2)
 
         except Exception as e:

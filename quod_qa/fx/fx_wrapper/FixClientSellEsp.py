@@ -68,6 +68,7 @@ class FixClientSellEsp():
         self.case_params_sell_esp.order_params['Price'] = price
         if qty!='':
             self.case_params_sell_esp.order_params['OrderQty'] = qty
+        print('New Order Single parameters: ', self.case_params_sell_esp.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 even_name + tif, self.case_params_sell_esp.connectivityESP, self.case_params_sell_esp.case_id,
@@ -147,6 +148,7 @@ class FixClientSellEsp():
             self.case_params_sell_esp.order_pending['OrderQty']=qty
             self.case_params_sell_esp.order_pending['LeavesQty']=qty
         self.case_params_sell_esp.order_pending['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        print('New Order Single pending : ', self.case_params_sell_esp.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -167,6 +169,7 @@ class FixClientSellEsp():
             self.case_params_sell_esp.order_new['LeavesQty']=qty
         if price !='':
             self.case_params_sell_esp.order_new['Price'] = price
+        print('New Order Single NEW : ', self.case_params_sell_esp.order_pending)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
@@ -192,10 +195,10 @@ class FixClientSellEsp():
             self.case_params_sell_esp.order_filled['CumQty']=qty
         if price !='':
             self.case_params_sell_esp.order_filled['Price'] = price
-            self.case_params_sell_esp.order_filled['LastPx'] = self.price
-            self.case_params_sell_esp.order_filled['AvgPx'] = self.price
-            self.case_params_sell_esp.order_filled['LastSpotRate'] = self.price
-
+            self.case_params_sell_esp.order_filled['LastPx'] = price
+            self.case_params_sell_esp.order_filled['AvgPx'] = price
+            self.case_params_sell_esp.order_filled['LastSpotRate'] = price
+        print('New Order Single Filled : ', self.case_params_sell_esp.order_pending)
 
 
         self.verifier.submitCheckRule(
