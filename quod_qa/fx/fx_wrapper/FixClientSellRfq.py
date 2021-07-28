@@ -96,7 +96,7 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_params['QuoteID'] = quote_id
         if side != '':
             self.case_params_sell_rfq.order_params['Side'] = side
-        print('Send an order    ', self.case_params_sell_rfq.order_params)
+        print('Send an order', self.case_params_sell_rfq.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
                 'Send new order ' + tif, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id,
@@ -276,7 +276,8 @@ class FixClientSellRfq():
 
     def verify_order_pending_swap(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
-        self.case_params_sell_rfq.order_pending.pop('Price')
+        # self.case_params_sell_rfq.order_pending.pop('Price')
+        self.case_params_sell_rfq.order_pending['Price'] = price
         if qty != '':
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
@@ -346,7 +347,6 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         self.case_params_sell_rfq.order_filled['LastSpotRate'] = '*'
-        self.case_params_sell_rfq.order_filled['Price'] = self.price
         self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
             'OrderID'].simple_value
         self.case_params_sell_rfq.order_filled['LastForwardPoints'] = '*'
@@ -354,7 +354,6 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_filled['Price'] = price
             self.case_params_sell_rfq.order_filled['LastPx'] = price
             self.case_params_sell_rfq.order_filled['AvgPx'] = price
-            self.case_params_sell_rfq.order_filled['Price'] = price
         if fwd_point != '':
             self.case_params_sell_rfq.order_filled['LastSpotRate'] = last_spot_rate
             self.case_params_sell_rfq.order_filled['LastForwardPoints'] = fwd_point
@@ -380,7 +379,6 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_rejected['Text'] = text
         if qty != '':
             self.case_params_sell_rfq.order_rejected['OrderQty'] = qty
-        print('Data for rejection        ',  self.case_params_sell_rfq.order_rejected)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Rejected',

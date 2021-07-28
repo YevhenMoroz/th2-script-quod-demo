@@ -281,7 +281,8 @@ class CaseParamsSellEsp:
     def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account'] = self.order_params['Account']
+        # self.order_filled['Account'] = self.order_params['Account']
+        self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
