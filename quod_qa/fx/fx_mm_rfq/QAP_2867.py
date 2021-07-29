@@ -1,19 +1,16 @@
 import logging
-from datetime import date
 from pathlib import Path
 from random import randint
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2
 from custom.verifier import Verifier
-from quod_qa.common_tools import shorting_qty_for_di
+from quod_qa.common_tools import shorting_qty_for_di, random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
     RFQExtractionDetailsRequest
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
@@ -74,8 +71,8 @@ def execute(report_id, session_id):
 
     client_tier = "Iridium1"
     account = "Iridium1_1"
-    qty_1 = str(randint(100000000, 200000000))
-    qty_2 = str(randint(100000000, 200000000))
+    qty_1 = random_qty(1, 10, 9)
+    qty_2 = random_qty(1, 10, 9)
     symbol = "GBP/USD"
     security_type_swap = "FXSWAP"
     security_type = "FXFWD"
