@@ -34,9 +34,29 @@ def round_decimals_down(number: float, decimals: int):
 
 def random_qty(number: int):
     """
-    generate random number with length -> number
+    Generate random number with length -> number
     """
     now = datetime.now()
     timestamp = str(datetime.timestamp(now))
     qty = timestamp.replace(".", "")[-number:]
     return qty
+
+
+def shorting_qty_for_di(qty, currency):
+    """
+    Returns a short value of qty and adds currency to it
+    """
+    k = "K"
+    m = "M"
+    b = "B"
+    short_qty = ""
+    thousand = range(1, 7)
+    million = range(8, 10)
+    billion = range(11, 13)
+    if len(qty) in thousand:
+        short_qty = qty[0:3] + "." + qty[3:5] + k + " " + currency
+    if len(qty) in million:
+        short_qty = qty[0:3] + "." + qty[3:5] + m + " " + currency
+    if len(qty) in billion:
+        short_qty = qty[0:3] + "." + qty[3:5] + b + " " + currency
+    return short_qty
