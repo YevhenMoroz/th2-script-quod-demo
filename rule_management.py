@@ -1,4 +1,10 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, \
+    TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, \
+    TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
+    TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateMarketNewOrdSingleFOK, \
+    TemplateNewOrdSingleExecutionReportReject
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -11,7 +17,7 @@ class RuleManager:
     def __init__(self):
         # Default rules IDs. Might be changed
         self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
-        self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
+        # self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
     @staticmethod
@@ -22,16 +28,16 @@ class RuleManager:
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
-    @staticmethod
-    def print_active_rules_sim_test():
-        test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
-        running_rules = test_core.getRulesInfo(request=Empty()).info
-        print(f'Rules running(test_sim) :{len(running_rules)}')
-        active_rules = dict()
-        for rule in running_rules:
-            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
-        for key, value in active_rules.items():
-            print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
+    # @staticmethod
+    # def print_active_rules_sim_test():
+    #     test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
+    #     running_rules = test_core.getRulesInfo(request=Empty()).info
+    #     print(f'Rules running(test_sim) :{len(running_rules)}')
+    #     active_rules = dict()
+    #     for rule in running_rules:
+    #         active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
+    #     for key, value in active_rules.items():
+    #         print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
     # --- REMOVE RULES SECTION ---
 
