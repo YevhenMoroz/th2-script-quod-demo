@@ -20,8 +20,10 @@ class FixClientSellRfq():
     # ACTIONS
 
     # Send RFQ
-    def send_request_for_quote(self):
+    def send_request_for_quote(self, expire_time=''):
         self.case_params_sell_rfq.prepare_rfq_params()
+        if expire_time!='':
+            self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['ExpireTime']=expire_time
         print('RFQ' , self.case_params_sell_rfq.rfq_params)
         self.quote = self.fix_act.placeQuoteFIX(
             bca.convert_to_request(
@@ -242,6 +244,22 @@ class FixClientSellRfq():
             bca.create_check_rule(
                 "Checking QuoteCancel",
                 bca.filter_to_grpc("QuoteCancel", self.case_params_sell_rfq.quote_cancel_params),
+                self.quote.checkpoint_id,
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id
+            )
+        )
+        return self
+
+    def verify_quote_reject(self,event_name_cust=''):
+        self.case_params_sell_rfq.prepape_quote_cancel_report()
+        event_name = "Checking Quote Reject"
+        if event_name_cust !='':
+            event_name = event_name_cust
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                event_name,
+                bca.filter_to_grpc("QuoteRequestReject", self.case_params_sell_rfq.quote_cancel_params),
                 self.quote.checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id

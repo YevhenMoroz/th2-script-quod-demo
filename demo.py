@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx import clone, SendMD
-from quod_qa.fx.fx_mm_autohedging import QAP_2290
+from quod_qa.fx.fx_mm_autohedging import QAP_2290, QAP_2228
 
 from quod_qa.fx.fx_mm_esp import QAP_2990, QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
@@ -80,16 +80,17 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
-        QAP_2092WIP.execute(report_id,session_id)
+        # QAP_2092WIP.execute(report_id,session_id)
         # QAP_1558.execute(report_id)
 
+
         # QAP_2089.execute(report_id)
-        # QAP_2500.execute(report_id,session_id)
+        QAP_2228.execute(report_id,session_id)
 
         # QAP_2103.execute(report_id)
 

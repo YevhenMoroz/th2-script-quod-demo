@@ -12,6 +12,7 @@ class CaseParamsSellRfq:
     quote_params = None
     quote_params_swap = None
     # quote_cancel_params = None
+    quote_request_reject_params = None
     order_params = None
     order_multi_leg_params = None
     order_exec_report = None
@@ -488,3 +489,10 @@ class CaseParamsSellRfq:
     #         ],
     #         'QuoteID': '*'
     #     }
+
+    def prepare_quote_request_reject(self):
+        self.quote_request_reject_params = {
+            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteCancelType': '5',
+            'Text': '*'
+        }

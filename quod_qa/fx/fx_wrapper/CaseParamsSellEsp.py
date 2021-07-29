@@ -299,7 +299,7 @@ class CaseParamsSellEsp:
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepera order rejected report
-    def prepare_order_rejected_report(self):
+    def prepare_order_rejected_report_esp(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
         # self.order_rejected['Account'] = self.client
@@ -314,7 +314,7 @@ class CaseParamsSellEsp:
     # Prepera order rejected report Alog
     def prepare_order_algo_rejected_report(self):
         self.set_order_exec_rep_params()
-        self.prepare_order_rejected_report()
+        self.prepare_order_rejected_report_esp()
         self.order_algo_rejected = self.order_rejected
         self.order_algo_rejected.pop('SettlDate')
         self.order_algo_rejected['HandlInst'] = '2'
