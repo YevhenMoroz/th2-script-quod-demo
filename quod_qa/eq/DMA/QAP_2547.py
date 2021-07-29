@@ -9,7 +9,6 @@ from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager, rule_manager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_ticket import OrderTicketDetails
@@ -65,7 +64,6 @@ def execute(report_id):
     order_ticket_service = Stubs.win_act_order_ticket
     order_book_service = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    mnos = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", "CLIENTYMOROZ_PARIS", "XPAR", True, 100, 10.0)
     call(order_ticket_service.placeOrder, new_order_details.build())
     extraction_id = "order.dma"
     main_order_details = OrdersDetails()
