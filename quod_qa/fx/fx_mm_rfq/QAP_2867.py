@@ -6,6 +6,7 @@ from random import randint
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2
 from custom.verifier import Verifier
+from quod_qa.common_tools import shorting_qty_for_di
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
@@ -84,8 +85,8 @@ def execute(report_id, session_id):
     settle_type_leg2 = "W2"
     currency = "GBP"
     settle_currency = "USD"
-    expected_1 = qty_1[0:3] + "." + qty_1[3:5] + "M" + " " + currency
-    expected_2 = qty_2[0:3] + "." + qty_2[3:5] + "M" + " " + currency
+    expected_1 = shorting_qty_for_di(qty_1, currency)
+    expected_2 = shorting_qty_for_di(qty_2, currency)
 
     side = ""
     leg1_side = "1"
