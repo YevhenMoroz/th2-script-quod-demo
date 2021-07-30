@@ -615,9 +615,18 @@ def amend_order(ob_act, base_request):
     call(ob_act.amendOrder, modify_ot_order_request.build())
 
 
+def open_order_ticket_via_double_click(ob_act, base_request):
+    order_details = FXOrderDetails()
+    # order_details.set_qty('123123123')
+    modify_ot_order_request = ModifyFXOrderDetails(base_request)
+    modify_ot_order_request.set_order_details(order_details)
+
+    call(ob_act.openOrderTicketByDoubleClick, modify_ot_order_request.build())
+
+
 def cancel_order(ob_act, base_request):
-    cansel_order_request = CancelFXOrderDetails(base_request)
-    call(ob_act.cancelOrder, cansel_order_request.build())
+    cancel_order_request = CancelFXOrderDetails(base_request)
+    call(ob_act.cancelOrder, cancel_order_request.build())
 
 
 def release_order(ob_act, base_request):
@@ -852,7 +861,7 @@ def execute(report_id, session_id):
         # region Dealer Intervention
         # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
-        close_dmi_window(base_request, dealer_interventions_service)
+        # close_dmi_window(base_request, dealer_interventions_service)
         # endregion
 
         # region example of Drab&Drop
@@ -862,11 +871,12 @@ def execute(report_id, session_id):
 
         # region OrderBook actions
         # amend_order(ob_fx_act, base_request)
+        open_order_ticket_via_double_click(ob_fx_act, base_request)
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
         # clear_filters(ob_fx)
         # check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
-        check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        # check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
         # endregion
 
     except Exception as e:
