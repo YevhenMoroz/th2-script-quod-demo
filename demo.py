@@ -1,7 +1,11 @@
 import logging
 from datetime import datetime
+
+from th2_grpc_sim_quod.sim_pb2 import NoMDEntries
+
 from custom import basic_custom_actions as bca
 from examples import example_java_api
+from quod_qa.eq import read_log_example, MD_test
 from quod_qa.eq.Algo_Multilisted import QAP_3429, QAP_3134, QAP_2476, QAP_2837, QAP_3058, QAP_1967, QAP_1966, QAP_1963, \
     QAP_1962, QAP_1958, QAP_1957, QAP_1954, QAP_1983, QAP_1984, QAP_2068, QAP_1953, QAP_3021, QAP_2982, QAP_1986, \
     QAP_1988, QAP_1965, QAP_1985, QAP_1979, QAP_1977, QAP_1998, QAP_1974, QAP_1968, QAP_1969, QAP_1976, QAP_1975, \
@@ -35,6 +39,27 @@ def test_run():
     report_id = bca.create_event('srublyov tests ')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
+        rule_manager = RuleManager()
+        # rule_manager.remove_all_rules()
+        # rule_manager.remove_rule_by_id(14)
+        # rule_manager.remove_rule_by_id(20)
+        rule_manager.add_NewOrdSingle_IOC_MarketData(
+            "fix-buy-side-316-ganymede",
+            "XPAR_CLIENT1",
+            "XPAR",
+            20,
+            100,
+            True,
+            "fix-feed-handler-316-ganymede",
+            "493",
+            [
+                NoMDEntries(MDEntryType="0", MDEntryPx="19", MDEntrySize="1000", MDEntryPositionNo="1"),
+                NoMDEntries(MDEntryType="1", MDEntryPx="20", MDEntrySize="500", MDEntryPositionNo="1"),
+            ]
+        )
+        # MD_test.execute(report_id)
+        # read_log_example.execute(report_id)
+
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
         #     prepare_fe(report_id, session_id, work_dir, username, password)

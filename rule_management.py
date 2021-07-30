@@ -4,7 +4,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
     TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
     TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateMarketNewOrdSingleFOK, \
-    TemplateNewOrdSingleExecutionReportReject
+    TemplateNewOrdSingleExecutionReportReject, TemplateNewOrdSingleIOCMarketData
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -250,6 +250,22 @@ class RuleManager:
                                                   trade=trade,
                                                   price=price
                                                   ))
+
+    @staticmethod
+    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str, marketDataMap):
+        return Stubs.simulator.createNewOrdSingleIOCMarketData(
+            request=TemplateNewOrdSingleIOCMarketData(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                tradedQty=tradedQty,
+                trade=trade,
+                sessionAlias=sessionAlias,
+                symbol=symbol,
+                md_entries=marketDataMap,
+            )
+        )
     # ------------------------
 
 
