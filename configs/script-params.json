@@ -1,5 +1,5 @@
 {
-  "target_server_win": "quod_11q",
+  "target_server_win": "quod_17q",
   "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
@@ -14,6 +14,6 @@
   "qf_trading_fe_user": "ostronov",
   "qf_trading_fe_password_309": "ostronov",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - Quod site",
+  "qf_trading_fe_main_win_name": "Quod Financial - Quod site 314",
   "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "
 }

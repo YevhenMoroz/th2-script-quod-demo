@@ -26,7 +26,7 @@ from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_act_java_api_quod.act_service import ActService
 
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
-from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
+# from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 
 
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
@@ -45,7 +45,7 @@ class Stubs:
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
     simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
-    test_sim = factory.grpc_router.get_service(TemplateSimulatorServiceTestService)
+    # test_sim = factory.grpc_router.get_service(TemplateSimulatorServiceTestService)
     simulator_http = factory.grpc_router.get_service(SimTemplateService)
     # simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)

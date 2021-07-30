@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
@@ -32,7 +33,7 @@ currency = 'EUR'
 securitytype = 'FXSPOT'
 securityidsource = '8'
 side = '2'
-orderqty = '58000000'
+orderqty = str(random.randint(58000000, 59000000))
 securityid = 'EUR/USD'
 settldate = tsd.spo()
 
