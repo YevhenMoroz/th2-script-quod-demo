@@ -39,8 +39,16 @@ def wk1():
     return (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d')
 
 
+def wk1_ndf():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
+
+
 def wk2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y%m%d')
+
+
+def wk2_ndf():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=11)).date().strftime('%Y%m%d')
 
 
 def wk3():
