@@ -490,9 +490,22 @@ class CaseParamsSellRfq:
     #         'QuoteID': '*'
     #     }
 
-    def prepare_quote_request_reject(self):
+    def prepare_quote_reject_report(self):
         self.quote_request_reject_params = {
             'QuoteReqID': self.rfq_params['QuoteReqID'],
-            'QuoteCancelType': '5',
+            'QuoteRequestRejectReason': '99',
+            'NoRelatedSymbols': [
+                {
+                    'SettlType': self.settltype,
+                    'OrdType': self.ordtype,
+                    'SettlDate': self.settldate,
+                    'Currency': self.currency,
+                    'Instrument': {
+                        'SecurityType': self.securitytype,
+                        'Symbol': self.symbol,
+                    },
+                    'QuoteType':'*',
+                }
+        ],
             'Text': '*'
         }

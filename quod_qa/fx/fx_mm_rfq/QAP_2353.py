@@ -17,6 +17,7 @@ def execute(report_id):
     settle_type = 0
     currency = "EUR"
     qty = "1000000"
+    text = 'no available Bid depth on EUR/GBP SPO'
 
     try:
         # Step 1
@@ -27,7 +28,7 @@ def execute(report_id):
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
         # Step 2
-        # TODO Check QuoteRequestReject
+        rfq.verify_quote_reject(text=text)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

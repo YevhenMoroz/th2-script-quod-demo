@@ -251,15 +251,17 @@ class FixClientSellRfq():
         )
         return self
 
-    def verify_quote_reject(self,event_name_cust=''):
-        self.case_params_sell_rfq.prepape_quote_cancel_report()
+    def verify_quote_reject(self,event_name_cust='', text=''):
+        self.case_params_sell_rfq.prepare_quote_reject_report()
         event_name = "Checking Quote Reject"
         if event_name_cust !='':
             event_name = event_name_cust
+        if text!='':
+            self.case_params_sell_rfq.quote_request_reject_params['Text']=text
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 event_name,
-                bca.filter_to_grpc("QuoteRequestReject", self.case_params_sell_rfq.quote_cancel_params),
+                bca.filter_to_grpc("QuoteRequestReject", self.case_params_sell_rfq.quote_request_reject_params),
                 self.quote.checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id
