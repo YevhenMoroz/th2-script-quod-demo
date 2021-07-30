@@ -49,7 +49,7 @@ securityidsource = '8'
 securityid = 'EUR/USD'
 instrument_tier = 'EUR/USD-SPOT'
 threshold = 2000000
-bands = [1000000, 2000000, 3000000]
+bands = ['*', '*', '*']
 ordqty = 0
 clOrdID = ''
 ord_status = 'Filled'
@@ -89,12 +89,15 @@ def compare_position(even_name, case_id, expected_pos, actual_pos):
     verifier.verify()
 
 
-def check_order_book_ao(even_name, case_id, base_request, act_ob, threshold, status_exp):
+def check_order_book_ao(even_name, case_id, base_request, act_ob, threshold, status_exp, order_id_custom=''):
+    order_id = 'AO'
+    if order_id_custom != '':
+        order_id = order_id_custom
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", order_id, "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -129,8 +132,12 @@ def verify_auto_hedger_by_qty(case_id, order_qty_before, order_qty_after):
     verifier.verify()
 
 
-def cancel_order(ob_act, base_request):
+def cancel_order(ob_act, base_request, order_id):
     cancel_order_request = CancelFXOrderDetails(base_request)
+    s = []
+    s.append("Order ID")
+    s.append(order_id)
+    cancel_order_request.set_filter(s)
     call(ob_act.cancelOrder, cancel_order_request.build())
 
 
@@ -143,9 +150,10 @@ def execute(report_id, session_id):
 
         try:
             # Preconditions (pre_subscribtion)
-            call(cp_service.createRatesTile, base_details.build())
-            modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-            call(cp_service.closeRatesTile, base_details.build())
+            # call(cp_service.createRatesTile, base_details.build())
+            # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+            # call(cp_service.closeRatesTile, base_details.build())
+            # call(cp_service.closeWindow, case_base_request)
 
             # Step 1
             params_sell = CaseParamsSellEsp(client, case_id, side=side, ordtype=ordtype, timeinforce=timeinforce,
@@ -159,12 +167,18 @@ def execute(report_id, session_id):
             price = md.extract_filed('Price', 3)
             ordqty = threshold
             print('Order QTY that is sent from FIX ', ordqty)
+
+            # SEND ORDER 1
             md.send_new_order_single(price, ordqty, 'Send FIRST EUR/USD ORDER to trigger Auto Hedger'). \
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
+
+            # CHECK POSITION AFTER 1 ORDER
             first_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
             compare_position("Compare position is equal to threshold", case_id, threshold, first_pos)
+
+            # CHECK AO ORDER IS CREATED
             response = check_order_book_ao("Check AH is in Order book with OPEN Status", case_id, case_base_request,
                                            ob_act,
                                            threshold, status_open)
@@ -172,12 +186,15 @@ def execute(report_id, session_id):
             ord_id_before = response[1]
 
             # Step 2
+
+            # SEND ORDER 2
             md.send_new_order_single(price, ordqty, 'Send SECOND EUR/USD ORDER to trigger Auto Hedger'). \
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
             second_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
 
+            # CHECK POSITION
             ordqty = threshold * 2
             compare_position("Compare position is equal to threshold", case_id, ordqty, second_pos)
 
@@ -186,27 +203,39 @@ def execute(report_id, session_id):
                                            threshold, status_open)
             ord_qty_after = response[0]
             ord_id_after = response[1]
+
+            # CHECK AO IS THE SAME
             verify_auto_hedger_by_id(case_id, ord_id_before, ord_id_after)
             verify_auto_hedger_by_qty(case_id, ord_qty_before, ord_qty_after)
-            cancel_order(ob_act, case_base_request)
-            time.sleep(2)
-            response = check_order_book_ao("Check AH is still OPEN with the same QTY", case_id, case_base_request,
+
+            # CANCEL AO
+            cancel_order(ob_act, case_base_request, ord_id_after)
+            time.sleep(3)
+
+            # CHECK NEW AO WITH QTY=4M
+            response = check_order_book_ao("Check AH is OPEN with the new QTY", case_id, case_base_request,
                                            ob_act,
-                                           threshold, status_open)
-            new_qty = response[0]
-            verify_auto_hedger_by_qty(case_id, ord_qty_after, new_qty)
+                                           ordqty, status_open)
+            new_qty = response[0].replace(',','')
+            new_id = response[1]
+            verify_auto_hedger_by_qty(case_id, str(ordqty), new_qty)
+
+            # RETERN POSITION BACK TO 0
             params_sell = CaseParamsSellEsp(client, case_id, side='2', ordtype=ordtype, orderqty=new_qty,
                                             timeinforce=timeinforce, currency=currency, settlcurrency=settlcurrency,
                                             settltype=settltype, settldate=settldate, symbol=symbol,
                                             securitytype=securitytype,
                                             securityid=securityid, account=account)
             md1 = FixClientSellEsp(params_sell)
-            sell_price = '1.18000'
-            md1.send_new_order_single(sell_price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger '). \
+            sell_price = '1.18'
+            md1.send_new_order_single(sell_price, ordqty,
+                                      'Send New Order Single SELL SIDE NOT to trigger Auto Hedger '). \
                 verify_order_pending(price=sell_price, qty=ordqty). \
-                verify_order_new(price=sell_price,qty=ordqty). \
-                verify_order_filled(price=sell_price,qty=ordqty)
-            cancel_order(ob_act, case_base_request)
+                verify_order_new(price=sell_price, qty=ordqty). \
+                verify_order_filled(price=sell_price, qty=ordqty)
+
+            # CANCEL AO WITH QTY=4M
+            cancel_order(ob_act, case_base_request, new_id)
 
 
         except Exception as e:
