@@ -9,7 +9,7 @@ from quod_qa.fx.fx_mm_esp import QAP_2990, QAP_1518, QAP_1558, QAP_1559, QAP_279
     QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078
 from quod_qa.fx.fx_mm_positions import QAP_2500, QAP_1898
 from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090, \
-    QAP_1755, QAP_2103, QAP_2353
+    QAP_1755, QAP_2103, QAP_2353, QAP_2101
 from quod_qa.fx.fx_taker_esp import QAP_404
 from quod_qa.fx.qs_fx_routine import rfq
 from rule_management import RuleManager
@@ -89,7 +89,7 @@ def test_run():
         # QAP_1558.execute(report_id)
 
 
-        QAP_2353.execute(report_id)
+        QAP_2101.execute(report_id)
 
 
         # clone.execute(report_id)

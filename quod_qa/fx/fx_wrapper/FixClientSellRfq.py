@@ -350,7 +350,6 @@ class FixClientSellRfq():
             'OrderID'].simple_value
         print('filled',self.case_params_sell_rfq.order_filled)
 
-        print('custom',self.case_params_sell_rfq.order_filled)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SPOT',
