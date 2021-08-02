@@ -11,6 +11,7 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
+from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
@@ -20,7 +21,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-2007"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
@@ -33,7 +34,6 @@ def execute(report_id):
 
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -48,9 +48,9 @@ def execute(report_id):
 
     # region Create order via FIX
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
+    nos_rule = rule_manager.add_NOS(eq_wrappers.get_buy_connectivity(), "XPAR_CLIENT1")
 
-    connectivity = 'gtwquod5'
+    connectivity = eq_wrappers.get_buy_connectivity()
     fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
     fix_params = {

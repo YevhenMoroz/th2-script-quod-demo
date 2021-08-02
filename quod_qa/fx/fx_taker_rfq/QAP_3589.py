@@ -176,7 +176,7 @@ def execute(report_id, session_id):
                               quote_sts_new, quote_quote_sts_accepted, case_filter_venue)
         # Step 2
         place_order_tob(base_rfq_details, ar_service)
-        order_info = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id,
+        order_info = check_order_book("OB_0", case_base_request, case_instr_type, ob_actob_act, case_id,
                                       quote_owner, display_px)
         check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, order_info["orderBook.quoteid"])
         get_my_orders_details("MOB_0", ob_act, case_base_request, case_id, order_info["orderbook.orderid"], quote_owner)
@@ -186,3 +186,4 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

@@ -1,16 +1,33 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
+from th2_grpc_sim_quod.sim_pb2 import (TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule,
+                                       TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule,
+                                       TemplateNewOrdSingleExecutionReportTrade,
+                                       TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateOrderCancelRequest,
+                                       TemplateNewOrdSingleFOK,
+                                       TemplateNewOrdSingleIOC, TemplateNewOrdSingleMarket,
+                                       TemplateOrderCancelReplaceExecutionReport,
+                                       TemplateQuodDefMDRRule)
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, \
+    TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, \
+    TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
+    TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateMarketNewOrdSingleFOK, \
+    TemplateNewOrdSingleExecutionReportReject, TemplateNewOrdSingleIOCMarketData
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 from stubs import Stubs
 from google.protobuf.empty_pb2 import Empty
 
+import grpc
+from th2_grpc_sim import sim_pb2_grpc as core_test
+
 
 class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8,9]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -99,7 +116,8 @@ class RuleManager:
     # Example: session = 'fix-fh-fx-paris'
 
     @staticmethod
-    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int, delay: int):
+    def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: float, traded_qty: int,
+                                             delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                                account=account,
@@ -141,7 +159,7 @@ class RuleManager:
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
         return Stubs.simulator.createQuodNOSRule(
-            request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
+                request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
     @staticmethod
     def add_OCR(session: str):
@@ -160,8 +178,18 @@ class RuleManager:
                                                  TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
+    def add_RFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQRule(request=
+                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
+                                                      TemplateQuodRFQTRADERule(connection_id=
+                                                                               ConnectionID(session_alias=session)))
+    @staticmethod
+    def add_TRFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
                                                                                ConnectionID(session_alias=session)))
 
@@ -234,6 +262,10 @@ class RuleManager:
                                                   price=price
                                                   ))
 
+    @staticmethod
+    def add_fx_md_to(session: str):
+        return Stubs.simulator.createQuodDefMDRFXRule(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
     def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
@@ -244,6 +276,22 @@ class RuleManager:
                                                   trade=trade,
                                                   price=price
                                                   ))
+
+    @staticmethod
+    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str, marketDataMap):
+        return Stubs.simulator.createNewOrdSingleIOCMarketData(
+            request=TemplateNewOrdSingleIOCMarketData(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                tradedQty=tradedQty,
+                trade=trade,
+                sessionAlias=sessionAlias,
+                symbol=symbol,
+                md_entries=marketDataMap,
+            )
+        )
     # ------------------------
 
 

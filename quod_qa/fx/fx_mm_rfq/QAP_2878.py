@@ -66,6 +66,7 @@ def check_dealer_intervention(base_request, service, case_id, quote_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check quote request in DI")
     verifier.compare_values("Status", "New", response["dealerIntervention.status"])
+    verifier.verify()
 
 
 def close_dmi_window(base_request, dealer_interventions_service):
@@ -116,6 +117,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

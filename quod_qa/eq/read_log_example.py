@@ -43,7 +43,7 @@ def execute(report_id):
             'Send NewOrderSingle',
             "gtwquod5",
             report_id,
-            message_to_grpc('NewOrderSingle', dma_params, "gtwquod5")
+
         ))
         time.sleep(120)
 
@@ -81,7 +81,9 @@ def execute(report_id):
             bca.create_check_rule(
                 "Readlog NewOrderSingle Received",
                 bca.filter_to_grpc("OrderSubmit", readlog_nos_params),
-                responce.checkpoint_id, 'log305-ors', report_id
+                responce.checkpoint_id,
+                'log30 5-ors',
+                report_id
             )
         )
 

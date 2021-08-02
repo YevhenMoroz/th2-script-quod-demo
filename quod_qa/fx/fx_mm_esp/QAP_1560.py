@@ -172,6 +172,7 @@ def execute(report_id, session_id):
         params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
                                    securityid=securityid)
+        #TODO
         md = MarketDataRequst(params). \
             set_md_params() \
             .send_md_request() \
@@ -204,6 +205,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
 
         try:

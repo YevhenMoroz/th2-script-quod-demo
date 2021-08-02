@@ -1,7 +1,6 @@
 import time
 
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.MarketDataRequst import MarketDataRequst
 from custom import basic_custom_actions as bca
 import logging
 from pandas import Timestamp as tm
