@@ -25,17 +25,21 @@ def check_order_book(base_request, act_ob, case_id, qty):
     ob_side = ExtractionDetail("orderBook.side", "Side")
     ob_ord_type = ExtractionDetail("orderBook.ordType", "OrdType")
     ob_currency = ExtractionDetail("orderBook.currency", "Currency")
-
+    ob_instr_type = ExtractionDetail("orderBook.instrType", "InstrType")
+    ob_exec_status= ExtractionDetail("orderBook.sts", "ExecSts")
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_side, ob_ord_type, ob_currency])))
+            action=ExtractionAction.create_extraction_action(
+                extraction_details=[ob_side, ob_ord_type, ob_currency, ob_instr_type, ob_exec_status])))
     response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check order book")
-    verifier.compare_values("Order side", "Buy", response[ob_side.name])
+    verifier.compare_values("Order side", "Sell", response[ob_side.name])
     verifier.compare_values("Order type", "PreviouslyQuoted", response[ob_ord_type.name])
-    verifier.compare_values("Order currency", "GBP", response[ob_currency.name])
+    verifier.compare_values("Order currency", "USD", response[ob_currency.name])
+    verifier.compare_values("Order InstrType", "NonDeliverableSwap", response[ob_instr_type.name])
+    verifier.compare_values("Order status", "Filled", response[ob_exec_status.name])
     verifier.verify()
 
 
@@ -45,7 +49,7 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
 
-    ob_service=Stubs.win_act_order_book
+    ob_service = Stubs.win_act_order_book
     case_base_request = get_base_request(session_id, case_id)
 
     client_tier = "Iridium1"
@@ -67,7 +71,7 @@ def execute(report_id, session_id):
     leg2_side = "2"
     try:
         # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg2_side, leg2_side=leg1_side,
+        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
                                    orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_1,
                                    currency=currency, settlcurrency=settle_currency,
                                    leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
@@ -85,9 +89,9 @@ def execute(report_id, session_id):
         rfq_swap.send_new_order_multi_leg(price)
         # Step 3
         rfq_swap.verify_order_pending_swap()
-        rfq_swap.verify_order_filled()
+        rfq_swap.verify_order_filled_swap()
         # Step 4
-        # check_order_book(case_base_request, ob_service, case_id, qty_1)
+        check_order_book(case_base_request, ob_service, case_id, qty_1)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
