@@ -39,14 +39,14 @@ def check_order_book(base_request, act_ob, case_id, qty):
     verifier.verify()
 
 
-def execute(report_id, session_id):
+def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
-    set_base(session_id, case_id)
+    # set_base(session_id, case_id)
 
     ob_service=Stubs.win_act_order_book
-    case_base_request = get_base_request(session_id, case_id)
+    # case_base_request = get_base_request(session_id, case_id)
 
     client_tier = "Iridium1"
     account = "Iridium1_1"
@@ -89,7 +89,7 @@ def execute(report_id, session_id):
         rfq_swap.verify_order_pending_swap()
         rfq_swap.verify_order_filled()
         # Step 4
-        check_order_book(case_base_request, ob_service, case_id, qty_1)
+        # check_order_book(case_base_request, ob_service, case_id, qty_1)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

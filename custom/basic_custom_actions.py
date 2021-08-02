@@ -96,7 +96,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                 )
             elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
                          'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
-                         'ListingBlock']:
+                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol']:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
                         message_value=(message_to_grpc(tag, group, session_alias)))
