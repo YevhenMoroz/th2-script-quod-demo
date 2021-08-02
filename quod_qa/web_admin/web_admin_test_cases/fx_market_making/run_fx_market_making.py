@@ -3,7 +3,9 @@ import traceback
 from datetime import timedelta
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_1647 import QAP_1647
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_1688 import QAP_1688
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_1695 import QAP_1695
 
 
 class RunFxMarketMaking:
@@ -16,10 +18,9 @@ class RunFxMarketMaking:
     def execute(self):
         try:
             start_time = time.monotonic()
-
-
-
-
+            # QAP_1647(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1688(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1695(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run FXMM ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

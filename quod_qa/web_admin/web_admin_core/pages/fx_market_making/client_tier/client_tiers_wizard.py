@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -22,3 +24,9 @@ class ClientTiersWizard(CommonPage):
 
     def click_on_cancel_button(self):
         self.find_by_xpath(ClientTierConstants.CANCEL_BUTTON_XPATH).click()
+
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
+        self.clear_download_directory()
+        self.find_by_xpath(ClientTierConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        time.sleep(2)
+        return self.is_pdf_contains_value(value)

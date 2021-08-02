@@ -8,7 +8,7 @@ class ClientTierConstants:
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
-    #region ~~~~~~~Client Tiers Block~~~~~~~
+    # region ~~~~~~~Client Tiers Block~~~~~~~
     # main page
     CLIENT_TIER_MORE_ACTIONS_XPATH = "//*[@class='ct-grid']//*[@data-name='more-vertical']"
     MAIN_PAGE_CLIENT_TIER_EDIT_XPATH = "//*[@class='ct-grid']//*[@data-name='edit']"
@@ -20,21 +20,21 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_NAME_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
-    #region wizard
+    # region wizard
     # values tab
     CLIENT_TIER_VALUES_TAB_NAME_XPATH = "//*[text()='Name *']/preceding-sibling::input"
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = "//*[text()='Core Spot Price Strategy']/preceding-sibling::input"
     # schedules
     CLIENT_TIER_SCHEDULES_TAB_ENABLE_SCHEDULE_CHECKBOX_XPATH = "//*[text()='Enable Schedule']/preceding-sibling::span"
     # schedules schedules
-    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH ="//*[@class='schedule']//*[@class='nb-plus']"
-    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH ="//*[@class='schedule']//*[@class='nb-checkmark']"
-    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH ="//*[@class='schedule']//*[@class='nb-close']"
+    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH = "//*[@class='schedule']//*[@class='nb-plus']"
+    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH = "//*[@class='schedule']//*[@class='nb-checkmark']"
+    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH = "//*[@class='schedule']//*[@class='nb-close']"
     CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[@class="schedule"]//*[@class="nb-edit"]'
     CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[@class="schedule"]//*[@class="nb-trash"]'
 
-    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH ="//*[@class='schedule']//*[@placeholder='Day *']"
-    CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH ="//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
+    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = "//*[@class='schedule']//*[@placeholder='Day *']"
+    CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_XPATH = "//*[@class='schedule']//*[@placeholder='From Time *']"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th scheduleFromTime ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_TAB_TO_TIME_XPATH = "//*[@class='schedule']//*[@placeholder='To Time *']"
@@ -48,13 +48,13 @@ class ClientTierConstants:
     CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_EXCEPTION_DAY_XPATH = "//*[@class='schedule-excep']//*[@placeholder='Exception Date *']"
     CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_EXCEPTION_DAY_FILTER_XPATH = "//*[@class='schedule-excep']//*[@class='ng2-smart-th scheduleExceptionDate ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_FROM_TIME_XPATH = "//*[@class='schedule-excep']//*[@placeholder='From Time *']"
-    CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_FROM_TIME_FILTER_XPATH ="//*[@class='schedule-excep']//*[@class='ng2-smart-th scheduleFromTime ng-star-inserted']//input-filter"
+    CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_FROM_TIME_FILTER_XPATH = "//*[@class='schedule-excep']//*[@class='ng2-smart-th scheduleFromTime ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_TO_TIME_XPATH = "//*[@class='schedule-excep']//*[@placeholder='To Time *']"
     CLIENT_TIER_SCHEDULES_EXCEPTIONS_TAB_TO_TIME_FILTER_XPATH = "//*[@class='schedule-excep']//*[@class='ng2-smart-th scheduleToTime ng-star-inserted']//input-filter"
     # endregion
     # endregion
 
-    #region ~~~~~~~Client Tiers Instruments Block~~~~~~~
+    # region ~~~~~~~Client Tiers Instruments Block~~~~~~~
     CLIENT_TIER_INSTRUMENTS_MORE_ACTIONS_XPATH = "//*[@class='ctis-grid']//*[@data-name='more-vertical']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_EDIT_XPATH = "//*[@data-name='edit']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CLONE_XPATH = "//*[@data-name='copy']"
@@ -67,9 +67,9 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_RFQ_RESPONSE_STREAM_TTL_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[3]//input"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[1]//select"
-    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_DISABLED_BUTTON_XPATH = "//*[@class='toggle-switcher ng-tns-c118-88 ng-trigger ng-trigger-position']"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_DISABLED_BUTTON_XPATH = "//*[@class='ag-pinned-left-cols-container']//span"
 
-    #region wizard
+    # region wizard
     # values tab
     CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
     CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH = '//*[@formcontrolname="quoteTTL"]'
@@ -145,16 +145,15 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="nb-edit"]'
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="nb-trash"]'
 
-    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH= '//*[@placeholder ="Quantity *"]'
-    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH= '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="ng2-smart-th upperQty ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH = '//*[@placeholder ="Quantity *"]'
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="ng2-smart-th upperQty ng-star-inserted"]//input'
 
     # tenors tab
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-plus"]'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-plus ng2-main-add-btn"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-close"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-edit"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-trash"]'
-
 
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH = '//*[@placeholder ="Tenor *"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH = '//*[@class ="tenor-table-body"]//*[@class="form-control ng-pristine ng-valid ng-touched"]'
@@ -168,7 +167,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MINIMUM_PRICE_CHECKBOX_XPATH = '//*[@formcontrolname ="validateMinPrice"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MINIMUM_PRICE_XPATH = '//*[@formcontrolname ="validateMinPrice"]/input'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAXIMUM_PRICE_CHECKBOX_XPATH = '//*[@formcontrolname ="validateMaxPrice"]'
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAXIMUM_PRICE_XPATH ='//*[@formcontrolname ="validateMaxPrice"]/input'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAXIMUM_PRICE_XPATH = '//*[@formcontrolname ="validateMaxPrice"]/input'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_AUTOMATED_MARGIN_STRATEGIES_ENABLED_CHECKBOX_XPATH = '//*[text()="Automated Margin Strategies Enabled"]//parent::span'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_POSITION_BASED_MARGINS_CHECKBOX_XPATH = '//*[text()="Position Based Margins"]//parent::span'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_POSITION_BOOK_XPATH = '//*[@id ="monitoredPosAccountGroup"]'
@@ -188,10 +187,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_MARGIN_FILTER_XPATH = '//*[@class= "MDQuoteType ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_FILTER_XPATH = '//*[@class= "activeQuote ng2-smart-th ng-star-inserted"]//input'
 
-
-
-
-    #position levels sub tab
+    # position levels sub tab
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_PLUS_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-plus piloted-table-action"]'
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-checkmark"]'
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CLOSE_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-close"]'
@@ -206,7 +202,6 @@ class ClientTierConstants:
 
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_OFFER_MARGIN_XPATH = '//*[@placeholder ="Offer Margin"]'
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="ng2-smart-th offerMargin ng-star-inserted"]//input'
-    #endregion
+    # endregion
 
-
-    #endregion
+    # endregion
