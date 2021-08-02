@@ -20,7 +20,7 @@ timeouts = True
 
 tick = 0.005
 waves = 4
-qty = 2000
+qty = 40
 price = 20
 parent_price = 21
 wld_price = 19.98
@@ -41,9 +41,9 @@ client = "CLIENT2"
 order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
-s_par = '1015'
+s_par = '704'
 percentage = 10
-aggressivity = 2
+aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -51,8 +51,8 @@ connectivity_sell_side = "fix-sell-side-316-ganymede"
 connectivity_fh = 'fix-feed-handler-316-ganymede'
 
 instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
+            'Symbol': 'FR0010436584',
+            'SecurityID': 'FR0010436584',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
@@ -112,6 +112,8 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+
         rule_list = rule_creation()
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -164,14 +166,19 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Price': parent_price,
             'Currency': currency,
-            'TargetStrategy': 2,
+            'TargetStrategy': 1,
             'ExDestination': ex_destination_1,
             'TriggeringInstruction': trigger,
             'NoStrategyParameters': [
                 {
-                    'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': percentage
+                    'StrategyParameterName': 'StartDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                },
+                {
+                    'StrategyParameterName': 'EndDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': (now + timedelta(minutes=20)).strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -206,6 +213,7 @@ def execute(report_id):
 
         #Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 ={
+            'Account': client,
             'ExecID': '*',
             'OrderQty': qty,
             'NoStrategyParameters': '*',
@@ -244,6 +252,7 @@ def execute(report_id):
             ExecRestatementReason='*',
             TriggeringInstruction = trigger,
         )
+        er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'Price', 'OrderQty'])
 
         #region IOC

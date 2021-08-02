@@ -20,9 +20,8 @@ timeouts = True
 
 tick = 0.005
 waves = 4
-qty = 2000
+qty = 40
 price = 20
-parent_price = 21
 wld_price = 19.98
 child_day_qty = round(qty / waves)
 text_pn = 'Pending New status'
@@ -41,9 +40,9 @@ client = "CLIENT2"
 order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
-s_par = '1015'
+s_par = '704'
 percentage = 10
-aggressivity = 2
+aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -51,14 +50,10 @@ connectivity_sell_side = "fix-sell-side-316-ganymede"
 connectivity_fh = 'fix-feed-handler-316-ganymede'
 
 instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
+            'Symbol': 'FR0010436584',
+            'SecurityID': 'FR0010436584',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
-        }
-trigger = {
-            'TriggerType': 4,
-            'TriggerPrice': price + tick
         }
 
 def rule_creation():
@@ -112,6 +107,9 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+        waves = 4
+
         rule_list = rule_creation()
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # Send_MarkerData
@@ -162,16 +160,20 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Price': parent_price,
+            'Price': price,
             'Currency': currency,
-            'TargetStrategy': 2,
+            'TargetStrategy': 1,
             'ExDestination': ex_destination_1,
-            'TriggeringInstruction': trigger,
-            'NoStrategyParameters': [
+                    'NoStrategyParameters': [
                 {
-                    'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': percentage
+                    'StrategyParameterName': 'StartDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                },
+                {
+                    'StrategyParameterName': 'EndDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': (now + timedelta(minutes=20)).strftime("%Y%m%d-%H:%M:%S")
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -181,12 +183,12 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'WouldPriceReference',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': 'MAN'
+                    'StrategyParameterValue': 'MID'
                 },
                 {
                     'StrategyParameterName': 'WouldPriceOffset',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': '-1'
+                    'StrategyParameterValue': '2'
                 }
             ]
         }
@@ -206,6 +208,7 @@ def execute(report_id):
 
         #Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 ={
+            'Account': client,
             'ExecID': '*',
             'OrderQty': qty,
             'NoStrategyParameters': '*',
@@ -232,19 +235,19 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'Price', 'OrderQty'])
-        time.sleep(5)
+        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
             er_1,
             ExecType="0",
             OrdStatus='0',
+            SettlDate='*',
             SettlType = '*',
-            SettlDate = '*',
             ExecRestatementReason='*',
-            TriggeringInstruction = trigger,
         )
-        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'Price', 'OrderQty'])
+        er_2.pop('Account')
+        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         #region IOC
         case_id_2 = bca.create_event("Check IOC Order", case_id)

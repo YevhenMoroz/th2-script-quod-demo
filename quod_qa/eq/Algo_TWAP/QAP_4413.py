@@ -183,7 +183,7 @@ def execute(report_id):
                 },
                 {
                     'StrategyParameterName': 'MaxWouldShares',
-                    'StrategyParameterType': '6',
+                    'StrategyParameterType': '1',
                     'StrategyParameterValue': '350'
                 },
                 {
