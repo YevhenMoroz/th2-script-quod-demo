@@ -35,30 +35,14 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
 client = 'Osmium1'
 client_tier = 'Osmium'
 account = 'Osmium1_1'
-side = '1'
-ordtype = '2'
-timeinforce = '4'
-currency = 'EUR'
-settlcurrency = 'GBP'
-settltype = 0
 symbol = 'EUR/GBP'
 securitytype = 'FXSPOT'
-securityidsource = '8'
-securityid = 'EUR/GBP'
 instrument_tier = 'EUR/GBP-SPOT'
-threshold = 2000000
-bands = [1000000, 2000000, 3000000]
-ordqty = 0
-clOrdID = ''
-ord_status = 'Filled'
 status_open = 'Open'
 status_cnld = 'Cancelled'
-md = None
-settldate = spo()
 row = 2
 SELL = RatesTileTableOrdSide.SELL
 BUY = RatesTileTableOrdSide.BUY
@@ -92,7 +76,6 @@ def compare_position(even_name, case_id, expected_pos, actual_pos):
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
     verifier.compare_values("Quote position", str(expected_pos), str(actual_pos))
-
     verifier.verify()
 
 
@@ -158,19 +141,6 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     verifier.compare_values('ID', ord_id, response[order_id.name])
     verifier.verify()
 
-def verify_auto_hedger_by_id(case_id, order_id_before, order_id_after):
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Auto Hedger order ID")
-    verifier.compare_values('Order ID', order_id_before, order_id_after)
-    verifier.verify()
-
-
-def verify_auto_hedger_by_qty(case_id, order_qty_before, order_qty_after):
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Auto Hedger order QTY")
-    verifier.compare_values('Order ID', order_qty_before, order_qty_after)
-    verifier.verify()
-
 
 def cancel_order(ob_act, base_request, ord_id):
     cancel_order_request = CancelFXOrderDetails(base_request)
@@ -196,14 +166,6 @@ def amend_order(base_request, service, _qty):
 def open_ot_by_doubleclick_row(btd, cp_service, _row, _side):
     request = PlaceRateTileTableOrderRequest(btd, _row, _side)
     call(cp_service.placeRateTileTableOrder, request.build())
-
-
-def modify_order_ticket(base_request, service):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_place()
-    order_ticket.set_client('Osmium1')
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
 
 
 def place_order(base_request, service, _client):
