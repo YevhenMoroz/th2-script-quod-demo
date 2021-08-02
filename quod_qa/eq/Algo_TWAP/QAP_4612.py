@@ -191,7 +191,7 @@ def execute(report_id):
                     'StrategyParameterType': '14',
                     'StrategyParameterValue': 'MAN'
                 },
-                                {
+                {
                     'StrategyParameterName': 'WouldPriceOffset',
                     'StrategyParameterType': '1',
                     'StrategyParameterValue': '-1'
