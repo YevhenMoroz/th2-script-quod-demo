@@ -16,7 +16,7 @@ from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
 
-def check_order_book(base_request, act_ob, case_id, qty):
+def check_order_book(base_request, act_ob, case_id, qty, currency):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
@@ -37,7 +37,7 @@ def check_order_book(base_request, act_ob, case_id, qty):
     verifier.set_event_name("Check order book")
     verifier.compare_values("Order side", "Sell", response[ob_side.name])
     verifier.compare_values("Order type", "PreviouslyQuoted", response[ob_ord_type.name])
-    verifier.compare_values("Order currency", "USD", response[ob_currency.name])
+    verifier.compare_values("Order currency", currency, response[ob_currency.name])
     verifier.compare_values("Order InstrType", "NonDeliverableSwap", response[ob_instr_type.name])
     verifier.compare_values("Order status", "Filled", response[ob_exec_status.name])
     verifier.verify()
@@ -91,7 +91,7 @@ def execute(report_id, session_id):
         rfq_swap.verify_order_pending_swap()
         rfq_swap.verify_order_filled_swap()
         # Step 4
-        check_order_book(case_base_request, ob_service, case_id, qty_1)
+        check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
