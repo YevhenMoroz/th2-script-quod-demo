@@ -17,6 +17,7 @@ from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMeta
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
 from th2_grpc_common.common_pb2 import ComparisonSettings
 from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
+from decimal import Decimal
 
 
 def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
@@ -416,3 +417,37 @@ def create_checkpoint_request(event_id: EventID, description: str = "Checkpoint"
             create_checkpoint_request (CheckpointRequest): grpc request with checkpoint
     """
     return CheckpointRequest(description=description, parent_event_id=event_id)
+
+
+def wrap_message(content, message_type=None, session_alias=None, direction=Direction.Value("SECOND")):
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if isinstance(value, str):
+                fields[tag] = Value(simple_value=value)
+            elif isinstance(value, (int, float, Decimal)):
+                fields[tag] = Value(simple_value=str(value))
+            elif isinstance(value, dict):
+                fields[tag] = Value(message_value=wrap_message(content=value))
+            elif isinstance(value, list):
+                fields[tag] = Value(list_value=wrap_message(content=value))
+        message = Message(fields=fields)
+        if message_type is not None:
+            message.metadata.message_type = message_type
+            message.metadata.id.direction = direction
+            if session_alias is not None:
+                message.metadata.id.connection_id.session_alias = session_alias
+        return message
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(Value(simple_value=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(Value(simple_value=str(element)))
+            elif isinstance(element, dict):
+                values.append(Value(message_value=wrap_message(content=element)))
+            elif isinstance(element, list):
+                values.append(Value(list_value=wrap_message(content=element)))
+        list_value = ListValue(values=values)
+        return list_value
