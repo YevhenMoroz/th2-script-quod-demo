@@ -39,7 +39,7 @@ def check_esp_tile(base_request, service, case_id, instrument, date):
     extraction_id = bca.client_orderid(4)
     extraction_value.set_extraction_id(extraction_id)
     extraction_value.extract_instrument("ratesTile.instrument")
-    extraction_value.extract_tenor("ratesTile.date")
+    extraction_value.extract_tenor_date("ratesTile.date")
     response = call(service.extractRatesTileValues, extraction_value.build())
     extracted_instrument = response["ratesTile.instrument"]
     extracted_tenor_date = response["ratesTile.date"]
@@ -118,6 +118,6 @@ def execute(report_id, session_id):
         try:
             # Close tile
             call(ar_service.closeRatesTile, base_esp_details.build())
-
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         except Exception:
             logging.error("Error execution", exc_info=True)

@@ -111,7 +111,10 @@ class UsersPage(CommonPage):
         self.set_combobox_value(UsersConstants.CONNECTED_FILTER_AT_MAIN_PAGE, value)
 
     def get_disabled_massage(self):
-        return self.find_by_xpath(UsersConstants.DISABLED_MESSAGE).text
+        return self.find_by_xpath(UsersConstants.DISABLED_ENABLED_SUCCESSFUL_MESSAGE).text
+
+    def get_enabled_massage(self):
+        return self.find_by_xpath(UsersConstants.DISABLED_ENABLED_SUCCESSFUL_MESSAGE).text
 
     def get_user_id(self):
         return self.find_by_xpath(UsersConstants.USER_ID_AT_MAIN_PAGE).text

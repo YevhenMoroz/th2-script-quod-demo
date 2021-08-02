@@ -153,6 +153,14 @@ def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str):
     return request
 
 
+def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str):
+    request = act_ui_win_pb2.DirectMocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.qtyType = qty_type
+    request.qtyPercentage = qty_percentage
+    request.route = route
+    return request
+
+
 def direct_child_care_сorrect(qty_type: str, qty_percentage: str, recipient: str, route: str, count: int):
     request = act_ui_win_pb2.DirectChildCareDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     for i in range(1, count + 1):

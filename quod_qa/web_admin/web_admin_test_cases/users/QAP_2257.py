@@ -1,7 +1,9 @@
 import random
 import string
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
@@ -15,6 +17,7 @@ class QAP_2257(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.venue = "JSE"
@@ -37,12 +40,16 @@ class QAP_2257(CommonTestCase):
         venue_trader_sub_wizard.click_on_checkmark_button()
         time.sleep(2)
 
-
     def test_context(self):
-        self.precondition()
-        users_wizard = UsersWizard(self.web_driver_container)
-        expected_pdf_content = [self.venue, self.new_venue_trader_name]
+        try:
+            self.precondition()
+            users_wizard = UsersWizard(self.web_driver_container)
+            expected_pdf_content = [self.venue, self.new_venue_trader_name]
 
-        self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                    users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-        users_wizard.click_on_save_changes()
+            self.verify(f"Is PDF contains {expected_pdf_content}", True,
+                        users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            users_wizard.click_on_save_changes()
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

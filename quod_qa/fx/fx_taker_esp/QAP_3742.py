@@ -122,7 +122,7 @@ def place_esp_by_bid_btn(base_request):
     service = Stubs.win_act_aggregated_rates_service
     btd = BaseTileDetails(base=base_request)
     rfq_request = PlaceESPOrder(details=btd)
-    rfq_request.set_action(ESPTileOrderSide.BUY)
+    rfq_request.set_action(ESPTileOrderSide.SELL)
     rfq_request.top_of_book(False)
     call(service.placeESPOrder, rfq_request.build())
 
@@ -176,7 +176,7 @@ def execute(report_id, session_id):
         place_esp_by_bid_btn(case_base_request)
         pips = extract_price_from_ot(base_data, order_ticket_service)
         print(pips)
-        modify_order_ticket(case_base_request, order_ticket_service, str(int(pips[0]) + 50), pips[1])
+        modify_order_ticket(case_base_request, order_ticket_service, str(int(pips[0]) - 50), pips[1])
 
         # Step 3
         ord_id = check_order_book(case_base_request, ob_service, case_id, tenor, settle_date, qty, order_type)
