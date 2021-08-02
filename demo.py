@@ -1,42 +1,30 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2228
-from quod_qa.fx.fx_mm_rfq import QAP_1552, QAP_1539, QAP_2091, QAP_2101, QAP_2104
-from quod_qa.fx.my_methods import send_rfq
+from quod_qa.fx import ui_tests
 
 from rule_management import RuleManager
-
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe, \
+    prepare_fe_2
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 timeouts = False
+work_dir = Stubs.custom_config['qf_trading_fe_folder']
+username = Stubs.custom_config['qf_trading_fe_user']
+password = Stubs.custom_config['qf_trading_fe_password']
 
 channels = dict()
 
 
-def rule_creation():
-    rule_manager = RuleManager()
-    rfq_quote = rule_manager.add_RFQ('fix-bs-rfq-314-luna-standard')
-    rfq_trade = rule_manager.add_TRFQ('fix-bs-rfq-314-luna-standard')
-    # return [rfq_quote, rfq_trade]
-
-
-def rule_destroyer(list_rules):
-    if list_rules != None:
-        rule_manager = RuleManager()
-        for rule in list_rules:
-            rule_manager.remove_rule(rule)
-
-
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial"
 
     session_id = set_session_id()
     # rules = rule_creation()
@@ -51,28 +39,18 @@ def test_run():
             'TargetCompID': 'QUOD9',
         }
 
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
 
          # Add scripts
-        # QAP_2867.execute(report_id, session_id)
-        # QAP_2868.execute(report_id, session_id)
-        # QAP_2866.execute(report_id, session_id)
-        # QAP_2228.execute(report_id, session_id)
-        # QAP_2091.execute(report_id)
-        # QAP_2101.execute(report_id, session_id)
-        QAP_2104.execute(report_id, session_id)
-        # QAP_1539.execute(report_id, session_id)
+
         # rm = RuleManager()
-        # ui_tests.execute(report_id, session_id)
+        ui_tests.execute(report_id, session_id)
         # rm.print_active_rules()
         # rm.print_active_rules_sim_test()
-
-        # rm.remove_rules_by_id_list([5, 7])
-        # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
 
         print('duration time = ' + str(datetime.now() - start))
 
