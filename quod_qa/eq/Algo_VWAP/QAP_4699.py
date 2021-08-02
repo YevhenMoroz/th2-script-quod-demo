@@ -22,6 +22,7 @@ tick = 0.005
 waves = 4
 qty = 40
 price = 20
+parent_price = 21
 wld_price = 19.98
 child_day_qty = round(qty / waves)
 text_pn = 'Pending New status'
@@ -42,7 +43,7 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '704'
 percentage = 10
-aggressivity = 2
+aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -57,7 +58,7 @@ instrument = {
         }
 trigger = {
             'TriggerType': 4,
-            'TriggerPrice': price
+            'TriggerPrice': price + tick
         }
 
 def rule_creation():
@@ -163,7 +164,7 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Price': price,
+            'Price': parent_price,
             'Currency': currency,
             'TargetStrategy': 1,
             'ExDestination': ex_destination_1,
@@ -188,6 +189,11 @@ def execute(report_id):
                     'StrategyParameterName': 'WouldPriceReference',
                     'StrategyParameterType': '14',
                     'StrategyParameterValue': 'MAN'
+                },
+                {
+                    'StrategyParameterName': 'WouldPriceOffset',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '-1'
                 }
             ]
         }
