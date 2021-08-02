@@ -10,7 +10,8 @@ from custom import basic_custom_actions as bca
 
 from win_gui_modules.aggregated_rates_wrappers import PlaceRFQRequest, RFQTileOrderSide, ModifyRatesTileRequest, \
     PlaceESPOrder, ESPTileOrderSide, MoveESPOrderTicketRequest, ExtractRatesTileDataRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, prepare_fe, close_fe, prepare_fe303
+from win_gui_modules.utils import (set_session_id, get_base_request, call, prepare_fe, close_fe, prepare_fe303,
+                                   get_opened_fe)
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
@@ -52,8 +53,8 @@ class TestCase:
         work_dir = Stubs.custom_config['qf_trading_fe_folder_303']
         password = Stubs.custom_config['qf_trading_fe_password_303']
         # get_opened_fe_303(self.case_id, self.session_id)
-        prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
-
+        # prepare_fe303(self.case_id, self.session_id, work_dir, self.user, password)
+        get_opened_fe(self.case_id, self.session_id )
     # send market data
     def send_market_data(self, qty):
         act = Stubs.fix_act
@@ -242,10 +243,10 @@ class TestCase:
             qty_2 = '7000000'
             self.prepare_frontend()
             self.create_or_get_rates_tile()
-            self.send_market_data(1000000)
+            # self.send_market_data(1000000)
             # self.Check_rates_tile_table_values(1, "734", "784")
             # ask = self.Check_rates_tile_table_values(2, "618", "795")["rateTile.AskPx"]
-            bid = self.Check_rates_tile_table_values(3, "592", "827")["rateTile.BidPx"]
+            bid = self.Check_rates_tile_table_values(3, "592", "ProcessClientPriceGridActAction")["rateTile.BidPx"]
             values = self.Check_rates_tile_values()
             self.modify_rates_tile(qty_1)
             self.check_order_ticket(qty_1, 'Sell', bid, values["rateTile.AskLarge"], values["rateTile.instrument"],
@@ -256,4 +257,4 @@ class TestCase:
             self.check_move_order_ticket('bid', False, position['newPosition'])
         except Exception as e:
             logging.error('Error execution', exc_info=True)
-        close_fe(self.case_id, self.session_id)
+        # close_fe(self.case_id, self.session_id)

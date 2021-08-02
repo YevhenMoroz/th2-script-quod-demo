@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -32,8 +34,13 @@ class CounterpartsPage(CommonPage):
     def click_on_clone(self):
         self.find_by_xpath(CounterpartsConstants.CLONE_AT_MORE_ACTIONS_XPATH).click()
 
-    def click_on_delete(self):
+    def click_on_delete_and_confirmation(self, confirmation):
         self.find_by_xpath(CounterpartsConstants.DELETE_AT_MORE_ACTIONS_XPATH).click()
+        if confirmation:
+            time.sleep(2)
+            self.find_by_xpath(CounterpartsConstants.OK_BUTTON_XPATH).click()
+        else:
+            self.find_by_xpath(CounterpartsConstants.CANCEL_BUTTON_XPATH).click()
 
     def click_on_new(self):
         self.find_by_xpath(CounterpartsConstants.NEW_BUTTON_XPATH).click()

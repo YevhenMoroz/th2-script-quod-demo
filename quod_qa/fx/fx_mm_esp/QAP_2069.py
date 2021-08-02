@@ -21,6 +21,12 @@ def modify_rates_tile(base_request, service, instrument, client, pips):
     call(service.modifyRatesTile, modify_request.build())
 
 
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
+
+
 def modify_spread(base_request, service, *args):
     modify_request = ModifyRatesTileRequest(details=base_request)
     if "increase_ask" in args:
@@ -173,8 +179,11 @@ def execute(report_id, session_id):
         bid_after = check_bid(base_details, cp_service)
         compare_prices(case_id, ask_before, bid_before, ask_after, bid_after, pips)
 
+        use_default(base_details, cp_service)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

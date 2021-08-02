@@ -3,6 +3,11 @@ from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
 from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
+from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
+# from th2_grpc_sim_quod.template_simulator_test_service import TemplateSimulatorTestService
+from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
+from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
+from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 # from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
@@ -50,6 +55,7 @@ class Stubs:
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)
     win_act_trades = factory.grpc_router.get_service(TradesServiceService)
+    win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
     win_act_order_ticket = factory.grpc_router.get_service(OrderTicketServiceService)
     win_act_order_ticket_fx = factory.grpc_router.get_service(OrderTicketFxServiceService)
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)

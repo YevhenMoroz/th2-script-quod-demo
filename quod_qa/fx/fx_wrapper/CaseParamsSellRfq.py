@@ -12,6 +12,7 @@ class CaseParamsSellRfq:
     quote_params = None
     quote_params_swap = None
     # quote_cancel_params = None
+    quote_request_reject_params = None
     order_params = None
     order_multi_leg_params = None
     order_exec_report = None
@@ -394,10 +395,10 @@ class CaseParamsSellRfq:
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepare  order rejected report
-    def prepare_order_rejected_report(self):
+    def prepare_order_rejected_report_rfq(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
-        self.order_rejected['Account'] = self.client
+        # self.order_rejected['Account'] = self.client
         self.order_rejected['OrdStatus'] = '8'
         self.order_rejected['ExecType'] = '8'
         self.order_rejected['ExecRestatementReason'] = '4'
@@ -409,7 +410,7 @@ class CaseParamsSellRfq:
     # Prepare  order rejected report Alog
     def prepare_order_algo_rejected_report(self):
         self.set_order_exec_rep_params()
-        self.prepare_order_rejected_report()
+        self.prepare_order_rejected_report_rfq()
         self.order_algo_rejected = self.order_rejected
         self.order_algo_rejected.pop('SettlDate')
         self.order_algo_rejected['HandlInst'] = '2'
@@ -488,3 +489,23 @@ class CaseParamsSellRfq:
     #         ],
     #         'QuoteID': '*'
     #     }
+
+    def prepare_quote_reject_report(self):
+        self.quote_request_reject_params = {
+            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteRequestRejectReason': '99',
+            'NoRelatedSymbols': [
+                {
+                    'SettlType': self.settltype,
+                    'OrdType': self.ordtype,
+                    'SettlDate': self.settldate,
+                    'Currency': self.currency,
+                    'Instrument': {
+                        'SecurityType': self.securitytype,
+                        'Symbol': self.symbol,
+                    },
+                    'QuoteType':'*',
+                }
+        ],
+            'Text': '*'
+        }

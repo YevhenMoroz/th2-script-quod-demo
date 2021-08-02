@@ -41,9 +41,9 @@ def execute(report_id):
         rfq.verify_quote_pending()
 
         # # Step 3-4
-        offer_px = rfq.extruct_filed('OfferPx')
-        last_spot_rate = rfq.extruct_filed('OfferSpotRate')
-        last_frw_points = rfq.extruct_filed('OfferForwardPoints')
+        offer_px = rfq.extract_filed('OfferPx')
+        last_spot_rate = rfq.extract_filed('OfferSpotRate')
+        last_frw_points = rfq.extract_filed('OfferForwardPoints')
         rfq.send_new_order_single(offer_px)
         rfq.verify_order_pending()
         # # rfq.verify_order_new()

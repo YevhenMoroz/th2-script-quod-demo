@@ -432,8 +432,8 @@ class MenuItemDetails:
     def set_menu_item(self, menu_item: str):
         self._request.menuItem = menu_item
 
-    def set_selected_rows(self, selected_rows: [int]):
-        self._request.selectedRows = selected_rows
+    def set_selected_rows(self, selected_rows):
+        self._request.selectedRows.extend(selected_rows)
 
     def set_extraction_Id(self, extraction_Id: str):
         self._request.extractionId = extraction_Id
@@ -536,3 +536,97 @@ class ManualCrossDetails:
 
     def build(self):
         return self._request
+
+
+class FXOrdersDetails:
+    def __init__(self):
+        self.base_params = None
+        self.extraction_id = None
+        self.orders_details = order_book_fx_pb2.FXOrdersDetailsInfo()
+
+    @staticmethod
+    def create(order_info_list: list = None, info=None):
+        order_details = FXOrdersDetails()
+
+        if order_info_list is not None:
+            for i in order_info_list:
+                order_details.add_single_order_info(i)
+
+        if info is not None:
+            order_details.add_single_order_info(info)
+
+        return order_details
+
+    def set_extraction_id(self, extraction_id: str):
+        self.extraction_id = extraction_id
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.orders_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_order_info(self, order_info_list: list):
+        for order_info in order_info_list:
+            self.orders_details.orderInfo.append(order_info.build())
+
+    def add_single_order_info(self, order_info):
+        self.orders_details.orderInfo.append(order_info.build())
+
+    def set_default_params(self, base_request):
+        self.base_params = base_request
+
+    def extract_length(self, count_id: str):
+        self.orders_details.extractCount = True
+        self.orders_details.countId = count_id
+
+    def request(self):
+        request = order_book_fx_pb2.GetFXOrdersDetailsRequest()
+        request.base.CopyFrom(self.base_params)
+        request.extractionId = self.extraction_id
+        request.orderDetails.CopyFrom(self.orders_details)
+        return request
+
+    def details(self):
+        return self.orders_details
+
+
+class FXOrderInfo:
+    def __init__(self):
+        self.order_info = order_book_fx_pb2.FXOrderInfo()
+
+    @staticmethod
+    def create(action=None, actions: list = None, sub_order_details: FXOrdersDetails = None):
+        order_info = FXOrderInfo()
+        if action is not None:
+            order_info.add_single_order_action(action)
+
+        if actions is not None:
+            order_info.add_order_actions(actions)
+
+        if sub_order_details is not None:
+            order_info.set_sub_orders_details(sub_order_details)
+
+        return order_info
+
+    def set_sub_orders_details(self, sub_order_details: FXOrdersDetails):
+        self.order_info.subOrders.CopyFrom(sub_order_details.details())
+
+    def set_number(self, number: int):
+        self.order_info.number = number
+
+    def add_order_actions(self, actions: list):
+        for action in actions:
+            self.add_single_order_action(action)
+
+    def add_single_order_action(self, action):
+        order_action = order_book_fx_pb2.FXOrderAction()
+        if   isinstance(action, ExtractionAction):
+            order_action.extractionAction.CopyFrom(action.build())
+        else:
+            raise Exception("Unsupported action type")
+        self.order_info.orderActions.append(order_action)
+
+    def build(self):
+        return self.order_info

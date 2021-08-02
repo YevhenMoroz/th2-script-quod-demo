@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.login.login_constants import LoginConstants
 from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
@@ -35,5 +37,6 @@ class LoginPage(CommonPage):
     def login_to_web_admin(self, login, password):
         self.set_login(login)
         self.set_password(password)
+        time.sleep(1)
         self.click_login_button()
         self.check_is_login_successful()

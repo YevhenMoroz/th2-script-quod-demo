@@ -39,6 +39,7 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
+
     # region create 1 CO order
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id1 = eq_wrappers.get_order_id(base_request)
@@ -54,11 +55,12 @@ def execute(report_id, session_id):
     order_id3 = eq_wrappers.get_order_id(base_request)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-
+   
     # region DirectChildCare these orders
     eq_wrappers.direct_child_care_order('100', 'ChiX direct access', recipient=Stubs.custom_config['qf_trading_fe_user']
                                         , count=3)
     # endregion
+
     order_id1 = eq_wrappers.get_order_id(base_request) #######
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)

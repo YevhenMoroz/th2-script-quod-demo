@@ -69,12 +69,12 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("BidPx")
+        price = rfq.extract_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled_fwd()
         # Step 1
-        pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        # pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
 
         # Step 2
         rfq = FixClientSellRfq(
@@ -83,14 +83,15 @@ def execute(report_id, session_id):
                               settltype=settle_type, currency=currency, account=account)). \
             send_request_for_quote(). \
             verify_quote_pending()
-        price = rfq.extruct_filed("BidPx")
+        price = rfq.extract_filed("BidPx")
         rfq.send_new_order_single(price). \
             verify_order_pending(). \
             verify_order_filled_fwd()
 
-        position = float(order_qty)
-        position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        compare_position(case_id, pos_before, position, position_after)
+        # position = float(order_qty)
+        # position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
+        # compare_position(case_id, pos_before, position, position_after)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

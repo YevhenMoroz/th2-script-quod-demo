@@ -15,7 +15,7 @@ import time
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-4015"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
@@ -23,7 +23,7 @@ def execute(report_id):
     common_act = Stubs.win_act
     qty = "800"
     price = "40"
-    client = "CLIENT_FOR_CARE"
+    client = "CLIENT_FIX_CARE"
     lookup = "VETO"
     last_mkt = 'DASI'
     case_id = create_event(case_name, report_id)

@@ -20,11 +20,15 @@ class FixClientSellEsp():
     #ACTIONS
 
     #Send MarketDataRequest subscribe method
-    def send_md_request(self):
+    def send_md_request(self, event_name_custom=''):
+        event_name = 'Send MDR (subscribe)'
         self.case_params_sell_esp.md_params['SubscriptionRequestType'] = '1'
+        if event_name_custom!='':
+            event_name=event_name_custom
+        print('Market Data request parameters: ',self.case_params_sell_esp.md_params)
         self.subscribe = self.fix_act.placeMarketDataRequestFIX(
             bca.convert_to_request(
-                'Send MDR (subscribe)',
+                event_name,
                 self.case_params_sell_esp.connectivityESP,
                 self.case_params_sell_esp.case_id,
                 bca.message_to_grpc('MarketDataRequest', self.case_params_sell_esp.md_params, self.case_params_sell_esp.connectivityESP)
@@ -55,15 +59,19 @@ class FixClientSellEsp():
         return self
 
     #Send New Order Single
-    def send_new_order_single(self,price,qty=''):
+    def send_new_order_single(self,price,qty='',event_name_custom =''):
+        even_name = 'Send new order '
+        if event_name_custom!='':
+            even_name=event_name_custom
         tif = prepeare_tif(self.case_params_sell_esp.timeinforce)
         self.case_params_sell_esp.set_new_order_single_params()
         self.case_params_sell_esp.order_params['Price'] = price
         if qty!='':
             self.case_params_sell_esp.order_params['OrderQty'] = qty
+        print('New Order Single parameters: ', self.case_params_sell_esp.order_params)
         self.new_order = self.fix_act.placeOrderFIX(
             request=bca.convert_to_request(
-                'Send new order ' + tif, self.case_params_sell_esp.connectivityESP, self.case_params_sell_esp.case_id,
+                even_name + tif, self.case_params_sell_esp.connectivityESP, self.case_params_sell_esp.case_id,
                 bca.message_to_grpc('NewOrderSingle', self.case_params_sell_esp.order_params, self.case_params_sell_esp.connectivityESP)
             ))
         return self
@@ -79,21 +87,24 @@ class FixClientSellEsp():
         return self
 
     #Extract filed by name
-    def extruct_filed(self, field, band_number=1):
+    def extract_filed(self, field, band_number=1):
         if field.lower()=='price':
             self.price = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryPx'].simple_value
+            print('Extracted price: ', self.price)
             return self.price
         elif field.lower()=='mdentryid':
             mdEntryId = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryID'].simple_value
+            print('Extracted MD Entry ID: ', mdEntryId)
             return mdEntryId
         elif field.lower()=='mdentryforwardpoints':
             mdentryforwardpoints = self.subscribe.response_messages_list[0].fields['NoMDEntries'] \
                 .message_value.fields['NoMDEntries'].list_value.values[band_number] \
                 .message_value.fields['MDEntryForwardPoints'].simple_value
+            print('Extracted forward points: ', mdentryforwardpoints)
             return mdentryforwardpoints
 
 
@@ -137,6 +148,7 @@ class FixClientSellEsp():
             self.case_params_sell_esp.order_pending['OrderQty']=qty
             self.case_params_sell_esp.order_pending['LeavesQty']=qty
         self.case_params_sell_esp.order_pending['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        print('New Order Single pending : ', self.case_params_sell_esp.order_pending)
         self.checkpoint = self.new_order.checkpoint_id
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
@@ -148,10 +160,16 @@ class FixClientSellEsp():
         )
         return self
 
-    def verify_order_new(self):
+    def verify_order_new(self,price='',qty=''):
         self.case_params_sell_esp.prepare_order_new_report()
         self.case_params_sell_esp.order_new['Price']=self.price
         self.case_params_sell_esp.order_new['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        if qty !='':
+            self.case_params_sell_esp.order_new['OrderQty']=qty
+            self.case_params_sell_esp.order_new['LeavesQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_new['Price'] = price
+        print('New Order Single NEW : ', self.case_params_sell_esp.order_pending)
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = New',
@@ -171,6 +189,16 @@ class FixClientSellEsp():
         self.case_params_sell_esp.order_filled['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         if spot_s_d!='':
             self.case_params_sell_esp.order_filled['SpotSettlDate'] = spot_s_d
+        if qty !='':
+            self.case_params_sell_esp.order_filled['OrderQty']=qty
+            self.case_params_sell_esp.order_filled['LastQty']=qty
+            self.case_params_sell_esp.order_filled['CumQty']=qty
+        if price !='':
+            self.case_params_sell_esp.order_filled['Price'] = price
+            self.case_params_sell_esp.order_filled['LastPx'] = price
+            self.case_params_sell_esp.order_filled['AvgPx'] = price
+            self.case_params_sell_esp.order_filled['LastSpotRate'] = price
+        print('New Order Single Filled : ', self.case_params_sell_esp.order_pending)
 
 
         self.verifier.submitCheckRule(
@@ -216,7 +244,7 @@ class FixClientSellEsp():
         return self
 
     def verify_order_rejected(self,text='',price='', qty=''):
-        self.case_params_sell_esp.prepare_order_rejected_report()
+        self.case_params_sell_esp.prepare_order_rejected_report_esp()
         self.case_params_sell_esp.order_rejected['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
         self.case_params_sell_esp.order_rejected['Price']=self.price
         self.case_params_sell_esp.order_rejected['Text']=text

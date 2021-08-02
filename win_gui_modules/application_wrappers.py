@@ -36,7 +36,7 @@ class LoginDetailsRequest:
         self.login_details.username = username
 
     def set_password(self, password: str):
-        self.login_details.password = password
+        self.login_details.password_field = password
 
     def set_main_window_name(self, main_window_name: str):
         self.login_details.mainWindowName = main_window_name

@@ -4,6 +4,7 @@ from th2_grpc_hand import rhbatch_pb2
 import time
 #from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
+from quod_qa.wrapper import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo

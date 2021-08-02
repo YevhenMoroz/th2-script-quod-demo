@@ -1,5 +1,7 @@
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.order_management.execution_strategies.execution_strategies_dark_sub_wizard import \
     ExecutionStrategiesDarkSubWizard
@@ -17,6 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_2961(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.name = "TestSuperStrategy"
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
@@ -54,17 +57,22 @@ class QAP_2961(CommonTestCase):
         main_menu.click_on_edit_at_more_actions()
 
     def test_context(self):
-        self.precondition()
-        main_menu = ExecutionStrategiesPage(self.web_driver_container)
-        strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        expected_parameter_and_value_at_dark_block = ["MaxDarkPercentage: ", self.value]
-        actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_lit_dark_block(),
-                                                    strategies_wizard.get_parameter_value_at_lit_dark_block()]
-        self.verify("After saved at Lit Dark block", expected_parameter_and_value_at_dark_block,
-                    actual_parameter_and_value_at_dark_block)
-        strategies_wizard.click_on_save_changes()
-        main_menu.set_enabled_at_filter_field("true")
-        main_menu.set_name_at_filter_field(self.name)
-        time.sleep(2)
-        main_menu.click_on_enable_disable_button()
-        main_menu.click_on_ok_button()
+        try:
+            self.precondition()
+            main_menu = ExecutionStrategiesPage(self.web_driver_container)
+            strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
+            expected_parameter_and_value_at_dark_block = ["MaxDarkPercentage: ", self.value]
+            actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_lit_dark_block(),
+                                                        strategies_wizard.get_parameter_value_at_lit_dark_block()]
+            self.verify("After saved at Lit Dark block", expected_parameter_and_value_at_dark_block,
+                        actual_parameter_and_value_at_dark_block)
+            strategies_wizard.click_on_save_changes()
+            main_menu.set_enabled_at_filter_field("true")
+            main_menu.set_name_at_filter_field(self.name)
+            time.sleep(2)
+            main_menu.click_on_enable_disable_button()
+            main_menu.click_on_ok_button()
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 
+from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom import basic_custom_actions as bca
@@ -22,7 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1067"
     seconds, nanos = timestamps()  # Store case start time
 
@@ -31,14 +32,13 @@ def execute(report_id):
     common_act = Stubs.win_act
     qty = "900"
     price = "20"
-    client = "CLIENT1"
+    client = "CLIENT_FIX_CARE"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
+    lookup = "VETO"
     # endregion
     # region Open FE
 
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -51,40 +51,7 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    try:
-        # region Create CO
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
-
-        connectivity = 'gtwquod5'
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
-        fix_params = {
-            'Account': "CLIENT1",
-            'HandlInst': "3",
-            'Side': "2",
-            'OrderQty': qty,
-            'TimeInForce': "0",
-            'OrdType': 1,
-            'TransactTime': time,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
-        }
-
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
-        rule_manager.remove_rule(nos_rule)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
+    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"

@@ -98,7 +98,7 @@ def execute(report_id, session_id):
     instrument_type = "Spot"
     qty_1m = "1000000"
     qty_2m = "2000000"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
     empty_free_notes = ""
     pricing_off = "not active"
     executable_off = "not tradeable"
@@ -152,6 +152,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

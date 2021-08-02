@@ -56,7 +56,7 @@ class RoutesConstants:
     CHECK_MARK_AT_VENUES_TAB ='//*[@class="venue-table-body"]//*[@class="nb-checkmark"]'
     VENUE_AT_VENUES_TAB_XPATH = '//*[@placeholder="Venue *"]'
     PLUS_BUTTON_AT_VENUES_TAB_XPATH = '//*[@class="nb-plus ng2-main-add-btn"]'
-    EDIT_VENUE_AT_VENUES_TAB_XPATH = '//*[@class="ng2-smart-row selected ng-star-inserted"]//*[@class= "nb-edit ng2-main-edit-btn" ][1]'
+    EDIT_VENUE_AT_VENUES_TAB_XPATH = '//*[@class="ng2-smart-action ng2-smart-action-edit-edit ng-star-inserted"]//*[@class= "nb-edit ng2-main-edit-btn" ][1]'
     DELETE_VENUE_AT_VENUES_TAB_XPATH = '//*[@class="ng2-smart-row selected ng-star-inserted"]//*[@class= "nb-trash" ][1]'
     VENUE_FILTER_AT_VENUES_TAB_XPATH = '//*[@class="venue-table-body"]//*[@placeholder="Filter"]'
     # -Venues edit/new wizard-
@@ -136,7 +136,7 @@ class RoutesConstants:
 
     # --Strategy Type--
     STRATEGY_TYPE_AT_STRATEGY_TYPE_TAB_XPATH = '//*[@formcontrolname ="routeScenario"]//button'
-    DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH = '//*[@id="defaultScenario"]'
+    DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH = '//*[text()="Default Scenario"]/preceding-sibling::input'
     CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH ='//*[@class="cdk-overlay-pane"]//*[text()="{}"]'
 
 

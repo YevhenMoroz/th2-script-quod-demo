@@ -264,13 +264,13 @@ class CaseParamsSellEsp:
         self.order_pending['OrdStatus'] = 'A'
         self.order_pending['OrderQty'] = self.order_params['OrderQty']
         self.order_pending['LeavesQty'] = self.order_params['OrderQty']
-        self.order_pending['Account'] = self.order_params['Account']
+        # self.order_pending['Account'] = self.order_params['Account']
 
     # Prepera order new report
     def prepare_order_new_report(self):
         self.set_order_exec_rep_params()
         self.order_new = self.order_exec_report
-        self.order_new['Account'] = self.client
+        # self.order_new['Account'] = self.client
         self.order_new['OrdStatus'] = '0'
         self.order_new['ExecType'] = '0'
         self.order_new['SettlDate'] = self.settldate.split(' ')[0]
@@ -281,7 +281,8 @@ class CaseParamsSellEsp:
     def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        self.order_filled['Account'] = self.order_params['Account']
+        # self.order_filled['Account'] = self.order_params['Account']
+        self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
@@ -298,10 +299,10 @@ class CaseParamsSellEsp:
         # self.order_filled.pop('ExecRestatementReason')
 
     # Prepera order rejected report
-    def prepare_order_rejected_report(self):
+    def prepare_order_rejected_report_esp(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
-        self.order_rejected['Account'] = self.client
+        # self.order_rejected['Account'] = self.client
         self.order_rejected['OrdStatus'] = '8'
         self.order_rejected['ExecType'] = '8'
         self.order_rejected['ExecRestatementReason'] = '4'
@@ -313,7 +314,7 @@ class CaseParamsSellEsp:
     # Prepera order rejected report Alog
     def prepare_order_algo_rejected_report(self):
         self.set_order_exec_rep_params()
-        self.prepare_order_rejected_report()
+        self.prepare_order_rejected_report_esp()
         self.order_algo_rejected = self.order_rejected
         self.order_algo_rejected.pop('SettlDate')
         self.order_algo_rejected['HandlInst'] = '2'
