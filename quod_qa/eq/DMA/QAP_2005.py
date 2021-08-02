@@ -4,7 +4,6 @@ import time
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 
-from quod_qa.wrapper.eq_wrappers import buy_connectivity, sell_connectivity
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 
