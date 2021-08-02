@@ -625,8 +625,8 @@ def open_order_ticket_via_double_click(ob_act, base_request):
 
 
 def cancel_order(ob_act, base_request):
-    cansel_order_request = CancelFXOrderDetails(base_request)
-    call(ob_act.cancelOrder, cansel_order_request.build())
+    cancel_order_request = CancelFXOrderDetails(base_request)
+    call(ob_act.cancelOrder, cancel_order_request.build())
 
 
 def release_order(ob_act, base_request):

@@ -78,6 +78,7 @@ def check_dealer_intervention(base_request, service, case_id, quote_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check quote request in DI")
     verifier.compare_values("Status", "New", response["dealerIntervention.status"])
+    verifier.verify()
 
 
 def close_dmi_window(base_request, dealer_interventions_service):
