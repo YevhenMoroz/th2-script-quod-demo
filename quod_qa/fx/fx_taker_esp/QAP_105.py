@@ -101,5 +101,6 @@ def execute(report_id, session_id):
             # Close tile
             print(f'{case_name} duration time = ' + str(datetime.now() - start))
             call(ar_service.closeRatesTile, base_esp_details.build())
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         except Exception:
             logging.error("Error execution", exc_info=True)

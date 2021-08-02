@@ -176,7 +176,7 @@ def execute(report_id, session_id):
     to_curr = "USD"
     tenor = "Spot"
     initial_qty = str(random.randint(1000000, 5000000))
-    new_qty = str(random.randint(1000000, 5000000))
+    new_qty = str(random.randint(1000000, int(initial_qty)))
 
     try:
         # Step 1
