@@ -1,5 +1,5 @@
 class WashBookConstants:
-    WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='WashBook ']"
+    WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Wash Books ']"
 
     # region ~~~MAIN PAGE~~~
     NEW_BUTTON_XPATH = '//*[text()="New"]'
@@ -49,7 +49,7 @@ class WashBookConstants:
     # -VALUES-
     ID_AT_VALUES_TAB = '//*[text()="ID *"]/preceding-sibling::input'
     EXT_ID_CLIENT_AT_VALUES_TAB = '//*[text()="Ext ID Client *"]/preceding-sibling::input'
-    CLIENT_AT_VALUES_TAB = '//*[text()="Client *"]/preceding-sibling::input'
+    CLIENT_AT_VALUES_TAB = '//*[text()="Client"]/preceding-sibling::input'
     DESCRIPTION_AT_VALUES_TAB = '//*[text()="Description"]/preceding-sibling::input'
     CLEARING_ACCOUNT_TYPE_AT_VALUES_TAB = '//*[text()="Clearing Account Type"]/preceding-sibling::input'
     CLIENT_ID_SOURCE_AT_VALUES_TAB = '//*[text()="Client ID Source *"]/preceding-sibling::input'

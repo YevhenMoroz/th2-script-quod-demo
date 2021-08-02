@@ -1,5 +1,7 @@
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
@@ -7,13 +9,15 @@ from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard im
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
-#TODO: DON'T WORK!!! комнда рабаха должна пофиксить дизейбл инпут потом попробуй
+
+# TODO: DON'T WORK!!! FIXED DISABLE INPUT (Rabah command)
 class QAP_3145(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
         self.role_id = "Administrator"
+        self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -34,8 +38,13 @@ class QAP_3145(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        self.precondition()
-        role_wizard = UsersRoleSubWizard(self.web_driver_container)
-        print(role_wizard.get_role_id())
-        # self.verify("Is Role id contains value ?", self.role_id, role_wizard.get_role_id())
-        # self.verify("Is role id can not modify?", True, role_wizard.is_role_id_immutable())
+        try:
+            self.precondition()
+            role_wizard = UsersRoleSubWizard(self.web_driver_container)
+            print(role_wizard.get_role_id())
+            # self.verify("Is Role id contains value ?", self.role_id, role_wizard.get_role_id())
+            # self.verify("Is role id can not modify?", True, role_wizard.is_role_id_immutable())
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

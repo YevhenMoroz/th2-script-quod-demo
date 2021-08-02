@@ -1,4 +1,5 @@
 import time
+import traceback
 from datetime import datetime
 
 from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_page import WashBookPage
@@ -12,6 +13,7 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_2168(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         now = datetime.now()
         '''
         iteration_value this variable was created for concatenation id and ext_id_client values,
@@ -51,12 +53,16 @@ class QAP_2168(CommonTestCase):
         wash_book_main_menu.click_on_more_actions()
 
     def test_context(self):
-        self.precondition()
-        wash_book_main_menu = WashBookPage(self.web_driver_container)
-        expected_pdf_content = ["ID: {}".format(wash_book_main_menu.get_id_at_main_page()),
-                                "Ext ID Client: {}".format(wash_book_main_menu.get_ext_id_client_at_main_page()),
-                                "Client ID Source: BIC",
-                                "Clearing Account Type: Firm"]
+        try:
+            self.precondition()
+            wash_book_main_menu = WashBookPage(self.web_driver_container)
+            expected_pdf_content = ["ID: {}".format(wash_book_main_menu.get_id_at_main_page()),
+                                    "Ext ID Client: {}".format(wash_book_main_menu.get_ext_id_client_at_main_page()),
+                                    "Client ID Source: BIC",
+                                    "Clearing Account Type: Firm"]
 
-        self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                    wash_book_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            self.verify(f"Is PDF contains {expected_pdf_content}", True,
+                        wash_book_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+
+        except Exception:
+            print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

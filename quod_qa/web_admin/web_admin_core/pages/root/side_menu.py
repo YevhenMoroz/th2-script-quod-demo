@@ -7,6 +7,7 @@ from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_groups.client
     ClientGroupsConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
+from quod_qa.web_admin.web_admin_core.pages.site.desks.desks_constants import DesksConstants
 from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_constants import WashBookConstants
 from quod_qa.web_admin.web_admin_core.pages.positions.washbook_rules.washbook_rules_constants import \
     WashbookRulesConstants
@@ -32,7 +33,7 @@ from quod_qa.web_admin.web_admin_core.pages.order_management.execution_strategie
 from quod_qa.web_admin.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
     OrderManagementRulesConstants
 from quod_qa.web_admin.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
-from quod_qa.web_admin.web_admin_core.pages.others.institutions.institutions_constants import InstitutionsConstants
+from quod_qa.web_admin.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
 from quod_qa.web_admin.web_admin_core.pages.others.market_data_source.market_data_source_constants import \
     MarketDataSourceConstants
 from quod_qa.web_admin.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
@@ -78,7 +79,7 @@ from quod_qa.web_admin.web_admin_core.pages.risk_limits.price_tolerance_control.
 from quod_qa.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
     TradingLimitsConstants
 from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
-from quod_qa.web_admin.web_admin_core.pages.users.desks.desks_constants import DesksConstants
+
 from quod_qa.web_admin.web_admin_core.pages.users.user_sessions.user_sessions_constants import UserSessionsConstants
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_constants import UsersConstants
 from quod_qa.web_admin.web_admin_core.utils.toggle_state_enum import ToggleStateEnum
