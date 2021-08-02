@@ -63,8 +63,8 @@ def execute(report_id, session_id):
     leg2_settle_date = wk1_ndf()
     settle_type_leg1 = "0"
     settle_type_leg2 = "W1"
-    currency = "USD"
-    settle_currency = "PHP"
+    currency = "PHP"
+    settle_currency = "USD"
 
     side = "2"
     leg1_side = "1"

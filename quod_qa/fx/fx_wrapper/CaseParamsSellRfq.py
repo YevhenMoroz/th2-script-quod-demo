@@ -2,6 +2,7 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from custom.tenor_settlement_date import spo_ndf
 
 
 class CaseParamsSellRfq:
@@ -285,7 +286,7 @@ class CaseParamsSellRfq:
                 {
                     'InstrumentLeg': {
                         'LegSymbol': self.leg2_symbol,
-                        'LegSecurityType': self.leg2_settltype
+                        'LegSecurityType': self.leg2_securitytype
                     },
                     # 'LegSide': 2,
                     'LegSettlType': self.leg2_settltype,
@@ -391,8 +392,33 @@ class CaseParamsSellRfq:
         if self.securitytype == 'FXNDF':
             self.order_filled['Instrument']['MaturityDate'] = '*'
             self.order_filled['Instrument'].pop('Product')
-            self.order_filled['SpotSettlDate'] = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
+            self.order_filled['SpotSettlDate'] = spo_ndf()
         # self.order_filled.pop('ExecRestatementReason')
+        # Prepare  order filled report
+
+    def prepare_order_swap_filled_report(self):
+        self.set_new_order_multi_leg_params()
+        # self.order_filled = self.order_exec_report
+        # self.order_filled['Account'] = self.account
+        # self.order_filled['OrdStatus'] = '2'
+        # self.order_filled['ExecType'] = 'F'
+        # self.order_filled['Instrument']['SecurityType'] = self.securitytype
+        # self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
+        # self.order_filled['SettlType'] = self.settltype
+        # self.order_filled['SettlDate'] = self.settldate
+        # self.order_filled['LastQty'] = self.orderqty
+        # self.order_filled['CumQty'] = self.orderqty
+        # self.order_filled['LeavesQty'] = '0'
+        # self.order_filled['TradeDate'] = tsd.today()
+        # self.order_filled['ExDestination'] = 'XQFX'
+        # self.order_filled['GrossTradeAmt'] = '*'
+        # if self.securitytype == 'FXNDF':
+        #     self.order_filled['Instrument']['MaturityDate'] = '*'
+        #     self.order_filled['Instrument'].pop('Product')
+        #     self.order_filled['SpotSettlDate'] = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
+        # self.order_filled.pop('ExecRestatementReason')
+
+
 
     # Prepare  order rejected report
     def prepare_order_rejected_report_rfq(self):
