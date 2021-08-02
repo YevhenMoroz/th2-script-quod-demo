@@ -21,6 +21,7 @@ timeouts = True
 tick = 0.005
 waves = 4
 qty = 2000
+parent_price = 21
 price = 20
 wld_price = 19.98
 child_day_qty = round(qty / waves)
@@ -57,7 +58,7 @@ instrument = {
         }
 trigger = {
             'TriggerType': 4,
-            'TriggerPrice': price
+            'TriggerPrice': price + tick
         }
 
 def rule_creation():
@@ -131,7 +132,7 @@ def execute(report_id):
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': price,
+                'MDEntryPx': 20,
                 'MDEntrySize': qty,
                 'MDEntryPositionNo': '1'
             }
@@ -164,7 +165,7 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Price': price,
+            'Price': parent_price,
             'Currency': currency,
             'TargetStrategy': 1005,
             'ExDestination': ex_destination_1,
@@ -189,6 +190,11 @@ def execute(report_id):
                     'StrategyParameterName': 'WouldPriceReference',
                     'StrategyParameterType': '14',
                     'StrategyParameterValue': 'MAN'
+                },
+                                {
+                    'StrategyParameterName': 'WouldPriceOffset',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '-1'
                 }
             ]
         }
