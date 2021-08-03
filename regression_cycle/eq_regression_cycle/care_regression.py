@@ -46,6 +46,7 @@ def test_run(parent_id= None):
         QAP_1070.execute(report_id, session_id)
         QAP_1071.execute(report_id, session_id)
         QAP_1072.execute(report_id, session_id)
+        QAP_1073.execute(report_id, session_id)
         QAP_3910.execute(report_id, session_id)
 
 
