@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id,session_id):
+def execute(report_id, session_id):
     case_name = "QAP-2697"
     case_id = create_event(case_name, report_id)
     # region Declarations
