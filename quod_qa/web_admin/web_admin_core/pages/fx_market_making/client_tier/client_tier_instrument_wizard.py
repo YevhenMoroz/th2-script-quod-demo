@@ -30,3 +30,17 @@ class ClientTierInstrumentWizard(CommonPage):
         self.find_by_xpath(ClientTierConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_such_record_exists_massage_displayed(self):
+        if self.find_by_xpath(
+                ClientTierConstants.SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH).text == "Such a record already exists":
+            return True
+        else:
+            return False
+
+    def is_incorrect_or_missing_value_massage_displayed(self):
+        if self.find_by_xpath(
+                ClientTierConstants.INCORRECT_OR_MISSING_VALUES_XPATH).text == "Incorrect or missing values":
+            return True
+        else:
+            return False
