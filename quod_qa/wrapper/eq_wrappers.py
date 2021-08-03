@@ -14,17 +14,17 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request, direct_moc_request, direct_loc_request_correct
+    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
 sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
@@ -41,6 +41,13 @@ def get_sell_connectivity():
 
 def get_bo_connectivity():
     return bo_connectivity
+
+
+def extract_error_order_ticket(base_request):
+    extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+    extract_errors_request.extract_error_message()
+    result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, extract_errors_request.build())
+    return result
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -234,18 +241,19 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
     error_message.name = "ErrorMessage"
     error_message.type = ExtractManualCrossValuesRequest.ManualCrossExtractedType.ERROR_MESSAGE
-    request1 = ExtractManualCrossValuesRequest()
-    request1.extractionId = "ManualCrossErrorMessageExtractionID"
-    request1.extractedValues.append(error_message)
     req = ExtractManualCrossValuesRequest()
-    req.CopyFrom(request1)
+    req.extractionId = 'ManualCrossErrorMessageExtractionID'
+    req.extractedValues.append(error_message)
     manual_cross_details = ManualCrossDetails(request)
-    manual_cross_details.set_quantity(qty)
-    manual_cross_details.set_price(price)
-    manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.manualCrossValues.CopyFrom(req)
+
     try:
-        call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        frodo = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        return frodo
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -281,7 +289,7 @@ def direct_loc_order(qty, route):
 
 def direct_moc_order(qty, route):
     try:
-        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
+        call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route))
     except Exception:
         logger.error("Error execution", exc_info=True)
 
