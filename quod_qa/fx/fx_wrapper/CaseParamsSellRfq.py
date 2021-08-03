@@ -2,7 +2,7 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import spo_ndf
+from custom.tenor_settlement_date import spo_ndf, spo
 
 
 class CaseParamsSellRfq:
@@ -393,6 +393,8 @@ class CaseParamsSellRfq:
             self.order_filled['Instrument']['MaturityDate'] = '*'
             self.order_filled['Instrument'].pop('Product')
             self.order_filled['SpotSettlDate'] = spo_ndf()
+        if self.securitytype == 'FXFWD':
+            self.order_filled['SpotSettlDate'] = spo()
         # self.order_filled.pop('ExecRestatementReason')
         # Prepare  order filled report
 
