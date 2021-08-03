@@ -15,7 +15,7 @@ from win_gui_modules.utils import set_session_id, get_base_request, call, prepar
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
-    ExtractRatesTileValues
+    ExtractRatesTileValues, ExtractClientGridValues
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 
 
@@ -68,7 +68,7 @@ class TestCase:
         res = ''
         for x in range(len(string['bandsTable'])):
             if string['bandsTable'][x] == '#':
-                for y in range(0, 6):
+                for y in range(0, 7):
                     res += string['bandsTable'][x + y]
                 res += ','
         list = res.split(',')
@@ -81,23 +81,37 @@ class TestCase:
             verifier.compare_values(name, list[x], list[x+1], VerificationMethod.NOT_EQUALS)
         verifier.verify()
 
-    # def client_grid(self):
-    #     client_grid_params = ExtractClientGridValues(self.base_request)
-    #     client_grid_params.set_client_tier('Generic')
-    #     client_grid_params.set_instr_symbol('EUR/USD')
-    #     client_grid_params.set_extract_bands()
-    #     client_grid_params.set_bands_columns('key')
-    #
-    #     res = call(Stubs.win_act_cp_service.processClientPriceGrid, client_grid_params.build())
-    #
-    #     for x in res:
-    #         print(x, ' - - - ', res[x])
+    def client_grid(self):
+        client_grid_params = ExtractClientGridValues(self.base_request)
+        client_grid_params.set_client_tier('Generic')
+        client_grid_params.set_instr_symbol('EUR/USD')
+        client_grid_params.set_client_price_columns([])
+        client_grid_params.set_extract_bands()
+        client_grid_params.set_bands_columns(['Key', 'Spot'])
+
+        string = call(Stubs.win_act_cp_service.processClientPriceGrid, client_grid_params.build())
+
+        res = ''
+        for x in range(len(string['bandsTable'])):
+            if string['bandsTable'][x] == '#':
+                for y in range(0, 7):
+                    res += string['bandsTable'][x + y]
+                res += ','
+        list = res.split(',')
+        print(list)
+
+        verifier = Verifier(self.case_id)
+        verifier.set_event_name("Check colors")
+        for x in range(0, len(list) - 1, 2):
+            name = 'color Id: ' + str(x / 2)
+            verifier.compare_values(name, list[x], list[x + 1], VerificationMethod.NOT_EQUALS)
+        verifier.verify()
 
     def execute(self):
         try:
             self.prepare_frontend()
-            self.colour()
-            #self.client_grid()
+            #self.colour()
+            self.client_grid()
         except Exception as e:
             logging.error('Error execution', exc_info=True)
         close_fe(self.case_id, self.session_id)
