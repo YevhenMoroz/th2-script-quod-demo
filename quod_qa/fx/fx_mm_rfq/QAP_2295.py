@@ -7,11 +7,9 @@ from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from win_gui_modules.wrappers import set_base
 
 
-def execute(report_id, session_id):
+def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
 
     client_tier = "Iridium1"
     account = "Iridium1_1"
