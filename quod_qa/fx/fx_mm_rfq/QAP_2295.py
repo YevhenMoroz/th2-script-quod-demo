@@ -16,7 +16,7 @@ def execute(report_id):
     symbol = "EUR/GBP"
     security_type_spo = "FXFWD"
     settle_date = wk1()
-    settle_type = 0
+    settle_type = "W1"
     currency = "EUR"
     settle_currency = "GBP"
     side = "1"
