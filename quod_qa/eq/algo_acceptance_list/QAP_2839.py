@@ -18,28 +18,29 @@ timeouts = True
 case_name = os.path.basename(__file__)
 
 def execute(report_id, session_id):
-    # region Declarations
-    lookup = "BARC.L"   
-    order_type = "Limit"
-    price = "1"
-    qty = "1000"
-    tif = "Day"
-    client = "CLIENT2"
-    # endregion
+    try:
+        # region Declarations
+        lookup = "BARC.L"   
+        order_type = "Limit"
+        price = "1"
+        qty = "1000"
+        tif = "Day"
+        client = "CLIENT2"
+        # endregion
 
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    # endregion
+        # region Open FE
+        case_id = create_event(case_name, report_id)
+        set_base(session_id, case_id)
+        base_request = get_base_request(session_id, case_id)
+        # endregion
 
-    # region Create order via FE according to 1st and 2nd steps
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
-                             False, None, price, False, False, None)
-    # endregion
+        # region Create order via FE according to 1st and 2nd steps
+        eq_wrappers.create_order(base_request, qty, client, lookup, order_type, tif,
+                                False, None, price, False, False, None)
+        # endregion
 
-    # region Check values in OrderBook
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
-    # endregion
-
-    logging.error("Error execution",exc_info=True)
+        # region Check values in OrderBook
+        eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
+        # endregion
+    except:
+        logging.error("Error execution",exc_info=True)

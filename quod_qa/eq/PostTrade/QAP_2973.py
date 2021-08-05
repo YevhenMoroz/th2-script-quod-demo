@@ -100,7 +100,6 @@ def execute(report_id, session_id):
     param = [{"Security Account": "MOClientSA1", "Alloc Qty": qty}]
     responce_allocation = eq_wrappers.allocate_order(base_request, param)
     params = {
-        # 'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
@@ -113,10 +112,8 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'header': '*',
         'SettlDate': '*',
-        # 'SettlType': '0',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
-        # 'NoRootMiscFeesList': '*',
         'MatchStatus': '*',
         'ConfirmStatus': '*',
         'QuodTradeQualifier': '*',
@@ -126,14 +123,9 @@ def execute(report_id, session_id):
         ],
         'AllocID': '*',
         'NetMoney': '*',
-        # 'BookingType': '*',
-        # 'AllocType': '*',
-        # 'RootSettlCurrAmt': '*',
-        # 'AllocTransType': '0',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
-        # 'RootOrClientCommissionCurrency': '*',
         'CommissionData': '*',
         'NoMiscFees': '*',
         'ConfirmID': '*',
@@ -156,9 +148,7 @@ def execute(report_id, session_id):
         'header': '*',
         'SettlDate': '*',
         'LastMkt': '*',
-        # 'SettlType': 0,
         'GrossTradeAmt': '*',
-        # 'NoMiscFees': '*',
         'QuodTradeQualifier': '*',
         'NoOrders': [
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
@@ -169,9 +159,7 @@ def execute(report_id, session_id):
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
-        # 'RootOrClientCommission': '*',
         'AllocTransType': '0',
-        # 'SettlCurrFxRate': '2',
         'RootSettlCurrFxRateCalc': 'M',
 
         'ReportedPx': '*',
@@ -202,8 +190,6 @@ def execute(report_id, session_id):
             }
         ],
         'RootSettlCurrency': 'UAH',
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'RootCommTypeClCommBasis': '*'
         'RootSettlCurrFxRate': '2',
         'RootSettlCurrFxRateCalc': 'M'
     }

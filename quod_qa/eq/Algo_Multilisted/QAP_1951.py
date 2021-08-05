@@ -296,7 +296,7 @@ def execute(report_id):
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'OrigClOrdID': fix_message_new_order_single.get_ClOrdID(),
         }
-        fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'ClOrdID',  'OrigClOrdID'])
+        fix_verifier_ss.CheckOrderCancelReplaceRequest(replace_ss_param, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='SS FIXSELLQUOD5 sent 35=G Replace',key_parameters=['TimeInForce', 'OrderQty', 'Price'])
 
         # Check ExecutionReport FIXBUYTH2 35=8 on 35=F
         er_5 = {

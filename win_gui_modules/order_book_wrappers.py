@@ -433,8 +433,8 @@ class MenuItemDetails:
     def set_menu_item(self, menu_item: str):
         self._request.menuItem = menu_item
 
-    def set_selected_rows(self, selected_rows: [int]):
-        self._request.selectedRows = selected_rows
+    def set_selected_rows(self, selected_rows):
+        self._request.selectedRows.extend(selected_rows)
 
     def set_extraction_Id(self, extraction_Id: str):
         self._request.extractionId = extraction_Id

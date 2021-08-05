@@ -10,7 +10,7 @@ from datetime import datetime
 class TestCase:
     def __init__(self, report_id):
         self.case_id = bca.create_event('test', report_id)
-        self.api = Stubs.api_service
+        self.api = Stubs.act_rest
 
     def test_nos_method(self):
         nos_params = {
@@ -31,9 +31,9 @@ class TestCase:
                 'SecurityExchange': 'XPAR'
             }
         }
-        nos_response = self.api.submitNewOrderSingle(
+
+        self.api.submitNewOrderSingle(
             request=SubmitMessageRequest(message=bca.message_to_grpc('NewOrderSingle', nos_params, 'quod_rest')))
-        print(nos_response)
 
     # Main method
     def execute(self):

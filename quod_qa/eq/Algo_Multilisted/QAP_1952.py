@@ -250,7 +250,7 @@ def execute(report_id):
             'LeavesQty': qty
         }
 
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Pending New', key_parameters=['ExecType', 'OrdStatus', 'TimeInForce'])
 
         # Check that FIXBUYQUOD5 sent 35=8 new
         er_4 = dict(
@@ -260,7 +260,7 @@ def execute(report_id):
             OrderQty=qty,
             Text=text_n,
         )
-        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 New', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'TimeInForce'])
         #endregion
 
 
