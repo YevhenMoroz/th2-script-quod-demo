@@ -29,8 +29,8 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
     except Exception:
         logging.error("Error execution", exc_info=True)
 
-
+#TODO: change Regressiontest to Regression !!!
 if __name__ == '__main__':
-    test_run('5.1.133.145|Regression|', algo=False, equity=False,forex=False, retail=False, web_admin=True)
+    test_run('5.1.137.150|Regressiontest|', algo=False, equity=False,forex=False, retail=False, web_admin=True)
     Stubs.factory.close()
 

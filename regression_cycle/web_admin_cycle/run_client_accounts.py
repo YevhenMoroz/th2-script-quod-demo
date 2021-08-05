@@ -14,7 +14,7 @@ from custom import basic_custom_actions as bca
 
 class RunClientsAccounts:
     def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
-        self.folder_name = 'web admin'
+        self.folder_name = 'WebAdmin'
         self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
         self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
         self.web_driver_container = web_driver_container

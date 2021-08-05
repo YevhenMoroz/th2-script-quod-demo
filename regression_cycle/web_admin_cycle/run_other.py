@@ -23,7 +23,7 @@ from quod_qa.web_admin.web_admin_test_cases.others.QAP_835 import QAP_835
 
 class RunOthers:
     def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
-        self.folder_name = 'web admin'
+        self.folder_name = 'WebAdmin'
         self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
         self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
         self.web_driver_container = web_driver_container

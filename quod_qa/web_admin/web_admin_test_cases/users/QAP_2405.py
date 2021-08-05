@@ -3,9 +3,9 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
@@ -23,7 +23,7 @@ class QAP_2405(CommonTestCase):
         self.password = "adm02"
         self.user_id = ''.join("test " + str(random.randint(1, 1000)))
         self.password_at_login_wizard = ''.join("pass" + str(random.randint(1, 1000)))
-        self.role_id = "Administrator"
+        self.perm_role = "Permissions for administrator users"
         self.desks = ("Desk of Dealers 1", "Desk of Dealers 2")
         self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
         self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
@@ -46,11 +46,12 @@ class QAP_2405(CommonTestCase):
         login_sub_wizard.set_password(self.password)
         time.sleep(2)
         role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
-        role_sub_wizard.set_role_id(self.role_id)
+        role_sub_wizard.set_perm_role(self.perm_role)
         time.sleep(2)
-        role_sub_wizard.click_on_desks()
+        assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_sub_wizard.click_on_desks()
         time.sleep(2)
-        role_sub_wizard.set_desks(self.desks)
+        assignments_sub_wizard.set_desks(self.desks)
         time.sleep(1)
         users_wizard = UsersWizard(self.web_driver_container)
         users_wizard.click_on_save_changes()
