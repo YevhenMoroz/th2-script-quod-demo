@@ -181,9 +181,12 @@ def execute(report_id):
             **reusable_order_params,
             'ClOrdID': sor_order_params['ClOrdID'],
             'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'ExecID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'CumQty': '0',
             'LastPx': '0',
+            'OrderQty': case_params['OrderQty'],
+            'Price': case_params['Price'],
             'LastQty': '0',
             'QtyType': '0',
             'AvgPx': '0',
@@ -205,12 +208,15 @@ def execute(report_id):
             )
         )
 
+        del pending_er_params['Account']
         new_er_params = deepcopy(pending_er_params)
         new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
-        new_er_params['Instrument'] = {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        }
+        new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+        new_er_params['ExecID'] = '*'
+        new_er_params['ExecRestatementReason'] = '4'
+        new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+        new_er_params['Instrument'] = case_params['Instrument']
+        new_er_params['SettlDate'] = "*"
         verifier.submitCheckRule(
             bca.create_check_rule(
                 "ER New NewOrderSingle Received",

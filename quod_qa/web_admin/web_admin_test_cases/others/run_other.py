@@ -8,11 +8,17 @@ from quod_qa.web_admin.web_admin_test_cases.others.QAP_1739 import QAP_1739
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1741 import QAP_1741
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_676 import QAP_676
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_677 import QAP_677
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_678 import QAP_678
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_679 import QAP_679
 
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_800 import QAP_800
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_801 import QAP_801
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_802 import QAP_802
 from custom import basic_custom_actions as bca
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_803 import QAP_803
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_834 import QAP_834
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_835 import QAP_835
 
 
 class RunOthers:
@@ -28,9 +34,15 @@ class RunOthers:
             start_time = time.monotonic()
 
             QAP_676(self.web_driver_container, self.second_lvl_id).run()
+            QAP_677(self.web_driver_container, self.second_lvl_id).run()
+            QAP_678(self.web_driver_container, self.second_lvl_id).run()
+            QAP_679(self.web_driver_container, self.second_lvl_id).run()
             QAP_800(self.web_driver_container, self.second_lvl_id).run()
             QAP_801(self.web_driver_container, self.second_lvl_id).run()
             QAP_802(self.web_driver_container, self.second_lvl_id).run()
+            QAP_803(self.web_driver_container, self.second_lvl_id).run()
+            QAP_834(self.web_driver_container, self.second_lvl_id).run()
+            QAP_835(self.web_driver_container, self.second_lvl_id).run()
             QAP_1738(self.web_driver_container, self.second_lvl_id).run()
             QAP_1739(self.web_driver_container, self.second_lvl_id).run()
             QAP_1741(self.web_driver_container, self.second_lvl_id).run()

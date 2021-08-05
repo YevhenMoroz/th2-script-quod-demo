@@ -204,7 +204,7 @@ def check_order_book(ex_id, base_request, case_id, cl_ord):
     ob.set_filter(['ClOrdID', str(cl_ord)])
 
     ob_qty = ExtractionDetail("orderbook.qty", "Qty")
-    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "LmtPrice")
+    ob_limit_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
     ob_id = ExtractionDetail("orderBook.orderid", "Order ID")
     ob_sts = ExtractionDetail("orderBook.sts", "Sts")
 

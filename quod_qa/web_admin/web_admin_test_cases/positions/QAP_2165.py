@@ -3,8 +3,8 @@ import traceback
 from datetime import datetime
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_page import WashBookPage
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_wizard import WashBookWizard
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_page import WashBookPage
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_wizard import WashBookWizard
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
