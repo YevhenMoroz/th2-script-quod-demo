@@ -24,13 +24,13 @@ def test_run():
     report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        session_id = set_session_id()
-        if not Stubs.frontend_is_open:
-            prepare_fe(report_id, session_id, work_dir, username, password)
-        else:
-            get_opened_fe(report_id, session_id, work_dir)
+        # session_id = set_session_id()
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe(report_id, session_id, work_dir, username, password)
+        # else:
+        #     get_opened_fe(report_id, session_id, work_dir)
 
-        # example_java_api.TestCase(report_id).execute()
+        example_java_api.TestCase(report_id).execute()
         # QAP_1324.execute(report_id, session_id)
 
 
