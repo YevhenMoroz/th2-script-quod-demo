@@ -51,7 +51,7 @@ def get_params(response, qty, order_sts, side, account):
     return params
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3306"
 
     # region Declarations
@@ -59,11 +59,11 @@ def execute(report_id):
     qty2 = "70"
     qty1 = "30"
     price = "20"
-    client = "CLIENTYMOROZ"
+    client = "CLIENT_FIX_CARE"
+    lookup = "VETO"
     # endregion
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -72,41 +72,30 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregionA
     # region Create CO
-    try:
-        rule_manager = RuleManager()
-        rule1 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty3),
-                                                     float(price))
-        rule2 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty2),
-                                                     float(price))
-        rule3 = rule_manager.add_NewOrdSingle_Market("fix-bs-310-columbia", client + "_PARIS", "XPAR", False, int(qty1),
-                                                     float(price))
-        fix_message1 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty1), 0)
-        fix_message2 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty2), 0)
-        fix_message3 = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, int(qty3), 0)
-        response1 = fix_message1.pop('response')
-        response2 = fix_message2.pop('response')
-        response3 = fix_message3.pop('response')
-    finally:
-        rule_manager.remove_rule(rule1)
-        rule_manager.remove_rule(rule2)
-        rule_manager.remove_rule(rule3)
+    fix_message1 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty1), 0)
+    eq_wrappers.accept_order(lookup, qty1, "0")
+    fix_message2 = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty2), 0)
+    eq_wrappers.accept_order(lookup, qty2, "0")
+    fix_message3 = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, int(qty3), 0)
+    eq_wrappers.accept_order(lookup, qty3, "0")
+    response1 = fix_message1.pop('response')
+    response2 = fix_message2.pop('response')
+    response3 = fix_message3.pop('response')
     # endregion
     # region Manual Cross
     eq_wrappers.manual_cross_orders(base_request, qty2, price, [1, 2], "BSML")
     # endregion
     # region Verify
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
-    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3, "2", 1, client), response1,
-                                         ['OrdStatus', 'ClOrdID'])
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(get_params(response2, qty2, "2", 2, client), response1,
-                                         ['OrdStatus', 'ClOrdID'])
+                                         None)
     # endregion
     # region Manual Cross
     eq_wrappers.manual_cross_orders(base_request, qty3, price, [1, 3], "BSML")
     # endregion
     # region Verify
     fix_verifier_ss.CheckExecutionReport(get_params(response1, qty1, "2", 2, client), response1,
-                                         ['ExecType', 'OrdStatus', 'ClOrdID'])
+                                         None)
     fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3, "2", 1, client), response1,
-                                         ['ExecType', 'OrdStatus', 'ClOrdID'])
+                                         None,direction='SECOND')
     # endregion
