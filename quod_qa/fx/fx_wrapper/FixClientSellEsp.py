@@ -266,6 +266,10 @@ class FixClientSellEsp():
         self.case_params_sell_esp.prepare_order_algo_rejected_report()
         self.case_params_sell_esp.order_algo_rejected['Price']=self.price
         self.case_params_sell_esp.order_algo_rejected['Text']=text
+        self.case_params_sell_esp.order_algo_rejected['OrderID']=self.new_order.response_messages_list[0].fields['OrderID'].simple_value
+        print('Parameters for rejection report Algo  ',self.case_params_sell_esp.order_algo_rejected)
+
+        self.checkpoint = self.new_order.checkpoint_id
 
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(

@@ -21,8 +21,8 @@ md = None
 settldate = tsd.spo()
 symbol_usd_chf = 'USD/CHF'
 
-defmdsymb_usd_chf_barx = 'USD/CHF:SPO:REG:BARX'
-no_md_entries_usd_chf_barx = [
+defmdsymb_usd_chf_gs = 'USD/CHF:SPO:REG:GS'
+no_md_entries_usd_chf_gs = [
     {
         "MDEntryType": "0",
         "MDEntryPx": 1.005,
@@ -273,9 +273,9 @@ def execute(report_id):
                                    settldate=settldate, settltype=settltype)).\
             send_md_request(). \
             send_md_unsubscribe()
-        # SEND MD USD/CHF spot BARX
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_usd_chf_barx, symbol_usd_chf, securitytype).
-                     prepare_custom_md_spot(no_md_entries_usd_chf_barx)).send_market_data_spot()
+        # SEND MD USD/CHF spot GS
+        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_usd_chf_gs, symbol_usd_chf, securitytype).
+                     prepare_custom_md_spot(no_md_entries_usd_chf_gs)).send_market_data_spot()
 
         # SEND MD USD/CHF spot CITI
         FixClientBuy(CaseParamsBuy(case_id, defmdsymb_usd_chf_citi, symbol_usd_chf, securitytype).

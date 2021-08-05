@@ -159,9 +159,9 @@ class FixClientSellRfq():
         # self.case_params_sell_rfq.quote_params['Account'] = self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['Account']
         self.case_params_sell_rfq.quote_params.pop('Account')
         self.case_params_sell_rfq.quote_params['SettlType'] = \
-        self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
+            self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlType']
         self.case_params_sell_rfq.quote_params['SettlDate'] = \
-        self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
+            self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['SettlDate']
         if 'Side' in self.case_params_sell_rfq.quote_params.keys() == False:
             self.case_params_sell_rfq.quote_params['OfferPx'] = '*'
             self.case_params_sell_rfq.quote_params['OfferSize'] = '*'
@@ -365,13 +365,14 @@ class FixClientSellRfq():
 
     def verify_order_filled_swap(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()
-        self.case_params_sell_rfq.order_multi_leg_params['Price'] = self.price
-        print('SWAP FILLED ', self.case_params_sell_rfq.order_multi_leg_params)
+        self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
+
+        print('SWAP FILLED ', self.case_params_sell_rfq.order_filled_swap)
 
         self.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 'Execution Report with OrdStatus = Filled SWAP',
-                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_multi_leg_params,
+                bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled_swap,
                                    ['ClOrdID', 'OrdStatus']),
                 self.checkpoint, self.case_params_sell_rfq.connectivityRFQ, self.case_params_sell_rfq.case_id
             ),

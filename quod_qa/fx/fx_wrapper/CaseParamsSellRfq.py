@@ -2,7 +2,7 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import spo_ndf
+from custom.tenor_settlement_date import spo_ndf, spo
 
 
 class CaseParamsSellRfq:
@@ -12,14 +12,15 @@ class CaseParamsSellRfq:
     quote_cancel = None
     quote_params = None
     quote_params_swap = None
-    # quote_cancel_params = None
     quote_request_reject_params = None
     order_params = None
     order_multi_leg_params = None
     order_exec_report = None
+    order_exec_report_swap = None
     order_pending = None
     order_new = None
     order_filled = None
+    order_filled_swap = None
     order_rejected = None
     order_algo_rejected = None
 
@@ -337,6 +338,64 @@ class CaseParamsSellRfq:
 
         # Prepera order perding report
 
+    def set_order_exec_rep_params_swap(self):
+        def_order_exec_report = {
+            'Side': '*',
+            'AvgPx': '*',
+            'SettlCurrency': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'OrdStatus': '2',
+            'ExecType': 'F',
+            'Currency': '*',
+            'ExecID': '*',
+            'OrderID': '*',
+            'TimeInForce': '*',
+            'OrderQty': '*',
+            'LastQty': '*',
+            'Instrument': {
+                'Symbol': '*',
+                'SecurityExchange': '*',
+                'SecurityID': '*',
+                'Product': '*',
+                'SecurityIDSource': '*',
+            },
+            'NoParty': [{
+                'PartyID': '*',
+                'PartyIDSource': 'D',
+                'PartyRole': '36'
+            }],
+            'CumQty': '*',
+            'TransactTime': '*',
+            'LastPx': '*',
+            'OrdType': '*',
+            'ClOrdID': '*',
+            'OrderCapacity': '*',
+            'QtyType': '*',
+            'Price': '*',
+            'NoLegs': [
+                {
+                    'LegSettlDate': '*',
+                    'LegSettlType': '*',
+                    'InstrumentLeg': {
+                        'LegSymbol': '*',
+                        'LegSecurityType': '*',
+                    },
+                },
+                {
+                    'LegSettlType': '*',
+                    'LegSettlDate': '*',
+                    'InstrumentLeg': {
+                        'LegSymbol': '*',
+                        'LegSecurityType': '*',
+                    }
+                },
+            ]
+        }
+        self.order_exec_report_swap = def_order_exec_report
+
+        # Prepera order perding report
+
     # PREPARING
 
     # Prepare  requset params
@@ -380,9 +439,9 @@ class CaseParamsSellRfq:
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
-        self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
         self.order_filled['SettlType'] = self.settltype
         self.order_filled['SettlDate'] = self.settldate
+        self.order_filled['SpotSettlDate'] = spo()
         self.order_filled['LastQty'] = self.orderqty
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'
@@ -397,26 +456,12 @@ class CaseParamsSellRfq:
         # Prepare  order filled report
 
     def prepare_order_swap_filled_report(self):
-        self.set_new_order_multi_leg_params()
-        # self.order_filled = self.order_exec_report
-        # self.order_filled['Account'] = self.account
-        # self.order_filled['OrdStatus'] = '2'
-        # self.order_filled['ExecType'] = 'F'
-        # self.order_filled['Instrument']['SecurityType'] = self.securitytype
-        # self.order_filled['SettlDate'] = self.settldate.split(' ')[0]
-        # self.order_filled['SettlType'] = self.settltype
-        # self.order_filled['SettlDate'] = self.settldate
-        # self.order_filled['LastQty'] = self.orderqty
-        # self.order_filled['CumQty'] = self.orderqty
-        # self.order_filled['LeavesQty'] = '0'
-        # self.order_filled['TradeDate'] = tsd.today()
-        # self.order_filled['ExDestination'] = 'XQFX'
-        # self.order_filled['GrossTradeAmt'] = '*'
-        # if self.securitytype == 'FXNDF':
-        #     self.order_filled['Instrument']['MaturityDate'] = '*'
-        #     self.order_filled['Instrument'].pop('Product')
-        #     self.order_filled['SpotSettlDate'] = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
-        # self.order_filled.pop('ExecRestatementReason')
+        self.set_order_exec_rep_params_swap()
+        self.order_filled_swap = self.order_exec_report_swap
+
+
+
+
 
 
 
@@ -501,20 +546,11 @@ class CaseParamsSellRfq:
                 self.quote_params_swap.pop('OfferPx')
         if self.side == '':
             self.quote_params_swap.pop('Side')
+        if self.securitytype == 'FXNDS':
+            self.quote_params_swap.pop('ValidUntilTime')
+            self.quote_params_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate']='*'
 
-    # def prepape_quote_cancel_report(self):
-    #     self.quote_cancel_params = {
-    #         'QuoteReqID': self.rfq_params['QuoteReqID'],
-    #         'QuoteCancelType': '5',
-    #         'NoQuoteEntries': [{
-    #             'Instrument': {
-    #                 'Symbol': self.symbol,
-    #                 'SecurityType': self.securitytype
-    #             },
-    #         },
-    #         ],
-    #         'QuoteID': '*'
-    #     }
+
 
     def prepare_quote_reject_report(self):
         self.quote_request_reject_params = {

@@ -1,8 +1,6 @@
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
-
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
@@ -12,7 +10,7 @@ class TestCase:
     def __init__(self, report_id):
         self.case_id = bca.create_event('java api test', report_id)
         self.act_java_api = Stubs.act_java_api
-        self.connectivity = 'quod_http'
+        self.connectivity = 'java-api-luna314'
 
     def send_nos(self):
         nos_params = {
@@ -47,10 +45,10 @@ class TestCase:
         }
 
         print(ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, '314_java_api')))
+            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'java-api-luna314')))
 
         response= self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, '314_java_api')))
+            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, self.connectivity)))
 
         print(f'*********** response sendMessage = {response}************')
 

@@ -88,10 +88,11 @@ def execute(report_id, session_id):
         # Step 2
         rfq_swap.send_new_order_multi_leg(price)
         # Step 3
-        rfq_swap.verify_order_pending_swap()
-        rfq_swap.verify_order_filled_swap()
+        rfq_swap.verify_order_pending_swap(price)
+        rfq_swap.verify_order_filled_swap(price)
+
         # Step 4
-        check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
+        # check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

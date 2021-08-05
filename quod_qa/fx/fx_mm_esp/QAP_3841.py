@@ -29,9 +29,9 @@ bands=[2000000,6000000,12000000]
 ord_status='Rejected'
 md=None
 settldate = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
-settldate_report = (tm(datetime.utcnow().isoformat()).strftime('%Y-%B-%d'))
+settldate_report = (tm(datetime.utcnow().isoformat()).strftime('%Y-%b-%d'))
 new_settldate = (tm(datetime.utcnow().isoformat()) - bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
-new_settldate_report = (tm(datetime.utcnow().isoformat()) - bd(n=2)).date().strftime('%Y-%B-%d')
+new_settldate_report = (tm(datetime.utcnow().isoformat()) - bd(n=2)).date().strftime('%Y-%b-%d')
 
 defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
@@ -63,7 +63,6 @@ def execute(report_id):
         params.set_new_order_single_params()
 
         md.send_new_order_single(price).\
-            verify_order_pending().\
             verify_order_algo_rejected(text)
 
 
