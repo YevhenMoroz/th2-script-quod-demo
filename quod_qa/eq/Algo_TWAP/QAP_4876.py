@@ -381,7 +381,7 @@ def execute(report_id):
         )
         fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Price', 'TimeInForce'])
 
-        time.sleep(1)
+        time.sleep(2)
 
         #region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
