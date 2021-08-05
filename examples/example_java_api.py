@@ -7,6 +7,8 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
 
+rep_id = bca.create_event('java_api_example' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+
 
 class TestCase:
     def __init__(self, report_id):
@@ -52,7 +54,8 @@ class TestCase:
     # Main method
     def execute(self):
         self.send_nos()
+        Stubs.factory.close()
 
 
 if __name__ == '__main__':
-    pass
+    TestCase(rep_id).execute()
