@@ -50,7 +50,6 @@ def execute(report_id, session_id):
     extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
     extract_errors_request.extract_error_message()
     result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, extract_errors_request.build())
-    print(result)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
     verifier.compare_values("Order ID from View", result['ErrorMessage'],

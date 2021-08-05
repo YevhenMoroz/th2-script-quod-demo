@@ -24,7 +24,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+buy_connectivity = "fix-bs-310-columbia"   # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
 sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
@@ -64,24 +64,33 @@ def open_fe2(session_id, report_id, folder, user, password):
     prepare_fe(init_event, session_id, folder, user, password)
 
 
-def cancel_order_via_fix(case_id, session, cl_order_id, org_cl_order_id, client, side):
-    try:
-        fix_manager_qtwquod = FixManager(buy_connectivity, case_id)
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OCR(session)
-        cancel_parms = {
-            "ClOrdID": cl_order_id,
-            "Account": client,
-            "Side": side,
-            "TransactTime": datetime.utcnow().isoformat(),
-            "OrigClOrdID": org_cl_order_id,
-        }
-        fix_cancel = FixMessage(cancel_parms)
-        fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(rule)
+# def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
+#     try:
+#         fix_manager_qtwquod = FixManager(buy_connectivity, case_id)
+#         cancel_parms = {
+#             "ClOrdID": cl_order_id,
+#             "Account": client,
+#             "Side": side,
+#             "TransactTime": datetime.utcnow().isoformat(),
+#             "OrigClOrdID": org_cl_order_id,
+#         }
+#         fix_cancel = FixMessage(cancel_parms)
+#         fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
+#     except Exception:
+#         logger.error("Error execution", exc_info=True)
+
+
+def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
+    fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": side,
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID": client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
@@ -174,32 +183,15 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def cancel_order_via_fix(order_id, client_order_id, client, case_id, side):
-    fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
-    cancel_parms = {
-        "ClOrdID": order_id,
-        "Account": client,
-        "Side": side,
-        "TransactTime": datetime.utcnow().isoformat(),
-        "OrigClOrdID": client_order_id,
-    }
-    fix_cancel = FixMessage(cancel_parms)
-    fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
-
-
 def amend_order_via_fix(case_id, fix_message, parametr_list):
-    fix_manager = FixManager(buy_connectivity, case_id)
+    fix_manager = FixManager(sell_connectivity, case_id)
     try:
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(buy_connectivity)
         fix_modify_message = FixMessage(fix_message)
         fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(rule)
 
 
 def amend_order(request, client=None, qty=None, price=None, account=None):

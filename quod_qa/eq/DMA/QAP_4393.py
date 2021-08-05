@@ -53,7 +53,7 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + "_PARIS", 'XPAR', price)
+                                                                             client + "_PARIS", 'XPAR', float(price))
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, )
     finally:
         rule_manager.remove_rule(nos_rule)

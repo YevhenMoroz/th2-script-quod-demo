@@ -181,7 +181,7 @@ def execute(report_id, session_id):
         'ExpireDate': '*',
     }
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ExecType'],direction='SECOND')
+                                         key_parameters=['ExecType'])
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
