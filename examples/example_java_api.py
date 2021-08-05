@@ -12,7 +12,7 @@ class TestCase:
     def __init__(self, report_id):
         self.case_id = bca.create_event('java api test', report_id)
         self.act_java_api = Stubs.act_java_api
-        self.connectivity = 'quod_http'
+        self.connectivity = 'quod_java'
 
     def send_nos(self):
         nos_params = {
@@ -47,7 +47,7 @@ class TestCase:
         }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
+            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_java'), parent_event_id=self.case_id))
 
     # Main method
     def execute(self):
