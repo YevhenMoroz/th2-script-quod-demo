@@ -19,10 +19,10 @@ def execute(report_id, session_id):
     # region Declarations
     qty = "900"
     price = "10"
-    client = "CLIENT_YMOROZ"  # "CLIENT_COUNTERPART"
-    client2 = "CLIENT_COUNTERPART2"  # "CLIENT_COUNTERPART2"
-    account = "CLIENT_COUNTERPART_SA1"  # "CLIENT_COUNTERPART_SA1"
-    account2 = "CLIENT_COUNTERPART2_SA1"  # "CLIENT_COUNTERPART2_SA1"
+    client = "CLIENT_COUNTERPART"
+    client2 = "CLIENT_COUNTERPART2"
+    account = "CLIENT_COUNTERPART_SA1"
+    account2 = "CLIENT_COUNTERPART2_SA1"
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     bo_connectivity = eq_wrappers.get_bo_connectivity()
@@ -41,9 +41,9 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # region Create order via FIX
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price,no_allocs)
     response = fix_message.pop('response')
-    #eq_wrappers.accept_order('VETO', qty, price)
+    eq_wrappers.accept_order('VETO', qty, price)
     # endregion
     # region Verify
     params = {
@@ -78,6 +78,9 @@ def execute(report_id, session_id):
              'PartyIDSource': "C"},
             {'PartyRole': "34",
              'PartyID': "RegulatoryBody - Venue(Paris)",
+             'PartyIDSource': "C"},
+            {'PartyRole': "7",
+             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
              'PartyIDSource': "C"},
             {'PartyRole': "36",
              'PartyID': "gtwquod5",
@@ -138,6 +141,9 @@ def execute(report_id, session_id):
              'PartyIDSource': "C"},
             {'PartyRole': "17",
              'PartyID': "ContraFirm",
+             'PartyIDSource': "C"},
+            {'PartyRole': "7",
+             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
              'PartyIDSource': "C"},
             {'PartyRole': "28",
              'PartyRoleQualifier': "24",
