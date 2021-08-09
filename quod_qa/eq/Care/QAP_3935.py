@@ -54,7 +54,7 @@ def execute(report_id):
     # region Create CO
     fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
-    # verify washbook
+    # verify wash_books
     eq_wrappers.verify_order_value(base_request, case_id, 'Wash Book', 'DefaultWashBook')
     # endregion
 
