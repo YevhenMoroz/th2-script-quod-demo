@@ -278,7 +278,10 @@ class RuleManager:
                                                   ))
 
     @staticmethod
-    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str, marketDataMap):
+    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str,
+                                            triggerPrice: float, triggerQty:int ,snapshotFullRefresh, incrementalRefresh):
+
+
         return Stubs.simulator.createNewOrdSingleIOCMarketData(
             request=TemplateNewOrdSingleIOCMarketData(
                 connection_id=ConnectionID(session_alias=session),
@@ -289,7 +292,10 @@ class RuleManager:
                 trade=trade,
                 sessionAlias=sessionAlias,
                 symbol=symbol,
-                md_entries=marketDataMap,
+                triggerPrice=triggerPrice,
+                triggerQty=triggerQty,
+                snapshotFullRefresh=snapshotFullRefresh,
+                incrementalRefresh=incrementalRefresh,
             )
         )
     # ------------------------
