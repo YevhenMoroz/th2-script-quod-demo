@@ -1,15 +1,11 @@
 import logging
-from datetime import datetime
-from th2_grpc_hand import rhbatch_pb2
-import time
-#from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from quod_qa.wrapper import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.wrappers import verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,11 +19,10 @@ def execute(report_id, session_id):
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "800"
+    qty = "900"
     price = "3"
-    client = "CLIENT1"
+    client = "CLIENT_FIX_CARE"
     lookup = "VETO"
-    order_type = "Limit"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -40,13 +35,12 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             'XPAR_CLIENT1', "XPAR", 3)
+                                                                             client+"_PARIS", "XPAR", 3)
 
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 3, 'CLIENT1', 2, qty, 6, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 3, client, 2, qty, 6, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
     # endregions
 
@@ -58,7 +52,7 @@ def execute(report_id, session_id):
     order_status = ExtractionDetail("order_status", "Sts")
     order_id = ExtractionDetail("order_id", "Order ID")
     order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
+    order_price = ExtractionDetail("order_price", "Limit Price")
 
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
                                                                                             order_id,
@@ -75,12 +69,11 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             'XPAR_CLIENT1', "XPAR", 3)
+                                                                             client+"_PARIS", "XPAR", 3)
         eq_wrappers.direct_order(lookup, qty, price, 100)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
-        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
 
     # endregion
@@ -114,7 +107,7 @@ def execute(report_id, session_id):
 
     call(Stubs.win_act_order_book.getChildOrdersDetails, lvl2_details.request())
     eq_wrappers.verify_order_value(base_request, case_id, 'Order ID', child_ord_id1, True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '800', True)
+    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', qty, True)
     eq_wrappers.verify_order_value(base_request, case_id, 'ExecPcy', 'DMA', True)
     eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Open', True)
     # endregion

@@ -183,10 +183,21 @@ class RuleManager:
                                                 TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
+    def add_RFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQRule(request=
+                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
                                                                                ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_TRFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQTRADERule(request=
+                                                     TemplateQuodRFQTRADERule(connection_id=
+                                                                              ConnectionID(session_alias=session)))
     @staticmethod
     def add_TRFQ_test_sim(session: str):
         return Stubs.test_sim.createQuodRFQTRADERule(request=
@@ -224,6 +235,17 @@ class RuleManager:
                                                 tradedQty=tradedQty,
                                                 price=price
                                                 ))
+
+    @staticmethod
+    def add_MarketNewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float):
+        return Stubs.simulator.createMarketNewOrdSingleIOC(
+            request=TemplateMarketNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  tradedQty=tradedQty,
+                                                  price=price
+                                                  ))
 
     @staticmethod
     def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float):
@@ -298,6 +320,15 @@ class RuleManager:
                 incrementalRefresh=incrementalRefresh,
             )
         )
+
+    # @staticmethod
+    # def add_NewOrderSingle_ExecutionReport_Reject(session: str, account: str, ex_destination: str, price: float):
+    #     return Stubs.simulator.createNewOrdSingleExecutionReportReject(
+    #         request=TemplateNewOrdSingleExecutionReportReject(connection_id=ConnectionID(session_alias=session),
+    #                                               account=account,
+    #                                               exdestination=ex_destination,
+    #                                               price=price
+    #                                               ))
     # ------------------------
 
 

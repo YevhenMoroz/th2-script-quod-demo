@@ -20,8 +20,8 @@ def execute(report_id):
     # region Declarations
     qty = "900"
     price = "50"
-    client = "CLIENTYMOROZ"
-    account = "CLIENT_YMOROZ_SA1"
+    client = "MOClient"
+    account = "MOClient_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -34,11 +34,11 @@ def execute(report_id):
     # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-317ganymede-standard',
-                                                                             'CLIENTYMOROZ_PARIS', "XPAR", int(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-buy-317ganymede-standard',
-                                                                      'CLIENTYMOROZ_PARIS', 'XPAR',
-                                                                      int(price), int(qty), 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', "XPAR", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR',
+                                                                      float(price), int(qty), 1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
@@ -58,7 +58,7 @@ def execute(report_id):
     eq_wrappers.verify_block_value(base_request, case_id, "PSET BIC", "CRSTGB22")
     # endregion
     # region Amend Book
-    eq_wrappers.amend_block(base_request,pset="EURO_CLEAR")
+    eq_wrappers.amend_block(base_request, pset="EURO_CLEAR")
     # endregion
     # region Verify
     eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")

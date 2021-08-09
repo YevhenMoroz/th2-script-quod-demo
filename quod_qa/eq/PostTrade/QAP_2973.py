@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id,session_id):
+def execute(report_id, session_id):
     case_name = "QAP-2973"
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -34,7 +34,8 @@ def execute(report_id,session_id):
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
                                                                              client + '_PARIS', "XPAR", float(price))
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR', float(price), int(qty), 1)
+                                                                      client + '_PARIS', 'XPAR', float(price), int(qty),
+                                                                      1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 1, price)
         time.sleep(1)
     except Exception:
@@ -99,7 +100,6 @@ def execute(report_id,session_id):
     param = [{"Security Account": "MOClientSA1", "Alloc Qty": qty}]
     responce_allocation = eq_wrappers.allocate_order(base_request, param)
     params = {
-        # 'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
@@ -112,10 +112,8 @@ def execute(report_id,session_id):
         'Instrument': '*',
         'header': '*',
         'SettlDate': '*',
-        # 'SettlType': '0',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
-        # 'NoRootMiscFeesList': '*',
         'MatchStatus': '*',
         'ConfirmStatus': '*',
         'QuodTradeQualifier': '*',
@@ -125,14 +123,9 @@ def execute(report_id,session_id):
         ],
         'AllocID': '*',
         'NetMoney': '*',
-        # 'BookingType': '*',
-        # 'AllocType': '*',
-        # 'RootSettlCurrAmt': '*',
-        # 'AllocTransType': '0',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
-        # 'RootOrClientCommissionCurrency': '*',
         'CommissionData': '*',
         'NoMiscFees': '*',
         'ConfirmID': '*',
@@ -155,9 +148,7 @@ def execute(report_id,session_id):
         'header': '*',
         'SettlDate': '*',
         'LastMkt': '*',
-        # 'SettlType': 0,
         'GrossTradeAmt': '*',
-        # 'NoMiscFees': '*',
         'QuodTradeQualifier': '*',
         'NoOrders': [
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
@@ -168,9 +159,7 @@ def execute(report_id,session_id):
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
-        # 'RootOrClientCommission': '*',
         'AllocTransType': '0',
-        # 'SettlCurrFxRate': '2',
         'RootSettlCurrFxRateCalc': 'M',
 
         'ReportedPx': '*',
@@ -201,8 +190,6 @@ def execute(report_id,session_id):
             }
         ],
         'RootSettlCurrency': 'UAH',
-        # 'RootOrClientCommissionCurrency': '*',
-        # 'RootCommTypeClCommBasis': '*'
         'RootSettlCurrFxRate': '2',
         'RootSettlCurrFxRateCalc': 'M'
     }

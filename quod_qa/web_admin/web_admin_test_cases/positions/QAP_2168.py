@@ -2,8 +2,9 @@ import time
 import traceback
 from datetime import datetime
 
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_page import WashBookPage
-from quod_qa.web_admin.web_admin_core.pages.positions.washbook.washbook_wizard import WashBookWizard
+from custom import basic_custom_actions
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_page import WashBookPage
+from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_wizard import WashBookWizard
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -65,4 +66,6 @@ class QAP_2168(CommonTestCase):
                         wash_book_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
         except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

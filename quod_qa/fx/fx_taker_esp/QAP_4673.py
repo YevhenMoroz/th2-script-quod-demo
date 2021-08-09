@@ -89,27 +89,9 @@ def check_order_book(base_request, act_ob, case_id, instr_type, owner, qty):
 
 def open_order_ticket_via_double_click(ob_act, base_request):
     order_details = FXOrderDetails()
-    # order_details.set_qty('123123123')
     modify_ot_order_request = ModifyFXOrderDetails(base_request)
     modify_ot_order_request.set_order_details(order_details)
     call(ob_act.openOrderTicketByDoubleClick, modify_ot_order_request.build())
-
-
-def select_placed_order(base_request, act_ob, case_id, ord_id):
-    ob = OrdersDetails()
-    execution_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob.set_filter(["Order ID", ord_id])
-    ob_ord_id = ExtractionDetail('orderBook.OrderId', 'Order ID')
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_ord_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check placed order")
-    verifier.compare_values('Order ID', ord_id, response[ob_ord_id.name])
-    verifier.verify()
 
 
 def check_order_book_after_amend(base_request, act_ob, case_id, ord_id, initial_qty):
@@ -143,11 +125,6 @@ def place_esp_by_bid_btn(base_request):
 
 
 def amend_order(base_request, service, qty):
-    # order_details = FXOrderDetails()
-    # order_details.set_qty(qty)
-    # amend_order_request = ModifyFXOrderDetails(base_request)
-    # amend_order_request.set_order_details(order_details)
-    # call(ob_act.amendOrder, amend_order_request.build())
     order_ticket = FXOrderDetails()
     order_ticket.set_qty(qty)
     order_ticket.set_place()

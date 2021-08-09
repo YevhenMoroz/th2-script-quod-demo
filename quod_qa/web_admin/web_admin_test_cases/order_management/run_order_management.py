@@ -19,6 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2968 import QAP
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2969 import QAP_2969
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2970 import QAP_2970
 from custom import basic_custom_actions as bca
+from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4261 import QAP_4261
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4272 import QAP_4272
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_952 import QAP_952
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_958 import QAP_958
@@ -53,6 +54,7 @@ class RunOrderManagement:
             QAP_2968(self.web_driver_container, self.second_lvl_id).run()
             QAP_2969(self.web_driver_container, self.second_lvl_id).run()
             QAP_2970(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4261(self.web_driver_container, self.second_lvl_id).run()
             QAP_4272(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
@@ -60,5 +62,3 @@ class RunOrderManagement:
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)
-
-

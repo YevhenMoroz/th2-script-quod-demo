@@ -1,23 +1,14 @@
 import logging
-import os
-from datetime import datetime, date, timedelta
 import time
+from datetime import datetime, date, timedelta
 
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
-
-from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
-
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper import eq_wrappers
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
-from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_ticket import OrderTicketDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import get_base_request
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,30 +16,30 @@ timeouts = True
 
 
 def execute(report_id, session_id):
+    global fix_message, nos_rule
     case_name = "QAP-2008"
+    rule_manager = RuleManager()
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "800"
     qty2 = "1500"
+    client = "CLIENT1"
     price = 3
-    expireDate = date.today() + timedelta(2)
-    time1 = datetime.utcnow().isoformat()
     # endregion
 
     # region Open FE
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    # work_dir = Stubs.custom_config['qf_trading_fe_folder']
+    # username = Stubs.custom_config['qf_trading_fe_user']
+    # password = Stubs.custom_config['qf_trading_fe_password']
+    # eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
     # region Create order via FIX
+
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
@@ -66,29 +57,26 @@ def execute(report_id, session_id):
     time.sleep(1)
     params = {
         'OrderQty': qty,
-        'ExecType': 0,
-        'OrdStatus': 0,
-        'Side': 2,
+        'ExecType': 'A',
+        'OrdStatus': 'A',
+        'Side': '2',
+        'Account':'*',
         'Price': price,
-        'TimeInForce': 6,
+        'TimeInForce': '6',
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'ExecID': '*',
         'LastQty': '*',
         'OrderID': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'SettlDate': '*',
         'Currency': '*',
         'HandlInst': '*',
         'LeavesQty': '*',
         'CumQty': '*',
         'LastPx': '*',
         'OrdType': '*',
-        'LastMkt': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
-        'SettlDate': '*',
-        'Text':'*',
         # 'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
@@ -98,24 +86,30 @@ def execute(report_id, session_id):
     }
     fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'Price'])
+                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'Price'], direction='SECOND')
     # endregion
     # endregion
 
     # region Amend order
-    eq_wrappers.amend_order_via_fix(case_id, fix_message, {'OrderQty': qty2})
+    try:
+        nos_rule = rule_manager.add_OrderCancelReplaceRequest(eq_wrappers.get_buy_connectivity(), 'XPAR_' + client,
+                                                              'XPAR', True)
+        fix_message = eq_wrappers.amend_order_via_fix(case_id, fix_message, {'OrderQty': qty2})
+    finally:
+        time.sleep(10)
+        rule_manager.remove_rule(nos_rule)
     # endregion
 
     # region Check values after Amending
     params = {
         'OrderQty': qty2,
-        'ExecType': 5,
+        'ExecType': '5',
         'Account': '*',
-        'OrdStatus': 1,
+        'OrdStatus': '0',
         'TradeDate': '*',
-        'Side': 1,
+        'Side': '2',
         'Price': price,
-        'TimeInForce': 0,
+        'TimeInForce': '6',
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'ExecID': '*',
         'LastQty': '*',
@@ -129,10 +123,8 @@ def execute(report_id, session_id):
         'CumQty': '*',
         'LastPx': '*',
         'OrdType': '*',
-        'LastMkt': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
-        'SettlDate': '*',
         # 'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
@@ -140,24 +132,29 @@ def execute(report_id, session_id):
         'LastCapacity': '*',
         'ExpireDate': '*',
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_buy_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'Price'])
+                                         key_parameters=['ExecType'],direction='SECOND')
     # endregion
 
     # region Cancelling order
-    eq_wrappers.cancel_order_via_fix(case_id, session_id, eq_wrappers.get_cl_order_id(base_request),
-                                     str(int(eq_wrappers.get_cl_order_id(base_request)) + 1), 'CLIENT1', 2)
+    try:
+        nos_rule = rule_manager.add_OrderCancelRequest(eq_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
+                                                       True)
+        eq_wrappers.cancel_order_via_fix(response.response_messages_list[0].fields['OrderID'].simple_value,
+                                         response.response_messages_list[0].fields['ClOrdID'].simple_value, 'CLIENT1', case_id, 2)
+    finally:
+        time.sleep(10)
+        rule_manager.remove_rule(nos_rule)
     # endregion
 
     # region Check values after Cancel
     params = {
         'OrderQty': qty,
-        'ExecType': 5,
-        'OrdStatus': 1,
-        'Side': 1,
+        'ExecType': '4',
+        'OrdStatus': '4',
+        'Side': '2',
         'Price': price,
-        'TimeInForce': 6,
+        'TimeInForce': '6',
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'ExecID': '*',
         'LastQty': '*',
@@ -183,9 +180,8 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*',
         'ExpireDate': '*',
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_buy_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'Price'])
+                                         key_parameters=['ExecType'])
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

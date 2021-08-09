@@ -26,7 +26,7 @@ class RootConstants:
     CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR = "a[title='Client/Accounts']"
     ACCOUNTS_ITEM_XPATH = "//span[text()='Accounts']"
     WASHBOOK_ITEM_XPATH = "//span[text()='Wash Books']"
-    WASHBOOK_RULES_ITEM_XPATH = "//span[text()='WashBook Rules']"
+    WASHBOOK_RULES_ITEM_XPATH = "//span[text()='Wash Book Rules']"
     CLIENTS_ITEM_XPATH = "//span[text()='Clients']"
     CLIENT_GROUPS_ITEM_XPATH = "//span[text()='ClientGroups']"
     CLIENT_LIST_ITEM_XPATH = "//span[text()='Client List']"

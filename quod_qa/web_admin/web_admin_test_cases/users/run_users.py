@@ -12,6 +12,7 @@ from quod_qa.web_admin.web_admin_test_cases.users.QAP_2259 import QAP_2259
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_2405 import QAP_2405
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_2451 import QAP_2451
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_2578 import QAP_2578
+from quod_qa.web_admin.web_admin_test_cases.users.QAP_2863 import QAP_2863
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_3100 import QAP_3100
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_3145 import QAP_3145
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_4239 import QAP_4239
@@ -39,9 +40,10 @@ class RunUsers:
             QAP_2405(self.web_driver_container, self.second_lvl_id).run()
             QAP_2451(self.web_driver_container, self.second_lvl_id).run()
             QAP_2578(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2863(self.web_driver_container, self.second_lvl_id).run()
             QAP_3100(self.web_driver_container, self.second_lvl_id).run()
             # #TODO:DON'T WORK Blocker PADM-825
-            # QAP_3145(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3145(self.web_driver_container, self.second_lvl_id).run()
             QAP_4239(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()

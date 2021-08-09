@@ -13,22 +13,8 @@ class UsersRoleSubWizard(CommonPage):
     def get_role_id(self):
         return self.get_text_by_xpath(UsersConstants.ROLE_ID_AT_ROLE_SUB_WIZARD)
 
-    def set_desks(self, value: tuple):
-        result = self.set_checkbox_list(UsersConstants.DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD, value)
-        for item in range(len(result)):
-            self.find_by_xpath(result[item]).click()
-
     def is_role_id_immutable(self):
         return "Role ID*" == self.find_by_xpath(UsersConstants.ROLE_ID_AFTER_SAVED_XPATH).text
-
-    def get_desks(self):
-        return self.find_by_xpath(UsersConstants.DESKS_AT_ROLE_SUB_WIZARD).text
-
-    def set_location(self, value):
-        self.set_combobox_value(UsersConstants.LOCATION_AT_ROLE_SUB_WIZARD, value)
-
-    def get_location(self):
-        return self.get_text_by_xpath(UsersConstants.LOCATION_AT_ROLE_SUB_WIZARD)
 
     def set_group(self, value):
         self.set_combobox_value(UsersConstants.GROUP_AT_ROLE_SUB_WIZARD, value)
@@ -48,5 +34,4 @@ class UsersRoleSubWizard(CommonPage):
     def get_perm_op(self):
         return self.get_text_by_xpath(UsersConstants.PERM_OP_AT_ROLE_SUB_WIZARD)
 
-    def click_on_desks(self):
-        self.find_by_xpath(UsersConstants.DESKS_AT_ROLE_SUB_WIZARD).click()
+
