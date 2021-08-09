@@ -1,3 +1,4 @@
+import time
 import traceback
 
 from custom import basic_custom_actions
@@ -29,6 +30,7 @@ class QAP_4261(CommonTestCase):
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
+        time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
 
     def test_context(self):
