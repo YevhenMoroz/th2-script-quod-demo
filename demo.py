@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2228
-from quod_qa.fx.fx_mm_rfq import QAP_1552, QAP_1539, QAP_2091, QAP_2101, QAP_2104
+from quod_qa.fx.fx_mm_autohedging import QAP_2228, QAP_2290
+from quod_qa.fx.fx_mm_positions import QAP_1898
+from quod_qa.fx.fx_mm_rfq import QAP_1552, QAP_1539, QAP_2091, QAP_2101, QAP_2104, QAP_2105, QAP_2295, QAP_2296, \
+    QAP_2297, QAP_2958, QAP_1746
+from quod_qa.fx.fx_taker_esp import QAP_2949
 from quod_qa.fx.my_methods import send_rfq
 
 from rule_management import RuleManager
@@ -58,19 +61,13 @@ def test_run():
 
 
          # Add scripts
-        # QAP_2867.execute(report_id, session_id)
-        # QAP_2868.execute(report_id, session_id)
-        # QAP_2866.execute(report_id, session_id)
-        # QAP_2228.execute(report_id, session_id)
-        # QAP_2091.execute(report_id)
-        # QAP_2101.execute(report_id, session_id)
-        QAP_2104.execute(report_id, session_id)
-        # QAP_1539.execute(report_id, session_id)
+        # QAP_1746.execute(report_id)
+        # QAP_1552.execute(report_id)
+        # QAP_1898.execute(report_id, session_id)
         # rm = RuleManager()
-        # ui_tests.execute(report_id, session_id)
         # rm.print_active_rules()
         # rm.print_active_rules_sim_test()
-
+        send_rfq.execute(report_id)
         # rm.remove_rules_by_id_list([5, 7])
         # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
 
