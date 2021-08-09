@@ -34,8 +34,6 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 waves = 2
 
-now = datetime.today() - timedelta(hours=3)
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
 connectivity_sell_side = "fix-sell-side-316-ganymede"
@@ -103,6 +101,9 @@ def send_incremental(symbol: str, case_id: str, market_data):
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
+
+        
         rule_list = rule_creation();
         case_id = bca.create_event(os.path.basename(__file__), report_id)
         # region Send_MarkerData
