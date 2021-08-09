@@ -71,19 +71,15 @@ trigger = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")])
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, price_23, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+
+    nos_ioc_md_rule_1 = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, price_23, last_would_child, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+
+
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nos_ioc_md_rule, nos_rule1, nos_rule2, ocr_rule]
-
-
-def rule_creation_2():
-    rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")])
-    nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nos_ioc_md_rule, nos_rule3, ocr_rule]
+    return [nos_ioc_md_rule, nos_ioc_md_rule_1, nos_rule1, nos_rule2, ocr_rule]
 
 
 def rule_destroyer(list_rules):
@@ -443,9 +439,6 @@ def execute(report_id):
         send_market_dataT(s_par, case_id_4, market_data6)
 
         time.sleep(1)
-        rule_destroyer(rule_list)
-        rule_list = rule_creation_2()
-        time.sleep(3)
 
         #region WouldPrice childs and MKD
         case_id_5 = bca.create_event("Check WouldPrice childs and MKD", case_id)
