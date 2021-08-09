@@ -62,7 +62,6 @@ def execute(report_id):
         params.set_new_order_single_params()
 
         md.send_new_order_single(price).\
-            verify_order_pending().\
             verify_order_algo_rejected(text)
     except Exception as e:
         logging.error('Error execution', exc_info=True)
