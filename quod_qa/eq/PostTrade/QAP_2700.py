@@ -12,15 +12,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id, session_id):
+def execute(report_id,session_id):
     case_name = "QAP-2700"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "40"
     client = "MOClient"
-    account1 = "MOClientSA1"
-    account2 = "MOClientSA2"
+    account1 ="MOClient_SA1"
+    account2 = "MOClient_SA2"
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
@@ -30,23 +30,13 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
-    # # region Create Order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", int(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR',
-                                                                      int(price), int(qty), 1)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client + "_PARIS", 2, qty, 0, price)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
+    # # region Create CO
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
+    response = fix_message.pop('response')
     # endregion
+    eq_wrappers.accept_order("VETO", qty, price)
+    eq_wrappers.manual_execution(base_request, qty, price)
+    eq_wrappers.complete_order(base_request)
     # region verify order
     eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
     eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
@@ -56,7 +46,6 @@ def execute(report_id, session_id):
     # endregion
     # region Verify
     params = {
-        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
@@ -68,9 +57,8 @@ def execute(report_id, session_id):
         'header': '*',
         'SettlDate': '*',
         'LastMkt': '*',
-        'AllocInstructionMiscBlock1': '*',
-        'BookID': '*',
         'GrossTradeAmt': '*',
+        'NoRootMiscFeesList': '*',
         'QuodTradeQualifier': '*',
         'NoOrders': [
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
@@ -81,8 +69,11 @@ def execute(report_id, session_id):
         'BookingType': '*',
         'AllocType': '*',
         'RootSettlCurrAmt': '*',
+        'RootOrClientCommission': '*',
         'AllocTransType': '0',
         'ReportedPx': '*',
+        'RootOrClientCommissionCurrency': '*',
+        'RootCommTypeClCommBasis': '*'
 
     }
     fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
@@ -98,17 +89,15 @@ def execute(report_id, session_id):
         'TradeDate': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'AllocQty': int(int(qty) / 2),
+        'AllocQty': int(int(qty)/2),
         'AllocAccount': '*',
         'ConfirmType': 2,
         'Side': '*',
         'Currency': '*',
         'NoParty': '*',
         'Instrument': '*',
-        'BookID': '*',
         'header': '*',
         'SettlDate': '*',
-        'AllocInstructionMiscBlock1': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
         'MatchStatus': '*',
@@ -123,11 +112,12 @@ def execute(report_id, session_id):
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
+        'CommissionData': '*',
+        'NoMiscFees': '*',
         'ConfirmID': '*'
     }
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
     params = {
-        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
@@ -135,7 +125,6 @@ def execute(report_id, session_id):
         'Side': '*',
         'Currency': '*',
         'NoParty': '*',
-        'BookID': '*',
         'Instrument': '*',
         'header': '*',
         'SettlDate': '*',
@@ -151,7 +140,6 @@ def execute(report_id, session_id):
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
-        'AllocInstructionMiscBlock1': '*',
         'AllocTransType': '0',
         'ReportedPx': '*',
         'NoAllocs': [
@@ -159,15 +147,40 @@ def execute(report_id, session_id):
                 'AllocNetPrice': '*',
                 'AllocAccount': account1,
                 'AllocPrice': price,
-                'AllocQty': str(int(int(qty) / 2)),
+                'AllocQty': str(int(int(qty)/2)),
+                'ComissionData': {
+                    'CommissionType': '*',
+                    'Commission': '*',
+                    'CommCurrency': '*'
+                },
+                'NoMiscFees': [
+                    {
+                        'MiscFeeAmt': '*',
+                        'MiscFeeCurr': '*',
+                        'MiscFeeType': '*',
+                    }
+                ]
             },
             {
                 'AllocNetPrice': '*',
                 'AllocAccount': account2,
                 'AllocPrice': price,
-                'AllocQty': str(int(int(qty) / 2)),
+                'AllocQty': str(int(int(qty)/2)),
+                'ComissionData': {
+                    'CommissionType': '*',
+                    'Commission': '*',
+                    'CommCurrency': '*'
+                },
+                'NoMiscFees': [
+                    {
+                        'MiscFeeAmt': '*',
+                        'MiscFeeCurr': '*',
+                        'MiscFeeType': '*',
+                    }
+                ]
             }
         ],
+
 
     }
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])

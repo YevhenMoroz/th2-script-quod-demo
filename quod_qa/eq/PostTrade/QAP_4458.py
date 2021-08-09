@@ -31,11 +31,11 @@ def execute(report_id):
     # # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-310-columbia',
-                                                                             'MOClient_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-310-columbia',
-                                                                      'MOClient_PARIS', 'XPAR', 3,
-                                                                      800, 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                            client + '_PARIS', "XPAR", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                     client + '_PARIS', 'XPAR', float(price),
+                                                                      int(qty), 1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
     except Exception:
         logger.error("Error execution", exc_info=True)

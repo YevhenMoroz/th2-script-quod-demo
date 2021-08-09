@@ -20,7 +20,6 @@ def execute(report_id, session_id):
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     buy_connectivity = eq_wrappers.get_buy_connectivity()
-    sell_connectivity = eq_wrappers.get_sell_connectivity()
     # endregion
     # region Create order via FIX
     try:
@@ -61,8 +60,10 @@ def execute(report_id, session_id):
         'SecondaryOrderID': '*',
         'NoParty': '*',
         'Instrument': '*',
+        'CxlQty': qty,
+        'SettlType': '0'
     }
-    fix_verifier_ss = FixVerifier(sell_connectivity, case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
     # endregion

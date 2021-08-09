@@ -107,7 +107,7 @@ def execute(report_id, session_id):
         'ConfirmTransType': '0',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-sell-317-backoffice', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['AllocAccount'])
     params = {
         'TradeDate': '*',
