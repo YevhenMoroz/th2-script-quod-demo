@@ -46,6 +46,7 @@ order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
+aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -187,9 +188,14 @@ def execute(report_id):
                     'StrategyParameterValue': waves
                 },
                 {
-                    'StrategyParameterName': 'MaxWouldPercentage',
+                    'StrategyParameterName': 'Aggressivity',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': aggressivity
+                },
+                {
+                    'StrategyParameterName': 'MaxWouldShares',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '70'
+                    'StrategyParameterValue': '350'
                 },
                 {
                     'StrategyParameterName': 'WouldPriceReference',
