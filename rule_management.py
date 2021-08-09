@@ -1,4 +1,4 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject, TemplateNewOrdSingleIOCMarketData
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -10,7 +10,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     # Console output list of IDs active rules
     @staticmethod
@@ -217,12 +217,41 @@ class RuleManager:
                                                   price=price
                                                   ))
 
+    @staticmethod
+    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str,
+                                        triggerPrice: float, triggerQty:int ,snapshotFullRefresh, incrementalRefresh):
 
+        
+        return Stubs.simulator.createNewOrdSingleIOCMarketData(
+            request=TemplateNewOrdSingleIOCMarketData(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                tradedQty=tradedQty,
+                trade=trade,
+                sessionAlias=sessionAlias,
+                symbol=symbol,
+                triggerPrice=triggerPrice,
+                triggerQty=triggerQty,
+                snapshotFullRefresh=snapshotFullRefresh,
+                incrementalRefresh=incrementalRefresh,
+            )
+        )
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
     #rule_manager.remove_rule_by_id()
+    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-310-columbia', 'KEPLER', 'QDL3', 1)
+    # rule_manager.add_NewOrdSingle_IOC('fix-bs-310-columbia', 'KEPLER', 'QDL3', False, 250, 1)
+    # rule_manager.add_OrderCancelReplaceRequest('fix-bs-310-columbia', 'KEPLER', 'QDL3', True)
+    # rule_manager.add_OrderCancelRequest('fix-bs-310-columbia', 'KEPLER', 'QDL3', True)
+    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', 1)
+    # rule_manager.add_OrderCancelRequest('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', True)
+    # rule_manager.add_NewOrdSingle_Market('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', False, 1000, 1)
+    # rule_manager.add_NewOrdSingle_IOC('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', True, 1300, 30)
+    # rule_manager.add_NewOrdSingle_FOK('fix-bs-310-columbia', 'XPAR_CLIENT2', 'XPAR', True, 30)
     rule_manager.print_active_rules()
     #rule_manager.remove_all_rules()
