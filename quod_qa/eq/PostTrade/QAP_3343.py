@@ -109,7 +109,6 @@ def execute(report_id,session_id):
         'SettlCurrency': 'UAH',
         'SettlCurrAmt': '*',
         'Side': '*',
-        'Account': client,
         'Currency': '*',
         'NoParty': '*',
         'Instrument': '*',

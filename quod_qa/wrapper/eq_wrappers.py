@@ -30,8 +30,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -979,7 +979,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         fees_details.remove_fees()
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
-        response = check_booking_toggle_manual(request)
+        #response = check_booking_toggle_manual(request)
         # if response['book.manualCheckboxState'] != 'checked':
         # commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
@@ -994,7 +994,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
-
+    '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("BookExtractionId", )
     extraction_details.extract_net_price("book.netPrice")
@@ -1006,7 +1006,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     extraction_details.extract_pset_bic("book.psetBic")
     extraction_details.extract_exchange_rate("book.settlementType")
     extraction_details.extract_settlement_type("book.exchangeRate")
-
+    '''
     try:
         return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:

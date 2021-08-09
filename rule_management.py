@@ -1,4 +1,9 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, TemplateNewOrdSingleExecutionReportTradeByOrdQty
+from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+    TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, \
+    TemplateNoPartyIDs, TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, \
+    TemplateNewOrdSingleIOC, TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
+    TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
+    TemplateNewOrdSingleExecutionReportReject, TemplateMarketNewOrdSingleFOK
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -10,25 +15,13 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8]
-        self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
+        self.default_rules_id = [1, 2, 3, 4, 5, 6]
 
     # Console output list of IDs active rules
     @staticmethod
     def print_active_rules():
         active_rules = dict()
         for rule in Stubs.core.getRulesInfo(request=Empty()).info:
-            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
-        for key, value in active_rules.items():
-            print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
-
-    @staticmethod
-    def print_active_rules_sim_test():
-        test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
-        running_rules = test_core.getRulesInfo(request=Empty()).info
-        print(f'Rules running(test_sim) :{len(running_rules)}')
-        active_rules = dict()
-        for rule in running_rules:
             active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
@@ -124,24 +117,25 @@ class RuleManager:
     @staticmethod
     def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: float):
         return Stubs.simulator.createNewOrdSingleExecutionReportPendingAndNew(
-                request=TemplateNewOrdSingleExecutionReportPendingAndNew(
-                    connection_id=ConnectionID(session_alias=session),
-                    account=account,
-                    venue=venue,
-                    price=price))
+            request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             price=price))
 
     @staticmethod
     def add_OrderCancelRequest(session: str, account: str, venue: str, cancel: bool):
         return Stubs.simulator.createOrderCancelRequest(
-                request=TemplateOrderCancelRequest(connection_id=ConnectionID(session_alias=session),
-                                                   account=account,
-                                                   venue=venue,
-                                                   cancel=cancel))
+            request=TemplateOrderCancelRequest(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             cancel=cancel))
 
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
         return Stubs.simulator.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
+
+
 
     @staticmethod
     def add_OCR(session: str):
@@ -168,45 +162,44 @@ class RuleManager:
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
         return Stubs.simulator.createQuodSingleExecRule(
-                request=TemplateQuodSingleExecRule(
-                        connection_id=ConnectionID(session_alias=session),
-                        no_party_ids=party_id,
-                        cum_qty=cum_qty,
-                        mask_as_connectivity=mask_as_connectivity,
-                        md_entry_size=md_entry_size,
-                        md_entry_px=md_entry_px,
-                        symbol=symbol))
+            request=TemplateQuodSingleExecRule(
+                connection_id=ConnectionID(session_alias=session),
+                no_party_ids=party_id,
+                cum_qty=cum_qty,
+                mask_as_connectivity=mask_as_connectivity,
+                md_entry_size= md_entry_size,
+                md_entry_px= md_entry_px,
+                symbol=symbol))
 
     @staticmethod
-    def add_NewOrdSingle_FOK(session: str, account: str, venue: str, trade: bool, price: float):
+    def add_NewOrdSingle_FOK(session: str, account: str, venue: str, trade: bool, price : float ):
         return Stubs.simulator.createNewOrdSingleFOK(
-                request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
-                                                account=account,
-                                                venue=venue,
-                                                trade=trade,
-                                                price=price))
-
+            request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     price= price))
     @staticmethod
-    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: int):
+    def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty : int, price : int ):
         return Stubs.simulator.createNewOrdSingleIOC(
-                request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
-                                                account=account,
-                                                venue=venue,
-                                                trade=trade,
-                                                tradedQty=tradedQty,
-                                                price=price
-                                                ))
+            request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     price= price
+                                            ))
 
     @staticmethod
-    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float):
+    def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty : int, avgPrice : float ):
         return Stubs.simulator.createNewOrdSingleMarket(
-                request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
-                                                   account=account,
-                                                   venue=venue,
-                                                   trade=trade,
-                                                   tradedQty=tradedQty,
-                                                   avgPrice=avgPrice
-                                                   ))
+            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     venue=venue,
+                                                                     trade=trade,
+                                                                     tradedQty=tradedQty,
+                                                                     avgPrice=avgPrice
+                                            ))
 
     @staticmethod
     def add_OrderCancelReplaceRequest_ExecutionReport(session: str, trade: bool):

@@ -88,7 +88,6 @@ def execute(report_id, session_id):
     # region Verify
     param = [{"Security Account": "MO_client_SA1", "Alloc Qty": qty}]
     eq_wrappers.allocate_order(base_request, param)
-    time.sleep(10)
     params = {
         'TradeDate': '*',
         'TransactTime': '*',

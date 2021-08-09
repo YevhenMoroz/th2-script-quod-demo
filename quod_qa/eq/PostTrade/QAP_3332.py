@@ -18,7 +18,7 @@ def execute(report_id):
     # region Declarations
     qty = "900"
     price = "40"
-    client = "CLIENTYMOROZ"
+    client = "MOClient"
     account = "YM_client_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
@@ -29,7 +29,7 @@ def execute(report_id):
     # endregion
 
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    #eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
     # region Create DMA
@@ -41,7 +41,7 @@ def execute(report_id):
         trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, client + "_PARIS", "XPAR",
                                                                        int(price)
                                                                        , int(qty), 0)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         time.sleep(1)
     finally:

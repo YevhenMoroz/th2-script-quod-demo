@@ -1,20 +1,12 @@
 import logging
-from datetime import datetime
 
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import DirectChildCareDetails
-
+from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.order_book_wrappers import OrdersDetails
-from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, ModifyOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request, BaseParams
-import time
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails
+from win_gui_modules.utils import get_base_request, call
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -22,11 +14,8 @@ timeouts = True
 
 def execute(report_id, session_id):
     case_name = "QAP-3875"
-    seconds, nanos = timestamps()  # Store case start time
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
+    qty = "900"
     price = "40"
     client = "CLIENT_FIX_CARE"
     lookup = "VETO"
@@ -61,7 +50,7 @@ def execute(report_id, session_id):
                                         , count=3)
     # endregion
 
-    order_id1 = eq_wrappers.get_order_id(base_request) #######
+    order_id1 = eq_wrappers.get_order_id(base_request)
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id("getOrderInfo")
