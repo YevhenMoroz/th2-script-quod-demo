@@ -19,8 +19,8 @@ def execute(report_id,session_id):
     qty = "900"
     price = "40"
     client = "MOClient"
-    account1 ="MOClientSA1"
-    account2 = "MOClientSA2"
+    account1 ="MOClient_SA1"
+    account2 = "MOClient_SA2"
 
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']

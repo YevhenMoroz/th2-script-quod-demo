@@ -152,7 +152,6 @@ def execute(report_id, session_id):
                 'AllocAccount': account,
                 'AllocPrice': price,
                 'AllocQty': qty,
-                'NoMiscFees': '*'
             }
         ],
     }

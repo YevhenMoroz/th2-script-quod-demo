@@ -42,7 +42,7 @@ def modify_rates_tile(base_request, service, from_c, to_c, tenor):
 
 def set_order_ticket_options(base_request, service, client):
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues()
+    fx_values = DefaultFXValues([])
     fx_values.Client = client
     order_ticket_options.set_default_fx_values(fx_values)
     call(service.setOptionOrderTicket, order_ticket_options.build())

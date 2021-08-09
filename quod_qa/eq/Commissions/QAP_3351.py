@@ -1,14 +1,12 @@
+import logging
 import time
 
-from custom.verifier import Verifier, VerificationMethod
+from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
-from win_gui_modules.utils import set_session_id, get_base_request, call
-import logging
+from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -20,7 +18,6 @@ def execute(report_id, session_id):
     # region Declarations
     qty = "900"
     price = "10"
-    lookup = "VETO"
     client = "MOClient"
     account = "MOClient_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -41,7 +38,7 @@ def execute(report_id, session_id):
                                                                       client + '_PARIS', 'XPAR',
                                                                       float(price), int(qty), 1)
 
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -53,8 +50,8 @@ def execute(report_id, session_id):
 
     eq_wrappers.book_order(base_request, client, price, comm_basis="Absolute", comm_rate="5")
 
-    eq_wrappers.amend_block(base_request, comm_basis="Absolute", comm_rate="10")
-
+    eq_wrappers.amend_block(base_request, remove_commissions=True)
+    eq_wrappers.amend_block(base_request, remove_commissions=True,)
     # region Verify
     params = {
         'TradeDate': '*',

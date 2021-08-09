@@ -302,7 +302,6 @@ class CaseParamsSellEsp:
     def prepare_order_rejected_report_esp(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
-        # self.order_rejected['Account'] = self.client
         self.order_rejected['OrdStatus'] = '8'
         self.order_rejected['ExecType'] = '8'
         self.order_rejected['ExecRestatementReason'] = '4'
@@ -320,6 +319,7 @@ class CaseParamsSellEsp:
         self.order_algo_rejected['HandlInst'] = '2'
         self.order_algo_rejected['OrdRejReason'] = '99'
         self.order_algo_rejected['TargetStrategy'] = '*'
+        self.order_algo_rejected['StrategyName'] = '*'
         self.order_algo_rejected.pop('ExecRestatementReason')
         self.order_algo_rejected['Instrument'].pop('SecurityIDSource')
         self.order_algo_rejected['Instrument'].pop('SecurityID')

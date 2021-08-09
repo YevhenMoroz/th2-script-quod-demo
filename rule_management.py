@@ -27,7 +27,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -183,10 +183,21 @@ class RuleManager:
                                                 TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
+    def add_RFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQRule(request=
+                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
                                                                                ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_TRFQ_test_sim(session: str):
+        return Stubs.test_sim.createQuodRFQTRADERule(request=
+                                                     TemplateQuodRFQTRADERule(connection_id=
+                                                                              ConnectionID(session_alias=session)))
     @staticmethod
     def add_TRFQ_test_sim(session: str):
         return Stubs.test_sim.createQuodRFQTRADERule(request=
@@ -224,6 +235,17 @@ class RuleManager:
                                                 tradedQty=tradedQty,
                                                 price=price
                                                 ))
+
+    @staticmethod
+    def add_MarketNewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float):
+        return Stubs.simulator.createMarketNewOrdSingleIOC(
+            request=TemplateMarketNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
+                                                  account=account,
+                                                  venue=venue,
+                                                  trade=trade,
+                                                  tradedQty=tradedQty,
+                                                  price=price
+                                                  ))
 
     @staticmethod
     def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float):
@@ -278,7 +300,10 @@ class RuleManager:
                                                   ))
 
     @staticmethod
-    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str, marketDataMap):
+    def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty:int, trade:bool, sessionAlias: str, symbol:str,
+                                            triggerPrice: float, triggerQty:int ,snapshotFullRefresh, incrementalRefresh):
+
+
         return Stubs.simulator.createNewOrdSingleIOCMarketData(
             request=TemplateNewOrdSingleIOCMarketData(
                 connection_id=ConnectionID(session_alias=session),
@@ -289,9 +314,21 @@ class RuleManager:
                 trade=trade,
                 sessionAlias=sessionAlias,
                 symbol=symbol,
-                md_entries=marketDataMap,
+                triggerPrice=triggerPrice,
+                triggerQty=triggerQty,
+                snapshotFullRefresh=snapshotFullRefresh,
+                incrementalRefresh=incrementalRefresh,
             )
         )
+
+    # @staticmethod
+    # def add_NewOrderSingle_ExecutionReport_Reject(session: str, account: str, ex_destination: str, price: float):
+    #     return Stubs.simulator.createNewOrdSingleExecutionReportReject(
+    #         request=TemplateNewOrdSingleExecutionReportReject(connection_id=ConnectionID(session_alias=session),
+    #                                               account=account,
+    #                                               exdestination=ex_destination,
+    #                                               price=price
+    #                                               ))
     # ------------------------
 
 

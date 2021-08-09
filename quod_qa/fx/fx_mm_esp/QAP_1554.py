@@ -39,9 +39,10 @@ defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
 
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
+
         #Precondition
         FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype1, settldate=settldate1, symbol=symbol, securitytype=securitytype1)).\
             send_md_request().send_md_unsubscribe()
@@ -66,11 +67,9 @@ def execute(report_id):
             send_md_request().\
             verify_md_pending().\
             send_md_unsubscribe()
-
-
-
     except Exception as e:
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         pass
 

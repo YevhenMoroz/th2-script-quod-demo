@@ -30,10 +30,10 @@ def execute(report_id, session_id):
 
     # region Create CO
     eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    eq_wrappers.isMenuItemPresent(base_request)
+    eq_wrappers.is_menu_item_present(base_request)
     # endregion
 
     # region Check value
-    # eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Held")
-    # eq_wrappers.verify_order_value(base_request, case_id, "Client Account Group ID", client)
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Held")
+    eq_wrappers.verify_order_value(base_request, case_id, "Client Account Group ID", client)
     # region Execute

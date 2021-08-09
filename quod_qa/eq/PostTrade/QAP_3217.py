@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3217"
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -22,7 +22,6 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
@@ -31,9 +30,9 @@ def execute(report_id):
     # # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-eq-paris',
-                                                                             'MOClient_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-eq-paris', 'MOClient_PARIS', 'XPAR', 3,
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client+'_PARIS', "XPAR", 3)
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(), client+'_PARIS', 'XPAR', 3,
                                                                       800, 1)
         time.sleep(5)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
@@ -85,7 +84,7 @@ def execute(report_id):
         'RootSettlCurrAmt': '*'
 
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
     # endregion
     # region aprrove block
@@ -130,7 +129,7 @@ def execute(report_id):
         'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
     params = {
         'Quantity': qty,
@@ -186,5 +185,5 @@ def execute(report_id):
     }
     rule_manager.remove_rule(nos_rule)
     rule_manager.remove_rule(nos_rule2)
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
