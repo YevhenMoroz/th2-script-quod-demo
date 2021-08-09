@@ -202,7 +202,7 @@ def execute(report_id):
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)
-        
+
         market_data4 = [
             {
                 'MDUpdateAction': '0',
@@ -237,6 +237,7 @@ def execute(report_id):
 
         #Check that FIXQUODSELL5 sent 35=8 pending new
         er_1 ={
+            'Account': client,
             'ExecID': '*',
             'OrderQty': qty,
             'NoStrategyParameters': '*',
@@ -274,6 +275,7 @@ def execute(report_id):
             SettlType = '*',
             ExecRestatementReason='*',
         )
+        er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         #region Child IOC
