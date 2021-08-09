@@ -100,7 +100,6 @@ def execute(report_id, session_id):
     today = today.today().strftime('%m/%d/%Y')
 
     try:
-        # Step 1
         # Step 2
         params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
                                    securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
@@ -110,19 +109,11 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_no_reply()
         # Step 3
-        # quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
-        # # Step 4
-        # check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        # close_dmi_window(case_base_request, dealer_service)
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
+        # Step 4
+        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
+        close_dmi_window(case_base_request, dealer_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         press_pricing(base_details, cp_service)
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
