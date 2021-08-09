@@ -149,7 +149,7 @@ def execute(report_id,session_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = "Spot"
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -179,3 +179,4 @@ def execute(report_id,session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

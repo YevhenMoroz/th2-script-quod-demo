@@ -1,7 +1,9 @@
 import random
 import string
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
@@ -15,6 +17,7 @@ class QAP_2259(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.user_id = "buyside03"
@@ -42,13 +45,18 @@ class QAP_2259(CommonTestCase):
         venue_trader_sub_wizard.click_on_delete_button()
 
     def test_context(self):
-        self.precondition()
-        users_wizard = UsersWizard(self.web_driver_container)
-        expected_pdf_content = [self.venue, self.venue_trader_name]
-        '''
-        expected result "Wrong item->JSE" displayed us that pdf does not contain venue, and venue trader is empty
-        '''
-        self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->JSE",
-                    users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        try:
+            self.precondition()
+            users_wizard = UsersWizard(self.web_driver_container)
+            expected_pdf_content = [self.venue, self.venue_trader_name]
+            '''
+            expected result "Wrong item->JSE" displayed us that pdf does not contain venue, and venue trader is empty
+            '''
+            self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->JSE",
+                        users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
-        users_wizard.click_on_save_changes()
+            users_wizard.click_on_save_changes()
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

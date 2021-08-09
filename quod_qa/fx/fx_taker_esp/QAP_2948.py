@@ -118,7 +118,7 @@ def execute(report_id, session_id):
     ord_type = "Limit"
     tif = "Day"
     stop_price = "2"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     try:
         # Step 1
@@ -134,6 +134,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

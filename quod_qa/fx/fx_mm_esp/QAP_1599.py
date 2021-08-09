@@ -155,7 +155,7 @@ def execute(report_id, session_id):
     from_curr = "GBP"
     to_curr = "AUD"
     tenor = "1W"
-    venue = "HSBC"
+    venue = "HSB"
     instrument = "GBP/AUD-1W"
     client_tier = "Silver"
 
@@ -183,6 +183,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tiles

@@ -37,9 +37,10 @@ defaultmdsymbol_spo='USD/SEK:SPO:REG:HSBC'
 
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
+
         # Preconditions
         params_sell=CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd)
         FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
@@ -52,10 +53,10 @@ def execute(report_id):
                                       settltype, settldate_wk1, symbol, securitytype_fwd, securityid,account=account)
         params.prepare_md_for_verification(bands, priced=False, which_bands_not_pr=bands_not_priced)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price=md.extruct_filed('Price')
+        price=md.extract_filed('Price')
 
         #Step 4
-        fwd_p = md.extruct_filed('MDEntryForwardPoints',1)
+        fwd_p = md.extract_filed('MDEntryForwardPoints', 1)
         last_spot_rate=str(round((float(price)-float(fwd_p)),5))
         md.send_new_order_single(price).verify_order_pending().verify_order_new().\
             verify_order_filled_fwd(price,fwd_point=fwd_p,last_spot_rate=last_spot_rate)
@@ -68,11 +69,14 @@ def execute(report_id):
         md.send_new_order_single(price).\
             verify_order_pending().\
             verify_order_rejected(text)
-
     except Exception as e:
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
-        md.send_md_unsubscribe()
+        try:
+            md.send_md_unsubscribe()
+        except:
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
 
 
 

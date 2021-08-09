@@ -42,7 +42,7 @@ def modify_rates_tile(base_request, service, from_c, to_c, tenor):
 
 def set_order_ticket_options(base_request, service, client):
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues()
+    fx_values = DefaultFXValues([])
     fx_values.Client = client
     order_ticket_options.set_default_fx_values(fx_values)
     call(service.setOptionOrderTicket, order_ticket_options.build())
@@ -99,7 +99,7 @@ def execute(report_id, session_id):
     tenor = "Spot"
 
     client = "ASPECT_CITI"
-    owner = Stubs.custom_config['qf_trading_fe_user_309']
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     try:
         # Step 1-2
@@ -117,6 +117,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

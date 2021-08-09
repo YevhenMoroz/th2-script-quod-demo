@@ -7,7 +7,7 @@ from quod_qa.common_tools import round_decimals_up, round_decimals_down
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest
+from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ModifyRatesTileRequest
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
@@ -38,6 +38,12 @@ def modify_pricing_tile(base_request, service, instrument, client):
     modify_request = ModifyRatesTileRequest(details=base_request)
     modify_request.set_instrument(instrument)
     modify_request.set_client_tier(client)
+    call(service.modifyRatesTile, modify_request.build())
+
+
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
     call(service.modifyRatesTile, modify_request.build())
 
 
@@ -150,7 +156,7 @@ def execute(report_id, session_id):
     from_curr = "AUD"
     to_curr = "CAD"
     tenor = "1W"
-    venue = "HSBC"
+    venue = "HSB"
     instrument = "AUD/CAD-1W"
     client_tier = "Silver"
 
@@ -176,8 +182,11 @@ def execute(report_id, session_id):
         check_price_on_pricing_tile(case_id, price_mm[0], spot_mm[0], pts_mm[0])
         check_price_on_pricing_tile(case_id, price_mm[1], spot_mm[1], pts_mm[1])
 
+        use_default(base_details, cp_service)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tiles

@@ -32,9 +32,10 @@ defaultmdsymbol_spo='USD/NOK:SPO:REG:HSBC'
 
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
+
         # Preconditions
         params_sell=CaseParamsSellEsp(client, case_id, side, orderqty, ordtype, timeinforce, currency, settlcurrency,
                                       settltype, settldate_wk1, symbol, securitytype_fwd, securityid)
@@ -50,18 +51,20 @@ def execute(report_id):
         md = FixClientSellEsp(params)\
             .send_md_request().\
             verify_md_pending()
-        price=md.extruct_filed('Price')
+        price=md.extract_filed('Price')
         #Step 4
         text='empty book'
         md.send_new_order_single(price).\
             verify_order_pending().\
             verify_order_rejected(text)
-
     except Exception as e:
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
-        md.send_md_unsubscribe()
-
+        try:
+            md.send_md_unsubscribe()
+        except:
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
 
 
 

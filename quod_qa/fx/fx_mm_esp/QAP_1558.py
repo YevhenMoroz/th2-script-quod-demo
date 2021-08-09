@@ -45,9 +45,10 @@ defaultmdsymbol_spo_2 = 'EUR/CAD:SPO:REG:HSBC'
 
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
+
         params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                      timeinforce=timeinforce, currency=currency2,
                                      settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
@@ -62,12 +63,18 @@ def execute(report_id):
                                                symbol=symbol1, securitytype=securitytype_spo)
             params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo,
                                                symbol=symbol2, securitytype=securitytype_spo)
-            FixClientSellEsp(params_usd_cad).send_md_request().send_md_unsubscribe()
-            FixClientSellEsp(params_eur_cad).send_md_request().send_md_unsubscribe()
+            FixClientSellEsp(params_usd_cad). \
+                send_md_request(). \
+                send_md_unsubscribe()
+            FixClientSellEsp(params_eur_cad). \
+                send_md_request(). \
+                send_md_unsubscribe()
             FixClientBuy(
-                CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)).send_market_data_spot()
+                CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)). \
+                send_market_data_spot()
             FixClientBuy(
-                CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)).send_market_data_spot()
+                CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)). \
+                send_market_data_spot()
 
             # Steps 1-3
             params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
@@ -76,8 +83,10 @@ def execute(report_id):
                                          symbol=symbol1, securitytype=securitytype_fwd,
                                          securityid=securityid1)
             params_1.prepare_md_for_verification(bands, published=False)
-            md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
-            price1 = md1.extruct_filed('Price')
+            md1 = FixClientSellEsp(params_1). \
+                send_md_request(). \
+                verify_md_pending()
+            price1 = md1.extract_filed('Price')
             text = 'empty book'
             md1.send_new_order_single(price1). \
                 verify_order_pending(). \
@@ -92,7 +101,9 @@ def execute(report_id):
                                          securityid=securityid2, account=account)
             params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
             md2 = FixClientSellEsp(params_2)
-            price2 = md2.send_md_request().verify_md_pending().extruct_filed('Price')
+            price2 = md2.send_md_request(). \
+                verify_md_pending(). \
+                extract_filed('Price')
             md2.send_new_order_single(price2). \
                 verify_order_pending(). \
                 verify_order_filled_fwd()
@@ -104,11 +115,15 @@ def execute(report_id):
             md2.send_new_order_single(price2). \
                 verify_order_pending(). \
                 verify_order_rejected(text)
-
-
-        except Exception:
+        except Exception as e:
             logging.error('Error execution', exc_info=True)
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         finally:
-            md2.send_md_unsubscribe()
+            try:
+                md2.send_md_unsubscribe()
+            except:
+                bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
     except Exception:
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

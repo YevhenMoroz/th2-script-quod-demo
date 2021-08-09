@@ -1,53 +1,36 @@
 import logging
-import os
-from datetime import datetime
 from pathlib import Path
+from random import randint
 
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import get_expire_time
-from custom.verifier import Verifier as Ver, Verifier, VerificationMethod
-from quod_qa.fx.default_params_fx import text_messages
+from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import spo
+from custom.verifier import Verifier
+from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
-                                                          ExtractionDetailsRequest, RFQExtractionDetailsRequest)
+from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
+    ModificationRequest, RFQExtractionDetailsRequest
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
+from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
 
-
-def prepare_fe(case_id, session_id):
-    Stubs.frontend_is_open = True
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-        # ,
-        #          fe_dir='qf_trading_fe_folder_308',
-        #          fe_user='qf_trading_fe_user_308',
-        #          fe_pass='qf_trading_fe_password_308')
-    else:
-        get_opened_fe(case_id, session_id)
-
-
-def extract_unassigned_grid(base_request, service, qty, row=1):
+def check_dealer_intervention(base_request, service, case_id, qty):
     base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Status": "New"})
-    base_data.set_filter_dict({"Qty": str(qty)})
-    base_data.set_row_number(row)
-
+    base_data.set_filter_list(["Qty", qty])
     extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Id", "Id")])
+    extraction_id = bca.client_orderid(8)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
 
-    return call(service.getUnassignedRFQDetails, extraction_request.build())
+    response = call(service.getUnassignedRFQDetails, extraction_request.build())
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check quote request in DI")
+    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
 
 
 def assign_firs_request(base_request, service):
     base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_row_number(1)
-
     call(service.assignToMe, base_data.build())
 
 
@@ -56,138 +39,176 @@ def estimate_first_request(base_request, service):
     call(service.estimate, base_data.build())
 
 
-def reject_rfq(base_request, service):
+def set_ttl_and_pips(base_request, service, ttl, pips):
     modify_request = ModificationRequest(base=base_request)
-    modify_request.reject()
+    modify_request.set_quote_ttl(ttl)
+    modify_request.set_spread_step(pips)
     call(service.modifyAssignedRFQ, modify_request.build())
 
 
-def verify_assigned_grid_row(base_request, service, case_id, rfq_id, exp_status, exp_quote_status, qty):
-    base_data = BaseTableDataRequest(base=base_request)
-
-    base_data.set_row_number(1)
-    base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
-    base_data.set_filter_dict({"Qty": str(qty)})
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
-                                               ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
-
-    response = call(service.getAssignedRFQDetails, extraction_request.build())
-    print(response)
-    ver = Ver(case_id)
-    ver.set_event_name("Check Assigned Grid")
-    ver.compare_values('Status', exp_status, response["dealerIntervention.Status"])
-    ver.compare_values('QuoteStatus', exp_quote_status, response["dealerIntervention.QuoteStatus"])
-    ver.verify()
-
-
-def send_rfq(reusable_params, ttl, case_params, case_id, act):
-    print('quote sent')
-    rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{
-            **reusable_params,
-            'Currency': 'EUR',
-            'QuoteType': '1',
-            'OrderQty': reusable_params['OrderQty'],
-            'OrdType': 'D',
-            'ExpireTime': get_expire_time(ttl),
-            'TransactTime': (datetime.utcnow().isoformat())}]
-        }
-    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
-
-    send_rfq = act.sendMessage(
-            bca.convert_to_request(
-                    text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                    ))
-
-
-def send_estimated_quote(base_request, service):
+def modify_spread(base_request, service, *args):
     modify_request = ModificationRequest(base=base_request)
-    modify_request.send()
+    if "increase_ask" in args:
+        modify_request.increase_ask()
+    if "decrease_ask" in args:
+        modify_request.decrease_ask()
+    if "increase_bid" in args:
+        modify_request.increase_bid()
+    if "decrease_bid" in args:
+        modify_request.decrease_bid()
+    if "narrow_spread" in args:
+        modify_request.narrow_spread()
+    if "widen_spread" in args:
+        modify_request.widen_spread()
+    if "skew_towards_ask" in args:
+        modify_request.skew_towards_ask()
+    if "skew_towards_bid" in args:
+        modify_request.skew_towards_bid()
     call(service.modifyAssignedRFQ, modify_request.build())
 
 
-def clear_filters(base_request,service):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_row_number(1)
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_clear_flag()
-    call(service.getAssignedRFQDetails, extraction_request.build())
-    call(service.getUnassignedRFQDetails, extraction_request.build())
+def check_ttl(base_request, service, case_id, ttl):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_id = bca.client_orderid(4)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.extract_quote_ttl("rfqDetails.ttl")
+    response = call(service.getRFQDetails, extraction_request.build())
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check quote TTl")
+    verifier.compare_values("TTL", ttl, response["rfqDetails.ttl"])
+    verifier.verify()
 
 
-def execute(report_id, case_params, session_id):
+def check_price_ask_pips(base_request, service):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_id = bca.client_orderid(4)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    response = call(service.getRFQDetails, extraction_request.build())
+    ask = response["rfqDetails.askPricePips"]
+    return float(ask)
+
+
+def check_price_bid_pips(base_request, service):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_id = bca.client_orderid(4)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
+    response = call(service.getRFQDetails, extraction_request.build())
+    bid = response["rfqDetails.bidPricePips"]
+    return float(bid)
+
+
+def compare_prices_ask(case_id, ask_before, ask_after, pips, *args):
+    difference = abs(ask_after - ask_before)
+    expected_difference = "0.0"
+    pips = float(pips) * 10
+    if "increase_ask" in args:
+        expected_difference = pips
+    if "decrease_ask" in args:
+        expected_difference = pips
+    if "narrow_spread" in args:
+        expected_difference = pips
+    if "widen_spread" in args:
+        expected_difference = pips
+    if "skew_towards_ask" in args:
+        expected_difference = pips
+    if "skew_towards_bid" in args:
+        expected_difference = pips
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Compare prices ask")
+    verifier.compare_values("Price difference", str(expected_difference), str(difference))
+    verifier.verify()
+
+
+def compare_prices_bid(case_id, bid_before, bid_after, pips, *args):
+    difference = abs(bid_after - bid_before)
+    expected_difference = "0.0"
+    pips = float(pips) * 10
+    if "increase_bid" in args:
+        expected_difference = pips
+    if "decrease_bid" in args:
+        expected_difference = pips
+    if "narrow_spread" in args:
+        expected_difference = pips
+    if "widen_spread" in args:
+        expected_difference = pips
+    if "skew_towards_ask" in args:
+        expected_difference = pips
+    if "skew_towards_bid" in args:
+        expected_difference = pips
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Compare prices bid")
+    verifier.compare_values("Price difference", str(expected_difference), str(difference))
+    verifier.verify()
+
+
+def close_dmi_window(base_request, dealer_interventions_service):
+    call(dealer_interventions_service.closeWindow, base_request)
+
+
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
+
+    dealer_service = Stubs.win_act_dealer_intervention_service
+
     set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    seconds, nanos = bca.timestamps()  # Store case start time
-    service = Stubs.win_act_dealer_intervention_service
-    ttl = 180
-    print(tsd.spo())
-    reusable_params = {
-        'Account': case_params['Account'],
-        'Side': 1,
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT',
-            'Product': '4',
-            },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0',
-        'OrderQty': '25050000'
-        }
+    case_base_request = get_base_request(session_id, case_id)
+
+    client_tier = "Iridium1"
+    qty = str(randint(17000000, 20000000))
+    symbol = "GBP/USD"
+    security_type_spo = "FXSPOT"
+    settle_date = spo()
+    settle_type = "SPO"
+    currency = "GBP"
+    ttl = "360"
+    pips = "0.1"
+    increase_ask = "increase_ask"
+    decrease_ask = "decrease_ask"
+    increase_bid = "increase_bid"
+    decrease_bid = "decrease_bid"
+    narrow_spread = "narrow_spread"
+    widen_spread = "widen_spread"
+    skew_towards_ask = "skew_towards_ask"
+    skew_towards_bid = "skew_towards_bid"
+    list_of_actions = [increase_ask, decrease_ask, increase_bid, decrease_bid, narrow_spread,
+                       widen_spread, skew_towards_ask, skew_towards_bid]
 
     try:
-        send_rfq(reusable_params, ttl, case_params, case_id, act)
+        # Step 1
+        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
+                                   securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
+                                   currency=currency,
+                                   account=client_tier)
+        rfq = FixClientSellRfq(params)
+        rfq.send_request_for_quote_no_reply()
+        check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
+        assign_firs_request(case_base_request, dealer_service)
+        estimate_first_request(case_base_request, dealer_service)
+        # Step 2
+        set_ttl_and_pips(case_base_request, dealer_service, ttl, pips)
+        check_ttl(case_base_request, dealer_service, case_id, ttl)
 
-        rfq_id = extract_unassigned_grid(base_request, service, reusable_params['OrderQty'])
+        for action in list_of_actions:
+            ask = check_price_ask_pips(case_base_request, dealer_service)
+            bid = check_price_bid_pips(case_base_request, dealer_service)
+            modify_spread(case_base_request, dealer_service, action)
+            ask_after = check_price_ask_pips(case_base_request, dealer_service)
+            bid_after = check_price_bid_pips(case_base_request, dealer_service)
+            compare_prices_ask(case_id, ask, ask_after, pips, action)
+            compare_prices_bid(case_id, bid, bid_after, pips, action)
 
-        assign_firs_request(base_request, service)
-
-        estimate_first_request(base_request, service)
-
-        reject_rfq(base_request, service)
-
-        verify_assigned_grid_row(base_request, service, case_id, rfq_id,
-                                 'Rejected', '', reusable_params['OrderQty'])
-
-
-
-        reusable_params['OrderQty'] = '24050000'
-        clear_filters(base_request,service)
-
-        send_rfq(reusable_params, ttl, case_params, case_id, act)
-
-        rfq_id2 = extract_unassigned_grid(base_request, service, reusable_params['OrderQty'])
-
-        assign_firs_request(base_request, service)
-
-        estimate_first_request(base_request, service)
-
-        send_estimated_quote(base_request, service)
-
-        reject_rfq(base_request, service)
-
-        verify_assigned_grid_row(base_request, service, case_id, rfq_id2,
-                                 'Canceled', 'RemovedFromMarket', reusable_params['OrderQty'])
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
-            clear_filters(base_request, service)
+            # Close tile
+            close_dmi_window(case_base_request, dealer_service)
         except Exception:
             logging.error("Error execution", exc_info=True)
-
-    logger.info("Case {} was executed in {} sec.".format(
-            case_name, str(round(datetime.now().timestamp() - seconds))))

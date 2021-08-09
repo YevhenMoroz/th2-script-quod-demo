@@ -106,9 +106,10 @@ no_md_entries = [
 ]
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
+
 
         #Step 3
         #Send MD for Spot HSBC
@@ -129,10 +130,12 @@ def execute(report_id):
                                    securitytype=securitytype_fwd, securityid=securityid)
         params.prepare_md_for_verification_custom(no_md_entries)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-
-
     except Exception as e:
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
-        md.send_md_unsubscribe()
+        try:
+            md.send_md_unsubscribe()
+        except:
+            bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
 

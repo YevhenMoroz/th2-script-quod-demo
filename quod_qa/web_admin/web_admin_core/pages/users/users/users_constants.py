@@ -2,8 +2,9 @@ class UsersConstants:
     USERS_PAGE_TITLE_XPATH = "//*[@href='#/pages/users/view']//*[text()='Users']"
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
-    DISABLED_MESSAGE = "//*[@class='title subtitle']"
+    DISABLED_ENABLED_SUCCESSFUL_MESSAGE = "//*[@class='title subtitle']"
     RECORD_EXIST_EXCEPTION  = "//*[text()='Such a record already exists']"
+    INCORRECT_OR_MISSING_VALUES_EXCEPTION = "//*[text()='Incorrect or missing values']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"
@@ -91,27 +92,32 @@ class UsersConstants:
     COUNTRY_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Country"]/preceding-sibling::input'
     DATE_OF_BIRTH = '//*[text()="Date of Birth"]/preceding-sibling::input'
 
+    # Assignments
+    DESKS_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Desks *']/parent::div//button"
+    DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@class="cdk-overlay-container"]//*[text()="{}"]'
+    LOCATION_AT_ASSIGNMENTS_SUB_WIZARD = '//*[text()="Location"]/preceding-sibling::input'
+    ZONE_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Zone']/preceding-sibling::input"
+    INSTITUTION = "//*[text()='Institution']/preceding-sibling::input"
+
+
     # Role
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role ID *"]/preceding-sibling::input'
     ROLE_ID_AFTER_SAVED_XPATH = "//*[@class='app-input-placeholder disabled-input']"
-    DESKS_CHECKBOX_LIST_AT_ROLE_SUB_WIZARD = '//*[@class="cdk-overlay-pane"]//*[text()="{}"]'
-    DESKS_AT_ROLE_SUB_WIZARD ="//*[text()='Desks *']/parent::div//button"
-    LOCATION_AT_ROLE_SUB_WIZARD ='//*[text()="Location"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD ='//*[text()="Group"]/preceding-sibling::input'
     PERM_ROLE_AT_ROLE_SUB_WIZARD='//*[text()="Perm Role"]/preceding-sibling::input'
     PERM_OP_AT_ROLE_SUB_WIZARD ='//*[text()="Perm Op"]/preceding-sibling::input'
 
 
-    # Account groups sub wizard
-    PLUS_BUTTON_AT_ACCOUNT_GROUPS_SUB_WIZARD = '//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
-    CHECKMARK_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CANCEL_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
-    EDIT_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
-    DELETE_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[text()=" Account Groups "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
-    CLIENT_AT_ACCOUNT_GROUPS_SUB_WIZARD = '//*[@placeholder = "Client *"]'
-    TYPE_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[@placeholder = "Type *"]'
-    CLIENT_FILTER_AT_ACCOUNT_GROUPS_SUB_WIZARD ='//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
-    TYPE_FILTER_AT_ACCOUNT_GROUPS_SUB_WIZARD ="//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
+    # Client
+    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
+    CHECKMARK_AT_CLIENT_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
+    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
+    EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
+    DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
+    CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
+    TYPE_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Type *"]'
+    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
+    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = "//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
 
 
     # Venue trader

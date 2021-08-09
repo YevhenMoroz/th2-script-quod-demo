@@ -7,7 +7,7 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,32 +19,39 @@ channels = dict()
 def test_run(parent_id=None):
     report_id = bca.create_event('ESP MM regression', parent_id)
     session_id = set_session_id()
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
 
     try:
-        # QAP_1418.execute(report_id, session_id)
-        # QAP_1536.execute(report_id, session_id)
-        # QAP_1560.execute(report_id, session_id)
-        # QAP_1599.execute(report_id, session_id)
-        # QAP_1601.execute(report_id, session_id)
-        # QAP_2034.execute(report_id, session_id)
-        # QAP_2035.execute(report_id, session_id)
-        # QAP_2037.execute(report_id, session_id)
-        # QAP_2038.execute(report_id, session_id)
-        # QAP_2039.execute(report_id, session_id)
-        # QAP_2069.execute(report_id, session_id)
-        # QAP_2072.execute(report_id, session_id)
-        # QAP_2075.execute(report_id, session_id)
-        # QAP_2117.execute(report_id, session_id)
-        # QAP_2523.execute(report_id, session_id)
-        # QAP_2555.execute(report_id, session_id)
-        # QAP_2556.execute(report_id, session_id)
-        # QAP_2587.execute(report_id, session_id)
-        # QAP_2646.execute(report_id, session_id)
-        # QAP_2796.execute(report_id, session_id)
-        # QAP_2825.execute(report_id, session_id)
-        # QAP_2855.execute(report_id, session_id)
-        # QAP_3045.execute(report_id, session_id)
-        # QAP_3563.execute(report_id, session_id)
+
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
+
+        QAP_1418.execute(report_id, session_id)
+        QAP_1536.execute(report_id, session_id)
+        QAP_1560.execute(report_id, session_id)
+        QAP_1599.execute(report_id, session_id)
+        QAP_1601.execute(report_id, session_id)
+        QAP_2034.execute(report_id, session_id)
+        QAP_2035.execute(report_id, session_id)
+        QAP_2037.execute(report_id, session_id)
+        QAP_2038.execute(report_id, session_id)
+        QAP_2039.execute(report_id, session_id)
+        QAP_2069.execute(report_id, session_id)
+        QAP_2072.execute(report_id, session_id)
+        QAP_2075.execute(report_id, session_id)
+        QAP_2117.execute(report_id, session_id)
+        QAP_2523.execute(report_id, session_id)
+        QAP_2555.execute(report_id, session_id)
+        QAP_2556.execute(report_id, session_id)
+        QAP_2587.execute(report_id, session_id)
+        QAP_2646.execute(report_id, session_id)
+        QAP_2796.execute(report_id, session_id)
+        QAP_2825.execute(report_id, session_id)
+        QAP_2855.execute(report_id, session_id)
+        QAP_3045.execute(report_id, session_id)
+        QAP_3563.execute(report_id, session_id)
         QAP_1518.execute(report_id)
         QAP_1554.execute(report_id)
         QAP_1558.execute(report_id)

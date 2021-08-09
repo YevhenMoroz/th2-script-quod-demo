@@ -101,7 +101,7 @@ def execute(report_id, session_id):
     client_tier = "Silver"
     pips = "20"
     mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection303(
+        "MDReqID": simulator.getMDRefIDForConnection314(
             request=RequestMDRefID(
                 symbol="EUR/USD:SPO:REG:HSBC",
                 connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
@@ -172,12 +172,12 @@ def execute(report_id, session_id):
         params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
                                    securityid=securityid)
-        md = MarketDataRequst(params). \
+        md = MarketDataRequest(params). \
             set_md_params() \
             .send_md_request() \
             .prepare_md_response(bands) \
             .verify_md_pending()
-        price1 = md.extruct_filed('price')
+        price1 = md.extract_filed('price')
 
         # Step 2
         create_or_get_rates_tile(base_details, cp_service)
@@ -188,12 +188,12 @@ def execute(report_id, session_id):
         ask_after = check_ask(base_details, cp_service)
         compare_prices(case_id, ask_before, ask_after, pips)
         # Step 3
-        md = MarketDataRequst(params). \
+        md = MarketDataRequest(params). \
             set_md_params() \
             .send_md_request() \
             .prepare_md_response(bands) \
             .verify_md_pending()
-        price2 = md.extruct_filed('price')
+        price2 = md.extract_filed('price')
         # Step 4
         use_default(base_details, cp_service)
         ask_after_default = check_ask(base_details, cp_service)
@@ -204,12 +204,12 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
-
         try:
             # Close tile
             md.send_md_unsubscribe()
             call(cp_service.closeRatesTile, base_details.build())
-
         except Exception:
             logging.error("Error execution", exc_info=True)
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

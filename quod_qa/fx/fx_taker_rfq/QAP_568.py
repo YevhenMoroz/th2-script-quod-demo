@@ -1,7 +1,6 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
     ContextAction
@@ -112,7 +111,7 @@ def check_order_book(base_request, instr_type, act_ob, case_id, qty, client):
 
 def set_order_ticket_options(option_service, base_request, client):
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    fx_values = DefaultFXValues()
+    fx_values = DefaultFXValues([])
     fx_values.Client = client
     order_ticket_options.set_default_fx_values(fx_values)
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
@@ -136,7 +135,7 @@ def execute(report_id, session_id):
     quote_quote_sts_accepted = "Accepted"
 
     case_instr_type = "Spot"
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -163,6 +162,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

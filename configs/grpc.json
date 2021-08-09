@@ -13,19 +13,6 @@
         "endpoints": ["act_fix"]
       }
     },
-    "Act-1": {
-      "service-class": "ActService",
-      "endpoints": {
-        "act_1": {
-          "host": "10.0.22.22",
-          "port": 32134
-        }
-      },
-      "strategy": {
-        "name": "robin",
-        "endpoints": ["act_1"]
-      }
-    },
     "Check1": {
       "service-class": "Check1Service",
       "endpoints": {
@@ -66,7 +53,7 @@
       }
     },
     "SimulatorTest": {
-      "service-class": "TemplateSimulatorTestService",
+      "service-class": "TemplateSimulatorServiceTestService",
       "endpoints": {
         "simulator_test": {
           "host": "10.0.22.22",

@@ -26,7 +26,7 @@ class RoutesVenuesSubWizard(CommonPage):
     # venues sub-wizard tab
     # Setters
     def set_venue_filter_at_venues_tab(self, value):
-        self.set_combobox_value(RoutesConstants.VENUE_FILTER_AT_VALUES_TAB_XPATH, value)
+        self.set_text_by_xpath(RoutesConstants.VENUE_FILTER_AT_VALUES_TAB_XPATH, value)
 
     def set_venue_at_venues_tab(self, value):
         self.set_combobox_value(RoutesConstants.VENUE_AT_VENUES_TAB_XPATH, value)

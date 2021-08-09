@@ -6,7 +6,7 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest, QuoteRequestDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
@@ -62,7 +62,6 @@ def check_quote_request_b(base_request, service, case_id, status, quote_sts, ven
     verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
     verifier.verify()
 
-
 def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
@@ -97,6 +96,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

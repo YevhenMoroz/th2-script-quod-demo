@@ -121,7 +121,7 @@ def execute(report_id, session_id):
 
     case_name = Path(__file__).name[:-3]
     # case params
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "FXForward"
     case_client = "ASPECT_CITI"
     case_from_currency = "EUR"
@@ -165,6 +165,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

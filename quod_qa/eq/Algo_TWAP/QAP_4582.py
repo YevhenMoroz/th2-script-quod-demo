@@ -40,6 +40,7 @@ order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
+ord_price = 20
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -157,7 +158,7 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Price': price,
+            'Price': ord_price,
             'Currency': currency,
             'TargetStrategy': 1005,
             'ExDestination': ex_destination_1,
@@ -226,7 +227,7 @@ def execute(report_id):
             'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'Price': price,
+            'Price': ord_price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
@@ -360,7 +361,7 @@ def execute(report_id):
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',
         'SettlType': '*',
-        'Price': price,
+        'Price': ord_price,
         'TargetStrategy': new_order_single_params['TargetStrategy'],
         'Instrument': '*',
         'SecondaryExecID': '*',
