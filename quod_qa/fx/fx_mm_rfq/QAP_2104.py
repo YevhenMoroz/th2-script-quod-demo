@@ -92,7 +92,7 @@ def execute(report_id, session_id):
         rfq_swap.verify_order_filled_swap(price)
 
         # Step 4
-        # check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
+        check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
