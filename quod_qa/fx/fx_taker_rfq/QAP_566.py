@@ -6,7 +6,7 @@ from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest, QuoteRequestDetailsRequest
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
