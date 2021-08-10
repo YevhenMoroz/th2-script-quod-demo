@@ -564,6 +564,7 @@ class CaseParamsSellRfq:
                     'OrdType': self.ordtype,
                     'SettlDate': self.settldate,
                     'Currency': self.currency,
+                    'Side': self.side,
                     'Instrument': {
                         'SecurityType': self.securitytype,
                         'Symbol': self.symbol,
