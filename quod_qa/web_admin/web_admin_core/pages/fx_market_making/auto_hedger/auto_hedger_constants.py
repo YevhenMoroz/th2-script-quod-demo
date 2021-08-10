@@ -9,10 +9,24 @@ class AutoHedgerConstants:
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
+    MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
+    EDIT_XPATH = "//*[@data-name = 'edit']"
+    CLONE_XPATH = "//*[@data-name = 'copy']"
+    DELETE_XPATH = "//*[@data-name = 'trash-2']"
+    PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
+    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
+    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+
+    # main page
+    MAIN_PAGE_NAME_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_POSITION_BOOK_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[2]//input'
+    MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[3]//input'
+    MAIN_PAGE_ENABLE_SCHEDULE_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[4]//input'
 
     # Values tab
-    VALUES_TAB_NAME_FIELD_XPATH = '//*[text()= "Name *"]'
-    VALUES_TAB_POSITION_BOOK_FIELD_XPATH = '//*[text()= "Position Book"]'
+    VALUES_TAB_NAME_FIELD_XPATH = '//*[text()= "Name *"]/preceding-sibling::input'
+    VALUES_TAB_POSITION_BOOK_FIELD_XPATH = '//*[text()= "Position Book"]/preceding-sibling::input'
 
     # Schedules tab
 
@@ -69,13 +83,13 @@ class AutoHedgerConstants:
     INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-close ng2-main-cancel-btn"]'
     INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-trash"]'
     INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-edit ng2-main-edit-btn"]'
-    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '/*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
-    INSTRUMENTS_TAB_SYMBOL_FIELD_XPATH = '/*[@placeholder="Symbol *"]'
-    INSTRUMENTS_TAB_HEDGING_STRATEGY_FIELD_XPATH = '//*[text()="Hedging Strategy *"]'
-    INSTRUMENTS_TAB_LONG_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Long Threshold Qty (EUR)"]'
-    INSTRUMENTS_TAB_LONG_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Long Residual Qty (EUR)"]'
-    INSTRUMENTS_TAB_SHORT_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Short Threshold Qty (EUR)"]'
-    INSTRUMENTS_TAB_SHORT_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Short Residual Qty (EUR)"]'
+    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
+    INSTRUMENTS_TAB_SYMBOL_FIELD_XPATH = '//*[@placeholder="Symbol *"]'
+    INSTRUMENTS_TAB_HEDGING_STRATEGY_FIELD_XPATH = '//*[text()="Hedging Strategy *"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_LONG_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Long Threshold Qty (EUR)"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_LONG_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Long Residual Qty (EUR)"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_SHORT_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Short Threshold Qty (EUR)"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_SHORT_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Short Residual Qty (EUR)"]/preceding-sibling::input'
     # checkboxes
     INSTRUMENTS_TAB_USE_LONG_QUANTITIES_AS_BOTH_LONG_AND_SHORT_CHECKBOX_XPATH = '//*[text()="Use Long Quantities as Both Long and Short"]'
     INSTRUMENTS_TAB_MAINTAIN_HEDGE_POSITIONS_CHECKBOX_XPATH = '//*[text()="Maintain Hedge Positions"]'

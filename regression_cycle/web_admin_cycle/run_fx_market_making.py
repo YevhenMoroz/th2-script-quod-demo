@@ -13,11 +13,13 @@ from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2030 import QAP
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2040 import QAP_2040
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2045 import QAP_2045
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2056 import QAP_2056
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2158 import QAP_2158
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2247 import QAP_2247
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2289 import QAP_2289
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2379 import QAP_2379
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2442 import QAP_2442
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2649 import QAP_2649
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2772 import QAP_2772
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3008 import QAP_3008
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3009 import QAP_3009
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3010 import QAP_3010
@@ -48,6 +50,8 @@ class RunFxMarketMaking:
             QAP_2030(self.web_driver_container, self.second_lvl_id).run()
             QAP_2040(self.web_driver_container, self.second_lvl_id).run()
             QAP_2056(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2772(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2158(self.web_driver_container, self.second_lvl_id).run()
             QAP_3008(self.web_driver_container, self.second_lvl_id).run()
             QAP_3009(self.web_driver_container, self.second_lvl_id).run()
             QAP_3010(self.web_driver_container, self.second_lvl_id).run()
