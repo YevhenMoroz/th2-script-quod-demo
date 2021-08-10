@@ -1,8 +1,6 @@
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.auto_hedger.auto_hedger_constants import \
     AutoHedgerConstants
-from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_constants import \
-    ClientTierConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
