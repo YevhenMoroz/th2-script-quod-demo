@@ -167,6 +167,16 @@ def execute(report_id):
                     'StrategyParameterName': 'MinParticipationPriceOffset',
                     'StrategyParameterType': '1',
                     'StrategyParameterValue': '-1'
+                },
+                {
+                    'StrategyParameterName': 'Passive',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'PRM'
+                },
+                {
+                    'StrategyParameterName': 'PassiveOffset',
+                    'StrategyParameterType': '1',
+                    'StrategyParameterValue': '-1'
                 }
             ]
         }
