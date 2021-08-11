@@ -86,7 +86,7 @@ def execute(report_id):
         now = datetime.today() - timedelta(hours=3)
 
         rule_list = rule_creation();
-        case_id = bca.create_event(os.path.basename(__file__), report_id)
+        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
