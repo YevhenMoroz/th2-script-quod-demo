@@ -155,6 +155,9 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_FILTER_XPATH,
                                value)
 
+    def set_offer_margin_at_base_margins_tab(self, value):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH, value)
+
     def get_offer_margin_at_base_margins_tab(self):
         return self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH).text

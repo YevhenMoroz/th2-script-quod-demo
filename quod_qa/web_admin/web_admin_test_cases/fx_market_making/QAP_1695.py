@@ -1,4 +1,5 @@
 import random
+import string
 import time
 import traceback
 
@@ -38,7 +39,7 @@ class QAP_1695(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.name = ''.join("name " + str(random.randint(1, 1000)))
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/CAD"
         self.rfq_response_stream_ttl = 2

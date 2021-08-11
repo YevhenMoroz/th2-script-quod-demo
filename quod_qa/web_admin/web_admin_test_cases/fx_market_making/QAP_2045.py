@@ -3,9 +3,17 @@ import string
 import time
 import traceback
 
+from selenium.common.exceptions import TimeoutException
+
 from custom import basic_custom_actions
+from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_instrument_sweepable_quantities_sub_wizard import \
+    ClientTiersInstrumentSweepableQuantitiesSubWizard
+from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_instrument_tenors_sub_wizard import \
+    ClientTiersInstrumentTenorsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
+from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_instrument_wizard import \
+    ClientTierInstrumentWizard
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_instruments_page import \
     ClientTierInstrumentsPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tiers_page import ClientTiersPage
@@ -18,7 +26,7 @@ from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDrive
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_1688(CommonTestCase):
+class QAP_2045(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
@@ -28,6 +36,7 @@ class QAP_1688(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/CAD"
+        self.tenor = "Spot"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -51,6 +60,11 @@ class QAP_1688(CommonTestCase):
         try:
             self.precondition()
             client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+            client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+            client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
+                self.web_driver_container)
+            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
             try:
                 client_tiers_main_page.set_name(self.name)
                 self.verify("Is client tier created correctly? ", True, True)
@@ -59,32 +73,50 @@ class QAP_1688(CommonTestCase):
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
             time.sleep(3)
-            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_main_page.click_on_new()
             time.sleep(2)
-            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
             client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tier_instrument_wizard = ClientTiersWizard(self.web_driver_container)
+            client_tier_instrument_sweepable_quantities.click_on_plus()
+            client_tier_instrument_sweepable_quantities.set_quantity(1000000)
+            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+            time.sleep(1)
+            client_tier_instrument_sweepable_quantities.click_on_checkmark()
+            client_tier_instrument_sweepable_quantities.click_on_plus()
+            client_tier_instrument_sweepable_quantities.set_quantity(5000000)
+            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+            time.sleep(1)
+            client_tier_instrument_sweepable_quantities.click_on_checkmark()
+            client_tier_instrument_sweepable_quantities.click_on_plus()
+            client_tier_instrument_sweepable_quantities.set_quantity(10000000)
+            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+            time.sleep(1)
+            client_tier_instrument_sweepable_quantities.click_on_checkmark()
+            client_tier_instrument_sweepable_quantities.set_quantity_filter(5000000)
             time.sleep(2)
-            client_tier_instrument_wizard.click_on_save_changes()
+            client_tier_instrument_sweepable_quantities.click_on_delete()
+            client_tiers_instrument_wizard.click_on_save_changes()
             time.sleep(2)
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
             time.sleep(2)
-            client_tier_instrument_main_page.set_symbol(self.symbol)
+            client_tier_instrument_main_page.click_on_more_actions()
+            time.sleep(2)
+            client_tier_instrument_main_page.click_on_edit()
+            time.sleep(2)
+            client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+            client_tier_instrument_tenors_sub_wizard.click_on_plus()
+            time.sleep(2)
+            client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor)
+            time.sleep(4)
+            client_tier_instrument_tenors_sub_wizard.set_quantity_filter_at_base_margins_tab(5000000)
             time.sleep(2)
             try:
-                client_tier_instrument_main_page.click_on_more_actions()
-                time.sleep(2)
-                client_tier_instrument_main_page.click_on_enable_disable()
-                time.sleep(2)
-                client_tier_instrument_main_page.click_on_ok_xpath()
-                time.sleep(3)
-                self.verify("Instrument disabled ", True, True)
-            except Exception as e:
-                self.verify("Instrument not disabled !!!", True, e.__class__.__name__)
+                client_tier_instrument_tenors_sub_wizard.click_on_edit_at_base_margins_tab()
+                self.verify("Erorr, quantity does not deleted !!!", True, False)
+            except TimeoutException as e:
+                error_name = e.__class__.__name__
+                self.verify("Quantity is not displayed and deleted successful", "TimeoutException", error_name)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
                                               status='FAILED')

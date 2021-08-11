@@ -99,9 +99,17 @@ class QAP_801(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            expected_pdf_content = 'Counterpart: "don\'t touch just for autotest!"Counterpart    Name: don\'t touch just for ' \
-                                   'autotest!SubCounterparts1.   data - 12 - 3 - BIC Counterpart Party Role1.   BIC - 2 - ' \
-                                   'Exchange - 3 - Bank - Australia And New Zealand Banking Group Limited '
+            expected_pdf_content = [self.new_name_at_value_tab,
+                                    self.name_at_sub_counterparts,
+                                    self.party_id,
+                                    self.ext_id_client,
+                                    self.party_sub_id_type,
+                                    self.party_id_source,
+                                    self.venue_counterpart_id,
+                                    self.party_role,
+                                    self.party_role_qualifier,
+                                    "Australia And New Zealand Banking Group Limited",
+                                    ]
             counterparts_wizard = CounterpartsWizard(self.web_driver_container)
             sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
             list_of_set_sub_counterparts_value = [self.name_at_sub_counterparts,

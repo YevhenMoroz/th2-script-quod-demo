@@ -6,6 +6,7 @@ import traceback
 from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
@@ -24,7 +25,7 @@ class QAP_4239(CommonTestCase):
         self.pin_code = "333"
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.password_field = "333"
-        self.role_id = "HeadOfSaleDealer"
+        self.perm_role = "Permissions for Head of Sale-Dealers role"
         self.desks = ("Desk of SalesDealers 1", "Desk of SalesDealers 2")
 
     def precondition(self):
@@ -49,11 +50,12 @@ class QAP_4239(CommonTestCase):
             users_login_sub_wizard.set_password(self.password_field)
             users_role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
             time.sleep(2)
-            # users_role_sub_wizard.set_role_id(self.role_id)
+            users_role_sub_wizard.set_perm_role(self.perm_role)
             time.sleep(2)
-            users_role_sub_wizard.click_on_desks()
+            assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
+            assignments_sub_wizard.click_on_desks()
             time.sleep(2)
-            users_role_sub_wizard.set_desks(self.desks)
+            assignments_sub_wizard.set_desks(self.desks)
             users_wizard = UsersWizard(self.web_driver_container)
             users_wizard.click_on_save_changes()
             time.sleep(2)
