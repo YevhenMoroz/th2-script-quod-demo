@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-qty = 30
+qty = 300
 price_20 = 20  
 percentage = 10
 aggressivity = 1
