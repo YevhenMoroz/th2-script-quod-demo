@@ -1,8 +1,5 @@
 from th2_grpc_act_gui_quod import ar_operations_pb2
-from th2_grpc_act_gui_quod.ar_operations_pb2 import QuoteRequestDetailsInfo
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
-from th2_grpc_act_gui_quod.order_book_pb2 import ExtractionAction
-
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
