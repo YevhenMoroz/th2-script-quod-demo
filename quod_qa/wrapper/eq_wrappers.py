@@ -716,7 +716,7 @@ def unbook_order(request):
         basic_custom_actions.create_event('Fail amend_block')
 
 
-def allocate_order(request, arr_allocation_param: []):
+def allocate_order(request, arr_allocation_param: [] = None):
     modify_request = ModifyTicketDetails(base=request)
 
     allocations_details = modify_request.add_allocations_details()
@@ -725,8 +725,9 @@ def allocate_order(request, arr_allocation_param: []):
    param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
            {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
     '''
-    for i in arr_allocation_param:
-        allocations_details.add_allocation_param(i)
+    if arr_allocation_param:
+        for i in arr_allocation_param:
+            allocations_details.add_allocation_param(i)
     '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.extract_agreed_price("book.agreedPrice")

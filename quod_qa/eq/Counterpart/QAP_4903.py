@@ -58,60 +58,60 @@ def execute(report_id, session_id):
     finally:
         time.sleep(1)
         rule_manager.remove_rule(nos_rule)
-        # endregion
-        # region Verify
-        params = {
-            'ExecType': '0',
-            'OrdStatus': '0',
-            'Side': 1,
-            'TimeInForce': 0,
-            'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-            'ExecID': '*',
-            'LastQty': '*',
-            'OrderID': '*',
-            'TransactTime': '*',
-            'ExpireDate': '*',
-            'AvgPx': '*',
-            'SettlDate': '*',
-            'SettlType': '*',
-            'Currency': '*',
-            'HandlInst': '*',
-            'LeavesQty': '*',
-            'CumQty': '*',
-            'LastPx': '*',
-            'OrdType': '*',
-            'OrderCapacity': '*',
-            'QtyType': '*',
-            'ExecBroker': '*',
-            'NoParty': [
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "34",
-                 'PartyID': "RegulatoryBody - Venue(Paris)",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "32",
-                 'PartyID': "Custodian - User2",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "36",
-                 'PartyID': "gtwquod1",
-                 'PartyIDSource': "D"}
-            ],
-            'Instrument': '*',
-            'MaxFloor': int(qty) - 1,
-            'QuodTradeQualifier': '*',
-            'ExecRestatementReason': '*',
-            'TargetStrategy': '1004',
-            'BookID': '*',
-            'Price': price,
-            'OrderQtyData': {
-                'OrderQty': qty
-            }
+    # endregion
+    # region Verify
+    params = {
+        'ExecType': '0',
+        'OrdStatus': '0',
+        'Side': 1,
+        'TimeInForce': 0,
+        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ExecID': '*',
+        'LastQty': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'ExpireDate': '*',
+        'AvgPx': '*',
+        'SettlDate': '*',
+        'SettlType': '*',
+        'Currency': '*',
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'OrdType': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'ExecBroker': '*',
+        'NoParty': [
+            {'PartyRole': "66",
+             'PartyID': "MarketMaker - TH2Route",
+             'PartyIDSource': "C"},
+            {'PartyRole': "67",
+             'PartyID': "InvestmentFirm - ClCounterpart",
+             'PartyIDSource': "C"},
+            {'PartyRole': "34",
+             'PartyID': "RegulatoryBody - Venue(Paris)",
+             'PartyIDSource': "C"},
+            {'PartyRole': "32",
+             'PartyID': "Custodian - User2",
+             'PartyIDSource': "C"},
+            {'PartyRole': "36",
+             'PartyID': "gtwquod1",
+             'PartyIDSource': "D"}
+        ],
+        'Instrument': '*',
+        'MaxFloor': int(qty) - 1,
+        'QuodTradeQualifier': '*',
+        'ExecRestatementReason': '*',
+        'TargetStrategy': '1004',
+        'BookID': '*',
+        'Price': price,
+        'OrderQtyData': {
+            'OrderQty': qty
         }
-        fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
-        fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
-                                             key_parameters=None)
-        # endregion
+    }
+    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
+                                         key_parameters=None)
+    # endregion
