@@ -10,7 +10,7 @@ from win_gui_modules.wrappers import set_base
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-3328"
+    case_name = "QAP-3676"
     # region Declarations
     qty = "100"
     price = "10"
@@ -29,22 +29,19 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    fix_message.pop('response')
-    fix_message1 = FixMessage(fix_message)
+    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
     # endregion
     # region Accept
     eq_wrappers.accept_order(lookup, qty, price)
     # region
-    eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
-    eq_wrappers.amend_order(base_request)
+    # region extract value
     req = ExtractOrderTicketValuesRequest(base_request)
-    req.get_client_state()
-    req.get_instrument_state()
+    req.get_limit_checkbox_state()
     result = call(Stubs.win_act_order_ticket.extractOrderTicketValues, req.build())
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values("Order ID from View", result['CLIENT'],
+    verifier.compare_values("Order ID from View", result['LIMIT_CHECKBOX'],
                             "False"
                             )
     verifier.verify()
+    # endregion
