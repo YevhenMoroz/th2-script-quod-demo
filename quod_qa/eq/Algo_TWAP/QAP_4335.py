@@ -2,7 +2,7 @@ import os
 import logging
 import time
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 from types import CellType
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, NoMDEntries
@@ -117,6 +117,7 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
 
+        now = datetime.today() - timedelta(hours=3)
         n_waves = waves
 
         # Send_MarkerData
@@ -172,6 +173,16 @@ def execute(report_id):
             'TargetStrategy': 1005,
             'ExDestination': ex_destination_1,
             'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'StartDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
+                },
+                {
+                    'StrategyParameterName': 'EndDate',
+                    'StrategyParameterType': '19',
+                    'StrategyParameterValue': (now + timedelta(minutes=3)).strftime("%Y%m%d-%H:%M:%S")
+                },
                 {
                     'StrategyParameterName': 'Waves',
                     'StrategyParameterType': '1',
