@@ -196,11 +196,6 @@ def execute(report_id):
                     'StrategyParameterValue': aggressivity
                 },
                 {
-                    'StrategyParameterName': 'MaxWouldPercentage',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '20'
-                },
-                {
                     'StrategyParameterName': 'WouldPriceReference',
                     'StrategyParameterType': '14',
                     'StrategyParameterValue': 'PRM'
