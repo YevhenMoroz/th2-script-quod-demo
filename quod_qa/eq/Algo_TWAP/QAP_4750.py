@@ -201,7 +201,7 @@ def execute(report_id):
                     'StrategyParameterValue': 'PRM'
                 },
                 {
-                    'StrategyParameterName': 'LimitPriceOffset',
+                    'StrategyParameterName': 'WouldPriceOffset',
                     'StrategyParameterType': '1',
                     'StrategyParameterValue': '-2'
                 }
