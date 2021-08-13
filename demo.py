@@ -14,6 +14,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, Q
     QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, QAP_850, QAP_982, \
     QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, \
     QAP_3589, QAP_575, QAP_592
+from quod_qa.fx.fx_mm_autohedging import QAP_2113, QAP_2250, QAP_2290, QAP_2252
 from quod_qa.fx import MyTest, Test, ui_tests
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id
@@ -45,10 +46,15 @@ def test_run():
         # QAP_1589.execute(report_id, session_id)
         # QAP_2055.execute(report_id, session_id)
         # QAP_3742.execute(report_id, session_id)
-        QAP_4673.execute(report_id, session_id)
-        # ui_tests.execute(report_id, session_id)
-        QAP_4677.execute(report_id, session_id)
-
+        # QAP_4673.execute(report_id, session_id)
+        # QAP_4677.execute(report_id, session_id)
+        # QAP_2113.execute(report_id, session_id)
+        # QAP_2250.execute(report_id, session_id)
+        # QAP_2252.execute(report_id, session_id)
+        # MyTest.execute(report_id, session_id)
+        # QAP_2035.execute(report_id, session_id)
+        # QAP_2556.execute(report_id, session_id)
+        MyTest.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

@@ -45,10 +45,10 @@ def execute(report_id, session_id):
 
     cp_service = Stubs.win_act_cp_service
     instrument = "GBP/USD-SPOT"
-    client_tier = "Palladium"
-    value_200k = "200K"
-    value_6m = "6M"
-    value_1_2b = "1.2B"
+    client_tier = "Palladium1"
+    value_200k = "1M"
+    value_6m = "3M"
+    value_1_2b = "5M"
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
 

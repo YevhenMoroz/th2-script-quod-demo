@@ -94,7 +94,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, threshold, sta
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -163,7 +163,7 @@ def execute(report_id, session_id):
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
-            first_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            first_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
             compare_position("Compare position is equal to threshold", case_id, threshold, first_pos)
             response = check_order_book_ao("Check AH is in Order book with OPEN Status", case_id, case_base_request,
                                            ob_act,
@@ -176,7 +176,7 @@ def execute(report_id, session_id):
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
-            second_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            second_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
 
             ordqty = threshold * 2
             compare_position("Compare position is equal to threshold", case_id, ordqty, second_pos)
