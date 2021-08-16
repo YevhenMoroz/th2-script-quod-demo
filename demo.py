@@ -34,6 +34,7 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('srublyov tests ')
     logger.info(f"Root event was created (id = {report_id.id})")
+    session_id = set_session_id()
     try:
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
@@ -44,7 +45,7 @@ def test_run():
         # example_java_api.TestCase(report_id).execute()
         # QAP_1324.execute(report_id, session_id)
         # QAP_1750.execute(report_id, session_id)
-        # QAP_2837.execute(report_id, session_id)
+        QAP_2837.execute(report_id, session_id)
         # QAP_2838.execute(report_id, session_id)
         # QAP_1810.execute(report_id)
 
@@ -140,10 +141,12 @@ def test_run():
         # QAP_3027.execute(report_id)
         # QAP_3028.execute(report_id)
         # QAP_3058.execute(report_id)
-        # QAP_3134.execute(report_id)
+        QAP_3134.execute(report_id)
         # endregion
     except Exception:
         logging.error("Error execution", exc_info=True)
+    finally:
+        Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':

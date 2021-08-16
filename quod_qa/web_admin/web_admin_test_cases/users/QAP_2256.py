@@ -1,5 +1,7 @@
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
@@ -16,6 +18,7 @@ class QAP_2256(CommonTestCase):
         self.user_id = "adm01"
         self.venue = "JSE"
         self.venue_trader_name = "AW9RSTOWN03_03426"
+        self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,9 +44,14 @@ class QAP_2256(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        self.precondition()
-        users_wizard = UsersWizard(self.web_driver_container)
-        expected_pdf_content = [self.venue, self.venue_trader_name]
+        try:
+            self.precondition()
+            users_wizard = UsersWizard(self.web_driver_container)
+            expected_pdf_content = [self.venue, self.venue_trader_name]
 
-        self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                    users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            self.verify(f"Is PDF contains {expected_pdf_content}", True,
+                        users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

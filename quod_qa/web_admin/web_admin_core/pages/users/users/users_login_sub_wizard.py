@@ -12,8 +12,17 @@ class UsersLoginSubWizard(CommonPage):
     def set_user_id(self, value):
         self.set_text_by_xpath(UsersConstants.USER_ID_AT_LOGIN_SUB_WIZARD, value)
 
+    def get_user_id(self):
+        return self.get_text_by_xpath(UsersConstants.USER_ID_AT_LOGIN_SUB_WIZARD)
+
     def set_password(self, value):
         self.set_text_by_xpath(UsersConstants.PASSWORD_AT_LOGIN_SUB_WIZARD, value)
+
+    def set_pin_code(self, value):
+        self.set_text_by_xpath(UsersConstants.PIN_CODE_AT_LOGIN_SUB_WIZARD, value)
+
+    def get_pin_code(self):
+        return self.get_text_by_xpath(UsersConstants.PIN_CODE_AT_LOGIN_SUB_WIZARD)
 
     def set_ext_id_client(self, value):
         self.set_text_by_xpath(UsersConstants.EXT_ID_CLIENT_AT_LOGIN_SUB_WIZARD, value)

@@ -1,6 +1,8 @@
 import random
 import time
+import traceback
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
@@ -16,6 +18,7 @@ class QAP_2405(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.user_id = ''.join("test " + str(random.randint(1, 1000)))
@@ -73,6 +76,11 @@ class QAP_2405(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        self.precondition()
-        login_page = LoginPage(self.web_driver_container)
-        self.verify("Login to web adm with new user", True, login_page.check_is_web_admin_preloaded())
+        try:
+            self.precondition()
+            login_page = LoginPage(self.web_driver_container)
+            self.verify("Login to web adm with new user", True, login_page.check_is_web_admin_preloaded())
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

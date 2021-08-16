@@ -88,7 +88,7 @@ def execute(report_id, session_id):
     case_filter_venue = "CITI"
     case_filter_venue_1 = "JPM"
     case_qty = 10000000
-    case_quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    case_quote_owner = Stubs.custom_config['qf_trading_fe_user']
     quote_sts_new = 'New'
     quote_sts_terminated = "Terminated"
     quote_sts_accepted = "Accepted"

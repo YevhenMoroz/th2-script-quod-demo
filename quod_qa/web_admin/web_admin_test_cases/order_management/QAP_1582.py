@@ -1,7 +1,9 @@
 import time
+import traceback
 
 from selenium.common.exceptions import TimeoutException
 
+from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.order_management.execution_strategies.execution_strategies_general_sub_wizard import \
     ExecutionStrategiesGeneralSubWizard
@@ -17,6 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_1582(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+        self.console_error_lvl_id = second_lvl_id
         self.name = "test1582"
         self.user = "adm01"
         self.strategy_type = "External AMBUSH"
@@ -62,23 +65,28 @@ class QAP_1582(CommonTestCase):
         main_menu.click_on_edit_at_more_actions()
 
     def test_context(self):
-        self.precondition()
-        strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        main_menu = ExecutionStrategiesPage(self.web_driver_container)
-        expected_value_at_general_tab = ['Custom: ', "333"]
         try:
-            actual_value_at_general_tab = [strategies_wizard.get_parameter_name_at_general_block(),
-                                           strategies_wizard.get_parameter_value_at_general_block()]
-            self.verify("After click on toggle", expected_value_at_general_tab, actual_value_at_general_tab)
-        except TimeoutException:
-            actual_value_at_general_tab = ["TimeoutException because don't search parameter at general tab"]
-            self.verify("After click on toggle", expected_value_at_general_tab, actual_value_at_general_tab)
-        finally:
-            time.sleep(1)
-            strategies_wizard.click_on_close_button()
-            main_menu.set_name_at_filter_field(self.name)
-            time.sleep(2)
-            main_menu.set_enabled_at_filter_field("true")
-            main_menu.click_on_enable_disable_button()
-            time.sleep(1)
-            main_menu.click_on_ok_button()
+            self.precondition()
+            strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
+            main_menu = ExecutionStrategiesPage(self.web_driver_container)
+            expected_value_at_general_tab = ['Custom: ', "333"]
+            try:
+                actual_value_at_general_tab = [strategies_wizard.get_parameter_name_at_general_block(),
+                                               strategies_wizard.get_parameter_value_at_general_block()]
+                self.verify("After click on toggle", expected_value_at_general_tab, actual_value_at_general_tab)
+            except TimeoutException:
+                actual_value_at_general_tab = ["TimeoutException because don't search parameter at general tab"]
+                self.verify("After click on toggle", expected_value_at_general_tab, actual_value_at_general_tab)
+            finally:
+                time.sleep(1)
+                strategies_wizard.click_on_close_button()
+                main_menu.set_name_at_filter_field(self.name)
+                time.sleep(2)
+                main_menu.set_enabled_at_filter_field("true")
+                main_menu.click_on_enable_disable_button()
+                time.sleep(1)
+                main_menu.click_on_ok_button()
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+                                              status='FAILED')
+            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

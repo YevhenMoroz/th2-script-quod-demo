@@ -77,7 +77,7 @@ def execute(report_id):
                                          securityid=securityid1)
             params_1.prepare_md_for_verification(bands, published=False)
             md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
-            price1 = md1.extruct_filed('Price')
+            price1 = md1.extract_filed('Price')
             text = 'empty book'
             md1.send_new_order_single(price1). \
                 verify_order_pending(). \
@@ -92,7 +92,7 @@ def execute(report_id):
                                          securityid=securityid2, account=account)
             params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
             md2 = FixClientSellEsp(params_2)
-            price2 = md2.send_md_request().verify_md_pending().extruct_filed('Price')
+            price2 = md2.send_md_request().verify_md_pending().extract_filed('Price')
             md2.send_new_order_single(price2). \
                 verify_order_pending(). \
                 verify_order_filled_fwd()

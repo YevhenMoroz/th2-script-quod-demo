@@ -1,8 +1,8 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -278,6 +278,19 @@ class DeselectRowsRequest:
     def build(self):
         return self.request
 
+
+class GetCPRTPColors:
+
+    def __init__(self, base_tile_data: BaseTileData):
+        self.request = cp_operations_pb2.GetCPRTPColors(base=base_tile_data)
+
+    def get_pricing_btn_pixel_color(self, x: int, y: int):
+        element = cp_operations_pb2.GetCPRTPColors.Elements(type = cp_operations_pb2.GetCPRTPColors.ExtractableElements.PRICING_BUTTON,x = x, y = y)
+        self.request.elements.append(element)
+
+    def build(self):
+        return self.request
+
 class ExtractClientGridValues:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -307,3 +320,58 @@ class ExtractClientGridValues:
 
     def build(self):
         return self.place_order_request
+
+
+class ModifyClientRFQTileRequest:
+    def __init__(self, data: BaseTileData):
+        self.modify_request = cp_operations_pb2.ModifyClientRFQTileRequest(data=data)
+
+    def set_from_curr(self, currency: str):
+        self.modify_request.fromCurrency = currency
+
+    def set_to_curr(self, currency: str):
+        self.modify_request.toCurrency = currency
+
+    def change_currency(self, flag: bool = True):
+        self.modify_request.changeCurrency = flag
+
+    def change_near_tenor(self, tenor: str):
+        self.modify_request.nearTenor = tenor
+
+    def change_far_tenor(self, tenor: str):
+        self.modify_request.farLegTenor = tenor
+
+    def change_client(self, client: str):
+        self.modify_request.client = client
+
+    def change_client_tier(self, client_tier: str):
+        self.modify_request.clientTier = client_tier
+
+    def change_near_leg_aty(self, qty: str):
+        self.modify_request.nearLegQtyStr = qty
+
+    def change_far_leg_aty(self, qty: str):
+        self.modify_request.farLegQtySTR = qty
+
+    def build(self):
+        return self.modify_request
+
+
+class ClientRFQTileOrderDetailsEnum(Enum):
+    Sides = cp_operations_pb2.ClientRFQTileOrderDetails.Action
+    BUY = Sides.BUY
+    SELL = Sides.SELL
+
+
+class ClientRFQTileOrderDetails:
+    def __init__(self, data: BaseTileData):
+        self.details = cp_operations_pb2.ClientRFQTileOrderDetails(data=data)
+
+    def set_action_buy(self):
+        self.details.action = ClientRFQTileOrderDetailsEnum.BUY.value
+
+    def set_action_sell(self):
+        self.details.action = ClientRFQTileOrderDetailsEnum.SELL.value
+
+    def build(self):
+        return self.details

@@ -341,7 +341,8 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None) -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status:str = 'SUCCESS') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body="test body") -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -355,8 +356,8 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     event = Event(
         id=event_id,
         name=event_name,
-        status='SUCCESS',
-        body=b"",
+        status=status,
+        body=bytes(body, 'utf8'),
         start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
         # end_timestamp=current_timestamp,
         parent_id=parent_id)

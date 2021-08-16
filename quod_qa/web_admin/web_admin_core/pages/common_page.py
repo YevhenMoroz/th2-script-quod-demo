@@ -1,12 +1,11 @@
 import os
 
+import re
 import pyperclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
-
-from typing import List
 
 from quod_qa.web_admin.web_admin_core.utils.common_constants import CommonConstants
 from quod_qa.web_admin.web_admin_core.utils.csv_utils.csv_reader import CsvReader
@@ -31,7 +30,6 @@ class CommonPage:
         return self.web_driver_wait.until(
             expected_conditions.visibility_of_element_located((location_strategy, locator)))
 
-    # .text does not work
     def get_text_by_xpath(self, xpath: str):
         element = self.find_by_xpath(xpath)
 
@@ -67,8 +65,11 @@ class CommonPage:
         return result
 
     def set_combobox_value(self, combobox_xpath: str, value: str):
+        """
+        Method was created for setting value from drop down list
+        in active input field.
+        """
         self.set_text_by_xpath(combobox_xpath, value)
-
         option_xpath = CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)
         option = self.find_by_xpath(option_xpath)
         option.click()
@@ -129,5 +130,8 @@ class CommonPage:
 
         return os.path.join(download_directory, files.pop(0))
 
-
-
+    def is_field_enabled(self, xpath):
+        if self.find_by_xpath(xpath).is_enabled():
+            return True
+        else:
+            return False

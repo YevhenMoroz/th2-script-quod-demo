@@ -126,7 +126,7 @@ def execute(report_id, session_id):
     ob_act = Stubs.win_act_order_book
 
     case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "Spot"
     case_filter_venue = "HSBC"
     case_qty = 1000000

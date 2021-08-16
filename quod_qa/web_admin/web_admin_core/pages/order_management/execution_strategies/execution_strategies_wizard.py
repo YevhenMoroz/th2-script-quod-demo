@@ -9,6 +9,9 @@ class ExecutionStrategiesWizard(CommonPage):
         super().__init__(web_driver_container)
 
     # VALUES TAB
+    def set_sub_venue(self, value):
+        self.set_combobox_value(ExecutionStrategiesConstants.SUB_VENUE_AT_VALUES_TAB_XPATH, value)
+
     def set_name(self, value):
         self.set_text_by_xpath(ExecutionStrategiesConstants.NAME_AT_VALUES_TAB_XPATH, value)
 
@@ -140,6 +143,13 @@ class ExecutionStrategiesWizard(CommonPage):
 
     def get_parameter_value_at_general_block(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.PARAMETER_VALUE_AT_GENERAL_BLOCK).text
+
+    def get_parameter_name_at_lit_sweeping_block(self):
+        return self.find_by_xpath(ExecutionStrategiesConstants.PARAMETER_NAME_AT_SWEEPING_BLOCK).text
+
+    def get_parameter_value_at_lit_sweeping_block(self):
+        return self.find_by_xpath(ExecutionStrategiesConstants.PARAMETER_VALUE_AT_SWEEPING_BLOCK).text
+
 
     def is_lit_general_existed(self):
         return "General" == self.find_by_xpath(

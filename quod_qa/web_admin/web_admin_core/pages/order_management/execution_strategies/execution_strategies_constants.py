@@ -42,6 +42,7 @@ class ExecutionStrategiesConstants:
     DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[text()="Description"]/preceding-sibling::input'
     USER_AT_VALUES_TAB_XPATH = '//*[text()="User"]/preceding-sibling::input'
     CLIENT_AT_VALUES_TAB_XPATH = '//*[text()="Client"]/preceding-sibling::input'
+    SUB_VENUE_AT_VALUES_TAB_XPATH = '//*[text()="SubVenue"]/preceding-sibling::input'
     EXT_ID_CLIENT_AT_VALUES_TAB_XPATH = '//*[text()="Ext ID Client"]/preceding-sibling::input'
     EXT_ID_VENUE_AT_VALUES_TAB_XPATH = '//*[text()="Ext ID Venue"]/preceding-sibling::input'
     DEFAULT_TIF_AT_VALUES_TAB_XPATH = '//*[text()="Default TIF"]/preceding-sibling::input'
@@ -129,7 +130,8 @@ class ExecutionStrategiesConstants:
     PARAMETER_NAME_AT_GENERAL_BLOCK ="//*[@id='general-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-label']"
     PARAMETER_VALUE_AT_GENERAL_BLOCK ="//*[@id='general-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-value']"
 
-
+    PARAMETER_NAME_AT_SWEEPING_BLOCK = "//*[@id='lit-sweeping-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-label']"
+    PARAMETER_VALUE_AT_SWEEPING_BLOCK = "//*[@id='lit-sweeping-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-value']"
     # Error type at web admin page
     INCORRECT_OR_MISSING_VALUES_ERROR = "//*[text()='Incorrect or missing values']"
 

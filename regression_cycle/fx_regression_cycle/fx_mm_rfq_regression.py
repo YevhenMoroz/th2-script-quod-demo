@@ -1,5 +1,5 @@
 from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_1545, QAP_1547, QAP_1548, QAP_1550, \
-    QAP_1551, QAP_1562, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1971, QAP_1972, QAP_1978, QAP_2055, QAP_2062, \
+    QAP_1551, QAP_1562, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1971, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
     QAP_2066, QAP_2089, QAP_2090, QAP_2103, QAP_2121
 from stubs import Stubs
 import logging
@@ -46,8 +46,8 @@ def test_run(parent_id=None):
         QAP_1970.execute(report_id, case_params, session_id)
         QAP_1971.execute(report_id, case_params, session_id)
         QAP_1972.execute(report_id, case_params, session_id)
-        QAP_2055.execute(report_id)
-        QAP_2062.execute(report_id, case_params, session_id)
+        QAP_2055.execute(report_id, session_id)
+        QAP_2063.execute(report_id, case_params, session_id)
         QAP_2066.execute(report_id, case_params, session_id)
         QAP_2089.execute(report_id)
         QAP_2090.execute(report_id)
