@@ -61,7 +61,7 @@ instrument = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_2, trade_qty, True, connectivity_fh, s_par, [NoMDEntries(MDEntryType="0", MDEntryPx="0", MDEntrySize="0", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="20", MDEntrySize="500", MDEntryPositionNo="1")])
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_2, trade_qty, True, connectivity_fh, s_par, price_2, trade_qty, [NoMDEntries(MDEntryType="0", MDEntryPx="0", MDEntrySize="0", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="20", MDEntrySize="500", MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
 
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
 
@@ -119,7 +119,7 @@ def execute(report_id):
         waves = 3
 
         rule_list = rule_creation()
-        case_id = bca.create_event(os.path.basename(__file__), report_id)
+        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
         fix_manager_316 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)

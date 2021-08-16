@@ -18,7 +18,7 @@ def execute(report_id):
     nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT1")
 
     connectivity = 'fix-ss-310-columbia-standart'
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     fix_manager_qtwquod3 = FixManager(connectivity, case_id)
     verifier = FixVerifier(connectivity, case_id)
 

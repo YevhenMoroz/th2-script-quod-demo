@@ -18,39 +18,14 @@ def execute(report_id):
     Stubs.frontend_is_open = True
     try:
         verifier = Stubs.verifier
-        dma_params = {
-            'Account': "CLIENT1",
-            'ClOrdID': bca.client_orderid(9),
-            'HandlInst': "2",
-            'Side': 1,
-            'OrderQty': 100,
-            'TimeInForce': "0",
-            'Price': "20",
-            'OrdType': "2",
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': {
-                'Symbol': "FR0010542647_EUR",
-                'SecurityID': "FR0010542647",
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            'OrderCapacity': 'A',
-            'Currency': 'EUR',
-            "ExDestination": "XPAR"
-        }
-        responce = Stubs.fix_act.placeOrderFIX(
-            request=convert_to_request(
-            'Send NewOrderSingle',
-            "gtwquod5",
-            report_id,
-
-        ))
+        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(report_id))
+        checkpoint_id1 = checkpoint_response1.checkpoint
         time.sleep(120)
 
 
         readlog_nos_params = {
             "AuthenticationBlock": {
-                "UserID": "HD3",
+                "UserID": "HD5",
                 "RoleID": "HeadOfSaleDealer",
                 "SessionKey": "*"
             },
@@ -81,8 +56,8 @@ def execute(report_id):
             bca.create_check_rule(
                 "Readlog NewOrderSingle Received",
                 bca.filter_to_grpc("OrderSubmit", readlog_nos_params),
-                responce.checkpoint_id,
-                'log30 5-ors',
+                checkpoint_id1,
+                'log305-ors',
                 report_id
             )
         )

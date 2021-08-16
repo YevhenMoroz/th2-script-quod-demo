@@ -66,7 +66,7 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        case_id = bca.create_event(os.path.basename(__file__), report_id)
+        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         rule_list = rule_creation()
         fix_manager = FixManager(connectivity_sell_side, case_id)
         verifier_310_sell_side = FixVerifier(connectivity_sell_side, case_id)
