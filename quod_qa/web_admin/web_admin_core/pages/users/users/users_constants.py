@@ -101,10 +101,8 @@ class UsersConstants:
 
 
     # Role
-    ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role ID *"]/preceding-sibling::input'
-    ROLE_ID_AFTER_SAVED_XPATH = "//*[@class='app-input-placeholder disabled-input']"
+    PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD ='//*[text()="Group"]/preceding-sibling::input'
-    PERM_ROLE_AT_ROLE_SUB_WIZARD='//*[text()="Perm Role"]/preceding-sibling::input'
     PERM_OP_AT_ROLE_SUB_WIZARD ='//*[text()="Perm Op"]/preceding-sibling::input'
 
 

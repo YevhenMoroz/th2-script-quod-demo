@@ -37,7 +37,6 @@ def execute(report_id):
                 'MDEntryPositionNo': '1',
                 'TradingSessionSubID': '2',
                 'SecurityTradingStatus': '3'
-
             },
         ]
     }
