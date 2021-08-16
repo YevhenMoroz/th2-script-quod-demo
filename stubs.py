@@ -74,6 +74,7 @@ class Stubs:
     act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
     win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
     # api_service = factory.grpc_router.get_service(RestActService)
+    act_java_api = factory.grpc_router.get_service(ActService)
 
     custom_config = factory.create_custom_configuration()
     session_id = None
