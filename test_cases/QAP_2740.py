@@ -1,8 +1,9 @@
 import logging
 from copy import deepcopy
 from datetime import datetime
+from time import sleep
 
-from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
 
 from custom.verifier import Verifier
@@ -51,6 +52,7 @@ def execute(report_id):
         'SenderCompID2': 'KCH_QA_RET_CHILD',
         'TargetCompID2': 'QUOD_QA_RET_CHILD',
         'Account': 'KEPLER',
+        'Account2': 'TRQX_KEPLER',
         'HandlInst': '2',
         'Side': '2',
         'OrderQty': 100,
@@ -225,6 +227,146 @@ def execute(report_id):
             )
         )
 
+        del new_er_params['ExecRestatementReason']
+        exec_er_params = {
+            **new_er_params,
+            'OrdStatus': 2,
+            'ExecType': 'F',
+            'Account': sor_order_params['Account'],
+            'LastQty': sor_order_params['OrderQty'],
+            'CumQty': sor_order_params['OrderQty'],
+            'LeavesQty': 0,
+            'SecondaryOrderID': '*',
+            'LastMkt': 'TRQX',
+            'Text': 'Hello sim',
+            'ChildOrderID': '*',
+            'LastExecutionPolicy': 0,
+            'SecondaryExecID': '*',
+            'ExDestination': 'TRQX;BATD;CHID;XPAR',
+            'GrossTradeAmt': '*',
+            'TradeDate': '*',
+            'AvgPx': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'LastPx': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'NoParty': [{
+                'PartyID': '1',
+                'PartyIDSource': 'D',
+                'PartyRole': '2'
+            },
+                {
+                    'PartyID': 'gtwquod3',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '36'
+                },
+                {
+                    'PartyID': '2',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '3'
+                },
+                {
+                    'PartyID': 'KEPLER',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '1'
+                }]
+        }
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                "ER NOS Filled Received",
+                bca.filter_to_grpc("ExecutionReport", exec_er_params, ['ClOrdID', 'OrdStatus']),
+                checkpoint_1, case_params['TraderConnectivity'], case_id
+            )
+        )
+
+        instrument_bs = {
+            'SecurityType': 'CS',
+            'Symbol': 'CNLP_PA',
+            'SecurityID': case_params['Instrument']['SecurityID'],
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+
+        nos_bs_params = {
+            'Account': case_params['Account2'],
+            'HandlInst': '1',
+            'Side': case_params['Side'],
+            'TimeInForce': 3,
+            'OrdType': case_params['OrdType'],
+            'OrderCapacity': 'A',
+            'SettlDate': "*",
+            'Currency': 'EUR',
+            'OrderQty': case_params['OrderQty'],
+            'Price': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'ClOrdID': '*',
+            'ChildOrderID': '*',
+            'TransactTime': '*',
+            'Instrument': instrument_bs,
+            'ExDestination': 'TRQX'
+
+        }
+
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                'NewOrderSingle transmitted >> TRQX',
+                bca.filter_to_grpc('NewOrderSingle', nos_bs_params, ["ClOrdID"]),
+                checkpoint_1,
+                case_params['TraderConnectivity3'],
+                case_id
+            )
+        )
+
+        er_bs_params = {
+            'Account': nos_bs_params['Account'],
+            'ClOrdID': '*',
+            'OrderID': '*',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': nos_bs_params['OrderQty'],
+            'Currency': 'EUR',
+            'OrderQty': nos_bs_params['OrderQty'],
+            'LastQty': nos_bs_params['OrderQty'],
+            'OrdType': case_params['OrdType'],
+            'Side': case_params['Side'],
+            'Price': nos_bs_params['Price'],
+            'LastPx': nos_bs_params['Price'],
+            "TimeInForce": nos_bs_params['TimeInForce'],
+            'AvgPx': nos_bs_params['Price'],
+            'OrdStatus': '2',
+            'OrderCapacity': 'A',
+            'ExecType': 'F',
+            'LeavesQty': '0',
+            'Text': 'Hello sim',
+            'Instrument': nos_bs_params['Instrument'],
+            'NoParty': [{
+                'PartyID': '1',
+                'PartyIDSource': 'D',
+                'PartyRole': '2'
+            },
+                {
+                    'PartyID': '2',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '3'
+                },
+                {
+                    'PartyID': 'KEPLER',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '1'
+                }]
+        }
+
+        logger.debug("Verify received Execution Report (OrdStatus = Filled)")
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                'ER NewOrderSingle transmitted << TRQX',
+                bca.filter_to_grpc('ExecutionReport', er_bs_params, ),
+                checkpoint_1,
+                case_params['TraderConnectivity3'],
+                case_id,
+                Direction.Value("SECOND")
+
+            )
+        )
+
+
+
         work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
         username = Stubs.custom_config['qf_trading_fe_user_305']
         password = Stubs.custom_config['qf_trading_fe_password_305']
@@ -340,3 +482,4 @@ def execute(report_id):
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
+    sleep(10)

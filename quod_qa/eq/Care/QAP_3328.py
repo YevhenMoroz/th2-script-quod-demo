@@ -1,49 +1,50 @@
-import logging
-from datetime import datetime
-
-from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.fix_manager import FixManager
+from custom.verifier import Verifier
 from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
+from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, ModifyOrderDetails
 from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
-import time
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
+from win_gui_modules.utils import set_session_id, get_base_request, call
+from win_gui_modules.wrappers import set_base
 
 
 def execute(report_id, session_id):
     case_name = "QAP-3328"
-    seconds, nanos = timestamps()  # Store case start time
     # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
-    price = "30"
-    client = "MOClient"
+    qty = "100"
+    price = "10"
+    new_price = "1"
     lookup = "VETO"
+    client = "CLIENT_FIX_CARE"
+
+    # endregion
+    # region Open FE
     case_id = create_event(case_name, report_id)
+    set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
-    # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    # region create order via fix
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    # region Create CO
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message.pop('response')
+    fix_message1 = FixMessage(fix_message)
+    # endregion
+    # region Accept
     eq_wrappers.accept_order(lookup, qty, price)
-    eq_wrappers.manual_execution(base_request, str(int(qty)/2), price)
-    eq_wrappers.amend_order(base_request, client, str(int(qty) / 2), price)
+    # region
+    eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
+    eq_wrappers.amend_order(base_request)
     req = ExtractOrderTicketValuesRequest(base_request)
     req.get_client_state()
+    req.get_instrument_state()
     result = call(Stubs.win_act_order_ticket.extractOrderTicketValues, req.build())
-    print(result)
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check value")
+    verifier.compare_values("Order ID from View", result['CLIENT'],
+                            "False"
+                            )
+    verifier.verify()
