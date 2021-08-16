@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-2998"
+    case_name = "QAP-4231"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
@@ -25,6 +25,12 @@ def execute(report_id, session_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     base_request = get_base_request(session_id, case_id)
+    no_allocs = [
+        {
+            'AllocAccount': account,
+            'AllocQty': qty
+        }
+    ]
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
@@ -38,7 +44,7 @@ def execute(report_id, session_id):
                                                                       client + '_PARIS', 'XPAR',
                                                                       float(price), int(qty), 1)
 
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price, no_allocs)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -47,11 +53,9 @@ def execute(report_id, session_id):
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
     # endregion
-    eq_wrappers.book_order(base_request,client,price)
+    eq_wrappers.book_order(base_request, client, price)
     eq_wrappers.approve_block(base_request)
-    param = [{"Security Account": account, "Alloc Qty": qty}
-             ]
-    eq_wrappers.allocate_order(base_request,param)
+    eq_wrappers.allocate_order(base_request)
     # region Verify
     params = {
         'OrderQty': qty,
@@ -124,7 +128,7 @@ def execute(report_id, session_id):
         'AllocInstructionMiscBlock1': '*',
     }
     fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders','AllocTransType'])
+    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
     params = {
         'TradeDate': '*',
         'TransactTime': '*',
