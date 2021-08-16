@@ -9,9 +9,9 @@ def test_run(parent_id= None):
     report_id = bca.create_event('Algo regression_cycle', parent_id)
     try:
         #RB
-        twap_regression_rb.test_run(report_id)
-        parcitipation_regression_rb.test_run(report_id)
-        vwap_regression_rb.test_run(report_id)
+        #twap_regression_rb.test_run(report_id)
+        #parcitipation_regression_rb.test_run(report_id)
+        #vwap_regression_rb.test_run(report_id)
 
         #UAT
         iceberg_regression.test_run(report_id)
