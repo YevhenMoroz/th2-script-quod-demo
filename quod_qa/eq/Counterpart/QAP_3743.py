@@ -15,23 +15,15 @@ timeouts = True
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-3503"
+    case_name = "QAP-3743"
     # region Declarations
     qty = "900"
     price = "10"
     client = "CLIENT_COUNTERPART"
-    client2 = "CLIENT_COUNTERPART2"
     account = "CLIENT_COUNTERPART_SA1"
-    account2 = "CLIENT_COUNTERPART2_SA1"
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     bo_connectivity = eq_wrappers.get_bo_connectivity()
-    no_allocs = [
-        {
-            'AllocAccount': account,
-            'AllocQty': qty
-        }
-    ]
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -39,67 +31,23 @@ def execute(report_id, session_id):
     # endregion
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # # endregion
+    # endregion
     # region Create order via FIX
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price,no_allocs)
-    response = fix_message.pop('response')
-    eq_wrappers.accept_order('VETO', qty, price)
-    # endregion
-    # region Verify
-    params = {
-        'ExecType': '0',
-        'OrdStatus': '0',
-        'Side': 1,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'ExpireDate': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'ExecBroker': '*',
-        'NoParty': [
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "67",
-             'PartyID': "InvestmentFirm - ClCounterpart",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody - Venue(Paris)",
-             'PartyIDSource': "C"},
-            {'PartyRole': "7",
-             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-             'PartyIDSource': "C"},
-            {'PartyRole': "36",
-             'PartyID': "gtwquod5",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'Price': price,
-        'OrderQtyData': {
-            'OrderQty': qty
-        }
-    }
-    fix_verifier_bo = FixVerifier(bo_connectivity, case_id)
-    fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=None)
-    # endregion
-    # region Manual Execute
-    eq_wrappers.manual_execution(base_request, qty, price)
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR',
+                                                                      int(price), int(qty), 1)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        response = fix_message.pop('response')
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    finally:
+        time.sleep(1)
+        rule_manager.remove_rule(nos_rule)
+        rule_manager.remove_rule(nos_rule2)
     # endregion
     # region Verify
     params = {
@@ -112,9 +60,11 @@ def execute(report_id, session_id):
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'ExecID': '*',
         'LastQty': '*',
+        'SecondaryOrderID': '*',
+        'Text': '*',
         'OrderID': '*',
         'TransactTime': '*',
-        'LastCapacity': '*',
+        'LastExecutionPolicy': '*',
         'ExpireDate': '*',
         'AvgPx': '*',
         'SettlDate': '*',
@@ -122,33 +72,23 @@ def execute(report_id, session_id):
         'ExDestination': '*',
         'GrossTradeAmt': '*',
         'Currency': '*',
-        'VenueType': '*',
         'HandlInst': '*',
         'LeavesQty': '*',
         'CumQty': '*',
         'LastPx': '*',
+        'SecondaryExecID': '*',
         'OrdType': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
         'LastMkt': '*',
         'ExecBroker': '*',
         'NoParty': [
-            {'PartyRole': "1",
-             'PartyID': "ExecutingFirm",
+            {'PartyRole': "38",
+             'PartyID': "PositionAccount - DMA Washbook",
              'PartyIDSource': "C"},
             {'PartyRole': "67",
              'PartyID': "InvestmentFirm - ClCounterpart",
              'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "7",
-             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-             'PartyIDSource': "C"},
-            {'PartyRole': "28",
-             'PartyRoleQualifier': "24",
-             'PartyID': "TestExtIDClient",
-             'PartyIDSource': "N"},
             {'PartyRole': "34",
              'PartyID': "RegulatoryBody - Venue(Paris)",
              'PartyIDSource': "C"},
@@ -156,7 +96,7 @@ def execute(report_id, session_id):
              'PartyID': "MarketMaker - TH2Route",
              'PartyIDSource': "C"},
             {'PartyRole': "36",
-             'PartyID': username,
+             'PartyID': 'gtwquod1',
              'PartyIDSource': "D"}
         ],
         'Instrument': '*',
@@ -167,17 +107,16 @@ def execute(report_id, session_id):
             'OrderQty': qty
         }
     }
+    fix_verifier_bo = FixVerifier(bo_connectivity, case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
     # endregion
-    # region Complete
-    eq_wrappers.complete_order(base_request)
-    # endregion
     # region Book Order
-    eq_wrappers.book_order(base_request, client2, price)
+    eq_wrappers.book_order(base_request, client, price)
     # endregion
     # region Verify
     params = {
+        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
@@ -185,17 +124,8 @@ def execute(report_id, session_id):
         'Side': '*',
         'Currency': '*',
         'NoParty': [
-            {'PartyRole': "1",
-             'PartyID': "ExecutingFirm",
-             'PartyIDSource': "C"},
             {'PartyRole': "66",
              'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "22",
-             'PartyID': "Exchange - ClCountepart2",
              'PartyIDSource': "C"},
             {'PartyRole': "34",
              'PartyID': "RegulatoryBody - Venue(Paris)",
@@ -203,10 +133,6 @@ def execute(report_id, session_id):
             {'PartyRole': "10",
              'PartyID': "CREST",
              'PartyIDSource': "D"},
-            {'PartyRole': "28",
-             'PartyRoleQualifier': "24",
-             'PartyID': "TestExtIDClient",
-             'PartyIDSource': "N"},
             {'PartyRole': "67",
              'PartyID': "InvestmentFirm - ClCounterpart",
              'PartyIDSource': "C"}
@@ -237,7 +163,7 @@ def execute(report_id, session_id):
     eq_wrappers.approve_block(base_request)
     # endregion
     # region Allocate
-    param = [{"Security Account": account2, "Alloc Qty": qty}
+    param = [{"Security Account": account, "Alloc Qty": qty}
              ]
     eq_wrappers.allocate_order(base_request, param)
     # endregion
@@ -253,17 +179,8 @@ def execute(report_id, session_id):
         'Currency': '*',
         'BookID': '*',
         'NoParty': [
-            {'PartyRole': "1",
-             'PartyID': "ExecutingFirm",
-             'PartyIDSource': "C"},
             {'PartyRole': "66",
              'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "22",
-             'PartyID': "Exchange - ClCountepart2",
              'PartyIDSource': "C"},
             {'PartyRole': "34",
              'PartyID': "RegulatoryBody - Venue(Paris)",
@@ -271,12 +188,8 @@ def execute(report_id, session_id):
             {'PartyRole': "10",
              'PartyID': "CREST",
              'PartyIDSource': "D"},
-            {'PartyRole': "28",
-             'PartyRoleQualifier': "24",
-             'PartyID': "TestExtIDClient",
-             'PartyIDSource': "N"},
             {'PartyRole': "67",
-             'PartyID': "InvestmentFirm - ClCounterpart",
+             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
              'PartyIDSource': "C"}
         ],
         'Instrument': '*',
@@ -300,6 +213,7 @@ def execute(report_id, session_id):
     }
     fix_verifier_bo.CheckConfirmation(params, response, None)
     params = {
+        'Account': client,
         'Quantity': qty,
         'TradeDate': '*',
         'TransactTime': '*',
@@ -307,17 +221,8 @@ def execute(report_id, session_id):
         'Side': '*',
         'Currency': '*',
         'NoParty': [
-            {'PartyRole': "1",
-             'PartyID': "ExecutingFirm",
-             'PartyIDSource': "C"},
             {'PartyRole': "66",
              'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "22",
-             'PartyID': "Exchange - ClCountepart2",
              'PartyIDSource': "C"},
             {'PartyRole': "34",
              'PartyID': "RegulatoryBody - Venue(Paris)",
@@ -325,10 +230,6 @@ def execute(report_id, session_id):
             {'PartyRole': "10",
              'PartyID': "CREST",
              'PartyIDSource': "D"},
-            {'PartyRole': "28",
-             'PartyRoleQualifier': "24",
-             'PartyID': "TestExtIDClient",
-             'PartyIDSource': "N"},
             {'PartyRole': "67",
              'PartyID': "InvestmentFirm - ClCounterpart",
              'PartyIDSource': "C"}
@@ -354,7 +255,7 @@ def execute(report_id, session_id):
         'NoAllocs': [
             {
                 'AllocNetPrice': '*',
-                'AllocAccount': account2,
+                'AllocAccount': account,
                 'AllocPrice': price,
                 'AllocQty': qty,
 

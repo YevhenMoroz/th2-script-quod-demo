@@ -1,11 +1,8 @@
-import time
 from copy import deepcopy
 from datetime import datetime, timedelta
-
-from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
-
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -14,27 +11,23 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
-    MenuItemDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+    direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
-order_book_act = Stubs.win_act_order_book
-common_act = Stubs.win_act
 
 
 def get_buy_connectivity():
@@ -561,9 +554,11 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
                settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
                fees_basis=None,
                fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
-               remove_fees=False):
+               remove_fees=False,selected_row_count=None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
+    if selected_row_count is not None:
+        modify_request.set_selected_row_count(selected_row_count)
     ticket_details = modify_request.add_ticket_details()
     ticket_details.set_client(client)
     ticket_details.set_net_gross_ind(net_gross_ind)
@@ -721,7 +716,7 @@ def unbook_order(request):
         basic_custom_actions.create_event('Fail amend_block')
 
 
-def allocate_order(request, arr_allocation_param: []):
+def allocate_order(request, arr_allocation_param: [] = None):
     modify_request = ModifyTicketDetails(base=request)
 
     allocations_details = modify_request.add_allocations_details()
@@ -730,8 +725,9 @@ def allocate_order(request, arr_allocation_param: []):
    param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
            {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
     '''
-    for i in arr_allocation_param:
-        allocations_details.add_allocation_param(i)
+    if arr_allocation_param:
+        for i in arr_allocation_param:
+            allocations_details.add_allocation_param(i)
     '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.extract_agreed_price("book.agreedPrice")
