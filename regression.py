@@ -24,5 +24,6 @@ def test_run(name ,algo = True, equity = True, forex = True, retail = True):
 
 
 if __name__ == '__main__':
-    test_run('5.1.130.149_Regression')
+    test_run('5.1.130.149|Regression"')
+    #test_run('5.1.132.145|Redburn Tests|')  #RB
     Stubs.factory.close()
