@@ -312,7 +312,8 @@ def execute(report_id):
         response = call(Stubs.win_act_middle_office_service.checkContextAction, modify_request.build())
         result_check_approve = response["extractionKey"]
 
-        verifier.compare_values("Context action Approve existance", "false",
+        verifier.set_event_name("Check context action Approve")
+        verifier.compare_values("Context action Approve exists?", "false",
                                 result_check_approve)
         verifier.verify()
 
