@@ -225,6 +225,17 @@ class MiscDetails:
         self.request.boField5 = value
 
 
+class CheckContextAction:
+    def __init__(self, request: common_pb2.CheckContextActionDetails()):
+        self.request = request
+
+    def set_extraction_key(self, extraction_key: str):
+        self.request.extractionKey = extraction_key
+
+    def set_action_name(self, action_name: str):
+        self.request.actionName = action_name
+
+
 class ModifyTicketDetails:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -280,6 +291,10 @@ class ModifyTicketDetails:
     def add_misc_details(self) -> MiscDetails:
         self._request.miscDetails.CopyFrom(middle_office_pb2.MiscDetails())
         return MiscDetails(self._request.miscDetails)
+
+    def add_check_context_action(self) -> CheckContextAction:
+        self._request.checkContextAction.CopyFrom(common_pb2.CheckContextActionDetails())
+        return CheckContextAction(self._request.checkContextAction)
 
     def build(self):
         return self._request
