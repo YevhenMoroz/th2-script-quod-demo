@@ -110,7 +110,7 @@ def execute(report_id, session_id):
         ob_act = Stubs.win_act_order_book
 
         rule_list = rule_creation();
-        case_id = bca.create_event(os.path.basename(__file__), report_id)
+        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         set_base(session_id, case_id)
         base_request = get_base_request(session_id, case_id)
         # Send_MarkerData

@@ -99,7 +99,7 @@ def send_md(case_id):
 
 
 def execute(report_id):
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     fix_manager = FixManager(connectivity_sell_side, case_id)
     fix_verifier_sell_side = FixVerifier(connectivity_sell_side, case_id)
     fix_verifier_buy_side = FixVerifier(connectivity_buy_side, case_id)
