@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 
-from order_ticket import OrderTicketDetails, FXOrderDetails
+from .order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2
 from dataclasses import dataclass
 
