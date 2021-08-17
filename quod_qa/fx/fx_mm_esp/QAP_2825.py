@@ -219,10 +219,10 @@ def execute(report_id, session_id):
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
-        md2.send_md_unsubscribe()
         try:
             # Close tile
             call(cp_service.closeRatesTile, base_details.build())
-
+            md2.send_md_unsubscribe()
         except Exception:
             logging.error("Error execution", exc_info=True)
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

@@ -31,9 +31,9 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             'MOClient_PARIS', "XPAR", int(price))
+                                                                             client + '_PARIS', "XPAR", int(price))
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      'MOClient_PARIS', 'XPAR',
+                                                                      client + '_PARIS', 'XPAR',
                                                                       int(price), int(qty), 1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
@@ -49,15 +49,15 @@ def execute(report_id, session_id):
     eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
     #  endregion
     #  region Book
-    book_ticket=eq_wrappers.book_order(base_request, client, price, settlement_type='Regular', fees_type="ExchFees",
-                           fees_basis="Absolute", fees_rate="100")
+    book_ticket = eq_wrappers.book_order(base_request, client, price, settlement_type='Regular', fees_type="ExchFees",
+                                         fees_basis="Absolute", fees_rate="100")
     # endregion
     # region Verify
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking realtime parameters")
     verifier.compare_values("Total Fees", "100", book_ticket["book.totalFees"])
     verifier.verify()
-    eq_wrappers.verify_block_value(base_request,case_id,"Total Fees","100")
+    eq_wrappers.verify_block_value(base_request, case_id, "Total Fees", "100")
     # endregion
 
     # region Amend block

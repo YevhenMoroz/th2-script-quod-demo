@@ -1,6 +1,6 @@
 class ClientTierConstants:
     CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Client Tier ']"
-    REFRESH_PAGE_BUTTON_XPATH = "//*[@nbtooltip='Refresh Page']"
+    REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
@@ -8,14 +8,17 @@ class ClientTierConstants:
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
+    SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
+    INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     # region ~~~~~~~Client Tiers Block~~~~~~~
     # main page
     CLIENT_TIER_MORE_ACTIONS_XPATH = "//*[@class='ct-grid']//*[@data-name='more-vertical']"
-    MAIN_PAGE_CLIENT_TIER_EDIT_XPATH = "//*[@class='ct-grid']//*[@data-name='edit']"
+    MAIN_PAGE_CLIENT_TIER_EDIT_XPATH = "//*[@class='cdk-overlay-container']//*[@data-name='edit']"
     MAIN_PAGE_CLIENT_TIER_CLONE_XPATH = "//*[@class='ct-grid']//*[@data-name='copy']"
     MAIN_PAGE_CLIENT_TIER_DELETE_XPATH = "//*[@class='ct-grid']//*[@data-name='trash-2']"
     MAIN_PAGE_CLIENT_TIER_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_CSV_XPATH = "//*[@class='ct-grid']//*[@data-name='download']"
+    MAIN_PAGE_CLIENT_TIER_DOWNLOAD_PDF_XPATH ="//*[@class='cdk-overlay-container']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = "//*[@class='ct-grid']//*[text()='New']"
     MAIN_PAGE_CLIENT_TIER_NAME_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
@@ -152,7 +155,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-plus ng2-main-add-btn"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-edit"]'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-edit ng2-main-edit-btn"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-trash"]'
 
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH = '//*[@placeholder ="Tenor *"]'
@@ -181,7 +184,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH = '//*[@placeholder ="Offer Margin"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[5]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[6]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
-    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH = '//*[@class= "ng2-smart-th upperQty ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class= "ng2-smart-th upperQty ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_FILTER_XPATH = '//*[@class= "defaultBidMargin ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class= "defaultOfferMargin ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_MARGIN_FILTER_XPATH = '//*[@class= "MDQuoteType ng2-smart-th ng-star-inserted"]//input'

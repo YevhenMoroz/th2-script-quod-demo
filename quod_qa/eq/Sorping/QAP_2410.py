@@ -76,7 +76,7 @@ def send_MD(symbol: str, case_id :str, market_data ):
     ))
 
 def execute(report_id):
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     rule_list = rule_creation()
     market_data1 = [
             {

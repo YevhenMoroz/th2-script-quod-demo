@@ -131,7 +131,7 @@ def execute(report_id, session_id):
                          qty_1m, owner, client, pricing_off, sts_rej)
         # Step 6
         press_pricing(base_details, cp_service)
-        select_rows(base_details, cp_service, [1, 2])
+        select_rows(base_details, cp_service, [2, 3])
         press_executable(base_details, cp_service)
         # Step 7
         place_order(base_details, cp_service, client, slippage, qty_1m)

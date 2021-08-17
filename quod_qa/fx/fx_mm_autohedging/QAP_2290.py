@@ -128,7 +128,7 @@ def check_order_book(even_name, case_id, base_request, act_ob, threshold, status
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -190,7 +190,7 @@ def execute(report_id, session_id):
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
-            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
             compare_position("Compare position is equal to threshold", case_id, threshold, actual_pos)
             check_order_book("Check AH is in Order book with OPEN Status", case_id, case_base_request, ob_act,
                              threshold, status_open)
@@ -207,7 +207,7 @@ def execute(report_id, session_id):
                 verify_order_filled(qty=ordqty)
             order_id_after = check_order_book("Check AH in Order book is the same", case_id, case_base_request, ob_act,
                                               threshold, status_cnld)
-            verify_auto_hedger(case_id,order_id_before,order_id_after)
+            verify_auto_hedger(case_id, order_id_before, order_id_after)
 
             # Post Conditions
             params_sell = CaseParamsSellEsp(client, case_id, side='2', ordtype=ordtype, orderqty=ordqty,
@@ -215,14 +215,14 @@ def execute(report_id, session_id):
                                             currency=currency, settlcurrency=settlcurrency, settltype=settltype,
                                             settldate=settldate, symbol=symbol, securitytype=securitytype,
                                             securityid=securityid, account=account)
-            md1= FixClientSellEsp(params_sell)
+            md1 = FixClientSellEsp(params_sell)
             sell_price = '1.19594'
             ordqty += threshold
             md1.send_new_order_single(sell_price, ordqty, 'Send New Order Single SELL SIDE NOT to trigger Auto Hedger '). \
                 verify_order_pending(price=sell_price, qty=ordqty). \
                 verify_order_new(price=sell_price,qty=ordqty). \
                 verify_order_filled(price=sell_price,qty=ordqty)
-            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
             compare_position("Compare position is equal to 0", case_id, '0', actual_pos)
             time.sleep(2)
 

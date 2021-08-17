@@ -9,7 +9,7 @@ from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
-from quod_qa.wrapper.eq_wrappers import create_order, verify_order_value
+from quod_qa.wrapper.ret_wrappers import create_order, verify_order_value
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,7 +38,7 @@ def execute(session_id, report_id):
 
     # region Create order via FE according to 1st and 2nd steps
     create_order(base_request, qty, client, lookup, order_type, tif,
-                 False, None, price, None, None, False, False, None, False)
+                 False, None, price, None, False, None, None)
     # endregion
 
     # region Check values in OrderBook

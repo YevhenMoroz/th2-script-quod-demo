@@ -35,7 +35,7 @@ def check_date(base_request, service, case_id, expected_date):
     now = datetime.now()
     extracted_value = response["ratesTile.Date"]
     date = extracted_value + "-" + str(now.year)
-    extracted_date = datetime.strptime(date, "%d-%B-%Y").strftime('%Y-%m-%d %H:%M:%S')
+    extracted_date = datetime.strptime(date, "%d-%b-%Y").strftime('%Y-%m-%d %H:%M:%S')
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Verify Tenor date on pricing tile")

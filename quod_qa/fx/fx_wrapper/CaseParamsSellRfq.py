@@ -452,6 +452,8 @@ class CaseParamsSellRfq:
             self.order_filled['Instrument']['MaturityDate'] = '*'
             self.order_filled['Instrument'].pop('Product')
             self.order_filled['SpotSettlDate'] = spo_ndf()
+        if self.securitytype == 'FXFWD':
+            self.order_filled['SpotSettlDate'] = spo()
         # self.order_filled.pop('ExecRestatementReason')
         # Prepare  order filled report
 
@@ -562,6 +564,7 @@ class CaseParamsSellRfq:
                     'OrdType': self.ordtype,
                     'SettlDate': self.settldate,
                     'Currency': self.currency,
+                    'Side': self.side,
                     'Instrument': {
                         'SecurityType': self.securitytype,
                         'Symbol': self.symbol,

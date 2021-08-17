@@ -39,18 +39,17 @@ def check_order_book(base_request, act_ob, case_id, qty):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-
-    # set_base(session_id, case_id)
-
-    ob_service=Stubs.win_act_order_book
-    # case_base_request = get_base_request(session_id, case_id)
+    set_base(session_id, case_id)
+    ob_service = Stubs.win_act_order_book
+    case_base_request = get_base_request(session_id, case_id)
 
     client_tier = "Iridium1"
     account = "Iridium1_1"
     qty_1 = random_qty(1, 3, 7)
+    qty_2 = random_qty(1, 3, 7)
     symbol = "GBP/USD"
     security_type_swap = "FXSWAP"
     security_type_fwd = "FXFWD"
@@ -70,7 +69,7 @@ def execute(report_id):
     try:
         # Step 1
         params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg2_side, leg2_side=leg1_side,
-                                   orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_1,
+                                   orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_2,
                                    currency=currency, settlcurrency=settle_currency,
                                    leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
                                    settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
@@ -89,7 +88,7 @@ def execute(report_id):
         rfq_swap.verify_order_pending_swap()
         rfq_swap.verify_order_filled()
         # Step 4
-        # check_order_book(case_base_request, ob_service, case_id, qty_1)
+        check_order_book(case_base_request, ob_service, case_id, qty_1)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

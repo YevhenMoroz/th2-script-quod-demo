@@ -6,7 +6,6 @@ from datetime import datetime
 import pyautogui
 from th2_grpc_act_gui_quod import order_ticket_service
 
-from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 
@@ -25,6 +24,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+
 def execute(report_id, session_id):
     case_name = "QAP-1045"
     seconds, nanos = timestamps()  # Store case start time
@@ -38,9 +38,10 @@ def execute(report_id, session_id):
     newPrice = "1"
     timeStart = datetime.utcnow().isoformat()
     lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
+    client = "CLIENT1"
     # endregion
     # region Open FE
+
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
@@ -54,8 +55,33 @@ def execute(report_id, session_id):
         get_opened_fe(case_id, session_id)
     # endregionA
     # region Create order via FIX
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    fix_message.pop("response")
+    rule_manager = RuleManager()
+    nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT1")
+
+    connectivity = 'fix-ss-310-columbia-standart'
+    fix_manager_qtwquod5 = FixManager(connectivity, case_id)
+    fix_params = {
+        'Account': "CLIENT1",
+        'HandlInst': "3",
+        'Side': "2",
+        'OrderQty': qty,
+        'TimeInForce': "0",
+        'OrdType': 2,
+        'Price': price,
+        'TransactTime': timeStart,
+        'Instrument': {
+            'Symbol': 'FR0004186856_EUR',
+            'SecurityID': 'FR0004186856',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        },
+        'Currency': 'EUR'
+    }
+
+    fix_message = FixMessage(fix_params)
+    fix_message.add_random_ClOrdID()
+    fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+    rule_manager.remove_rule(nos_rule)
     # endregion
 
     # region Check values in OrderBook
@@ -87,25 +113,44 @@ def execute(report_id, session_id):
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
     # region Send OrderCancelReplaceRequest with new price
-    fix_message=FixMessage(fix_message)
-    param={'Price': newPrice}
-    eq_wrappers.amend_order_via_fix(case_id,fix_message,param,client+"_PARIS")
-    eq_wrappers.accept_modify(lookup,qty,price)
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters({'Price': newPrice})
+
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
     # region Send OrderCancelReplaceRequest with new qty
-    param = {'OrderQty': newQty, 'Price': newPrice}
-    eq_wrappers.amend_order_via_fix(case_id, fix_message, param, client + "_PARIS")
-    eq_wrappers.accept_modify(lookup, qty, price)
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters({'OrderQty': newQty, 'Price': newPrice})
+
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
+    amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
+    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
     # region Cancel order
-    cl_order_id=eq_wrappers.get_cl_order_id(base_request)
-    eq_wrappers.cancel_order_via_fix(case_id,cl_order_id,cl_order_id,client,1)
-    eq_wrappers.accept_cancel(lookup,qty,price)
+    order_id = request[order_id.name]
+    client_order_id =request[client_order_id.name]
+    cancel_parms = {
+        "ClOrdID": order_id,
+        "Account": client,
+        "Side": "2",
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrigClOrdID":client_order_id,
+    }
+    fix_cancel = FixMessage(cancel_parms)
+    responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
+    call(common_act.acceptOrder, accept_order_request(lookup, newQty, newPrice))
     # endregion
     # region Check values in OrderBook after Cancel
-    eq_wrappers.verify_order_value(base_request,case_id,"Sts","Cancelled")
-    eq_wrappers.verify_order_value(base_request, case_id, "Qty", newQty)
-    eq_wrappers.verify_order_value(base_request, case_id, "Limit Price", newPrice)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+
+    call(act.getOrdersDetails, order_details.request())
+    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
+                                                 [verify_ent("Order Status", order_status.name, "Cancelled"),
+                                                  verify_ent("Qty", order_qty.name, newQty),
+                                                  verify_ent("LmtPrice", order_price.name, newPrice)]))
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
