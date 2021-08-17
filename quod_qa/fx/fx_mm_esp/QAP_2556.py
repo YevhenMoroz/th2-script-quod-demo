@@ -41,16 +41,6 @@ def open_order_ticket_sell(btd, service, row):
     call(service.placeRateTileTableOrder, request.build())
 
 
-def place_order_sell(base_request, service, qty, slippage, client):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_qty(qty)
-    order_ticket.set_client(client)
-    order_ticket.set_slippage(slippage)
-    order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
 def check_order_book(base_request, act_ob, instr_type, case_id, qty, owner, client):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
@@ -72,6 +62,14 @@ def check_order_book(base_request, act_ob, instr_type, case_id, qty, owner, clie
     verifier.compare_values('Sts', 'Filled', response[ob_exec_sts.name])
     verifier.compare_values("Qty", qty, response[ob_qty.name].replace(',', ''))
     verifier.verify()
+
+
+def place_order_sell(base_request, service, _client, qty, slippage):
+    place_request = PlaceRatesTileOrderRequest(details=base_request)
+    place_request.set_client(_client)
+    place_request.set_quantity(qty)
+    place_request.set_slippage(slippage)
+    call(service.placeRatesTileOrder, place_request.build())
 
 
 def execute(report_id, session_id):
@@ -104,7 +102,7 @@ def execute(report_id, session_id):
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
                          qty, owner, client)
         open_order_ticket_sell(base_tile_data, cp_service, 1)
-        place_order_sell(case_base_request, order_ticket_service, qty, slippage, client)
+        place_order_sell(base_details, cp_service, client, qty, slippage)
         check_order_book(case_base_request, ob_service, instrument_type, case_id,
                          qty, owner, client)
 

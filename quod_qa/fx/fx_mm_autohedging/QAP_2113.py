@@ -38,8 +38,8 @@ logger.setLevel(logging.INFO)
 client = 'Osmium1'
 client_tier = 'Osmium'
 account = 'Osmium1_1'
-symbol = 'EUR/GBP'
-instrument_tier = 'EUR/GBP-SPOT'
+symbol = 'EUR/USD'
+instrument_tier = 'EUR/USD-SPOT'
 status_open = 'Open'
 row = 2
 SELL = RatesTileTableOrdSide.SELL
@@ -82,7 +82,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, Qty, status_ex
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -126,7 +126,7 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     ob.add_single_order_info(
