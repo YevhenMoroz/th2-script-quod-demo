@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
@@ -32,7 +33,7 @@ currency = 'EUR'
 securitytype = 'FXSPOT'
 securityidsource = '8'
 side = '2'
-orderqty = '58000000'
+orderqty = str(random.randint(58000000, 59000000))
 securityid = 'EUR/USD'
 settldate = tsd.spo()
 
@@ -92,7 +93,6 @@ def clear_filters(base_request, service):
     base_data.set_row_number(1)
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_request.set_clear_flag(True)
-    # service.getUnassignedRFQDetails(extraction_request.build())
     call(service.getUnassignedRFQDetails, extraction_request.build())
 
 
@@ -134,6 +134,7 @@ def execute(report_id, session_id):
         verify_results(case_id, unassigned_extraction, qrb_extraction)
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             print(f'{case_name} duration time = ' + str(datetime.now() - start))

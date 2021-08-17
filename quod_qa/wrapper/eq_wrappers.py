@@ -1,8 +1,11 @@
+import time
 from copy import deepcopy
 from datetime import datetime, timedelta
+
+from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
-from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
+
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -11,23 +14,27 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request_correct, direct_moc_request_correct
+    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
+    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
+    MenuItemDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
 sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
+order_book_act = Stubs.win_act_order_book
+common_act = Stubs.win_act
 
 
 def get_buy_connectivity():
@@ -40,6 +47,13 @@ def get_sell_connectivity():
 
 def get_bo_connectivity():
     return bo_connectivity
+
+
+def extract_error_order_ticket(base_request):
+    extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+    extract_errors_request.extract_error_message()
+    result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, extract_errors_request.build())
+    return result
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -125,7 +139,9 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
+        rule_manager = RuleManager()
         fix_manager = FixManager(sell_connectivity, case_id)
+
         fix_params = {
             'Account': client,
             'HandlInst': handl_inst,
@@ -143,6 +159,13 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
                 'SecurityIDSource': '4',
                 'SecurityExchange': 'XPAR'
             },
+            # 'Instrument': {
+            #     'Symbol': 'IS0000000001_EUR',
+            #     'SecurityID': 'ISI1',
+            #     'SecurityIDSource': '4',
+            #     'SecurityExchange': 'XEUR'
+            # },
+
             'Currency': 'EUR',
         }
         fix_params.update()
@@ -162,14 +185,11 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
+def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(sell_connectivity, case_id)
     try:
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OrderCancelReplaceRequest(buy_connectivity, venue_client_name, venue,
-                                                          True)
-        fix_modify_message = deepcopy(fix_message)
-        fix_modify_message.change_parameters(param_list)
+        fix_modify_message = FixMessage(fix_message)
+        fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
@@ -224,14 +244,18 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     request1.extractionId = "ManualCrossErrorMessageExtractionID"
     request1.extractedValues.append(error_message)
     req = ExtractManualCrossValuesRequest()
-    req.CopyFrom(request1)
+    req.extractionId = 'ManualCrossErrorMessageExtractionID'
+    req.extractedValues.append(error_message)
     manual_cross_details = ManualCrossDetails(request)
-    manual_cross_details.set_quantity(qty)
-    manual_cross_details.set_price(price)
-    manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.manualCrossValues.CopyFrom(req)
+
     try:
-        call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        frodo = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        return frodo
     except Exception:
         basic_custom_actions.create_event('Fail manual_cross_orders_error')
         logger.error("Error execution", exc_info=True)
@@ -304,7 +328,7 @@ def reject_order(lookup, qty, price):
 
 def direct_order(lookup, qty, price, qty_percent):
     try:
-        call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
+        call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         basic_custom_actions.create_event('Fail direct_order')
         logger.error("Error execution", exc_info=True)
@@ -339,13 +363,11 @@ def split_limit_order(request, qty, type, price, display_qty=None):
         logger.error("Error execution", exc_info=True)
 
 
-def split_order(request, qty, price=None, display_qty=None):
+def split_order(request, qty, type, price):
     order_split = OrderTicketDetails()
     order_split.set_quantity(qty)
-    if price is not None:
-        order_split.set_limit(price)
-    if display_qty is not None:
-        order_split.set_display_qty(display_qty)
+    order_split.set_order_type(type)
+    order_split.set_limit(price)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_split)
@@ -554,11 +576,9 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
                settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
                fees_basis=None,
                fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
-               remove_fees=False,selected_row_count=None):
+               remove_fees=False):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
-    if selected_row_count is not None:
-        modify_request.set_selected_row_count(selected_row_count)
     ticket_details = modify_request.add_ticket_details()
     ticket_details.set_client(client)
     ticket_details.set_net_gross_ind(net_gross_ind)
@@ -716,7 +736,7 @@ def unbook_order(request):
         basic_custom_actions.create_event('Fail amend_block')
 
 
-def allocate_order(request, arr_allocation_param: [] = None):
+def allocate_order(request, arr_allocation_param: []):
     modify_request = ModifyTicketDetails(base=request)
 
     allocations_details = modify_request.add_allocations_details()
@@ -725,9 +745,8 @@ def allocate_order(request, arr_allocation_param: [] = None):
    param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
            {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
     '''
-    if arr_allocation_param:
-        for i in arr_allocation_param:
-            allocations_details.add_allocation_param(i)
+    for i in arr_allocation_param:
+        allocations_details.add_allocation_param(i)
     '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.extract_agreed_price("book.agreedPrice")

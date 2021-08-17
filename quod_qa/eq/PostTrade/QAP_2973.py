@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id,session_id):
+def execute(report_id, session_id):
     case_name = "QAP-2973"
     case_id = create_event(case_name, report_id)
     # region Declarations
@@ -34,7 +34,8 @@ def execute(report_id,session_id):
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
                                                                              client + '_PARIS', "XPAR", float(price))
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR', float(price), int(qty), 1)
+                                                                      client + '_PARIS', 'XPAR', float(price), int(qty),
+                                                                      1)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 1, price)
         time.sleep(1)
     except Exception:

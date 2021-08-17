@@ -14,7 +14,7 @@ from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, 
     PositionsInfo, ExtractionPositionsAction
 from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 
@@ -60,7 +60,7 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     dealing_positions_details.set_extraction_id(extraction_id)
     dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
     position = ExtractionPositionsFieldsDetails("dealingpositions.position", "Position")
-    quote_position = ExtractionPositionsFieldsDetails("dealingpositions.quotePosition", "Quote Position")
+    quote_position = ExtractionPositionsFieldsDetails("dealingpositions.quotePosition", "Quote Position (USD)")
     mkt_px = ExtractionPositionsFieldsDetails("dealingpositions.mktPx", "Mkt Px")
     mtm_pnl = ExtractionPositionsFieldsDetails("dealingpositions.mtmPnl", "MTM PnL")
 
@@ -81,7 +81,7 @@ def check_pnl(case_id, position, mtk_px, quote_pos, extracted_pnl):
     expected_pnl = round(((position * mtk_px) + quote_pos), 1)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check MTM Pnl")
-    verifier.compare_values("MTM Pnl", str(expected_pnl), extracted_pnl.replace(",", "")[:-1])
+    verifier.compare_values("MTM Pnl", str(expected_pnl)[:-2], extracted_pnl.replace(",", ""))
     verifier.verify()
 
 
@@ -138,6 +138,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

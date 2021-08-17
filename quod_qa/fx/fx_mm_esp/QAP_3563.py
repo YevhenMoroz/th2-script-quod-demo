@@ -78,7 +78,7 @@ def execute(report_id, session_id):
     ob_act = Stubs.win_act_order_book
 
     instrument = "EUR/CAD-SPOT"
-    client_tier = "Palladium"
+    client_tier = "Palladium1"
     client = "Palladium1"
     owner = Stubs.custom_config['qf_trading_fe_user']
 
@@ -96,6 +96,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

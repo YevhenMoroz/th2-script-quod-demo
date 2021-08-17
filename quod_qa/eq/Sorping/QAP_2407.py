@@ -77,7 +77,7 @@ def send_MD(symbol: str, case_id :str):
     ))
 
 def execute(report_id):
-    case_id = bca.create_event(os.path.basename(__file__), report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     rule_list = rule_creation()
     send_MD(listing_id1, case_id)
     fix_manager_qtwquod5 = FixManager(connectivity_ss, case_id)

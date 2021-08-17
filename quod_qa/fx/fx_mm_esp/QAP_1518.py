@@ -30,11 +30,10 @@ defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
 
 
 def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
         try:
-
             # Preconditions
             params_0 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency,
@@ -57,16 +56,20 @@ def execute(report_id):
             params_1.prepare_md_for_verification(bands)
             md_1.send_md_request(). \
                 verify_md_pending()
-            price = md_1.extruct_filed('Price')
+            price = md_1.extract_filed('Price')
             # Step 2-5
             md_1.send_new_order_single(price)
             md_1.verify_order_pending()
             md_1.verify_order_new()
             md_1.verify_order_filled(spot_s_d=settldate)
-
         except Exception as e:
             logging.error('Error execution', exc_info=True)
+            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         finally:
-            md_1.send_md_unsubscribe()
+            try:
+                md_1.send_md_unsubscribe()
+            except:
+                bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
     except Exception:
         logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

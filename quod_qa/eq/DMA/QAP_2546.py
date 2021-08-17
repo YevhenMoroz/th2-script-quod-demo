@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-2546"
     seconds, nanos = timestamps()  # Store case start tim
     # region Declarations
@@ -37,7 +37,6 @@ def execute(report_id):
 
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']

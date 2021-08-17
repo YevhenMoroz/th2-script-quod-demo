@@ -89,7 +89,7 @@ def execute(report_id):
         now = datetime.today() - timedelta(hours=3)
         
         rule_list = rule_creation();
-        case_id = bca.create_event(os.path.basename(__file__), report_id)
+        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
@@ -260,7 +260,8 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['OrderQty', 'Price', 'ExecType', 'OrdStatus'])
         #endregion
 
-        
+        time.sleep(3)
+
         #region Cancel Algo Order
         case_id_3 = bca.create_event("Cancel Algo Order", case_id)
 

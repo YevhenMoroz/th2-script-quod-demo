@@ -8,25 +8,22 @@ from custom.basic_custom_actions import create_event
 from win_gui_modules.utils import set_session_id, get_base_request
 import logging
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3000"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "40"
-    client = "CLIENTYMOROZ"
-    account = "YM_client_SA1"
+    client = "MOClient"
+    account = "MOClient_SA1"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
-    recipient = "ymoroz (HeadOfSaleDealer)"
     # endregion
 
     # region Open FE
@@ -34,13 +31,14 @@ def execute(report_id):
     # endregion
 
     # region Create DMA
-    connectivity_buy_side = "fix-bs-eq-paris"
     rule_manager = RuleManager()
     try:
-        rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, client + "_PARIS",
-                                                                               "XPAR",int(price))
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, client + "_PARIS", "XPAR",int(price)
-                                                                 ,int(qty),0)
+        rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                         client + "_PARIS",
+                                                                         "XPAR", float(price))
+        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                       client + "_PARIS", "XPAR", float(price)
+                                                                       , int(qty), 0)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         time.sleep(1)
@@ -82,14 +80,14 @@ def execute(report_id):
         'RootOrClientCommissionCurrency': '*',
 
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders'])
     # endregion
     # region Approve
     eq_wrappers.approve_block(base_request)
     # endregion
     # region Allocate
-    arr_allocation_param=[{"Security Account": account, "Alloc Qty": "901"}]
+    arr_allocation_param = [{"Security Account": account, "Alloc Qty": "901"}]
     eq_wrappers.allocate_order(base_request, arr_allocation_param)
     # endregion
     # region Verify
@@ -124,7 +122,7 @@ def execute(report_id):
         'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['AllocAccount', 'NoOrders'])
 
     params = {
@@ -168,6 +166,6 @@ def execute(report_id):
             }
         ],
     }
-    fix_verifier_ss = FixVerifier('fix-ss-back-office', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
     # endregion

@@ -1,6 +1,8 @@
 import logging
 from datetime import date
 from pathlib import Path
+from random import randint
+
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1
 from custom.verifier import Verifier
@@ -66,6 +68,7 @@ def check_dealer_intervention(base_request, service, case_id, quote_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check quote request in DI")
     verifier.compare_values("Status", "New", response["dealerIntervention.status"])
+    verifier.verify()
 
 
 def close_dmi_window(base_request, dealer_interventions_service):
@@ -86,7 +89,7 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "GBP/USD-1W"
     client_tier = "Iridium1"
-    qty = "1000324"
+    qty = str(randint(1000000, 2000000))
     symbol = "GBP/USD"
     security_type_fwd = "FXFWD"
     settle_date = wk1()
@@ -116,6 +119,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

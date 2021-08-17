@@ -92,8 +92,8 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "EUR/USD-SPOT"
-    client_tier = "Gold_Day"
-    client = "Client1"
+    client_tier = "Silver"
+    client = "Silver1"
     slippage = "10"
     instrument_type = "Spot"
     qty_1m = "1000000"
@@ -152,6 +152,7 @@ def execute(report_id, session_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tile

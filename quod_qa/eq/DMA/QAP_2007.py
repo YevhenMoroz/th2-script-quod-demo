@@ -1,7 +1,7 @@
 import logging
 import os
-from datetime import datetime
-
+import time
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom import basic_custom_actions as bca
@@ -10,6 +10,7 @@ from custom.basic_custom_actions import create_event, timestamps
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
+from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
@@ -20,88 +21,71 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
+    global fix_message, nos_rule, rule_manager
     case_name = "QAP-2007"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    time = datetime.utcnow().isoformat()
+    qty = "800"
+    client = 'CLIENT4'
+    price = "40"
     # endregion
 
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
     # endregion
 
     # region Create order via FIX
-    rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
-
-    connectivity = 'gtwquod5'
-    fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
-    fix_params = {
-        'Account': "CLIENT1",
-        'HandlInst': "2",
-        'Side': "2",
-        'OrderQty': qty,
-        'TimeInForce': "4",
-        'OrdType': 2,
-        'Price': price,
-        'TransactTime': time,
-        'Instrument': {
-            'Symbol': 'FR0004186856_EUR',
-            'SecurityID': 'FR0004186856',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        },
-        'Currency': 'EUR',
-        'SecurityExchange': 'XPAR',
-    }
-
-    fix_message = FixMessage(fix_params)
-    fix_message.add_random_ClOrdID()
-    fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
-    rule_manager.remove_rule(nos_rule)
-    # endregion
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingle_FOK(eq_wrappers.get_buy_connectivity(), client + '_PARIS', 'XPAR',
+                                                     False, float(price))
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 4, price)
+    finally:
+        time.sleep(10)
+        rule_manager.remove_rule(nos_rule)
+        response = fix_message.pop('response')
 
     # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
+    params = {
+        'OrderQty': qty,
+        'ExecType': '4',
+        'OrdStatus': '4',
+        'Side': 1,
+        'Text': '*',
+        'TimeInForce': 4,
+        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ExecID': '*',
+        'LastQty': '*',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'AvgPx': '*',
+        'ExpireDate': '*',
+        'SettlDate': '*',
+        'Currency': '*',
+        'Price': 40,
+        'HandlInst': '*',
+        'LeavesQty': '*',
+        'CumQty': '*',
+        'LastPx': '*',
+        'SettlType': '*',
+        'OrdType': '*',
+        'LastMkt': '*',
+        'OrderCapacity': '*',
+        'QtyType': '*',
+        'SecondaryOrderID': '*',
+        'NoParty': '*',
+        'Instrument': '*',
+        'CxlQty': qty
+    }
 
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_tif = ExtractionDetail("order_tif", "TIF")
-    order_ordType = ExtractionDetail("oder_ordType", "OrdType")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_tif,
-                                                                                            order_ordType
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Eliminated"),
-                                                  verify_ent("Qty", order_qty.name, "900"),
-                                                  verify_ent("TIF", order_tif.name, "FillOrKill"),
-                                                  verify_ent("OrdType", order_ordType.name, "Limit")]))
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
+                                         key_parameters=['ClOrdID', 'OrdStatus'])
+    # endregion
     # endregion
 
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    # logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

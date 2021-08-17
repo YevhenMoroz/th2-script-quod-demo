@@ -1,4 +1,4 @@
-from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4307, QAP_4288, QAP_4282
+from quod_qa.RET.Gating_Rules import QAP_4280, QAP_4282, QAP_4288, QAP_4307
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -14,9 +14,9 @@ def test_run(session_id, parent_id=None):
     report_id = bca.create_event('Gating Rules regression', parent_id)
     try:
         QAP_4280.execute(session_id, report_id)
-        QAP_4307.execute(session_id, report_id)
-        QAP_4288.execute(session_id, report_id)
         QAP_4282.execute(session_id, report_id)
+        QAP_4288.execute(session_id, report_id)
+        QAP_4307.execute(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

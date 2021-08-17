@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
+from PIL import Image
+import pybase64
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_act_gui_quod.order_book_fx_pb2 import FXOrderInfo
 
@@ -16,15 +18,16 @@ from win_gui_modules.aggregated_rates_wrappers import (ModifyRatesTileRequest,
 from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
                                                      PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
                                                      ExtractRatesTileTableValuesRequest, GetCPRTPColors,
-                                                     ModifyClientRFQTileRequest, ClientRFQTileOrderDetails)
+                                                     ModifyClientRFQTileRequest, ClientRFQTileOrderDetails,
+                                                     ExtractRatesTileTableValuesRequest, GetCPRTPColors,
+                                                     PlaceRatesTileOrderRequest)
 from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
-                                                   DefaultFXValues, FXConfigsRequest, CustomCurrencySlippage)
+                                                   DefaultFXValues, FXConfigsRequest, OrderQuantityIncrements)
 from win_gui_modules.order_book_wrappers import (OrdersDetails, FXOrderInfo, OrderInfo as OrdInf, ExtractionDetail,
-                                                 ExtractionAction,
-                                                 ModifyFXOrderDetails, CancelFXOrderDetails, ReleaseFXOrderDetails,
-                                                 FXOrdersDetails)
+                                                 ExtractionAction,ModifyFXOrderDetails, CancelFXOrderDetails,
+                                                 ReleaseFXOrderDetails, FXOrdersDetails, QuoteRequestDetails)
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.utils import get_base_request, call
@@ -256,32 +259,32 @@ def set_order_ticket_options(option_service, base_request):
 
     """
 
-    # TODO: fix issue :
-
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
-    slippage = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
-    slippage2 = CustomCurrencySlippage(instrument='GBP/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
-    # slippage3 = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321', removeRowNumber=2)
-    fx_values = DefaultFXValues([slippage, slippage2])
-    fx_values.AggressiveTIF = "Pegger"
+    # slippage = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
+    # slippage2 = CustomCurrencySlippage(instrument='GBP/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
+    order_qty_increment = OrderQuantityIncrements(quantity='1000000', increment='555')
+    fx_values = DefaultFXValues(custom_currency_slippage_list=[],
+                                order_quantity_increments_list=[order_qty_increment])
+    # fx_values = DefaultFXValues([slippage])
     order_type = "Market"
-    tif = "FillOrKill"
-    strategy_type = "Quod DarkPool"
-    strategy = "PeggedTaker"
-    child_strategy = "BasicTaker"
+    # tif = "FillOrKill"
+    # strategy_type = "Quod DarkPool"
+    # strategy = "PeggedTaker"
+    # child_strategy = "BasicTaker"
+    # fx_values.AggressiveTIF = "Pegger"
     fx_values.AggressiveOrderType = order_type
-    fx_values.AggressiveTIF = tif
-    fx_values.AggressiveStrategyType = strategy_type
-    fx_values.AggressiveStrategy = strategy
-    fx_values.AggressiveChildStrategy = child_strategy
-    fx_values.PassiveOrderType = order_type
-    fx_values.PassiveTIF = tif
-    fx_values.PassiveStrategyType = strategy_type
-    fx_values.PassiveStrategy = strategy
-    fx_values.PassiveChildStrategy = child_strategy
-    fx_values.AlgoSlippage = '12367.45'
-    fx_values.DMASlippage = '12678.09'
-    fx_values.Client = "FIXCLIENT4"
+    # fx_values.AggressiveTIF = tif
+    # fx_values.AggressiveStrategyType = strategy_type
+    # fx_values.AggressiveStrategy = strategy
+    # fx_values.AggressiveChildStrategy = child_strategy
+    # fx_values.PassiveOrderType = order_type
+    # fx_values.PassiveTIF = tif
+    # fx_values.PassiveStrategyType = strategy_type
+    # fx_values.PassiveStrategy = strategy
+    # fx_values.PassiveChildStrategy = child_strategy
+    # fx_values.AlgoSlippage = '12367.45'
+    # fx_values.DMASlippage = '12678.09'
+    # fx_values.Client = "FIXCLIENT4"
 
     order_ticket_options.set_default_fx_values(fx_values)
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
@@ -309,13 +312,17 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     order_ticket = FXOrderDetails()
 
     order_ticket.set_price_large('1.23')
-    order_ticket.set_price_pips('456')
-    order_ticket.set_qty('1150000')
+    # order_ticket.set_price_pips('456')
+    # order_ticket.set_qty('1150000')
     # order_ticket.set_client('ASPECT_CITI')
-    order_ticket.set_tif('FillOrKill')
-    order_ticket.set_slippage('2.5')
-    order_ticket.set_order_type('Limit')
-    order_ticket.set_stop_price('1.3')
+    # order_ticket.set_tif('FillOrKill')
+    # order_ticket.set_slippage('2.5')
+    # order_ticket.set_order_type('Limit')
+    # order_ticket.set_stop_price('1.3')
+    order_ticket.click_pips(-3)
+    # order_ticket.click_qty(-3)
+    # order_ticket.click_slippage(3)
+    # order_ticket.click_stop_price(3)
     # order_ticket.set_custom_algo_check_box()
     # order_ticket.set_custom_algo('Quod VWAP')
     # order_ticket.set_strategy('Quod VWAP Default')
@@ -323,8 +330,27 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     # order_ticket.set_care_order('QA3 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
     # order_ticket.set_care_order('Text Aspect Desk of Traders (CN)', False)#Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
 
-    order_ticket.set_place()
-    # order_ticket.set_pending()
+    # strategy = order_ticket.add_multilisting_strategy("Quod MultiListing")
+    # strategy.set_allow_missing_trim(True)
+    # strategy.set_available_venues(True)
+    # strategy.set_allowed_venues('HSBC')
+    # strategy.set_forbidden_venues('CITI')
+    # strategy.set_fok_exploration(True)
+    # strategy.set_available_venues(True)
+    # strategy.set_sweeping_allowed(True)
+    # strategy.set_post_mode('Single')
+
+    strategy = order_ticket.add_twap_strategy("QUOD TWAP")
+    strategy.set_start_date(from_date='Now', offset='1')
+    strategy.set_end_date(from_date='CloseTime', offset='2')
+    strategy.set_waves('5')
+    strategy.set_slice_duration('7')
+    strategy.set_reserve_quantity('7')
+    strategy.set_allowed_venues("HBCS")
+    strategy.set_forbidden_venues("CITI")
+
+    # order_ticket.set_place()
+    order_ticket.set_pending()
     # order_ticket.set_keep_open()
 
     new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
@@ -391,7 +417,7 @@ def extract_rates_panel_esp(base_tile_details, ar_service):
     s = 'RatesTile0'
     request = ExtractRatesTileDataRequest(base_tile_details)
     request.set_extraction_id(f'{s}.extraction_id')
-    # request.extract_instrument(f'{s}.instrument')
+    request.extract_instrument(f'{s}.instrument')
     # request.extract_quantity(f'{s}.quantity')
     # request.extract_tenor(f'{s}.tenor')
     # request.extract_best_bid(f'{s}.best_bid')
@@ -404,6 +430,7 @@ def extract_rates_panel_esp(base_tile_details, ar_service):
     # request.extract_instrument(f'{s}.instrument')
     # request.extract_client_tier(f'{s}.client_tier')
     request.extract_1click_btn_text(f'{s}.btn_text')
+    request.extract_header_color(f'{s}.header_color') # https://www.color-hex.com/color/b68ab5 to understand is it expected ))
 
     result = call(ar_service.extractRatesTileValues, request.build())
     print(result)
@@ -433,6 +460,7 @@ def extract_order_ticket_values(base_tile_details, order_ticket_service):
     # request.get_is_algo_checked()
 
     request.get_error_message_text()
+    request.get_send_btn_text()
     print('call()')
     result = call(order_ticket_service.extractFxOrderTicketValues, request.build())
     print(result)
@@ -494,12 +522,12 @@ def extract_di_panel(base_request, dealer_intervention_service):
     # extraction_request.extract_is_bid_price_pips_enabled(f'{dmi_rfq}.is_bid_price_pips_enabled')
     # extraction_request.extract_is_ask_price_pips_enabled(f'{dmi_rfq}.is_ask_price_pips_enabled')
     # extraction_request.extract_is_near_leg_quantity_enabled(f'{dmi_rfq}.is_near_leg_quantity_enabled')
-    # extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
+    extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
     # extraction_request.extract_is_price_spread_enabled(f'{dmi_rfq}.is_price_spread_enabled')
     # extraction_request.extract_is_bid_price_large_enabled(f'{dmi_rfq}.is_bid_price_large_enabled')
     # extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
-    extraction_request.extract_case_state_value_label_control(f'{dmi_rfq}.case_state_value_label_control')
-    extraction_request.extract_quot_estate_value_label_control(f'{dmi_rfq}.quot_estate_value_label_control')
+    # extraction_request.extract_case_state_value_label_control(f'{dmi_rfq}.case_state_value_label_control')
+    # extraction_request.extract_quot_estate_value_label_control(f'{dmi_rfq}.quot_estate_value_label_control')
 
     result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
     for R in result:
@@ -557,6 +585,7 @@ def place_esp_by_tob_buy(base_request):
     rfq_request = PlaceESPOrder(details=btd)
     rfq_request.set_action(ESPTileOrderSide.BUY)
     rfq_request.top_of_book()
+    rfq_request.doubleClick()
     call(service.placeESPOrder, rfq_request.build())
 
 
@@ -615,9 +644,18 @@ def amend_order(ob_act, base_request):
     call(ob_act.amendOrder, modify_ot_order_request.build())
 
 
+def open_order_ticket_via_double_click(ob_act, base_request):
+    order_details = FXOrderDetails()
+    # order_details.set_qty('123123123')
+    modify_ot_order_request = ModifyFXOrderDetails(base_request)
+    modify_ot_order_request.set_order_details(order_details)
+
+    call(ob_act.openOrderTicketByDoubleClick, modify_ot_order_request.build())
+
+
 def cancel_order(ob_act, base_request):
-    cansel_order_request = CancelFXOrderDetails(base_request)
-    call(ob_act.cancelOrder, cansel_order_request.build())
+    cancel_order_request = CancelFXOrderDetails(base_request)
+    call(ob_act.cancelOrder, cancel_order_request.build())
 
 
 def release_order(ob_act, base_request):
@@ -645,7 +683,20 @@ def extract_color_from_pricing_button(base_tile_data, cp_service, x, y):
     requests = GetCPRTPColors(base_tile_data=base_tile_data)
     requests.get_pricing_btn_pixel_color(x, y)
     result = call(cp_service.getCPRatesTileColors, requests.build())
-    print(result)
+
+    file_name = "image.png"
+    with open(file_name, "wb") as fh:
+        bts = bytes(base64.standard_b64decode(result['PRICING_BUTTON']))
+        print(result['PRICING_BUTTON'])
+        fh.write(bts)
+
+    red_image = Image.open(file_name)
+    red_image_rgb = red_image.convert("RGB")
+    for i in range(90,100):
+        for j in range(1,10):
+            rgb_pixel_value = red_image_rgb.getpixel((i, j))
+            print(rgb_pixel_value, end=' ') # you can check color value in https://www.w3schools.com/colors/colors_rgb.asp
+        print()
 
 
 def create_client_rfq_tile(cp_service, base_tile_data: BaseTileData):
@@ -722,9 +773,9 @@ def check_fx_order_book_lvl2(base_request, act_ob, case_id, order_id):
     child_qty = ExtractionDetail("orderBook.childQty", "Qty")
 
     child_info = FXOrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[child_ord_id,
-                                                                                                       child_sts,
-                                                                                                       child_lmt_price,
-                                                                                                       child_qty]))
+                                                                                                         child_sts,
+                                                                                                         child_lmt_price,
+                                                                                                         child_qty]))
     child_details = FXOrdersDetails.create(info=child_info)
 
     ob_ord_id = ExtractionDetail("OrderBook.ordId", "Order ID")
@@ -744,6 +795,34 @@ def check_fx_order_book_lvl2(base_request, act_ob, case_id, order_id):
     verifier.set_event_name("Check that order is canceled")
     verifier.compare_values("Order status", "PCA", response[ob_sts.name])
     verifier.verify()
+
+
+# def reject_from_quote_request_book(base_request, ar_servise):
+#     ob = QuoteRequestDetails()
+#     execution_id = bca.client_orderid(4)
+#     ob.set_default_params(base_request)
+#     ob.set_filter(['User', 'QA3'])
+#     ob.set_extraction_id(execution_id)
+#
+#     ob.add_single_order_info(QuoteRequestInfo.create(action=ContextActionsQuoteBook.reject))
+#     call(ar_servise.getQuoteRequestBookDetails, ob.request())
+
+
+def create_or_get_cp_rates_tile(base_request, service):
+    call(service.createRatesTile, base_request.build())
+
+
+def place_order(base_request, service):
+    place_request = PlaceRatesTileOrderRequest(details=base_request)
+    place_request.set_slippage("1.23")
+    place_request.set_quantity("12334545")
+    place_request.click_pips(-3)
+    place_request.click_qty(-3)
+    print('click()')
+    place_request.click_slippage(3)
+    place_request.click_stop_price(3)
+    # place_request.buy()
+    call(service.placeRatesTileOrder, place_request.build())
 
 
 def execute(report_id, session_id):
@@ -802,12 +881,13 @@ def execute(report_id, session_id):
         # modify_rates_tile(base_tile_details, ar_service, 'NOK', 'SEK', 1000000, case_venue)
         # extract_rfq_panel()
         # extract_rfq_table_data()
-        # extract_rates_panel_esp(base_details, ar_service)
+        # extract_rates_panel_esp(base_tile_details, ar_service)
         # all available ways to open orderTicket via esp panel
         # place_esp_by_bid_btn(base_request)
         # place_esp_by_ask_btn(base_request)
         # place_esp_by_tob_buy(base_request)
-        # place_esp_by_tob_sell(base_request)
+        # place_esp_by_tob_sell(base_request
+        # )
 
         # endregion
 
@@ -818,13 +898,14 @@ def execute(report_id, session_id):
 
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
         # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
         # region ClientPricing
-        # extract_cp_rates_panel(base_details,cp_service)
+        # extract_cp_rates_panel(base_tile_details,cp_service)
+        # create_or_get_cp_rates_tile(base_tile_details, cp_service)
         # check_tile_value(base_tile_details, cp_service,1 )
         # select_rows(base_tile_details, [1, 2], cp_service)
         # print('Sleeping')
@@ -838,6 +919,7 @@ def execute(report_id, session_id):
         # for j in range(100,110):
         #     print(j,end=" ")
         # extract_color_from_pricing_button(base_tile_data, cp_service,89, 0)
+        # place_order(base_tile_details, cp_service)
         # endregion
 
         # region Client Pricing RFQ tile
@@ -847,12 +929,14 @@ def execute(report_id, session_id):
         # send_client_rfq(cp_service, base_tile_data)
         # place_client_rfq_order(cp_service, base_tile_data)
         # close_client_rfq_tile(cp_service, base_tile_data)
+        # extract_color_from_pricing_button(base_tile_data, cp_service,0, 0)
+
         # endregion
 
         # region Dealer Intervention
         # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
-        close_dmi_window(base_request, dealer_interventions_service)
+        # close_dmi_window(base_request, dealer_interventions_service)
         # endregion
 
         # region example of Drab&Drop
@@ -862,11 +946,16 @@ def execute(report_id, session_id):
 
         # region OrderBook actions
         # amend_order(ob_fx_act, base_request)
+        # open_order_ticket_via_double_click(ob_fx_act, base_request)
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
         # clear_filters(ob_fx)
         # check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
-        check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        # check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        # endregion
+
+        # region Quote Request Book
+        # reject_from_quote_request_book(base_request, ar_service)
         # endregion
 
     except Exception as e:

@@ -48,7 +48,6 @@ def execute(report_id, session_id):
         'LastQty': '*',
         'OrderID': '*',
         'TransactTime': '*',
-        'Text': '*',
         'AvgPx': '*',
         'SettlDate': '*',
         'Currency': '*',
@@ -56,16 +55,18 @@ def execute(report_id, session_id):
         'LeavesQty': '*',
         'CumQty': '*',
         'LastPx': '*',
+        'CxlQty': qty,
         'OrdType': '*',
         'LastMkt': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
         'SettlType': '*',
+        ''
         'SecondaryOrderID': '*',
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
 

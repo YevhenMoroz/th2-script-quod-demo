@@ -4,7 +4,6 @@ import time
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 
-from quod_qa.wrapper.eq_wrappers import buy_connectivity, sell_connectivity
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 
@@ -119,48 +118,3 @@ def execute(report_id, session_id):
     fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
     # region Cancelling order
 
-    try:
-        rule = rule_manager.add_OrderCancelRequest(eq_wrappers.get_sell_connectivity(), client + "_PARIS",
-                                                   "XPAR", True)
-        eq_wrappers.cancel_order_via_fix(case_id, eq_wrappers.get_buy_connectivity(), cl_order_id, cl_order_id, client,
-                                         1)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(rule)
-    # endregion
-    params = {
-        'OrderQtyData': {'OrderQty': qty},
-        'ExecType': '4',
-        'OrdStatus': '4',
-        'Side': '2',
-        'TimeInForce': '0',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'OrigClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'LastQty': '*',
-        'ExecBroker': '*',
-        'OrderID': '*',
-        'Price': price2,
-        'TransactTime': '*',
-        'Text': 'order canceled',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlType': '*',
-        'SecondaryOrderID': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-    }
-    fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
-
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

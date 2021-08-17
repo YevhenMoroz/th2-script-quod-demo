@@ -7,12 +7,14 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from datetime import datetime
 
+# rep_id = bca.create_event('java_api_example ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+
 
 class TestCase:
     def __init__(self, report_id):
         self.case_id = bca.create_event('java api test', report_id)
         self.act_java_api = Stubs.act_java_api
-        self.connectivity = 'quod_http'
+        self.connectivity = 'quod_java'
 
     def send_nos(self):
         nos_params = {
@@ -46,19 +48,15 @@ class TestCase:
             }
         }
 
-        print(ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
-
-        response= self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_http')))
-
-        print(f'*********** response sendMessage = {response}************')
-
+        self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
+            message=bca.message_to_grpc('Order_OrderSubmit', nos_params, 'quod_java'), parent_event_id=self.case_id))
 
     # Main method
     def execute(self):
         self.send_nos()
+        Stubs.factory.close()
 
 
 if __name__ == '__main__':
+    # TestCase(rep_id).execute()
     pass
