@@ -130,6 +130,7 @@ def execute(report_id, session_id):
         'SettlDate': '*',
         'LastMkt': '*',
         'GrossTradeAmt': '*',
+        'SecondaryOrderID': '*',
         'AllocInstructionMiscBlock1': '*',
         'QuodTradeQualifier': '*',
         'NoOrders': [

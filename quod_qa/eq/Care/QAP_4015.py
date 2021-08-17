@@ -23,7 +23,7 @@ def execute(report_id, session_id):
     common_act = Stubs.win_act
     qty = "800"
     price = "40"
-    client = "CLIENT_FIX_CARE"
+    client = "CLIENT_FIX_CARE_WB"
     lookup = "VETO"
     last_mkt = 'DASI'
     case_id = create_event(case_name, report_id)

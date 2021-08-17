@@ -12,6 +12,24 @@ from .algo_strategies import (TWAPStrategy, MultilistingStrategy, QuodParticipat
                               FXTWAPStrategy)
 from .common_wrappers import CommissionsDetails
 
+from .utils import call
+
+
+class OrderTicketExtractedValue(Enum):
+    DISCLOSE_FLAG = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISCLOSE_FLAG
+    INSTRUMENT = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.INSTRUMENT
+    LIMIT_CHECKBOX = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.LIMIT_CHECKBOX
+    STOP_PRICE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.STOP_PRICE
+    ERROR_MESSAGE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ERROR_MESSAGE
+    CLIENT = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.CLIENT
+    EDIT_VENUE = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.EDIT_VENUE
+    DISPLAY_QTY = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DISPLAY_QTY
+    ACCOUNT = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.ACCOUNT
+    CHECKBOX_CUSTOM_ALGO = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.CHECKBOX_CUSTOM_ALGO
+    CUSTOM_ALGO = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.CUSTOM_ALGO
+    DATE_PICKER = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.DATE_PICKER
+    PENDING_CHECKBOX = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.PENDING_CHECKBOX
+
 
 class OrderTicketDetails:
 
@@ -20,6 +38,9 @@ class OrderTicketDetails:
 
     def set_client(self, client: str):
         self.order.client = client
+
+    def set_instrument(self, instrument: str):
+        self.order.instrument = instrument
 
     def set_limit(self, limit: str):
         self.order.limit = limit
@@ -40,7 +61,10 @@ class OrderTicketDetails:
         self.order.timeInForce = tif
 
     def set_account(self, account: str):
-        self.order.client = account
+        self.order.account = account
+
+    def set_display_qty(self, display_qty: str):
+        self.order.displayQty = display_qty
 
     def buy(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.BUY
@@ -51,9 +75,10 @@ class OrderTicketDetails:
     def submit(self):
         self.order.orderSide = order_ticket_pb2.OrderDetails.OrderSide.SUBMIT
 
-    def set_care_order(self, desk: str, partial_desk: bool = False):
+    def set_care_order(self, desk: str, partial_desk: bool = False, disclose_flag=None):
         self.order.careOrderParams.desk = desk
         self.order.careOrderParams.partialDesk = partial_desk
+        self.order.careOrderParams.discloseFlag = disclose_flag
 
     def add_twap_strategy(self, strategy_type: str) -> TWAPStrategy:
         self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
@@ -73,12 +98,6 @@ class OrderTicketDetails:
         self.order.algoOrderParams.quodParticipationStrategyParams.CopyFrom(
             order_ticket_pb2.QuodParticipationStrategyParams())
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
-
-    def set_care_order(self, desk: str, partial_desk: bool = False,
-                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
-        self.order.careOrderParams.desk = desk
-        self.order.careOrderParams.partialDesk = partial_desk
-        self.order.careOrderParams.discloseFlag = disclose_flag
 
     def set_washbook(self, washbook: str):
         self.order.advOrdParams.washbook = washbook
@@ -268,3 +287,89 @@ class ExtractFxOrderTicketValuesRequest:
 
     def build(self):
         return self.request
+
+
+class ExtractOrderTicketValuesRequest:
+    def __init__(self, base_request, extractionId: str = 'extractOrderTicketValues'):
+        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
+        self.request.base.CopyFrom(base_request)
+        self.request.extractionId = extractionId
+
+    def get_disclose_flag_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.DISCLOSE_FLAG, "DISCLOSE_FLAG")
+
+    def get_instrument_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.INSTRUMENT, "INSTRUMENT")
+
+    def get_limit_checkbox_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.LIMIT_CHECKBOX, "LIMIT_CHECKBOX")
+
+    def get_stop_price_checkbox_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.STOP_PRICE, "STOP_PRICE")
+
+    def get_client_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.CLIENT, "CLIENT")
+
+    def get_edit_venue_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.EDIT_VENUE, "EDIT_VENUE")
+
+    def get_display_qty_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.DISPLAY_QTY, "DISPLAY_QTY")
+
+    def get_account_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.ACCOUNT, "ACCOUNT")
+
+    def get_checkbox_custom_algo_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.CHECKBOX_CUSTOM_ALGO, "CHECKBOX_CUSTOM_ALGO")
+
+    def get_custom_algo_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.CUSTOM_ALGO, "CUSTOM_ALGO")
+
+    def get_date_picker_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.DATE_PICKER, "DATE_PICKER")
+
+    def get_pending_checkbox_state(self):
+        self.get_extract_value(OrderTicketExtractedValue.PENDING_CHECKBOX, "PENDING_CHECKBOX")
+
+    def get_extract_value(self, field: OrderTicketExtractedValue, name: str):
+        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+
+
+class ExtractOrderTicketErrorsRequest:
+
+    def __init__(self, base_request, extractionId: str = 'ErrorMessageExtractionID'):
+        self.request = order_ticket_pb2.ExtractOrderTicketValuesRequest()
+        self.request.base.CopyFrom(base_request)
+        self.request.extractionId = extractionId
+
+    def extract_error_message(self):
+        self.get_extract_value(OrderTicketExtractedValue.ERROR_MESSAGE)
+
+    def get_extract_value(self, field: OrderTicketExtractedValue):
+        extracted_value = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = "ErrorMessage"
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+
+    def extract_error_message_order_ticket(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+        extract_errors_request.extract_error_message()
+        result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
+        print(result)
+
+    def get_disclose_flag_state(base_request, order_ticket_service):
+        # extract rates tile table values
+        extract_disclose_flag_request = ExtractOrderTicketValuesRequest(base_request)
+        extract_disclose_flag_request.get_disclose_flag_state()
+        result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
+        print(result)

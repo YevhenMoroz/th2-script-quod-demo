@@ -10,13 +10,12 @@ from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDrive
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-# TODO: DON'T WORK!!! FIXED DISABLE INPUT (Rabah command)
 class QAP_3145(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
-        self.role_id = "Administrator"
+        self.perm_role = "Permissions for administrator users"
         self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
@@ -41,9 +40,7 @@ class QAP_3145(CommonTestCase):
         try:
             self.precondition()
             role_wizard = UsersRoleSubWizard(self.web_driver_container)
-            print(role_wizard.get_role_id())
-            # self.verify("Is Role id contains value ?", self.role_id, role_wizard.get_role_id())
-            # self.verify("Is role id can not modify?", True, role_wizard.is_role_id_immutable())
+            self.verify("Is Perm Role contains value ?", self.perm_role, role_wizard.get_perm_role())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
                                               status='FAILED')

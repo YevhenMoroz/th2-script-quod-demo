@@ -1,4 +1,4 @@
-from regression_cycle import  fx_regression, algo_regression, eq_regression
+from regression_cycle import fx_regression, algo_regression, eq_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -28,4 +28,3 @@ def test_run(name, algo=True, equity=True, forex=True):
 if __name__ == '__main__':
     test_run('5.1.137.150|Regression|', algo=False, equity=False)
     Stubs.factory.close()
-

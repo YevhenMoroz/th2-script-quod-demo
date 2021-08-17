@@ -24,7 +24,7 @@ class CounterpartsWizard(CommonPage):
     def click_on_pdf_button(self):
         self.find_by_xpath(CounterpartsConstants.DOWNLOAD_PDF_XPATH).click()
 
-    def click_download_pdf_entity_button_and_check_pdf(self, value: str):
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
         self.find_by_xpath(CounterpartsConstants.DOWNLOAD_PDF_XPATH).click()
         time.sleep(2)

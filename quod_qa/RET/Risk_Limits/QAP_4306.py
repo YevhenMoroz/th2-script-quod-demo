@@ -13,7 +13,7 @@ from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
-from quod_qa.wrapper.eq_wrappers import create_order, get_order_id, verify_order_value
+from quod_qa.wrapper.ret_wrappers import create_order, get_order_id, verify_order_value
 from custom.verifier import Verifier
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ def execute(session_id, report_id):
 
     # region Create order via FE according to 1st step
     create_order(base_request, qty, client, lookup, order_type, tif,
-                 True, recipient, price, None, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None, False)
+                 True, recipient, price, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # end region
 
     order_id = get_order_id(base_request)

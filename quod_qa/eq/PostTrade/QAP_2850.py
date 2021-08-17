@@ -32,9 +32,10 @@ def execute(report_id):
     # # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-bs-eq-paris',
-                                                                             'MOClient_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade('fix-bs-eq-paris', 'MOClient_PARIS', 'XPAR', 3,
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client+'_PARIS', "XPAR", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client+'_PARIS', 'XPAR', float(price),
                                                                       800, 0)
         time.sleep(1)
     except Exception:
@@ -54,5 +55,5 @@ def execute(report_id):
     response = eq_wrappers.check_error_in_book(base_request)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values('Check value', "Error - [QUOD-11699] Invalid AccountGroupID: MOClient", response['errorMessage'])
+    verifier.compare_values('Check value', "Error - [QUOD-11699] Invalid AccountGroupID: SBK", response['errorMessage'])
     verifier.verify()

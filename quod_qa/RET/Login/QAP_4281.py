@@ -42,8 +42,8 @@ def execute(session_id, report_id):
         login_details_id = "LoginErrorMessageExtraction"
         login_details_req.set_session_id(session_id)
         login_details_req.set_parent_event_id(init_event)
-        login_details_req.set_username("QA5")
-        login_details_req.set_password("QA5")
+        login_details_req.set_username("quodsup")
+        login_details_req.set_password("quodsup")
         login_details_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
         login_details_req.set_login_window_name(Stubs.custom_config['qf_trading_fe_login_win_name'])
         login_details_req.is_error_expected(True)
@@ -52,7 +52,7 @@ def execute(session_id, report_id):
         response = call(stub.login, login_details_req.build())
         verifier = Verifier(case_id)
         verifier.set_event_name("Check error")
-        verifier.compare_values("Login Error", expected_value, response["LoginError"][0:39])
+        verifier.compare_values("Login Error", expected_value, response["LoginError"][0:44])
         verifier.verify()
         # end region
     else:
