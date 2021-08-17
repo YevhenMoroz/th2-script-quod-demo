@@ -1,3 +1,4 @@
+import base64
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -24,12 +25,13 @@ from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, Deselect
 from win_gui_modules.common_wrappers import BaseTileDetails, MoveWindowDetails
 from win_gui_modules.dealer_intervention_wrappers import RFQExtractionDetailsRequest, ModificationRequest
 from win_gui_modules.layout_panel_wrappers import (WorkspaceModificationRequest, OptionOrderTicketRequest,
-                                                   DefaultFXValues, FXConfigsRequest, OrderQuantityIncrements)
+                                                   DefaultFXValues, FXConfigsRequest)
 from win_gui_modules.order_book_wrappers import (OrdersDetails, FXOrderInfo, OrderInfo as OrdInf, ExtractionDetail,
                                                  ExtractionAction,ModifyFXOrderDetails, CancelFXOrderDetails,
-                                                 ReleaseFXOrderDetails, FXOrdersDetails, QuoteRequestDetails)
+                                                 ReleaseFXOrderDetails, FXOrdersDetails)
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
+from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
@@ -262,9 +264,9 @@ def set_order_ticket_options(option_service, base_request):
     order_ticket_options = OptionOrderTicketRequest(base=base_request)
     # slippage = CustomCurrencySlippage(instrument='EUR/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
     # slippage2 = CustomCurrencySlippage(instrument='GBP/USD', dmaSlippage='1234.56789', algoSlippage='98765.4321')
-    order_qty_increment = OrderQuantityIncrements(quantity='1000000', increment='555')
-    fx_values = DefaultFXValues(custom_currency_slippage_list=[],
-                                order_quantity_increments_list=[order_qty_increment])
+    # order_qty_increment = OrderQuantityIncrements(quantity='1000000', increment='555')
+    # fx_values = DefaultFXValues(custom_currency_slippage_list=[],
+    #                             order_quantity_increments_list=[order_qty_increment])
     # fx_values = DefaultFXValues([slippage])
     order_type = "Market"
     # tif = "FillOrKill"
@@ -272,7 +274,7 @@ def set_order_ticket_options(option_service, base_request):
     # strategy = "PeggedTaker"
     # child_strategy = "BasicTaker"
     # fx_values.AggressiveTIF = "Pegger"
-    fx_values.AggressiveOrderType = order_type
+    # fx_values.AggressiveOrderType = order_type
     # fx_values.AggressiveTIF = tif
     # fx_values.AggressiveStrategyType = strategy_type
     # fx_values.AggressiveStrategy = strategy
@@ -286,8 +288,8 @@ def set_order_ticket_options(option_service, base_request):
     # fx_values.DMASlippage = '12678.09'
     # fx_values.Client = "FIXCLIENT4"
 
-    order_ticket_options.set_default_fx_values(fx_values)
-    call(option_service.setOptionOrderTicket, order_ticket_options.build())
+    # order_ticket_options.set_default_fx_values(fx_values)
+    # call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
 def set_one_click_mod(option_service, base_request):
@@ -303,6 +305,27 @@ def set_one_click_mod(option_service, base_request):
     fx_configs.set_headers_prices_format('VWAP of Default Quantity')
 
     call(option_service.setOptionForexConfigs, fx_configs.build())
+
+def check_quote_request_b(base_request, service, case_id, status = "New", quote_status = "Accepted", venue = "HSBCR"):
+    qrb = QuoteDetailsRequest(base=base_request)
+    qrb.set_extraction_id("set_here_any_random_ID")
+    qrb.set_filter(["Venue", venue,"User", "QA3"])
+    qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
+    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
+    qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
+    qrb.add_extraction_details([qrb_venue,qrb_status ])
+    qrb.add_child_extraction_details([qrb_quote_status])
+    response = call(service.getQuoteRequestBookDetails, qrb.request())
+
+
+    print( response)
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check QuoteRequest book")
+    verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
+    verifier.compare_values('Status', status, response[qrb_status.name])
+    verifier.compare_values('QuoteStatus', quote_status, response[qrb_quote_status.name])
+    verifier.verify()
 
 
 def set_fx_order_ticket_value(base_request, order_ticket_service):
