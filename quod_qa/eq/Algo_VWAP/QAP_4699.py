@@ -27,7 +27,6 @@ text_r = 'order replaced'
 
 #algo param
 waves = 4
-percentage = 10
 aggressivity = 1
 
 #order param
