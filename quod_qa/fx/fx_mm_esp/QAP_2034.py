@@ -163,38 +163,40 @@ def execute(report_id, session_id):
     instrument = "EUR/JPY-1W"
     client_tier = "Silver"
 
+    # def_md_symbol_eur_jpy = "EUR/JPY:SPO:REG:HSBC"
     def_md_symbol_eur_jpy = "EUR/JPY:SPO:REG:HSBC"
     symbol_eur_jpy = "EUR/JPY"
 
     try:
-        # Step 1
-        create_or_get_esp_tile(base_details, ar_service)
-        modify_esp_tile(base_details, ar_service, from_curr, to_curr, tenor, venue)
-        # Step 2
-        create_or_get_pricing_tile(base_details, cp_service)
-        modify_pricing_tile(base_details, cp_service, instrument, client_tier)
+        # # Step 1
+        # create_or_get_esp_tile(base_details, ar_service)
+        # modify_esp_tile(base_details, ar_service, from_curr, to_curr, tenor, venue)
+        # # Step 2
+        # create_or_get_pricing_tile(base_details, cp_service)
+        # modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
         FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_jpy, symbol_eur_jpy)).send_market_data_spot()
-        esp_pts = extract_pts_from_esp(base_details, ar_service)
-        mm_base = extract_column_base(base_details, cp_service)
-        pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],
-                                  mm_base[0], mm_base[1])
-        spot_mm = extract_column_spot(base_details, cp_service)
-        price_mm = extract_price_from_pricing_tile(base_details, cp_service)
-
-        check_price_on_pricing_tile(case_id, price_mm[0], spot_mm[0], pts_mm[0])
-        check_price_on_pricing_tile(case_id, price_mm[1], spot_mm[1], pts_mm[1])
-
-        use_default(base_details, cp_service)
+        # esp_pts = extract_pts_from_esp(base_details, ar_service)
+        # mm_base = extract_column_base(base_details, cp_service)
+        # pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],
+        #                           mm_base[0], mm_base[1])
+        # spot_mm = extract_column_spot(base_details, cp_service)
+        # price_mm = extract_price_from_pricing_tile(base_details, cp_service)
+        #
+        # check_price_on_pricing_tile(case_id, price_mm[0], spot_mm[0], pts_mm[0])
+        # check_price_on_pricing_tile(case_id, price_mm[1], spot_mm[1], pts_mm[1])
+        #
+        # use_default(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
+            pass
             # Close tiles
-            call(ar_service.closeRatesTile, base_details.build())
-            call(cp_service.closeRatesTile, base_details.build())
+            # call(ar_service.closeRatesTile, base_details.build())
+            # call(cp_service.closeRatesTile, base_details.build())
 
         except Exception:
             logging.error("Error execution", exc_info=True)

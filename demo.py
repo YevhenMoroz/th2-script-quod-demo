@@ -1,21 +1,16 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from examples import example_java_api
-from quod_qa.fx import clone, SendMD
-from quod_qa.fx.fx_mm_autohedging import QAP_2290, QAP_2228
 
-from quod_qa.fx.fx_mm_esp import QAP_2990, QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
+from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
-    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_4094
-from quod_qa.fx.fx_mm_positions import QAP_2500, QAP_1898
-from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_2345, QAP_1746, QAP_1978, QAP_2089, QAP_2055, QAP_2090, \
-    QAP_1755, QAP_2103, QAP_2353, QAP_2101, QAP_2104
-from quod_qa.fx.fx_taker_esp import QAP_404
-from quod_qa.fx.qs_fx_routine import rfq_spot, java_api
+    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_2034
+from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
+    QAP_1755
+from quod_qa.fx.qs_fx_routine import SendMD
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -93,7 +88,7 @@ def test_run():
         # example_java_api.TestCase(report_id).execute()
         # QAP_2012.execute(report_id)
 
-        rfq_spot.execute(report_id)
+        # rfq_spot.execute(report_id)
 
         # QAP_2104.execute(report_id,session_id)
 
@@ -103,7 +98,12 @@ def test_run():
         # QAP_2103.execute(report_id)
 
         # QAP_3841.execute(report_id)
-        # QAP_1898.execute(report_id, session_id)
+
+
+        QAP_2034.execute(report_id, session_id)
+        
+
+
         # QAP_2089.execute(report_id)
         # QAP_3841.execute(report_id)
         # QAP_1518.execute(report_id)
@@ -116,11 +116,17 @@ def test_run():
 
 
 
-        #
-        # rm = RuleManager()
-        # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        # rm.print_active_rules()
-        # rm.remove_rule_by_id()
+
+        rm = RuleManager()
+        # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
+        # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
+        # rm.add_fx_md_to('fix-fh-314-luna')
+        rm.print_active_rules_sim_test()
+        rm.print_active_rules()
+        # rm.print_active_rules_sim_test()
+
+        # rm.remove_rule_by_id(574)
+        rm.print_active_rules()
 
 
     except Exception:
