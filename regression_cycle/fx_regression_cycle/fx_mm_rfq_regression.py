@@ -4,7 +4,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_154
     QAP_2066, QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2104, QAP_2105, QAP_2143, \
     QAP_2177, QAP_2294, QAP_2295, QAP_2296, QAP_2297, QAP_2353, QAP_2670, QAP_2866, QAP_2867, QAP_2868, QAP_2958, \
-    QAP_3739
+    QAP_3739, QAP_3565
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -57,11 +57,12 @@ def test_run(parent_id=None):
         # QAP_2345.execute(report_id)
         # QAP_2353.execute(report_id)
         # QAP_3739.execute(report_id)
+        QAP_3565.execute(report_id)
 
         # QAP_1537.execute(report_id, case_params)
         # QAP_1539.execute(report_id, session_id)
         # QAP_1540.execute(report_id, case_params)
-        QAP_1542.execute(report_id, case_params)
+        # QAP_1542.execute(report_id, case_params)
         # QAP_1545.execute(report_id, case_params, session_id)
         # QAP_1547.execute(report_id, case_params, session_id)
         # QAP_1548.execute(report_id, case_params, session_id)
