@@ -18,31 +18,36 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+text_r = 'order replaced'
+text_wpfp = 'could not determine Would price from Primary'
+
+#algo param
 waves = 4
+aggressivity = 2
+
+#order param
 qty = 40
 wld_price = 19.995
 child_ioc_qty = 30
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
-text_wpfp = 'could not determine Would price from Primary'
-side = 1
 price_20 = 20
 price_30 = 30
+side = 1
 tif_day = 0
 tif_ioc = 3
+order_type = 2
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '704'
-aggressivity = 2
+
 
 
 case_name = os.path.basename(__file__)
