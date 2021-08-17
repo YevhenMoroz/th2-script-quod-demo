@@ -56,10 +56,10 @@ def test_run():
             'TargetCompID': 'QUOD9',
         }
 
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
         # rm = RuleManager()
         # # rm.remove_rule_by_id_test_sim(2)
@@ -73,10 +73,10 @@ def test_run():
 
         # send_rfq.execute(report_id)
 
-        # QAP_2877.execute(report_id, session_id)
+        QAP_2877.execute(report_id, session_id)
         # QAP_4228.execute(report_id)
         # QAP_4085.execute(report_id)
-        send_md.execute(report_id)
+        # send_md.execute(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
