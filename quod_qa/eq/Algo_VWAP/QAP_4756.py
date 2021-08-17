@@ -48,8 +48,6 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '704'
 
-
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
 connectivity_sell_side = "fix-sell-side-316-ganymede"
