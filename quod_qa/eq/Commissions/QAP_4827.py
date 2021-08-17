@@ -30,16 +30,22 @@ def execute(report_id, session_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    instrument = {
+        'Symbol': 'IS0000000001_EUR',
+        'SecurityID': 'IS0000000001',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XEUR'
+    }
     # endregion
     # region Create Order
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
+                                                                             client + '_EUREX', "XEUR", float(price))
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR', float(price),
+                                                                      client + '_EUREX', 'XEUR', float(price),
                                                                       int(qty), 1)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price, instrument)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
