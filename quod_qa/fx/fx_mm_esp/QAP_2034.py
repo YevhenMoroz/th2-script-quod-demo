@@ -1,7 +1,9 @@
 import logging
 import math
+from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
 from quod_qa.common_tools import round_decimals_up
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
@@ -164,9 +166,47 @@ def execute(report_id, session_id):
     client_tier = "Silver"
 
     # def_md_symbol_eur_jpy = "EUR/JPY:SPO:REG:HSBC"
-    def_md_symbol_eur_jpy = "EUR/JPY:SPO:REG:HSBC"
-    symbol_eur_jpy = "EUR/JPY"
+    def_md_symbol_eur_jpy = "GBP/CAD:SPO:REG:HSBC"
+    symbol_eur_jpy = "GBP/CAD"
 
+    no_md_entries_spo = [
+        {
+            "MDEntryType": "0",
+            "MDEntryPx": 1.19581,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            'SettlDate': spo(),
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        },
+        {
+            "MDEntryType": "1",
+            "MDEntryPx": 1.19611,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            'SettlDate': spo(),
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        }
+    ]
+
+    def_md_symb_eur_jpy_wk1 = "GBP/CAD:FXF:WK1:HSBC"
+    no_md_entries_wk1 = [
+        {
+            "MDEntryType": "0",
+            "MDEntryPx": 1.19585,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            "MDEntryForwardPoints": '0.0002',
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        },
+        {
+            "MDEntryType": "1",
+            "MDEntryPx": 1.19615,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            "MDEntryForwardPoints": '0.0002',
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        },
+    ]
     try:
         # # Step 1
         # create_or_get_esp_tile(base_details, ar_service)
@@ -175,7 +215,8 @@ def execute(report_id, session_id):
         # create_or_get_pricing_tile(base_details, cp_service)
         # modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_jpy, symbol_eur_jpy)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_jpy, symbol_eur_jpy).prepare_custom_md_spot(no_md_entries_spo)).send_market_data_spot()
+        FixClientBuy(CaseParamsBuy(case_id, def_md_symb_eur_jpy_wk1, symbol_eur_jpy).prepare_custom_md_fwd(no_md_entries_wk1)).send_market_data_fwd()
         # esp_pts = extract_pts_from_esp(base_details, ar_service)
         # mm_base = extract_column_base(base_details, cp_service)
         # pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],
