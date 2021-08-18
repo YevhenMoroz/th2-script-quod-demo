@@ -44,7 +44,6 @@ account = 'XPAR_CLIENT2'
 s_par = '734'
 s_trqx = '3416'
 
-
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
