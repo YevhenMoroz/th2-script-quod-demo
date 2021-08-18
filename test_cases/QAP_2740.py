@@ -79,6 +79,7 @@ def execute(report_id):
     }
     symbol_paris = "596"
     symbol_trqx = "3390"
+# Triggering rules for trade
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -106,7 +107,7 @@ def execute(report_id):
         symbol={"TRQX": symbol_trqx}
     ))
     try:
-        # Send MarketDataSnapshotFullRefresh message
+# Send MarketDataSnapshotFullRefresh message
 
         MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
             symbol=symbol_paris,
@@ -171,6 +172,7 @@ def execute(report_id):
             'TargetStrategy': case_params['TargetStrategy'],
             'Text': 'QAP-2740'
         }
+# Sending New Order
         new_sor_order = act.placeOrderFIX(
             bca.convert_to_request(
                 'Send NewSingleOrder',
@@ -179,6 +181,7 @@ def execute(report_id):
                 bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
             ))
         checkpoint_1 = new_sor_order.checkpoint_id
+# Check ER with status Pending
         pending_er_params = {
             **reusable_order_params,
             'ClOrdID': sor_order_params['ClOrdID'],
@@ -209,6 +212,7 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
+# Check ER with status New
 
         del pending_er_params['Account']
         new_er_params = deepcopy(pending_er_params)
@@ -226,7 +230,7 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
-
+# Check ER with status Filled
         del new_er_params['ExecRestatementReason']
         exec_er_params = {
             **new_er_params,
@@ -275,7 +279,7 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
-
+# Buy Side checks
         instrument_bs = {
             'SecurityType': 'CS',
             'Symbol': 'CNLP_PA',
@@ -303,6 +307,7 @@ def execute(report_id):
 
         }
 
+# Check New Order Single received
         verifier.submitCheckRule(
             bca.create_check_rule(
                 'NewOrderSingle transmitted >> TRQX',
@@ -312,6 +317,7 @@ def execute(report_id):
                 case_id
             )
         )
+# Check Buy Side ER with status New
 
         er_bs_params = {
             'Account': nos_bs_params['Account'],
@@ -352,10 +358,11 @@ def execute(report_id):
                 }]
         }
 
+# Check ER with status Filled
         logger.debug("Verify received Execution Report (OrdStatus = Filled)")
         verifier.submitCheckRule(
             bca.create_check_rule(
-                'ER NewOrderSingle transmitted << TRQX',
+                'ER NewOrderSingle Filled << TRQX',
                 bca.filter_to_grpc('ExecutionReport', er_bs_params, ),
                 checkpoint_1,
                 case_params['TraderConnectivity3'],
@@ -366,7 +373,7 @@ def execute(report_id):
         )
 
 
-
+# FE init
         work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
         username = Stubs.custom_config['qf_trading_fe_user_305']
         password = Stubs.custom_config['qf_trading_fe_password_305']
@@ -419,11 +426,13 @@ def execute(report_id):
 
             venue = request[sub_lvl1_1_venue_OA.name]
             logger.info(venue)
+# Check parent order trade via GUI
             call(common_act.verifyEntities, verification(order_info_extraction, "Checking main order",
                                                          [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                                      "Synth (Quod LitDark)"),
                                                           verify_ent("Order LmtPrice", main_order_lmt_price.name, "25"),
                                                           verify_ent("Order Status", main_order_sts.name, "Filled")]))
+# Check child order lvl1 via GUI
             call(common_act.verifyEntities, verification(order_info_extraction, "Checking Lvl_2 orders",
                                                          [verify_ent("Sub Order 1 Lvl 1 ExecPcy",
                                                                      sub_lvl1_1_exec_pcy.name,
@@ -433,7 +442,7 @@ def execute(report_id):
                                                                      "Synth (Quod DarkPool)")
                                                           ]))
 
-            # check child orders
+# Check child order lvl2 and lvl3 via GUI
             sub_order_id = request[sub_order_id_dt.name]
             if not sub_order_id:
                 raise Exception("Sub order id is not returned")
