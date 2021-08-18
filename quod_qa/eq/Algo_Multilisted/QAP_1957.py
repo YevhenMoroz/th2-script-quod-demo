@@ -17,22 +17,26 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#text
+text_pn='Pending New status'
+text_n='New status'
+text_c='order canceled'
+
+#order param
 qty = 1300
 display_qty = 1000
 price = 20
 side = 1
 tif_gtc = 1
-text_pn='Pending New status'
-text_n='New status'
-text_c='order canceled'
+order_type = 2
 currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 s_par = '734'
 s_trqx = '3416'
-
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"
