@@ -3,8 +3,8 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_esp import QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034, QAP_2075, \
     QAP_1601, QAP_2039, QAP_2035, QAP_1418, QAP_2556, QAP_2117, QAP_2855, QAP_3563, QAP_2069, QAP_2587, \
-    QAP_2796, QAP_1536, QAP_2037, QAP_2072, QAP_2523, QAP_3045, QAP_1511, QAP_1589  # , QAP_1560
-from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055
+    QAP_2796, QAP_1536, QAP_2037, QAP_2072, QAP_2523, QAP_3045, QAP_1511, QAP_1589, QAP_4794, QAP_1560
+from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055, QAP_4748
 from quod_qa.fx.fx_taker_esp import QAP_4156, QAP_833, QAP_1115, QAP_110, QAP_231, QAP_3042, QAP_3364, QAP_105, QAP_3742, \
     QAP_4673, QAP_4677, QAP_1591, QAP_4768
 from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
@@ -47,7 +47,6 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('aleksey tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial"
 
     session_id = set_session_id()
     start = datetime.now()
@@ -68,10 +67,11 @@ def test_run():
         # QAP_2113.execute(report_id, session_id)
         # QAP_2250.execute(report_id, session_id)
         # QAP_2252.execute(report_id, session_id)
-        # MyTest.execute(report_id, session_id)
         # QAP_2035.execute(report_id, session_id)
         # QAP_2556.execute(report_id, session_id)
-        QAP_4768.execute(report_id, session_id)
+        # QAP_4768.execute(report_id, session_id)
+        # QAP_4794.execute(report_id, session_id)
+        QAP_4748.execute(report_id, session_id)
         # MyTest.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
