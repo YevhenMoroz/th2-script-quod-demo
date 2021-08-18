@@ -17,20 +17,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-qty = 1300
-dec_qty = 900
+#text
 text_pn='Pending New status'
 text_n='New status'
-text_ocrr='OCRRRule'
 text_c='order canceled'
-text_f='Fill'
+
+#order param
+qty = 1300
+dec_qty = 900
 side = 1
 price = 20
 dec_price = 19
 tif_day = 0
+order_type = 2
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '734'
