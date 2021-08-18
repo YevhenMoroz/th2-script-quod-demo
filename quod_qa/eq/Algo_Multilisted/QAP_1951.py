@@ -30,12 +30,12 @@ price = 20
 dec_price = 19
 tif_day = 0
 order_type = 2
+currency = 'EUR'
 
 #venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '734'
 s_trqx = '3416'
 
