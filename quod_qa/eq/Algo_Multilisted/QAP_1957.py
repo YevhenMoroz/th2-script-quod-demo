@@ -22,9 +22,11 @@ text_pn='Pending New status'
 text_n='New status'
 text_c='order canceled'
 
+#algo param
+display_qty = 1000
+
 #order param
 qty = 1300
-display_qty = 1000
 price = 20
 side = 1
 tif_gtc = 1
