@@ -114,3 +114,9 @@ class AccountsWizard(CommonPage):
     def click_save_button(self):
         self.find_by_xpath(AccountsConstants.WIZARD_SAVE_BUTTON_XPATH).click()
         time.sleep(2)
+
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
+        self.clear_download_directory()
+        self.find_by_xpath(AccountsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        time.sleep(2)
+        return self.is_pdf_contains_value(value)

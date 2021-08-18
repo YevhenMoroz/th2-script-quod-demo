@@ -5,9 +5,13 @@ from datetime import timedelta
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_1740 import QAP_1740
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2182 import QAP_2182
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2195 import QAP_2195
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2196 import QAP_2196
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2197 import QAP_2197
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_2165
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_2168
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2203 import QAP_2203
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2461 import QAP_2461
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2474 import QAP_2474
+
 
 from custom import basic_custom_actions as bca
 
@@ -22,9 +26,14 @@ class RunClientsAccounts:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_2182(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2197(self.web_driver_container, self.second_lvl_id).run()
             QAP_1740(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2182(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2195(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2196(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2197(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2203(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2461(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2474(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

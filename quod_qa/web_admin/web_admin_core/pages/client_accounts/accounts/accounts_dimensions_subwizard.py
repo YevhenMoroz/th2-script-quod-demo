@@ -79,3 +79,6 @@ class AccountsDimensionsSubWizard(CommonPage):
 
     def click_discard_entity_button(self):
         self.find_by_xpath(AccountsConstants.DIMENSIONS_DISCARD_ENTITY_BUTTON_XPATH).click()
+
+    def click_on_plus(self):
+        self.find_by_xpath(AccountsConstants.DIMENSIONS_PLUS_BUTTON_XPATH).click()
