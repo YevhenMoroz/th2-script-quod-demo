@@ -29,12 +29,12 @@ price = 20
 tif_day = 0
 tif_gtc = 1
 order_type = 2
+currency = 'EUR'
 
 #venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '734'
 s_trqx = '3416'
 
