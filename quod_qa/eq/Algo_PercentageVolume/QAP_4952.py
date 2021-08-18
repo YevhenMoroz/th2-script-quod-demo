@@ -17,6 +17,17 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+
+#algo param
+percentage = 10
+aggressivity = 1
+
+#order param
 qty = 500
 child_ioc_qty = 200
 tick = 0.005 
@@ -26,28 +37,20 @@ price_25 = 25
 price_30 = 30
 mkd = 100
 ltq = 200
-percentage = 10
-aggressivity = 1
 child_ltq_qty = 23
 child_mkd_qty = 12
 #child_ltq_qty = round (ltq * percentage / (100 - percentage))   #23
 #child_mkd_qty = round (mkd * percentage / (100 - percentage)) #12
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
 side = 1
 tif_day = 0
 tif_ioc = 3
+order_type = 2
+currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '1015'
 
 case_name = os.path.basename(__file__)
