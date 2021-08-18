@@ -1,24 +1,16 @@
 import logging
-import random
 from pathlib import Path
-
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, ActionsRatesTile,\
                                                       PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
-    ModifyOrderDetails, ModifyFXOrderDetails, ReleaseFXOrderDetails
-from win_gui_modules.order_ticket import FXOrderDetails, OrderTicketDetails, ExtractFxOrderTicketValuesRequest
+from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
-                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
-                                                     ExtractRatesTileTableValuesRequest)
 
 
 class CheckClass:
