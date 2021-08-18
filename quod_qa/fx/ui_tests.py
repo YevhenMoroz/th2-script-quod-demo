@@ -877,7 +877,7 @@ def execute(report_id, session_id):
     # endregion
 
     try:
-
+        pass
         # region FE workspace ↓
         # export_layout(base_request, option_service)
         # import_layout(base_request, option_service)
@@ -936,8 +936,8 @@ def execute(report_id, session_id):
         # print('Deselecting')
         # deselect_rows(base_tile_details,cp_service)
         # row = 2
-        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
-        # set_fx_order_ticket_value(base_request,order_ticket_service)
+        #  open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
+        set_fx_order_ticket_value(base_request,order_ticket_service)
         # for i in range(0, 10):
         # for j in range(100,110):
         #     print(j,end=" ")

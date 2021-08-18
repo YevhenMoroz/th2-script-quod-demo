@@ -184,14 +184,13 @@ def execute(report_id, session_id):
 
         use_default(base_details, cp_service)
 
-    except Exception:
+    except Exception as ex:
         logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id, body=f'{ex.args}\n{ex}\n{type(ex)}')
     finally:
         try:
             # Close tiles
             call(ar_service.closeRatesTile, base_details.build())
             call(cp_service.closeRatesTile, base_details.build())
-
         except Exception:
             logging.error("Error execution", exc_info=True)

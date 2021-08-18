@@ -48,7 +48,7 @@ qty = '2000000'
 api = Stubs.api_service
 ttl_default = 120
 ttl_null = None
-ttl_test = 140
+ttl_test = 300
 
 def set_send_hedge_order(case_id, ttl):
     modify_params = {
