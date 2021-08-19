@@ -101,7 +101,7 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
-    base_tile_data = BaseTileData(base=base_request)
+    base_tile_data = BaseTileData(base=base_request, )
     base_tile_details = BaseTileDetails(base=base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service

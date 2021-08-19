@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_esp import QAP_2825, QAP_2555, QAP_2038, QAP_1599, QAP_1518, QAP_2034, QAP_2075, \
     QAP_1601, QAP_2039, QAP_2035, QAP_1418, QAP_2556, QAP_2117, QAP_2855, QAP_3563, QAP_2069, QAP_2587, \
     QAP_2796, QAP_1536, QAP_2037, QAP_2072, QAP_2523, QAP_3045, QAP_1511, QAP_1589, QAP_4794, QAP_1560
-from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055, QAP_4748
+from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2055, QAP_4748, QAP_2958, QAP_4777
 from quod_qa.fx.fx_taker_esp import QAP_4156, QAP_833, QAP_1115, QAP_110, QAP_231, QAP_3042, QAP_3364, QAP_105, QAP_3742, \
     QAP_4673, QAP_4677, QAP_1591, QAP_4768
 from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
@@ -14,7 +14,7 @@ from quod_qa.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, Q
     QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, QAP_850, QAP_982, \
     QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, \
     QAP_3589, QAP_575, QAP_592
-from quod_qa.fx.fx_mm_autohedging import QAP_2113, QAP_2250, QAP_2290, QAP_2252
+from quod_qa.fx.fx_mm_autohedging import QAP_2113, QAP_2250, QAP_2290, QAP_2252, QAP_2251
 from quod_qa.fx import MyTest, Test, ui_tests
 from rule_management import RuleManager
 from stubs import Stubs
@@ -71,8 +71,12 @@ def test_run():
         # QAP_2556.execute(report_id, session_id)
         # QAP_4768.execute(report_id, session_id)
         # QAP_4794.execute(report_id, session_id)
-        QAP_4748.execute(report_id, session_id)
+        # QAP_4748.execute(report_id, session_id)
+        # QAP_2958.execute(report_id, session_id)
+        # QAP_2251.execute(report_id, session_id)
+        QAP_4777.execute(report_id, session_id)
         # MyTest.execute(report_id, session_id)
+        # ui_tests.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

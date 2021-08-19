@@ -27,7 +27,7 @@ from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRate
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 
@@ -37,7 +37,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 client = 'Osmium1'
 client_tier = 'Osmium'
-account = 'QUOD3_1'
+account_osmium = 'Osmium1_1'
+account_quod = 'QUOD3_1'
 symbol = 'EUR/USD'
 instrument_tier = 'EUR/USD-SPOT'
 status_open = 'Open'
@@ -45,12 +46,14 @@ row = 2
 SELL = RatesTileTableOrdSide.SELL
 BUY = RatesTileTableOrdSide.BUY
 qty = '2000000'
+default_strategy_id = 400018
+strategy_null = None
+default_strategy_name = 'test'
+strategy_null_name = 'Hedging_Test'
 api = Stubs.api_service
-ttl_default = 120
-ttl_null = None
-ttl_test = 300
 
-def set_send_hedge_order(case_id, ttl):
+
+def set_send_hedge_order(case_id, strategy):
     modify_params = {
         "autoHedgerName": "OsmiumAH",
         "hedgeAccountGroupID": "QUOD3",
@@ -70,12 +73,12 @@ def set_send_hedge_order(case_id, ttl):
                 "crossCurrPairHedgingPolicy": "DIR",
                 "useSameLongShortQty": "true",
                 "hedgingStrategy": "POS",
-                "algoPolicyID": 400018,
+                "algoPolicyID": strategy,
                 "shortLowerQty": 0,
                 "shortUpperQty": 0,
                 "timeInForce": "DAY",
                 "sendHedgeOrders": 'true',
-                "exposureDuration": ttl,
+                "exposureDuration": 120,
                 "hedgeOrderDestination": "EXT"
             }
 
@@ -108,73 +111,72 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     return response["dealingpositions.position"].replace(",", "")
 
 
-def compare_position(even_name, case_id, expected_pos, actual_pos):
+def compare_position(even_name, case_id,
+                     expected_pos_acc1, actual_pos_acc1, expected_pos_acc2, actual_pos_acc2,
+                     acc1_name, acc2_name):
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values("Quote position", str(expected_pos), str(actual_pos))
+    verifier.compare_values(f"Quote position {acc1_name}", str(expected_pos_acc1), str(actual_pos_acc1))
+    verifier.compare_values(f"Quote position {acc2_name}", str(expected_pos_acc2), str(actual_pos_acc2))
     verifier.verify()
 
 
-def check_order_book_ao(even_name, case_id, base_request, act_ob):
+def check_order_book_ao(even_name, case_id, base_request, act_ob, strategy_name):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', 'Sts', 'Open'])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger'])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    order_TIF = ExtractionDetail('orderBook.TIF', 'TIF')
-    order_sts = ExtractionDetail('orderBook.Sts', 'Sts')
-    order_owner = ExtractionDetail('orderBook.Orig', 'Orig')
+    order_strategy = ExtractionDetail('orderBook.AlgoStrategy', 'Strategy')
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_TIF, order_sts,
-                                                                                 order_owner])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_strategy])))
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values('TIF', 'Day', response[order_TIF.name])
-    verifier.compare_values('Sts', 'Open', response[order_sts.name])
-    verifier.compare_values("Orig", 'AutoHedger', response[order_owner.name])
+    verifier.compare_values('Strategy', strategy_name, response[order_strategy.name])
     verifier.verify()
     ord_id = response[order_id.name]
     return ord_id
 
 
-def check_order_book_after_ttl_expire(case_id, case_base_request, act_ob, ord_id):
+def check_order_book_after_strategy_change(case_id, case_base_request, act_ob, ord_id, strategy_name):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(case_base_request)
-    ob.set_filter(["Order ID", ord_id])
+    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', 'Sts', 'Open'])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    order_sts = ExtractionDetail('orderBook.Sts', 'Sts')
+    order_strategy = ExtractionDetail('orderBook.AlgoStrategy', 'Strategy')
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_sts])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_strategy])))
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
-    verifier.set_event_name('Checking order after ttl expire')
-    verifier.compare_values('ID', ord_id, response[order_id.name])
-    verifier.compare_values('Order Sts', 'Cancelled', response[order_sts.name])
+    verifier.set_event_name('Checking order strategy changed')
+    verifier.compare_values('ID', ord_id, response[order_id.name], VerificationMethod.NOT_EQUALS)
+    verifier.compare_values('Strategy Name', strategy_name, response[order_strategy.name])
     verifier.verify()
+    return response[order_id.name]
 
 
-def check_order_book_new_ttl_applied(case_id, base_request, act_ob, ord_id):
+def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", ord_id])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger'])
+    status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    order_sts = ExtractionDetail('orderBook.Sts', 'Sts')
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_sts])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[status, order_id])))
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
-    verifier.set_event_name('Checking order with new ttl')
+    verifier.set_event_name('Checking that there is no new orders')
+    verifier.compare_values('Sts', 'Cancelled', response[status.name])
     verifier.compare_values('ID', ord_id, response[order_id.name])
-    verifier.compare_values('Order Sts', 'Open', response[order_sts.name])
     verifier.verify()
 
 
@@ -191,11 +193,14 @@ def open_ot_by_doubleclick_row(btd, cp_service, _row, _side):
 
 def place_order(base_request, service, _client):
     place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_client(_client)
+    place_request.set_client(client)
     call(service.placeRatesTileOrder, place_request.build())
 
 
 def execute(report_id, session_id):
+    """
+    This test requires orders to be filled
+    """
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     case_base_request = get_base_request(session_id, case_id)
@@ -206,30 +211,38 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     try:
         # Step 1
-        expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-        set_send_hedge_order(case_id, ttl_null)
+        set_send_hedge_order(case_id, strategy_null)
+        expecting_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
+        expecting_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         call(cp_service.createRatesTile, base_details.build())
         modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
         place_order(base_details, cp_service, client)
         # Step 2
-        ord_id = check_order_book_ao('Checking placed order', case_id, case_base_request, ob_act)
-        time.sleep(40)
-        check_order_book_after_ttl_expire(case_id, case_base_request, ob_act, ord_id)
+        ord_id = check_order_book_ao('Checking placed order with null strategy ID',
+                                     case_id, case_base_request, ob_act, strategy_null_name)
         # Step 3
-        set_send_hedge_order(case_id, ttl_test)
-        ord_id = check_order_book_ao('Extracting order ID for cancelling', case_id, case_base_request, ob_act)
-        cancel_order(ob_act, case_base_request, ord_id)
-        ord_id = check_order_book_ao('Extracting order ID with new TTL', case_id, case_base_request, ob_act)
-        time.sleep(60)
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
+        place_order(base_details, cp_service, client)
+        set_send_hedge_order(case_id, default_strategy_id)
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
+        place_order(base_details, cp_service, client)
+        # cancel_order(ob_act, case_base_request, ord_id)
+        ord_id = check_order_book_ao('Checking placed order with default strategy ID',
+                                     case_id, case_base_request, ob_act, default_strategy_name)
         # Step 4
-        check_order_book_new_ttl_applied(case_id, case_base_request, ob_act, ord_id)
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
         place_order(base_details, cp_service, client)
         cancel_order(ob_act, case_base_request, ord_id)
-        # Step 5
-        actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-        compare_position('Checking positions', case_id, expecting_pos, actual_pos)
+        check_order_book_no_new_order(case_id, case_base_request, ob_act, ord_id)
+        actual_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
+        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        compare_position(
+            'Checking positions', case_id,
+            expecting_pos_quod, actual_pos_quod,
+            expecting_pos_osmium, actual_pos_osmium,
+            account_osmium, account_quod
+        )
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
@@ -238,6 +251,6 @@ def execute(report_id, session_id):
             # Close tile
             call(cp_service.closeRatesTile, base_details.build())
             # Set default parameters
-            set_send_hedge_order(case_id, ttl_default)
+            set_send_hedge_order(case_id, default_strategy_id)
         except Exception:
             logging.error("Error execution", exc_info=True)

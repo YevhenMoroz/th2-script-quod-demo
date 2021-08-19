@@ -506,11 +506,11 @@ def extract_di_panel(base_request, dealer_intervention_service):
     extraction_request = RFQExtractionDetailsRequest(base=base_request)
     extraction_request.set_extraction_id("ExtractionId")
     # extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
-    # extraction_request.extract_price_spread("rfqDetails.priceSpread")
-    # extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    # extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
-    # extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-    # extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
+    extraction_request.extract_price_spread("rfqDetails.priceSpread")
+    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
+    extraction_request.extract_bid_price_large("rfqDetails.bidPriceLarge")
+    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    extraction_request.extract_bid_price_pips("rfqDetails.bidPricePips")
     # extraction_request.extract_near_leg_quantity("rfqDetails.nerLegQty")
     # # extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
     # extraction_request.extract_request_state("rfqDetails.requestState")
@@ -545,7 +545,7 @@ def extract_di_panel(base_request, dealer_intervention_service):
     # extraction_request.extract_is_bid_price_pips_enabled(f'{dmi_rfq}.is_bid_price_pips_enabled')
     # extraction_request.extract_is_ask_price_pips_enabled(f'{dmi_rfq}.is_ask_price_pips_enabled')
     # extraction_request.extract_is_near_leg_quantity_enabled(f'{dmi_rfq}.is_near_leg_quantity_enabled')
-    extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
+    # extraction_request.extract_is_far_leg_quantity_enabled(f'{dmi_rfq}.is_far_leg_quantity_enabled')
     # extraction_request.extract_is_price_spread_enabled(f'{dmi_rfq}.is_price_spread_enabled')
     # extraction_request.extract_is_bid_price_large_enabled(f'{dmi_rfq}.is_bid_price_large_enabled')
     # extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
@@ -921,7 +921,7 @@ def execute(report_id, session_id):
 
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
-        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # set_fx_order_ticket_value(base_request,order_ticket_service)
         # extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
@@ -937,7 +937,7 @@ def execute(report_id, session_id):
         # deselect_rows(base_tile_details,cp_service)
         # row = 2
         #  open_ot_by_doubleclick_row(base_tile_data, cp_service, row)
-        set_fx_order_ticket_value(base_request,order_ticket_service)
+        # set_fx_order_ticket_value(base_request,order_ticket_service)
         # for i in range(0, 10):
         # for j in range(100,110):
         #     print(j,end=" ")
@@ -957,7 +957,7 @@ def execute(report_id, session_id):
         # endregion
 
         # region Dealer Intervention
-        # extract_di_panel(base_request, dealer_interventions_service)
+        extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # close_dmi_window(base_request, dealer_interventions_service)
         # endregion
