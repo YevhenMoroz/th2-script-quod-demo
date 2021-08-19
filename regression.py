@@ -1,4 +1,4 @@
-from regression_cycle import fx_regression, algo_regression, eq_regression
+from regression_cycle import fx_regression, algo_regression, eq_regression, web_admin_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -7,7 +7,7 @@ from datetime import datetime
 logging.basicConfig(format='%(asctime)s - %(message)s')
 
 
-def test_run(name, algo=True, equity=True, forex=True):
+def test_run(name, algo=True, equity=True, forex=True, web_admin=True):
     report_id = bca.create_event(name + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     try:
         start = datetime.now()
@@ -19,6 +19,8 @@ def test_run(name, algo=True, equity=True, forex=True):
             eq_regression.test_run(report_id)
         if forex:
             fx_regression.test_run(report_id)
+        if web_admin:
+            web_admin_regression.test_run(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
     except Exception:
