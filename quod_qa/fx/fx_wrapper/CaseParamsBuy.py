@@ -8,7 +8,7 @@ class CaseParamsBuy():
 
     connectivity = 'fix-fh-314-luna'
     # simulator = Stubs.test_sim
-    simulator = Stubs.simulator
+    simulator = Stubs.test_sim
     market_d_params_spot=None
     market_d_params_fwd=None
 
