@@ -1,8 +1,8 @@
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 
-from .order_ticket import OrderTicketDetails
-from th2_grpc_act_gui_quod import order_book_pb2
+from .order_ticket import OrderTicketDetails, FXOrderDetails
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2
 from dataclasses import dataclass
 
 
@@ -115,27 +115,27 @@ class CancelFXOrderDetails:
         return self.cancel_order_details
 
 
-# class ReleaseFXOrderDetails:
-#     def __init__(self, base_request):
-#         self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-#         self.release_order_details.base.CopyFrom(base_request)
-#
-#     def set_filter(self, filter_list: list):
-#         length = len(filter_list)
-#         i = 0
-#         while i < length:
-#             self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
-#             i += 2
-#
-#     def set_selected_row_count(self, selected_row_count: int):
-#         self.release_order_details.multipleRowSelection = True
-#         self.release_order_details.selectedRowCount = selected_row_count
-#
-#     def set_order_details(self, order_details: FXOrderDetails):
-#         self.release_order_details.orderDetails.CopyFrom(order_details.build())
-#
-#     def build(self):
-#         return self.release_order_details
+class ReleaseFXOrderDetails:
+    def __init__(self, base_request):
+        self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+        self.release_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.release_order_details.multipleRowSelection = True
+        self.release_order_details.selectedRowCount = selected_row_count
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.release_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.release_order_details
 
 
 @dataclass
@@ -517,7 +517,6 @@ class ManualCrossDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-
     def set_filter(self, table_filter: dict):
         self._request.filter.update(table_filter)
 
@@ -625,7 +624,7 @@ class FXOrderInfo:
 
     def add_single_order_action(self, action):
         order_action = order_book_fx_pb2.FXOrderAction()
-        if   isinstance(action, ExtractionAction):
+        if isinstance(action, ExtractionAction):
             order_action.extractionAction.CopyFrom(action.build())
         else:
             raise Exception("Unsupported action type")
@@ -633,3 +632,102 @@ class FXOrderInfo:
 
     def build(self):
         return self.order_info
+
+
+# class QuoteRequestDetails:
+#     def __init__(self):
+#         self.base = None
+#         self.extractionId = None
+#         self.quote_request_details = ar_operations_pb2.QuoteRequestDetailsInfo()
+#
+#     @staticmethod
+#     def create(order_info_list: list = None, info=None):
+#         order_details = QuoteRequestDetails()
+#
+#         if order_info_list is not None:
+#             for i in order_info_list:
+#                 order_details.add_single_order_info(i)
+#
+#         if info is not None:
+#             order_details.add_single_order_info(info)
+#
+#         return order_details
+#
+#     def set_extraction_id(self, extraction_id: str):
+#         self.extractionId = extraction_id
+#
+#     def set_filter(self, filter_list: list):
+#         length = len(filter_list)
+#         i = 0
+#         while i < length:
+#             self.quote_request_details.filter[filter_list[i]] = filter_list[i + 1]
+#             i += 2
+#
+#     def set_order_info(self, order_info_list: list):
+#         for quoteRequestInfo in order_info_list:
+#             self.quote_request_details.quoteRequestInfo.append(quoteRequestInfo.build())
+#
+#     def add_single_order_info(self, quoteRequestInfo):
+#         self.quote_request_details.quoteRequestInfo.append(quoteRequestInfo.build())
+#
+#     def set_default_params(self, base_request):
+#         self.base = base_request
+#
+#     def extract_length(self, count_id: str):
+#         self.quote_request_details.extractCount = True
+#         self.quote_request_details.countId = count_id
+#
+#     def request(self):
+#         request = ar_operations_pb2.QuoteRequestDetailsRequest()
+#         request.base.CopyFrom(self.base)
+#         request.extractionId = self.extractionId
+#         request.orderDetails.CopyFrom(self.quote_request_details)
+#         return request
+#
+#     def details(self):
+#         return self.quote_request_details
+
+
+# class QuoteRequestInfo:
+#     def __init__(self):
+#         self.order_info = ar_operations_pb2.QuoteRequestInfo()
+#
+#     @staticmethod
+#     def create(action=None, actions: list = None, sub_order_details: QuoteRequestDetails = None):
+#         quote_request_info = QuoteRequestInfo()
+#         if action is not None:
+#             quote_request_info.add_single_order_action(action)
+#
+#         if actions is not None:
+#             quote_request_info.add_order_actions(actions)
+#
+#         if sub_order_details is not None:
+#             quote_request_info.set_sub_orders_details(sub_order_details)
+#
+#         return quote_request_info
+#
+#     def set_sub_orders_details(self, sub_order_details: QuoteRequestDetails):
+#         self.order_info.subOrders.CopyFrom(sub_order_details.details())
+#
+#     def set_number(self, number: int):
+#         self.order_info.number = number
+#
+#     def add_order_actions(self, actions: list):
+#         for action in actions:
+#             self.add_single_order_action(action)
+#
+#     def add_single_order_action(self, action):
+#         quote_request_action = ar_operations_pb2.QuoteRequestAction()
+#         if isinstance(action, ContextActionsQuoteBook):
+#             quote_request_action.contextActionsQuoteBook = action.value
+#         else:
+#             raise Exception("Unsupported action type")
+#         self.order_info.quoteRequestActions.append(quote_request_action)
+#
+#     def build(self):
+#         return self.order_info
+# #
+#
+# class ContextActionsQuoteBook(Enum):
+#     reject = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.REJECT
+#     unassign = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.UNASSIGN
