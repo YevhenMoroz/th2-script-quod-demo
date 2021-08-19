@@ -18,17 +18,20 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 qty = 500
-child_ioc_qty = 70
-ask_qty = qty - child_ioc_qty   #430
+child_ioc_qty = 200
 tick = 0.005 
 price_20 = 20
 price = 19.995
-price_1 = 19.99      
-price_2 = 19.985    
+price_25 = 25 
+price_30 = 30
+mkd = 100
+ltq = 200
 percentage = 10
 aggressivity = 1
-child_mkd_qty = round (qty * percentage / (100 - percentage))   #56
-child_ltq_qty = round (child_ioc_qty * percentage / (100 - percentage)) #8
+child_ltq_qty = 23
+child_mkd_qty = 12
+#child_ltq_qty = round (ltq * percentage / (100 - percentage))   #23
+#child_mkd_qty = round (mkd * percentage / (100 - percentage)) #12
 text_pn = 'Pending New status'
 text_n = 'New status'
 text_ocrr = 'OCRRRule'
@@ -59,11 +62,16 @@ instrument = {
             'SecurityExchange': 'XPAR'
         }
 
+trigger = {
+            'TriggerType': 4,
+            'TriggerPrice': price_30
+        }
+
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price, child_ioc_qty, True, connectivity_fh, s_par, price, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx="19.99", MDEntrySize="500", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="19.995", MDEntrySize="430", MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
-    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_1)
-    nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_2)
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_30, child_ioc_qty, True, connectivity_fh, s_par,  price_30, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx="20", MDEntrySize="100", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="0", MDEntrySize="0", MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
+    nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
     return [nos_ioc_md_rule, nos_rule1, nos_rule2, ocr_rule]
 
@@ -123,14 +131,14 @@ def execute(report_id):
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': price_1,
-                'MDEntrySize': qty,
+                'MDEntryPx': price_20,
+                'MDEntrySize': mkd,
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': price,
-                'MDEntrySize': qty,
+                'MDEntryPx': price_30,
+                'MDEntrySize': mkd,
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -140,8 +148,8 @@ def execute(report_id):
             {
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
-                'MDEntryPx': price_20,
-                'MDEntrySize': 100,
+                'MDEntryPx': price_25,
+                'MDEntrySize': ltq,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
             }
@@ -162,10 +170,11 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Price': price_20,
+            'Price': price_30,
             'Currency': currency,
             'TargetStrategy': 2,
             'ExDestination': ex_destination_1,
+            'TriggeringInstruction': trigger,
             'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
@@ -180,17 +189,17 @@ def execute(report_id):
                 {
                     'StrategyParameterName': 'MaxWouldShares',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '70'
+                    'StrategyParameterValue': '200'
                 },
                 {
                     'StrategyParameterName': 'WouldPriceReference',
                     'StrategyParameterType': '14',
-                    'StrategyParameterValue': 'LTP'
+                    'StrategyParameterValue': 'MAN'
                 },
                 {
                     'StrategyParameterName': 'WouldPriceOffset',
                     'StrategyParameterType': '1',
-                    'StrategyParameterValue': '-1'
+                    'StrategyParameterValue': '0'
                 }
             ]
         }
@@ -203,7 +212,7 @@ def execute(report_id):
             {
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
-                'MDEntryPx': price,
+                'MDEntryPx': price_25,
                 'MDEntrySize': child_ioc_qty,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
@@ -214,7 +223,7 @@ def execute(report_id):
             {
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
-                'MDEntryPx': price,
+                'MDEntryPx': price_25,
                 'MDEntrySize': child_ioc_qty,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                 'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
@@ -222,7 +231,7 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data4)
 
-        time.sleep(1)
+        time.sleep(3)
 
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),
@@ -255,7 +264,7 @@ def execute(report_id):
             'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'Price': price_20,
+            'Price': price_30,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
@@ -270,6 +279,7 @@ def execute(report_id):
             SettlDate='*',
             SettlType = '*',
             ExecRestatementReason='*',
+            TriggeringInstruction=trigger
         )
         er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
@@ -286,7 +296,7 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
             'Side': side,
-            'Price': price,
+            'Price': price_30,
             'SettlDate': '*',
             'Currency': currency,
             'TimeInForce': tif_ioc,
@@ -310,7 +320,7 @@ def execute(report_id):
             'Side': side,
             'AvgPx': '0',
             'OrdStatus': 'A',
-            'Price': price,
+            'Price': price_30,
             'TimeInForce': tif_ioc,
             'ExecType': "A",
             'ExDestination': ex_destination_1,
@@ -331,7 +341,7 @@ def execute(report_id):
         er_5 = {
             'Account': account,
             'CumQty': child_ioc_qty,
-            'LastPx': price,
+            'LastPx': price_30,
             'ExecID': '*',
             'OrderQty': child_ioc_qty,
             'OrdType': order_type,
@@ -344,7 +354,7 @@ def execute(report_id):
             'Side': side,
             'AvgPx': '*',
             'OrdStatus': '2',
-            'Price': price,
+            'Price': price_30,
             'Currency': currency,
             'TimeInForce': tif_ioc,
             'Instrument': '*',
@@ -367,7 +377,7 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
             'Side': side,
-            'Price': price_1,
+            'Price': price_20,
             'SettlDate': '*',
             'Currency': currency,
             'TimeInForce': tif_day,
@@ -390,7 +400,7 @@ def execute(report_id):
             'Side': side,
             'AvgPx': '0',
             'OrdStatus': 'A',
-            'Price': price_1,
+            'Price': price_20,
             'TimeInForce': new_order_single_params['TimeInForce'],
             'ExecType': "A",
             'ExDestination': ex_destination_1,
@@ -421,7 +431,7 @@ def execute(report_id):
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'TransactTime': '*',
             'Side': side,
-            'Price': price_2,
+            'Price': price,
             'SettlDate': '*',
             'Currency': currency,
             'TimeInForce': tif_day,
@@ -444,7 +454,7 @@ def execute(report_id):
             'Side': side,
             'AvgPx': '0',
             'OrdStatus': 'A',
-            'Price': price_2,
+            'Price': price,
             'TimeInForce': new_order_single_params['TimeInForce'],
             'ExecType': "A",
             'ExDestination': ex_destination_1,
@@ -559,7 +569,8 @@ def execute(report_id):
         'QtyType': '0',
         'ExecRestatementReason': '*',
         'SettlType': '*',
-        'Price': price_20,
+        'TriggeringInstruction': trigger,
+        'Price': price_30,
         'TargetStrategy': new_order_single_params['TargetStrategy'],
         'Instrument': instrument,
         'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
