@@ -28,5 +28,5 @@ def test_run(name, algo=True, equity=True, forex=True, web_admin=True):
 
 
 if __name__ == '__main__':
-    test_run('5.1.137.150|Regression|', algo=False, equity=False)
+    test_run('5.1.137.150|Regression|', algo=False, equity=False, forex=False, web_admin=False)
     Stubs.factory.close()
