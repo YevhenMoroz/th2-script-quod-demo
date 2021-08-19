@@ -130,7 +130,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, strategy_name)
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values('Sts', strategy_name, response[order_strategy.name])
+    verifier.compare_values('Strategy', strategy_name, response[order_strategy.name])
     verifier.verify()
     ord_id = response[order_id.name]
     return ord_id
