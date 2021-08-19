@@ -14,7 +14,7 @@ def execute(report_id):
 
 
     MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="953",
+        symbol="704",
         connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
 

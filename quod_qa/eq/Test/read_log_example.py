@@ -20,7 +20,7 @@ def execute(report_id):
         verifier = Stubs.verifier
         checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(report_id))
         checkpoint_id1 = checkpoint_response1.checkpoint
-        # time.sleep(120)
+        time.sleep(120)
 
         # 5XRAA7DXZg14IOkuNrAfsg = VETO.[PARIS]
 
@@ -64,7 +64,7 @@ def execute(report_id):
         }
         verifier.submitCheckRule(
             bca.create_check_rule(
-                "Readlog NewOrderSingle Received",
+                "Readlog check OrderSubmit",
                 bca.filter_to_grpc("OrderSubmit", readlog_nos_params),
                 checkpoint_id1,
                 'log305-ors',
