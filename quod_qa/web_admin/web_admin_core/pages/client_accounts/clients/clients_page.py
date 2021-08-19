@@ -59,3 +59,6 @@ class ClientsPage(CommonPage):
 
     def set_client_group(self, value):
         self.set_text_by_xpath(ClientsConstants.MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH, value)
+
+    def get_clearing_account_type(self):
+        return self.find_by_xpath(ClientsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH).text
