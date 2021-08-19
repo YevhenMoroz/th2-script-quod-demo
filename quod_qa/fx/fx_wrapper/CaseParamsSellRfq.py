@@ -271,6 +271,8 @@ class CaseParamsSellRfq:
             'OrdType': 'D',
             'TransactTime': (datetime.utcnow().isoformat()),
             'OrderQty': self.orderqty,
+            'Currency': self.currency,
+            'SettlCurrency': self.settlcurrency,
             'Price': '*',
             'TimeInForce': self.timeinforce,
             'NoLegs': [
@@ -332,7 +334,8 @@ class CaseParamsSellRfq:
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'LeavesQty': self.orderqty
+            'LeavesQty': self.orderqty,
+
         }
         self.order_exec_report = def_order_exec_report
 
@@ -340,55 +343,78 @@ class CaseParamsSellRfq:
 
     def set_order_exec_rep_params_swap(self):
         def_order_exec_report = {
-            'Side': '*',
+            'Account': self.account,
+            'Side': self.leg2_side,
             'AvgPx': '*',
-            'SettlCurrency': '*',
-            'HandlInst': '*',
-            'LeavesQty': '*',
+            'SettlCurrency': self.settlcurrency,
+            'HandlInst': '1',
+            'LeavesQty': '0',
+            'LastSwapPoints': '*',
+            'LastSpotRate': '*',
             'OrdStatus': '2',
+            'TradeDate': tsd.today(),
+            'SpotSettlDate': tsd.spo(),
+            'SettlType': self.settltype,
             'ExecType': 'F',
-            'Currency': '*',
+            'Currency': self.currency,
             'ExecID': '*',
             'OrderID': '*',
-            'TimeInForce': '*',
-            'OrderQty': '*',
+            'TimeInForce': self.timeinforce,
+            'OrderQty': self.orderqty,
             'LastQty': '*',
             'Instrument': {
-                'Symbol': '*',
-                'SecurityExchange': '*',
-                'SecurityID': '*',
-                'Product': '*',
-                'SecurityIDSource': '*',
+                'Symbol': self.symbol,
+                'SecurityType': 'FXSWAP',
+                'SecurityExchange': 'XQFX',
+                'SecurityID': self.symbol,
+                'Product': '4',
+                'SecurityIDSource': '8',
             },
             'NoParty': [{
                 'PartyID': '*',
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'CumQty': '*',
+            'CumQty': self.orderqty,
             'TransactTime': '*',
             'LastPx': '*',
-            'OrdType': '*',
-            'ClOrdID': '*',
-            'OrderCapacity': '*',
-            'QtyType': '*',
+            'OrdType': 'D',
+            'ClOrdID': self.clordid,
+            'OrderCapacity': 'A',
+            'QtyType': '0',
             'Price': '*',
+            'ExDestination': '*',
+            'GrossTradeAmt': '*',
             'NoLegs': [
                 {
-                    'LegSettlDate': '*',
-                    'LegSettlType': '*',
+                    'LegSide': self.leg1_side,
+                    'LegLastQty': self.leg1_ordqty,
+                    'LegOrderQty': self.leg1_ordqty,
+                    'LegLastPx': '*',
+                    'LegSettlDate': self.leg1_settldate,
+                    'LegSettlType': self.leg1_settltype,
                     'InstrumentLeg': {
-                        'LegSymbol': '*',
-                        'LegSecurityType': '*',
+                        'LegSymbol': self.leg1_symbol,
+                        'LegSecurityType': self.leg1_securitytype,
+                        'LegSecurityID': self.leg1_symbol,
+                        'LegSecurityExchange': '*',
+                        'LegSecurityIDSource': '*',
                     },
                 },
                 {
-                    'LegSettlType': '*',
-                    'LegSettlDate': '*',
+                    'LegSide': self.leg2_side,
+                    'LegLastQty': self.leg2_ordqty,
+                    'LegOrderQty': self.leg2_ordqty,
+                    'LegLastPx': '*',
+                    'LegSettlDate': self.leg2_settldate,
+                    'LegSettlType': self.leg2_settltype,
                     'InstrumentLeg': {
-                        'LegSymbol': '*',
-                        'LegSecurityType': '*',
-                    }
+                        'LegSymbol': self.leg2_symbol,
+                        'LegSecurityType': self.leg2_securitytype,
+                        'LegSecurityID': self.leg2_symbol,
+                        'LegSecurityExchange': '*',
+                        'LegSecurityIDSource': '*',
+                    },
                 },
             ]
         }
@@ -460,18 +486,12 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
-
-
-
-
-
-
+        self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
 
     # Prepare  order rejected report
     def prepare_order_rejected_report_rfq(self):
         self.set_order_exec_rep_params()
         self.order_rejected = self.order_exec_report
-        # self.order_rejected['Account'] = self.client
         self.order_rejected['OrdStatus'] = '8'
         self.order_rejected['ExecType'] = '8'
         self.order_rejected['ExecRestatementReason'] = '4'
@@ -532,27 +552,52 @@ class CaseParamsSellRfq:
             self.quote_params['Instrument'].pop('Product')
 
     def prepare_quote_report_swap(self):
+        # check difference between far and near leg to set offer_size = difference and bid_size = difference for UnEven swap (if we have float with value after dot != 0 we take whole value )
+        if self.leg2_ordqty != self.leg1_ordqty:
+            size = float(self.leg2_ordqty) - float(self.leg1_ordqty)
+            if str(size).split('.')[1] == '0':
+                self.quote_params_swap['OfferSize'] = str(size).split('.')[0]
+                self.quote_params_swap['BidSize'] = str(size).split('.')[0]
+            else:
+                self.quote_params_swap['OfferSize'] = str(size)
+                self.quote_params_swap['BidSize'] = str(size)
+
+        # check if far leg = BUY => delete BID part from report and points from one of the legs
         if self.leg2_side == '1':
             self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
             self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '1':
-                self.quote_params_swap.pop('BidSwapPoints')
-                self.quote_params_swap.pop('BidSize')
-                self.quote_params_swap.pop('BidPx')
+                # Check if we send Currency 1 or Currency 2
+                if self.symbol.split('/')[0] == self.currency:
+                    self.quote_params_swap.pop('BidSwapPoints')
+                    self.quote_params_swap.pop('BidSize')
+                    self.quote_params_swap.pop('BidPx')
+                else:
+                    self.quote_params_swap.pop('OfferSwapPoints')
+                    self.quote_params_swap.pop('OfferSize')
+                    self.quote_params_swap.pop('OfferPx')
+
+        # check if far leg = SELL => delete Offer part from report and points from one of the legs
         if self.leg2_side == '2':
             self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
             self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '2':
-                self.quote_params_swap.pop('OfferSwapPoints')
-                self.quote_params_swap.pop('OfferSize')
-                self.quote_params_swap.pop('OfferPx')
+                # Check if we send Currency 1 or Currency 2
+                if self.symbol.split('/')[0] == self.currency:
+                    self.quote_params_swap.pop('OfferSwapPoints')
+                    self.quote_params_swap.pop('OfferSize')
+                    self.quote_params_swap.pop('OfferPx')
+                else:
+                    self.quote_params_swap.pop('BidSwapPoints')
+                    self.quote_params_swap.pop('BidSize')
+                    self.quote_params_swap.pop('BidPx')
+
         if self.side == '':
             self.quote_params_swap.pop('Side')
+        # Specific part only for NDS
         if self.securitytype == 'FXNDS':
             self.quote_params_swap.pop('ValidUntilTime')
-            self.quote_params_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate']='*'
-
-
+            self.quote_params_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate'] = '*'
 
     def prepare_quote_reject_report(self):
         self.quote_request_reject_params = {
@@ -569,8 +614,8 @@ class CaseParamsSellRfq:
                         'SecurityType': self.securitytype,
                         'Symbol': self.symbol,
                     },
-                    'QuoteType':'*',
+                    'QuoteType': '*',
                 }
-        ],
+            ],
             'Text': '*'
         }
