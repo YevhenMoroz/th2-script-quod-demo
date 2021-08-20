@@ -49,9 +49,18 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
 
     session_id = set_session_id()
-    start = datetime.now()
-    print(f'start time = {start}')
+    # rules = rule_creation()
     try:
+        start = datetime.now()
+        print(f'start time = {start}')
+        case_params = {
+            'case_id': bca.create_event_id(),
+            'TraderConnectivity': 'fix-ss-rfq-314-luna-standard',
+            'Account': 'Iridium1',
+            'SenderCompID': 'QUODFX_UAT',
+            'TargetCompID': 'QUOD9',
+        }
+
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
