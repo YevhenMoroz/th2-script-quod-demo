@@ -19,21 +19,13 @@ logger.setLevel(logging.INFO)
 instrument_spot = 'GBP/USD-Spot'
 instrument_forward = 'GBP/USD-2W'
 tier = 'Iridium1'
-
-
-class ModifyRFQ:
-    def __init__(self,
-                 near_tenor='Spot', far_tenor='2W',
-                 from_curr='GBP', to_curr='USD',
-                 client_tier='Iridium1', client='Iridium1',
-                 qty='300000000'):
-        self.near_tenor = near_tenor
-        self.far_tenor = far_tenor
-        self.from_curr = from_curr
-        self.to_curr = to_curr
-        self.client_tier = client_tier
-        self.client = client
-        self.qty = qty
+near_tenor='Spot'
+far_tenor='2W'
+from_curr='GBP'
+to_curr = 'USD'
+client_tier='Iridium1'
+client='Iridium1'
+qty='300000000'
 
 
 def create_or_get_pricing_tile(base_request, service):
@@ -67,15 +59,15 @@ def close_client_rfq_tile(cp_service, base_tile_data: BaseTileData):
     call(cp_service.closeClientRFQTile, base_tile_data)
 
 
-def modify_client_rfq_tile(cp_service, base_tile_data, modify_rfq: ModifyRFQ):
+def modify_client_rfq_tile(cp_service, base_tile_data):
     request = ModifyClientRFQTileRequest(data=base_tile_data)
-    request.change_client_tier(modify_rfq.client_tier)
-    request.set_from_curr(modify_rfq.from_curr)
-    request.set_to_curr(modify_rfq.to_curr)
-    request.change_near_tenor(modify_rfq.near_tenor)
-    request.change_far_tenor(modify_rfq.far_tenor)
-    request.change_near_leg_aty(modify_rfq.qty)
-    request.change_client(modify_rfq.client)
+    request.change_client_tier(client_tier)
+    request.set_from_curr(from_curr)
+    request.set_to_curr(to_curr)
+    request.change_near_tenor(near_tenor)
+    request.change_far_tenor(far_tenor)
+    request.change_near_leg_aty(qty)
+    request.change_client(client)
     call(cp_service.modifyRFQTile, request.build())
 
 
@@ -90,7 +82,7 @@ def send_client_rfq(cp_service, base_tile_data):
 
 
 def check_quote_request_b(base_request, service, case_id,
-                          qty='300000000',  status="Terminated", venue="QUODFX", quote_status='Filled'):
+                          status="Terminated", venue="QUODFX", quote_status='Filled'):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_filter(["Venue", venue, "User", "QA5", 'Status', status, 'Qty', qty])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
@@ -106,7 +98,7 @@ def check_quote_request_b(base_request, service, case_id,
     verifier.verify()
 
 
-def check_order_book(base_request, act_ob, venue='QUODFX', owner='QA5', qty='300000000', sts='Terminated'):
+def check_order_book(base_request, act_ob, venue='QUODFX', owner='QA5', sts='Terminated'):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
@@ -139,7 +131,6 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     pos_service = Stubs.act_fx_dealing_positions
     try:
-        modify_request = ModifyRFQ()
         create_or_get_pricing_tile(base_detail, cp_service)
         modify_rates_tile(base_detail, cp_service, instrument_spot, tier)
         create_or_get_pricing_tile(details_tile_spot, cp_service)
@@ -153,7 +144,7 @@ def execute(report_id, session_id):
         call(cp_service.closeRatesTile, details_tile_spot.build())
         call(cp_service.closeRatesTile, details_tile_forward.build())
         create_client_rfq_tile(cp_service, base_tile_data)
-        modify_client_rfq_tile(cp_service, base_tile_data, modify_request)
+        modify_client_rfq_tile(cp_service, base_tile_data)
         send_client_rfq(cp_service, base_tile_data)
         place_client_rfq_order(cp_service, base_tile_data)
         check_quote_request_b(case_base_request, ar_service, case_id)
