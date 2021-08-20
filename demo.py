@@ -1,15 +1,13 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import ui_tests
 from quod_qa.fx.fx_mm_autohedging import QAP_2228, QAP_2290
-from quod_qa.fx.fx_mm_esp import QAP_2034, QAP_2035
 from quod_qa.fx.fx_mm_positions import QAP_1898
 from quod_qa.fx.fx_mm_rfq import QAP_1552, QAP_1539, QAP_2091, QAP_2101, QAP_2104, QAP_2105, QAP_2295, QAP_2296, \
     QAP_2297, QAP_2958, QAP_1746, QAP_1540, QAP_1562, QAP_1563, QAP_1970, QAP_2103, QAP_2177, QAP_3565, QAP_2877, \
-    QAP_4228, QAP_4085, QAP_2062, QAP_2992
+    QAP_4228, QAP_4085, QAP_3106, QAP_3107, QAP_3108, QAP_3109, QAP_2382
 from quod_qa.fx.fx_taker_esp import QAP_2949
-from quod_qa.fx.fx_taker_rfq import QAP_2826, QAP_568
+from quod_qa.fx.fx_taker_rfq import QAP_2826
 from quod_qa.fx.my_methods import send_rfq, send_md
 
 from rule_management import RuleManager
@@ -43,7 +41,7 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('ostronov tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 308"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
 
     session_id = set_session_id()
     # rules = rule_creation()
@@ -72,13 +70,18 @@ def test_run():
         # QAP_2103.execute(report_id)
         # QAP_2177.execute(report_id)
         # QAP_3565.execute(report_id)
-        # QAP_2958.execute(report_id, session_id)
-        # QAP_2062.execute(report_id, session_id)
-        QAP_2992.execute(report_id, session_id)
 
         # send_rfq.execute(report_id)
+
+        # QAP_2877.execute(report_id, session_id)
+        # QAP_2382.execute(report_id)
+        # QAP_3106.execute(report_id, session_id)
+        # QAP_3107.execute(report_id, session_id)
+        QAP_3108.execute(report_id, session_id)
+        # QAP_3109.execute(report_id, session_id)
+        # # QAP_4228.execute(report_id)
+        # QAP_4085.execute(report_id)
         # send_md.execute(report_id)
-        # ui_tests.execute(report_id, session_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
