@@ -2,6 +2,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_manager import FixManager
@@ -24,9 +25,10 @@ def execute(report_id, session_id):
     # region Create Order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
-        fix_manager = FixManager(eq_wrappers.get_sell_connectivity(), case_id)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", float(price))
+        fix_manager = FixManager(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
         fix_params = {
             'Account': client,
             'HandlInst': 2,
@@ -111,7 +113,7 @@ def execute(report_id, session_id):
             'OrderQty': qty
         }
     }
-    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=None)
     # endregion

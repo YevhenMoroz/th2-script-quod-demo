@@ -4,6 +4,7 @@ import logging
 
 from datetime import datetime
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 
 from stubs import Stubs
@@ -40,7 +41,7 @@ def execute(report_id):
 
     # region Create DMA order
     try:
-        eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
 

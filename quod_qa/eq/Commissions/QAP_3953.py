@@ -1,31 +1,31 @@
+import logging
 import time
 
 import quod_qa.wrapper.eq_fix_wrappers
+from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
-from custom.basic_custom_actions import create_event
-
 from win_gui_modules.utils import get_base_request
-import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-4231"
+    case_name = "QAP-3393"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "900"
     price = "10"
     client = "CLIENT_COMM_1"
-    account = "CLIENT_COMM_1_SA1"
+    account = "CLIENT_COMM_1_SA3"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     base_request = get_base_request(session_id, case_id)
+
     no_allocs = [
         {
             'AllocAccount': account,
@@ -36,7 +36,8 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    # region Create Orders
+
+    # region Create Order
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
@@ -47,7 +48,7 @@ def execute(report_id, session_id):
             client + '_PARIS', 'XPAR',
             float(price), int(qty), 1)
 
-        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price, no_allocs)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price, no_allocs)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -61,77 +62,44 @@ def execute(report_id, session_id):
     eq_wrappers.allocate_order(base_request)
     # region Verify
     params = {
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'Account': '*',
-        'OrdStatus': 2,
-        'TradeDate': '*',
-        'Side': 2,
-        'ExpireDate': '*',
+        'OrderQtyData': {
+            'OrderQty': qty
+        },
+        'ExpireDate':'*',
+        'ExecType': '0',
+        'OrdStatus': '0',
+        'Side': 1,
         'Price': price,
         'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
+        'ClOrdID': eq_wrappers.get_cl_order_id(base_request),
         'ExecID': '*',
+        'QuodTradeQualifier': '*',
+        'BookID': '*',
         'LastQty': '*',
+        'LastMkt': '*',
+        'Text': '*',
         'OrderID': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'LastExecutionPolicy': '*',
-        'SettlDate': '*',
         'Currency': '*',
         'HandlInst': '*',
         'LeavesQty': '*',
         'CumQty': '*',
         'LastPx': '*',
         'OrdType': '*',
-        'LastMkt': '*',
         'OrderCapacity': '*',
         'QtyType': '*',
         'SettlDate': '*',
         'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
-        'header': '*',
-        'SecondaryExecID': '*',
-        'Text': '*',
         'SecondaryOrderID': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
-    }
-    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
-                                         key_parameters=['ClOrdID', 'OrdStatus'])
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'Account': client,
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
         'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '5',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'AllocInstructionMiscBlock1': '*',
+        'ExecBroker': '*'
     }
     fix_verifier_bo = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
+    fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params1',
+                                         key_parameters=['ClOrdID'])
     params = {
         'TradeDate': '*',
         'TransactTime': '*',
@@ -155,13 +123,13 @@ def execute(report_id, session_id):
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
              'OrderID': '*'}
         ],
-        'CommissionData':
-            {'CommissionType': '3',
-             'Commission': '45',
-             'CommCurrency': 'EUR'},
         'AllocInstructionMiscBlock1': '*',
+        'CommissionData': {
+            'CommissionType': '3',
+            'CommCurrency': '*',
+            'Commission': '450'},
         'AllocID': '*',
-        'NetMoney': '*',
+        'NetMoney': '9450',
         'ReportedPx': '*',
         'CpctyConfGrp': '*',
         'ConfirmTransType': '*',
@@ -184,29 +152,29 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*',
         'QuodTradeQualifier': '*',
         'BookID': '*',
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '9.95',
-                'AllocAccount': account,
-                'AllocPrice': '10',
-                'AllocQty': qty,
-                'CommissionData': {
-                    'CommissionType': '3',
-                    'CommCurrency': 'EUR',
-                    'Commission': '45'}
-            }
-        ],
         'NoOrders': [
             {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
              'OrderID': '*'}
         ],
         'AllocID': '*',
-        'NetMoney': '*',
+        'NetMoney': '9450',
         'BookingType': '*',
         'AllocType': '2',
         'RootSettlCurrAmt': '*',
         'AllocTransType': '0',
         'ReportedPx': '*',
+        'NoAllocs': [
+            {
+                'AllocNetPrice': '10.5',
+                'AllocAccount': account,
+                'AllocPrice': '10',
+                'AllocQty': qty,
+                'CommissionData': {
+                    'CommissionType': '3',
+                    'CommCurrency': '*',
+                    'Commission': '450'}
+            }
+        ],
         'AllocInstructionMiscBlock1': '*',
     }
     fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])

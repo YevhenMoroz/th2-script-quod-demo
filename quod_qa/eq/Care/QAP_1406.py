@@ -1,5 +1,6 @@
 import logging
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
@@ -28,7 +29,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    responce=eq_wrappers.create_order_via_fix(case_id, 2, 1, dummy_client, 2, qty, 0, price)
+    responce= quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, dummy_client, 2, qty, 0, price)
     # endregion
     # region verify values
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Held")

@@ -1,5 +1,6 @@
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
@@ -31,14 +32,14 @@ def execute(report_id,session_id):
     # endregion
 
     # region Create DMA
-    connectivity_buy_side = eq_wrappers.get_buy_connectivity()
+    connectivity_buy_side = quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity()
     rule_manager = RuleManager()
     try:
         rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, client + "_PARIS",
                                                                          "XPAR", int(price))
         trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(connectivity_buy_side, client + "_PARIS", "XPAR",
                                                                        int(price), int(qty), 0)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         time.sleep(1)
     finally:

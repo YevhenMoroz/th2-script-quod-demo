@@ -1,5 +1,6 @@
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
@@ -33,14 +34,16 @@ def execute(report_id, session_id):
     # region Create DMA
     rule_manager = RuleManager()
     try:
-        rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(), client +
+        rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), client +
                                                                          "_PARIS",
                                                                          "XPAR", int(price))
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(), client +
+        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), client +
                                                                        "_PARIS", "XPAR",
-                                                                       int(price)
-                                                                       , int(qty), 0)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+            int(price)
+            , int(qty), 0)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         time.sleep(1)
     finally:
@@ -88,7 +91,7 @@ def execute(report_id, session_id):
         'RootOrClientCommissionCurrency': '*',
 
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     time.sleep(1)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders'])
     # endregion

@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from th2_grpc_act_gui_quod import order_ticket_service
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
@@ -46,12 +47,14 @@ def execute(report_id, session_id):
     # region Create order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', 'XPAR', float(price))
-        nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR', float(price),
-                                                                      traded_qty=int(int(qty) / 2), delay=0)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', 'XPAR', float(price))
+        nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', 'XPAR', float(price),
+            traded_qty=int(int(qty) / 2), delay=0)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         eq_wrappers.complete_order(base_request)
         eq_wrappers.notify_dfd(base_request)
         response = fix_message.pop('response')
@@ -89,7 +92,7 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'header': '*',
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
                                          key_parameters=['ExecType', 'OrdStatus'], direction='FIRST')
     params1 = {
@@ -125,6 +128,6 @@ def execute(report_id, session_id):
         'header': '*',
     }
 
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params1, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

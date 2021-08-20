@@ -1,6 +1,7 @@
 import logging
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
@@ -30,13 +31,15 @@ def execute(report_id, session_id):
     # region Create Order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_PARIS', 'XPAR',
-                                                                      float(price), int(qty), 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', 'XPAR',
+            float(price), int(qty), 1)
 
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -83,7 +86,7 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*',
         'ExecBroker': '*'
     }
-    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params1',
                                          key_parameters=['ClOrdID', 'ExecType'])
     # endregion
