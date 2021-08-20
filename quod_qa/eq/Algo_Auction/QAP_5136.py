@@ -20,7 +20,7 @@ timeouts = True
 
 waves = 4
 historical_volume = 600
-initial_multiplier = 100
+initial_multiplier = 50
 percentage = 40
 qty = 1200
 child_qty = historical_volume * (percentage / 100) / (1 - percentage / 100) * (initial_multiplier/100)
