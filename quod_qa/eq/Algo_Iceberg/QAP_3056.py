@@ -28,10 +28,10 @@ text_ocrr = 'OCRRRule'
 display_qty = 1000
 
 #order param
-qty = 1300
+qty = 1000
 dec_qty = 900
 price = 20
-dec_price = 1
+dec_price = 15
 side = 1
 order_type = 2
 currency = 'EUR'
