@@ -155,7 +155,7 @@ class FixClientSellRfq():
 
     # Check Market Data respons was received
     def verify_quote_pending(self, offer_forward_points='', bid_forward_points='', bid_size='', offer_size='',
-                             offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate=''):
+                             offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate='', checkpoint_id_=''):
         self.case_params_sell_rfq.prepare_quote_report()
         self.quote_id = self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params['QuoteID'] = self.quote_id
@@ -187,12 +187,17 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params['BidSpotRate'] = bid_spot_rate
         if offer_spot_rate != '':
             self.case_params_sell_rfq.quote_params['OfferSpotRate'] = offer_spot_rate
-        print('RFQ pending parameters: ', self.case_params_sell_rfq.quote_params)
+
+        print('RFQ pending parameters: \t', self.case_params_sell_rfq.quote_params)
+        checkpoint_id = self.quote.checkpoint_id
+        if checkpoint_id_ != '':
+            checkpoint_id = checkpoint_id_
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
                 bca.filter_to_grpc('Quote', self.case_params_sell_rfq.quote_params, ['QuoteReqID']),
-                self.quote.checkpoint_id,
+                checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id
             )
@@ -201,7 +206,7 @@ class FixClientSellRfq():
 
     def verify_quote_pending_swap(self, offer_swap_points='', bid_swap_points='', bid_size='', offer_size='',
                                   offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate=''
-                                  , leg_of_fwd_p='', leg_bid_fwd_p=''):
+                                  , leg_of_fwd_p='', leg_bid_fwd_p='', checkpoint_id_=''):
         self.case_params_sell_rfq.prepare_quote_report_swap()
         self.quote_id = self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
@@ -228,11 +233,17 @@ class FixClientSellRfq():
         if offer_spot_rate != '':
             self.case_params_sell_rfq.quote_params_swap['OfferSpotRate'] = offer_spot_rate
 
+        print('RFQ swap pending parameters: \t', self.case_params_sell_rfq.quote_params_swap)
+
+        checkpoint_id = self.quote.checkpoint_id
+        if checkpoint_id_ != '':
+            checkpoint_id = checkpoint_id_
+
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
                 bca.filter_to_grpc('Quote', self.case_params_sell_rfq.quote_params_swap, ['QuoteReqID']),
-                self.quote.checkpoint_id,
+                checkpoint_id,
                 self.case_params_sell_rfq.connectivityRFQ,
                 self.case_params_sell_rfq.case_id
             )
