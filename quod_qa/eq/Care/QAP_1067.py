@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 
+import quod_qa.wrapper.eq_fix_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom import basic_custom_actions as bca
@@ -52,7 +53,7 @@ def execute(report_id, session_id):
         get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Sent', False)

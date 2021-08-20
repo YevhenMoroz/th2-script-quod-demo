@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
@@ -31,15 +33,15 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    buy_connectivity = eq_wrappers.get_buy_connectivity()
+    buy_connectivity = quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity()
     # endregion
     # region Create order via FIX
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 4, qty, 1, price, stop_price=price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 4, qty, 1, price, stop_price=price)
     response = fix_message.pop('response')
     # endregion
     # region Check values in OrderBook
     eq_wrappers.accept_order('VETO', qty, price)
-    eq_wrappers.amend_order_via_fix(case_id, fix_message, {'StopPx': price2, 'TimeInForce': 0})
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, {'StopPx': price2, 'TimeInForce': 0})
     eq_wrappers.reject_order('VETO', qty, price)
     eq_wrappers.verify_order_value(base_request, case_id, 'Stop Price', price, False)
     eq_wrappers.verify_order_value(base_request, case_id, 'TIF', 'GoodTillCancel', False)
@@ -72,7 +74,7 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'SettlType': '*'
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'StopPx', 'ExecType'])
     # endregion

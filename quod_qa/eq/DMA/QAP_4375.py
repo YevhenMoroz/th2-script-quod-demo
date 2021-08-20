@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, date, timedelta
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
@@ -37,16 +38,17 @@ def execute(report_id, session_id):
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + "_PARIS", 'XPAR', float(price))
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, no_allocs=
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + "_PARIS", 'XPAR', float(price))
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, no_allocs=
         [
             {
                 'AllocAccount': 'CareWB',
                 'AllocQty': qty
             }
         ]
-                                                       )
+                                                                           )
         response = fix_message.pop('response')
     finally:
         rule_manager.remove_rule(nos_rule)
@@ -81,6 +83,6 @@ def execute(report_id, session_id):
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])

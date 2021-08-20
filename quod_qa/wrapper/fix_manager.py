@@ -30,6 +30,19 @@ class FixManager:
             ))
 
         return response
+    def Send_NewOrderList_FixMessage(self, fix_message, message_name='Send NewOrderList', case = None):
+        if case == None:
+            case = self.case_id
+
+        response = self.act.placeOrderFIX(
+            request=bca.convert_to_request(
+                message_name,
+                self.TraderConnectivity,
+                case,
+                bca.message_to_grpc('NewOrderList', fix_message.get_parameters(), self.TraderConnectivity)
+            ))
+
+        return response
 
     def Send_OrderCancelRequest_FixMessage(self, fix_message, message_name='Cancel order', case=None):
         if case == None:
@@ -100,6 +113,7 @@ class FixManager:
                 bca.message_to_grpc('MarketDataRequest', fix_message.get_parameters(), self.TraderConnectivity)
             ))
         return response
+
 
     def CheckSubscription(self, MDSymbol):
         #TODO Need Update

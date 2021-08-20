@@ -5,6 +5,7 @@ from datetime import datetime
 
 from th2_grpc_act_gui_quod import order_ticket_service
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 
@@ -53,7 +54,7 @@ def execute(report_id, session_id):
         get_opened_fe(case_id, session_id)
     # endregionA
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
 
     # region AcceptOrder
     eq_wrappers.accept_order(lookup, qty, price)

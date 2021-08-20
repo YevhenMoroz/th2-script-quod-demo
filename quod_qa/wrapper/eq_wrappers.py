@@ -1,32 +1,24 @@
-import time
-from copy import deepcopy
-from datetime import datetime, timedelta
-
-from th2_grpc_act_gui_quod import middle_office_service, order_book_service
-from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
-    ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
+    ReassignOrderDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
+    direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
-    MenuItemDetails
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -35,18 +27,6 @@ sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-stan
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
-
-
-def get_buy_connectivity():
-    return buy_connectivity
-
-
-def get_sell_connectivity():
-    return sell_connectivity
-
-
-def get_bo_connectivity():
-    return bo_connectivity
 
 
 def extract_error_order_ticket(base_request):
@@ -68,23 +48,6 @@ def open_fe(session_id, report_id, case_id, folder, user, password):
 def open_fe2(session_id, report_id, folder, user, password):
     init_event = create_event("Initialization", parent_id=report_id)
     prepare_fe(init_event, session_id, folder, user, password)
-
-
-def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
-    try:
-        fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
-        cancel_parms = {
-            "ClOrdID": cl_order_id,
-            "Account": client,
-            "Side": side,
-            "TransactTime": datetime.utcnow().isoformat(),
-            "OrigClOrdID": org_cl_order_id,
-        }
-        fix_cancel = FixMessage(cancel_parms)
-        fix_manager_qtwquod.Send_OrderCancelRequest_FixMessage(fix_cancel)
-    except Exception:
-        basic_custom_actions.create_event('Fail cancel_order_via_fix')
-        logger.error("Error execution", exc_info=True)
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
@@ -121,7 +84,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail create_order')
+        basic_custom_actions.create_event('Fail create_order', status="FAIL")
     finally:
         rule_manager.remove_rule(nos_rule)
 
@@ -134,69 +97,6 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
                 'SecurityExchange': 'XEUR'
             }
 '''
-
-
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
-                         insrument=None):
-    try:
-        rule_manager = RuleManager()
-        fix_manager = FixManager(sell_connectivity, case_id)
-
-        fix_params = {
-            'Account': client,
-            'HandlInst': handl_inst,
-            'Side': side,
-            'OrderQty': qty,
-            'TimeInForce': tif,
-            'OrdType': ord_type,
-            'Price': price,
-            'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
-            'TransactTime': datetime.utcnow().isoformat(),
-            'NoAllocs': no_allocs,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            # 'Instrument': {
-            #     'Symbol': 'IS0000000001_EUR',
-            #     'SecurityID': 'ISI1',
-            #     'SecurityIDSource': '4',
-            #     'SecurityExchange': 'XEUR'
-            # },
-
-            'Currency': 'EUR',
-        }
-        fix_params.update()
-        if price == None:
-            fix_params.pop('Price')
-        if no_allocs == None:
-            fix_params.pop('NoAllocs')
-        if insrument != None:
-            fix_params.update(Instrument=insrument)
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
-        fix_params['response'] = response
-        return fix_params
-    except Exception:
-        basic_custom_actions.create_event('Fail create_order_via_fix')
-        logger.error("Error execution", exc_info=True)
-
-
-def amend_order_via_fix(case_id, fix_message, parametr_list):
-    fix_manager = FixManager(sell_connectivity, case_id)
-    try:
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
-        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-        fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        basic_custom_actions.create_event('Fail amend_order_via_fix')
-        rule_manager.remove_rule(rule)
 
 
 def amend_order(request, client=None, qty=None, price=None, account=None):
@@ -218,8 +118,8 @@ def amend_order(request, client=None, qty=None, price=None, account=None):
         call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail amend_order', status="FAIL")
     finally:
-        basic_custom_actions.create_event('Fail amend_order')
         rule_manager.remove_rule(rule)
 
 
@@ -232,7 +132,7 @@ def manual_cross_orders(request, qty, price, list, last_mkt):
     try:
         call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail manual_cross_orders')
+        basic_custom_actions.create_event('Fail manual_cross_orders', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -257,7 +157,7 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
         frodo = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
         return frodo
     except Exception:
-        basic_custom_actions.create_event('Fail manual_cross_orders_error')
+        basic_custom_actions.create_event('Fail manual_cross_orders_error', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -273,7 +173,7 @@ def accept_order(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
     except Exception:
-        basic_custom_actions.create_event('Fail accept_order')
+        # basic_custom_actions.create_event('Fail accept_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -281,7 +181,7 @@ def accept_modify(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptModifyPlusChild, accept_order_request(lookup, qty, price))
     except Exception:
-        basic_custom_actions.create_event('Fail accept_modify')
+        basic_custom_actions.create_event('Fail accept_modify', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -289,7 +189,7 @@ def accept_cancel(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptAndCancelChildren, accept_order_request(lookup, qty, price))
     except Exception:
-        basic_custom_actions.create_event('Fail accept_cancel')
+        basic_custom_actions.create_event('Fail accept_cancel', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -297,7 +197,7 @@ def direct_loc_order(qty, route):
     try:
         call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty, route))
     except Exception:
-        basic_custom_actions.create_event('Fail direct_loc_order')
+        basic_custom_actions.create_event('Fail direct_loc_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -305,7 +205,7 @@ def direct_moc_order(qty, route):
     try:
         call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty, route, ))
     except Exception:
-        basic_custom_actions.create_event('Fail direct_moc_order')
+        basic_custom_actions.create_event('Fail direct_moc_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -314,7 +214,7 @@ def direct_child_care_order(qty, route, recipient, count):
         call(Stubs.win_act_order_book.orderBookDirectChildCare,
              direct_child_care_сorrect('UnmatchedQty', qty, recipient, route, count))
     except Exception:
-        basic_custom_actions.create_event('Fail direct_child_care_order')
+        basic_custom_actions.create_event('Fail direct_child_care_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -322,7 +222,7 @@ def reject_order(lookup, qty, price):
     try:
         call(Stubs.win_act.rejectOrder, reject_order_request(lookup, qty, price))
     except Exception:
-        basic_custom_actions.create_event('Fail reject_order')
+        basic_custom_actions.create_event('Fail reject_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -330,7 +230,7 @@ def direct_order(lookup, qty, price, qty_percent):
     try:
         call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
-        basic_custom_actions.create_event('Fail direct_order')
+        basic_custom_actions.create_event('Fail direct_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -341,7 +241,7 @@ def cancel_order(request):
     try:
         call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail cancel_order')
+        basic_custom_actions.create_event('Fail cancel_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -359,7 +259,7 @@ def split_limit_order(request, qty, type, price, display_qty=None):
     try:
         call(Stubs.win_act_order_book.splitLimit, amend_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail split_limit_order')
+        basic_custom_actions.create_event('Fail split_limit_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -375,20 +275,20 @@ def split_order(request, qty, type, price):
     try:
         call(Stubs.win_act_order_book.splitOrder, amend_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail split_order')
+        basic_custom_actions.create_event('Fail split_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
 def transfer_order(request, user):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
+    # order_details = OrdersDetails()
+    # order_details.set_default_params(request)
     transfer_order_details = TransferOrderDetails()
     transfer_order_details.set_default_params(request)
     transfer_order_details.set_transfer_order_user(user, True)
     try:
         call(Stubs.win_act_order_book.transferOrder, transfer_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail transfer_order')
+        basic_custom_actions.create_event('Fail transfer_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -404,7 +304,7 @@ def manual_execution(request, qty, price, execution_firm='ExecutingTrader', cont
     try:
         call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail manual_execution')
+        basic_custom_actions.create_event('Fail manual_execution', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -414,7 +314,7 @@ def complete_order(request):
     try:
         call(Stubs.win_act_order_book.completeOrder, complete_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail complete_order')
+        basic_custom_actions.create_event('Fail complete_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -424,7 +324,7 @@ def un_complete_order(request):
     try:
         call(Stubs.win_act_order_book.unCompleteOrder, un_complete_order_details.build())
     except Exception:
-        basic_custom_actions.create_event('Fail un_complete_order')
+        basic_custom_actions.create_event('Fail un_complete_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -439,7 +339,7 @@ def get_order_id(request):
         result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail get_order_id')
+        basic_custom_actions.create_event('Fail get_order_id', status="FAIL")
     return result[order_id.name]
 
 
@@ -454,7 +354,7 @@ def get_is_locked(request):
         result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail get_is_locked')
+        basic_custom_actions.create_event('Fail get_is_locked', status="FAIL")
     return result[is_locked.name]
 
 
@@ -522,7 +422,7 @@ def notify_dfd(request):
         call(Stubs.win_act_order_book.notifyDFD, notify_dfd_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail notify_dfd')
+        basic_custom_actions.create_event('Fail notify_dfd', status="FAIL")
 
 
 def group_modify(request, client, security_account=None, routes=None, free_notes=None):
@@ -539,7 +439,7 @@ def group_modify(request, client, security_account=None, routes=None, free_notes
         call(Stubs.win_act_order_book.groupModify, group_modify_details)
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail group_modify')
+        basic_custom_actions.create_event('Fail group_modify', status="FAIL")
 
 
 def reassign_order(request, recipient):
@@ -550,7 +450,8 @@ def reassign_order(request, recipient):
         call(Stubs.win_act_order_book.reassignOrder, reassign_order_details)
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail reassign_order')
+        basic_custom_actions.create_event('Fail reassign_order', status="FAIL")
+
 
 def approve_block(request):
     middle_office_service = Stubs.win_act_middle_office_service
@@ -559,7 +460,7 @@ def approve_block(request):
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail approve_block')
+        basic_custom_actions.create_event('Fail approve_block', status="FAIL")
 
 
 def check_booking_toggle_manual(base_request):
@@ -571,14 +472,17 @@ def check_booking_toggle_manual(base_request):
     extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
     return call(middle_office_service.bookOrder, modify_request.build())
 
+
 def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_broker=None, trade_date=None,
                settlement_type=None, settlement_currency=None, exchange_rate=None, exchange_rate_calc=None,
                settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
                fees_basis=None,
                fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
-               remove_fees=False):
+               remove_fees=False, selected_row_count=None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
+    if selected_row_count is not None:
+        modify_request.set_selected_row_count(selected_row_count)
     ticket_details = modify_request.add_ticket_details()
     ticket_details.set_client(client)
     ticket_details.set_net_gross_ind(net_gross_ind)
@@ -608,8 +512,8 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     commissions_details = modify_request.add_commissions_details()
     if comm_basis is not None:
         response = check_booking_toggle_manual(request)
-        # if response['book.manualCheckboxState'] == 'unchecked':
-        commissions_details.toggle_manual()
+        if response['book.manualCheckboxState'] == 'unchecked':
+            commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if remove_commission:
         commissions_details.remove_commissions()
@@ -643,7 +547,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
         return response
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail book_order')
+        basic_custom_actions.create_event('Fail book_order', status="FAIL")
 
 
 def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
@@ -723,7 +627,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block')
+        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
 
 def unbook_order(request):
@@ -733,20 +637,20 @@ def unbook_order(request):
         call(middle_office_service.unBookOrder, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block')
+        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
 
-def allocate_order(request, arr_allocation_param: []):
+def allocate_order(request, arr_allocation_param: [] = None):
     modify_request = ModifyTicketDetails(base=request)
-
     allocations_details = modify_request.add_allocations_details()
     '''
     example of arr_allocation_param:
    param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
            {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
     '''
-    for i in arr_allocation_param:
-        allocations_details.add_allocation_param(i)
+    if arr_allocation_param is not None:
+        for i in arr_allocation_param:
+            allocations_details.add_allocation_param(i)
     '''
     extraction_details = modify_request.add_extraction_details()
     extraction_details.extract_agreed_price("book.agreedPrice")
@@ -763,7 +667,7 @@ def allocate_order(request, arr_allocation_param: []):
         return response
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail allocate_order')
+        basic_custom_actions.create_event('Fail allocate_order', status="FAIL")
 
 
 def amend_allocate(request, account=None, agreed_price=None, settlement_currency=None, exchange_rate=None,
@@ -825,7 +729,7 @@ def amend_allocate(request, account=None, agreed_price=None, settlement_currency
         return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_allocate')
+        basic_custom_actions.create_event('Fail amend_allocate', status="FAIL")
 
 
 def unallocate_order(request):
@@ -834,7 +738,7 @@ def unallocate_order(request):
         call(Stubs.win_act_middle_office_service.unAllocateMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail unallocate_order')
+        basic_custom_actions.create_event('Fail unallocate_order', status="FAIL")
 
 
 def check_in_order(request):
@@ -844,7 +748,7 @@ def check_in_order(request):
         call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_in_order')
+        basic_custom_actions.create_event('Fail check_in_order', status="FAIL")
 
 
 def check_out_order(request):
@@ -854,7 +758,7 @@ def check_out_order(request):
         call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_out_order')
+        basic_custom_actions.create_event('Fail check_out_order', status="FAIL")
 
 
 def view_orders_for_block(request, count: int):
@@ -873,7 +777,7 @@ def view_orders_for_block(request, count: int):
         return arr_response
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail view_orders_for_block')
+        basic_custom_actions.create_event('Fail view_orders_for_block', status="FAIL")
 
 
 def check_error_in_book(request):
@@ -885,7 +789,7 @@ def check_error_in_book(request):
         return error
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_error_in_book')
+        basic_custom_actions.create_event('Fail check_error_in_book', status="FAIL")
 
 
 def re_order_leaves(request, is_sall=False):
@@ -898,7 +802,7 @@ def re_order_leaves(request, is_sall=False):
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(request)
     call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
-    basic_custom_actions.create_event('Fail re_order_leaves')
+    basic_custom_actions.create_event('Fail re_order_leaves', status="FAIL")
 
 
 def is_menu_item_present(request, menu_item, filter=None):
@@ -910,7 +814,7 @@ def is_menu_item_present(request, menu_item, filter=None):
         return call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail is_menu_item_present')
+        basic_custom_actions.create_event('Fail is_menu_item_present', status="FAIL")
 
 
 def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
@@ -925,7 +829,7 @@ def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_li
     if trades_filter_list is not None:
         trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
     call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
-    basic_custom_actions.create_event('Fail manual_match')
+    basic_custom_actions.create_event('Fail manual_match', status="FAIL")
 
 
 def approve_block(request):
@@ -935,10 +839,10 @@ def approve_block(request):
         call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail approve_block')
+        basic_custom_actions.create_event('Fail approve_block', status="FAIL")
 
 
-def check_booking_toggle_manual(base_request):
+def check_booking_toggle_manual(base_request, ):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=base_request)
     modify_request.add_commissions_details()
@@ -946,7 +850,6 @@ def check_booking_toggle_manual(base_request):
     extraction_details.set_extraction_id("BookExtractionId")
     extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
     return call(middle_office_service.bookOrder, modify_request.build())
-
 
 
 def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
@@ -994,7 +897,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         fees_details.remove_fees()
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
-        #response = check_booking_toggle_manual(request)
+        # response = check_booking_toggle_manual(request)
         # if response['book.manualCheckboxState'] != 'checked':
         # commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
@@ -1026,7 +929,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block')
+        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
 
 def check_in_order(request):
@@ -1036,7 +939,7 @@ def check_in_order(request):
         call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_in_order')
+        basic_custom_actions.create_event('Fail check_in_order', status="FAIL")
 
 
 def check_out_order(request):
@@ -1046,7 +949,7 @@ def check_out_order(request):
         call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_out_order')
+        basic_custom_actions.create_event('Fail check_out_order', status="FAIL")
 
 
 def view_orders_for_block(request, count: int):
@@ -1065,7 +968,7 @@ def view_orders_for_block(request, count: int):
         return arr_response
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail view_orders_for_block')
+        basic_custom_actions.create_event('Fail view_orders_for_block', status="FAIL")
 
 
 def check_error_in_book(request):
@@ -1077,7 +980,7 @@ def check_error_in_book(request):
         return error
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_error_in_book')
+        basic_custom_actions.create_event('Fail check_error_in_book', status="FAIL")
 
 
 def re_order_leaves(request, is_sall=False):
@@ -1093,7 +996,7 @@ def re_order_leaves(request, is_sall=False):
         call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail re_order_leaves')
+        basic_custom_actions.create_event('Fail re_order_leaves', status="FAIL")
 
 
 def is_menu_item_present(request, menu_item, filter=None):
@@ -1105,7 +1008,7 @@ def is_menu_item_present(request, menu_item, filter=None):
         return call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail is_menu_item_present')
+        basic_custom_actions.create_event('Fail is_menu_item_present', status="FAIL")
 
 
 def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
@@ -1123,7 +1026,7 @@ def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_li
         call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail manual_match')
+        basic_custom_actions.create_event('Fail manual_match', status="FAIL")
 
 
 def get_2nd_lvl_detail(request, column_name):
@@ -1144,5 +1047,5 @@ def get_2nd_lvl_detail(request, column_name):
         request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail get_2nd_lvl_detail')
+        basic_custom_actions.create_event('Fail get_2nd_lvl_detail', status="FAIL")
     return request["lvl_2"]

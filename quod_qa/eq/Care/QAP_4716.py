@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails
@@ -46,7 +47,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create order via fix
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, no_allocs)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, no_allocs)
     response = fix_message['response']
     # endregion
     eq_wrappers.accept_order('VETO', qty, price)
