@@ -54,6 +54,7 @@ currency = 'EUR'
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
+currency = 'EUR'
 s_par = '1015'
 
 case_name = os.path.basename(__file__)
