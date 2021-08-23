@@ -19,21 +19,13 @@ logger.setLevel(logging.INFO)
 instrument_spot = 'GBP/USD-Spot'
 instrument_forward = 'GBP/USD-2W'
 tier = 'Iridium1'
-
-
-class ModifyRFQ:
-    def __init__(self,
-                 near_tenor='Spot', far_tenor='2W',
-                 from_curr='GBP', to_curr='USD',
-                 client_tier='Iridium1', client='Iridium1',
-                 qty='300000000'):
-        self.near_tenor = near_tenor
-        self.far_tenor = far_tenor
-        self.from_curr = from_curr
-        self.to_curr = to_curr
-        self.client_tier = client_tier
-        self.client = client
-        self.qty = qty
+near_tenor='Spot'
+far_tenor='2W'
+from_curr='GBP'
+to_curr = 'USD'
+client_tier='Iridium1'
+client='Iridium1'
+qty='300000000'
 
 
 def create_or_get_pricing_tile(base_request, service):
