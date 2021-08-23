@@ -30,8 +30,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-bs-310-columbia"  # 'fix-bs-310-columbia' # fix-ss-back-office fix-buy-317ganymede-standard
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -47,6 +47,13 @@ def get_sell_connectivity():
 
 def get_bo_connectivity():
     return bo_connectivity
+
+
+def extract_error_order_ticket(base_request):
+    extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+    extract_errors_request.extract_error_message()
+    result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, extract_errors_request.build())
+    return result
 
 
 def open_fe(session_id, report_id, case_id, folder, user, password):
@@ -132,7 +139,9 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
                          insrument=None):
     try:
+        rule_manager = RuleManager()
         fix_manager = FixManager(sell_connectivity, case_id)
+
         fix_params = {
             'Account': client,
             'HandlInst': handl_inst,
@@ -150,6 +159,13 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
                 'SecurityIDSource': '4',
                 'SecurityExchange': 'XPAR'
             },
+            # 'Instrument': {
+            #     'Symbol': 'IS0000000001_EUR',
+            #     'SecurityID': 'ISI1',
+            #     'SecurityIDSource': '4',
+            #     'SecurityExchange': 'XEUR'
+            # },
+
             'Currency': 'EUR',
         }
         fix_params.update()
@@ -169,14 +185,11 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
+def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(sell_connectivity, case_id)
     try:
-        rule_manager = RuleManager()
-        rule = rule_manager.add_OrderCancelReplaceRequest(buy_connectivity, venue_client_name, venue,
-                                                          True)
-        fix_modify_message = deepcopy(fix_message)
-        fix_modify_message.change_parameters(param_list)
+        fix_modify_message = FixMessage(fix_message)
+        fix_modify_message.change_parameters(parametr_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
@@ -231,14 +244,18 @@ def manual_cross_orders_error(request, qty, price, list, last_mkt):
     request1.extractionId = "ManualCrossErrorMessageExtractionID"
     request1.extractedValues.append(error_message)
     req = ExtractManualCrossValuesRequest()
-    req.CopyFrom(request1)
+    req.extractionId = 'ManualCrossErrorMessageExtractionID'
+    req.extractedValues.append(error_message)
     manual_cross_details = ManualCrossDetails(request)
-    manual_cross_details.set_quantity(qty)
-    manual_cross_details.set_price(price)
-    manual_cross_details.set_selected_rows(list)
     manual_cross_details.set_last_mkt(last_mkt)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_quantity(qty)
+    manual_cross_details.manualCrossValues.CopyFrom(req)
+
     try:
-        call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        frodo = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        return frodo
     except Exception:
         basic_custom_actions.create_event('Fail manual_cross_orders_error')
         logger.error("Error execution", exc_info=True)
@@ -311,7 +328,7 @@ def reject_order(lookup, qty, price):
 
 def direct_order(lookup, qty, price, qty_percent):
     try:
-        call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
+        call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         basic_custom_actions.create_event('Fail direct_order')
         logger.error("Error execution", exc_info=True)
@@ -346,13 +363,11 @@ def split_limit_order(request, qty, type, price, display_qty=None):
         logger.error("Error execution", exc_info=True)
 
 
-def split_order(request, qty, price=None, display_qty=None):
+def split_order(request, qty, type, price):
     order_split = OrderTicketDetails()
     order_split.set_quantity(qty)
-    if price is not None:
-        order_split.set_limit(price)
-    if display_qty is not None:
-        order_split.set_display_qty(display_qty)
+    order_split.set_order_type(type)
+    order_split.set_limit(price)
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_split)

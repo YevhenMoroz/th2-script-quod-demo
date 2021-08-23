@@ -121,7 +121,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, strategy_name)
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', 'Sts', 'Open'])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', 'Sts', 'Open'])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     order_strategy = ExtractionDetail('orderBook.AlgoStrategy', 'Strategy')
     ob.add_single_order_info(
@@ -130,7 +130,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, strategy_name)
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values('Sts', strategy_name, response[order_strategy.name])
+    verifier.compare_values('Strategy', strategy_name, response[order_strategy.name])
     verifier.verify()
     ord_id = response[order_id.name]
     return ord_id
@@ -141,7 +141,7 @@ def check_order_book_after_strategy_change(case_id, case_base_request, act_ob, o
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(case_base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', 'Sts', 'Open'])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', 'Sts', 'Open'])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     order_strategy = ExtractionDetail('orderBook.AlgoStrategy', 'Strategy')
     ob.add_single_order_info(
@@ -161,7 +161,7 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER'])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger'])
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     ob.add_single_order_info(

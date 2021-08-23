@@ -95,6 +95,4 @@ def execute(report_id, session_id):
     # region Verify
     fix_verifier_ss.CheckExecutionReport(get_params(response1, qty1, "2", 2, client), response1,
                                          None)
-    fix_verifier_ss.CheckExecutionReport(get_params(response3, qty3, "2", 1, client), response1,
-                                         None,direction='SECOND')
     # endregion

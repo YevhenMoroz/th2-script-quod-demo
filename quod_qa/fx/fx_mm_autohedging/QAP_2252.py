@@ -48,7 +48,7 @@ qty = '2000000'
 api = Stubs.api_service
 ttl_default = 120
 ttl_null = None
-ttl_test = 140
+ttl_test = 300
 
 def set_send_hedge_order(case_id, ttl):
     modify_params = {
@@ -120,11 +120,11 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', 'Sts', 'Open'])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', 'Sts', 'Open'])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     order_TIF = ExtractionDetail('orderBook.TIF', 'TIF')
     order_sts = ExtractionDetail('orderBook.Sts', 'Sts')
-    order_owner = ExtractionDetail('orderBook.Owner', 'Owner')
+    order_owner = ExtractionDetail('orderBook.Orig', 'Orig')
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[order_id, order_TIF, order_sts,
@@ -134,7 +134,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob):
     verifier.set_event_name(even_name)
     verifier.compare_values('TIF', 'Day', response[order_TIF.name])
     verifier.compare_values('Sts', 'Open', response[order_sts.name])
-    verifier.compare_values('Owner', 'AH_TECHNICAL_USER', response[order_owner.name])
+    verifier.compare_values("Orig", 'AutoHedger', response[order_owner.name])
     verifier.verify()
     ord_id = response[order_id.name]
     return ord_id
@@ -191,7 +191,7 @@ def open_ot_by_doubleclick_row(btd, cp_service, _row, _side):
 
 def place_order(base_request, service, _client):
     place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_client(client)
+    place_request.set_client(_client)
     call(service.placeRatesTileOrder, place_request.build())
 
 
@@ -214,14 +214,14 @@ def execute(report_id, session_id):
         place_order(base_details, cp_service, client)
         # Step 2
         ord_id = check_order_book_ao('Checking placed order', case_id, case_base_request, ob_act)
-        time.sleep(50)
+        time.sleep(40)
         check_order_book_after_ttl_expire(case_id, case_base_request, ob_act, ord_id)
         # Step 3
         set_send_hedge_order(case_id, ttl_test)
         ord_id = check_order_book_ao('Extracting order ID for cancelling', case_id, case_base_request, ob_act)
         cancel_order(ob_act, case_base_request, ord_id)
         ord_id = check_order_book_ao('Extracting order ID with new TTL', case_id, case_base_request, ob_act)
-        time.sleep(50)
+        time.sleep(60)
         # Step 4
         check_order_book_new_ttl_applied(case_id, case_base_request, ob_act, ord_id)
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)

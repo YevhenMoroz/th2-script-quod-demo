@@ -78,7 +78,7 @@ def execute(report_id, session_id):
     ob_act = Stubs.win_act_order_book
 
     instrument = "EUR/CAD-SPOT"
-    client_tier = "Palladium"
+    client_tier = "Palladium1"
     client = "Palladium1"
     owner = Stubs.custom_config['qf_trading_fe_user']
 

@@ -117,7 +117,9 @@ def execute(report_id, session_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
+        off_fwd_pts=rfq.extract_filed("LegOfferForwardPoints")
+        bid_fwd_pts=rfq.extract_filed("LegBidForwardPoints")
+        rfq.verify_quote_pending_swap(leg_of_fwd_p=off_fwd_pts, leg_bid_fwd_p=bid_fwd_pts)
         check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_bellow_sum, today)
         # Step 3
         params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
@@ -132,7 +134,9 @@ def execute(report_id, session_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
+        off_fwd_pts = rfq.extract_filed("LegOfferForwardPoints")
+        bid_fwd_pts = rfq.extract_filed("LegBidForwardPoints")
+        rfq.verify_quote_pending_swap(leg_of_fwd_p=off_fwd_pts, leg_bid_fwd_p=bid_fwd_pts)
         check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_bellow_sum, today)
         # Step 4
         params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,

@@ -1,8 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
 
 from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -136,6 +135,21 @@ class PlaceRatesTileOrderRequest:
 
     def set_client(self, client: str):
         self.place_order_request.client = client
+
+    def click_pips(self, click_pips: int):
+        self.place_order_request.clickPips = click_pips
+
+    def click_qty(self, click_qty: int):
+        self.place_order_request.clickQty = click_qty
+
+    def click_slippage(self, click_slippage: int):
+        self.place_order_request.clickSlippage = click_slippage
+
+    def click_stop_price(self, click_stop_price: int):
+        self.place_order_request.clickStopPrice = click_stop_price
+
+    def click_display_qty(self, click_display_qty: int):
+        self.place_order_request.clickDisplayQty = click_display_qty
 
     def build(self):
         return self.place_order_request
@@ -291,6 +305,7 @@ class GetCPRTPColors:
     def build(self):
         return self.request
 
+
 class ExtractClientGridValues:
     def __init__(self, base: EmptyRequest = None):
         if base is not None:
@@ -375,3 +390,6 @@ class ClientRFQTileOrderDetails:
 
     def build(self):
         return self.details
+
+
+

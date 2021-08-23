@@ -20,7 +20,7 @@ def execute(report_id):
         verifier = Stubs.verifier
         checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(report_id))
         checkpoint_id1 = checkpoint_response1.checkpoint
-        time.sleep(120)
+        # time.sleep(120)
 
         # 5XRAA7DXZg14IOkuNrAfsg = VETO.[PARIS]
 
