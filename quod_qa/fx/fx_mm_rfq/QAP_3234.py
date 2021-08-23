@@ -8,9 +8,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -19,7 +17,6 @@ logger.setLevel(logging.INFO)
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    simulator = Stubs.test_sim
 
     client_tier = "Silver1"
     symbol = "EUR/USD"
