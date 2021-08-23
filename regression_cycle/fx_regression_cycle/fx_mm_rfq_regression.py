@@ -4,7 +4,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_154
     QAP_2066, QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2104, QAP_2105, QAP_2143, \
     QAP_2177, QAP_2294, QAP_2295, QAP_2296, QAP_2297, QAP_2353, QAP_2670, QAP_2866, QAP_2867, QAP_2868, QAP_2958, \
-    QAP_3739, QAP_3565, QAP_2382
+    QAP_3739, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -102,6 +102,10 @@ def test_run(parent_id=None):
         # QAP_2877.execute(report_id, session_id)
         # QAP_2878.execute(report_id, session_id)
         # QAP_2958.execute(report_id, session_id)
+        #
+        # QAP_4223.execute(report_id, session_id)
+        # QAP_4777.execute(report_id, session_id)
+        # QAP_4748.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

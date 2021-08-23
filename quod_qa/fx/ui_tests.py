@@ -957,7 +957,7 @@ def execute(report_id, session_id):
         # endregion
 
         # region Dealer Intervention
-        extract_di_panel(base_request, dealer_interventions_service)
+        # extract_di_panel(base_request, dealer_interventions_service)
         # set_value_di_panel(base_request, dealer_interventions_service)
         # close_dmi_window(base_request, dealer_interventions_service)
         # endregion
@@ -973,8 +973,8 @@ def execute(report_id, session_id):
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
         # clear_filters(ob_fx)
-        # check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
-        # check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
         # endregion
 
         # region Quote Request Book
