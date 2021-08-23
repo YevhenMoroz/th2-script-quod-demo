@@ -1,4 +1,4 @@
-from quod_qa.RET.Care import QAP_1719, QAP_4286, QAP_4313
+from quod_qa.RET.Care import QAP_1719, QAP_4286, QAP_4313, QAP_5087, QAP_5088
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -17,6 +17,9 @@ def test_run(session_id, parent_id=None):
         QAP_1719.execute(session_id, report_id)
         QAP_4286.execute(session_id, report_id)
         QAP_4313.execute(session_id, report_id)
+        QAP_4313.execute(session_id, report_id)
+        QAP_5087.execute(session_id, report_id)
+        QAP_5088.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
