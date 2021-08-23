@@ -14,8 +14,9 @@ class FixMessage:
         self.parameters[parametr_name] = new_parametr_value
 
     def change_parameters(self, parameter_list: dict):
-        for key in parameter_list:
-            self.parameters[key] = parameter_list[key]
+        if parameter_list is not None:
+            for key in parameter_list:
+                self.parameters[key] = parameter_list[key]
 
     def get_parameter(self, parametr_name):
         return self.parameters[parametr_name]
