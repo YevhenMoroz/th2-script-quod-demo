@@ -105,7 +105,7 @@ def execute(report_id):
         rfq.send_request_for_quote_swap()
         bid_price = float(mdu_params_spo[0]["MDEntryPx"])
         offer_price = float(mdu_params_spo[1]["MDEntryPx"])
-        mid_price=str(round((bid_price+offer_price)/2, 5))
+        mid_price = str(round((bid_price + offer_price) / 2, 5))
         rfq.verify_quote_pending_swap(bid_spot_rate=mid_price, offer_spot_rate=mid_price)
 
     except Exception:
