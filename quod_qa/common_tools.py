@@ -1,5 +1,6 @@
 import math
 import random
+import re
 from datetime import datetime
 from random import randint
 
@@ -71,3 +72,11 @@ def shorting_qty_for_di(qty, currency):
     if len(qty) in billion:
         short_qty = qty[0:3] + "." + qty[3:5] + b + " " + currency
     return short_qty
+
+
+def parse_qty_from_di(qty_from_dealer):
+    """
+    Take qty value from Dealer (23.34M EUR for example) and parse from it only decimals value (23.34)
+    """
+    result = re.match(r'\d+(.\d+)?', qty_from_dealer)
+    return result.group(0)

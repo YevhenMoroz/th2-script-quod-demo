@@ -342,7 +342,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": "ERROR"}') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": ""}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -451,3 +451,23 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
+
+
+def get_message_by_field_and_value(content, field: str, value: str, matched_list=None) -> list:
+    if matched_list is None:
+        matched_list = []
+    if isinstance(content, Message):
+        for f, v in content.fields.items():
+            if f == field and v.simple_value == value:
+                matched_list.append(content)
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    elif isinstance(content, ListValue):
+        for v in content.values:
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    return matched_list[0] if len(matched_list) > 0 else []

@@ -15,6 +15,13 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractM
     AllocationsExtractionDetails
 from custom.verifier import Verifier
 
+import grpc
+from google.protobuf.empty_pb2 import Empty
+from th2_grpc_sim_http.sim_template_pb2 import TemplateHttpLogonRule, TemplateHttpAnswerRule, PartySettlement1, \
+    PartySettlement2, SettlementInstructions1, SettlementInstructions2, TemplateDeleteRule
+from th2_grpc_sim import sim_pb2_grpc as core_http
+from th2_grpc_common.common_pb2 import ConnectionID
+
 # from test_cases.QAP_1560 import TestCase
 
 
@@ -32,6 +39,57 @@ def execute(report_id):
     case_name = "QAP-2701"
 
     common_act = Stubs.win_act
+
+    simulator_http = Stubs.simulator_http
+    coreHttp = core_http.SimStub(grpc.insecure_channel("10.0.22.22:31123"))
+
+    Answer = simulator_http.createHttpAnswerRule(
+        request=TemplateHttpAnswerRule(
+            connection_id=ConnectionID(session_alias='http-server'),
+            instructingPartyValue="BLMACHAL2XX",
+            settlementInstructions={"ID1": "BT01C", "SubAccountNo": "21435", "PaymentCurrency": "GBP",
+                                    "SubAgentBIC": "RTBSGB2LXXX",
+                                    "SubAgentName1": "RBC INVESTOR SERVICES TRUST, UK BRA", "SubAgentName2": "NCH",
+                                    "PSET": "CRSTGB22", "InstitutionBIC": "OMGOUS33XXX",
+                                    "ParticipantName1": "OMGEO LLC"},
+            matchingSecurityCode="FI-25061620",
+            account1ID="3434",
+            account2ID="ACC-2",
+            partySettlement1=PartySettlement1(SettlementInstructionsSourceIndicator="ALRT",
+                                              AlertCountryCode="GBR",
+                                              AlertMethodType="CREST",
+                                              AlertSecurityType="EQU",
+                                              AlertSettlementModelName="INTMODEL",
+                                              settlementInstructions=SettlementInstructions1(ID1="BT01C",
+                                                                                             SubAccountNo="21435",
+                                                                                             PaymentCurrency="GBP",
+                                                                                             SubAgentBIC="RTBSGB2LXXX",
+                                                                                             SubAgentName1="RBC INVESTOR SERVICES TRUST, UK BRA",
+                                                                                             SubAgentName2="NCH",
+                                                                                             PSET="CRSTGB22",
+                                                                                             InstitutionBIC="OMGOUS33XXX",
+                                                                                             ParticipantName1="OMGEO LLC",
+                                                                                             )),
+            partySettlement2=PartySettlement2(SettlementInstructionsSourceIndicator="ALRT",
+                                              AlertCountryCode="USA",
+                                              AlertMethodType="DTC",
+                                              AlertSecurityType="EQU",
+                                              AlertSettlementModelName="ARALERTI",
+                                              settlementInstructions=SettlementInstructions2(ID1="1940",
+                                                                                             ID2="00053308",
+                                                                                             ID3="00058320",
+                                                                                             SecurityAccount="23438",
+                                                                                             SubAccountNo="100527",
+                                                                                             PaymentCurrency="USD",
+                                                                                             CashAccountNo="23438",
+                                                                                             SubAgentBIC="DTCCUS41XXX",
+                                                                                             SubAgentName1="DEPOSITORY TRUST AND CLEARING CORPO",
+                                                                                             SubAgentName2="RATION",
+                                                                                             PSET="DTCYUS33",
+                                                                                             AffirmingPartyIndicator="A",
+                                                                                             InstitutionBIC="OMGOUS33XXX"
+                                                                                             )),
+        ))
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -61,7 +119,7 @@ def execute(report_id):
 
         #create care market order
         cmo1_params = {
-            'Account': 'MOClient',
+            'Account': 'MOClient2',
             'HandlInst': '3',
             'Side': '1',
             'Price': '10',
@@ -85,7 +143,8 @@ def execute(report_id):
                 bca.message_to_grpc('NewOrderSingle', cmo1_params, "gtwquod5")
             ))
 
-        call(common_act.acceptOrder, accept_order_request(session_id, case_id, "VETO", qty1, ""))
+        # call(common_act.acceptOrder, accept_order_request(session_id, case_id, "VETO", qty1, ""))
+        call(common_act.acceptOrder, accept_order_request("VETO", qty1, ""))
 
         # create manual execution
         service = Stubs.win_act_order_book
@@ -203,23 +262,23 @@ def execute(report_id):
 
         ext_id = "MiddleOfficeExtractionId"
         middle_office_service = Stubs.win_act_middle_office_service
-        extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
-        extract_request.set_extraction_id(ext_id)
-        extract_request.set_filter(["Order ID", block_order_id])
-        block_order_status = ExtractionDetail("middleOffice.status", "Status")
-        block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
-        block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
-        extract_request.add_extraction_details(
-            [block_order_status, block_order_match_status, block_order_summary_status])
-        request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+        # extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
+        # extract_request.set_extraction_id(ext_id)
+        # extract_request.set_filter(["Order ID", block_order_id])
+        # block_order_status = ExtractionDetail("middleOffice.status", "Status")
+        # block_order_match_status = ExtractionDetail("middleOffice.matchStatus", "Match Status")
+        # block_order_summary_status = ExtractionDetail("middleOffice.summaryStatus", "Summary Status")
+        # extract_request.add_extraction_details(
+        #     [block_order_status, block_order_match_status, block_order_summary_status])
+        # request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
 
-        verifier = Verifier(case_id)
-
-        verifier.set_event_name("Checking block order")
-        verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
-        verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
-        verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
-        verifier.verify()
+        # verifier = Verifier(case_id)
+        #
+        # verifier.set_event_name("Checking block order")
+        # verifier.compare_values("Order Status", "ApprovalPending", request[block_order_status.name])
+        # verifier.compare_values("Order Match Status", "Unmatched", request[block_order_match_status.name])
+        # verifier.compare_values("Order Summary Status", "", request[block_order_summary_status.name])
+        # verifier.verify()
 
         #verify
         extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
@@ -243,31 +302,56 @@ def execute(report_id):
                                 request_allocate[block_order_conf_service.name])
         verifier.verify()
 
-        # # Check allocations blotter for MOClientSA1
-        #
-        # middle_office_service = Stubs.win_act_middle_office_service
-        #
-        # extract_request = AllocationsExtractionDetails(base=base_request)
-        # extract_request.set_block_filter({"Order ID": block_order_id})
-        # extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
-        # allocate_status = ExtractionDetail("middleOffice.status", "Status")
-        # allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
-        # allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
-        # order_details = extract_request.add_order_details()
-        # order_details.add_extraction_details([allocate_status, allocate_account_id,
-        #                                       allocate_status_match_status])
-        # request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
-        #
-        # verifier = Verifier(case_id)
-        #
-        # verifier.set_event_name("Checking allocate blotter")
-        # verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
-        # verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
-        # verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
-        # verifier.verify()
+        # Check allocations blotter for MOClient2SA1
+
+        middle_office_service = Stubs.win_act_middle_office_service
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_block_filter({"Order ID": block_order_id})
+        extract_request.set_allocations_filter({"Account ID": "MOClient2SA1"})
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_status, allocate_account_id,
+                                              allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClient2SA1", request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
+
+        # Check allocations blotter for MOClient2SA2
+
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_block_filter({"Order ID": block_order_id})
+        extract_request.set_allocations_filter({"Account ID": "MOClient2SA2"})
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_status, allocate_account_id,
+                                              allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking allocate blotter")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClient2SA2",
+                                request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched",
+                                request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
 
 
     except Exception as e:
         logging.error("Error execution", exc_info=True)
     close_fe(case_id, session_id)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    coreHttp.removeRule(Answer)

@@ -24,7 +24,6 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
         if web_admin:
             web_admin_regression.test_run(report_id)
 
-
         print('duration time = ' + str(datetime.now() - start))
     except Exception:
         logging.error("Error execution", exc_info=True)
@@ -33,4 +32,3 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
 if __name__ == '__main__':
     test_run('5.1.137.150|Regressiontest|', algo=False, equity=False,forex=False, retail=False, web_admin=True)
     Stubs.factory.close()
-

@@ -60,7 +60,7 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     dealing_positions_details.set_extraction_id(extraction_id)
     dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
     position = ExtractionPositionsFieldsDetails("dealingpositions.position", "Position")
-    quote_position = ExtractionPositionsFieldsDetails("dealingpositions.quotePosition", "Quote Position")
+    quote_position = ExtractionPositionsFieldsDetails("dealingpositions.quotePosition", "Quote Position (USD)")
     mkt_px = ExtractionPositionsFieldsDetails("dealingpositions.mktPx", "Mkt Px")
     mtm_pnl = ExtractionPositionsFieldsDetails("dealingpositions.mtmPnl", "MTM PnL")
 

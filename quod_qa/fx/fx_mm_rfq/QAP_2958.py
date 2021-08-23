@@ -1,8 +1,7 @@
 import logging
+import time
 from datetime import date
 from pathlib import Path
-from random import randint
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1
 from custom.verifier import Verifier
@@ -10,30 +9,12 @@ from quod_qa.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest
+from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
+    RFQExtractionDetailsRequest
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
-
-
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
-
-
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def press_pricing(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_pricing()
-    call(service.modifyRatesTile, modify_request.build())
 
 
 def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
@@ -59,7 +40,6 @@ def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, c
 def check_dealer_intervention(base_request, service, case_id, quote_id):
     base_data = BaseTableDataRequest(base=base_request)
     base_data.set_filter_dict({"Id": quote_id})
-
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_id = bca.client_orderid(8)
     extraction_request.set_extraction_id(extraction_id)
@@ -69,6 +49,62 @@ def check_dealer_intervention(base_request, service, case_id, quote_id):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check quote request in DI")
     verifier.compare_values("Status", "New", response["dealerIntervention.status"])
+    verifier.verify()
+
+
+def assign_firs_request(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    call(service.assignToMe, base_data.build())
+
+
+def estimate_first_request(base_request, service):
+    base_data = BaseTableDataRequest(base=base_request)
+    call(service.estimate, base_data.build())
+
+
+def extract_bid_part(base_request, service):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_id = bca.client_orderid(4)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.extract_bid_price_pips("rfqDetails.PricePips")
+    extraction_request.extract_bid_price_large("rfqDetails.PriceLarge")
+    extraction_request.extract_bid_near_points_value_label("rfqDetails.NearPoints")
+    extraction_request.extract_bid_value_label("rfqDetails.Value")
+    response = call(service.getRFQDetails, extraction_request.build())
+    print(response)
+    bid_large = response["rfqDetails.PriceLarge"]
+    bid_small = response["rfqDetails.PricePips"]
+    bid_spot_rate = bid_large + bid_small
+    bid_near_pts = response["rfqDetails.NearPoints"]
+    bid_px = response["rfqDetails.Value"]
+    return [bid_spot_rate, bid_near_pts, bid_px]
+
+
+def extract_ask_part(base_request, service):
+    extraction_request = RFQExtractionDetailsRequest(base=base_request)
+    extraction_id = bca.client_orderid(4)
+    extraction_request.set_extraction_id(extraction_id)
+    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
+    extraction_request.extract_ask_near_points_value_label("rfqDetails.askNearPoints")
+    extraction_request.extract_ask_value_label("rfqDetails.askValue")
+    response = call(service.getRFQDetails, extraction_request.build())
+    print(response)
+    ask_large = response["rfqDetails.askPriceLarge"]
+    ask_small = response["rfqDetails.askPricePips"]
+    ask_spot_rate = ask_large + ask_small
+    ask_near_pts = response["rfqDetails.askNearPoints"]
+    ask_px = response["rfqDetails.askValue"]
+    return [ask_spot_rate, ask_near_pts, ask_px]
+
+
+def check_calculation(case_id, event_name, spot_rate, pts, px):
+    pts = float(pts) / 10000
+    expected_px = float(spot_rate) + pts
+
+    verifier = Verifier(case_id)
+    verifier.set_event_name(event_name)
+    verifier.compare_values("Px value", str(expected_px), str(px))
     verifier.verify()
 
 
@@ -87,8 +123,7 @@ def execute(report_id, session_id):
     dealer_service = Stubs.win_act_dealer_intervention_service
 
     case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "GBP/USD-Spot"
+
     client_tier = "Iridium1"
     qty = random_qty(2, 3, 8)
     symbol = "GBP/USD"
@@ -101,7 +136,6 @@ def execute(report_id, session_id):
 
     try:
         # Step 1
-        # Step 2
         params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
                                    securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
                                    currency=currency,
@@ -109,20 +143,21 @@ def execute(report_id, session_id):
 
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_no_reply()
+        # Step 2
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
+        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
+        assign_firs_request(case_base_request, dealer_service)
+        estimate_first_request(case_base_request, dealer_service)
+        time.sleep(5)
         # Step 3
-        # quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
-        # # Step 4
-        # check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        # close_dmi_window(case_base_request, dealer_service)
+        bid_values = extract_bid_part(case_base_request, dealer_service)
+        ask_values = extract_ask_part(case_base_request, dealer_service)
+        #
+        check_calculation(case_id, "Check bid calculation", bid_values[0], bid_values[1], bid_values[2])
+        check_calculation(case_id, "Check ask calculation", ask_values[0], ask_values[1], ask_values[2])
+
+        close_dmi_window(case_base_request, dealer_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         press_pricing(base_details, cp_service)
-    #         call(cp_service.closeRatesTile, base_details.build())
-    #
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
