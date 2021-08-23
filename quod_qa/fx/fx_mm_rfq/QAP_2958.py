@@ -118,6 +118,7 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
 
+    cp_service = Stubs.win_act_cp_service
     ar_service = Stubs.win_act_aggregated_rates_service
     dealer_service = Stubs.win_act_dealer_intervention_service
 

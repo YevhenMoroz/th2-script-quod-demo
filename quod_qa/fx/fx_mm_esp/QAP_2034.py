@@ -5,7 +5,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
-from quod_qa.common_tools import round_decimals_up
+from quod_qa.common_tools import round_decimals_up, round_decimals_down
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from stubs import Stubs
@@ -240,9 +240,9 @@ def execute(report_id, session_id):
 
         use_default(base_details, cp_service)
 
-    except Exception:
+    except Exception as ex:
         logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id, body=f'{ex.args}\n{ex}\n{type(ex)}')
     finally:
         try:
             # Close tiles
