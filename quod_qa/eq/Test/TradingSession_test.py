@@ -24,20 +24,31 @@ def execute(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '19',
-                'MDEntrySize': '1000',
+                'MDEntryPx': '20',
+                'MDEntrySize': '1200',
                 'MDEntryPositionNo': '1',
-                'TradingSessionSubID': '2',
-                'SecurityTradingStatus': '3'
+                # 'TradingSessionSubID': '4',
+                # 'SecurityTradingStatus': '3'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '19.99',
-                'MDEntrySize': '1000',
+                'MDEntryPx': '21',
+                'MDEntrySize': '1200',
                 'MDEntryPositionNo': '1',
-                'TradingSessionSubID': '2',
+                # 'TradingSessionSubID': '4',
+                # 'SecurityTradingStatus': '3'
+            },
+            {
+                'MDEntryType': '2',
+                'MDEntryPx': '19.9',
+                'MDEntrySize': '2000',
+                'MDEntryPositionNo': '1',
+                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                'TradingSessionSubID': '4',
                 'SecurityTradingStatus': '3'
             }
+
         ]
     }
 
