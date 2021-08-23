@@ -39,7 +39,7 @@ def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, c
 
 def check_dealer_intervention(base_request, service, case_id, quote_id):
     base_data = BaseTableDataRequest(base=base_request)
-    # base_data.set_filter_dict({"Id": quote_id})
+    base_data.set_filter_dict({"Id": quote_id})
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_id = bca.client_orderid(8)
     extraction_request.set_extraction_id(extraction_id)
@@ -72,11 +72,11 @@ def extract_bid_part(base_request, service):
     extraction_request.extract_bid_value_label("rfqDetails.Value")
     response = call(service.getRFQDetails, extraction_request.build())
     print(response)
-    bid_large = response["rfqDetails.bidPriceLarge"]
-    bid_small = response["rfqDetails.bidPricePips"]
-    bid_spot_rate = float(bid_large + bid_small)
-    bid_near_pts = float(response["rfqDetails.bidNearPoints"])
-    bid_px = float(response["rfqDetails.bidValue"])
+    bid_large = response["rfqDetails.PriceLarge"]
+    bid_small = response["rfqDetails.PricePips"]
+    bid_spot_rate = bid_large + bid_small
+    bid_near_pts = response["rfqDetails.NearPoints"]
+    bid_px = response["rfqDetails.Value"]
     return [bid_spot_rate, bid_near_pts, bid_px]
 
 
@@ -92,15 +92,15 @@ def extract_ask_part(base_request, service):
     print(response)
     ask_large = response["rfqDetails.askPriceLarge"]
     ask_small = response["rfqDetails.askPricePips"]
-    ask_spot_rate = float(ask_large + ask_small)
-    ask_near_pts = float(response["rfqDetails.askNearPoints"])
-    ask_px = float(response["rfqDetails.askValue"])
+    ask_spot_rate = ask_large + ask_small
+    ask_near_pts = response["rfqDetails.askNearPoints"]
+    ask_px = response["rfqDetails.askValue"]
     return [ask_spot_rate, ask_near_pts, ask_px]
 
 
 def check_calculation(case_id, event_name, spot_rate, pts, px):
-    pts = pts / 10000
-    expected_px = spot_rate + pts
+    pts = float(pts) / 10000
+    expected_px = float(spot_rate) + pts
 
     verifier = Verifier(case_id)
     verifier.set_event_name(event_name)
@@ -118,6 +118,7 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
 
+    cp_service = Stubs.win_act_cp_service
     ar_service = Stubs.win_act_aggregated_rates_service
     dealer_service = Stubs.win_act_dealer_intervention_service
 
@@ -143,8 +144,7 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote_no_reply()
         # Step 2
-        # quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
-        quote_id=''
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
         assign_firs_request(case_base_request, dealer_service)
         estimate_first_request(case_base_request, dealer_service)
