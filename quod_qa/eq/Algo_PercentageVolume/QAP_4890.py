@@ -381,7 +381,7 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='FIXQUODSELL5 sent 35=8 New MKD', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region WouldPrice childs and MKD
         case_id_5 = bca.create_event("Check WouldPrice childs and MKD", case_id)
