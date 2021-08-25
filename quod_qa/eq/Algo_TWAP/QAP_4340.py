@@ -516,6 +516,8 @@ def execute(report_id):
             }
         ]
         send_market_dataT(s_par, case_id_5, market_data6)
+        
+        time.sleep(2)
 
         waves -= 1
         #region Slice 3
