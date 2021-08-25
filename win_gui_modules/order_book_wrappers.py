@@ -34,29 +34,56 @@ class ModifyOrderDetails:
         return self.modify_order_details
 
 
-# class ModifyFXOrderDetails:
-#     def __init__(self, base_request):
-#         self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-#
-#         self.modify_order_details.base.CopyFrom(base_request)
-#
-#     def set_order_details(self, order_details: FXOrderDetails):
-#         self.modify_order_details.orderDetails.CopyFrom(order_details.build())
-#
-#     def set_filter(self, filter_list: list):
-#         length = len(filter_list)
-#         i = 0
-#         while i < length:
-#             self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
-#             i += 2
-#
-#     def set_selected_row_count(self, selected_row_count: int):
-#         self.modify_order_details.multipleRowSelection = True
-#         self.modify_order_details.selectedRowCount = selected_row_count
-#
-#     def build(self):
-#         return self.modify_order_details
-#
+class ModifyFXOrderDetails:
+    def __init__(self, base_request):
+        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+
+        self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
+    def amend_by_icon(self):
+        self.modify_order_details.amendByIcon = True
+
+    def build(self):
+        return self.modify_order_details
+
+
+class ModifyFXOrderDetails:
+    def __init__(self, base_request):
+        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+
+        self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.modify_order_details
+
 
 class CancelOrderDetails:
     def __init__(self):
@@ -469,51 +496,6 @@ class MenuItemDetails:
         return self._request
 
 
-class ManualExecutingDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.ManualExecutionDetails(base=base)
-        else:
-            self._request = order_book_pb2.ManualExecutionDetails()
-
-    def set_default_params(self, base_request):
-        self._request.base.CopyFrom(base_request)
-
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
-
-    def set_row_number(self, row_number: (int)):
-        self._request.rowNumber = row_number
-
-    def add_executions_details(self) -> ExecutionsDetails:
-        var = self._request.executionDetails.add()
-        return ExecutionsDetails(var)
-
-    def build(self):
-        return self._request
-
-
-class CompleteOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.CompleteOrdersDetails(base=base)
-        else:
-            self._request = order_book_pb2.CompleteOrdersDetails()
-
-    def set_default_params(self, base_request):
-        self._request.base.CopyFrom(base_request)
-
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
-
-    def set_selected_row_count(self, selected_row_count: int):
-        self._request.multipleRowSelection = True
-        self._request.selectedRowCount = selected_row_count
-
-    def build(self):
-        return self._request
-
-
 # Use for ReOrder Action and ReOrder Leaves Action
 class BaseOrdersDetails:
     def __init__(self, base: EmptyRequest = None):
@@ -538,11 +520,10 @@ class ManualCrossDetails:
             self._request = order_book_pb2.ManualCrossDetails(base=base)
         else:
             self._request = order_book_pb2.ManualCrossDetails()
-        self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
+        self.manualCrossValues = ExtractManualCrossValuesRequest()
 
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
-
 
     def set_filter(self, table_filter: dict):
         self._request.filter.update(table_filter)
@@ -651,7 +632,7 @@ class FXOrderInfo:
 
     def add_single_order_action(self, action):
         order_action = order_book_fx_pb2.FXOrderAction()
-        if   isinstance(action, ExtractionAction):
+        if isinstance(action, ExtractionAction):
             order_action.extractionAction.CopyFrom(action.build())
         else:
             raise Exception("Unsupported action type")
@@ -659,3 +640,212 @@ class FXOrderInfo:
 
     def build(self):
         return self.order_info
+
+
+class ManualExecutingDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.ManualExecutionDetails(base=base)
+        else:
+            self._request = order_book_pb2.ManualExecutionDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_row_number(self, row_number: (int)):
+        self._request.rowNumber = row_number
+
+    def add_executions_details(self) -> ExecutionsDetails:
+        var = self._request.executionDetails.add()
+        return ExecutionsDetails(var)
+
+    def build(self):
+        return self._request
+
+
+class CompleteOrdersDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.CompleteOrdersDetails(base=base)
+        else:
+            self._request = order_book_pb2.CompleteOrdersDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self._request.multipleRowSelection = True
+        self._request.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self._request
+
+
+# Use for ReOrder Action and ReOrder Leaves Action
+class BaseOrdersDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.BaseOrdersDetails(base=base)
+        else:
+            self._request = order_book_pb2.BaseOrdersDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def build(self):
+        return self._request
+
+
+class ManualCrossDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.ManualCrossDetails(base=base)
+        else:
+            self._request = order_book_pb2.ManualCrossDetails()
+        self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_price(self, value: str):
+        self._request.price = value
+
+    def set_quantity(self, value: str):
+        self._request.quantity = value
+
+    def set_capacity(self, value: str):
+        self._request.capacity = value
+
+    def set_last_mkt(self, value: str):
+        self._request.lastMkt = value
+
+    def set_selected_rows(self, row_numbers: list):
+        for row in row_numbers:
+            self._request.selectedRows.append(row)
+
+    def build(self):
+        return self._request
+
+
+class FXOrdersDetails:
+    def __init__(self):
+        self.base_params = None
+        self.extraction_id = None
+        self.orders_details = order_book_fx_pb2.FXOrdersDetailsInfo()
+
+    @staticmethod
+    def create(order_info_list: list = None, info=None):
+        order_details = FXOrdersDetails()
+
+        if order_info_list is not None:
+            for i in order_info_list:
+                order_details.add_single_order_info(i)
+
+        if info is not None:
+            order_details.add_single_order_info(info)
+
+        return order_details
+
+    def set_extraction_id(self, extraction_id: str):
+        self.extraction_id = extraction_id
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.orders_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_order_info(self, order_info_list: list):
+        for order_info in order_info_list:
+            self.orders_details.orderInfo.append(order_info.build())
+
+    def add_single_order_info(self, order_info):
+        self.orders_details.orderInfo.append(order_info.build())
+
+    def set_default_params(self, base_request):
+        self.base_params = base_request
+
+    def extract_length(self, count_id: str):
+        self.orders_details.extractCount = True
+        self.orders_details.countId = count_id
+
+    def request(self):
+        request = order_book_fx_pb2.GetFXOrdersDetailsRequest()
+        request.base.CopyFrom(self.base_params)
+        request.extractionId = self.extraction_id
+        request.orderDetails.CopyFrom(self.orders_details)
+        return request
+
+    def details(self):
+        return self.orders_details
+
+
+class FXOrderInfo:
+    def __init__(self):
+        self.order_info = order_book_fx_pb2.FXOrderInfo()
+
+    @staticmethod
+    def create(action=None, actions: list = None, sub_order_details: FXOrdersDetails = None):
+        order_info = FXOrderInfo()
+        if action is not None:
+            order_info.add_single_order_action(action)
+
+        if actions is not None:
+            order_info.add_order_actions(actions)
+
+        if sub_order_details is not None:
+            order_info.set_sub_orders_details(sub_order_details)
+
+        return order_info
+
+    def set_sub_orders_details(self, sub_order_details: FXOrdersDetails):
+        self.order_info.subOrders.CopyFrom(sub_order_details.details())
+
+    def set_number(self, number: int):
+        self.order_info.number = number
+
+    def add_order_actions(self, actions: list):
+        for action in actions:
+            self.add_single_order_action(action)
+
+    def add_single_order_action(self, action):
+        order_action = order_book_fx_pb2.FXOrderAction()
+        if isinstance(action, ExtractionAction):
+            order_action.extractionAction.CopyFrom(action.build())
+        else:
+            raise Exception("Unsupported action type")
+        self.order_info.orderActions.append(order_action)
+
+    def build(self):
+        return self.order_info
+
+
+class SuspendOrderDetails:
+
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+        else:
+            self._request = order_book_pb2.SuspendOrderDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_cancel_children(self, cancel_children: bool):
+        self._request.cancelChildren = cancel_children
+
+    def build(self):
+        return self._request

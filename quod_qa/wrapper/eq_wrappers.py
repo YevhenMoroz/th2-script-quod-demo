@@ -1,3 +1,5 @@
+import time
+
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
 
@@ -5,6 +7,7 @@ from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from demo import logger
+from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
 from rule_management import RuleManager
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
@@ -18,13 +21,11 @@ from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
+    SuspendOrderDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
-bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
 
@@ -52,7 +53,8 @@ def open_fe2(session_id, report_id, folder, user, password):
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=None,
-                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False
+                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False,
+                 capacity=None
                  ):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
@@ -71,11 +73,12 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         order_ticket.set_washbook(washbook)
     if account is not None:
         order_ticket.set_account(account)
+    if capacity is not None:
+        order_ticket.set_capacity(capacity)
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(base_request)
-
     order_ticket_service = Stubs.win_act_order_ticket
     try:
         rule_manager = RuleManager()
@@ -138,24 +141,19 @@ def manual_cross_orders(request, qty, price, list, last_mkt):
 
 def manual_cross_orders_error(request, qty, price, list, last_mkt):
     error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
-    error_message.name = "ErrorMessage"
-    error_message.type = ExtractManualCrossValuesRequest.ManualCrossExtractedType.ERROR_MESSAGE
-    request1 = ExtractManualCrossValuesRequest()
-    request1.extractionId = "ManualCrossErrorMessageExtractionID"
-    request1.extractedValues.append(error_message)
+    error_message.name = "Error"
     req = ExtractManualCrossValuesRequest()
     req.extractionId = 'ManualCrossErrorMessageExtractionID'
     req.extractedValues.append(error_message)
     manual_cross_details = ManualCrossDetails(request)
-    manual_cross_details.set_last_mkt(last_mkt)
-    manual_cross_details.set_selected_rows(list)
-    manual_cross_details.set_price(price)
     manual_cross_details.set_quantity(qty)
+    manual_cross_details.set_price(price)
+    manual_cross_details.set_selected_rows(list)
+    manual_cross_details.set_last_mkt(last_mkt)
     manual_cross_details.manualCrossValues.CopyFrom(req)
-
     try:
-        frodo = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
-        return frodo
+        reply = call(Stubs.win_act_order_book.manualCross, manual_cross_details.build())
+        return reply
     except Exception:
         basic_custom_actions.create_event('Fail manual_cross_orders_error', status="FAIL")
         logger.error("Error execution", exc_info=True)
@@ -596,8 +594,8 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
         response = check_booking_toggle_manual(request)
-        # if response['book.manualCheckboxState'] != 'checked':
-        # commissions_details.toggle_manual()
+        if response['book.manualCheckboxState'] != 'checked':
+         commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
@@ -651,23 +649,20 @@ def allocate_order(request, arr_allocation_param: [] = None):
     if arr_allocation_param is not None:
         for i in arr_allocation_param:
             allocations_details.add_allocation_param(i)
-    '''
     extraction_details = modify_request.add_extraction_details()
-    extraction_details.extract_agreed_price("book.agreedPrice")
-    extraction_details.extract_gross_amount("book.grossAmount")
-    extraction_details.extract_total_comm("book.totalComm")
-    extraction_details.extract_total_fees("book.totalFees")
-    extraction_details.extract_net_price("book.netPrice")
-    extraction_details.extract_net_amount("book.netAmount")
-    extraction_details.extract_pset_bic("book.psetBic")
-    extraction_details.extract_exchange_rate("book.exchangeRate")
-    '''
+    extraction_details.extract_agreed_price("alloc.agreedPrice")
+    extraction_details.extract_gross_amount("alloc.grossAmount")
+    extraction_details.extract_total_comm("alloc.totalComm")
+    extraction_details.extract_total_fees("alloc.totalFees")
+    extraction_details.extract_net_price("alloc.netPrice")
+    extraction_details.extract_net_amount("alloc.netAmount")
+
     try:
         response = call(Stubs.win_act_middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
         return response
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail allocate_order', status="FAIL")
+        basic_custom_actions.create_event('Fail allocate_order', status="TRUE")
 
 
 def amend_allocate(request, account=None, agreed_price=None, settlement_currency=None, exchange_rate=None,
@@ -783,7 +778,7 @@ def view_orders_for_block(request, count: int):
 def check_error_in_book(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(request)
-    modify_request.set_partial_error_message("qwerty")
+    modify_request.set_partial_error_message("error_in_book")
     try:
         error = call(middle_office_service.bookOrder, modify_request.build())
         return error
@@ -801,8 +796,27 @@ def re_order_leaves(request, is_sall=False):
     new_order_details = NewOrderDetails()
     new_order_details.set_order_details(order_ticket)
     new_order_details.set_default_params(request)
-    call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
-    basic_custom_actions.create_event('Fail re_order_leaves', status="FAIL")
+    try:
+        call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail re_order', status="FAIL")
+
+
+def re_order(request, is_sall=False):
+    order_ticket = OrderTicketDetails()
+    if is_sall:
+        order_ticket.sell()
+    else:
+        order_ticket.buy()
+    new_order_details = NewOrderDetails()
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(request)
+    try:
+        call(Stubs.win_act_order_book.reOrder, order_ticket.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+    basic_custom_actions.create_event('Fail re_order', status="FAIL")
 
 
 def is_menu_item_present(request, menu_item, filter=None):
@@ -970,35 +984,6 @@ def view_orders_for_block(request, count: int):
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail view_orders_for_block', status="FAIL")
 
-
-def check_error_in_book(request):
-    middle_office_service = Stubs.win_act_middle_office_service
-    modify_request = ModifyTicketDetails(request)
-    modify_request.set_partial_error_message("qwerty")
-    try:
-        error = call(middle_office_service.bookOrder, modify_request.build())
-        return error
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_error_in_book', status="FAIL")
-
-
-def re_order_leaves(request, is_sall=False):
-    order_ticket = OrderTicketDetails()
-    if is_sall:
-        order_ticket.sell()
-    else:
-        order_ticket.buy()
-    new_order_details = NewOrderDetails()
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(request)
-    try:
-        call(Stubs.win_act_order_book.reOrderLeaves, order_ticket.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail re_order_leaves', status="FAIL")
-
-
 def is_menu_item_present(request, menu_item, filter=None):
     menu_item_details = MenuItemDetails(request)
     menu_item_details.set_menu_item(menu_item)
@@ -1049,3 +1034,18 @@ def get_2nd_lvl_detail(request, column_name):
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail get_2nd_lvl_detail', status="FAIL")
     return request["lvl_2"]
+
+
+def suspend_order(base_request, cancel_children=False, filter=None):
+    suspend_order_details = SuspendOrderDetails(base_request)
+    if filter is not None:
+        suspend_order_details.set_filter(filter)
+    suspend_order_details.set_cancel_children(cancel_children)
+    call(Stubs.win_act_order_book.suspendOrder, suspend_order_details.build())
+
+
+def release_order(base_request, filter=None):
+    base_order_details = BaseOrdersDetails(base_request)
+    if filter is not None:
+        base_order_details.set_filter(filter)
+    call(Stubs.win_act_order_book.releaseOrder, base_order_details.build())
