@@ -564,8 +564,9 @@ class CaseParamsSellRfq:
 
         # check if far leg = BUY => delete BID part from report and points from one of the legs
         if self.leg2_side == '1':
-            self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
-            self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
+            if self.leg1_settltype=='0':
+                self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
+                self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '1':
                 # Check if we send Currency 1 or Currency 2
                 if self.symbol.split('/')[0] == self.currency:
@@ -579,8 +580,9 @@ class CaseParamsSellRfq:
 
         # check if far leg = SELL => delete Offer part from report and points from one of the legs
         if self.leg2_side == '2':
-            self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
-            self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
+            if self.leg1_settltype=='0':
+                self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
+                self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '2':
                 # Check if we send Currency 1 or Currency 2
                 if self.symbol.split('/')[0] == self.currency:
