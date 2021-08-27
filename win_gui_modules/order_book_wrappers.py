@@ -411,7 +411,7 @@ class OrderInfo:
         self.order_info = order_book_pb2.OrderInfo()
 
     @staticmethod
-    def create(action=None, actions: list = None, sub_order_details: OrdersDetails = None):
+    def create(action=None, actions: list = None,row_number: int=0, sub_order_details: OrdersDetails = None):
         order_info = OrderInfo()
         if action is not None:
             order_info.add_single_order_action(action)
@@ -421,6 +421,9 @@ class OrderInfo:
 
         if sub_order_details is not None:
             order_info.set_sub_orders_details(sub_order_details)
+
+        if row_number is not None:
+            order_info.set_number(row_number)
 
         return order_info
 

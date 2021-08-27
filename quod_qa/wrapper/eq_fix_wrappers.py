@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317-standard-test"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 # fix-sell-317-standard-test
 bo_connectivity = "fix-sell-317-backoffice"
 
@@ -29,8 +29,8 @@ def get_bo_connectivity():
 def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None, insrument=None):
     fix_params = {
         'Account': client,
-        'OrderQtyData': {'OrderQty': qty},
-        #'OrderQty': qty,
+        #'OrderQtyData': {'OrderQty': qty},
+        'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
         'OrdType': ord_type,

@@ -11,6 +11,8 @@ from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
 from rule_management import RuleManager
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
+from custom import basic_custom_actions as bca
+from win_gui_modules import trades_blotter_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
@@ -278,8 +280,6 @@ def split_order(request, qty, type, price):
 
 
 def transfer_order(request, user):
-    # order_details = OrdersDetails()
-    # order_details.set_default_params(request)
     transfer_order_details = TransferOrderDetails()
     transfer_order_details.set_default_params(request)
     transfer_order_details.set_transfer_order_user(user, True)
@@ -326,6 +326,22 @@ def un_complete_order(request):
         logger.error("Error execution", exc_info=True)
 
 
+def get_order_value(request, column_name, filter_list=None):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id(column_name)
+    order_details.set_filter(filter_list)
+    value = ExtractionDetail(column_name, column_name)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    try:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail get_order_id', status="FAIL")
+    return result[value.name]
+
+
 def get_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -367,6 +383,13 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
+def base_verifier(case_id, printed_name, expected_value, actual_value):
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Check: " + printed_name)
+    verifier.compare_values(printed_name, expected_value, actual_value)
+    verifier.verify()
+
+
 def verify_order_value(request, case_id, column_name, expected_value, is_child=False):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -378,10 +401,22 @@ def verify_order_value(request, case_id, column_name, expected_value, is_child=F
         result = call(Stubs.win_act_order_book.getChildOrdersDetails, order_details.request())
     else:
         result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values(column_name, expected_value, result[value.name])
-    verifier.verify()
+    base_verifier(case_id, column_name, expected_value, result[value.name])
+
+
+def verify_execution_value(request, case_id, column_name, expected_value, trades_filter_list=None):
+    execution_details = OrdersDetails()
+    extraction_id = bca.client_orderid(4)
+    execution_details.set_default_params(request)
+    execution_details.set_extraction_id(extraction_id)
+    if trades_filter_list is not None:
+        execution_details.set_filter(trades_filter_list)
+    trades_price = ExtractionDetail(column_name, column_name)
+    execution_details.add_single_order_info(
+        OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=[trades_price])))
+    response = call(Stubs.win_act_order_book.getTradeBookDetails, execution_details.request())
+    base_verifier(case_id, column_name, expected_value, response[column_name])
 
 
 def verify_block_value(request, case_id, column_name, expected_value):
@@ -392,10 +427,7 @@ def verify_block_value(request, case_id, column_name, expected_value):
     extraction_detail = ExtractionDetail(column_name, column_name)
     extract_request.add_extraction_details([extraction_detail])
     request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking block order")
-    verifier.compare_values(column_name, expected_value, request[extraction_detail.name])
-    verifier.verify()
+    base_verifier(case_id, column_name, expected_value, request[extraction_detail.name])
 
 
 def verify_allocate_value(request, case_id, column_name, expected_value, account=None):
@@ -406,11 +438,8 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
     extraction_detail = ExtractionDetail(column_name, column_name)
     order_details = extract_request.add_order_details()
     order_details.add_extraction_details([extraction_detail])
-    request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking allocate blotter")
-    verifier.compare_values(column_name, expected_value, request_allocate_blotter[extraction_detail.name])
-    verifier.verify()
+    call(middle_office_service.extractAllocationsTableData, extract_request.build())
+    base_verifier(case_id, column_name, expected_value, request[extraction_detail.name])
 
 
 def notify_dfd(request):
@@ -449,16 +478,6 @@ def reassign_order(request, recipient):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail reassign_order', status="FAIL")
-
-
-def approve_block(request):
-    middle_office_service = Stubs.win_act_middle_office_service
-    modify_request = ModifyTicketDetails(base=request)
-    try:
-        call(middle_office_service.approveMiddleOfficeTicket, modify_request.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail approve_block', status="FAIL")
 
 
 def check_booking_toggle_manual(base_request):
@@ -531,6 +550,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
 
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("BookExtractionId")
+    extraction_details.extract_net_price("book.totalAllocQty")
     extraction_details.extract_net_price("book.netPrice")
     extraction_details.extract_net_amount("book.netAmount")
     extraction_details.extract_total_comm("book.totalComm")
@@ -595,7 +615,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         commissions_details = modify_request.add_commissions_details()
         response = check_booking_toggle_manual(request)
         if response['book.manualCheckboxState'] != 'checked':
-         commissions_details.toggle_manual()
+            commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
@@ -704,22 +724,15 @@ def amend_allocate(request, account=None, agreed_price=None, settlement_currency
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
-        misc_details.set_bo_field_1(misc_arr[0])
-        misc_details.set_bo_field_2(misc_arr[1])
-        misc_details.set_bo_field_3(misc_arr[2])
-        misc_details.set_bo_field_4(misc_arr[3])
-        misc_details.set_bo_field_5(misc_arr[4])
-    '''
+        for i in range(4):
+            misc_details.set_bo_field_1(misc_arr[i])
     extraction_details = modify_request.add_extraction_details()
-    extraction_details.extract_agreed_price("book.agreedPrice")
-    extraction_details.extract_gross_amount("book.grossAmount")
-    extraction_details.extract_total_comm("book.totalComm")
-    extraction_details.extract_total_fees("book.totalFees")
-    extraction_details.extract_net_price("book.netPrice")
-    extraction_details.extract_net_amount("book.netAmount")
-    extraction_details.extract_pset_bic("book.psetBic")
-    extraction_details.extract_exchange_rate("book.exchangeRate")
-    '''
+    extraction_details.extract_agreed_price("alloc.agreedPrice")
+    extraction_details.extract_gross_amount("alloc.grossAmount")
+    extraction_details.extract_total_comm("alloc.totalComm")
+    extraction_details.extract_total_fees("alloc.totalFees")
+    extraction_details.extract_net_price("alloc.netPrice")
+    extraction_details.extract_net_amount("alloc.netAmount")
     try:
         return call(Stubs.win_act_middle_office_service.amendAllocations, modify_request.build())
     except Exception:
@@ -819,31 +832,11 @@ def re_order(request, is_sall=False):
     basic_custom_actions.create_event('Fail re_order', status="FAIL")
 
 
-def is_menu_item_present(request, menu_item, filter=None):
-    menu_item_details = MenuItemDetails(request)
-    menu_item_details.set_menu_item(menu_item)
-    if filter is not None:
-        menu_item_details.set_filter(filter)
-    try:
-        return call(Stubs.win_act_order_book.isMenuItemPresent, menu_item_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail is_menu_item_present', status="FAIL")
-
-
-def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
-    match_details = MatchDetails()
-    match_details.set_qty_to_match(qty_to_match)
-    # match_details.click_cancel()
-    match_details.click_match()
-    trades_order_details = ModifyTradesDetails(match_details=match_details)
-    trades_order_details.set_default_params(request)
-    if order_filter_list is not None:
-        match_details.set_filter()
-    if trades_filter_list is not None:
-        trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
-    call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
-    basic_custom_actions.create_event('Fail manual_match', status="FAIL")
+def cancel_execution(request, trades_filter_list=None):
+    cancel_manual_execution_details = trades_blotter_wrappers.CancelManualExecutionDetails()
+    cancel_manual_execution_details.set_default_params(request)
+    cancel_manual_execution_details.set_filter(trades_filter_list)
+    call(Stubs.win_act_trades.cancelManualExecution, cancel_manual_execution_details.build())
 
 
 def approve_block(request):
@@ -854,16 +847,6 @@ def approve_block(request):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail approve_block', status="FAIL")
-
-
-def check_booking_toggle_manual(base_request, ):
-    middle_office_service = Stubs.win_act_middle_office_service
-    modify_request = ModifyTicketDetails(base=base_request)
-    modify_request.add_commissions_details()
-    extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("BookExtractionId")
-    extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
-    return call(middle_office_service.bookOrder, modify_request.build())
 
 
 def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
@@ -911,9 +894,9 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         fees_details.remove_fees()
     if comm_basis and comm_rate is not None:
         commissions_details = modify_request.add_commissions_details()
-        # response = check_booking_toggle_manual(request)
-        # if response['book.manualCheckboxState'] != 'checked':
-        # commissions_details.toggle_manual()
+        response = check_booking_toggle_manual(request)
+        if response['book.manualCheckboxState'] != 'checked':
+            commissions_details.toggle_manual()
         commissions_details.add_commission(comm_basis, comm_rate)
     if fees_basis and fees_rate is not None:
         fees_details = modify_request.add_fees_details()
@@ -926,7 +909,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
-    '''
+
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("BookExtractionId", )
     extraction_details.extract_net_price("book.netPrice")
@@ -935,54 +918,12 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     extraction_details.extract_gross_amount("book.grossAmount")
     extraction_details.extract_total_fees("book.totalFees")
     extraction_details.extract_agreed_price("book.agreedPrice")
-    extraction_details.extract_pset_bic("book.psetBic")
-    extraction_details.extract_exchange_rate("book.settlementType")
-    extraction_details.extract_settlement_type("book.exchangeRate")
-    '''
     try:
         return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
-
-def check_in_order(request):
-    order_book_obj = ModifyOrderDetails()
-    order_book_obj.set_default_params(request)
-    try:
-        call(Stubs.win_act_order_book.checkInOrder, order_book_obj.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_in_order', status="FAIL")
-
-
-def check_out_order(request):
-    order_book_obj = ModifyOrderDetails()
-    order_book_obj.set_default_params(request)
-    try:
-        call(Stubs.win_act_order_book.checkOutOrder, order_book_obj.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail check_out_order', status="FAIL")
-
-
-def view_orders_for_block(request, count: int):
-    middle_office_service = Stubs.win_act_middle_office_service
-    extract_request = ViewOrderExtractionDetails(base=request)
-    lenght = "middleOffice.viewOrdersCount"
-    extract_request.extract_length(lenght)
-    arr_response = []
-    for i in range(1, count + 1):
-        order_details = extract_request.add_order_details()
-        order_details.set_order_number(i)
-        dma_order_id_view = ExtractionDetail("middleOffice.orderId", "Order ID")
-        order_details.add_extraction_detail(dma_order_id_view)
-    try:
-        arr_response.append(call(middle_office_service.extractViewOrdersTableData, extract_request.build()))
-        return arr_response
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail view_orders_for_block', status="FAIL")
 
 def is_menu_item_present(request, menu_item, filter=None):
     menu_item_details = MenuItemDetails(request)
@@ -1014,26 +955,26 @@ def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_li
         basic_custom_actions.create_event('Fail manual_match', status="FAIL")
 
 
-def get_2nd_lvl_detail(request, column_name):
+def get_2nd_lvl_order_detail(request, column_name, row_number: int = 0):
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(request)
     main_order_details.set_extraction_id("getOrderInfo")
     main_order_id = ExtractionDetail("order_id", "Order ID")
     main_order_extraction_action = ExtractionAction.create_extraction_action(
         extraction_details=[main_order_id])
-    lvl_2_detail = ExtractionDetail("lvl_2", column_name)
+    lvl_2_detail = ExtractionDetail(column_name, column_name)
     lvl2ext_action = ExtractionAction.create_extraction_action(
         extraction_details=[lvl_2_detail])
-    lvl_2_info = OrderInfo.create(actions=[lvl2ext_action])
+    lvl_2_info = OrderInfo.create(actions=[lvl2ext_action], row_number=row_number)
     sub_order_details = OrdersDetails.create(order_info_list=[lvl_2_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
+    main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action,
+                                                              sub_order_details=sub_order_details))
     try:
         request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail get_2nd_lvl_detail', status="FAIL")
-    return request["lvl_2"]
+        basic_custom_actions.create_event('Fail get_2nd_lvl_order_detail', status="FAIL")
+    return request[column_name]
 
 
 def suspend_order(base_request, cancel_children=False, filter=None):

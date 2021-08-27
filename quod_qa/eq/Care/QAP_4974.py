@@ -47,8 +47,8 @@ def execute(report_id, session_id):
 
     # endregion
     # region Verify
-    child_sts = eq_wrappers.get_2nd_lvl_detail(base_request, "Sts")
-    child_qty = eq_wrappers.get_2nd_lvl_detail(base_request, "Qty")
+    child_sts = eq_wrappers.get_2nd_lvl_order_detail(base_request, "Sts")
+    child_qty = eq_wrappers.get_2nd_lvl_order_detail(base_request, "Qty")
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking Child")
     verifier.compare_values("Sts", "Open", child_sts)

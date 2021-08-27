@@ -50,7 +50,7 @@ def execute(report_id, session_id):
         time.sleep(1)
         rule_manager.remove_rule(nos_rule)
         rule_manager.remove_rule(nos_rule2)
-    exec_id = eq_wrappers.get_2nd_lvl_detail(base_request, "ExecID")
+    exec_id = eq_wrappers.get_2nd_lvl_order_detail(base_request, "ExecID")
     # endregion
 
     # region create CO
@@ -73,6 +73,6 @@ def execute(report_id, session_id):
     eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled")
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking Fees")
-    verifier.compare_values("ExecType", "Trade", eq_wrappers.get_2nd_lvl_detail(base_request, "ExecType"))
+    verifier.compare_values("ExecType", "Trade", eq_wrappers.get_2nd_lvl_order_detail(base_request, "ExecType"))
     verifier.verify()
     # endregion
