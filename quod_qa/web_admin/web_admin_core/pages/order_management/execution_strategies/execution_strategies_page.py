@@ -36,7 +36,7 @@ class ExecutionStrategiesPage(CommonPage):
     def click_on_clone_at_more_actions(self):
         self.find_by_xpath(ExecutionStrategiesConstants.CLONE_AT_MORE_ACTIONS_XPATH).click()
 
-    def click_download_pdf_entity_button_and_check_pdf(self, value: str):
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
         self.find_by_xpath(ExecutionStrategiesConstants.DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH).click()
         time.sleep(2)
