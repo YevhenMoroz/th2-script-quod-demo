@@ -1,16 +1,8 @@
 import logging
-import os
 from copy import deepcopy
 from datetime import datetime
-
-import pyautogui
-from th2_grpc_act_gui_quod import order_ticket_service
-
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
-
+from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
-import time
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
@@ -40,8 +32,8 @@ def execute(report_id, session_id):
     lookup = "VETO"
     client = "CLIENT1"
     # endregion
-    # region Open FE
 
+    # region Open FE
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
@@ -53,7 +45,8 @@ def execute(report_id, session_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id)
-    # endregionA
+    # endregion
+
     # region Create order via FIX
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT1")
@@ -112,6 +105,7 @@ def execute(report_id, session_id):
     # region Accept CO
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
+
     # region Send OrderCancelReplaceRequest with new price
     fix_modify_message = deepcopy(fix_message)
     fix_modify_message.change_parameters({'Price': newPrice})
@@ -120,6 +114,7 @@ def execute(report_id, session_id):
     amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
+
     # region Send OrderCancelReplaceRequest with new qty
     fix_modify_message = deepcopy(fix_message)
     fix_modify_message.change_parameters({'OrderQty': newQty, 'Price': newPrice})
@@ -128,6 +123,7 @@ def execute(report_id, session_id):
     amend_responce = fix_manager_qtwquod5.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message)
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
     # endregion
+
     # region Cancel order
     order_id = request[order_id.name]
     client_order_id =request[client_order_id.name]
@@ -142,6 +138,7 @@ def execute(report_id, session_id):
     responce_cancel = fix_manager_qtwquod5.Send_OrderCancelRequest_FixMessage(fix_cancel)
     call(common_act.acceptOrder, accept_order_request(lookup, newQty, newPrice))
     # endregion
+
     # region Check values in OrderBook after Cancel
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))

@@ -1,6 +1,8 @@
 import logging
 import os
 import time
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
@@ -41,9 +43,9 @@ def execute(report_id, session_id):
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_FOK(eq_wrappers.get_buy_connectivity(), client + '_PARIS', 'XPAR',
+        nos_rule = rule_manager.add_NewOrdSingle_FOK(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), client + '_PARIS', 'XPAR',
                                                      False, float(price))
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 4, price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 4, price)
     finally:
         time.sleep(10)
         rule_manager.remove_rule(nos_rule)
@@ -82,7 +84,7 @@ def execute(report_id, session_id):
         'CxlQty': qty
     }
 
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'OrdStatus'])
     # endregion

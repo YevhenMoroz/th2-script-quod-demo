@@ -3,6 +3,8 @@ import os
 from copy import deepcopy
 from datetime import datetime
 from th2_grpc_act_gui_quod import order_ticket_service
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
@@ -45,10 +47,10 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     param_list = {'Price': newPrice}
     #Amend fix order
-    eq_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
     # endregion
     # region Reject amend
     eq_wrappers.reject_order(lookup, qty, price)
