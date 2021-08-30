@@ -48,7 +48,7 @@ qty = '2000000'
 api = Stubs.api_service
 ttl_default = 120
 ttl_null = None
-ttl_test = 140
+ttl_test = 300
 
 def set_send_hedge_order(case_id, ttl):
     modify_params = {
@@ -214,7 +214,7 @@ def execute(report_id, session_id):
         place_order(base_details, cp_service, client)
         # Step 2
         ord_id = check_order_book_ao('Checking placed order', case_id, case_base_request, ob_act)
-        time.sleep(50)
+        time.sleep(40)
         check_order_book_after_ttl_expire(case_id, case_base_request, ob_act, ord_id)
         # Step 3
         set_send_hedge_order(case_id, ttl_test)

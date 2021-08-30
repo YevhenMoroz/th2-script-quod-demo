@@ -1,18 +1,35 @@
 from datetime import datetime, timedelta
 from custom import basic_custom_actions
-from demo import logger
-from quod_qa.wrapper.eq_wrappers import sell_connectivity, buy_connectivity, bo_connectivity
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
+from custom import basic_custom_actions as bca
+import logging
+logging.basicConfig(format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
 sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+# fix-sell-317-standard-test
 bo_connectivity = "fix-sell-317-backoffice"
+
+
+def get_buy_connectivity():
+    return buy_connectivity
+
+
+def get_sell_connectivity():
+    return sell_connectivity
+
+
+def get_bo_connectivity():
+    return bo_connectivity
 
 
 def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None, insrument=None):
     fix_params = {
         'Account': client,
+        #'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
@@ -55,24 +72,6 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def create_order_list_via_fix(case_id, no_orders: []):
-    try:
-        fix_manager = FixManager(sell_connectivity, case_id)
-        fix_params = {
-            'BidType': "1",
-            'TotNoOrders': len(no_orders),
-            'NoOrders': no_orders,
-        }
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        response = fix_manager.Send_NewOrderList_FixMessage(fix_message)
-        fix_params['response'] = response
-        return fix_params
-    except Exception:
-        basic_custom_actions.create_event('Fail create_order_list_via_fix', status="FAIL")
-        logger.error("Error execution", exc_info=True)
-
-
 def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(sell_connectivity, case_id)
     try:
@@ -102,13 +101,33 @@ def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
         logger.error("Error execution", exc_info=True)
 
 
-def get_buy_connectivity():
-    return buy_connectivity
+def create_order_list_via_fix(case_id, no_orders: []):
+    try:
+        fix_manager = FixManager(sell_connectivity, case_id)
+        fix_params = {
+            'BidType': "1",
+            'TotNoOrders': len(no_orders),
+            'NoOrders': no_orders,
+        }
+        fix_message = FixMessage(fix_params)
+        fix_message.add_tag({'ListID': bca.client_orderid(10)})
+        response = fix_manager.Send_NewOrderList_FixMessage(fix_message)
+        fix_params['response'] = response
+        return fix_params
+    except Exception:
+        basic_custom_actions.create_event('Fail create_order_list_via_fix', status="FAIL")
+        logger.error("Error execution", exc_info=True)
 
 
-def get_sell_connectivity():
-    return sell_connectivity
-
-
-def get_bo_connectivity():
-    return bo_connectivity
+def cancel_order_list_via_fix(case_id, list_id):
+    try:
+        fix_manager_qtwquod = FixManager(sell_connectivity, case_id)
+        cancel_parms = {
+            "ListID": list_id,
+            "TransactTime": datetime.utcnow().isoformat(),
+        }
+        fix_cancel = FixMessage(cancel_parms)
+        fix_manager_qtwquod.Send_ListCancelRequest_FixMessage(fix_cancel)
+    except Exception:
+        basic_custom_actions.create_event('Fail cancel_order_list_via_fix', status="FAIL")
+        logger.error("Error execution", exc_info=True)

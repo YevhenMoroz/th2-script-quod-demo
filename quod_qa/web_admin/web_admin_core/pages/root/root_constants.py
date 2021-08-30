@@ -8,10 +8,15 @@ class RootConstants:
     MDENTITLEMENTS_ITEM_XPATH = "//span[text()='MDEntitlements']"
     ADMIN_COMMAND_ITEM_XPATH = "//span[text()='AdminCommand']"
 
+    SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
+    INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"
+    ZONES_ITEM_XPATH = "//span[text()='Zones']"
+    LOCATIONS_ITEM_XPATH = "//span[text()='Locations']"
+    DESKS_ITEM_XPATH = "//span[text()='Desks']"
+
     USERS_TOGGLE_CSS_SELECTOR = "a[title='Users']"
     USERS_ITEM_XPATH = "//*[@href='#/pages/users/view']//span[text()='Users']"
     USER_SESSIONS_ITEM_XPATH = "//span[text()='User Sessions']"
-    DESKS_ITEM_XPATH = "//span[text()='Desks']"
 
     REFERENCE_DATA_TOGGLE_CSS_SELECTOR = "a[title='Reference Data']"
     VENUES_ITEM_XPATH = "//span[text()='Venues']"

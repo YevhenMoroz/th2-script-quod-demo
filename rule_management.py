@@ -41,7 +41,11 @@ class RuleManager:
         for rule in running_rules:
             active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
         for key, value in active_rules.items():
-            print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
+            if '.' in value[0]:
+                print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
+            else:
+                print(f'{key} -> {value[0]} -> {value[1]}')
+        print('=' * 50)
 
     # --- REMOVE RULES SECTION ---
 
@@ -174,11 +178,6 @@ class RuleManager:
                                                 TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_RFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQRule(request=
-                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
-
-    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
@@ -189,11 +188,7 @@ class RuleManager:
         return Stubs.test_sim.createQuodRFQTRADERule(request=
                                                      TemplateQuodRFQTRADERule(connection_id=
                                                                               ConnectionID(session_alias=session)))
-    @staticmethod
-    def add_TRFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQTRADERule(request=
-                                                      TemplateQuodRFQTRADERule(connection_id=
-                                                                               ConnectionID(session_alias=session)))
+
 
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
@@ -256,7 +251,7 @@ class RuleManager:
                                             ))
 
     @staticmethod
-    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify = True):
         return Stubs.simulator.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
@@ -278,6 +273,13 @@ class RuleManager:
     def add_fx_md_to(session: str):
         return Stubs.simulator.createQuodDefMDRFXRule(
             request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
+    @staticmethod
+    def add_fx_md_to_test_sim(session: str):
+        return Stubs.test_sim.createQuodDefMDRFXRule(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
+
 
     @staticmethod
     def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):

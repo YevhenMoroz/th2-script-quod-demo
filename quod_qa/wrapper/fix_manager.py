@@ -16,6 +16,9 @@ class FixManager:
     def get_case_id(self):
         return self.case_id
 
+    def set_case_id(self, case_id):
+        self.case_id = case_id
+
 
     def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle', case = None):
         if case == None:
@@ -27,19 +30,6 @@ class FixManager:
                 self.TraderConnectivity,
                 case,
                 bca.message_to_grpc('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
-            ))
-
-        return response
-    def Send_NewOrderList_FixMessage(self, fix_message, message_name='Send NewOrderList', case = None):
-        if case == None:
-            case = self.case_id
-
-        response = self.act.placeOrderFIX(
-            request=bca.convert_to_request(
-                message_name,
-                self.TraderConnectivity,
-                case,
-                bca.message_to_grpc('NewOrderList', fix_message.get_parameters(), self.TraderConnectivity)
             ))
 
         return response
@@ -76,7 +66,6 @@ class FixManager:
             connection_id=ConnectionID(session_alias=self.TraderConnectivity)
         )).MDRefID
 
-        # fix_message.add_tag({'Instrument': {'Symbol': symbol}})
         fix_message.add_tag({'MDReqID': MDReqID})
 
         response = self.act.sendMessage(
@@ -113,7 +102,6 @@ class FixManager:
                 bca.message_to_grpc('MarketDataRequest', fix_message.get_parameters(), self.TraderConnectivity)
             ))
         return response
-
 
     def CheckSubscription(self, MDSymbol):
         #TODO Need Update

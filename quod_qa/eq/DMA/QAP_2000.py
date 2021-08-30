@@ -2,11 +2,11 @@ import logging
 from datetime import datetime
 
 import quod_qa.wrapper.eq_fix_wrappers
+from datetime import datetime
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from custom.basic_custom_actions import create_event, timestamps
+from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
-from win_gui_modules.utils import set_session_id
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)

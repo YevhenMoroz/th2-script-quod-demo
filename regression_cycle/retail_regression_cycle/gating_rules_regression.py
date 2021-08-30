@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Gating Rules regression', parent_id)
+    report_id = bca.create_event('Gating Rules', parent_id)
     try:
         QAP_4280.execute(session_id, report_id)
         QAP_4282.execute(session_id, report_id)

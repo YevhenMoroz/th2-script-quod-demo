@@ -12,7 +12,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Algo_TWAP regression', parent_id)
+    report_id = bca.create_event('Algo TWAP', parent_id)
     try:
         QAP_4295.execute(session_id, report_id)
         QAP_4317.execute(session_id, report_id)

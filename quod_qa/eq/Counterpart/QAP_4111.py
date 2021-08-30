@@ -39,8 +39,8 @@ def execute(report_id, session_id):
     # region Verify
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking Counterparts")
-    verifier.compare_values("Contra Firm", "ContraFirm", eq_wrappers.get_2nd_lvl_detail(base_request,"Contra Firm"))
-    verifier.compare_values("Executing Firm", "ExecutingFirm", eq_wrappers.get_2nd_lvl_detail(base_request,
+    verifier.compare_values("Contra Firm", "ContraFirm", eq_wrappers.get_2nd_lvl_order_detail(base_request, "Contra Firm"))
+    verifier.compare_values("Executing Firm", "ExecutingFirm", eq_wrappers.get_2nd_lvl_order_detail(base_request,
                                                                                               "Executing Firm"))
     verifier.verify()
     # endregion
