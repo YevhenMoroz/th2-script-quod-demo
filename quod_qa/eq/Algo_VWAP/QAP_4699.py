@@ -235,7 +235,7 @@ def execute(report_id):
             'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
             'OrderCapacity': new_order_single_params['OrderCapacity'],
             'QtyType': '0',
-            'Price': price,
+            'Price': parent_price,
             'TargetStrategy': new_order_single_params['TargetStrategy'],
             'Instrument': instrument
 
@@ -371,7 +371,7 @@ def execute(report_id):
         'OrderCapacity': new_order_single_params['OrderCapacity'],
         'QtyType': '0',
         'SettlType': '*',
-        'Price': price,
+        'Price': parent_price,
         'TargetStrategy': new_order_single_params['TargetStrategy'],
         'Instrument': '*',
         'SecondaryExecID': '*',

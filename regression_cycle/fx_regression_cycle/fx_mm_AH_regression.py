@@ -25,9 +25,9 @@ def test_run(parent_id=None):
         # QAP_2113.execute(report_id, session_id)
         # QAP_2228.execute(report_id, session_id)
         # QAP_2250.execute(report_id, session_id)
-        # QAP_2251.execute(report_id, session_id) not done
+        # QAP_2251.execute(report_id, session_id)
         # QAP_2252.execute(report_id, session_id)
-        QAP_2290.execute(report_id, session_id)
+        # QAP_2290.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

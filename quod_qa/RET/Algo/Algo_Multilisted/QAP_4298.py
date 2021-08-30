@@ -49,7 +49,7 @@ def create_order_multilisting(base_request, order_ticket_service, qty, client, o
         order_ticket.sell()
 
     multilisting_strategy = order_ticket.add_multilisting_strategy("Quod Multilisting")
-    multilisting_strategy.set_allow_missing_trim(allow_missing_prim)
+    multilisting_strategy.set_allow_missing_prim(allow_missing_prim)
     multilisting_strategy.set_available_venues(available_venue)
     multilisting_strategy.set_post_mode(post_mode)
 

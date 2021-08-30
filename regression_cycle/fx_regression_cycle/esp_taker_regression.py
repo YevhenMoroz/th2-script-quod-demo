@@ -1,5 +1,5 @@
 from quod_qa.fx.fx_taker_esp import QAP_110, QAP_1115, QAP_3364, QAP_382, QAP_2854, QAP_2947, QAP_231, QAP_3042, \
-    QAP_492, QAP_2948, QAP_1591, QAP_2949, QAP_833, QAP_4156, QAP_404, QAP_2373, QAP_2416
+    QAP_492, QAP_2948, QAP_1591, QAP_2949, QAP_833, QAP_4156, QAP_404, QAP_2373, QAP_2416, QAP_4677, QAP_4673, QAP_4768
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -35,7 +35,9 @@ def test_run(parent_id=None):
         QAP_3042.execute(report_id, session_id)
         QAP_3364.execute(report_id, session_id)
         QAP_4156.execute(report_id, session_id)
-
+        QAP_4677.execute(report_id, session_id)
+        QAP_4673.execute(report_id, session_id)
+        QAP_4768.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
