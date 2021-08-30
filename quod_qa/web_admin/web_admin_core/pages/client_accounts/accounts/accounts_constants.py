@@ -1,4 +1,5 @@
 class AccountsConstants:
+    DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Accounts ']"
     NEW_BUTTON_XPATH = "//button[text()='New']"
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@class="ag-center-cols-container"]//*[@class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"]//*[@col-id="clearingAccountType"]//span//span[4]'
@@ -36,6 +37,7 @@ class AccountsConstants:
     DIMENSIONS_PER_TRANSAC_EXEMPT_FILTER_XPATH = "//nb-accordion/nb-accordion-item[2]//th[contains(@class, 'perTransacFeeExemption')]//input"
     DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_FILTER_XPATH = "//nb-accordion/nb-accordion-item[2]//th[contains(@class, 'venueClientAccountName')]//input"
 
+    DIMENSIONS_PLUS_BUTTON_XPATH = "//*[text() = ' Dimensions ']/parent::*[@class='expanded']//*[@class='nb-plus']"
     DIMENSIONS_EDIT_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'edit')]"
     DIMENSIONS_DELETE_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'delete')]"
     DIMENSIONS_CREATE_ENTITY_BUTTON_XPATH = "//nb-accordion/nb-accordion-item[2]//a[contains(@class, 'create') or contains(@class, 'save')]"
@@ -71,3 +73,4 @@ class AccountsConstants:
     CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[text()='Ok']"
 
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
+    EXT_ID_CLIENT_XPATH = "//*[@col-id='clientAccountID']/span[1]/span[4]"
