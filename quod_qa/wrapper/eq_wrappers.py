@@ -1,5 +1,8 @@
 import time
 
+from th2_grpc_act_gui_quod.care_orders_pb2 import InternalTransferActionDetails
+from th2_grpc_act_gui_quod.care_orders_service import TransferPoolDetailsCLass
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
 
@@ -14,6 +17,7 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -30,6 +34,11 @@ from win_gui_modules.wrappers import set_base, accept_order_request
 
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
+
+
+def scroll_order_book(request, count: int = 1):
+    scrolling_details = GridScrollingDetails(ScrollingOperation.UP, count, request)
+    call(Stubs.win_act_order_book.orderBookGridScrolling, scrolling_details.build())
 
 
 def extract_error_order_ticket(base_request):
@@ -288,6 +297,17 @@ def transfer_order(request, user):
     except Exception:
         basic_custom_actions.create_event('Fail transfer_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
+
+
+def internal_transfer(base_request, transfer_accept: bool = True, order_book_filter=None):
+    internal_transfer_details = TransferPoolDetailsCLass()
+    if transfer_accept:
+        internal_transfer_details.confirm_ticket_accept()
+    else:
+        internal_transfer_details.cancel_ticket_reject()
+    internal_transfer_action = InternalTransferActionDetails(base_request, internal_transfer_details.build())
+    internal_transfer_action.set_filter(order_book_filter)
+    call(Stubs.win_act_order_book.internalTransferAction, internal_transfer_action.build())
 
 
 def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
