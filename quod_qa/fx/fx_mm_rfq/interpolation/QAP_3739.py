@@ -23,9 +23,8 @@ side = "1"
 def send_rfq_and_filled_order_broken(case_id, qty_1):
     params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty_1, symbol=symbol,
                                     securitytype=security_type_fwd, settldate=settle_date_br,
-                                    settltype=settle_type_broken,
-                                    currency=currency, side=side,
-                                    account=client, securityid=symbol)
+                                    settltype=settle_type_broken, currency=currency, settlcurrency=settle_currency,
+                                    side=side, account=account, securityid=symbol)
     rfq = FixClientSellRfq(params_spot)
     rfq.send_request_for_quote()
     rfq.verify_quote_pending()

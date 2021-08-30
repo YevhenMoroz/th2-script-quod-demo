@@ -8,7 +8,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_154
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

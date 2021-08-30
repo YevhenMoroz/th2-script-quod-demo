@@ -74,7 +74,8 @@ def check_quote_request_b(base_request, service, case_id, qty, venue):
     if venue == 'CITIR':
         verifier.compare_values(f'Quote request book QuoteStatus for {venue}', '', response[qrb_quote_status.name])
     if venue == '':
-        verifier.compare_values(f'Quote request book QuoteStatus for 2nd quote', 'Accepted', response[qrb_quote_status.name])
+        verifier.compare_values(f'Quote request book QuoteStatus for 2nd quote', 'Accepted',
+                                response[qrb_quote_status.name])
     verifier.compare_values('Tenor', 'Broken', response[qrb_tenor.name])
     verifier.verify()
 
@@ -96,7 +97,8 @@ def check_quote_request_b_after_reject(base_request, service, case_id, qty, venu
         verifier.compare_values(f'Quote request book QuoteStatus for {venue}', '', response[qrb_quote_status.name])
         verifier.compare_values(f'Quote request book Status for {venue}', 'New', response[qrb_status.name])
     if venue == '':
-        verifier.compare_values(f'Quote request book QuoteStatus for 2nd quote', 'Canceled', response[qrb_quote_status.name])
+        verifier.compare_values(f'Quote request book QuoteStatus for 2nd quote', 'Canceled',
+                                response[qrb_quote_status.name])
         verifier.compare_values(f'Quote request book Status for 2nd quote', 'Terminated', response[qrb_status.name])
     verifier.compare_values('Tenor', 'Broken', response[qrb_tenor.name])
     verifier.verify()
