@@ -1,5 +1,7 @@
 import logging
 import time
+
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
@@ -27,14 +29,15 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create Order
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region Split
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", float(price))
         eq_wrappers.split_order(base_request, str(int(qty) + 1), price)
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -44,8 +47,8 @@ def execute(report_id, session_id):
 
     # endregion
     # region Verify
-    child_sts = eq_wrappers.get_2nd_lvl_detail(base_request, "Sts")
-    child_qty = eq_wrappers.get_2nd_lvl_detail(base_request, "Qty")
+    child_sts = eq_wrappers.get_2nd_lvl_order_detail(base_request, "Sts")
+    child_qty = eq_wrappers.get_2nd_lvl_order_detail(base_request, "Qty")
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking Child")
     verifier.compare_values("Sts", "Open", child_sts)

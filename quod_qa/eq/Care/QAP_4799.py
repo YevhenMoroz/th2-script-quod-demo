@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
@@ -31,7 +33,7 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
     # endregion
     # region Create order via FIX
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price, instrument=instrument)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price, instrument=instrument)
     # endregion
     eq_wrappers.accept_order(lookup, qty, price)
     eq_wrappers.split_order()

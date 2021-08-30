@@ -3,6 +3,7 @@ from datetime import datetime
 
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import DirectChildCareDetails
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
@@ -41,17 +42,17 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create 1 CO order
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id1 = eq_wrappers.get_order_id(base_request)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region create 2 CO order
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id2 = eq_wrappers.get_order_id(base_request)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region create 3 CO order
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id3 = eq_wrappers.get_order_id(base_request)
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion

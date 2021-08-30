@@ -1,3 +1,4 @@
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
@@ -30,13 +31,15 @@ def execute(report_id, session_id):
     # # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client+'_PARIS', "XPAR", 3)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                     client+'_PARIS', 'XPAR', 3,
-                                                                      800, 1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client +'_PARIS', "XPAR", 3)
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client +'_PARIS', 'XPAR', 3,
+            800, 1)
         time.sleep(5)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -95,7 +98,7 @@ def execute(report_id, session_id):
         'RootSettlCurrAmt': '*'
 
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
     # endregion
     # region aprrove block
@@ -163,7 +166,7 @@ def execute(report_id, session_id):
         'ConfirmID': '*'
     }
 
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
     params = {
         'Quantity': qty,
@@ -218,5 +221,5 @@ def execute(report_id, session_id):
         # 'RootCommTypeClCommBasis': '*'
 
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])

@@ -1,3 +1,4 @@
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
@@ -31,7 +32,7 @@ def execute(report_id,session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
     response = fix_message.pop('response')
     # endregion
     eq_wrappers.accept_order("VETO", qty, price)
@@ -76,7 +77,7 @@ def execute(report_id,session_id):
         'RootCommTypeClCommBasis': '*'
 
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
     # endregion
     # region aprrove block
