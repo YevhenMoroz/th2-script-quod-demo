@@ -12,7 +12,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Risk Limits regression', parent_id)
+    report_id = bca.create_event('Risk Limits', parent_id)
     try:
         QAP_4299.execute(session_id, report_id)
         QAP_4291.execute(session_id, report_id)

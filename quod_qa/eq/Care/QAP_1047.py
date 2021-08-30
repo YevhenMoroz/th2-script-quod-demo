@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
@@ -42,7 +43,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region create CO
-    eq_wrappers.create_order_via_fix(case_id, handl_ins, side, client, order_type, qty, tif, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, handl_ins, side, client, order_type, qty, tif, price)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
@@ -51,8 +52,9 @@ def execute(report_id, session_id):
     # region Direct order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", float(price))
 
         eq_wrappers.direct_order(lookup, price, qty, qty_percent)
     except Exception:

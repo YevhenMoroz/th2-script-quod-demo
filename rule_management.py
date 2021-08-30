@@ -178,11 +178,6 @@ class RuleManager:
                                                 TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_RFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQRule(request=
-                                                TemplateQuodRFQRule(connection_id=ConnectionID(session_alias=session)))
-
-    @staticmethod
     def add_TRFQ(session: str):
         return Stubs.simulator.createQuodRFQTRADERule(request=
                                                       TemplateQuodRFQTRADERule(connection_id=
@@ -193,11 +188,7 @@ class RuleManager:
         return Stubs.test_sim.createQuodRFQTRADERule(request=
                                                      TemplateQuodRFQTRADERule(connection_id=
                                                                               ConnectionID(session_alias=session)))
-    @staticmethod
-    def add_TRFQ_test_sim(session: str):
-        return Stubs.test_sim.createQuodRFQTRADERule(request=
-                                                      TemplateQuodRFQTRADERule(connection_id=
-                                                                               ConnectionID(session_alias=session)))
+
 
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
@@ -260,7 +251,7 @@ class RuleManager:
                                             ))
 
     @staticmethod
-    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify = True):
         return Stubs.simulator.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,

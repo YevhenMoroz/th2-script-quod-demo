@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Login regression', parent_id)
+    report_id = bca.create_event('Login', parent_id)
     try:
         QAP_4278.execute(session_id, report_id)
         QAP_4281.execute(session_id, report_id)

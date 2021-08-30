@@ -1,4 +1,6 @@
 import logging
+
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_message import FixMessage
@@ -33,14 +35,14 @@ def execute(report_id, session_id):
     # endregion
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, qty, price)
     response = fix_message.pop('response')
     # Amend fix order
     param_list = {'Price': newPrice}
     fix_message = FixMessage(fix_message)
-    eq_wrappers.amend_order_via_fix(case_id, fix_message, param_list, case_name+"_PARIS")
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list, case_name + "_PARIS")
     # endregion
     # region accept amend
     eq_wrappers.accept_modify(lookup, qty, price)
@@ -76,5 +78,5 @@ def execute(report_id, session_id):
         'header': '*',
         'GrossTradeAmt': '*'
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'])

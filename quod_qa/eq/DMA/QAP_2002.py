@@ -5,6 +5,7 @@ from datetime import datetime
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from test_cases.QAP_2864 import simulator
 from win_gui_modules.order_book_wrappers import OrdersDetails
@@ -42,9 +43,9 @@ def execute(report_id, session_id):
 
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_MarketNewOrdSingle_FOK(eq_wrappers.get_buy_connectivity(), 'XPAR_'+client, 'XPAR',
+        nos_rule = rule_manager.add_MarketNewOrdSingle_FOK(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
                                                            float(1), True)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 4)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 4)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -90,7 +91,7 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*'
     }
 
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'OrdStatus','TimeInForce'])
 

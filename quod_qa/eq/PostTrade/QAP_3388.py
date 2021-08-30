@@ -1,5 +1,6 @@
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
@@ -31,12 +32,14 @@ def execute(report_id, session_id):
     # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                       client+ '_PARIS', "XPAR", int(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                     client + '_PARIS', 'XPAR',
-                                                                      int(price), int(qty), 1)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", int(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', 'XPAR',
+            int(price), int(qty), 1)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -105,7 +108,7 @@ def execute(report_id, session_id):
         'ConfirmTransType': '1',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders','ConfirmTransType','Account'])
     params = {
         'Account': client,

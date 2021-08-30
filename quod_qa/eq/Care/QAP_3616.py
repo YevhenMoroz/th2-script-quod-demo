@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
+
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails, ManualCrossDetails
@@ -42,12 +44,12 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create order via fix
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     # endregion
     # region accept 1 order
     # eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # region accept 2 order
     # eq_wrappers.accept_order(lookup, qty, price)
     # endregion
