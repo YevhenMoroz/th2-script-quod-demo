@@ -64,7 +64,7 @@ def execute(report_id):
         }
         verifier.submitCheckRule(
             bca.create_check_rule(
-                "Readlog NewOrderSingle Received",
+                "Readlog check OrderSubmit",
                 bca.filter_to_grpc("OrderSubmit", readlog_nos_params),
                 checkpoint_id1,
                 'log305-ors',

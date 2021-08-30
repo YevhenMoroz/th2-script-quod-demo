@@ -59,3 +59,9 @@ class AccountsPage(CommonPage):
 
     def get_client(self):
         return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLIENT).text
+
+    def get_ext_id_client(self):
+        return self.find_by_xpath(AccountsConstants.EXT_ID_CLIENT_XPATH).text
+
+    def set_id(self, value):
+        self.set_text_by_xpath(AccountsConstants.ID_INPUT_GRID_FILTER_XPATH, value)

@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Algo Multilisted regression', parent_id)
+    report_id = bca.create_event('Algo Multilisted', parent_id)
 
     try:
         QAP_4298.execute(session_id, report_id)
