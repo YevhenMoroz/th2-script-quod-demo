@@ -84,6 +84,7 @@ def execute(report_id):
             price = rfq_swap.extract_filed('BidPx')
             spot_rate = rfq_swap.extract_filed('BidSpotRate')
             # Step 2,4
+            # rfq_swap.case_params_sell_rfq.order_multi_leg_params['Currency']=settlcurrency
             rfq_swap.send_new_order_multi_leg(price)
             rfq_swap.verify_order_pending_swap(price)
             rfq_swap.verify_order_filled_swap(price, spot_rate=spot_rate, leg_last_px_near=leg_last_px_near,
