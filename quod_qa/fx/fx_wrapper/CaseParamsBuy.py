@@ -66,22 +66,22 @@ class CaseParamsBuy():
                     'SettlDate': self.settldate,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19591,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settldate,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settldate,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
+                # {
+                #     "MDEntryType": "0",
+                #     "MDEntryPx": 1.19591,
+                #     "MDEntrySize": 12000000,
+                #     "MDEntryPositionNo": 3,
+                #     'SettlDate': self.settldate,
+                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                # },
+                # {
+                #     "MDEntryType": "1",
+                #     "MDEntryPx": 1.19615,
+                #     "MDEntrySize": 12000000,
+                #     "MDEntryPositionNo": 3,
+                #     'SettlDate': self.settldate,
+                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                # },
             ]
         }
 

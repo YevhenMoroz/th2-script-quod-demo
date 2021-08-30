@@ -189,9 +189,10 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params['OfferSpotRate'] = offer_spot_rate
 
         print('RFQ pending parameters: \t', self.case_params_sell_rfq.quote_params)
-        checkpoint_id = self.quote.checkpoint_id
         if checkpoint_id_ != '':
             checkpoint_id = checkpoint_id_
+        else:
+            checkpoint_id = self.quote.checkpoint_id
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(

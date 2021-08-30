@@ -1,5 +1,5 @@
 class DesksConstants:
-    DESKS_PAGE_TITLE_XPATH = "//*[@class='menu-title ng-tns-c76-90'][text()='Desks']"
+    DESKS_PAGE_TITLE_XPATH = "//*[@class='entity-title left']//*[text()='Desks']"
     NEW_BUTTON_XPATH = '//button[text()="New"]'
     REFRESH_BUTTON_XPATH = '//*[@data-name="refresh"]'
     MORE_ACTIONS_XPATH = '//*[@data-name="more-vertical"]'

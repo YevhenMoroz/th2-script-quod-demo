@@ -226,9 +226,9 @@ def execute(report_id, session_id):
 
         use_default(base_details, cp_service)
 
-    except Exception as ex:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id, body=f'{ex.args}\n{ex}\n{type(ex)}')
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             # Close tiles

@@ -3,7 +3,7 @@ from custom import basic_custom_actions as bca
 
 class FixMessage:
 
-    def __init__(self, parameters=''):
+    def __init__(self, parameters={}):
         self.parameters = parameters
 
     def get_parameters(self):
