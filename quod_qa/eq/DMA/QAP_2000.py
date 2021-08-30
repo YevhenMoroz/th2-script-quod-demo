@@ -1,10 +1,8 @@
 import logging
-from datetime import datetime
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from custom.basic_custom_actions import create_event, timestamps
+from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
-from win_gui_modules.utils import set_session_id
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
@@ -21,10 +19,11 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
     buy_connectivity = eq_wrappers.get_buy_connectivity()
     # endregion
+
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, "XPAR_" + client, "XPAR", False, 0, 0)
+        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, "XPAR_" + client, "VETO", False, 0, 0)
         fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 1, qty, 0)
         response = fix_message.pop('response')
     except Exception:
@@ -32,9 +31,10 @@ def execute(report_id, session_id):
     finally:
         rule_manager.remove_rule(nos_rule)
     # endregion
+
     # region Check values in OrderBook
     params = {
-        'OrderQty': qty,
+        'OrderQtyData': {'OrderQty': qty},
         'ExecType': '4',
         'OrdStatus': '4',
         'Side': 2,

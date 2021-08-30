@@ -1,11 +1,6 @@
-import time
-from copy import deepcopy
 from datetime import datetime, timedelta
-
-from th2_grpc_act_gui_quod import middle_office_service, order_book_service
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
     ExtractManualCrossValuesRequest, GroupModifyDetails, ReassignOrderDetails
-
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
@@ -18,20 +13,19 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request, direct_moc_request, direct_loc_request_correct, direct_moc_request_correct
+    direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, BaseOrdersDetails, ExtractEventRows, OrderAnalysisAction, \
-    MenuItemDetails
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
+sell_connectivity = "fix-sell-317-standard-test"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
@@ -116,7 +110,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     order_ticket_service = Stubs.win_act_order_ticket
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(buy_connectivity,
                                                                              client + "_PARIS", "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
@@ -146,7 +140,7 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
             'Account': client,
             'HandlInst': handl_inst,
             'Side': side,
-            'OrderQty': qty,
+            'OrderQtyData': {'OrderQty': qty},
             'TimeInForce': tif,
             'OrdType': ord_type,
             'Price': price,
@@ -157,7 +151,7 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
                 'Symbol': 'FR0004186856_EUR',
                 'SecurityID': 'FR0004186856',
                 'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
+                'SecurityExchange': 'VETO'
             },
             # 'Instrument': {
             #     'Symbol': 'IS0000000001_EUR',
@@ -185,11 +179,14 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
         logger.error("Error execution", exc_info=True)
 
 
-def amend_order_via_fix(case_id, fix_message, parametr_list):
+def amend_order_via_fix(case_id, fix_message, param_list, venue_client_name, venue="XPAR"):
     fix_manager = FixManager(sell_connectivity, case_id)
     try:
+        rule_manager = RuleManager()
+        rule = rule_manager.add_OrderCancelReplaceRequest(buy_connectivity, venue_client_name, venue,
+                                                          True)
         fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
+        fix_modify_message.change_parameters(param_list)
         fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
@@ -199,27 +196,31 @@ def amend_order_via_fix(case_id, fix_message, parametr_list):
         rule_manager.remove_rule(rule)
 
 
-def amend_order(request, client=None, qty=None, price=None, account=None):
+def amend_order(request, parent_event, client=None, qty=None, price=None, account=None, washbook=None):
     order_amend = OrderTicketDetails()
-    if not qty is None:
+    if qty is not None:
         order_amend.set_quantity(qty)
-    if not price is None:
+    if price is not None:
         order_amend.set_limit(price)
-    if not client is None:
+    if client is not None:
         order_amend.set_client(client)
-    if not account is None:
+    if account is not None:
         order_amend.set_account(account)
+    if washbook is not None:
+        order_amend.set_washbook(washbook)
+
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
     try:
+        rule_account = str(client) + "_PARIS"
         rule_manager = RuleManager()
-        rule = rule_manager.add_OCRR(buy_connectivity)
+        rule = rule_manager.add_OrderCancelReplaceRequest(session=buy_connectivity, account=rule_account, exdestination="XPAR")
         call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail amend_order', parent_event)
     finally:
-        basic_custom_actions.create_event('Fail amend_order')
         rule_manager.remove_rule(rule)
 
 

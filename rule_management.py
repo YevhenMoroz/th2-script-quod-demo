@@ -256,7 +256,7 @@ class RuleManager:
                                             ))
 
     @staticmethod
-    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify = True):
         return Stubs.simulator.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
