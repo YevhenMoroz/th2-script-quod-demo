@@ -24,7 +24,7 @@ class CaseParamsSellRfq:
     order_rejected = None
     order_algo_rejected = None
 
-    def __init__(self, client, case_id, side='', leg1_side='', leg2_side='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
+    def __init__(self, client, case_id , side:str='', leg1_side:str='', leg2_side:str='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, leg1_settltype=0, leg2_settltype=0, settldate='', leg1_settldate='',
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',
@@ -486,7 +486,10 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
+        self.order_filled_swap['NoLegs'][0]['LegLastForwardPoints'] = '*'
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
+        if self.leg1_settltype == '0':
+            self.order_filled_swap['NoLegs'][0].pop('LegLastForwardPoints')
 
     # Prepare  order rejected report
     def prepare_order_rejected_report_rfq(self):

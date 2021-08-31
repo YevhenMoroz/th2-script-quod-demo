@@ -311,7 +311,11 @@ class FixClientSellRfq():
 
     def verify_order_pending_swap(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
-        self.case_params_sell_rfq.order_pending['Price'] = price
+        self.case_params_sell_rfq.order_pending['Price'] = self.price
+        if price != '':
+            self.case_params_sell_rfq.order_pending['Price'] = price
+        if price == '':
+            self.case_params_sell_rfq.order_pending.pop('Price')
         if qty != '':
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
@@ -374,8 +378,8 @@ class FixClientSellRfq():
         )
         return self
 
-    def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', leg_last_px_near='',
-                                 leg_last_px_far=''):
+    def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', last_spot_rate='', leg_last_px_near='',
+                                 leg_last_px_far='', last_swap_points='', avg_px='',last_px=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()
         self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
         self.case_params_sell_rfq.order_filled_swap['AvgPx'] = self.price
@@ -386,8 +390,16 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_filled_swap['AvgPx'] = price
             self.case_params_sell_rfq.order_filled_swap['LastPx'] = price
             self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = price
+        if price == '':
+            self.case_params_sell_rfq.order_filled_swap.pop('Price')
         if spot_rate != '':
             self.case_params_sell_rfq.order_filled_swap['LastSpotRate'] = spot_rate
+        if last_swap_points != '':
+            self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = last_swap_points
+        if avg_px != '':
+            self.case_params_sell_rfq.order_filled_swap['AvgPx'] = avg_px
+        if last_px != '':
+            self.case_params_sell_rfq.order_filled_swap['LastPx'] = last_px
         if leg_last_px_near != '':
             self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegLastPx'] = leg_last_px_near
         if leg_last_px_far != '':
