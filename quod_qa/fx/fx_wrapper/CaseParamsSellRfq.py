@@ -7,6 +7,7 @@ from custom.tenor_settlement_date import spo_ndf, spo
 
 class CaseParamsSellRfq:
     connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
+    connectivityDropCopy = "fix-sell-m-314luna-drop"
     rfq_params = None
     rfq_params_swap = None
     quote_cancel = None
@@ -20,9 +21,11 @@ class CaseParamsSellRfq:
     order_pending = None
     order_new = None
     order_filled = None
+    order_filled_drop_copy = None
     order_filled_swap = None
     order_rejected = None
     order_algo_rejected = None
+    drop_filter_params = None
 
     def __init__(self, client, case_id, side='', leg1_side='', leg2_side='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
@@ -30,7 +33,7 @@ class CaseParamsSellRfq:
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',
                  leg2_symbol='', securitytype='FXSPOT', leg1_securitytype='', leg2_securitytype='',
                  securityid='EUR/USD', securityidsource='8', handlinstr='1', securityexchange='XQFX',
-                 product=4, account='', ttl=120,
+                 product=4, account='', ttl=120, internal_account='QUOD_1'
                  ):
         self.client = client
         self.case_id = case_id
@@ -62,6 +65,7 @@ class CaseParamsSellRfq:
         self.securityexchange = securityexchange
         self.product = product
         self.account = account
+        self.internal_account = internal_account
         self.ttl = ttl
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
@@ -74,6 +78,7 @@ class CaseParamsSellRfq:
         self.set_rfq_params_swap()
         self.set_quote_params()
         self.set_quote_params_swap()
+        self.set_drop_pre_filter_params()
 
     def set_rfq_params(self):
         self.rfq_params = {
@@ -95,6 +100,15 @@ class CaseParamsSellRfq:
                 # 'TransactTime': (datetime.utcnow().isoformat())
             }
             ]
+        }
+
+    def set_drop_pre_filter_params(self):
+        self.drop_filter_params = {
+            'header': {
+                'MsgType': ('0', "NOT_EQUAL"),
+                'TargetCompID': 'QUOD8',
+                'SenderCompID': 'QUODFX_UAT'
+            },
         }
 
     def set_quote_params(self):
@@ -482,6 +496,38 @@ class CaseParamsSellRfq:
             self.order_filled['SpotSettlDate'] = spo()
         # self.order_filled.pop('ExecRestatementReason')
         # Prepare  order filled report
+
+    def prepare_order_filled_taker(self):
+        self.set_order_exec_rep_params()
+        self.order_filled_drop_copy = self.order_exec_report
+        self.order_exec_report['ClOrdID'] = "*"
+        self.order_exec_report.pop('OrdType')
+        self.order_exec_report.pop('OrderID')
+        self.order_exec_report.pop('OrderCapacity')
+        self.order_exec_report.pop('QtyType')
+        self.order_exec_report.pop('TimeInForce')
+        self.order_exec_report.pop('HandlInst')
+        self.order_exec_report.pop('NoParty')
+        self.order_filled_drop_copy['Account'] = self.internal_account
+        self.order_filled_drop_copy['OrdStatus'] = '2'
+        self.order_filled_drop_copy['ExecType'] = 'F'
+        self.order_filled_drop_copy['Instrument']['SecurityType'] = self.securitytype
+        self.order_filled_drop_copy['SettlType'] = self.settltype
+        self.order_filled_drop_copy['SettlDate'] = self.settldate
+        self.order_filled_drop_copy['SpotSettlDate'] = spo()
+        self.order_filled_drop_copy['LastQty'] = self.orderqty
+        self.order_filled_drop_copy['CumQty'] = self.orderqty
+        self.order_filled_drop_copy['LeavesQty'] = '0'
+        self.order_filled_drop_copy['TradeDate'] = tsd.today()
+        self.order_filled_drop_copy['GrossTradeAmt'] = '*'
+        if self.order_filled_drop_copy == 'FXNDF':
+            self.order_filled_drop_copy['Instrument']['MaturityDate'] = '*'
+            self.order_filled_drop_copy['Instrument'].pop('Product')
+            self.order_filled_drop_copy['SpotSettlDate'] = spo_ndf()
+        if self.securitytype == 'FXFWD':
+            self.order_filled_drop_copy['SpotSettlDate'] = spo()
+    #     # self.order_filled.pop('ExecRestatementReason')
+    #     # Prepare  order filled report
 
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
