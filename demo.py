@@ -8,7 +8,7 @@ from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_208
     QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_2034, QAP_2035
 from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
     QAP_1755, QAP_2103, QAP_2382
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851
+from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850
 from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot
 from rule_management import RuleManager
 from stubs import Stubs
@@ -91,7 +91,7 @@ def test_run():
 
 
         # QAP_3689.execute(report_id)
-        QAP_3851.execute(report_id)
+        QAP_3850.execute(report_id)
 
 
 
