@@ -1,7 +1,6 @@
 import time
 
 from th2_grpc_act_gui_quod.care_orders_pb2 import InternalTransferActionDetails
-from th2_grpc_act_gui_quod.care_orders_service import TransferPoolDetailsCLass
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
@@ -15,7 +14,7 @@ from rule_management import RuleManager
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from custom import basic_custom_actions as bca
-from win_gui_modules import trades_blotter_wrappers
+from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
@@ -28,7 +27,7 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -377,21 +376,6 @@ def get_order_id(request):
     return result[order_id.name]
 
 
-def get_is_locked(request):
-    order_details = OrdersDetails()
-    order_details.set_default_params(request)
-    order_details.set_extraction_id("IsLocked")
-    is_locked = ExtractionDetail("IsLocked", "IsLocked")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[is_locked])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    try:
-        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail get_is_locked', status="FAIL")
-    return result[is_locked.name]
-
-
 def get_cl_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -460,6 +444,15 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
     order_details.add_extraction_details([extraction_detail])
     call(middle_office_service.extractAllocationsTableData, extract_request.build())
     base_verifier(case_id, column_name, expected_value, request[extraction_detail.name])
+
+
+def verify_basket_order_value(request, case_id, column_name, expected_value, basket_book_filter=None):
+    extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+    extract_order_data_details.set_default_params(request)
+    extract_order_data_details.set_filter(basket_book_filter)
+    extract_order_data_details.set_column_name(column_name)
+    result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
+    base_verifier(case_id, column_name, expected_value, result)
 
 
 def notify_dfd(request):
@@ -1010,3 +1003,9 @@ def release_order(base_request, filter=None):
     if filter is not None:
         base_order_details.set_filter(filter)
     call(Stubs.win_act_order_book.releaseOrder, base_order_details.build())
+
+
+def add_to_basket(request, list_row_numbers: [], basket_name=""):
+    add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
+    order_book_service = Stubs.win_act_order_book
+    call(order_book_service.addToBasket, add_to_basket_details.build())
