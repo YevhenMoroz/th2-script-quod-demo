@@ -378,6 +378,43 @@ class FixClientSellRfq():
         )
         return self
 
+    def verify_drop_copy(self, check_point):
+        self.case_params_sell_rfq.prepare_order_filled_report()
+        self.case_params_sell_rfq.prepare_order_filled_taker()
+        self.case_params_sell_rfq.order_filled['Price'] = self.price
+        self.case_params_sell_rfq.order_filled['LastPx'] = self.price
+        self.case_params_sell_rfq.order_filled_drop_copy['LastPx'] = self.price
+        self.case_params_sell_rfq.order_filled['SpotSettlDate'] = '*'
+        self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
+        self.case_params_sell_rfq.order_filled_drop_copy['AvgPx'] = self.price
+        self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
+        self.case_params_sell_rfq.order_filled_drop_copy['LastSpotRate'] = self.price
+        if self.case_params_sell_rfq.quote_params['Side'] == "1":
+            self.case_params_sell_rfq.order_filled_drop_copy['Side'] = "2"
+        if self.case_params_sell_rfq.quote_params['Side'] == "2":
+            self.case_params_sell_rfq.order_filled_drop_copy['Side'] = "1"
+        self.case_params_sell_rfq.order_filled['OrderID'] = self.new_order.response_messages_list[0].fields[
+            'OrderID'].simple_value
+        print('filled', self.case_params_sell_rfq.order_filled)
+
+        message_filters_req = [
+            bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled_drop_copy),
+            bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled, ['ClOrdID', 'OrdStatus'])
+        ]
+        pre_filter_req = bca.prefilter_to_grpc(self.case_params_sell_rfq.drop_filter_params)
+        self.verifier.submitCheckSequenceRule(
+            bca.create_check_sequence_rule(
+                description="Check Drop Copy Execution report",
+                prefilter=pre_filter_req,
+                msg_filters=message_filters_req,
+                checkpoint=check_point,
+                connectivity=self.case_params_sell_rfq.connectivityDropCopy,
+                event_id=self.case_params_sell_rfq.case_id,
+                timeout=3000
+            )
+        )
+        return self
+
     def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', last_spot_rate='', leg_last_px_near='',
                                  leg_last_px_far='', last_swap_points='', avg_px='',last_px=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()

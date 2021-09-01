@@ -156,7 +156,7 @@ def execute(report_id, session_id):
 
         # TODO Need to receive QuoteID for sending NewOrderSingle
 
-        rfq.send_new_order_single("1.1818", quote_id=quote_id[1])
+        rfq.send_new_order_single("1.1818")
         rfq.verify_order_pending().verify_order_filled_fwd()
         close_dmi_window(case_base_request, dealer_service)
 
