@@ -11,13 +11,13 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
 
     client_tier = "Iridium1"
-    symbol = "EUR/GBP"
+    symbol = "EUR/RUB"
     security_type_spo = "FXSPOT"
     settle_date = spo()
     settle_type = 0
     currency = "EUR"
     qty = "1000000"
-    text = 'no available Bid depth on EUR/GBP SPO'
+    text = 'no available Bid depth on EUR/RUB SPO'
 
     try:
         # Step 1

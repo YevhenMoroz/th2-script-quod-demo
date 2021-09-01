@@ -19,7 +19,9 @@ class TestCase:
 
     def send_nos(self):
         nos_params = {
-            'SEND_SUBJECT': 'QUOD314.MDA.FIX',
+            # 'SEND_SUBJECT': 'QUOD.QSFE.FIX',
+            # 'SEND_SUBJECT': 'QUOD.MDA.FIX',
+            'SEND_SUBJECT': 'QUOD.PRICING.1.FIX',
             'MarketDataRequestBlock': {
                 # 'MarketDepth': '',
                 # 'ExternalEntitlementKey': '',

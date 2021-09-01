@@ -7,8 +7,8 @@ from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_208
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
     QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_2034, QAP_2035
 from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
-    QAP_1755, QAP_2103, QAP_2382
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850
+    QAP_1755, QAP_2103, QAP_2382, QAP_2353
+from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850, QAP_4234
 from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot
 from rule_management import RuleManager
 from stubs import Stubs
@@ -91,12 +91,13 @@ def test_run():
 
 
         # QAP_3689.execute(report_id)
-        QAP_3850.execute(report_id)
+        # QAP_2353.execute(report_id)
+        # QAP_4234.execute(report_id)
 
 
 
         # QAP_2103.execute(report_id)
-        # java_api_MDReq.TestCase().execute(report_id)
+        java_api_MDReq.TestCase().execute(report_id)
         # java_api.TestCase(report_id).execute()
 
         # rfq_spot.execute(report_id)
