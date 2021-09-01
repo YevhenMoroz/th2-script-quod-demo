@@ -27,16 +27,8 @@ def execute(report_id, session_id):
     qty2 = "1500"
     client = "CLIENT1"
     price = 3
-    # endregion
-
-    # region Open FE
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    # work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    # username = Stubs.custom_config['qf_trading_fe_user']
-    # password = Stubs.custom_config['qf_trading_fe_password']
-    # eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
 
     # region Create order via FIX
@@ -44,10 +36,9 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
-                                                                             'XPAR_CLIENT1', "XPAR", price)
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),'XPAR_'+client, "XPAR", price)
 
-        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, 'CLIENT1', 2, qty, 6, price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 2, qty, 6, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -56,7 +47,6 @@ def execute(report_id, session_id):
     # endregion
     response = fix_message.pop('response')
     # region Check
-    time.sleep(1)
     params = {
         'OrderQty': qty,
         'ExecType': 'A',
@@ -98,7 +88,7 @@ def execute(report_id, session_id):
                                                               'XPAR', True)
         fix_message = quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, {'OrderQty': qty2})
     finally:
-        time.sleep(10)
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
     # endregion
 
@@ -142,10 +132,10 @@ def execute(report_id, session_id):
     try:
         nos_rule = rule_manager.add_OrderCancelRequest(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
                                                        True)
-        quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(response.response_messages_list[0].fields['OrderID'].simple_value,
-                                                             response.response_messages_list[0].fields['ClOrdID'].simple_value, 'CLIENT1', case_id, 2)
+        cl_ord_id = response.response_messages_list[0].fields['ClOrdID'].simple_value
+        quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(cl_ord_id, cl_ord_id, client, case_id, 2)
     finally:
-        time.sleep(10)
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
     # endregion
 

@@ -1,18 +1,17 @@
 import logging
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
 from custom.basic_custom_actions import create_event
-
+from quod_qa.wrapper import eq_fix_wrappers
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
+from win_gui_modules.order_book_wrappers import OrdersDetails
+from win_gui_modules.utils import get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
-from quod_qa.wrapper import eq_wrappers
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -45,7 +44,7 @@ def execute(report_id, session_id):
     # region Create order via FIX
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NOS('fix-bs-310-columbia', "XPAR_CLIENT1")
-    connectivity = eq_wrappers.buy_connectivity
+    connectivity = eq_fix_wrappers.buy_connectivity
     fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
     fix_params = {

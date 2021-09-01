@@ -1,16 +1,10 @@
 import logging
 from datetime import datetime
-from time import sleep
-from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
-from rule_management import RuleManager
+from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_ticket import OrderTicketDetails
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe, close_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -48,12 +42,12 @@ def execute(report_id, session_id):
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=desk, price=price)
     # endregion
     # region Check values in OrderBook
-    eq_wrappers.verify_order_value(base_request,case_id,"Sts","Sent")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
     eq_wrappers.verify_order_value(base_request, case_id, "Qty", qty)
     eq_wrappers.verify_order_value(base_request, case_id, "Limit Price", price)
     # endregion
     # region Accept CO
-    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
+    eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region Check values in OrderBook after Accept
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
