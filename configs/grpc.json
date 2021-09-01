@@ -116,7 +116,7 @@
       "endpoints": {
         "act_fx_dealing_positions": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -251,7 +251,7 @@
  "endpoints": {
  "act_care_order": {
      "host": "10.0.22.24",
-     "port": 32288
+     "port": 32223
  }
  },
  "strategy": {

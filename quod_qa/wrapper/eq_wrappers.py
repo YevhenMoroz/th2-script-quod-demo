@@ -1,11 +1,10 @@
-from th2_grpc_act_gui_quod.care_orders_pb2 import InternalTransferActionDetails
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from demo import logger
 from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
 from rule_management import RuleManager
@@ -25,7 +24,7 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -176,7 +175,7 @@ def accept_order(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
     except Exception:
-        # basic_custom_actions.create_event('Fail accept_order', status="FAIL")
+        basic_custom_actions.create_event('Fail accept_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -300,8 +299,13 @@ def internal_transfer(base_request, transfer_accept: bool = True, order_book_fil
     else:
         internal_transfer_details.cancel_ticket_reject()
     internal_transfer_action = InternalTransferActionDetails(base_request, internal_transfer_details.build())
-    internal_transfer_action.set_filter(order_book_filter)
-    call(Stubs.win_act_order_book.internalTransferAction, internal_transfer_action.build())
+    if order_book_filter is not None:
+        internal_transfer_action.set_filter(order_book_filter)
+    try:
+        call(Stubs.care_orders_action.internalTransferAction, internal_transfer_action.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail transfer_order', status="FAIL")
+        logger.error("Error execution", exc_info=True)
 
 
 def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
@@ -344,7 +348,8 @@ def get_order_value(request, column_name, filter_list=None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
-    order_details.set_filter(filter_list)
+    if filter_list is not None:
+        order_details.set_filter(filter_list)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -382,10 +387,11 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def base_verifier(case_id, printed_name, expected_value, actual_value):
+def base_verifier(case_id, printed_name, expected_value, actual_value,
+                  verification_method: VerificationMethod = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check: " + printed_name)
-    verifier.compare_values(printed_name, expected_value, actual_value)
+    verifier.compare_values(printed_name, expected_value, actual_value, verification_method)
     verifier.verify()
 
 
