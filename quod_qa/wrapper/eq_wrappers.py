@@ -1,5 +1,3 @@
-import time
-
 from th2_grpc_act_gui_quod.care_orders_pb2 import InternalTransferActionDetails
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
@@ -30,9 +28,6 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
     SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
-
-order_book_act = Stubs.win_act_order_book
-common_act = Stubs.win_act
 
 
 def scroll_order_book(request, count: int = 1):
@@ -442,8 +437,8 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
     extraction_detail = ExtractionDetail(column_name, column_name)
     order_details = extract_request.add_order_details()
     order_details.add_extraction_details([extraction_detail])
-    call(middle_office_service.extractAllocationsTableData, extract_request.build())
-    base_verifier(case_id, column_name, expected_value, request[extraction_detail.name])
+    result = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+    base_verifier(case_id, column_name, expected_value, result[extraction_detail.name])
 
 
 def verify_basket_order_value(request, case_id, column_name, expected_value, basket_book_filter=None):
