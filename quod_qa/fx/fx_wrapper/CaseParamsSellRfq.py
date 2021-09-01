@@ -11,6 +11,7 @@ class CaseParamsSellRfq:
     rfq_params = None
     rfq_params_swap = None
     quote_cancel = None
+    quote_response = None
     quote_params = None
     quote_params_swap = None
     quote_request_reject_params = None
@@ -69,6 +70,8 @@ class CaseParamsSellRfq:
         self.ttl = ttl
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
+        self.quote_resp_id = bca.client_orderid(10)
+        self.quote_resp_type = "8"
         self.quote_reqid = bca.client_orderid(9)
 
         self.set_new_order_single_params()
@@ -244,6 +247,15 @@ class CaseParamsSellRfq:
             'QuoteReqID': self.rfq_params['QuoteReqID'],
             'QuoteID': '*',
             'QuoteCancelType': '5',
+        }
+
+    def set_quote_response_params(self):
+        self.quote_response = {
+            'QuoteReqID': "*",
+            'QuoteID': "*",
+            'QuoteRespID': self.quote_resp_id,
+            'QuoteRespType': self.quote_resp_type,
+            'Symbol': self.symbol
         }
 
     # Set New Order Single parameters
@@ -526,6 +538,7 @@ class CaseParamsSellRfq:
             self.order_filled_drop_copy['SpotSettlDate'] = spo_ndf()
         if self.securitytype == 'FXFWD':
             self.order_filled_drop_copy['SpotSettlDate'] = spo()
+
     #     # self.order_filled.pop('ExecRestatementReason')
     #     # Prepare  order filled report
 
@@ -610,7 +623,7 @@ class CaseParamsSellRfq:
 
         # check if far leg = BUY => delete BID part from report and points from one of the legs
         if self.leg2_side == '1':
-            if self.leg1_settltype=='0':
+            if self.leg1_settltype == '0':
                 self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
                 self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '1':
@@ -626,7 +639,7 @@ class CaseParamsSellRfq:
 
         # check if far leg = SELL => delete Offer part from report and points from one of the legs
         if self.leg2_side == '2':
-            if self.leg1_settltype=='0':
+            if self.leg1_settltype == '0':
                 self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
                 self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
             if self.side == '2':

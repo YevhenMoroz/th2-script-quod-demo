@@ -92,6 +92,20 @@ class FixClientSellRfq():
             ))
         return self
 
+    def send_quote_response(self):
+        self.case_params_sell_rfq.set_quote_response_params()
+        self.case_params_sell_rfq.quote_response['QuoteID'] = self.case_params_sell_rfq.quote_params['QuoteID']
+        print('Quote Responce Params    ', self.case_params_sell_rfq.quote_response)
+        self.fix_act.sendMessage(
+            bca.convert_to_request(
+                'Send Response',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteResponse', self.case_params_sell_rfq.quote_response,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
     # Send New Order Single
     def send_new_order_single(self, price, side='', quote_id=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
