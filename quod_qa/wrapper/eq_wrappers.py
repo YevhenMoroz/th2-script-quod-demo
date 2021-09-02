@@ -1,3 +1,4 @@
+from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
@@ -13,6 +14,8 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
+    TemplatesDetails
 from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
@@ -447,7 +450,7 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
     base_verifier(case_id, column_name, expected_value, result[extraction_detail.name])
 
 
-def verify_basket_order_value(request, case_id, column_name, expected_value, basket_book_filter=None):
+def verify_basket_value(request, case_id, column_name, expected_value, basket_book_filter=None):
     extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
     extract_order_data_details.set_default_params(request)
     extract_order_data_details.set_filter(basket_book_filter)
@@ -996,17 +999,71 @@ def suspend_order(base_request, cancel_children=False, filter=None):
     if filter is not None:
         suspend_order_details.set_filter(filter)
     suspend_order_details.set_cancel_children(cancel_children)
-    call(Stubs.win_act_order_book.suspendOrder, suspend_order_details.build())
+    try:
+        call(Stubs.win_act_order_book.suspendOrder, suspend_order_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail suspend_order', status="FAIL")
 
 
 def release_order(base_request, filter=None):
     base_order_details = BaseOrdersDetails(base_request)
     if filter is not None:
         base_order_details.set_filter(filter)
-    call(Stubs.win_act_order_book.releaseOrder, base_order_details.build())
+    try:
+        call(Stubs.win_act_order_book.releaseOrder, base_order_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail release_order', status="FAIL")
 
 
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
     order_book_service = Stubs.win_act_order_book
-    call(order_book_service.addToBasket, add_to_basket_details.build())
+    try:
+        call(order_book_service.addToBasket, add_to_basket_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
+
+
+def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_policy='Care', symbol_source='ISIN',
+                        has_header=True, templ: {} = None):
+    if templ is None:
+        templ = {'Symbol': ['1', 'FR0004186856'], 'Quantity': ['2', '0'], 'Price': ['3', '0'],
+                 'Account': ['4', 'CLIENT_FIX_CARE_SA1'], 'Side': ['5', 'Buy'], 'OrdType': ['6', 'Limit'],
+                 'StopPrice': ['7', '0'], 'Capacity': ['8', 'Agency']}
+
+    fields_details = [
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
+                                        templ.get('Symbol')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
+                                        templ.get('Quantity')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
+                                        templ.get('Price')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
+                                        templ.get('Side')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
+                                        templ.get('OrdType')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
+                                        templ.get('StopPrice')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
+                                        templ.get('Account')[1]).build(),
+        ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
+                                        templ.get('Capacity')[1]).build()
+    ]
+    details = ImportedFileMappingDetails(has_header, fields_details).build()
+    templates_details = TemplatesDetails()
+    templates_details.set_default_params(request)
+    templates_details.set_name_value(templ_name)
+    templates_details.set_exec_policy(exec_policy)
+    templates_details.set_default_client(client)
+    templates_details.set_description(descrip)
+    templates_details.set_symbol_source(symbol_source)
+    templates_details.set_time_in_force(tif)
+    templates_details.set_imported_file_mapping_details(details)
+    try:
+        call(Stubs.win_act_basket_ticket.manageTemplates, templates_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
