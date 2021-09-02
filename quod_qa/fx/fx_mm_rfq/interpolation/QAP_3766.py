@@ -29,11 +29,11 @@ leg2_side = ""
 defaultmdsymbol_spo = 'GBP/USD:SPO:REG:CITI'
 
 bid_spot_rate = '1.19603'
-bid_swap_pts = '0.00002'
-bid_px = '0.00002'
+bid_swap_pts = '0.000017'
+bid_px = '0.000017'
 offer_spot_rate = '1.19603'
-offer_swap_pts = '0.000015'
-offer_px = '0.000015'
+offer_swap_pts = '0.000025'
+offer_px = '0.000025'
 
 
 def send_swap_and_filled(case_id):

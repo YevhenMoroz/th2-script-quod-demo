@@ -16,7 +16,7 @@ from stubs import Stubs
 client = 'Argentina1'
 account = 'Argentina1_1'
 client_tier = 'Argentina'
-symbol = "GBP/USD"
+symbol = "EUR/USD"
 security_type_swap = "FXSWAP"
 security_type_fwd = "FXFWD"
 security_type_spo = "FXSPO"
@@ -26,8 +26,8 @@ settle_date_w2 = wk2()
 settle_type_spo = "0"
 settle_type_w1 = "W1"
 settle_type_w2 = "W2"
-currency = "USD"
-settle_currency = "GBP"
+currency = "EUR"
+settle_currency = "USD"
 qty = '1000000'
 side = "1"
 leg1_side = "2"
@@ -38,109 +38,7 @@ venue_ms = 'MS'
 mic_ms = 'MS-SW'
 api = Stubs.api_service
 
-
-
-
 def change_venue_status_msr(case_id, health, metric):
-    modify_params_MSR = {
-        "tradingStatus": "T",
-        "GTDHolidayCheck": "false",
-        "algoIncluded": "false",
-        "supportBrokerQueue": "false",
-        "supportStatus": "false",
-        "supportQuoteBook": "false",
-        "autoRFQTimeout": 5000,
-        "multilegReportType": "M",
-        "clQuoteReqIDFormat": "#20d",
-        "MIC": "MS-RFQ",
-        "supportOrderBook": "false",
-        "supportReverseCalSpread": "false",
-        "timeZone": "GMT Standard Time",
-        "venueName": "MSR",
-        "venueShortName": "MS",
-        "MDSource": "MF",
-        "shortTimeZone": "GMT",
-        "tradingPhase": "OPN",
-        "clOrdIDFormat": "#20d",
-        "supportIntradayData": "false",
-        "tradingPhaseProfileID": 123,
-        "supportPublicQuoteReq": "false",
-        "venueID": "MSR",
-        "supportMarketDepth": "false",
-        "supportTrade": "true",
-        "venueVeryShortName": "M",
-        "settlementRank": 7,
-        "feedSource": "QUOD",
-        "clientVenueID": "MS-RFQ",
-        "supportMovers": "false",
-        "supportQuote": "false",
-        "supportTimesAndSales": "false",
-        "supportTickers": "false",
-        "routeVenueID": "MSR",
-        "venueType": "LIT",
-        "supportNews": "false",
-        "supportMarketTime": "false",
-        "holdFIXShortSell": "false",
-        "regulatedShortSell": "false",
-        "generateBidOfferID": "false",
-        "generateQuoteMsgID": "false",
-        "supportTermQuoteRequest": "false",
-        "supportQuoteCancel": "true",
-        "supportSizedMDRequest": "false",
-        "venueQualifier": "RFS",
-        "supportDiscretionInst": "false",
-        "supportBrokenDateFeed": "true",
-        "weekendDay": None,
-        "venueOrdCapacity": [
-            {
-                "ordCapacity": "P"
-            },
-            {
-                "ordCapacity": "A"
-            },
-            {
-                "ordCapacity": "G"
-            },
-            {
-                "ordCapacity": "L"
-            },
-            {
-                "ordCapacity": "W"
-            },
-            {
-                "ordCapacity": "R"
-            },
-            {
-                "ordCapacity": "I"
-            },
-            {
-                "ordCapacity": "O"
-            }
-        ],
-        "venuePhaseSession": [
-            {
-                "supportMinQty": "false",
-                "tradingPhase": "OPN",
-                "tradingSession": "NotD",
-                "venuePhaseSessionPegPriceType": [],
-                "venuePhaseSessionTypeTIF": [
-                    {
-                        "supportDisplayQty": "false",
-                        "timeInForce": "FOK",
-                        "ordType": "LMT"
-                    },
-                    {
-                        "supportDisplayQty": "false",
-                        "timeInForce": "FOK",
-                        "ordType": "MKT"
-                    },
-                ],
-            }
-        ]
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyVenue', modify_params_MSR, 'rest_wa314luna'),
-                                     parent_event_id=case_id))
     modify_venue_params = {
         "venueID": "MS",
         "alive": 'true',
@@ -159,101 +57,6 @@ def change_venue_status_msr(case_id, health, metric):
             parent_event_id=case_id))
 
 def change_venue_status_ms(case_id, health, metric):
-    modify_params_MS = {
-        "tradingStatus": "T",
-        "GTDHolidayCheck": "false",
-        "algoIncluded": "true",
-        "supportBrokerQueue": "false",
-        "supportStatus": "false",
-        "supportQuoteBook": "false",
-        "MIC": "MS-SW",
-        "supportOrderBook": "false",
-        "supportReverseCalSpread": "false",
-        "timeZone": "GMT Standard Time",
-        "venueName": "MS",
-        "venueShortName": "MS",
-        "MDSource": "TEST",
-        "shortTimeZone": "GMT",
-        "tradingPhase": "OPN",
-        "clOrdIDFormat": "#20d",
-        "clQuoteReqIDFormat": "#20d",
-        "supportIntradayData": "false",
-        "tradingPhaseProfileID": 123,
-        "supportPublicQuoteReq": "false",
-        "venueID": "MS",
-        "supportMarketDepth": "true",
-        "supportTrade": "true",
-        "venueVeryShortName": "M",
-        "settlementRank": 7,
-        "feedSource": "QUOD",
-        "clientVenueID": "MS-SW",
-        "supportMovers": "false",
-        "supportQuote": "false",
-        "supportTimesAndSales": "true",
-        "supportTickers": "false",
-        "venueType": "LIT",
-        "supportNews": "false",
-        "supportMarketTime": "false",
-        "holdFIXShortSell": "false",
-        "regulatedShortSell": "false",
-        "multilegReportType": "M",
-        "generateBidOfferID": "false",
-        "generateQuoteMsgID": "false",
-        "supportTermQuoteRequest": "true",
-        "supportQuoteCancel": "true",
-        "weekendDay": None,
-        "supportSizedMDRequest": "false",
-        "venueQualifier": "ESP",
-        "supportDiscretionInst": "false",
-        "supportBrokenDateFeed": "true",
-        "venueOrdCapacity": [
-            {
-                "ordCapacity": "O"
-            },
-            {
-                "ordCapacity": "I"
-            },
-            {
-                "ordCapacity": "R"
-            },
-            {
-                "ordCapacity": "A"
-            },
-            {
-                "ordCapacity": "P"
-            },
-            {
-                "ordCapacity": "G"
-            },
-            {
-                "ordCapacity": "W"
-            }
-        ],
-        "venuePhaseSession": [
-            {
-                "supportMinQty": "false",
-                "tradingPhase": "OPN",
-                "tradingSession": "NotD",
-                "venuePhaseSessionPegPriceType": [],
-                "venuePhaseSessionTypeTIF": [
-                    {
-                        "supportDisplayQty": "false",
-                        "timeInForce": "FOK",
-                        "ordType": "LMT"
-                    },
-                    {
-                        "supportDisplayQty": "false",
-                        "timeInForce": "FOK",
-                        "ordType": "MKT"
-                    },
-                ],
-            }
-        ]
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyVenue', modify_params_MS, 'rest_wa314luna'),
-                                     parent_event_id=case_id))
-
     modify_venue_params = {
         "venueID": "MSR",
         "alive": 'true',
@@ -268,12 +71,12 @@ def change_venue_status_ms(case_id, health, metric):
     }
     api.sendMessage(
         request=SubmitMessageRequest(
-            message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa314luna'),
+            message=bca.wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa314luna'),
             parent_event_id=case_id))
 
 
 def send_swap_and_filled(case_id):
-    #Precondition
+    # Precondition
     change_venue_status_ms(case_id, 'true', '-1')
     change_venue_status_msr(case_id, 'true', '-1')
 
@@ -291,11 +94,11 @@ def send_swap_and_filled(case_id):
     rfq = FixClientSellRfq(params_swap)
     rfq.send_request_for_quote_swap()
     # Step 2
-    rfq.verify_quote_pending_swap(). \
-        verify_quote_reject()
+    rfq.verify_quote_reject()
 
 
-
+    change_venue_status_ms(case_id, 'false', '0')
+    change_venue_status_msr(case_id, 'false', '0')
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -304,6 +107,5 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        change_venue_status_ms(case_id, 'true', '-1')
-        change_venue_status_msr(case_id, 'true', '-1')
+
+

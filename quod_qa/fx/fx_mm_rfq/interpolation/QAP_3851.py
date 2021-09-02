@@ -31,9 +31,9 @@ leg2_side = "1"
 defaultmdsymbol_spo = 'GBP/USD:SPO:REG:CITI'
 defaultmdsymbol_wk1 = 'GBP/USD:FXF:WK1:CITI'
 defaultmdsymbol_wk2 = 'GBP/USD:FXF:WK2:CITI'
-price_to_check = '0.000005'
-leg_last_px_near = '1.196045'
-leg_last_px_far = '1.19605'
+price_to_check = '-0.000008'
+leg_last_px_near = '1.196055'
+leg_last_px_far = '1.196047'
 last_spot_rate = '1.19603'
 
 

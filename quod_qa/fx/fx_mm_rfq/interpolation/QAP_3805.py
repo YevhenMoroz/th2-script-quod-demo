@@ -85,11 +85,22 @@ def send_swap_and_filled(case_id):
                           securitytype=security_type_spo, securityid=symbol, currency=currency,
                           settlcurrency=settle_currency)). \
         send_md_request().send_md_unsubscribe()
+    FixClientSellEsp(
+        CaseParamsSellEsp(client, case_id, settltype=settle_type_spo, settldate=settle_type_w1, symbol=symbol,
+                          securitytype=security_type_spo, securityid=symbol, currency=currency,
+                          settlcurrency=settle_currency)). \
+        send_md_request().send_md_unsubscribe()
+    FixClientSellEsp(
+        CaseParamsSellEsp(client, case_id, settltype=settle_type_spo, settldate=settle_type_w2, symbol=symbol,
+                          securitytype=security_type_spo, securityid=symbol, currency=currency,
+                          settlcurrency=settle_currency)). \
+        send_md_request().send_md_unsubscribe()
     FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol)).send_market_data_spot()
     FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_wk1, symbol).prepare_custom_md_fwd(
         no_md_entries_wk1)).send_market_data_fwd()
     FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_wk2, symbol).prepare_custom_md_fwd(
         no_md_entries_wk2)).send_market_data_fwd()
+
     params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
                                     orderqty=qty2, leg1_ordqty=qty, leg2_ordqty=qty2,
                                     currency=currency, settlcurrency=settle_currency,
