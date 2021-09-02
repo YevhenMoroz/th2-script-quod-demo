@@ -312,8 +312,11 @@ class FixClientSellRfq():
     def verify_order_pending_swap(self, price='', qty='', side=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending['Price'] = self.price
+        self.case_params_sell_rfq.order_pending['Side'] = self.case_params_sell_rfq.leg2_side
         if price != '':
             self.case_params_sell_rfq.order_pending['Price'] = price
+        if side != '':
+            self.case_params_sell_rfq.order_pending['Side'] = side
         if price == '':
             self.case_params_sell_rfq.order_pending.pop('Price')
         if qty != '':
@@ -321,7 +324,7 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
             self.case_params_sell_rfq.order_pending['OrderID'] = self.new_order.response_messages_list[0].fields[
                 'OrderID'].simple_value
-        self.case_params_sell_rfq.order_pending['Side'] = self.case_params_sell_rfq.leg2_side
+
         # if 'Side' in self.case_params_sell_rfq.quote_params_swap.keys():
         #     pass
         # if side!='':
@@ -416,7 +419,7 @@ class FixClientSellRfq():
         return self
 
     def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', last_spot_rate='', leg_last_px_near='',
-                                 leg_last_px_far='', last_swap_points='', avg_px='',last_px=''):
+                                 leg_last_px_far='', last_swap_points='', avg_px='', last_px=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()
         self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
         self.case_params_sell_rfq.order_filled_swap['AvgPx'] = self.price
@@ -441,6 +444,14 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegLastPx'] = leg_last_px_near
         if leg_last_px_far != '':
             self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegLastPx'] = leg_last_px_far
+        if side == '1':
+            self.case_params_sell_rfq.order_filled_swap['Side'] = side
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegSide'] = '2'
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegSide'] = '1'
+        if side == '2':
+            self.case_params_sell_rfq.order_filled_swap['Side'] = side
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegSide'] = '1'
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegSide'] = '2'
 
         print('SWAP FILLED \t', self.case_params_sell_rfq.order_filled_swap)
 
