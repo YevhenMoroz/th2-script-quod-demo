@@ -17,7 +17,7 @@ def execute(report_id):
     settle_type = 0
     currency = "EUR"
     qty = "1000000"
-    text = 'no available Bid depth on EUR/RUB SPO'
+    text = f"no available Bid depth on {symbol} SPO"
 
     try:
         # Step 1
