@@ -487,6 +487,73 @@ class FixClientSellRfq():
         )
         return self
 
+    def verify_order_filled_swap_drop_copy(self, price='', qty='', side='', spot_rate='', last_spot_rate='',
+                                           leg_last_px_near='',
+                                           leg_last_px_far='', last_swap_points='', avg_px='', last_px='',
+                                           check_point='', spot_date=''):
+        self.case_params_sell_rfq.prepare_order_swap_filled_report()
+        self.case_params_sell_rfq.prepare_order_swap_filled_taker()
+        self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
+        self.case_params_sell_rfq.order_filled_swap['AvgPx'] = self.price
+        self.case_params_sell_rfq.order_filled_swap['LastPx'] = self.price
+        self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = self.price
+        if spot_date != '':
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['SpotSettlDate'] = spot_date
+            self.case_params_sell_rfq.order_filled_swap['SpotSettlDate'] = spot_date
+        if price != '':
+            self.case_params_sell_rfq.order_filled_swap['Price'] = price
+            self.case_params_sell_rfq.order_filled_swap['AvgPx'] = price
+            self.case_params_sell_rfq.order_filled_swap['LastPx'] = price
+            self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = price
+        if price == '':
+            self.case_params_sell_rfq.order_filled_swap.pop('Price')
+        if spot_rate != '':
+            self.case_params_sell_rfq.order_filled_swap['LastSpotRate'] = spot_rate
+        if last_swap_points != '':
+            self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = last_swap_points
+        if avg_px != '':
+            self.case_params_sell_rfq.order_filled_swap['AvgPx'] = avg_px
+        if last_px != '':
+            self.case_params_sell_rfq.order_filled_swap['LastPx'] = last_px
+        if leg_last_px_near != '':
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegLastPx'] = leg_last_px_near
+        if leg_last_px_far != '':
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegLastPx'] = leg_last_px_far
+        if side == '1':
+            self.case_params_sell_rfq.order_filled_swap['Side'] = side
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['Side'] = "2"
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegSide'] = '2'
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegSide'] = '1'
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['NoLegs'][0]['LegSide'] = '1'
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['NoLegs'][1]['LegSide'] = '2'
+        if side == '2':
+            self.case_params_sell_rfq.order_filled_swap['Side'] = side
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['Side'] = "1"
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegSide'] = '1'
+            self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegSide'] = '2'
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['NoLegs'][0]['LegSide'] = '2'
+            self.case_params_sell_rfq.order_filled_swap_drop_copy['NoLegs'][1]['LegSide'] = '1'
+
+        print('SWAP FILLED \t', self.case_params_sell_rfq.order_filled_swap)
+
+        message_filters_req = [
+            bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled_swap_drop_copy),
+            bca.filter_to_grpc('ExecutionReport', self.case_params_sell_rfq.order_filled_swap, ['ClOrdID', 'OrdStatus'])
+        ]
+        pre_filter_req = bca.prefilter_to_grpc(self.case_params_sell_rfq.drop_filter_params)
+        self.verifier.submitCheckSequenceRule(
+            bca.create_check_sequence_rule(
+                description="Check Drop Copy Execution report",
+                prefilter=pre_filter_req,
+                msg_filters=message_filters_req,
+                checkpoint=check_point,
+                connectivity=self.case_params_sell_rfq.connectivityDropCopy,
+                event_id=self.case_params_sell_rfq.case_id,
+                timeout=3000
+            )
+        )
+        return self
+
     def verify_order_filled_fwd(self, price='', qty='', fwd_point='', last_spot_rate='', side=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.order_filled['Price'] = self.price

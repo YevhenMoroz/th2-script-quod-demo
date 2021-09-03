@@ -24,11 +24,13 @@ class CaseParamsSellRfq:
     order_filled = None
     order_filled_drop_copy = None
     order_filled_swap = None
+    order_filled_swap_drop_copy = None
     order_rejected = None
     order_algo_rejected = None
     drop_filter_params = None
 
-    def __init__(self, client, case_id , side:str='', leg1_side:str='', leg2_side:str='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
+    def __init__(self, client, case_id, side: str = '', leg1_side: str = '', leg2_side: str = '', orderqty=1,
+                 leg1_ordqty='', leg2_ordqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, leg1_settltype=0, leg2_settltype=0, settldate='', leg1_settldate='',
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',
@@ -571,10 +573,32 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
+
         self.order_filled_swap['NoLegs'][0]['LegLastForwardPoints'] = '*'
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
         if self.leg1_settltype == '0':
             self.order_filled_swap['NoLegs'][0].pop('LegLastForwardPoints')
+
+    def prepare_order_swap_filled_taker(self):
+        self.set_order_exec_rep_params_swap()
+        self.order_filled_swap_drop_copy = self.order_exec_report_swap
+        self.order_exec_report_swap['ClOrdID'] = "*"
+        self.order_exec_report_swap.pop('OrdType')
+        self.order_exec_report_swap.pop('Account')
+        self.order_exec_report_swap.pop('OrderID')
+        self.order_exec_report_swap.pop('OrderCapacity')
+        self.order_exec_report_swap.pop('QtyType')
+        self.order_exec_report_swap.pop('SettlType')
+        self.order_exec_report_swap.pop('TimeInForce')
+        self.order_exec_report_swap.pop('ExDestination')
+        self.order_exec_report_swap['NoLegs'][0].pop('LegOrderQty')
+        self.order_exec_report_swap['NoLegs'][1].pop('LegOrderQty')
+        self.order_exec_report_swap.pop('HandlInst')
+        self.order_exec_report_swap.pop('NoParty')
+        self.order_filled_swap_drop_copy['NoLegs'][0]['LegLastForwardPoints'] = '*'
+        self.order_filled_swap_drop_copy['NoLegs'][1]['LegLastForwardPoints'] = '*'
+        if self.leg1_settltype == '0':
+            self.order_filled_swap_drop_copy['NoLegs'][0].pop('LegLastForwardPoints')
 
     # Prepare  order rejected report
     def prepare_order_rejected_report_rfq(self):
@@ -684,10 +708,10 @@ class CaseParamsSellRfq:
 
         if self.side == '':
             self.quote_params_swap.pop('Side')
-        #If we send request without side at all
+        # If we send request without side at all
         if self.leg1_side == '':
             self.quote_params_swap['NoLegs'][0].pop('LegSide')
-            if self.leg1_settltype=='0':
+            if self.leg1_settltype == '0':
                 self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
                 self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
         if self.leg2_side == '':
@@ -699,7 +723,7 @@ class CaseParamsSellRfq:
 
     def prepare_quote_reject_report(self):
         self.set_quote_request_reject_params()
-        if self.securitytype=='FXSWAP':
+        if self.securitytype == 'FXSWAP':
             self.quote_request_reject_params['NoRelatedSymbols'][0].pop('SettlType')
             self.quote_request_reject_params['NoRelatedSymbols'][0].pop('OrdType')
             self.quote_request_reject_params['NoRelatedSymbols'][0].pop('SettlDate')
