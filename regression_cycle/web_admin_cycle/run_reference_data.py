@@ -8,6 +8,10 @@ from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1731 import QAP_1
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1732 import QAP_1732
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1733 import QAP_1733
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2302 import QAP_2302
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2905 import QAP_2905
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_759 import QAP_759
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP_760
 
 
 class ReferenceData:
@@ -20,10 +24,14 @@ class ReferenceData:
     def execute(self):
         try:
             start_time = time.monotonic()
+            QAP_758(self.web_driver_container, self.second_lvl_id).run()
+            QAP_759(self.web_driver_container, self.second_lvl_id).run()
+            QAP_760(self.web_driver_container, self.second_lvl_id).run()
             QAP_1731(self.web_driver_container, self.second_lvl_id).run()
             QAP_1732(self.web_driver_container, self.second_lvl_id).run()
             QAP_1733(self.web_driver_container, self.second_lvl_id).run()
             QAP_2302(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2905(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
