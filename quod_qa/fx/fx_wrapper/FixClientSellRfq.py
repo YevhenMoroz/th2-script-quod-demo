@@ -68,8 +68,8 @@ class FixClientSellRfq():
 
     def send_request_for_quote_swap_no_reply(self):
         self.case_params_sell_rfq.prepare_rfq_params_swap()
-        print('SWAP RFQ ', self.case_params_sell_rfq.rfq_params_swap)
-        self.quote = self.fix_act.sendMessage(
+        print('SWAP RFQ     ', self.case_params_sell_rfq.rfq_params_swap)
+        self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Request For Quote',
                 self.case_params_sell_rfq.connectivityRFQ,

@@ -101,12 +101,12 @@ def test_run():
 
         # QAP_3805.execute(report_id)
         # QAP_3689.execute(report_id)
-        QAP_3908_BLOCKED_BY_PCON_2405.execute(report_id)
+
 
 
 
         # QAP_2103.execute(report_id)
-        # java_api_MDReq.TestCase().execute(report_id)
+        java_api_MDReq.TestCase().execute(report_id)
         # java_api.TestCase(report_id).execute()
 
         # rfq_spot.execute(report_id)

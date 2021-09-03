@@ -13,7 +13,8 @@ from datetime import datetime
 class TestCase:
     def __init__(self):
         self.act_java_api = Stubs.act_java_api
-        self.connectivity = 'java-api-luna314'
+        # self.connectivity = 'java-api-luna314'
+        self.connectivity = '314_java_api'
 
 
 
@@ -21,7 +22,11 @@ class TestCase:
         nos_params = {
             # 'SEND_SUBJECT': 'QUOD.QSFE.FIX',
             # 'SEND_SUBJECT': 'QUOD.MDA.FIX',
-            'SEND_SUBJECT': 'QUOD.PRICING.1.FIX',
+            # 'SEND_SUBJECT': 'QUOD.MDA.REQUEST',
+            # 'SEND_SUBJECT': 'QUOD.PRICING.2.FE',
+            'SEND_SUBJECT': 'MDA.QUOD.PRICING.2.SUB',
+            # 'SEND_SUBJECT': 'MDA.506403761.4.D.PRICING.2',
+            # 'SEND_SUBJECT': 'QUOD.PRICING.1.FIX',
             'MarketDataRequestBlock': {
                 # 'MarketDepth': '',
                 # 'ExternalEntitlementKey': '',
@@ -38,8 +43,8 @@ class TestCase:
                 'MDSymbolList': {
                     'MDSymbolBlock': [
                         {
-                            'ListingID': '100000413',
-                            'MDSymbol': '100000413.4',
+                            'ListingID': '506403761',
+                            'MDSymbol': '506403761.4',
                             'ClientTierID': '4',
                             'FeedType': 'D',
                             # 'MDEntrySizeList': '',
@@ -67,23 +72,31 @@ class TestCase:
         case_id = bca.create_event(case_name, report_id)
         self.send_nos()
         def_order_exec_report = {
-            'MarketDataFullList':{
-                'MarketDataFullBlock':[
-                    {
-                        'MDEntryType': 'Bid',
-                        'MDEntryPosition': '1',
-                        'MDOriginType': 'Book'
-                    }
-                ]
-            }
+            'ActiveClientTier':'*',
+            'AutomatedMargin':'*',
+            'MarginPriceType':'*',
+            'MDQuoteType':'*',
+            'MDQuoteTypeStatus':'*',
+            'MDReportID':'*',
+            'MDTime':'*',
+            'PositionBasedMargins':'*',
+            'QuoteConditionStatus':'*',
+            'MDReqID':'*',
+            'MarketDataFullList':[
+                {
+                    'MDEntryBaseMargin':'*',
+                    'MDEntryBaseSize':'*'
+                }
+            ]
         }
+
         checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id1 = checkpoint1.checkpoint
         Stubs.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 '',
-                bca.filter_to_grpc('MarketDataSnapshotFullRefresh', def_order_exec_report,
-                                   ['MDEntryPosition', 'MDOriginType']),
+                bca.filter_to_grpc('Market_MarketDataSnapshotFullRefresh', def_order_exec_report,
+                                   ['MDReqID', 'MDReportID']),
                 checkpoint_id1, self.connectivity, case_id
             ),
             timeout=1000
