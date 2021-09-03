@@ -86,13 +86,13 @@ def send_swap_and_filled(case_id):
                           settlcurrency=settle_currency)). \
         send_md_request().send_md_unsubscribe()
     FixClientSellEsp(
-        CaseParamsSellEsp(client, case_id, settltype=settle_type_spo, settldate=settle_type_w1, symbol=symbol,
-                          securitytype=security_type_spo, securityid=symbol, currency=currency,
+        CaseParamsSellEsp(client, case_id, settltype=settle_type_w1, settldate=settle_date_w1, symbol=symbol,
+                          securitytype=security_type_fwd, securityid=symbol, currency=currency,
                           settlcurrency=settle_currency)). \
         send_md_request().send_md_unsubscribe()
     FixClientSellEsp(
-        CaseParamsSellEsp(client, case_id, settltype=settle_type_spo, settldate=settle_type_w2, symbol=symbol,
-                          securitytype=security_type_spo, securityid=symbol, currency=currency,
+        CaseParamsSellEsp(client, case_id, settltype=settle_type_w2, settldate=settle_date_w2, symbol=symbol,
+                          securitytype=security_type_fwd, securityid=symbol, currency=currency,
                           settlcurrency=settle_currency)). \
         send_md_request().send_md_unsubscribe()
     FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol)).send_market_data_spot()

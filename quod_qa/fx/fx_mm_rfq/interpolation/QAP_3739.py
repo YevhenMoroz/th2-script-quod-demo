@@ -30,7 +30,8 @@ def send_rfq_and_filled_order_broken(case_id, qty_1):
     rfq.verify_quote_pending()
     price = rfq.extract_filed("OfferPx")
     rfq.send_new_order_single(price)
-    rfq.verify_order_pending().verify_order_filled_fwd()
+    rfq.verify_order_pending().\
+        verify_order_filled_fwd()
 
 
 def execute(report_id):

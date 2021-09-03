@@ -94,7 +94,7 @@ def send_swap_and_filled(case_id):
     rfq = FixClientSellRfq(params_swap)
     rfq.send_request_for_quote_swap()
     # Step 2
-    rfq.verify_quote_reject()
+    rfq.verify_quote_reject(text='failed to get forward points through RFQ')
 
 
     change_venue_status_ms(case_id, 'false', '0')
