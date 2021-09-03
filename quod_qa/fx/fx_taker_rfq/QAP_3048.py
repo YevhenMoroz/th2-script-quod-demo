@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.common_tools import random_qty
+from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, PlaceRFQRequest, \
     RFQTileOrderSide
