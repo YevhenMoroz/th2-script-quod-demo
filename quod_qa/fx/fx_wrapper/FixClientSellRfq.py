@@ -388,17 +388,24 @@ class FixClientSellRfq():
         )
         return self
 
-    def verify_drop_copy(self, check_point):
+    def verify_drop_copy(self, check_point, spot_date=''):
         self.case_params_sell_rfq.prepare_order_filled_report()
         self.case_params_sell_rfq.prepare_order_filled_taker()
         self.case_params_sell_rfq.order_filled['Price'] = self.price
+        self.case_params_sell_rfq.order_filled_drop_copy['Price'] = self.price
         self.case_params_sell_rfq.order_filled['LastPx'] = self.price
         self.case_params_sell_rfq.order_filled_drop_copy['LastPx'] = self.price
-        self.case_params_sell_rfq.order_filled['SpotSettlDate'] = '*'
         self.case_params_sell_rfq.order_filled['AvgPx'] = self.price
         self.case_params_sell_rfq.order_filled_drop_copy['AvgPx'] = self.price
-        self.case_params_sell_rfq.order_filled['LastSpotRate'] = self.price
-        self.case_params_sell_rfq.order_filled_drop_copy['LastSpotRate'] = self.price
+        self.case_params_sell_rfq.order_filled_drop_copy['LastSpotRate'] = '*'
+        self.case_params_sell_rfq.order_filled['LastSpotRate'] = '*'
+        if spot_date != '':
+            self.case_params_sell_rfq.order_filled_drop_copy['SpotSettlDate'] = spot_date
+            self.case_params_sell_rfq.order_filled['SpotSettlDate'] = spot_date
+        if self.case_params_sell_rfq.quote_params["SettlType"] != "0":
+            self.case_params_sell_rfq.order_filled['LastForwardPoints'] = '*'
+            self.case_params_sell_rfq.order_filled_drop_copy['LastForwardPoints'] = '*'
+            self.case_params_sell_rfq.order_filled_drop_copy.pop('Account')
         if self.case_params_sell_rfq.quote_params['Side'] == "1":
             self.case_params_sell_rfq.order_filled_drop_copy['Side'] = "2"
         if self.case_params_sell_rfq.quote_params['Side'] == "2":
