@@ -28,7 +28,7 @@ class CaseParamsSellRfq:
     order_algo_rejected = None
     drop_filter_params = None
 
-    def __init__(self, client, case_id, side='', leg1_side='', leg2_side='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
+    def __init__(self, client, case_id , side:str='', leg1_side:str='', leg2_side:str='', orderqty=1, leg1_ordqty='', leg2_ordqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, leg1_settltype=0, leg2_settltype=0, settldate='', leg1_settldate='',
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',
@@ -448,6 +448,28 @@ class CaseParamsSellRfq:
 
         # Prepera order perding report
 
+    def set_quote_request_reject_params(self):
+        def_quote_request_reject_params = {
+            'QuoteReqID': self.rfq_params['QuoteReqID'],
+            'QuoteRequestRejectReason': '99',
+            'NoRelatedSymbols': [
+                {
+                    'SettlType': self.settltype,
+                    'OrdType': self.ordtype,
+                    'SettlDate': self.settldate,
+                    'Currency': self.currency,
+                    'Side': self.side,
+                    'Instrument': {
+                        'SecurityType': self.securitytype,
+                        'Symbol': self.symbol,
+                    },
+                    'QuoteType': '*',
+                }
+            ],
+            'Text': '*'
+        }
+        self.quote_request_reject_params = def_quote_request_reject_params
+
     # PREPARING
 
     # Prepare  requset params
@@ -458,6 +480,10 @@ class CaseParamsSellRfq:
     def prepare_rfq_params_swap(self):
         if self.side == '':
             self.rfq_params_swap['NoRelatedSymbols'][0].pop('Side')
+        if self.leg1_side == '':
+            self.rfq_params_swap['NoRelatedSymbols'][0]['NoLegs'][0].pop('LegSide')
+        if self.leg2_side == '':
+            self.rfq_params_swap['NoRelatedSymbols'][0]['NoLegs'][1].pop('LegSide')
 
     # Prepare  order pending report
     def prepare_order_pending_report(self):
@@ -545,7 +571,10 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
+        self.order_filled_swap['NoLegs'][0]['LegLastForwardPoints'] = '*'
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
+        if self.leg1_settltype == '0':
+            self.order_filled_swap['NoLegs'][0].pop('LegLastForwardPoints')
 
     # Prepare  order rejected report
     def prepare_order_rejected_report_rfq(self):
@@ -655,28 +684,22 @@ class CaseParamsSellRfq:
 
         if self.side == '':
             self.quote_params_swap.pop('Side')
+        #If we send request without side at all
+        if self.leg1_side == '':
+            self.quote_params_swap['NoLegs'][0].pop('LegSide')
+            if self.leg1_settltype=='0':
+                self.quote_params_swap['NoLegs'][0].pop('LegOfferForwardPoints')
+                self.quote_params_swap['NoLegs'][0].pop('LegBidForwardPoints')
+        if self.leg2_side == '':
+            self.quote_params_swap['NoLegs'][1].pop('LegSide')
         # Specific part only for NDS
         if self.securitytype == 'FXNDS':
             self.quote_params_swap.pop('ValidUntilTime')
             self.quote_params_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate'] = '*'
 
     def prepare_quote_reject_report(self):
-        self.quote_request_reject_params = {
-            'QuoteReqID': self.rfq_params['QuoteReqID'],
-            'QuoteRequestRejectReason': '99',
-            'NoRelatedSymbols': [
-                {
-                    'SettlType': self.settltype,
-                    'OrdType': self.ordtype,
-                    'SettlDate': self.settldate,
-                    'Currency': self.currency,
-                    'Side': self.side,
-                    'Instrument': {
-                        'SecurityType': self.securitytype,
-                        'Symbol': self.symbol,
-                    },
-                    'QuoteType': '*',
-                }
-            ],
-            'Text': '*'
-        }
+        self.set_quote_request_reject_params()
+        if self.securitytype=='FXSWAP':
+            self.quote_request_reject_params['NoRelatedSymbols'][0].pop('SettlType')
+            self.quote_request_reject_params['NoRelatedSymbols'][0].pop('OrdType')
+            self.quote_request_reject_params['NoRelatedSymbols'][0].pop('SettlDate')
