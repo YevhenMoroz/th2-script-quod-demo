@@ -1,4 +1,4 @@
-from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3, broken_1, broken_w1w2
+from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3, broken_w1w2
 from quod_qa.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
