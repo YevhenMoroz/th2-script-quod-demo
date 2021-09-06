@@ -9,16 +9,18 @@ from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, \
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
-from demo import logger
+import logging
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum, MiscsBookingFieldNumber, \
+    MiscsAllocationsFieldNumber
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
+from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest, MiscsOrdDetails, \
+    BookingFieldValue, AllocationsFieldValue
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
@@ -35,6 +37,9 @@ sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-stan
 bo_connectivity = "fix-sell-317-backoffice"
 order_book_act = Stubs.win_act_order_book
 common_act = Stubs.win_act
+logging.basicConfig(format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def get_buy_connectivity():
@@ -89,12 +94,15 @@ def cancel_order_via_fix(case_id, cl_order_id, org_cl_order_id, client, side):
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=None,
-                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False
+                 is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False,
+                misc_bo_fields: dict = None, misc_alloc_fields: dict = None
                  ):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
+    # if set_value_for_back_office(misc_bo_fields, misc_alloc_fields) is not False:
+    #     order_ticket.set_miscs_order_details(set_value_for_back_office(misc_bo_fields, misc_alloc_fields))
     if is_care:
         order_ticket.set_care_order(recipient, recipient_user, disclose_flag)
     order_ticket.set_tif(tif)
@@ -108,6 +116,8 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
         order_ticket.set_washbook(washbook)
     if account is not None:
         order_ticket.set_account(account)
+    # if dict_bo_fields is not None and dict_alloc_fields is not None:
+
     new_order_details = NewOrderDetails()
     new_order_details.set_lookup_instr(lookup)  # VETO
     new_order_details.set_order_details(order_ticket)
@@ -136,69 +146,34 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 '''
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
-                         insrument=None, stop_price=None):
-    try:
-        rule_manager = RuleManager()
-        fix_manager = FixManager(sell_connectivity, case_id)
-
-        fix_params = {
-            'Account': client,
-            'HandlInst': handl_inst,
-            'Side': side,
-            'OrderQtyData': {'OrderQty': qty},
-            'TimeInForce': tif,
-            'OrdType': ord_type,
-            'Price': price,
-            'StopPx': stop_price,
-            'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
-            'TransactTime': datetime.utcnow().isoformat(),
-            'NoAllocs': no_allocs,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            # 'Instrument': {
-            #     'Symbol': 'IS0000000001_EUR',
-            #     'SecurityID': 'ISI1',
-            #     'SecurityIDSource': '4',
-            #     'SecurityExchange': 'XEUR'
-            # },
-
-            'Currency': 'EUR',
-        }
-        fix_params.update()
-        if price == None:
-            fix_params.pop('Price')
-        if stop_price is None:
-            fix_params.pop('StopPx')
-        if no_allocs == None:
-            fix_params.pop('NoAllocs')
-        if insrument != None:
-            fix_params.update(Instrument=insrument)
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
-        fix_params['response'] = response
-        return fix_params
-    except Exception:
-        basic_custom_actions.create_event('Fail create_order_via_fix')
-        logger.error("Error execution", exc_info=True)
-
-
-def amend_order_via_fix(case_id, fix_message, parametr_list):
-    fix_manager = FixManager(sell_connectivity, case_id)
-    try:
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
-        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
-        fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        basic_custom_actions.create_event('Fail amend_order_via_fix')
+def set_value_for_back_office(misc_bo_fields: dict = None, misc_alloc_fields: dict = None):
+    misc_bo_field = MiscsOrdDetails()
+    flag = False
+    flag2 = False
+    if misc_bo_field is None:
+        flag = True
+    else:
+        misc_bo_field.set_booking_fields_value(
+            [BookingFieldValue(MiscsBookingFieldNumber.BOOKING_FIELD_1, misc_bo_fields.get('0')),
+             BookingFieldValue(MiscsBookingFieldNumber.BOOKING_FIELD_2, misc_bo_fields.get('1')),
+             BookingFieldValue(MiscsBookingFieldNumber.BOOKING_FIELD_3, misc_bo_fields.get('2')),
+             BookingFieldValue(MiscsBookingFieldNumber.BOOKING_FIELD_4, misc_bo_fields.get('3')),
+             BookingFieldValue(MiscsBookingFieldNumber.BOOKING_FIELD_5, misc_bo_fields.get('4'))]
+        )
+    if misc_alloc_fields is None:
+        flag2 = True
+    else:
+        misc_bo_field.set_allocations_fields_value(
+            [AllocationsFieldValue(MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_1, misc_alloc_fields.get('0')),
+             AllocationsFieldValue(MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_2, misc_alloc_fields.get('1')),
+             AllocationsFieldValue(MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_3, misc_alloc_fields.get('2')),
+             AllocationsFieldValue(MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_4, misc_alloc_fields.get('3')),
+             AllocationsFieldValue(MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_5, misc_alloc_fields.get('4'))
+             ])
+    if flag is True and flag2 is True:
+        return False
+    else:
+        return misc_bo_field
 
 
 def amend_order(request, client=None, qty=None, price=None, account=None, capacity=None):
@@ -396,7 +371,7 @@ def transfer_order(request, user):
         logger.error("Error execution", exc_info=True)
 
 
-def manual_execution(request, qty, price, with_error, execution_firm='ExecutingTrader', contra_firm="Contra Firm"
+def manual_execution(request, qty, price, with_error=False, execution_firm='ExecutingTrader', contra_firm="Contra Firm"
                      ):
     manual_executing_details = ManualExecutingDetails(request)
     manual_executing_details.set_error_expected(with_error)
@@ -507,6 +482,7 @@ def verify_block_value(request, case_id, column_name, expected_value):
     verifier.set_event_name("Checking block order")
     verifier.compare_values(column_name, expected_value, request[extraction_detail.name])
     verifier.verify()
+
 
 
 def verify_allocate_value(request, case_id, column_name, expected_value, account=None):
@@ -924,9 +900,10 @@ def is_menu_item_present(request, menu_item, filter=None):
         basic_custom_actions.create_event('Fail is_menu_item_present')
 
 
-def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
+def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None, extract_error=False):
     match_details = MatchDetails()
     match_details.set_qty_to_match(qty_to_match)
+    match_details.set_error_expected(extract_error)
     # match_details.click_cancel()
     match_details.click_match()
     trades_order_details = ModifyTradesDetails(match_details=match_details)
@@ -1118,11 +1095,12 @@ def is_menu_item_present(request, menu_item, filter=None):
         basic_custom_actions.create_event('Fail is_menu_item_present')
 
 
-def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None):
+def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_list=None, extract_error=False):
     match_details = MatchDetails()
     if order_filter_list is not None:  # example["Client Name", 'CLIENT1', "OrderId", "CO1210526150717138001"]
         match_details.set_filter(order_filter_list)
     match_details.set_qty_to_match(qty_to_match)
+    match_details.set_error_expected(extract_error)
     # match_details.click_cancel()
     match_details.click_match()
     trades_order_details = ModifyTradesDetails(match_details=match_details)
@@ -1130,7 +1108,8 @@ def manual_match(request, qty_to_match, order_filter_list=None, trades_filter_li
     if trades_filter_list is not None:
         trades_order_details.set_filter(trades_filter_list)  # example ["ExecID", 'EX1210616111101191001']
     try:
-        call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
+        result = call(Stubs.win_act_trades.manualMatch, trades_order_details.build())
+        return result
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail manual_match')
@@ -1171,3 +1150,9 @@ def release_order(base_request, filter=None):
     if filter is not None:
         base_order_details.set_filter(filter)
     call(Stubs.win_act_order_book.releaseOrder, base_order_details.build())
+
+# def mass_execution_summary_at_average_price(base_request, count_row):
+#     act = Stubs.win_act_order_book
+#     mass_exec_summary_average_price_details = MassExecSummaryAveragePriceDetails(base_request)
+#     mass_exec_summary_average_price_details.set_count_of_selected_rows(count_row)
+#     call(act.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_details)
