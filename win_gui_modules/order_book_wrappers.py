@@ -1,8 +1,9 @@
+from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 
 from .order_ticket import OrderTicketDetails, FXOrderDetails
-from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2, care_orders_pb2
 from .order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
@@ -85,6 +86,7 @@ class ModifyFXOrderDetails:
 
     def build(self):
         return self.modify_order_details
+
 
 class ModifyFXOrderDetails:
     def __init__(self, base_request):
@@ -214,28 +216,45 @@ class TransferOrderDetails:
     def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
         self.transfer_order_details.desk = desk
         self.transfer_order_details.partialDesk = partial_desk
-class ReleaseFXOrderDetails:
-    def __init__(self, base_request):
-        self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-        self.release_order_details.base.CopyFrom(base_request)
+
+
+class TransferPoolDetailsCLass:
+
+    def __init__(self):
+        self.order = care_orders_pb2.TransferPoolDetails()
+
+    def confirm_ticket_accept(self):
+       self.order.confirm = TransferPoolDetails.Confirmation.ACCEPT
+
+    def cancel_ticket_reject(self):
+        self.order.confirm = TransferPoolDetails.Confirmation.REJECT
+
+    def build(self):
+        return self.order
+
+
+class InternalTransferActionDetails:
+
+    def __init__(self, base_request, order_details: TransferPoolDetails):
+         self.internal_transfer_details = care_orders_pb2.InternalTransferActionDetails()
+         self.internal_transfer_details.base.CopyFrom(base_request)
+         self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details)
+
+    def set_default_params(self, base_request):
+        self.internal_transfer_details.base.CopyFrom(base_request)
 
     def set_filter(self, filter_list: list):
         length = len(filter_list)
         i = 0
         while i < length:
-            self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.internal_transfer_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
-    def set_selected_row_count(self, selected_row_count: int):
-        self.release_order_details.multipleRowSelection = True
-        self.release_order_details.selectedRowCount = selected_row_count
-
-    def set_order_details(self, order_details: FXOrderDetails):
-        self.release_order_details.orderDetails.CopyFrom(order_details.build())
+    def add_transfer_pool_details(self, order_details: TransferPoolDetails):
+        return self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details.build())
 
     def build(self):
-        return self.release_order_details
-
+        return self.internal_transfer_details
 
 @dataclass
 class ExtractionDetail:
@@ -750,6 +769,33 @@ class SuspendOrderDetails:
     def build(self):
         return self._request
 
+
+class AddToBasketDetails:
+    def __init__(self, base: EmptyRequest = None, row_numbers: list = None, basket_name: str = None):
+        if base is not None:
+            self._request = order_book_pb2.AddToBasketDetails(base=base)
+        else:
+            self._request = order_book_pb2.CancelOrderDetails()
+
+        if row_numbers is not None:
+            for numbers in row_numbers:
+                self._request.rowNumbers.append(numbers)
+
+        if basket_name is not None:
+            self._request.basketName = basket_name
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def set_basket_name(self, basket_name: str):
+        self._request.basketName = basket_name
+
+    def build(self):
+        return self._request
 
 # class QuoteRequestDetails:
 #     def __init__(self):

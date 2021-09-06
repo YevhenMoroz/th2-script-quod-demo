@@ -1,7 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import common_pb2
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData, ScrollingOperation
 
 
 class BaseTileDetails:
@@ -125,6 +125,29 @@ class MoveWindowDetails:
 
     def close_window(self):
         self._request.closeWindow = True
+
+    def build(self):
+        return self._request
+
+
+class GridScrollingDetails:
+    def __init__(self, scrolling_operation: ScrollingOperation, number_of_scrolls: int, base: EmptyRequest = None):
+        if base is not None:
+            self._request = common_pb2.GridScrollingDetails(base=base)
+        else:
+            self._request = common_pb2.GridScrollingDetails()
+
+        self._request.scrollingOperation = scrolling_operation
+        self._request.numberOfScrolls = number_of_scrolls
+
+    def set_scrolling_operation(self, scrolling_operation: ScrollingOperation):
+        self._request.scrollingOperation = scrolling_operation
+
+    def set_number_of_scrolls(self, number_of_scrolls: int):
+        self._request.numberOfScrolls = number_of_scrolls
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
 
     def build(self):
         return self._request
