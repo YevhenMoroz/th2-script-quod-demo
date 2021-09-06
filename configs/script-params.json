@@ -6,13 +6,13 @@
   "web_admin_login": "adm03",
   "web_admin_password": "adm03",
 
-  "qf_trading_fe_folder": "C:\\ProgramData\\QuodFinancialQUOD310_DEV_COLUMBIA\\Quod_Financial_Trader_Front-end_64bits",
+  "qf_trading_fe_folder": "C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits",
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
   "qf_trading_fe_user": "ymoroz",
   "qf_trading_fe_password": "ymoroz",
   "qf_trading_fe_user2": "HD4",
   "qf_trading_fe_password2": "HD4",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial"
+  "qf_trading_fe_main_win_name": "Quod Financial - 310 COLUMBIA",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (317 GANYMEDE) "
 }

@@ -5,6 +5,7 @@ from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from custom import basic_custom_actions as bca
 import logging
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -12,8 +13,7 @@ logger.setLevel(logging.INFO)
 buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
 sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
 # fix-sell-317-standard-test  fix-sell-310-newdict
-bo_connectivity = "fix-sell-310-backoffice" #fix-sell-310-backoffice  fix-sell-317-backoffice
-
+bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
 
 
 def get_buy_connectivity():
@@ -31,7 +31,7 @@ def get_bo_connectivity():
 def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None, insrument=None):
     fix_params = {
         'Account': client,
-        #'OrderQtyData': {'OrderQty': qty},
+        # 'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,

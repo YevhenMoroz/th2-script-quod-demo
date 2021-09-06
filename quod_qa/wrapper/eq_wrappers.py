@@ -15,7 +15,7 @@ from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails
 from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
@@ -390,6 +390,15 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
+def get_basket_value(request, column_name, basket_book_filter=None):
+    extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+    extract_order_data_details.set_default_params(request)
+    extract_order_data_details.set_filter(basket_book_filter)
+    extract_order_data_details.set_column_name(column_name)
+    result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
+    return result[column_name.name]
+
+
 def base_verifier(case_id, printed_name, expected_value, actual_value,
                   verification_method: VerificationMethod = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
@@ -398,10 +407,11 @@ def base_verifier(case_id, printed_name, expected_value, actual_value,
     verifier.verify()
 
 
-def verify_order_value(request, case_id, column_name, expected_value, is_child=False):
+def verify_order_value(request, case_id, column_name, expected_value, is_child=False,order_filter_list=None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
+    order_details.set_filter(order_filter_list)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -1067,3 +1077,46 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
+
+
+def basket_row_details(row, remove_row=False, symbol=None, side=None, ord_type=None, capacity=None):
+    if not remove_row:
+        params = {}
+        if symbol is not None:
+            params.update({'Symbol': symbol})
+        if side is not None:
+            params.update({'Side': symbol})
+        if ord_type is not None:
+            params.update({'Order Type': ord_type})
+        if capacity is not None:
+            params.update({'Capacity': capacity})
+        result = RowDetails(row, False, params).build()
+    else:
+        RowDetails(row, True).build()
+    return result
+
+
+def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
+                             is_csv=False, amend_rows_details: [basket_row_details] = None):
+    if is_csv:
+        file_type = FileType.CSV
+    else:
+        file_type = FileType.EXCEL
+    file_details = FileDetails(0, path).build()
+    basket_ticket_details = BasketTicketDetails()
+    basket_ticket_details.set_file_details(file_details)
+    basket_ticket_details.set_default_params(request)
+    basket_ticket_details.set_name_value(basket_name)
+    basket_ticket_details.set_basket_template_name(basket_template_name)
+    basket_ticket_details.set_client_value(client)
+    if expire_date is not None:
+        basket_ticket_details.set_date_value(expire_date)
+    if tif is not None:
+        basket_ticket_details.set_time_in_force_value(tif)
+    if amend_rows_details is not None:
+        basket_ticket_details.set_row_details(amend_rows_details)
+    try:
+        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
