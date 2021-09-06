@@ -15,10 +15,12 @@ class TestCase:
         self.act_java_api = Stubs.act_java_api
         # self.connectivity = 'java-api-luna314'
         self.connectivity = '314_java_api'
+        checkpoint_id1 = None
 
 
-
-    def send_nos(self):
+    def send_nos(self,case_id):
+        checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        self.checkpoint_id1 = checkpoint1.checkpoint
         nos_params = {
             # 'SEND_SUBJECT': 'QUOD.QSFE.FIX',
             # 'SEND_SUBJECT': 'QUOD.MDA.FIX',
@@ -62,15 +64,15 @@ class TestCase:
         response= self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc('Market_MarketDataRequest', nos_params, self.connectivity)))
 
-        print(f'*********** response sendMessage = {response}************')
-        print(f'*********** response sendMessage = {response}************')
+        # print(f'*********** response sendMessage = {response}************')
+        # print(f'*********** response sendMessage = {response}************')
 
 
     # Main method
     def execute(self, report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
-        self.send_nos()
+        self.send_nos(case_id)
         def_order_exec_report = {
             'ActiveClientTier':'*',
             'AutomatedMargin':'*',
@@ -82,25 +84,109 @@ class TestCase:
             'PositionBasedMargins':'*',
             'QuoteConditionStatus':'*',
             'MDReqID':'*',
-            'MarketDataFullList':[
-                {
-                    'MDEntryBaseMargin':'*',
-                    'MDEntryBaseSize':'*'
-                }
-            ]
+            'MarketDataFullList': {
+                'MarketDataFullBlock':
+                    [
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        },
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        },
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        },
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        },
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        },
+                        {
+                            'VenueOrdID': '*',
+                            'MDEntryPx': '*',
+                            'OrdType': '*',
+                            'MDQuoteType': '*',
+                            'MDEntryID': '*',
+                            'MDEntrySize': '*',
+                            'QuoteEntryID': '*',
+                            'MDEntryBaseSize': '*',
+                            'MDEntryPosition': '*',
+                            'MDEntryMargin': '*',
+                            'MDEntryType': '*',
+                            'MDEntryBaseMargin': '*',
+                        }
+                    ]
+            }
         }
 
-        checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint1.checkpoint
+        # checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        # checkpoint_id1 = checkpoint1.checkpoint
         Stubs.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 '',
                 bca.filter_to_grpc('Market_MarketDataSnapshotFullRefresh', def_order_exec_report,
                                    ['MDReqID', 'MDReportID']),
-                checkpoint_id1, self.connectivity, case_id
+                self.checkpoint_id1, self.connectivity, case_id
             ),
-            timeout=1000
+
         )
+        print(def_order_exec_report)
 
 
 if __name__ == '__main__':

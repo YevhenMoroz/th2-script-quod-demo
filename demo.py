@@ -11,7 +11,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850, QAP_4234, \
     QAP_3766, QAP_3747, QAP_3806, QAP_3807
 from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3740
-from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot
+from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot, rfq_swap_1w_2w
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id
@@ -107,6 +107,7 @@ def test_run():
 
         # QAP_2103.execute(report_id)
         java_api_MDReq.TestCase().execute(report_id)
+        # rfq_swap_1w_2w.execute(report_id)
         # java_api.TestCase(report_id).execute()
 
         # rfq_spot.execute(report_id)
@@ -139,15 +140,17 @@ def test_run():
 
 
 
-        rm = RuleManager()
+        # rm = RuleManager()
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
         # # # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
         # # # rm.add_fx_md_to('fix-fh-314-luna')
-        # # rm.print_active_rules_sim_test()
+        # rm.print_active_rules_sim_test()
         # # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
         # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
         # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
+
         # rm.print_active_rules()
+
         # rm.print_active_rules_sim_test()
         #
         # # rm.remove_rule_by_id(574)
