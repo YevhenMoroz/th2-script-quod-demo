@@ -7,10 +7,6 @@ def tom():
     return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
 
 
-def broken_1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y%m%d')
-
-
 def broken_2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=4)).date().strftime('%Y%m%d')
 

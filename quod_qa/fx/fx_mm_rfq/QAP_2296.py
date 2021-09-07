@@ -1,10 +1,7 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
-
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
@@ -28,21 +25,21 @@ def set_price_slippage(service, case_id, status, pip):
         "alive": "true",
         "clientTierInstrSymbolQty": [
             {
-                "upperQty": 5000000,
-                "indiceUpperQty": 2,
+                "upperQty": 1000000,
+                "indiceUpperQty": 1,
                 "publishPrices": "true"
             },
             {
-                "upperQty": 1000000,
-                "indiceUpperQty": 1,
+                "upperQty": 5000000,
+                "indiceUpperQty": 2,
                 "publishPrices": "true"
             }
         ],
         "clientTierInstrSymbolTenor": [
             {
                 "tenor": "SPO",
-                "minSpread": 0,
-                "maxSpread": 300,
+                "minSpread": "0",
+                "maxSpread": "300.5",
                 "marginPriceType": "PIP",
                 "lastUpdateTime": timestamp,
                 "MDQuoteType": "TRD",
@@ -64,8 +61,8 @@ def set_price_slippage(service, case_id, status, pip):
             },
             {
                 "tenor": "WK1",
-                "minSpread": 0,
-                "maxSpread": 250,
+                "minSpread": "0",
+                "maxSpread": "250",
                 "marginPriceType": "PIP",
                 "lastUpdateTime": timestamp,
                 "MDQuoteType": "TRD",

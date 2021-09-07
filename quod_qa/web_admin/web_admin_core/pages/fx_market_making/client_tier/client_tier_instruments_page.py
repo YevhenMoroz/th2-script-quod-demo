@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -52,3 +54,12 @@ class ClientTierInstrumentsPage(CommonPage):
 
     def click_on_download_csv(self):
         self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_CSV_XPATH).click()
+
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
+        self.clear_download_directory()
+        self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_PDF_XPATH).click()
+        time.sleep(2)
+        return self.is_pdf_contains_value(value)
+
+    def get_core_spot_price_strategy(self):
+        return self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_XPATH).text

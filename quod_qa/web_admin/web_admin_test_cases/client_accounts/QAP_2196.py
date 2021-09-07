@@ -26,6 +26,7 @@ class QAP_2196(CommonTestCase):
         self.client_id_source = "BIC"
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMS"
+        self.client = "BROKER"
         self.account_id_source = "BIC"
 
     def precondition(self):
@@ -42,6 +43,8 @@ class QAP_2196(CommonTestCase):
         time.sleep(1)
         values_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
+        values_sub_wizard.set_client(self.client)
+        time.sleep(1)
         values_sub_wizard.set_client_id_source(self.client_id_source)
         time.sleep(2)
         dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
@@ -49,6 +52,7 @@ class QAP_2196(CommonTestCase):
         dimensions_sub_wizard.set_venue_account(self.venue_account)
         dimensions_sub_wizard.set_venue(self.venue)
         dimensions_sub_wizard.set_account_id_source(self.account_id_source)
+        time.sleep(2)
         dimensions_sub_wizard.click_create_entity_button()
         time.sleep(2)
         wizard = AccountsWizard(self.web_driver_container)
@@ -60,16 +64,16 @@ class QAP_2196(CommonTestCase):
         time.sleep(1)
         main_page.click_edit_entity_button()
         time.sleep(2)
-        dimensions_sub_wizard.click_delete_button()
-        time.sleep(2)
+
 
     def test_context(self):
-
         try:
             self.precondition()
             main_page = AccountsPage(self.web_driver_container)
             wizard = AccountsWizard(self.web_driver_container)
             dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
+            dimensions_sub_wizard.click_delete_button()
+            time.sleep(2)
             expected_pdf_content = [
                 self.ext_id_client,
                 self.client_id_source, ]
