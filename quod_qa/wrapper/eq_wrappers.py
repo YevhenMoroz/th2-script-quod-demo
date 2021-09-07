@@ -1,15 +1,11 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-
-from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails
-import time
-
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from demo import logger
 from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
 from rule_management import RuleManager
@@ -18,6 +14,9 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -28,12 +27,14 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, MassExecSummaryAveragePriceDetails
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
-order_book_act = Stubs.win_act_order_book
-common_act = Stubs.win_act
+
+def scroll_order_book(request, count: int = 1):
+    scrolling_details = GridScrollingDetails(ScrollingOperation.UP, count, request)
+    call(Stubs.win_act_order_book.orderBookGridScrolling, scrolling_details.build())
 
 
 def extract_error_order_ticket(base_request):
@@ -177,7 +178,7 @@ def accept_order(lookup, qty, price):
     try:
         call(Stubs.win_act.acceptOrder, accept_order_request(lookup, qty, price))
     except Exception:
-        # basic_custom_actions.create_event('Fail accept_order', status="FAIL")
+        basic_custom_actions.create_event('Fail accept_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -294,6 +295,22 @@ def transfer_order(request, user):
         logger.error("Error execution", exc_info=True)
 
 
+def internal_transfer(base_request, transfer_accept: bool = True, order_book_filter=None):
+    internal_transfer_details = TransferPoolDetailsCLass()
+    if transfer_accept:
+        internal_transfer_details.confirm_ticket_accept()
+    else:
+        internal_transfer_details.cancel_ticket_reject()
+    internal_transfer_action = InternalTransferActionDetails(base_request, internal_transfer_details.build())
+    if order_book_filter is not None:
+        internal_transfer_action.set_filter(order_book_filter)
+    try:
+        call(Stubs.care_orders_action.internalTransferAction, internal_transfer_action.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail transfer_order', status="FAIL")
+        logger.error("Error execution", exc_info=True)
+
+
 def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
     manual_executing_details = ManualExecutingDetails(request)
     executions_details = manual_executing_details.add_executions_details()
@@ -334,7 +351,8 @@ def get_order_value(request, column_name, filter_list=None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
-    order_details.set_filter(filter_list)
+    if filter_list is not None:
+        order_details.set_filter(filter_list)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -387,17 +405,28 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def base_verifier(case_id, printed_name, expected_value, actual_value):
+def get_basket_value(request, column_name, basket_book_filter=None):
+    extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+    extract_order_data_details.set_default_params(request)
+    extract_order_data_details.set_filter(basket_book_filter)
+    extract_order_data_details.set_column_name(column_name)
+    result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
+    return result[column_name.name]
+
+
+def base_verifier(case_id, printed_name, expected_value, actual_value,
+                  verification_method: VerificationMethod = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check: " + printed_name)
-    verifier.compare_values(printed_name, expected_value, actual_value)
+    verifier.compare_values(printed_name, expected_value, actual_value, verification_method)
     verifier.verify()
 
 
-def verify_order_value(request, case_id, column_name, expected_value, is_child=False):
+def verify_order_value(request, case_id, column_name, expected_value, is_child=False,order_filter_list=None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
+    order_details.set_filter(order_filter_list)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -1066,6 +1095,48 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
+
+def basket_row_details(row, remove_row=False, symbol=None, side=None, ord_type=None, capacity=None):
+    if not remove_row:
+        params = {}
+        if symbol is not None:
+            params.update({'Symbol': symbol})
+        if side is not None:
+            params.update({'Side': symbol})
+        if ord_type is not None:
+            params.update({'Order Type': ord_type})
+        if capacity is not None:
+            params.update({'Capacity': capacity})
+        result = RowDetails(row, False, params).build()
+    else:
+        RowDetails(row, True).build()
+    return result
+
+
+def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
+                             is_csv=False, amend_rows_details: [basket_row_details] = None):
+    if is_csv:
+        file_type = FileType.CSV
+    else:
+        file_type = FileType.EXCEL
+    file_details = FileDetails(0, path).build()
+    basket_ticket_details = BasketTicketDetails()
+    basket_ticket_details.set_file_details(file_details)
+    basket_ticket_details.set_default_params(request)
+    basket_ticket_details.set_name_value(basket_name)
+    basket_ticket_details.set_basket_template_name(basket_template_name)
+    basket_ticket_details.set_client_value(client)
+    if expire_date is not None:
+        basket_ticket_details.set_date_value(expire_date)
+    if tif is not None:
+        basket_ticket_details.set_time_in_force_value(tif)
+    if amend_rows_details is not None:
+        basket_ticket_details.set_row_details(amend_rows_details)
+    try:
+        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
 
 def mass_execution_summary_at_average_price(base_request, count: int):
     mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
