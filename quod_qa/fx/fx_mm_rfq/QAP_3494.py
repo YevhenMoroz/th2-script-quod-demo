@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo_ndf
+from custom.tenor_settlement_date import spo_ndf, spo
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 
@@ -11,13 +11,12 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
 
     client_tier = "Iridium1"
-    symbol = "EUR/RUB"
+    symbol = "EUR/USD"
     security_type_spo = "FXSPOT"
-    settle_date = spo_ndf()
+    settle_date = spo()
     settle_type = 0
     currency = "EUR"
     qty = "1000000"
-    text = f"no available Bid depth on {symbol} SPO"
 
     try:
         # Step 1
@@ -27,8 +26,10 @@ def execute(report_id):
                                    account=client_tier)
         rfq = FixClientSellRfq(params)
         rfq.send_request_for_quote()
+        rfq.verify_quote_pending()
         # Step 2
-        rfq.verify_quote_reject(text=text)
+        rfq.send_quote_response()
+        rfq.verify_quote_reject()
 
     except Exception:
         logging.error("Error execution", exc_info=True)

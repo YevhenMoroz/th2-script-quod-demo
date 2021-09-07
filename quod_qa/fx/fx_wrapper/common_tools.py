@@ -3,6 +3,9 @@ import random
 import re
 from datetime import datetime
 from random import randint
+import psycopg2
+from psycopg2 import Error
+import paramiko as paramiko
 
 
 def round_decimals_up(number: float, decimals: int):
@@ -80,3 +83,46 @@ def parse_qty_from_di(qty_from_dealer):
     """
     result = re.match(r'\d+(.\d+)?', qty_from_dealer)
     return result.group(0)
+
+
+def update_quod_settings(setting_value: str):
+    """
+    Update value in cell settingvalue for row AutoRFQClientPricingFallback
+    in quod314 data base
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.42",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+
+        cursor.execute(
+            f"update quodsettings set settingvalue ={setting_value} where  settingkey= 'AutoRFQClientPricingFallback'")
+        connection.commit()
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
+def restart_component_on_back():
+    """
+    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    """
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
+
+    stdin, stdout, stderr = ssh.exec_command("qrestart  QUOD.QS_RFQ_STANDARD_SELL")
+    for line in stdout.read().splitlines():
+        print(line)
+    stdin.close()

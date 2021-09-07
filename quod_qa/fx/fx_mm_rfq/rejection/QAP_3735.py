@@ -3,14 +3,14 @@ import time
 from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1
+from custom.tenor_settlement_date import wk1, wk2
 from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
-    RFQExtractionDetailsRequest
+    ModificationRequest
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import call, get_base_request
@@ -40,6 +40,7 @@ def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, c
 def check_dealer_intervention(base_request, service, case_id, quote_id):
     base_data = BaseTableDataRequest(base=base_request)
     base_data.set_filter_dict({"Id": quote_id})
+
     extraction_request = ExtractionDetailsRequest(base_data)
     extraction_id = bca.client_orderid(8)
     extraction_request.set_extraction_id(extraction_id)
@@ -62,50 +63,10 @@ def estimate_first_request(base_request, service):
     call(service.estimate, base_data.build())
 
 
-def extract_bid_part(base_request, service):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.extract_bid_price_pips("rfqDetails.PricePips")
-    extraction_request.extract_bid_price_large("rfqDetails.PriceLarge")
-    extraction_request.extract_bid_near_points_value_label("rfqDetails.NearPoints")
-    extraction_request.extract_bid_value_label("rfqDetails.Value")
-    response = call(service.getRFQDetails, extraction_request.build())
-    print(response)
-    bid_large = response["rfqDetails.PriceLarge"]
-    bid_small = response["rfqDetails.PricePips"]
-    bid_spot_rate = bid_large + bid_small
-    bid_near_pts = response["rfqDetails.NearPoints"]
-    bid_px = response["rfqDetails.Value"]
-    return [bid_spot_rate, bid_near_pts, bid_px]
-
-
-def extract_ask_part(base_request, service):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    extraction_request.extract_ask_near_points_value_label("rfqDetails.askNearPoints")
-    extraction_request.extract_ask_value_label("rfqDetails.askValue")
-    response = call(service.getRFQDetails, extraction_request.build())
-    print(response)
-    ask_large = response["rfqDetails.askPriceLarge"]
-    ask_small = response["rfqDetails.askPricePips"]
-    ask_spot_rate = ask_large + ask_small
-    ask_near_pts = response["rfqDetails.askNearPoints"]
-    ask_px = response["rfqDetails.askValue"]
-    return [ask_spot_rate, ask_near_pts, ask_px]
-
-
-def check_calculation(case_id, event_name, spot_rate, pts, px):
-    pts = float(pts) / 10000
-    expected_px = float(spot_rate) + pts
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(event_name)
-    verifier.compare_values("Px value", str(expected_px), str(px))
-    verifier.verify()
+def send_quote(base_request, service):
+    modify_request = ModificationRequest(base=base_request)
+    modify_request.send()
+    call(service.modifyAssignedRFQ, modify_request.build())
 
 
 def close_dmi_window(base_request, dealer_interventions_service):
@@ -118,43 +79,56 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
 
-    cp_service = Stubs.win_act_cp_service
     ar_service = Stubs.win_act_aggregated_rates_service
     dealer_service = Stubs.win_act_dealer_intervention_service
 
     case_base_request = get_base_request(session_id, case_id)
 
-    client_tier = "Iridium1"
-    qty = random_qty(2, 3, 8)
-    symbol = "GBP/USD"
+    client_tier = "Argentina1"
+    account = "Argentina1_1"
+    symbol = "EUR/GBP"
+    security_type_swap = "FXSWAP"
     security_type_fwd = "FXFWD"
-    settle_date = wk1()
-    settle_type = "W1"
-    currency = "GBP"
+    settle_date_w1 = wk1()
+    settle_date_w2 = wk2()
+    settle_type_w1 = "W1"
+    settle_type_w2 = "W2"
+    currency = "EUR"
+    settle_currency = "GBP"
+
+    side = "2"
+    leg1_side = "1"
+    leg2_side = "2"
+    qty_1 = random_qty(3, 5, 8)
     today = date.today()
     today = today.today().strftime('%m/%d/%Y')
 
     try:
         # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                   securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
+        params_swap = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
+                                        orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_1,
+                                        currency=currency, settlcurrency=settle_currency,
+                                        leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
+                                        settldate=settle_date_w1, leg1_settldate=settle_date_w1,
+                                        leg2_settldate=settle_date_w2,
+                                        symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
+                                        securitytype=security_type_swap, leg1_securitytype=security_type_fwd,
+                                        leg2_securitytype=security_type_fwd,
+                                        securityid=symbol, account=account)
 
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_no_reply()
+        rfq = FixClientSellRfq(params_swap)
+        rfq.send_request_for_quote_swap_no_reply()
         # Step 2
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_1, today)
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
         assign_firs_request(case_base_request, dealer_service)
+
         estimate_first_request(case_base_request, dealer_service)
         time.sleep(5)
-        # Step 3
-        bid_values = extract_bid_part(case_base_request, dealer_service)
-        ask_values = extract_ask_part(case_base_request, dealer_service)
-        #
-        check_calculation(case_id, "Check bid calculation", bid_values[0], bid_values[1], bid_values[2])
-        check_calculation(case_id, "Check ask calculation", ask_values[0], ask_values[1], ask_values[2])
+        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id1 = checkpoint_response1.checkpoint
+        send_quote(case_base_request, dealer_service)
+        rfq.verify_quote_pending_swap(checkpoint_id_=checkpoint_id1)
 
         close_dmi_window(case_base_request, dealer_service)
 

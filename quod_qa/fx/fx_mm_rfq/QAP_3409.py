@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
@@ -9,7 +10,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
-    RFQExtractionDetailsRequest, ModificationRequest
+    RFQExtractionDetailsRequest
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import call, get_base_request
@@ -67,14 +68,11 @@ def extract_qty(base_request, service):
     extraction_id = bca.client_orderid(4)
     extraction_request.set_extraction_id(extraction_id)
     extraction_request.extract_near_leg_quantity("rfqDetails.nearLegQty")
-    extraction_request.extract_far_leg_quantity("rfqDetails.farLegQty")
     response = call(service.getRFQDetails, extraction_request.build())
 
     near_leg_qty = response["rfqDetails.nearLegQty"]
-    far_leg_qty = response["rfqDetails.farLegQty"]
     near_leg_qty = float(parse_qty_from_di(near_leg_qty))
-    far_leg_qty = float(parse_qty_from_di(far_leg_qty))
-    return [near_leg_qty, far_leg_qty]
+    return near_leg_qty
 
 
 def extract_bid_part(base_request, service):
@@ -82,52 +80,14 @@ def extract_bid_part(base_request, service):
     extraction_id = bca.client_orderid(4)
     extraction_request.set_extraction_id(extraction_id)
     extraction_request.extract_bid_near_price_value_label("rfqDetails.bidNearPrice")
-    extraction_request.extract_bid_far_price_value_label("rfqDetails.bidFarPrice")
     extraction_request.extract_opposite_near_bid_qty_value_label("rfqDetails.nearBidQty")
-    extraction_request.extract_opposite_far_bid_qty_value_label("rfqDetails.farBidQty")
 
     response = call(service.getRFQDetails, extraction_request.build())
 
     print(response)
     bid_near_px = float(response["rfqDetails.bidNearPrice"])
-    bid_far_px = float(response["rfqDetails.bidFarPrice"])
     bid_near_qty = float(parse_qty_from_di(response["rfqDetails.nearBidQty"]))
-    bid_far_qty = float(parse_qty_from_di(response["rfqDetails.farBidQty"]))
-    return [bid_near_px, bid_far_px, bid_near_qty, bid_far_qty]
-
-
-def extract_ask_part(base_request, service):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.extract_ask_near_price_value_label("rfqDetails.askNearPrice")
-    extraction_request.extract_ask_far_price_value_label("rfqDetails.askFarPrice")
-    extraction_request.extract_opposite_near_ask_qty_value_label("rfqDetails.nearAskQty")
-    extraction_request.extract_opposite_far_ask_qty_value_label("rfqDetails.farAskQty")
-
-    response = call(service.getRFQDetails, extraction_request.build())
-
-    print(response)
-
-    ask_near_px = float(response["rfqDetails.askNearPrice"])
-    ask_far_px = float(response["rfqDetails.askFarPrice"])
-    ask_near_qty = float(parse_qty_from_di(response["rfqDetails.nearAskQty"]))
-    ask_far_qty = float(parse_qty_from_di(response["rfqDetails.farAskQty"]))
-    return [ask_near_px, ask_far_px, ask_near_qty, ask_far_qty]
-
-
-def modify_price_by_clicking_arrow(base_request, service, pips):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.set_spread_step(pips)
-    modify_request.widen_spread()
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-
-def modify_price(base_request, service, price):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.set_ask_large(price)
-    modify_request.set_bid_large(price)
-    call(service.modifyAssignedRFQ, modify_request.build())
+    return [bid_near_px, bid_near_qty]
 
 
 def check_calculation_near(case_id, event_name, near_px, near_leg_qty, near_qty):
@@ -137,16 +97,6 @@ def check_calculation_near(case_id, event_name, near_px, near_leg_qty, near_qty)
     verifier = Verifier(case_id)
     verifier.set_event_name(event_name)
     verifier.compare_values("Near Qty", str(expected_near_qty), str(near_qty))
-    verifier.verify()
-
-
-def check_calculation_far(case_id, event_name, far_px, far_leg_qty, far_qty):
-    expected_far_qty = far_px * far_leg_qty
-    expected_far_qty = round_decimals_down(expected_far_qty, 2)
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(event_name)
-    verifier.compare_values("Far Qty", str(expected_far_qty), str(far_qty))
     verifier.verify()
 
 
@@ -164,8 +114,8 @@ def execute(report_id, session_id):
     dealer_service = Stubs.win_act_dealer_intervention_service
 
     case_base_request = get_base_request(session_id, case_id)
-    qty_1 = "20000000"
-    qty_2 = "30000000"
+    qty_1 = "25000000"
+    qty_2 = "35000000"
 
     client_tier = "Iridium1"
     account = "Iridium1_1"
@@ -204,44 +154,16 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params_swap)
         rfq.send_request_for_quote_swap_no_reply()
         # Step 2
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", "31000000", today)
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_1, today)
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
         assign_firs_request(case_base_request, dealer_service)
         # Step 3
         estimate_first_request(case_base_request, dealer_service)
         # Step 4
         qty = extract_qty(case_base_request, dealer_service)
+        time.sleep(5)
         bid_values = extract_bid_part(case_base_request, dealer_service)
-        ask_values = extract_ask_part(case_base_request, dealer_service)
-        check_calculation_near(case_id, "Check near bid qty calculation", bid_values[0], qty[0], bid_values[2])
-        check_calculation_far(case_id, "Check far bid qty calculation", bid_values[1], qty[1], bid_values[3])
-        check_calculation_near(case_id, "Check near ask qty calculation", ask_values[0], qty[0], ask_values[2])
-        check_calculation_far(case_id, "Check ask bid qty calculation", ask_values[1], qty[1], ask_values[3])
-        # Step 5
-        modify_price(case_base_request, dealer_service, "2.36")
-
-        bid_values = extract_bid_part(case_base_request, dealer_service)
-        ask_values = extract_ask_part(case_base_request, dealer_service)
-        check_calculation_near(case_id, "Check near bid qty calculation after changing price", bid_values[0], qty[0],
-                               bid_values[2])
-        check_calculation_far(case_id, "Check far bid qty calculation after changing price", bid_values[1], qty[1],
-                              bid_values[3])
-        check_calculation_near(case_id, "Check near ask qty calculation after changing price", ask_values[0], qty[0],
-                               ask_values[2])
-        check_calculation_far(case_id, "Check ask bid qty calculation after changing price", ask_values[1], qty[1],
-                              ask_values[3])
-        # Step 6
-        modify_price_by_clicking_arrow(case_base_request, dealer_service, "5")
-        bid_values = extract_bid_part(case_base_request, dealer_service)
-        ask_values = extract_ask_part(case_base_request, dealer_service)
-        check_calculation_near(case_id, "Check near bid qty calculation after changing price by clicking on arrow",
-                               bid_values[0], qty[0], bid_values[2])
-        check_calculation_far(case_id, "Check far bid qty calculation after changing price by clicking on arrow",
-                              bid_values[1], qty[1], bid_values[3])
-        check_calculation_near(case_id, "Check near ask qty calculation after changing price by clicking on arrow",
-                               ask_values[0], qty[0], ask_values[2])
-        check_calculation_far(case_id, "Check ask bid qty calculation after changing price by clicking on arrow",
-                              ask_values[1], qty[1], ask_values[3])
+        check_calculation_near(case_id, "Check near bid qty calculation", bid_values[0], qty, bid_values[1])
         close_dmi_window(case_base_request, dealer_service)
 
     except Exception:
