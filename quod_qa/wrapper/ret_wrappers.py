@@ -22,7 +22,7 @@ from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, c
 from win_gui_modules.wash_book_positions_wrappers import GetWashBookDetailsRequest, \
     ExtractionWashBookPositionsFieldsDetails, WashPositionsInfo, ExtractionWashBookPositionsAction
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_moc_request, direct_loc_request
+    direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -141,16 +141,27 @@ def accept_modify(lookup, qty, price):
     call(Stubs.win_act.acceptModifyPlusChild, accept_order_request(lookup, qty, price))
 
 
-def direct_loc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request("UnmatchedQty", qty, route))
+def direct_loc_order(qty_percentage, route):
+    call(Stubs.win_act_order_book.orderBookDirectLoc, direct_loc_request_correct("UnmatchedQty", qty_percentage, route))
 
 
-def direct_moc_order(qty, route):
-    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request("UnmatchedQty", qty, route))
+def direct_moc_order(qty_percentage, route):
+    call(Stubs.win_act_order_book.orderBookDirectMoc, direct_moc_request_correct("UnmatchedQty", qty_percentage, route))
 
 
-def direct_child_care_order(qty, route, recipient):
-    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request("UnmatchedQty", qty, route, recipient))
+def direct_poc_order(reference_price, percentage, qty_percentage, route):
+    call(Stubs.win_act_order_book.orderBookDirectPoc, direct_poc_request_correct("UnmatchedQty", reference_price,
+                                                                                 percentage, qty_percentage, route))
+
+
+def direct_poc_order_via_inbox(reference_price, percentage, qty_percentage, route):
+    call(Stubs.win_act.clientInboxDirectPoc, direct_poc_request_correct("UnmatchedQty", reference_price,
+                                                                        percentage, qty_percentage, route))
+
+
+def direct_child_care_order(qty_percentage, route, recipient):
+    call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request_correct("UnmatchedQty", qty_percentage,
+                                                                                       route, recipient))
 
 
 def reject_order(lookup, qty, price):
@@ -277,6 +288,35 @@ def extract_parent_order_details(base_request, column_name, extraction_id, order
 
     result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
     return result[column_name]
+
+
+def extract_child_lvl1_order_details(base_request, column_name, extraction_id):
+    child_main_order_details = OrdersDetails()
+    child_main_order_details.set_default_params(base_request)
+    child_main_order_details.set_extraction_id(extraction_id)
+
+    value = ExtractionDetail(column_name, column_name)
+    sub_lvl1_1_ext_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+
+    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action])
+    sub_order_details_level1 = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
+    child_main_order_details.add_single_order_info(OrderInfo.create(sub_order_details=sub_order_details_level1))
+
+    request = call(Stubs.win_act_order_book.getOrdersDetails, child_main_order_details.request())
+    return request[column_name]
+
+
+def extract_child_lvl2_order_details(base_request, column_name, order_book_service, parent_order_id, extraction_id):
+    order_details = OrdersDetails()
+    order_details.set_default_params(base_request)
+    order_details.set_extraction_id(extraction_id)
+    order_details.set_filter(['ParentOrdID', parent_order_id])
+
+    value = ExtractionDetail(column_name, column_name)
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    request = call(order_book_service.getChildOrdersDetails, order_details.request())
+    return request[column_name]
 
 
 def verifier(case_id, event_name, expected_value, actual_value):

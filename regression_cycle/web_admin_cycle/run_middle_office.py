@@ -20,9 +20,9 @@ class RunMiddleOffice:
     def execute(self):
         try:
             start_time = time.monotonic()
-            #QAP_2564(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_3148(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4858(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2564(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3148(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4858(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Middle Office ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

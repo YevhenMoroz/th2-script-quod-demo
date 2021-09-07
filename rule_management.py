@@ -162,10 +162,11 @@ class RuleManager:
                                                  TemplateQuodOCRRule(connection_id=ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_OCRR(session: str):
+    def add_OCRR(session: str, trade: bool = False):
         return Stubs.simulator.createQuodOCRRRule(request=
                                                   TemplateQuodOCRRRule(connection_id=
-                                                                       ConnectionID(session_alias=session)))
+                                                                       ConnectionID(session_alias=session),
+                                                                       trade=trade))
 
     @staticmethod
     def add_RFQ(session: str):
@@ -251,7 +252,7 @@ class RuleManager:
                                             ))
 
     @staticmethod
-    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify: bool):
+    def add_OrderCancelReplaceRequest(session: str, account: str, exdestination: str, modify = True):
         return Stubs.simulator.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,

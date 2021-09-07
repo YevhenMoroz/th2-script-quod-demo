@@ -1,4 +1,6 @@
 import logging
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
@@ -33,7 +35,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
     # region Accept CO
     eq_wrappers.accept_order(lookup, qty, price)
@@ -71,7 +73,7 @@ def execute(report_id, session_id):
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
     # Cancel order
-    eq_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
+    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
     # region Reject Cancel message
     eq_wrappers.reject_order(lookup, qty, price)
     # endregion

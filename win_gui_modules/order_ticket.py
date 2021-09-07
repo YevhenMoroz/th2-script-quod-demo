@@ -102,6 +102,9 @@ class OrderTicketDetails:
     def set_washbook(self, washbook: str):
         self.order.advOrdParams.washbook = washbook
 
+    def set_capacity(self, capacity: str):
+        self.order.advOrdParams.capacity = capacity
+
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)

@@ -3,6 +3,8 @@ from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 
 from .order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2
+from .order_ticket import OrderTicketDetails, FXOrderDetails
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
 
 
@@ -33,6 +35,56 @@ class ModifyOrderDetails:
     def build(self):
         return self.modify_order_details
 
+
+class ModifyFXOrderDetails:
+    def __init__(self, base_request):
+        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+
+        self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
+    def amend_by_icon(self):
+        self.modify_order_details.amendByIcon = True
+
+    def build(self):
+        return self.modify_order_details
+
+
+class ModifyFXOrderDetails:
+    def __init__(self, base_request):
+        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+
+        self.modify_order_details.base.CopyFrom(base_request)
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.modify_order_details.multipleRowSelection = True
+        self.modify_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.modify_order_details
 
 class ModifyFXOrderDetails:
     def __init__(self, base_request):
@@ -115,6 +167,53 @@ class CancelFXOrderDetails:
         return self.cancel_order_details
 
 
+class ReleaseFXOrderDetails:
+    def __init__(self, base_request):
+        self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
+        self.release_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.release_order_details.multipleRowSelection = True
+        self.release_order_details.selectedRowCount = selected_row_count
+
+    def set_order_details(self, order_details: FXOrderDetails):
+        self.release_order_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.release_order_details
+
+
+class TransferOrderDetails:
+    def __init__(self):
+        self.transfer_order_details = order_book_pb2.TransferOrderDetails()
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.transfer_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_default_params(self, base_request):
+        self.transfer_order_details.base.CopyFrom(base_request)
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.transfer_order_details.multipleRowSelection = True
+        self.transfer_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.transfer_order_details
+
+    def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
+        self.transfer_order_details.desk = desk
+        self.transfer_order_details.partialDesk = partial_desk
 class ReleaseFXOrderDetails:
     def __init__(self, base_request):
         self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
@@ -632,6 +731,24 @@ class FXOrderInfo:
 
     def build(self):
         return self.order_info
+
+
+class SuspendOrderDetails:
+
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+        else:
+            self._request = order_book_pb2.SuspendOrderDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_cancel_children(self, cancel_children: bool):
+        self._request.cancelChildren = cancel_children
+
+    def build(self):
+        return self._request
 
 
 # class QuoteRequestDetails:
