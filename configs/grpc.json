@@ -246,6 +246,21 @@
  ]
  }
 },
+    "Win_Act_Care_Order": {
+ "service-class": "CareOrdersServiceService",
+ "endpoints": {
+ "act_care_order": {
+     "host": "10.0.22.24",
+     "port": 32223
+ }
+ },
+ "strategy": {
+ "name": "robin",
+ "endpoints": [
+ "act_care_order"
+ ]
+ }
+},
     "SimulatorHttp": {
       "service-class": "SimTemplateService",
       "endpoints": {
@@ -288,6 +303,36 @@
         "name": "robin",
         "endpoints": [
           "act_java_api"
+        ]
+      }
+    },
+     "Win_Act_Basket_Order_Book": {
+      "service-class": "BasketBookServiceService",
+      "endpoints": {
+        "act_basket_order_book": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_basket_order_book"
+        ]
+      }
+    },
+    "Win_Act_Basket_Ticket": {
+      "service-class": "BasketTicketServiceService",
+      "endpoints": {
+        "act_basket_ticket": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_basket_ticket"
         ]
       }
     }
