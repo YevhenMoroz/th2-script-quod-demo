@@ -69,7 +69,7 @@ class FixClientSellRfq():
     def send_request_for_quote_swap_no_reply(self):
         self.case_params_sell_rfq.prepare_rfq_params_swap()
         print('SWAP RFQ ', self.case_params_sell_rfq.rfq_params_swap)
-        self.quote = self.fix_act.sendMessage(
+        self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Request For Quote',
                 self.case_params_sell_rfq.connectivityRFQ,
@@ -77,6 +77,7 @@ class FixClientSellRfq():
                 bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params_swap,
                                     self.case_params_sell_rfq.connectivityRFQ)
             ))
+
         return self
 
     def send_quote_cancel(self):
@@ -223,7 +224,8 @@ class FixClientSellRfq():
                                   offer_px='', bid_px='', bid_spot_rate='', offer_spot_rate=''
                                   , leg_of_fwd_p='', leg_bid_fwd_p='', checkpoint_id_=''):
         self.case_params_sell_rfq.prepare_quote_report_swap()
-        self.quote_id = self.extract_filed('QuoteID')
+        if self.quote!=None:
+            self.quote_id = self.extract_filed('QuoteID')
         self.case_params_sell_rfq.quote_params_swap['QuoteID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap['QuoteMsgID'] = self.quote_id
         self.case_params_sell_rfq.quote_params_swap.pop('Account')
@@ -249,10 +251,11 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.quote_params_swap['OfferSpotRate'] = offer_spot_rate
 
         print('RFQ swap pending parameters: \t', self.case_params_sell_rfq.quote_params_swap)
-
-        checkpoint_id = self.quote.checkpoint_id
         if checkpoint_id_ != '':
             checkpoint_id = checkpoint_id_
+        else:
+            checkpoint_id = self.quote.checkpoint_id
+
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(
