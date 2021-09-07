@@ -88,15 +88,10 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
     order_ticket_service = Stubs.win_act_order_ticket
     try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
-                                                                             client + "_PARIS", "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_order', status="FAIL")
-    finally:
-        rule_manager.remove_rule(nos_rule)
 
 
 '''
@@ -463,8 +458,9 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
 def verify_basket_value(request, case_id, column_name, expected_value, basket_book_filter=None):
     extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
     extract_order_data_details.set_default_params(request)
-    extract_order_data_details.set_filter(basket_book_filter)
-    extract_order_data_details.set_column_name(column_name)
+    extract_order_data_details.set_column_name([column_name])
+    if basket_book_filter is not None:
+        extract_order_data_details.set_filter(basket_book_filter)
     result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
     base_verifier(case_id, column_name, expected_value, result)
 
@@ -1115,8 +1111,8 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
-    try:
-        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+    #try:
+    call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
+    #except Exception:
+        #logger.error("Error execution", exc_info=True)
+        #basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")

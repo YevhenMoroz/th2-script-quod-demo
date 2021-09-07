@@ -33,9 +33,11 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
+    '''
     # region Create Basket via import
     eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path, client)
     # endregion
+    '''
     # region Verify
     eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name)
     eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
