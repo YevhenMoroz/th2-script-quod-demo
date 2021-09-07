@@ -18,8 +18,6 @@ def execute(report_id, session_id):
     client = "CLIENT_FIX_CARE"
     qty1 = "600"
     qty2 = "500"
-    price1 = "20"
-    price2 = "10"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -33,15 +31,14 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    '''
     # region Create Basket via import
     eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path, client)
     # endregion
-    '''
     # region Verify
-    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name)
+    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name, {'Basket Name': basket_name})
+    basket_id = eq_wrappers.get_basket_value(base_request, "Id", {'Basket Name': basket_name})
     eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   ["Qty", qty1, "Limit Price", price1])
+                                   order_filter_list=["Basket ID", basket_id, "Qty", qty1])
     eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   ["Qty", qty2, "Limit Price", price2])
+                                   order_filter_list=["Basket ID", basket_id, "Qty", qty2])
     # endregion

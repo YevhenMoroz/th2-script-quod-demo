@@ -385,13 +385,14 @@ def get_cl_order_id(request):
     return result[cl_order_id.name]
 
 
-def get_basket_value(request, column_name, basket_book_filter=None):
+def get_basket_value(request, column_name, basket_book_filter: dict = None):
     extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
     extract_order_data_details.set_default_params(request)
-    extract_order_data_details.set_filter(basket_book_filter)
-    extract_order_data_details.set_column_name(column_name)
-    result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
-    return result[column_name.name]
+    extract_order_data_details.set_column_names([column_name])
+    if basket_book_filter is not None:
+        extract_order_data_details.set_filter(basket_book_filter)
+    result = call(Stubs.win_act_basket_order_book.extractOrderData, extract_order_data_details.build())
+    return result[column_name]
 
 
 def base_verifier(case_id, printed_name, expected_value, actual_value,
@@ -402,11 +403,12 @@ def base_verifier(case_id, printed_name, expected_value, actual_value,
     verifier.verify()
 
 
-def verify_order_value(request, case_id, column_name, expected_value, is_child=False,order_filter_list=None):
+def verify_order_value(request, case_id, column_name, expected_value, is_child=False, order_filter_list: list = None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
-    order_details.set_filter(order_filter_list)
+    if order_filter_list is not None:
+        order_details.set_filter(order_filter_list)
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -458,11 +460,11 @@ def verify_allocate_value(request, case_id, column_name, expected_value, account
 def verify_basket_value(request, case_id, column_name, expected_value, basket_book_filter=None):
     extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
     extract_order_data_details.set_default_params(request)
-    extract_order_data_details.set_column_name([column_name])
+    extract_order_data_details.set_column_names([column_name])
     if basket_book_filter is not None:
         extract_order_data_details.set_filter(basket_book_filter)
-    result = call(Stubs.win_act_basket_order_book, extract_order_data_details.build())
-    base_verifier(case_id, column_name, expected_value, result)
+    result = call(Stubs.win_act_basket_order_book.extractOrderData, extract_order_data_details.build())
+    base_verifier(case_id, column_name, expected_value, result[column_name])
 
 
 def notify_dfd(request):
@@ -1025,9 +1027,8 @@ def release_order(base_request, filter=None):
 
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
-    order_book_service = Stubs.win_act_order_book
     try:
-        call(order_book_service.addToBasket, add_to_basket_details.build())
+        call(Stubs.win_act_order_book.addToBasket, add_to_basket_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
@@ -1111,8 +1112,8 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
-    #try:
+    # try:
     call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    #except Exception:
-        #logger.error("Error execution", exc_info=True)
-        #basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+    # except Exception:
+    # logger.error("Error execution", exc_info=True)
+    # basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
