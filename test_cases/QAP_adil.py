@@ -1,16 +1,17 @@
 from stubs import Stubs
 from custom.basic_custom_actions import create_event, timestamps, client_orderid, wrap_message, convert_to_request, \
-    filter_to_grpc, create_check_rule
+    filter_to_grpc, create_check_sequence_rule, prefilter_to_grpc
 from datetime import datetime, timedelta
 from copy import deepcopy
 from rule_management import RuleManager
-import time
+
 
 
 def run_test_case():
     seconds, nanos = timestamps()
     case_name = "test instance"
     sell_side_conn = "gtwquod3"
+    buy_side_conn = "fix-bs-eq-paris"
     rule_manager = RuleManager()
 
     # create event with name case_name and return case_id
@@ -40,12 +41,15 @@ def run_test_case():
         'ClientAlgoPolicyID': 'QA_SORPING',
         'TargetStrategy': "1011"
     }
-    #print(new_order_params['ClOrdID'])
-    rule = rule_manager.add_NOS(sell_side_conn, new_order_params['Account'])
+
+    # print(new_order_params['ClOrdID'])
+    rule = rule_manager.add_NOS(buy_side_conn, new_order_params['Account'])
     new_order = Stubs.fix_act.placeOrderFIX(
         request=convert_to_request("Send new order", sell_side_conn, case_id,
                                    wrap_message(new_order_params, "NewOrderSingle", sell_side_conn))
     )
+
+    # set a checkpoint in order to start searching messages from a specific time
     checkpoint_1 = new_order.checkpoint_id
 
     # Execution report params with status pending
@@ -79,13 +83,6 @@ def run_test_case():
             'PartyRole': '36'
         }]
     }
-    Stubs.verifier.submitCheckRule(
-        request=create_check_rule(
-            "Execution Report with OrdStatus = Pending",
-            filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, sell_side_conn, case_id
-        )
-    )
 
     # Execution report params with status New
     new_er_params = deepcopy(pending_er_params)
@@ -95,24 +92,33 @@ def run_test_case():
     new_er_params['ExecRestatementReason'] = '4'
     new_er_params['Account'] = "#"
 
-    Stubs.verifier.submitCheckRule(
-        request=create_check_rule(
-            "Execution Report with OrdStatus = New",
-            filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, sell_side_conn, case_id
+    # Attributes by which messages will be filtered
+    pre_filter_sim_params = {
+        'header': {
+            'MsgType': ('0', "NOT_EQUAL")
+        }
+    }
+
+    # Making an example PreFilter class
+    pre_filter_sim = prefilter_to_grpc(pre_filter_sim_params)
+
+    # List of filters of messages
+    message_filters_sim = [
+        filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
+        filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus'])
+    ]
+
+    # Creating request for verification to check1
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check sell side message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_sim,
+            checkpoint=checkpoint_1,
+            connectivity=sell_side_conn,
+            event_id=case_id,
         )
     )
-    # time.sleep(3)
-    # amend_order_params = deepcopy(new_order_params)
-    # amend_order_params['OrderQty'] = 200
-    # amend_order_params['OrigClOrdID'] = new_order_params['ClOrdID']
-    # amend_order_params['SettlDate'] = (datetime.utcnow() + timedelta(days=2)).strftime("%Y%m%d")
-    # amend_order_params['TransactTime'] = datetime.utcnow().isoformat()
-    # amend_order = Stubs.fix_act.placeOrderReplaceFIX(
-    #     request=convert_to_request("Send order Cancel and Replace", sell_side_conn, case_id,
-    #                                wrap_message(amend_order_params, "OrderCancelReplaceRequest", sell_side_conn))
-    # )
-    #
     rule_manager.remove_rule(rule)
 
 
