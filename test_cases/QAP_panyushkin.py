@@ -9,7 +9,8 @@ import time
 def run_test_case():
     seconds, nanos = timestamps() 
     case_name = "Example"
-    sell_side_conn = "fix-bs-eq-paris"
+    sell_side_conn = "gtwquod3"
+    buy_side_conn = "fix-bs-eq-paris"
     rule_manager = RuleManager()
 
     case_id = create_event(case_name)
