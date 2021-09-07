@@ -256,7 +256,6 @@ class FixClientSellRfq():
         else:
             checkpoint_id = self.quote.checkpoint_id
 
-
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 'Receive quote',
