@@ -70,13 +70,6 @@ def run_test_case():
         'LeavesQty': new_order_params['OrderQty'],
         'Instrument': new_order_params['Instrument']
     }
-    Stubs.verifier.submitCheckRule(
-        request=create_check_rule(
-            "Execution Report with OrdStatus = Pending",
-            filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, sell_side_conn, case_id
-        )
-    )
 
     new_er_params = deepcopy(pending_er_params)
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
@@ -84,11 +77,16 @@ def run_test_case():
     new_er_params['SettlDate'] = (datetime.utcnow() + timedelta(days=2)).strftime("%Y%m%d")
     new_er_params['ExecRestatementReason'] = '4'
 
-    Stubs.verifier.submitCheckRule(
-        request=create_check_rule(
-            "Execution Report with OrdStatus = New",
-            filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus']),
-            checkpoint_1, sell_side_conn, case_id
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check sell side",
+            prefilter=pre_filter,
+            msg_filters=message_filters_sell_side,
+            checkpoint=checkpoint_1,
+            connectivity=sell_side_conn,
+            event_id=case_id,
+            timeout=2000
+            
         )
     )
 
