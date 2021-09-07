@@ -70,8 +70,8 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.24",
-          "port": 32288
+          "host": "10.0.22.22",
+          "port": 32223
         }
       },
       "strategy": {

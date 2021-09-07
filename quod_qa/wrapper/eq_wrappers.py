@@ -526,19 +526,21 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     if toggle_recompute is not False:
         settlement_details.toggle_recompute()
 
-    commissions_details = modify_request.add_commissions_details()
-    if comm_basis is not None:
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] == 'unchecked':
-            commissions_details.toggle_manual()
-        commissions_details.add_commission(comm_basis, comm_rate)
-    if remove_commission:
-        commissions_details.remove_commissions()
-    fees_details = modify_request.add_fees_details()
-    if fees_basis is not None:
-        fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
-    if remove_fees:
-        fees_details.remove_fees()
+    # Yehor need to finish with it
+    if comm_basis or comm_rate is not None or remove_commission:
+        commissions_details = modify_request.add_commissions_details()
+        if comm_basis or comm_rate is not None:
+            response = check_booking_toggle_manual(request)
+            if response['book.manualCheckboxState'] == 'unchecked':
+                commissions_details.toggle_manual()
+                commissions_details.add_commission(comm_basis, comm_rate)
+        if remove_commission:
+            commissions_details.remove_commissions()
+    # fees_details = modify_request.add_fees_details()
+    # if fees_basis is not None:
+    #     fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
+    # if remove_fees:
+    #     fees_details.remove_fees()
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
