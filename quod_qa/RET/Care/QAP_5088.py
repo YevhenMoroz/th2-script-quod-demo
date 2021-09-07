@@ -7,12 +7,11 @@ from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 
 from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
 
+from stubs import Stubs
 
 from win_gui_modules.utils import get_base_request, set_session_id, prepare_fe, get_opened_fe, close_fe
 from win_gui_modules.wrappers import set_base
-
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from quod_qa.wrapper.ret_wrappers import switch_user, create_order, verify_order_value, amend_order, get_order_id

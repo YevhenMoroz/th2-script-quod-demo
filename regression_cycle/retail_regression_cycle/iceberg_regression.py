@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_Iceberg import QAP_4289, QAP_5120, QAP_5122, QAP_5123
+from quod_qa.RET.Algo.Algo_Iceberg import QAP_4289, QAP_5120, QAP_5122, QAP_5123, QAP_5175
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -18,6 +18,7 @@ def test_run(session_id, parent_id=None):
         QAP_5120.execute(session_id, report_id)
         QAP_5122.execute(session_id, report_id)
         QAP_5123.execute(session_id, report_id)
+        QAP_5175.execute(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

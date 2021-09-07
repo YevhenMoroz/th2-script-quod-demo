@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime, timedelta
 from custom import basic_custom_actions
 from quod_qa.wrapper.fix_manager import FixManager
@@ -8,10 +9,11 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
-# fix-sell-317-standard-test
-bo_connectivity = "fix-sell-317-backoffice"
+buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
+# fix-sell-317-standard-test  fix-sell-310-newdict
+bo_connectivity = "fix-sell-310-backoffice" #fix-sell-310-backoffice  fix-sell-317-backoffice
+
 
 
 def get_buy_connectivity():
@@ -74,10 +76,11 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
 
 def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(sell_connectivity, case_id)
+    fix_message = FixMessage(fix_message)
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters(parametr_list)
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     try:
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
-        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)

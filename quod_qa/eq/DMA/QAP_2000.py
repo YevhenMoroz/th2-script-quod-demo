@@ -1,9 +1,6 @@
 import logging
-from datetime import datetime
-
+import time
 import quod_qa.wrapper.eq_fix_wrappers
-from datetime import datetime
-from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
@@ -32,10 +29,12 @@ def execute(report_id, session_id):
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
     # endregion
     # region Check values in OrderBook
     params = {
+        'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'ExecType': '4',
         'OrdStatus': '4',
@@ -65,7 +64,7 @@ def execute(report_id, session_id):
         'CxlQty': qty,
         'SettlType': '0'
     }
-    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType'])
+                                         key_parameters=None)
     # endregion

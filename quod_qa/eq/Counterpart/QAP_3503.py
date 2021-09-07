@@ -1,11 +1,8 @@
 import logging
-import time
-
 import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
