@@ -15,7 +15,13 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
 from custom import basic_custom_actions as bca
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ExtractMiddleOfficeBlotterValuesRequest, \
-    AllocationsExtractionDetails
+    AllocationsExtractionDetails, CheckContextAction
+
+import grpc
+from google.protobuf.empty_pb2 import Empty
+from th2_grpc_sim_http.sim_template_pb2 import TemplateHttpLogonRule, TemplateHttpAnswerRule, PartySettlement1, \
+    PartySettlement2, SettlementInstructions1, SettlementInstructions2, TemplateDeleteRule
+from th2_grpc_sim import sim_pb2_grpc as core_http
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,6 +33,57 @@ def execute(report_id):
     act2 = Stubs.win_act_order_book
     common_act = Stubs.win_act
     simulator = Stubs.simulator
+
+    simulator_http = Stubs.simulator_http
+    coreHttp = core_http.SimStub(grpc.insecure_channel("10.0.22.22:31123"))
+
+    Answer = simulator_http.createHttpAnswerRule(
+        request=TemplateHttpAnswerRule(
+            connection_id=ConnectionID(session_alias='http-server'),
+            instructingPartyValue="BLMACHAL2XX",
+            settlementInstructions={"ID1": "BT01C", "SubAccountNo": "21435", "PaymentCurrency": "GBP",
+                                    "SubAgentBIC": "RTBSGB2LXXX",
+                                    "SubAgentName1": "RBC INVESTOR SERVICES TRUST, UK BRA", "SubAgentName2": "NCH",
+                                    "PSET": "CRSTGB22", "InstitutionBIC": "OMGOUS33XXX",
+                                    "ParticipantName1": "OMGEO LLC"},
+            matchingSecurityCode="FI-25061620",
+            account1ID="3434",
+            account2ID="ACC-2",
+            partySettlement1=PartySettlement1(SettlementInstructionsSourceIndicator="ALRT",
+                                              AlertCountryCode="GBR",
+                                              AlertMethodType="CREST",
+                                              AlertSecurityType="EQU",
+                                              AlertSettlementModelName="INTMODEL",
+                                              settlementInstructions=SettlementInstructions1(ID1="BT01C",
+                                                                                             SubAccountNo="21435",
+                                                                                             PaymentCurrency="GBP",
+                                                                                             SubAgentBIC="RTBSGB2LXXX",
+                                                                                             SubAgentName1="RBC INVESTOR SERVICES TRUST, UK BRA",
+                                                                                             SubAgentName2="NCH",
+                                                                                             PSET="CRSTGB22",
+                                                                                             InstitutionBIC="OMGOUS33XXX",
+                                                                                             ParticipantName1="OMGEO LLC",
+                                                                                             )),
+            partySettlement2=PartySettlement2(SettlementInstructionsSourceIndicator="ALRT",
+                                              AlertCountryCode="USA",
+                                              AlertMethodType="DTC",
+                                              AlertSecurityType="EQU",
+                                              AlertSettlementModelName="ARALERTI",
+                                              settlementInstructions=SettlementInstructions2(ID1="1940",
+                                                                                             ID2="00053308",
+                                                                                             ID3="00058320",
+                                                                                             SecurityAccount="23438",
+                                                                                             SubAccountNo="100527",
+                                                                                             PaymentCurrency="USD",
+                                                                                             CashAccountNo="23438",
+                                                                                             SubAgentBIC="DTCCUS41XXX",
+                                                                                             SubAgentName1="DEPOSITORY TRUST AND CLEARING CORPO",
+                                                                                             SubAgentName2="RATION",
+                                                                                             PSET="DTCYUS33",
+                                                                                             AffirmingPartyIndicator="A",
+                                                                                             InstitutionBIC="OMGOUS33XXX"
+                                                                                             )),
+        ))
 
     bs_paris = 'fix-bs-eq-paris'
     bs_trqx = 'fix-bs-eq-trqx'
@@ -55,7 +112,7 @@ def execute(report_id):
             'TargetCompID': 'QUOD3',
             'SenderCompID2': 'KCH_QA_RET_CHILD',
             'TargetCompID2': 'QUOD_QA_RET_CHILD',
-            'Account': 'MOClient',
+            'Account': 'MOClient2',
             'HandlInst': '1',
             'Side': '2',
             'OrderQty': '100',
@@ -104,7 +161,7 @@ def execute(report_id):
                 bca.message_to_grpc('NewOrderSingle', dma_order_params, "gtwquod5")
             ))
 
-        Stubs.core.removeRule(trade_rule_1)
+
 
         middle_office_service = Stubs.win_act_middle_office_service
 
@@ -128,6 +185,8 @@ def execute(report_id):
                                                       verify_ent("Order Post Trade Status",
                                                                  main_order_post_trade_status.name, "ReadyToBook")
                                                       ]))
+
+        Stubs.core.removeRule(trade_rule_1)
 
         # book order
 
@@ -206,7 +265,7 @@ def execute(report_id):
         # Check allocations blotter
 
         extract_request = AllocationsExtractionDetails(base=base_request)
-        extract_request.set_allocations_filter({"Account ID": "MOClientSA1"})
+        extract_request.set_allocations_filter({"Account ID": "MOClient2SA1"})
         allocate_status = ExtractionDetail("middleOffice.status", "Status")
         allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
         allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
@@ -216,13 +275,50 @@ def execute(report_id):
 
         verifier = Verifier(case_id)
 
-        verifier.set_event_name("Checking allocate blotter")
+        verifier.set_event_name("Checking allocate blotter MOClient2SA1")
         verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
-        verifier.compare_values("Allocation Account ID", "MOClientSA1", request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Account ID", "MOClient2SA1", request_allocate_blotter[allocate_account_id.name])
         verifier.compare_values("Allocation Match Status", "Matched", request_allocate_blotter[allocate_status_match_status.name])
         verifier.verify()
 
-        # Approve action unanble
+        extract_request = AllocationsExtractionDetails(base=base_request)
+        extract_request.set_allocations_filter({"Account ID": "MOClient2SA2"})
+        allocate_status = ExtractionDetail("middleOffice.status", "Status")
+        allocate_account_id = ExtractionDetail("middleOffice.account_id", "Account ID")
+        allocate_status_match_status = ExtractionDetail("middleOffice.match_status", "Match Status")
+        order_details = extract_request.add_order_details()
+        order_details.add_extraction_details([allocate_status, allocate_account_id, allocate_status_match_status])
+        request_allocate_blotter = call(middle_office_service.extractAllocationsTableData, extract_request.build())
+
+        #verifier = Verifier(case_id)
+
+        verifier.set_event_name("Checking allocate blotter MOClient2SA2")
+        verifier.compare_values("Allocation Status", "Affirmed", request_allocate_blotter[allocate_status.name])
+        verifier.compare_values("Allocation Account ID", "MOClient2SA2",
+                                request_allocate_blotter[allocate_account_id.name])
+        verifier.compare_values("Allocation Match Status", "Matched",
+                                request_allocate_blotter[allocate_status_match_status.name])
+        verifier.verify()
+
+        coreHttp.removeRule(Answer)
+
+        # Approve action
+
+        modify_request = ModifyTicketDetails(base=base_request)
+        modify_request.set_filter(["Order ID", block_order_id])
+        check_context_action = modify_request.add_check_context_action()
+        check_context_action.set_action_name("Approve")
+        check_context_action.set_extraction_key("extractionKey")
+        response = call(Stubs.win_act_middle_office_service.checkContextAction, modify_request.build())
+        result_check_approve = response["extractionKey"]
+
+        verifier.set_event_name("Check context action Approve")
+        verifier.compare_values("Context action Approve exists?", "false",
+                                result_check_approve)
+        verifier.verify()
+
+
+
 
 
 

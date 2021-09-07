@@ -15,17 +15,14 @@ timeouts = True
 
 def execute(report_id):
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
+    nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT1")
 
-    connectivity = 'gtwquod3'
+    connectivity = 'fix-ss-310-columbia-standart'
     case_id = bca.create_event(os.path.basename(__file__), report_id)
     fix_manager_qtwquod3 = FixManager(connectivity, case_id)
     verifier = FixVerifier(connectivity, case_id)
 
-
-
-
-    sor_params = {
+    multilisting_params = {
         'Account': "CLIENT1",
         'HandlInst': "2",
         'Side': "1",
@@ -64,9 +61,9 @@ def execute(report_id):
 
     }
 
-    fix_message_sor = FixMessage(sor_params)
-    fix_message_sor.add_random_ClOrdID()
-    response = fix_manager_qtwquod3.Send_NewOrderSingle_FixMessage(fix_message_sor)
+    fix_message_multilisting = FixMessage(multilisting_params)
+    fix_message_multilisting.add_random_ClOrdID()
+    response = fix_manager_qtwquod3.Send_NewOrderSingle_FixMessage(fix_message_multilisting)
 
     reject_parameters = {
         'Instrument': {
@@ -75,7 +72,7 @@ def execute(report_id):
         },
         'OrdStatus': '8',
         'Text': "unknown venue `TRQX_er'",
-        'ClOrdID': fix_message_sor.get_ClOrdID()
+        'ClOrdID': fix_message_multilisting.get_ClOrdID()
     }
     verifier.CheckExecutionReport(reject_parameters, response)
     rule_manager.remove_rule(nos_rule)

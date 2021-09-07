@@ -48,8 +48,9 @@ def execute(report_id):
     eq_wrappers.switch_user(session_id, case_id)
     # endregion1
     # region create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, resipient=desk, price=price)
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, desk, price, False)
     # endregions
+
     # region Check values in OrderBook
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
@@ -83,7 +84,7 @@ def execute(report_id):
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region ManualExecute CO
-    eq_wrappers.manual_execution(base_request2,qty,price)
+    eq_wrappers.manual_execution(base_request2, qty, price)
     # endregion
     # region Complete Order
     eq_wrappers.complete_order(base_request2)

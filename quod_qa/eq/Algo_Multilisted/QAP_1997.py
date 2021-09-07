@@ -26,7 +26,7 @@ def execute(report_id):
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
-        sor_params = {
+        multilisting_params = {
             'Account': client,
             'HandlInst': 2,
             'Side': 1,
@@ -56,24 +56,47 @@ def execute(report_id):
         # endregion
         # region Connectivity
         case_id = bca.create_event(os.path.basename(__file__), report_id)
-        fix_manager_qtwquod5 = FixManager('gtwquod5', case_id)
-        fix_verifier_ss = FixVerifier('gtwquod5', case_id)
+        fix_manager_qtwquod5 = FixManager('fix-ss-310-columbia-standart', case_id)
+        fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
         # endregion
 
-        fix_message = FixMessage(sor_params)
-        fix_message.add_random_ClOrdID()
-        sor_responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
+        fix_message_multilisting = FixMessage(multilisting_params)
+        fix_message_multilisting.add_random_ClOrdID()
+        responce = fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message_multilisting)
 
         time.sleep(1)
         # Check on ss
         er_params_new = {
-            'ExecType': "4",
+            'ExecID': '*',
+            'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': '0',
+            'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': multilisting_params['Side'],
+            'AvgPx': '0',
             'OrdStatus': '4',
-            'TimeInForce': sor_params['TimeInForce'],
-            'OrderID': sor_responce.response_messages_list[0].fields['OrderID'].simple_value,
-            'Text': 'no liquidity found'
+            'SettlDate': '*',
+            'Currency': multilisting_params['Currency'],
+            'TimeInForce': multilisting_params['TimeInForce'],
+            'ExecType': "4",
+            'HandlInst': multilisting_params['HandlInst'],
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': '0',
+            'LastPx': '0',
+            'OrdType': multilisting_params['OrdType'],
+            'ClOrdID': fix_message_multilisting.get_ClOrdID(),
+            'Text': 'no liquidity found',
+            'OrderCapacity': multilisting_params['OrderCapacity'],
+            'QtyType': '0',
+            'ExecRestatementReason': '*',
+            'SettlType': '*',
+            'Price': price,
+            'TargetStrategy': multilisting_params['TargetStrategy'],
+            'Instrument': instrument
         }
-        fix_verifier_ss.CheckExecutionReport(er_params_new, sor_responce, message_name='Check ER to SS',
+        fix_verifier_ss.CheckExecutionReport(er_params_new, responce, message_name='Check ER to SS',
                                              key_parameters=['OrderID', 'OrdStatus', 'ExecType'])
 
     except Exception:
