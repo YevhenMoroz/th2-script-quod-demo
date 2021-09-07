@@ -23,7 +23,7 @@ def run_test_case():
     new_order_params = {
         'Account': 'KEPLER',
         'HandlInst': '2',
-        'Side': '1',
+        'Side': '2',
         'OrderQty': 500,
         'TimeInForce': '1',
         'Price': 5000,
