@@ -1,6 +1,8 @@
 from datetime import datetime
 from urllib import request
 
+from th2_grpc_act_gui_quod import act_ui_win_pb2
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
 from copy import deepcopy
 from custom import basic_custom_actions
@@ -22,7 +24,7 @@ from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, c
 from win_gui_modules.wash_book_positions_wrappers import GetWashBookDetailsRequest, \
     ExtractionWashBookPositionsFieldsDetails, WashPositionsInfo, ExtractionWashBookPositionsAction
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
-    direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct
+    direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct, BaseParams
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
@@ -112,16 +114,21 @@ def amend_negative_ex(base_request, order_book_service):
     call(order_book_service.amendOrder, amend_order_details.build())
 
 
-def create_order_extracting_error(base_request, qty, client, lookup, tif, order_type=None, price=None, sell_side=False):
+def create_order_extracting_error(base_request, qty, client, lookup, tif, side, order_type=None, price=None,
+                                  pos_validity=None):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_instrument(lookup)
     order_ticket.set_tif(tif)
+    if pos_validity:
+        order_ticket.set_general_tab_in_advanced(pos_validity)
     if order_type:
         order_ticket.set_order_type(order_type)
         order_ticket.set_limit(price)
-    if sell_side:
+    if side == "Buy":
+        order_ticket.buy()
+    if side == "Sell":
         order_ticket.sell()
 
     new_order_details = NewOrderDetails()
@@ -162,6 +169,18 @@ def direct_poc_order_via_inbox(reference_price, percentage, qty_percentage, rout
 def direct_child_care_order(qty_percentage, route, recipient):
     call(Stubs.win_act_order_book.orderBookDirectChildCare, direct_moc_request_correct("UnmatchedQty", qty_percentage,
                                                                                        route, recipient))
+
+
+def direct_poc_error_extraction(reference_price, percentage, qty_percentage, route):
+    error_message = ExtractDirectsValuesRequest.DirectsExtractedValue()
+    error_message.name = "ErrorMessage"
+    error_message.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
+    request = ExtractDirectsValuesRequest()
+    request.extractionId = "DirectErrorMessageExtractionID"
+    request.extractedValues.append(error_message)
+    response = call(Stubs.win_act_order_book.orderBookDirectPoc,
+                    direct_poc_request_correct('UnmatchedQty', reference_price, percentage, qty_percentage, route))
+    print(response)
 
 
 def reject_order(lookup, qty, price):
@@ -290,11 +309,12 @@ def extract_parent_order_details(base_request, column_name, extraction_id, order
     return result[column_name]
 
 
-def extract_child_lvl1_order_details(base_request, column_name, extraction_id):
+def extract_child_lvl1_order_details(base_request, column_name, extraction_id, child_order_id=None):
     child_main_order_details = OrdersDetails()
     child_main_order_details.set_default_params(base_request)
     child_main_order_details.set_extraction_id(extraction_id)
-
+    if child_order_id:
+        child_main_order_details.set_filter(['Order ID', child_order_id])
     value = ExtractionDetail(column_name, column_name)
     sub_lvl1_1_ext_action = ExtractionAction.create_extraction_action(extraction_details=[value])
 

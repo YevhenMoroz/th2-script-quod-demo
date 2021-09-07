@@ -46,10 +46,10 @@ def execute(session_id, report_id):
     # endregion
 
     # region Create POC child AO according to 1st step
-    direct_poc_order_via_inbox("Mid", "50", "50", "NSE")
+    direct_poc_order_via_inbox("LastTradedPrice", "0", "200", "NSE")
     # endregion
 
-    # region Check values of child AO in OrderBook (Child Orders) according to 1st step
+    # region Check values of child AO in OrderBook (Child Orders) according to 2nd step
     # Child AO will have Sts==Open for OrdType=Market or need to send MarketData for OrdType=Limit
     verify_order_value(base_request, case_id, "Sts", "Open", True)
     # endregion

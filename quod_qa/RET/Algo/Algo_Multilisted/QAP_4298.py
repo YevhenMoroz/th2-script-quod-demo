@@ -1,4 +1,5 @@
 import logging
+import os
 
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, \
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-
+from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
@@ -136,7 +137,7 @@ def execute(session_id, report_id):
     # end region
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # end region
