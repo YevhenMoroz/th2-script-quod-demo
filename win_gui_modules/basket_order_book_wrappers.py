@@ -17,3 +17,19 @@ class ExtractOrderDataDetails:
 
     def build(self):
         return self._request
+
+
+class ExtractChildOrderDataDetails:
+    def __init__(self, extract_order_data: ExtractOrderDataDetails = None, rows_number: int = None):
+        self._request = basket_book_pb2.ExtractChildOrderDataDetails()
+        self._request.extractDetails.CopyFrom(extract_order_data)
+        self._request.rowsNumber = rows_number
+
+    def set_extract_order_data(self, extract_order_data: ExtractOrderDataDetails):
+        self._request.extractDetails.CopyFrom(extract_order_data)
+
+    def set_rows_number(self, rows_number: int):
+        self._request.rowsNumber = rows_number
+
+    def build(self):
+        return self._request

@@ -410,6 +410,18 @@ def get_basket_value(request, column_name, basket_book_filter: dict = None):
     return result[column_name]
 
 
+def get_basket_orders_values(request, row_count: int, extract_value, basket_book_filter: dict = None):
+    extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+    extract_order_data_details.set_default_params(request)
+    extract_order_data_details.set_filter(basket_book_filter)  # Set filter for parent order
+    extract_order_data_details.set_column_names([extract_value])  # Set column for child orders which data be extracted
+    extract_child_details = basket_order_book_wrappers.ExtractChildOrderDataDetails(extract_order_data_details.build(),
+                                                                                    row_count)  # argument #2 - row numbers
+    basket_book_service = Stubs.win_act_basket_order_book
+    result = call(basket_book_service.extractChildOrderData, extract_child_details.build())
+    return result
+
+
 def base_verifier(case_id, printed_name, expected_value, actual_value,
                   verification_method: VerificationMethod = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
@@ -1094,7 +1106,7 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
+def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
                        capacity=None, stop_price=None):
     if not remove_row:
         params = {}
@@ -1103,7 +1115,7 @@ def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, 
         if side is not None:
             params.update({'Side': side})
         if qty is not None:
-            params.update({'qty': qty})
+            params.update({'Qty': qty})
         if ord_type is not None:
             params.update({'Order Type': ord_type})
         if price is not None:
@@ -1112,9 +1124,9 @@ def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, 
             params.update({'Capacity': capacity})
         if stop_price is not None:
             params.update({'Stop Price': stop_price})
-        result = RowDetails(row, False, params).build()
+        result = RowDetails(row_filter, False, params).build()
     else:
-        result = RowDetails(row, True).build()
+        result = RowDetails(row_filter, True).build()
     return result
 
 
