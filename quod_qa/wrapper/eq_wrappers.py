@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, CreateBasketDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -1161,6 +1161,12 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+
+
+def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [basket_row_details] = None):
+    create_basket_details = CreateBasketDetails(request, orders_rows, basket_name, amend_rows_details)
+    order_book_service = Stubs.win_act_order_book
+    call(order_book_service.createBasket, create_basket_details.build())
 
 
 def mass_execution_summary_at_average_price(base_request, count: int):
