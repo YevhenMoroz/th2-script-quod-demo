@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -1094,36 +1094,44 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def basket_row_details(row, remove_row=False, symbol=None, side=None, ord_type=None, capacity=None):
+def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
+                       capacity=None, stop_price=None):
     if not remove_row:
         params = {}
         if symbol is not None:
             params.update({'Symbol': symbol})
         if side is not None:
-            params.update({'Side': symbol})
+            params.update({'Side': side})
+        if qty is not None:
+            params.update({'qty': qty})
         if ord_type is not None:
             params.update({'Order Type': ord_type})
+        if price is not None:
+            params.update({'Price': price})
         if capacity is not None:
             params.update({'Capacity': capacity})
+        if stop_price is not None:
+            params.update({'Stop Price': stop_price})
         result = RowDetails(row, False, params).build()
     else:
-        RowDetails(row, True).build()
+        result = RowDetails(row, True).build()
     return result
 
 
 def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
                              is_csv=False, amend_rows_details: [basket_row_details] = None):
     if is_csv:
-        file_type = FileType.CSV
+        file_type = 1
     else:
-        file_type = FileType.EXCEL
-    file_details = FileDetails(0, path).build()
+        file_type = 0
+    file_details = FileDetails(file_type, path).build()
     basket_ticket_details = BasketTicketDetails()
     basket_ticket_details.set_file_details(file_details)
     basket_ticket_details.set_default_params(request)
     basket_ticket_details.set_name_value(basket_name)
     basket_ticket_details.set_basket_template_name(basket_template_name)
     basket_ticket_details.set_client_value(client)
+
     if expire_date is not None:
         basket_ticket_details.set_date_value(expire_date)
     if tif is not None:
@@ -1141,6 +1149,7 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+
 
 def mass_execution_summary_at_average_price(base_request, count: int):
     mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)

@@ -37,7 +37,7 @@ def execute(report_id, session_id):
     # endregion
     # region Create Basket via import
     eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_xlsx, client)
-    eq_wrappers.create_basket_via_import(base_request, basket_name2, basket_template_name, path_csv, client)
+    eq_wrappers.create_basket_via_import(base_request, basket_name2, basket_template_name, path_csv, client,is_csv=True)
     # endregion
     # region Verify xlsx
     eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name, {'Basket Name': basket_name})
