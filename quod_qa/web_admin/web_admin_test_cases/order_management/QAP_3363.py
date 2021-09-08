@@ -47,7 +47,7 @@ class QAP_3363(CommonTestCase):
         time.sleep(2)
         values_sub_wizard.set_venue(self.venue)
         time.sleep(1)
-        values_sub_wizard.set_listing_group("Banking_KSE")
+        values_sub_wizard.set_listing_group("Banking_LSE")
         time.sleep(1)
         conditions_sub_wizard.click_on_plus()
         time.sleep(1)

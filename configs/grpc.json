@@ -70,7 +70,7 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.24",
+          "host": "10.0.22.22",
           "port": 32223
         }
       },
@@ -86,7 +86,7 @@
       "endpoints": {
         "act_order_ticket": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -101,7 +101,7 @@
       "endpoints": {
         "act_order_ticket_fx": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -131,7 +131,7 @@
       "endpoints": {
         "act_order_book": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -146,7 +146,7 @@
       "endpoints": {
         "act_order_book_fx": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -161,7 +161,7 @@
       "endpoints": {
         "act_rfq": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -176,7 +176,7 @@
       "endpoints": {
         "act_client_pricing": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -191,7 +191,7 @@
       "endpoints": {
         "act_middle_office": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -206,7 +206,7 @@
       "endpoints": {
         "act_dealer_interventions": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -221,7 +221,7 @@
       "endpoints": {
         "act_layout": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
         }
       },
       "strategy": {
@@ -236,7 +236,7 @@
  "endpoints": {
  "win_wct_trades_service": {
           "host": "10.0.22.24",
-          "port": 32223
+          "port": 32288
  }
  },
  "strategy": {

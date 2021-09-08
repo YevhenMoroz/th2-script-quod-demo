@@ -1,9 +1,8 @@
-from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3, broken_1, broken_w1w2
-from quod_qa.common_tools import random_qty
+from custom.tenor_settlement_date import broken_w1w2
+from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 import logging
-import random
 from datetime import datetime
 from pathlib import Path
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
@@ -11,8 +10,7 @@ from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import (OrdersDetails, ExtractionDetail,
-                                                 ExtractionAction, OrderInfo, FXOrdersDetails, FXOrderInfo)
+from win_gui_modules.order_book_wrappers import (ExtractionDetail)
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base

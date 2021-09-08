@@ -374,6 +374,21 @@ def get_order_id(request):
     return result[order_id.name]
 
 
+def get_is_locked(request):
+    order_details = OrdersDetails()
+    order_details.set_default_params(request)
+    order_details.set_extraction_id("IsLocked")
+    is_locked = ExtractionDetail("IsLocked", "IsLocked")
+    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[is_locked])
+    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
+    try:
+        result = call(Stubs.win_act_order_book.getOrdersDetails, order_details.request())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail get_is_locked', status="FAIL")
+    return result[is_locked.name]
+
+
 def get_cl_order_id(request):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
@@ -551,19 +566,21 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     if toggle_recompute is not False:
         settlement_details.toggle_recompute()
 
-    commissions_details = modify_request.add_commissions_details()
-    if comm_basis is not None:
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] == 'unchecked':
-            commissions_details.toggle_manual()
-        commissions_details.add_commission(comm_basis, comm_rate)
-    if remove_commission:
-        commissions_details.remove_commissions()
-    fees_details = modify_request.add_fees_details()
-    if fees_basis is not None:
-        fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
-    if remove_fees:
-        fees_details.remove_fees()
+    # Yehor need to finish with it
+    if comm_basis or comm_rate is not None or remove_commission:
+        commissions_details = modify_request.add_commissions_details()
+        if comm_basis or comm_rate is not None:
+            response = check_booking_toggle_manual(request)
+            if response['book.manualCheckboxState'] == 'unchecked':
+                commissions_details.toggle_manual()
+                commissions_details.add_commission(comm_basis, comm_rate)
+        if remove_commission:
+            commissions_details.remove_commissions()
+    # fees_details = modify_request.add_fees_details()
+    # if fees_basis is not None:
+    #     fees_details.add_fees(fees_type, fees_basis, rate=fees_rate, category=fees_category)
+    # if remove_fees:
+    #     fees_details.remove_fees()
 
     if misc_arr is not None:
         misc_details = modify_request.add_misc_details()
@@ -1027,8 +1044,9 @@ def release_order(base_request, filter=None):
 
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
+    order_book_service = Stubs.win_act_order_book
     try:
-        call(Stubs.win_act_order_book.addToBasket, add_to_basket_details.build())
+        call(order_book_service.addToBasket, add_to_basket_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
@@ -1112,8 +1130,19 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
-    # try:
-    call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    # except Exception:
-    # logger.error("Error execution", exc_info=True)
-    # basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+    try:
+        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+
+    try:
+        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+
+def mass_execution_summary_at_average_price(base_request, count: int):
+    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
+    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)

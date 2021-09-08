@@ -927,7 +927,7 @@ def execute(report_id, session_id):
         # endregion
 
         # region ClientPricing
-        # extract_cp_rates_panel(base_tile_details,cp_service)
+        extract_cp_rates_panel(base_tile_details,cp_service)
         # create_or_get_cp_rates_tile(base_tile_details, cp_service)
         # check_tile_value(base_tile_details, cp_service,1 )
         # select_rows(base_tile_details, [1, 2], cp_service)
@@ -973,8 +973,8 @@ def execute(report_id, session_id):
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
         # clear_filters(ob_fx)
-        check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
-        check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        # check_fx_order_book_lvl1(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
+        # check_fx_order_book_lvl2(base_request, ob_fx_act, report_id, 'AO1210708111556095001')
         # endregion
 
         # region Quote Request Book
