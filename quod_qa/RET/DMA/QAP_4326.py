@@ -1,5 +1,7 @@
 import logging
+import os
 
+from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.verifier import Verifier
 from custom.basic_custom_actions import create_event, timestamps
@@ -50,7 +52,7 @@ def execute(session_id, report_id):
     # end region
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 
