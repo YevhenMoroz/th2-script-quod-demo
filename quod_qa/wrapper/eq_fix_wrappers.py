@@ -10,8 +10,8 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
+buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
 # fix-sell-317-standard-test  fix-sell-310-newdict
 bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
 
@@ -28,8 +28,8 @@ def get_bo_connectivity():
     return bo_connectivity
 
 
-def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
-                         insrument=None):
+def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, stop_price=None, no_allocs=None,
+                         instrument=None):
     fix_params = {
         'Account': client,
         # 'OrderQtyData': {'OrderQty': qty},
@@ -57,18 +57,19 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
         fix_params.pop('StopPx')
     if no_allocs is None:
         fix_params.pop('NoAllocs')
-    if insrument is not None:
-        fix_params.update(Instrument=insrument)
+    if instrument is not None:
+        fix_params.update(Instrument=instrument)
     fix_message = FixMessage(fix_params)
     fix_message.add_random_ClOrdID()
     return fix_message.get_parameters()
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
-                         insrument=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
+                         instrument=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
-        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price, no_allocs, insrument)
+        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price,stop_price, no_allocs,
+                                          instrument)
         fix_message = FixMessage(fix_params)
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
         fix_params['response'] = response

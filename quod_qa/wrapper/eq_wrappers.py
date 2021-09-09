@@ -27,7 +27,8 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
+    CreateBasketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -408,6 +409,18 @@ def get_basket_value(request, column_name, basket_book_filter: dict = None):
         extract_order_data_details.set_filter(basket_book_filter)
     result = call(Stubs.win_act_basket_order_book.extractOrderData, extract_order_data_details.build())
     return result[column_name]
+
+
+def get_basket_orders_values(request, row_count: int, extract_value, basket_book_filter: dict = None):
+    extract_order_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+    extract_order_data_details.set_default_params(request)
+    extract_order_data_details.set_filter(basket_book_filter)  # Set filter for parent order
+    extract_order_data_details.set_column_names([extract_value])  # Set column for child orders which data be extracted
+    extract_child_details = basket_order_book_wrappers.ExtractChildOrderDataDetails(extract_order_data_details.build(),
+                                                                                    row_count)  # argument #2 - row numbers
+    basket_book_service = Stubs.win_act_basket_order_book
+    result = call(basket_book_service.extractChildOrderData, extract_child_details.build())
+    return result
 
 
 def base_verifier(case_id, printed_name, expected_value, actual_value,
@@ -1094,7 +1107,7 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
+def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
                        capacity=None, stop_price=None):
     if not remove_row:
         params = {}
@@ -1103,7 +1116,7 @@ def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, 
         if side is not None:
             params.update({'Side': side})
         if qty is not None:
-            params.update({'qty': qty})
+            params.update({'Qty': qty})
         if ord_type is not None:
             params.update({'Order Type': ord_type})
         if price is not None:
@@ -1112,9 +1125,9 @@ def basket_row_details(row, remove_row=False, symbol=None, side=None, qty=None, 
             params.update({'Capacity': capacity})
         if stop_price is not None:
             params.update({'Stop Price': stop_price})
-        result = RowDetails(row, False, params).build()
+        result = RowDetails(row_filter, False, params).build()
     else:
-        result = RowDetails(row, True).build()
+        result = RowDetails(row_filter, True).build()
     return result
 
 
@@ -1144,11 +1157,10 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
 
-    try:
-        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
+
+def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [basket_row_details] = None):
+    create_basket_details = CreateBasketDetails(request, orders_rows, basket_name, amend_rows_details)
+    call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
 
 
 def mass_execution_summary_at_average_price(base_request, count: int):
