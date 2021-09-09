@@ -4,12 +4,12 @@ from custom.basic_custom_actions import create_event, timestamps, client_orderid
 from datetime import datetime, timedelta
 from copy import deepcopy
 from rule_management import RuleManager
-
+from th2_grpc_common.common_pb2 import Direction
 
 
 def run_test_case():
     seconds, nanos = timestamps()
-    case_name = "test instance"
+    case_name = "adil test"
     sell_side_conn = "gtwquod3"
     buy_side_conn = "fix-bs-eq-paris"
     rule_manager = RuleManager()
@@ -102,8 +102,8 @@ def run_test_case():
     # Making an example PreFilter class
     pre_filter_sim = prefilter_to_grpc(pre_filter_sim_params)
 
-    # List of filters of messages
-    message_filters_sim = [
+    # message filter list for 2 types of Execution Report
+    message_filters_sell = [
         filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
         filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus'])
     ]
@@ -113,12 +113,80 @@ def run_test_case():
         create_check_sequence_rule(
             description="Check sell side message from Paris",
             prefilter=pre_filter_sim,
-            msg_filters=message_filters_sim,
+            msg_filters=message_filters_sell,
             checkpoint=checkpoint_1,
             connectivity=sell_side_conn,
             event_id=case_id,
         )
     )
+    temp_instrument = {
+        'SecurityType': 'CS',
+        'Symbol': 'GARD',
+        'SecurityID': 'FR0000065435',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
+
+    # new order single params for buy side
+    order_params_buys_side = deepcopy(new_order_params)
+    order_params_buys_side.pop("ClientAlgoPolicyID")
+    order_params_buys_side.pop("ComplianceID")
+    order_params_buys_side.pop("TargetStrategy")
+    order_params_buys_side["ClOrdID"] = "*"
+    order_params_buys_side["TransactTime"] = "*"
+    order_params_buys_side["ChildOrderID"] = "*"
+    order_params_buys_side["SettlDate"] = "*"
+    order_params_buys_side["Instrument"] = temp_instrument
+    order_params_buys_side["HandlInst"] = "1"
+    order_params_buys_side["ExDestination"] = "XPAR"
+    message_filters_NOS = [filter_to_grpc("NewOrderSingle", order_params_buys_side, ["SecurityID"])]
+
+    # request for module check1, which compares the NOS message from the buy side
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side NOS message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_NOS,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn,
+            event_id=case_id
+        )
+    )
+
+    # Execution report params for buy side
+    er_params_buy_side = {
+        "OrderID": "*",
+        "ExecID": "*",
+        "ExecType": "0",
+        "OrdStatus": "0",
+        "CumQty": "0",
+        "AvgPx": "0",
+        "Text": "sim work",
+        "LeavesQty": "0",
+        "TransactTime": datetime.utcnow().replace(microsecond=0).isoformat(),
+        "OrderQty": new_order_params["OrderQty"],
+        "OrdType": new_order_params["OrdType"],
+        "ClOrdID": "*",
+        "Side": new_order_params["Side"],
+        "Price": new_order_params["Price"]
+    }
+    message_filters_ER = [filter_to_grpc("ExecutionReport", er_params_buy_side)]
+
+    # request for module check1, which compares the NOS message from the buy side
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side ER message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_ER,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            direction=Direction.Value("SECOND")
+        )
+    )
+
+
+
     rule_manager.remove_rule(rule)
 
 
