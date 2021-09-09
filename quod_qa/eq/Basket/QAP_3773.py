@@ -45,4 +45,5 @@ def execute(report_id, session_id):
     eq_wrappers.verify_order_value(base_request, case_id, "ISIN", new_isin,
                                    order_filter_list=["Order ID", orders_id["1"]])
     eq_wrappers.verify_order_value(base_request, case_id, "Capacity", new_capacity)
+    eq_wrappers.verify_order_value(base_request, case_id, "OrdType", "Market")
     # endregion

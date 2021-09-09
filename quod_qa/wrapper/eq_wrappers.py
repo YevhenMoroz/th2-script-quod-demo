@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, CreateBasketDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -27,7 +27,8 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
+    CreateBasketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -1156,17 +1157,10 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
 
-    try:
-        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
-
 
 def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [basket_row_details] = None):
     create_basket_details = CreateBasketDetails(request, orders_rows, basket_name, amend_rows_details)
-    order_book_service = Stubs.win_act_order_book
-    call(order_book_service.createBasket, create_basket_details.build())
+    call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
 
 
 def mass_execution_summary_at_average_price(base_request, count: int):
