@@ -103,3 +103,4 @@ class VenuesTradingPhaseProfileSubWizard(CommonPage):
 
     def set_end_time_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.TRADING_PHASE_PROFILE_SEQUENCES_TAB_END_TIME_FILTER_XPATH, value)
+

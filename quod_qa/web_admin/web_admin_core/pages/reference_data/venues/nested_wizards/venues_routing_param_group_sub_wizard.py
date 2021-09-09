@@ -33,12 +33,27 @@ class VenuesRoutingParamGroupsSubWizard(CommonPage):
 
     def set_positive_routes(self, value):
         self.set_checkbox_list(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH, value)
+        result = tuple(
+            self.set_checkbox_list(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH,
+                                   value))
+        for item in range(len(result)):
+            self.find_by_xpath(result[item]).click()
 
     def set_positive_routes_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH, value)
 
+    def click_on_positive_rotes(self):
+        self.find_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH).click()
+
     def set_negative_routes(self, value):
-        self.set_checkbox_list(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH, value)
+        result = tuple(
+            self.set_checkbox_list(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH,
+                                   value))
+        for item in range(len(result)):
+            self.find_by_xpath(result[item]).click()
+
+    def click_on_negative_routes(self):
+        self.find_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH).click()
 
     def set_negative_routes_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH, value)

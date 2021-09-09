@@ -19,17 +19,17 @@ class VenuesConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
 
     # --Main page--
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="venueName"]//span//span[4]'
-    MAIN_PAGE_ID_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[2]//input'
+    MAIN_PAGE_ID_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_ID_XPATH = '//*[@col-id="venueID"]//span//span[4]'
-    MAIN_PAGE_MIC_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[3]//input'
+    MAIN_PAGE_MIC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_MIC_XPATH = '//*[@col-id="MIC"]//span//span[4]'
-    MAIN_PAGE_COUNTRY_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[4]//input'
-    MAIN_PAGE_COUNTRY_XPATH = '//*[@col-id="countryEnumTable.countryName"]//span//span[4]'
-    MAIN_PAGE_CATEGORY_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[5]//input'
+    MAIN_PAGE_COUNTRY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
+    MAIN_PAGE_COUNTRY_XPATH = '//*[@col-id="countryEnumTable.countryName"]/span/span[4]'
+    MAIN_PAGE_CATEGORY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     MAIN_PAGE_CATEGORY_XPATH = '//*[@col-id="venueCategory"]//span//span[4]'
-    MAIN_PAGE_QUALIFIER_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[6]//input'
+    MAIN_PAGE_QUALIFIER_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[6]//input'
     MAIN_PAGE_QUALIFIER_XPATH = '//*[@col-id="venueQualifier"]//span//span[4]'
     MAIN_PAGE_ANTI_CROSSING_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[7]//input'
     MAIN_PAGE_ANTI_CROSSING_XPATH = '//*[@col-id="antiCrossingPeriod"]//span//span[4]'
@@ -53,16 +53,16 @@ class VenuesConstants:
 
     # --Profiles tab--
     PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH = '//*[@id="priceLimitProfile"]'
-    PROFILES_TAB_PRICE_LIMIT_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="priceLimitProfile"]::parent/div/div//button'
+    PROFILES_TAB_PRICE_LIMIT_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="priceLimitProfile"]/parent::div/following-sibling::div//button'
     PROFILES_TAB_TICK_SIZE_PROFILE_XPATH = '//*[@id="tickSizeProfile"]'
-    PROFILES_TAB_TICK_SIZE_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="tickSizeProfile"]::parent/div/div//button'
+    PROFILES_TAB_TICK_SIZE_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="tickSizeProfile"]/parent::div/following-sibling::div//button'
     PROFILES_TAB_HOLIDAY_XPATH = '//*[@id="holiday"]'
-    PROFILES_TAB_HOLIDAY_MANAGE_BUTTON_XPATH = '//*[@form-control-name="holiday"]::parent/div/div//button'
+    PROFILES_TAB_HOLIDAY_MANAGE_BUTTON_XPATH = '//*[@form-control-name="holiday"]/parent::div/following-sibling::div//button'
     PROFILES_TAB_ANTI_CROSSING_PERIOD_XPATH = '//*[@formcontrolname="antiCrossingPeriod"]'
     PROFILES_TAB_TRADING_PHASE_PROFILE_XPATH = '//*[@id="tradingPhaseProfile"]'
-    PROFILES_TAB_TRADING_PHASE_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="tradingPhaseProfile"]::parent/div/div//button'
+    PROFILES_TAB_TRADING_PHASE_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="tradingPhaseProfile"]/parent::div/following-sibling::div//button'
     PROFILES_TAB_ROUTING_PARAM_GROUP_XPATH = '//*[@id="routingParamGroup"]'
-    PROFILES_TAB_ROUTING_PARAM_GROUP_MANAGE_BUTTON_XPATH = '//*[@form-control-name="routingParamGroup"]::parent/div/div//button'
+    PROFILES_TAB_ROUTING_PARAM_GROUP_MANAGE_BUTTON_XPATH = '//*[@form-control-name="routingParamGroup"]/parent::div/following-sibling::div//button'
     PROFILES_TAB_WEEKEND_DAY_XPATH = '//*[@formcontrolname="weekendDay"]'
 
     # --Price limit profile sub tab--
@@ -110,11 +110,11 @@ class VenuesConstants:
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeRefPriceType ng-star-inserted"]//input'
 
     # --Tick size points sub tab--
-    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/ancestor::nb-card//nb-card-body//*[@class="nb-plus sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/ancestor::nb-card//nb-card-body//*[@class="nb-close"]'
-    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/ancestor::nb-card//nb-card-body//*[@class="nb-edit sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/ancestor::nb-card//nb-card-body//*[@class="nb-trash sub-table-action"]'
+    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
+    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
+    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
+    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
+    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
 
     TICK_SIZE_POINTS_TAB_TICK_XPATH = '//*[@placeholder="Tick *"]'
     TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '//*[@class="ng2-smart-th tickSize ng-star-inserted"]//input'
@@ -154,11 +154,11 @@ class VenuesConstants:
 
     # --Trading phase profile sequence sub tab--
 
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/ancestor::nb-card//nb-card-body//*[@class="nb-plus sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/ancestor::nb-card//nb-card-body//*[@class="nb-close"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/ancestor::nb-card//nb-card-body//*[@class="nb-edit sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/ancestor::nb-card//nb-card-body//*[@class="nb-trash sub-table-action"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
 
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_XPATH = '//*[@class="status-basic ng-untouched ng-pristine ng-valid nb-transition"]//input'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_FILTER_XPATH = '//*[@class="ng2-smart-th submitAllowed ng-star-inserted"]//input'
@@ -187,13 +187,14 @@ class VenuesConstants:
     ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH = '//*[@class="ng2-smart-th positiveRoute_ext ng-star-inserted"]//input'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *"]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '//*[@class="negativeRoute_ext ng2-smart-th ng-star-inserted"]//input'
+    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH = "//*[@class='cdk-overlay-pane']//*[text()='{}']"
 
     # --Routing parameters tab--
-    ROUTING_PARAMETERS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Parameters"]/ancestor::nb-card//nb-card-body//*[@class="nb-plus sub-table-action"]'
-    ROUTING_PARAMETERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Parameters"]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    ROUTING_PARAMETERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Parameters"]/ancestor::nb-card//nb-card-body//*[@class="nb-close"]'
-    ROUTING_PARAMETERS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Parameters"]/ancestor::nb-card//nb-card-body//*[@class="nb-edit sub-table-action"]'
-    ROUTING_PARAMETERS_TAB_PLUS_DELETE_BUTTON_XPATH = '//*[text()="Parameters"]/ancestor::nb-card//nb-card-body//*[@class="nb-trash sub-table-action"]'
+    ROUTING_PARAMETERS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
+    ROUTING_PARAMETERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
+    ROUTING_PARAMETERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
+    ROUTING_PARAMETERS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
+    ROUTING_PARAMETERS_TAB_PLUS_DELETE_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
 
     ROUTING_PARAMETERS_TAB_PARAMETER_XPATH = '//*[@placeholder="Parameter *"]'
     ROUTING_PARAMETERS_TAB_PARAMETER_FILTER_XPATH = '//*[@class="customParam ng2-smart-th ng-star-inserted"]//input'
