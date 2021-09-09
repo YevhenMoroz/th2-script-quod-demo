@@ -4,8 +4,6 @@ from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_fix_wrappers, eq_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from stubs import Stubs
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
