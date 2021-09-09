@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from copy import deepcopy
 from rule_management import RuleManager
 import time
+import com.exactpro.th2.common.grpc.Direction
+
 
 def run_test_case():
     seconds, nanos = timestamps() 
@@ -55,8 +57,8 @@ def run_test_case():
         'Currency': 'EUR',
         'TargetStrategy': new_order_params['TargetStrategy'],
         'ClOrdID': new_order_params['ClOrdID'],
-        'OrderID': "*",
-        'ExecID': "*",
+        'OrderID': '*',
+        'ExecID': '*',
         'TransactTime': '*',
         'Price': new_order_params['Price'],
         'OrderQty': new_order_params['OrderQty'],
@@ -93,6 +95,63 @@ def run_test_case():
             event_id=case_id,
             timeout=2000
             
+        )
+    )
+    
+    order_params_buy_side = deepcopy(new_order_params)
+    order_params_buy_side['HandlInst'] = '2'
+    order_params_buy_side['TimeInForce'] = '1'
+    order_params_buy_side['OrderCapacity'] = "A"
+    order_params_buy_side['Currency'] = 'EUR'
+    order_params_buy_side['TargetStrategy'] = "1011"
+    order_params_buy_side["Instrument"] = instrument_1
+    
+    message_filters_buy_side = [filter_to_grpc("NewOrderSingle",order_params_buy_side)]
+        Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side",
+            prefilter=pre_filter,
+            msg_filters=message_filters_buy_side,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            timeout=2000
+            
+        )
+    )
+        
+    params_buy_side_er = 
+    {
+        'Side': new_order_params['Side'],
+        'OrdType': new_order_params['OrdType'],
+        'ClOrdID': new_order_params['ClOrdID'],
+        'OrderID': '*',
+        'ExecID': '*',
+        'TransactTime': '*',
+        'Price': new_order_params['Price'],
+        'OrderQty': new_order_params['OrderQty'],
+        'CumQty': '0',
+        'LastPx': '0',
+        'LastQty': '0',
+        'QtyType': '0',
+        'AvgPx': '0',
+        'OrdStatus': 'A',
+        'ExecType': 'A',
+        'LeavesQty': new_order_params['OrderQty'],
+    }
+        
+    message_filters_er = [filter_to_grpc("ExecutionReport", params_buy_side_er)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check ExecutionReport",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_er,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            direction=Direction.SECOND
+            timeout=2000
         )
     )
 
