@@ -20,18 +20,22 @@ orderqty = 1000000
 new_orderqty = 52000000
 ordtype = '2'
 timeinforce = '4'
-currency = 'EUR'
+currency= 'EUR'
 settlcurrency = 'USD'
-settltype = 0
-symbol = 'EUR/USD'
-securitytype = 'FXSPOT'
-securityidsource = '8'
-securityid = 'EUR/USD'
-bands = [2000000, 6000000, 12000000]
-ord_status = 'Rejected'
+settltype=0
+symbol='EUR/USD'
+securitytype='FXSPOT'
+securityidsource='8'
+securityid='EUR/USD'
+bands=[2000000,6000000,12000000]
+ord_status='Rejected'
 settldate = spo()
-md = None
-defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
+md=None
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
+
+
+
+
 
 
 def execute(report_id):
@@ -39,26 +43,24 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
 
-        # Precondition
-        FixClientSellEsp(
-            CaseParamsSellEsp(client, case_id, settltype=settltype, symbol=symbol, securitytype=securitytype)). \
+        #Precondition
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype)).\
             send_md_request().send_md_unsubscribe()
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
 
-        # Step 1
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                   timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, symbol=symbol,
+        #Step 1
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
                                    securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price = md.extract_filed('Price')
+        price= md.extract_filed('Price')
 
-        text = 'not enough quantity in book'
-        params.orderqty = new_orderqty
+        text='not enough quantity in book'
+        params.orderqty=new_orderqty
         params.set_new_order_single_params()
-        md.send_new_order_single(price). \
-            verify_order_pending(). \
+        md.send_new_order_single(price).\
+            verify_order_pending().\
             verify_order_rejected(text)
     except Exception as e:
         logging.error('Error execution', exc_info=True)
@@ -68,3 +70,6 @@ def execute(report_id):
             md.send_md_unsubscribe()
         except:
             bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+
+
+

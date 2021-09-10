@@ -270,7 +270,7 @@ def execute(report_id):
     try:
         # Step 1 SEND MARKET DATA
         FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_usd_chf, securitytype=securitytype,
-                                           settldate=settldate, settltype=settltype)). \
+                                   settldate=settldate, settltype=settltype)).\
             send_md_request(). \
             send_md_unsubscribe()
         # SEND MD USD/CHF spot GS
@@ -287,7 +287,7 @@ def execute(report_id):
 
         # Step 2
         params = CaseParamsSellEsp(client, case_id, symbol=symbol_usd_chf, securitytype=securitytype,
-                                   settltype=settltype)
+                                   settldate=settldate, settltype=settltype)
         md = FixClientSellEsp(params). \
             send_md_request()
         params.prepare_md_for_verification_custom(no_md_entries)

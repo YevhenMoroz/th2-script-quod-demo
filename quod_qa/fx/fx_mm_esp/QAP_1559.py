@@ -51,7 +51,7 @@ def execute(report_id):
 
         params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                      timeinforce=timeinforce, currency=currency2,
-                                     settlcurrency=settlcurrency, settltype=settltype,
+                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
                                      symbol=symbol2, securitytype=securitytype_fwd,
                                      securityid=securityid2, account=account)
         md2 = FixClientSellEsp(params_2)
@@ -69,7 +69,7 @@ def execute(report_id):
             # Steps 1-3
             params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency1,
-                                         settlcurrency=settlcurrency, settltype=settltype,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1,
                                          symbol=symbol1, securitytype=securitytype_fwd,
                                          securityid=securityid1)
             params_1.prepare_md_for_verification(bands, priced=False)
