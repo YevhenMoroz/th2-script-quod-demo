@@ -38,7 +38,9 @@ def execute(report_id):
                 'NavigatorExecution': '1',
                 'NavigatorInitialSweepTime': '5',
                 'NavGuard': '0',
+                'MaxPercentageVolume': '10'
             }
+
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(

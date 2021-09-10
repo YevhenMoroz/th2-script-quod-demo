@@ -33,7 +33,8 @@ def execute(report_id):
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'LimitPriceReference': 'Last',
-            'LimitPriceOffset': '2'
+            'LimitPriceOffset': '2',
+            'ExcludePricePoint2': '1'
         }
     }
 

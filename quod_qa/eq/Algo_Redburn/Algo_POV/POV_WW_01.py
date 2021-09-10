@@ -34,7 +34,8 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'RB_TWAP-WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '99'
+                'TriggerPriceRed': '99',
+                'MaxPercentageVolume': '10'
             }
         }
 
