@@ -6,6 +6,7 @@ from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from custom import basic_custom_actions as bca
 import logging
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -35,10 +36,11 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
 
+
         params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                    timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, symbol=symbol,
-                                   securitytype=securitytype,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype,
+                                   settldate=settldate, symbol=symbol, securitytype=securitytype,
                                    securityidsource=securityidsource, securityid=securityid, account=account)
         md = FixClientSellEsp(params). \
             send_md_request(). \
