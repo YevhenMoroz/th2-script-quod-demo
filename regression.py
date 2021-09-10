@@ -12,18 +12,18 @@ def test_run(name ,algo = True, equity = True, forex = True, retail = True):
     try:
         if algo:
             algo_regression.test_run(report_id)
-        if equity:
-            eq_regression.test_run(report_id)
-        if forex:
-            fx_regression.test_run(report_id)
-        if retail:
-            retail_regression.test_run(report_id)
+        #if equity:
+            #eq_regression.test_run(report_id)
+        #if forex:
+            #fx_regression.test_run(report_id)
+        #if retail:
+            #retail_regression.test_run(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
 
 
 if __name__ == '__main__':
-    test_run('5.1.130.149|Regression|')
+    test_run('5.1.138.151|Regression|')
     #test_run('5.1.132.145|Redburn Tests|')  #RB
     Stubs.factory.close()
