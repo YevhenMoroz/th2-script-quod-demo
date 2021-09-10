@@ -34,10 +34,7 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'RB_TWAP-WW_01',
             'QuodFlatParameters': {
-                'PricePoint1Price': '50',
-                'PricePoint1Participation': '20',
-                'PricePoint2Price': '60',
-                'PricePoint2Participation': '30',
+                'TriggerPriceRed': '99',
             }
         }
 
