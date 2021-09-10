@@ -147,14 +147,14 @@ def run_test_case():
 
     params_buy_side_er = {
         "CumQty": "0",
-        "ExecID": "*",
+        "ExecID": "1",
         "OrderQty": new_order_params["OrderQty"],
         "OrdType": new_order_params["OrdType"],
         "ClOrdID": "*",
         "Text": "sim work",
         "TransactTime": "*",
         "Side": new_order_params["Side"],
-        "OrderID": "*",
+        "OrderID": "1",
         "AvgPx": "0",
         "OrdStatus": "0",
         "Price": new_order_params["Price"],
