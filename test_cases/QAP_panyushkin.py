@@ -1,11 +1,10 @@
 from stubs import Stubs
 from custom.basic_custom_actions import create_event, timestamps, client_orderid, wrap_message, convert_to_request, \
-    filter_to_grpc, create_check_rule
+    filter_to_grpc, create_check_rule, create_check_sequence_rule, prefilter_to_grpc
 from datetime import datetime, timedelta
 from copy import deepcopy
 from rule_management import RuleManager
-import time
-import com.exactpro.th2.common.grpc.Direction
+from th2_grpc_common.common_pb2 import Direction
 
 
 def run_test_case():
@@ -107,7 +106,8 @@ def run_test_case():
     order_params_buy_side["Instrument"] = instrument_1
     
     message_filters_buy_side = [filter_to_grpc("NewOrderSingle",order_params_buy_side)]
-        Stubs.verifier.submitCheckSequenceRule(
+
+    Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
             description="Check buy side",
             prefilter=pre_filter,
@@ -120,8 +120,7 @@ def run_test_case():
         )
     )
         
-    params_buy_side_er = 
-    {
+    params_buy_side_er = {
         'Side': new_order_params['Side'],
         'OrdType': new_order_params['OrdType'],
         'ClOrdID': new_order_params['ClOrdID'],
@@ -150,7 +149,7 @@ def run_test_case():
             checkpoint=checkpoint_1,
             connectivity=buy_side_conn,
             event_id=case_id,
-            direction=Direction.SECOND
+            direction=Direction.SECOND,
             timeout=2000
         )
     )
