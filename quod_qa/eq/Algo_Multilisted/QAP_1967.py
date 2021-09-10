@@ -13,8 +13,8 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 
+#order param
 qty = 1300
-account = "CLIENT1"
 time_in_force = 0
 price_1 = 35
 stop_price_1 = 35
@@ -23,6 +23,9 @@ stop_price_2 = 34
 price_3 = 36
 stop_price_3 = 36
 side = 1
+
+#venue param
+account = "CLIENT1"
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_feed_handler = "fix-fh-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
@@ -35,7 +38,6 @@ instrument = {
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
-
 
 def rule_creation():
     rule_manager = RuleManager()

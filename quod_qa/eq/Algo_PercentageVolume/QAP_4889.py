@@ -439,7 +439,7 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_4, market_data6)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region WouldPrice childs and MKD
         case_id_5 = bca.create_event("Check WouldPrice childs and MKD", case_id)

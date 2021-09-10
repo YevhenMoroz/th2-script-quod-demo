@@ -12,24 +12,29 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 
+#order param
 qty = 2000
-account = "CLIENT1"
 time_in_force = 2
 stop_price = 40
 side = 1
-connectivity_buy_side = "fix-bs-310-columbia"
-connectivity_feed_handler = "fix-fh-310-columbia"
-connectivity_sell_side = "fix-ss-310-columbia-standart"
+ord_type = 3
+
+#venue param
+account = "CLIENT1"
 symbol_paris = "734"
 symbol_trqx = "3416"
-ord_type = 3
 ex_destination_1 = "XPAR"
+
 instrument = {
             'Symbol': 'FR0000121121_EUR',
             'SecurityID': 'FR0000121121',
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         }
+
+connectivity_buy_side = "fix-bs-310-columbia"
+connectivity_feed_handler = "fix-fh-310-columbia"
+connectivity_sell_side = "fix-ss-310-columbia-standart"
 
 def rule_creation():
     rule_manager = RuleManager()

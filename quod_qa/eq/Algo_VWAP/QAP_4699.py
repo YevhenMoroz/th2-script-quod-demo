@@ -18,32 +18,35 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-tick = 0.005
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+text_r = 'order replaced'
+
+#algo param
 waves = 4
-qty = 40
+aggressivity = 1
+
+#order param
+tick = 0.005
 price = 20
 parent_price = 21
 wld_price = 19.98
+qty = 40
 child_day_qty = round(qty / waves)
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
+order_type = 2
 side = 1
 tif_day = 0
 tif_ioc = 3
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '704'
-percentage = 10
-aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"

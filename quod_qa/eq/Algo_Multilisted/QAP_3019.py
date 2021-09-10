@@ -19,21 +19,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
-qty = 1300
+#text
 text_pn='Pending New status'
 text_n='New status'
-text_ocrr='OCRRRule'
 text_c='order canceled'
+
+#order param
+qty = 1300
 tif_gtd = 6
-expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
 price = 35
 side = 1
+order_type_limit = 2
+currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type_limit = 2
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '734'
 s_trqx = '3416'
 
@@ -86,6 +88,9 @@ def execute(report_id):
     try:
         rule_list = rule_creation();
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
+
+        expire_date = (datetime.today() + timedelta(days=2)).strftime("%Y%m%d")
+
         # Send_MarkerData
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
