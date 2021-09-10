@@ -8,7 +8,7 @@ from th2_grpc_common.common_pb2 import Direction
 
 
 def run_test_case():
-    seconds, nanos = timestamps() 
+    seconds, nanos = timestamps()
     case_name = "Example"
     sell_side_conn = "gtwquod3"
     buy_side_conn = "fix-bs-eq-paris"
@@ -78,11 +78,11 @@ def run_test_case():
     new_er_params['SettlDate'] = (datetime.utcnow() + timedelta(days=2)).strftime("%Y%m%d")
     new_er_params['ExecRestatementReason'] = '4'
 
-    pre_filter_params = {'header': {'MsgType':('0',"Not_equal")}}
+    pre_filter_params = {'header': {'MsgType': ('0', "NOT_EQUAL")}}
     pre_filter = prefilter_to_grpc(pre_filter_params)
     message_filters_sell_side = [
-        filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID','OrdStatus']),
-        filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID','OrdStatus']) ]
+        filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
+        filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus'])]
 
     Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
@@ -93,10 +93,10 @@ def run_test_case():
             connectivity=sell_side_conn,
             event_id=case_id,
             timeout=2000
-            
+
         )
     )
-    
+
     order_params_buy_side = deepcopy(new_order_params)
     order_params_buy_side['HandlInst'] = '2'
     order_params_buy_side['TimeInForce'] = '1'
@@ -104,8 +104,8 @@ def run_test_case():
     order_params_buy_side['Currency'] = 'EUR'
     order_params_buy_side['TargetStrategy'] = "1011"
     order_params_buy_side["Instrument"] = instrument_1
-    
-    message_filters_buy_side = [filter_to_grpc("NewOrderSingle",order_params_buy_side)]
+
+    message_filters_buy_side = [filter_to_grpc("NewOrderSingle", order_params_buy_side)]
 
     Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
@@ -116,10 +116,10 @@ def run_test_case():
             connectivity=buy_side_conn,
             event_id=case_id,
             timeout=2000
-            
+
         )
     )
-        
+
     params_buy_side_er = {
         'Side': new_order_params['Side'],
         'OrdType': new_order_params['OrdType'],
@@ -138,13 +138,13 @@ def run_test_case():
         'ExecType': 'A',
         'LeavesQty': new_order_params['OrderQty'],
     }
-        
+
     message_filters_er = [filter_to_grpc("ExecutionReport", params_buy_side_er)]
 
     Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
             description="Check ExecutionReport",
-            prefilter=pre_filter_sim,
+            prefilter=pre_filter,
             msg_filters=message_filters_er,
             checkpoint=checkpoint_1,
             connectivity=buy_side_conn,
@@ -156,6 +156,7 @@ def run_test_case():
 
     rule_manager.remove_rule(rule)
     print(f"Case {case_name} was executed")
+
 
 if __name__ == '__main__':
     run_test_case()
