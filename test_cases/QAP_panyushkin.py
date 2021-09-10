@@ -1,6 +1,6 @@
 from stubs import Stubs
 from custom.basic_custom_actions import create_event, timestamps, client_orderid, wrap_message, convert_to_request, \
-    filter_to_grpc, create_check_rule, create_check_sequence_rule, prefilter_to_grpc
+    filter_to_grpc, create_check_sequence_rule, prefilter_to_grpc
 from datetime import datetime, timedelta
 from copy import deepcopy
 from rule_management import RuleManager
@@ -9,7 +9,7 @@ from th2_grpc_common.common_pb2 import Direction
 
 def run_test_case():
     seconds, nanos = timestamps()
-    case_name = "Example"
+    case_name = "panyushkin"
     sell_side_conn = "gtwquod3"
     buy_side_conn = "fix-bs-eq-paris"
     rule_manager = RuleManager()
@@ -26,10 +26,10 @@ def run_test_case():
         'Account': 'KEPLER',
         'HandlInst': '2',
         'Side': '2',
-        'OrderQty': 500,
-        'TimeInForce': '1',
-        'Price': 5000,
-        'OrdType': '1',
+        'OrderQty': 150,
+        'TimeInForce': '0',
+        'Price': 20,
+        'OrdType': '2',
         'ClOrdID': client_orderid(9),
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument_1,
@@ -64,6 +64,10 @@ def run_test_case():
         'CumQty': '0',
         'LastPx': '0',
         'LastQty': '0',
+        'NoParty': [{
+            'PartyID': f'{sell_side_conn}',
+            'PartyIDSource': 'D',
+            'PartyRole': '36'}],
         'QtyType': '0',
         'AvgPx': '0',
         'OrdStatus': 'A',
@@ -73,6 +77,7 @@ def run_test_case():
     }
 
     new_er_params = deepcopy(pending_er_params)
+    new_er_params['Account'] = "#"
     new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
     new_er_params['SecondaryAlgoPolicyID'] = new_order_params['ClientAlgoPolicyID']
     new_er_params['SettlDate'] = (datetime.utcnow() + timedelta(days=2)).strftime("%Y%m%d")
@@ -97,13 +102,33 @@ def run_test_case():
         )
     )
 
+    instrument_2 = {
+        'SecurityType': 'CS',
+        'Symbol': 'GARD',
+        'SecurityID': 'FR0000065435',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
+
+    trailer_1 = {
+        'CheckSum': '*'
+    }
+
     order_params_buy_side = deepcopy(new_order_params)
-    order_params_buy_side['HandlInst'] = '2'
-    order_params_buy_side['TimeInForce'] = '1'
+    order_params_buy_side['ExDestination'] = '*'
+    order_params_buy_side['ChildOrderID'] = '*'
+    order_params_buy_side['HandlInst'] = '1'
+    order_params_buy_side['ClOrdID'] = '*'
+    order_params_buy_side["SettlDate"] = "*"
+    order_params_buy_side['TransactTime'] = '*'
+    order_params_buy_side['TimeInForce'] = '0'
     order_params_buy_side['OrderCapacity'] = "A"
     order_params_buy_side['Currency'] = 'EUR'
-    order_params_buy_side['TargetStrategy'] = "1011"
-    order_params_buy_side["Instrument"] = instrument_1
+    order_params_buy_side['trailer'] = trailer_1
+    order_params_buy_side["Instrument"] = instrument_2
+    order_params_buy_side.pop("ClientAlgoPolicyID")
+    order_params_buy_side.pop("ComplianceID")
+    order_params_buy_side.pop("TargetStrategy")
 
     message_filters_buy_side = [filter_to_grpc("NewOrderSingle", order_params_buy_side)]
 
@@ -121,22 +146,20 @@ def run_test_case():
     )
 
     params_buy_side_er = {
-        'Side': new_order_params['Side'],
-        'OrdType': new_order_params['OrdType'],
-        'ClOrdID': new_order_params['ClOrdID'],
-        'OrderID': '*',
-        'ExecID': '*',
-        'TransactTime': '*',
-        'Price': new_order_params['Price'],
-        'OrderQty': new_order_params['OrderQty'],
-        'CumQty': '0',
-        'LastPx': '0',
-        'LastQty': '0',
-        'QtyType': '0',
-        'AvgPx': '0',
-        'OrdStatus': 'A',
-        'ExecType': 'A',
-        'LeavesQty': new_order_params['OrderQty'],
+        "CumQty": "0",
+        "ExecID": "*",
+        "OrderQty": new_order_params["OrderQty"],
+        "OrdType": new_order_params["OrdType"],
+        "ClOrdID": "*",
+        "Text": "sim work",
+        "TransactTime": "*",
+        "Side": new_order_params["Side"],
+        "OrderID": "*",
+        "AvgPx": "0",
+        "OrdStatus": "0",
+        "Price": new_order_params["Price"],
+        "ExecType": "0",
+        "LeavesQty": "0"
     }
 
     message_filters_er = [filter_to_grpc("ExecutionReport", params_buy_side_er)]
