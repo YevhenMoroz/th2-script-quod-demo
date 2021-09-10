@@ -40,7 +40,7 @@ def run_test_case():
         'TargetStrategy': "1011"
     }
 
-    rule = rule_manager.add_NOS(sell_side_conn, new_order_params['Account'])
+    rule = rule_manager.add_NOS(buy_side_conn, new_order_params['Account'])
     new_order = Stubs.fix_act.placeOrderFIX(
         request=convert_to_request("Send new order", sell_side_conn, case_id,
                                    wrap_message(new_order_params, "NewOrderSingle", sell_side_conn))
@@ -172,7 +172,7 @@ def run_test_case():
             checkpoint=checkpoint_1,
             connectivity=buy_side_conn,
             event_id=case_id,
-            direction=Direction.SECOND,
+            direction=Direction.Value('SECOND'),
             timeout=2000
         )
     )
