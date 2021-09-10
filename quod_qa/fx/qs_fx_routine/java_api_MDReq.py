@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 from stubs import Stubs
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
@@ -15,20 +16,15 @@ class TestCase:
         self.act_java_api = Stubs.act_java_api
         # self.connectivity = 'java-api-luna314'
         self.connectivity = '314_java_api'
-        # checkpoint_id1 = None
+        checkpoint_id2 = None
 
 
     def send_nos(self):
         # checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        # self.checkpoint_id1 = checkpoint1.checkpoint
+        # self.checkpoint_id2 = checkpoint1.checkpoint
         nos_params = {
-            # 'SEND_SUBJECT': 'QUOD.QSFE.FIX',
-            # 'SEND_SUBJECT': 'QUOD.MDA.FIX',
-            # 'SEND_SUBJECT': 'QUOD.MDA.REQUEST',
-            # 'SEND_SUBJECT': 'QUOD.PRICING.2.FE',
             'SEND_SUBJECT': 'MDA.QUOD.PRICING.2.SUB',
-            # 'SEND_SUBJECT': 'MDA.506403761.4.D.PRICING.2',
-            # 'SEND_SUBJECT': 'QUOD.PRICING.1.FIX',
+            'REPLY_SUBJECT': 'MDA.506403761.4.D.PRICING.2',
             'MarketDataRequestBlock': {
                 # 'MarketDepth': '',
                 # 'ExternalEntitlementKey': '',
@@ -72,7 +68,27 @@ class TestCase:
     def execute(self, report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
+        checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id1 = checkpoint1.checkpoint
+        time.sleep(5)
         self.send_nos()
+        # def_order_exec_report = {
+        #     'ActiveClientTier':'*',
+        #     'AutomatedMargin':'*',
+        #     'MarginPriceType':'*',
+        #     'MDQuoteType':'*',
+        #     'MDQuoteTypeStatus':'*',
+        #     'MDReportID':'*',
+        #     'MDTime':'*',
+        #     'PositionBasedMargins':'*',
+        #     'QuoteConditionStatus':'*',
+        #     'MDReqID':'*',
+        #     'MarketDataFullList': {
+        #         'MarketDataFullBlock': '*'
+        #         }
+        #
+        #     }
+
         def_order_exec_report = {
             'ActiveClientTier':'*',
             'AutomatedMargin':'*',
@@ -174,14 +190,109 @@ class TestCase:
                     ]
             }
         }
-
-        checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint1.checkpoint
+        # def_order_exec_report = {
+        #     'ActiveClientTier':'*',
+        #     'AutomatedMargin':'*',
+        #     'MarginPriceType':'*',
+        #     'MDQuoteType':'*',
+        #     'MDQuoteTypeStatus':'*',
+        #     'MDReportID':'*',
+        #     'MDTime':'*',
+        #     'PositionBasedMargins':'*',
+        #     'QuoteConditionStatus':'*',
+        #     'MDReqID':'*',
+        #     'MarketDataFullList': [
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 },
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 },
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 },
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 },
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 },
+        #                 {
+        #                     'VenueOrdID': '*',
+        #                     'MDEntryPx': '*',
+        #                     'OrdType': '*',
+        #                     'MDQuoteType': '*',
+        #                     'MDEntryID': '*',
+        #                     'MDEntrySize': '*',
+        #                     'QuoteEntryID': '*',
+        #                     'MDEntryBaseSize': '*',
+        #                     'MDEntryPosition': '*',
+        #                     'MDEntryMargin': '*',
+        #                     'MDEntryType': '*',
+        #                     'MDEntryBaseMargin': '*',
+        #                 }
+        #             ]
+        #     }
+        time.sleep(2)
         Stubs.verifier.submitCheckRule(
             request=bca.create_check_rule(
                 '',
-                bca.filter_to_grpc('Market_MarketDataSnapshotFullRefresh', def_order_exec_report,
-                                   ['MDReqID', 'MDReportID']),
+                bca.filter_to_grpc('Market_MarketDataSnapshotFullRefresh', def_order_exec_report),
                 checkpoint_id1, self.connectivity, case_id
             ),
 

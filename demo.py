@@ -7,7 +7,7 @@ from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_208
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
     QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_2034, QAP_2035
 from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
-    QAP_1755, QAP_2103, QAP_2382, QAP_2353, QAP_3908_BLOCKED_BY_PCON_2405
+    QAP_1755, QAP_2103, QAP_2382, QAP_2353, QAP_3908_BLOCKED_BY_PCON_2405, QAP_5353
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850, QAP_4234, \
     QAP_3766, QAP_3747, QAP_3806, QAP_3807
 from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3740
@@ -106,7 +106,7 @@ def test_run():
 
 
         # QAP_2103.execute(report_id)
-        java_api_MDReq.TestCase().execute(report_id)
+        # java_api_MDReq.TestCase().execute(report_id)
         # rfq_swap_1w_2w.execute(report_id)
         # java_api.TestCase(report_id).execute()
 
@@ -118,7 +118,7 @@ def test_run():
 
         # clone.execute(report_id)
 
-        # QAP_2103.execute(report_id)
+        QAP_5353.execute(report_id)
         # QAP_2382.execute(report_id)
 
 
@@ -141,18 +141,20 @@ def test_run():
 
 
         # rm = RuleManager()
+        # rm.remove_rule_by_id(2)
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        # # # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
-        # # # rm.add_fx_md_to('fix-fh-314-luna')
+        # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
+        # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.print_active_rules_sim_test()
         # # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
         # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
         # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
 
         # rm.print_active_rules()
-
-        # rm.print_active_rules_sim_test()
         #
+        # rm.remove_rule_by_id_test_sim(1)
+        # rm.print_active_rules_sim_test()
+
         # # rm.remove_rule_by_id(574)
         # rm.print_active_rules()
 

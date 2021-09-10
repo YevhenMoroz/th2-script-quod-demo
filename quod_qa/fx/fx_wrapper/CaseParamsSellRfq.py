@@ -372,6 +372,7 @@ class CaseParamsSellRfq:
             'ExecType': 'F',
             'Currency': self.currency,
             'ExecID': '*',
+            'LastMkt': 'XQFX',
             'OrderID': '*',
             'TimeInForce': self.timeinforce,
             'OrderQty': self.orderqty,
