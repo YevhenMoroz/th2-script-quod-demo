@@ -9,7 +9,9 @@ from quod_qa.eq.algo_acceptance_list import QAP_2994, QAP_2995, QAP_2996, QAP_29
 from quod_qa.eq.Algo_VWAP import QAP_4756, QAP_4801, QAP_4800, QAP_4940, QAP_4700, QAP_4699, QAP_4733, QAP_4734, QAP_4735
 from quod_qa.eq.Care import QAP_1013
 from quod_qa.eq.Test import TraidingSession_test, SendMarketData
-from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_BA_01, TWAP_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, TWAP_NAV_02, TWAP_NAV_01
+from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, VWAP_NAV_02, VWAP_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MaxP_01, POV_MinP_01, POV_NAV_01, POV_NAV_02, POV_WW_01
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -30,8 +32,31 @@ def test_run():
     report_id = bca.create_event('srublyov tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        #TWAP_BA_01.execute(report_id)
         TWAP_WW_01.execute(report_id)
+        TWAP_BA_01.execute(report_id)
+        TWAP_WW_01.execute(report_id)
+        TWAP_NAV_01.execute(report_id)
+        TWAP_NAV_02.execute(report_id)
+        TWAP_AUC_01.execute(report_id)
+        TWAP_MinP_01.execute(report_id)
+        TWAP_MaxP_01.execute(report_id)
+
+        VWAP_BA_01.execute(report_id)
+        VWAP_WW_01.execute(report_id)
+        VWAP_NAV_01.execute(report_id)
+        VWAP_NAV_02.execute(report_id)
+        VWAP_AUC_01.execute(report_id)
+        VWAP_MinP_01.execute(report_id)
+        VWAP_MaxP_01.execute(report_id)
+
+        POV_BA_01.execute(report_id)
+        POV_WW_01.execute(report_id)
+        POV_NAV_01.execute(report_id)
+        POV_NAV_02.execute(report_id)
+        POV_AUC_01.execute(report_id)
+        POV_MinP_01.execute(report_id)
+        POV_MaxP_01.execute(report_id)
+        POV_MaxP_01.execute(report_id)
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
         #     prepare_fe(report_id, session_id, work_dir, username, password)
