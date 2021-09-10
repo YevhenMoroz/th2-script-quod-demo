@@ -56,7 +56,7 @@ def test_run():
         POV_AUC_01.execute(report_id)
         POV_MinP_01.execute(report_id)
         POV_MaxP_01.execute(report_id)
-        POV_MaxP_01.execute(report_id)
+        
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
         #     prepare_fe(report_id, session_id, work_dir, username, password)
