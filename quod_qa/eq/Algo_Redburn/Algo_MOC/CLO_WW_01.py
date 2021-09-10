@@ -29,6 +29,7 @@ def execute(report_id):
         'Currency': "EUR",
         'TargetStrategy': 1015, # MOC
         'ExDestination': 'XPAR',
+        'Text': 'CLO_WW_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'WouldInAuction': '1',
