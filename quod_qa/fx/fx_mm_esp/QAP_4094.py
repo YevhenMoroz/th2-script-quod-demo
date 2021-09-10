@@ -9,6 +9,7 @@ from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from custom import basic_custom_actions as bca
 import logging
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -19,19 +20,20 @@ side = '1'
 orderqty = 1
 ordtype = '2'
 timeinforce = '4'
-currency = 'EUR'
+currency= 'EUR'
 settlcurrency = 'USD'
-settltype = 0
-symbol = 'EUR/XXX'
-securitytype = 'FXSPOT'
-securityidsource = '8'
-securityid = 'EUR/USD'
-bands = [2000000, 6000000, 12000000]
-ord_status = 'Filled'
-md = None
+settltype=0
+symbol='EUR/XXX'
+securitytype='FXSPOT'
+securityidsource='8'
+securityid='EUR/USD'
+bands=[2000000,6000000,12000000]
+ord_status='Filled'
+md=None
 settldate = spo()
-text = 'no active client tier'
+text='no active client tier'
 defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
+
 
 
 def execute(report_id):
@@ -40,17 +42,16 @@ def execute(report_id):
     try:
 
         # Preconditions
-        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype,
+        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate,
                                         symbol=symbol, securitytype=securitytype)
         FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
         # Send market data to the HSBC venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
             send_market_data_spot()
 
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                   timeinforce=timeinforce, currency=currency,
-                                   settlcurrency=settlcurrency, settltype=settltype, symbol=symbol,
-                                   securitytype=securitytype,
+
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,currency=currency,
+                                   settlcurrency=settlcurrency, settltype=settltype, settldate= settldate, symbol=symbol, securitytype=securitytype,
                                    securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
         md = FixClientSellEsp(params).send_md_request().verify_md_pending()
@@ -64,3 +65,6 @@ def execute(report_id):
             md.send_md_unsubscribe()
         except:
             bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
+
+
+

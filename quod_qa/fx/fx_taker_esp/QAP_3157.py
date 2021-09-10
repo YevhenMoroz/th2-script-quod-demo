@@ -34,7 +34,7 @@ def open_order_ticket(base_request, service):
 
 def place_order(base_request, service):
     order_ticket = FXOrderDetails()
-    order_ticket.set_care_order("Aspect Desk Of Traders (CL)", False)
+    order_ticket.set_care_order("Aspect Desk Of Traders (CN)", False)
     order_ticket.set_place()
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())

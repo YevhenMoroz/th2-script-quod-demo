@@ -51,7 +51,7 @@ def execute(report_id):
 
         params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                      timeinforce=timeinforce, currency=currency2,
-                                     settlcurrency=settlcurrency, settltype=settltype,
+                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
                                      symbol=symbol2, securitytype=securitytype_fwd,
                                      securityid=securityid2, account=account)
         params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
@@ -59,9 +59,9 @@ def execute(report_id):
         try:
 
             # Precondition
-            params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype,
+            params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate1_spo,
                                                symbol=symbol1, securitytype=securitytype_spo)
-            params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype,
+            params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo,
                                                symbol=symbol2, securitytype=securitytype_spo)
             FixClientSellEsp(params_usd_cad). \
                 send_md_request(). \
@@ -79,7 +79,7 @@ def execute(report_id):
             # Steps 1-3
             params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency1,
-                                         settlcurrency=settlcurrency, settltype=settltype,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1,
                                          symbol=symbol1, securitytype=securitytype_fwd,
                                          securityid=securityid1)
             params_1.prepare_md_for_verification(bands, published=False)
@@ -96,7 +96,7 @@ def execute(report_id):
             # Step 4-5
             params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency2,
-                                         settlcurrency=settlcurrency, settltype=settltype,
+                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
                                          symbol=symbol2, securitytype=securitytype_fwd,
                                          securityid=securityid2, account=account)
             params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)

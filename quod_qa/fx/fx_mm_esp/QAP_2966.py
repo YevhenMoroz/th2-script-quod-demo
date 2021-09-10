@@ -180,91 +180,93 @@ no_md_entries_usd_sek = [
     },
 ]
 
-no_md_entries = [
-    {
-        'SettlType': 0,
-        'MDEntryPx': '0.86162',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '10000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 1,
-        'MDEntryDate': '*',
-        'MDEntryType': 0
-    },
-    {
-        'SettlType': 0,
-        'MDEntryPx': '0.86177',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '1000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 1,
-        'MDEntryDate': '*',
-        'MDEntryType': 1
-    }, {
-        'SettlType': 0,
-        'MDEntryPx': '0.86162',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '5000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 2,
-        'MDEntryDate': '*',
-        'MDEntryType': 0
-    },
-    {
-        'SettlType': 0,
-        'MDEntryPx': '0.86177',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '5000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 2,
-        'MDEntryDate': '*',
-        'MDEntryType': 1
-    }, {
-        'SettlType': 0,
-        'MDEntryPx': '0.86162',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '1000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 3,
-        'MDEntryDate': '*',
-        'MDEntryType': 0
-    },
-    {
-        'SettlType': 0,
-        'MDEntryPx': '0.86177',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '10000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': tsd.spo(),
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 3,
-        'MDEntryDate': '*',
-        'MDEntryType': 1
-    }
+no_md_entries=[
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86162',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '10000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 1,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86177',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '1000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 1,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                },{
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86162',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '5000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 2,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86177',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '5000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 2,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                },{
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86162',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '1000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 0
+                },
+                {
+                    'SettlType': 0,
+                    'MDEntryPx': '0.86177',
+                    'MDEntryTime': '*',
+                    'MDEntryID': '*',
+                    'MDEntrySize': '10000000',
+                    'QuoteEntryID': '*',
+                    'MDOriginType': 1,
+                    'SettlDate': tsd.spo(),
+                    'MDQuoteType': 1,
+                    'MDEntryPositionNo': 3,
+                    'MDEntryDate': '*',
+                    'MDEntryType': 1
+                }
 
-]
+            ]
+
+
 
 
 def execute(report_id):
@@ -275,35 +277,30 @@ def execute(report_id):
         # Step 1 SEND MARKET DATA
 
         # SEND MD EUR/USD spot
-        FixClientSellEsp(
-            CaseParamsSellEsp(client, case_id, symbol=symbol_eur_usd, securitytype=securitytype,
-                              settltype=settltype)). \
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_eur_usd,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
             send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_spo_eur_usd, symbol_eur_usd, securitytype).
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_usd,symbol_eur_usd,securitytype).
                      prepare_custom_md_spot(no_md_entries_eur_usd)).send_market_data_spot()
 
-        # SEND MD EUR/NOK spot
-        FixClientSellEsp(
-            CaseParamsSellEsp(client, case_id, symbol=symbol_eur_nok, securitytype=securitytype,
-                              settltype=settltype)) \
+        #SEND MD EUR/NOK spot
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_eur_nok,securitytype=securitytype,settldate=settldate, settltype=settltype))\
             .send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_spo_eur_nok, symbol_eur_nok, securitytype).
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_eur_nok,symbol_eur_nok,securitytype).
                      prepare_custom_md_spot(no_md_entries_eur_nok)).send_market_data_spot()
 
-        # SEND MD USD/SEK spot
-        FixClientSellEsp(
-            CaseParamsSellEsp(client, case_id, symbol=symbol_usd_sek, securitytype=securitytype,
-                              settltype=settltype)). \
+        #SEND MD USD/SEK spot
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol_usd_sek,securitytype=securitytype,settldate=settldate, settltype=settltype)).\
             send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_spo_usd_sek, symbol_usd_sek, securitytype).
+        FixClientBuy(CaseParamsBuy(case_id,defmdsymb_spo_usd_sek,symbol_usd_sek,securitytype).
                      prepare_custom_md_spot(no_md_entries_usd_sek)).send_market_data_spot()
 
         # SEND MD USD/SEK spot
         params_eur_usd = CaseParamsSellEsp(client, case_id, symbol=symbol_nok_sek, securitytype=securitytype,
-                                           settltype=settltype)
+                                           settldate=settldate, settltype=settltype)
         params_eur_usd.prepare_md_for_verification_custom(no_md_entries)
         md_nok_sek = FixClientSellEsp(params_eur_usd)
         md_nok_sek.send_md_request()
+
 
         # Step 2
 

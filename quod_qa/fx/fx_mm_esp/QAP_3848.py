@@ -13,18 +13,21 @@ logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium1'
 account = 'Palladium1_1'
-currency = 'EUR'
+currency= 'EUR'
 settlcurrency = 'USD'
-settltype = 0
-symbol = 'EUR/USD'
-securitytype = 'FXSPOT'
-securityid = 'EUR/USD'
-booktype = '1'
-bands = [1000000, 2000000, 3000000]
-bands_tiered = [1000000, 2000000]
-md = None
-settldate = tsd.spo()
-defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
+settltype=0
+symbol='EUR/USD'
+securitytype='FXSPOT'
+securityid='EUR/USD'
+booktype='1'
+bands=[1000000,2000000,3000000]
+bands_tiered=[1000000,2000000]
+md=None
+settldate=tsd.spo()
+defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
+
+
+
 
 
 def execute(report_id):
@@ -32,21 +35,22 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
 
-        # Preconditions
-        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype,
-                                        symbol=symbol, securitytype=securitytype, booktype=booktype)
+
+        #Preconditions
+        params_sell = CaseParamsSellEsp(client, case_id,settltype=settltype, settldate=settldate,
+                                   symbol=symbol, securitytype=securitytype, booktype=booktype)
         FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
-        # Send market data to the HSBC venue EUR/USD spot
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
+        #Send market data to the HSBC venue EUR/USD spot
+        FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype)).\
             send_market_data_spot()
 
-        params = CaseParamsSellEsp(client, case_id, settltype=settltype,
+        params = CaseParamsSellEsp(client, case_id,settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, booktype=booktype)
         time.sleep(5)
         md = FixClientSellEsp(params)
         params.prepare_md_for_verification(bands_tiered)
-        # Step 1
-        md.send_md_request(). \
+        #Step 1
+        md.send_md_request().\
             verify_md_pending()
     except Exception as e:
         logging.error('Error execution', exc_info=True)
@@ -56,3 +60,5 @@ def execute(report_id):
             md.send_md_unsubscribe()
         except:
             bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
+
+
