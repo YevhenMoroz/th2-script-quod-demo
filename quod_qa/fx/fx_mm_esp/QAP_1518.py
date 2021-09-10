@@ -37,7 +37,7 @@ def execute(report_id):
             # Preconditions
             params_0 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency,
-                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate,
+                                         settlcurrency=settlcurrency, settltype=settltype,
                                          symbol=symbol, securitytype=securitytype,
                                          securityid=securityid, account=account)
             md_0 = FixClientSellEsp(params_0).send_md_request().send_md_unsubscribe()
@@ -49,7 +49,7 @@ def execute(report_id):
             # Step 1
             params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                          timeinforce=timeinforce, currency=currency,
-                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate,
+                                         settlcurrency=settlcurrency, settltype=settltype,
                                          symbol=symbol, securitytype=securitytype,
                                          securityid=securityid, account=account)
             md_1 = FixClientSellEsp(params_1)

@@ -18,24 +18,19 @@ orderqty1 = '1000000'
 orderqty2 = '2000000'
 ordtype = '2'
 timeinforce = '4'
-currency= 'GBP'
+currency = 'GBP'
 settlcurrency = 'SEK'
-settltype='W1'
-symbol='GBP/SEK'
-securitytype_fwd='FXFWD'
-securitytype_spo='FXSPOT'
-securityid='GBP/SEK'
-bands=[1000000,2000000]
-bands_not_pub=[2000000]
-md=None
-settldate_wk1=tsd.wk1()
-settldate_spo=tsd.spo()
-defaultmdsymbol_spo='GBP/SEK:SPO:REG:HSBC'
-
-
-
-
-
+settltype = 'W1'
+symbol = 'GBP/SEK'
+securitytype_fwd = 'FXFWD'
+securitytype_spo = 'FXSPOT'
+securityid = 'GBP/SEK'
+bands = [1000000, 2000000]
+bands_not_pub = [2000000]
+md = None
+settldate_wk1 = tsd.wk1()
+settldate_spo = tsd.spo()
+defaultmdsymbol_spo = 'GBP/SEK:SPO:REG:HSBC'
 
 
 def execute(report_id):
@@ -43,38 +38,39 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
 
-        #Preconditions
-        params_sell=CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_spo, symbol=symbol, securitytype=securitytype_spo)
+        # Preconditions
+        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_spo, symbol=symbol,
+                                        securitytype=securitytype_spo)
         FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
-        #Send market data to the HSBC venue GBP/SEK spot
-        FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype_spo)).\
+        # Send market data to the HSBC venue GBP/SEK spot
+        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype_spo)). \
             send_market_data_spot()
 
-
-
-        #Step 1-3
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce, currency=currency, settlcurrency=settlcurrency,
-                                      settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd, securityid=securityid,account=account)
-        params.prepare_md_for_verification(bands, published=False,which_bands_not_pb=bands_not_pub)
-        md = FixClientSellEsp(params).\
-            send_md_request().\
+        # Step 1-3
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype,
+                                   timeinforce=timeinforce, currency=currency, settlcurrency=settlcurrency,
+                                   settltype=settltype, symbol=symbol,
+                                   securitytype=securitytype_fwd, securityid=securityid, account=account)
+        params.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_pub)
+        md = FixClientSellEsp(params). \
+            send_md_request(). \
             verify_md_pending()
-        price=md.extract_filed('Price')
+        price = md.extract_filed('Price')
 
-        #Step 4
+        # Step 4
 
-        md.send_new_order_single(price).\
-            verify_order_pending().\
+        md.send_new_order_single(price). \
+            verify_order_pending(). \
             verify_order_filled_fwd()
 
         time.sleep(3)
 
-        #Step 5
-        text='not enough quantity in book'
-        params.orderqty=orderqty2
+        # Step 5
+        text = 'not enough quantity in book'
+        params.orderqty = orderqty2
         params.set_new_order_single_params()
-        md.send_new_order_single(price).\
-            verify_order_pending().\
+        md.send_new_order_single(price). \
+            verify_order_pending(). \
             verify_order_rejected(text)
     except Exception as e:
         logging.error('Error execution', exc_info=True)
@@ -84,7 +80,3 @@ def execute(report_id):
             md.send_md_unsubscribe()
         except:
             bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-
-
-
-

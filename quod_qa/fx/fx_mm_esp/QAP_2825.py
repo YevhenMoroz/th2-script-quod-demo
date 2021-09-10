@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from custom.verifier import Verifier, VerificationMethod
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from stubs import Stubs
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues, SelectRowsRequest, \
     ExtractRatesTileTableValuesRequest
@@ -133,7 +134,7 @@ def execute(report_id, session_id):
     client_tier = "Silver"
     pips = "20"
     mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection303(
+        "MDReqID": simulator.getMDRefIDForConnection314(
             request=RequestMDRefID(
                 symbol="EUR/USD:SPO:REG:HSBC",
                 connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
@@ -172,12 +173,9 @@ def execute(report_id, session_id):
         params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
                                    securityid=securityid)
-        md = MarketDataRequst(params). \
-            set_md_params() \
-            .send_md_request() \
-            .prepare_md_response(bands)
-        md.md_subscribe_response['NoMDEntries'][0]['MDEntryPx'] = '1.19596'
-        md.md_subscribe_response['NoMDEntries'][1]['MDEntryPx'] = '1.1961'
+        md = FixClientSellEsp(params)
+        params.prepare_md_for_verification(bands)
+        md.send_md_request()
         md.verify_md_pending()
         price1 = md.extract_filed('price')
         md.send_md_unsubscribe()
@@ -199,13 +197,10 @@ def execute(report_id, session_id):
         params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
                                    symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
                                    securityid=securityid)
-        md2 = MarketDataRequst(params). \
-            set_md_params() \
-            .send_md_request()
+        md2 = FixClientSellEsp(params)
         bands2 = [2000000, 3000000, 1000000]
-        md2.prepare_md_response(bands2)
-        md2.md_subscribe_response['NoMDEntries'][4]['MDEntryPx'] = '1.19396'
-        md2.md_subscribe_response['NoMDEntries'][5]['MDEntryPx'] = '1.1981'
+        params.prepare_md_for_verification(bands2)
+        md2.send_md_request()
         md2.verify_md_pending()
         price2 = md2.extract_filed('price', 5)
         # Step 4
