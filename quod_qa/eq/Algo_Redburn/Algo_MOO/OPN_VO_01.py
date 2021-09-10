@@ -32,6 +32,7 @@ def execute(report_id):
         'Text': 'OPN_VO_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
+            'ExcludePricePoint2': '1'
         }
     }
 

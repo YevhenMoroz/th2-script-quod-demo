@@ -32,8 +32,9 @@ def execute(report_id):
         'Text': 'OPN_LIM_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'LimitPriceReference': 'Last',
-            'LimitPriceOffset': '2'
+            'LimitPriceReference': 'LTP',
+            'LimitPriceOffset': '2',
+            'ExcludePricePoint2': '1'
         }
     }
 

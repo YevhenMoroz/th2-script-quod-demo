@@ -35,7 +35,7 @@ def execute(report_id):
             'Text': 'TWAP-MinP_01',
             'QuodFlatParameters': {
                 'MinParticipation': '25',
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '30'
             }
         }
 

@@ -32,7 +32,7 @@ def execute(report_id):
         'Text': 'CLO_LIM_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'LimitPriceReference': 'Last',
+            'LimitPriceReference': 'LTP',
             'LimitPriceOffset': '2',
             'ExcludePricePoint2': '1'
         }
