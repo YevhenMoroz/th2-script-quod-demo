@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from quod_qa.common_tools import random_qty
+from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 

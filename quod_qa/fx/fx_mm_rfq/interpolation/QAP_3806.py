@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo, broken_1, broken_w1w2, broken_2
+from custom.tenor_settlement_date import wk1, wk2, spo, broken_w1w2, broken_2
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq

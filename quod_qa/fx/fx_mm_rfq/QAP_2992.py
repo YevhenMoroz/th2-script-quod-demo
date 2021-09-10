@@ -4,7 +4,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo, wk2
 from custom.verifier import Verifier
-from quod_qa.common_tools import random_qty, parse_qty_from_di, round_decimals_down
+from quod_qa.fx.fx_wrapper.common_tools import parse_qty_from_di, round_decimals_down
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs

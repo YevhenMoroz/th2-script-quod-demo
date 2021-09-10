@@ -40,7 +40,7 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
         # Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_spo, symbol=symbol,
+        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, symbol=symbol,
                                            securitytype=securitytype_spo)). \
             send_md_request().send_md_unsubscribe()
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype_spo)).send_market_data_spot()
@@ -48,7 +48,7 @@ def execute(report_id):
         # Step 1...
         params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
                                    timeinforce=timeinforce, currency=currency,
-                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate_w1,
+                                   settlcurrency=settlcurrency, settltype=settltype,
                                    symbol=symbol, securitytype=securitytype_w,
                                    securityidsource=securityidsource, securityid=securityid, account=account)
         params.prepare_md_for_verification(bands)

@@ -20,22 +20,20 @@ orderqty1 = '1000000'
 orderqty2 = '2000000'
 ordtype = '2'
 timeinforce = '4'
-currency= 'EUR'
+currency = 'EUR'
 settlcurrency = 'CAD'
-settltype1='0'
-settltype2='W1'
-symbol='EUR/USD'
-securitytype1='FXSPOT'
-securitytype2='FXFWD'
-securityidsource='8'
-securityid='EUR/USD'
-bands=[2000000,6000000,12000000]
-md=None
+settltype1 = '0'
+settltype2 = 'W1'
+symbol = 'EUR/USD'
+securitytype1 = 'FXSPOT'
+securitytype2 = 'FXFWD'
+securityidsource = '8'
+securityid = 'EUR/USD'
+bands = [2000000, 6000000, 12000000]
+md = None
 settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
 settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
-defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
-
-
+defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
 
 
 def execute(report_id):
@@ -43,35 +41,35 @@ def execute(report_id):
     case_id = bca.create_event(case_name, report_id)
     try:
 
-        #Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype1, settldate=settldate1, symbol=symbol, securitytype=securitytype1)).\
+        # Precondition
+        FixClientSellEsp(
+            CaseParamsSellEsp(client, case_id, settltype=settltype1, symbol=symbol, securitytype=securitytype1)). \
             send_md_request().send_md_unsubscribe()
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype1)).send_market_data_spot()
 
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype1, settldate= settldate1, symbol=symbol,
+        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype,
+                                   timeinforce=timeinforce,
+                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype1, symbol=symbol,
                                    securitytype=securitytype1, securityidsource=securityidsource, securityid=securityid)
         params.prepare_md_for_verification(bands)
-        #Steps 1-2
-        FixClientSellEsp(params).\
-            send_md_request().\
-            verify_md_pending().\
+        # Steps 1-2
+        FixClientSellEsp(params). \
+            send_md_request(). \
+            verify_md_pending(). \
             send_md_unsubscribe()
 
-        #Steps 3-4
-        params2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty2, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype2, settldate= settldate2, symbol=symbol,
-                                   securitytype=securitytype2, securityidsource=securityidsource, securityid=securityid)
+        # Steps 3-4
+        params2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty2, ordtype=ordtype,
+                                    timeinforce=timeinforce,
+                                    currency=currency, settlcurrency=settlcurrency, settltype=settltype2, symbol=symbol,
+                                    securitytype=securitytype2, securityidsource=securityidsource,
+                                    securityid=securityid)
         params2.prepare_md_for_verification(bands)
-        FixClientSellEsp(params2).\
-            send_md_request().\
-            verify_md_pending().\
+        FixClientSellEsp(params2). \
+            send_md_request(). \
+            verify_md_pending(). \
             send_md_unsubscribe()
-    except Exception as e:
+    except Exception:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        pass
-
-
 

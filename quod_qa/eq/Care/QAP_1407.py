@@ -3,6 +3,7 @@ from datetime import datetime
 
 from th2_grpc_hand import rhbatch_pb2
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
@@ -43,7 +44,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
     # region Verify
     result=eq_wrappers.is_menu_item_present(base_request,"Group Modify")

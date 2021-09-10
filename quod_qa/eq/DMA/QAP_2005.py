@@ -4,6 +4,7 @@ import time
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 
@@ -53,9 +54,10 @@ def execute(report_id, session_id):
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + "_PARIS", 'XPAR', price)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + "_PARIS", 'XPAR', price)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
     except:
         rule_manager.remove_rule(nos_rule)
     finally:
@@ -68,7 +70,7 @@ def execute(report_id, session_id):
     fix_manager = FixManager(sell_connectivity, case_id)
     try:
         rule_manager = RuleManager()
-        rule = rule_manager.add_OrderCancelReplaceRequest(eq_wrappers.get_buy_connectivity(), client + "_PARIS", "XPAR",
+        rule = rule_manager.add_OrderCancelReplaceRequest(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), client + "_PARIS", "XPAR",
                                                           True)
         fix_modify_message = deepcopy(fix_message1)
         fix_modify_message.change_parameters({'Price': price2})
@@ -114,7 +116,7 @@ def execute(report_id, session_id):
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_bo = FixVerifier(eq_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
     # region Cancelling order
 

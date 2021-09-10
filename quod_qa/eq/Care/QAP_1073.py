@@ -1,5 +1,6 @@
 import logging
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
@@ -34,7 +35,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order(lookup, qty, price)
     param_list = {'Price': newPrice}
     # region ManualExecute
@@ -43,7 +44,7 @@ def execute(report_id, session_id):
     # print(fix_message['Price'])
     # Amend fix order
     fix_message1 = FixMessage(fix_message)
-    eq_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, "PARIS_"+client)
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, "PARIS_" + client)
     # endregion
     # region reject amend
     eq_wrappers.reject_order(lookup, qty, price)
@@ -83,11 +84,11 @@ def execute(report_id, session_id):
         'ExDestination': '*',
         'GrossTradeAmt': '*'
     }
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'])
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'OrdStatus'])
-    fix_verifier_ss = FixVerifier(eq_wrappers.get_buy_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'])
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'OrdStatus'])
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'], direction="SECOND")

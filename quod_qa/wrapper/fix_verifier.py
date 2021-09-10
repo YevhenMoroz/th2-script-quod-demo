@@ -59,6 +59,55 @@ class FixVerifier:
             )
         )
 
+    def CheckBusinessMessageReject(self, parameters, response, key_parameters=['Text', 'RefMsgType'],
+                                   message_name='Check BusinessMessageReject', direction='FIRST', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("BusinessMessageReject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    def CheckOrderCancelRequest(self, parameters, response, key_parameters=['ClOrdID', 'OrigClOrdID'],
+                                direction='FIRST', message_name='Check OrderCancelRequest', case=None):
+        if case == None:
+                case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    def CheckListStatusRequest(self, parameters, response, key_parameters=['ListID', 'ListOrderStatus'],
+                                direction='FIRST', message_name='Check ListStatusRequest', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("ListStatusRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+
 
     def CheckExecutionReportSequence(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
                                      message_name='Check ExecutionReport', direction='FIRST', case=None):

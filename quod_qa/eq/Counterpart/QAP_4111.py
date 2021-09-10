@@ -1,4 +1,6 @@
 import logging
+
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
@@ -28,7 +30,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # region Create order via FIX
-    eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order('VETO', qty, price)
     # endregion
     # region ManualExec
@@ -37,8 +39,8 @@ def execute(report_id, session_id):
     # region Verify
     verifier = Verifier(case_id)
     verifier.set_event_name("Checking Counterparts")
-    verifier.compare_values("Contra Firm", "ContraFirm", eq_wrappers.get_2nd_lvl_detail(base_request,"Contra Firm"))
-    verifier.compare_values("Executing Firm", "ExecutingFirm", eq_wrappers.get_2nd_lvl_detail(base_request,
+    verifier.compare_values("Contra Firm", "ContraFirm", eq_wrappers.get_2nd_lvl_order_detail(base_request, "Contra Firm"))
+    verifier.compare_values("Executing Firm", "ExecutingFirm", eq_wrappers.get_2nd_lvl_order_detail(base_request,
                                                                                               "Executing Firm"))
     verifier.verify()
     # endregion
