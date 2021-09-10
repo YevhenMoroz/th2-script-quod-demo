@@ -82,7 +82,7 @@ def test_run(parent_id=None):
         # QAP_2345.execute(report_id)
         # QAP_2353.execute(report_id)
         # QAP_3739.execute(report_id)
-        QAP_3565.execute(report_id)
+        # QAP_3565.execute(report_id)
         # QAP_2382.execute(report_id)
         # QAP_2103.execute(report_id)
 
