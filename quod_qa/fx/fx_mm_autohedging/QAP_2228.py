@@ -158,7 +158,7 @@ def execute(report_id, session_id):
             # Step 1
             params_sell = CaseParamsSellEsp(client, case_id, side=side, ordtype=ordtype, timeinforce=timeinforce,
                                             currency=currency, settlcurrency=settlcurrency, settltype=settltype,
-                                            settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                            symbol=symbol, securitytype=securitytype,
                                             securityid=securityid, account=account)
             params_sell.prepare_md_for_verification(bands)
             md = FixClientSellEsp(params_sell). \

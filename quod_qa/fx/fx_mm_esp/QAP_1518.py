@@ -1,5 +1,7 @@
 import time
+from datetime import datetime
 
+from custom.tenor_settlement_date import spo
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
@@ -27,6 +29,56 @@ bands = [2000000, 6000000, 12000000]
 md = None
 settldate = tsd.spo()
 defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
+no_md_entries_spo = [
+        {
+            "MDEntryType": "0",
+            "MDEntryPx": 1.19581,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            'SettlDate': spo(),
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        },
+        {
+            "MDEntryType": "1",
+            "MDEntryPx": 1.19611,
+            "MDEntrySize": 1000000,
+            "MDEntryPositionNo": 1,
+            'SettlDate': spo(),
+            "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 1.19575,
+        "MDEntrySize": 5000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 1.19625,
+        "MDEntrySize": 5000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 1.19570,
+        "MDEntrySize": 15000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 1.19630,
+        "MDEntrySize": 15000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    }
+    ]
 
 
 def execute(report_id):
@@ -42,7 +94,7 @@ def execute(report_id):
                                          securityid=securityid, account=account)
             md_0 = FixClientSellEsp(params_0).send_md_request().send_md_unsubscribe()
             # Send market data to the HSBC venue EUR/USD spot
-            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
+            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype).prepare_custom_md_spot(no_md_entries_spo)). \
                 send_market_data_spot()
             time.sleep(5)
 
