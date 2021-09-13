@@ -6,9 +6,9 @@
   "web_admin_login": "",
   "web_admin_password": "",
 
-  "qf_trading_fe_folder": "C:\\Users\\ysamoilenko\\Desktop\\305_Quod_Financial_Trader_Front-end_64bits_20210511_5.1.129.142_rev1620665631_b6ec3519",
-  "qf_trading_fe_user": "ysamoile",
-  "qf_trading_fe_password": "ysamoile",
+  "qf_trading_fe_folder": "",
+  "qf_trading_fe_user": "",
+  "qf_trading_fe_password": "",
 
   "qf_trading_fe_folder_1": "",
   "qf_trading_fe_user_1": "",
@@ -20,6 +20,6 @@
 
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - 317 GANYMEDE",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (317 GANYMEDE) "
+  "qf_trading_fe_main_win_name": "Quod Financial - 305 Galileo",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (305 Galileo) "
 }
