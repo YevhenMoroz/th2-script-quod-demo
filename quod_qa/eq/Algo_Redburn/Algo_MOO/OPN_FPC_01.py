@@ -16,12 +16,12 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': bca.client_orderid(9),
+        'ClOrdID': 'OPN_FPC_01' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 100,
+        'OrderQty': 10000000,
         'TimeInForce': 0,
-        'Price': 20,
+        'Price': 120,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
