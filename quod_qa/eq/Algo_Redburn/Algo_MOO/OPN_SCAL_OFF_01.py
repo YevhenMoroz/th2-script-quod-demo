@@ -8,10 +8,10 @@ timeouts = True
 
 def execute(report_id):
     instrument = {
-        'Symbol': 'FR0000121121_EUR',
-        'SecurityID': 'FR0000121121',
+        'Symbol': 'GB00BH4HKS39-XLON',
+        'SecurityID': 'GB00BH4HKS39',
         'SecurityIDSource': '4',
-        'SecurityExchange': 'XPAR'
+        'SecurityExchange': 'XLON'
     }
 
     new_order_single_params = {
@@ -26,9 +26,9 @@ def execute(report_id):
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
-        'Currency': "EUR",
+        'Currency': "GBX",
         'TargetStrategy': 1012, # MOO
-        'ExDestination': 'XPAR',
+        'ExDestination': 'XLON',
         'Text': 'OPN_SCAL_OFF_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
