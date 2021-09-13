@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 import pickle
 
@@ -8,11 +9,14 @@ from google.protobuf import message as _message
 
 from custom import basic_custom_actions as bca
 from examples import example_java_api
+from quod_qa import test
 from quod_qa.eq.Algo_PercentageVolume import QAP_1324
+from quod_qa.eq.Care import QAP_1072
 from quod_qa.eq.PostTrade import QAP_3361
 from rule_management import RuleManager
 from stubs import Stubs
 from stubs import Stubs
+from test_cases import QAP_2618
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe, \
     prepare_fe_2
 
@@ -32,14 +36,7 @@ def test_run():
     report_id = bca.create_event('Yehor tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
 
-    # Unregister old session before launching test
-    with open("session_ids.dat", "rb") as element:
-        Stubs.win_act.unregister(pickle.load(element))
-
     session_id = set_session_id()
-    # Save session to the file
-    with open("session_ids.dat", "wb") as element:
-        pickle.dump(session_id, element)
 
     try:
         # example_java_api.TestCase(report_id).execute()
