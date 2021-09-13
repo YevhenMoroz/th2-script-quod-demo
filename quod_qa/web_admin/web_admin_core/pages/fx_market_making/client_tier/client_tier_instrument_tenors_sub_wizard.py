@@ -200,7 +200,7 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
     def click_on_edit_button_at_position_levels_tab(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_EDIT_BUTTON_XPATH).click()
 
-    def set_position_at_position_levels_tab(self, value: int):
+    def set_position_at_position_levels_tab(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_XPATH,
                                str(value))
 

@@ -2,6 +2,9 @@ from os.path import abspath, dirname, join
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
+from th2_grpc_act_gui_quod.basket_book_service import BasketBookServiceService
+from th2_grpc_act_gui_quod.basket_ticket_service import BasketTicketServiceService
+from th2_grpc_act_gui_quod.care_orders_service import CareOrdersServiceService
 from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
@@ -52,6 +55,9 @@ class Stubs:
     act_fx_dealing_positions = factory.grpc_router.get_service(FxDealingPositionsServiceService)
     win_act_dealer_intervention_service = factory.grpc_router.get_service(DealerInterventionOperationsService)
     api_service = factory.grpc_router.get_service(RestActService)
+    care_orders_action = factory.grpc_router.get_service(CareOrdersServiceService)
+    win_act_basket_order_book = factory.grpc_router.get_service(BasketBookServiceService)
+    win_act_basket_ticket = factory.grpc_router.get_service(BasketTicketServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 

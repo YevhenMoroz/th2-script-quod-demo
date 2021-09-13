@@ -112,7 +112,7 @@ def execute(report_id, session_id):
     # region check isLocked
     verifier = Verifier(case_id)
     verifier.set_event_name("Check value")
-    verifier.compare_values("IsLocked from View", eq_wrappers.get_is_locked(base_request), ''),
+    verifier.compare_values("IsLocked from View", eq_wrappers.get_order_value(base_request, "IsLocked"), ''),
     verifier.verify()
     # endregion
 
