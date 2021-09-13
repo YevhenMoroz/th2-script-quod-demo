@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-AUC_01',
+            'Text': 'POV-AUC_01',
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
                 'ParticipateInClosingAuctions': 'Y',

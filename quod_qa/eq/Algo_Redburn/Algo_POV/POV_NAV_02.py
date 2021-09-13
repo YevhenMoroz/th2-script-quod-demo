@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-NAV_02',
+            'Text': 'POV-NAV_02',
             'QuodFlatParameters': {
                 'NavigatorPercentage': '100',
                 'NavigatorExecution': '1',
