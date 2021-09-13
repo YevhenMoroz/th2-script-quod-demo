@@ -78,7 +78,6 @@ def test_run(parent_id=None):
         QAP_2090.execute(report_id)
         QAP_2091.execute(report_id)
         QAP_2103.execute(report_id)
-        QAP_2103.execute(report_id)
         QAP_2177.execute(report_id)
         QAP_2295.execute(report_id)
         QAP_2297.execute(report_id)
@@ -88,7 +87,6 @@ def test_run(parent_id=None):
         QAP_3003.execute(report_id)
         QAP_3234.execute(report_id)
         QAP_3494.execute(report_id)
-        QAP_3565.execute(report_id)
         QAP_3565.execute(report_id)
         QAP_3739.execute(report_id)
         QAP_4085.execute(report_id)
@@ -100,6 +98,7 @@ def test_run(parent_id=None):
         QAP_1539.execute(report_id, session_id)
         QAP_1540.execute(report_id, case_params)
         QAP_1542.execute(report_id, case_params)
+
         QAP_1545.execute(report_id, case_params, session_id)
         QAP_1547.execute(report_id, case_params, session_id)
         QAP_1548.execute(report_id, case_params, session_id)
@@ -108,7 +107,6 @@ def test_run(parent_id=None):
         QAP_1562.execute(report_id, case_params, session_id)
 
         QAP_1970.execute(report_id, case_params, session_id)
-        QAP_1971.execute(report_id, case_params, session_id)
         QAP_1972.execute(report_id, case_params, session_id)
         QAP_2063.execute(report_id, case_params, session_id)
         QAP_2066.execute(report_id, case_params, session_id)
