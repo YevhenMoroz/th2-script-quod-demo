@@ -42,7 +42,6 @@ def run_test_case():
         'TargetStrategy': "1011"
     }
 
-    # print(new_order_params['ClOrdID'])
     rule = rule_manager.add_NOS(buy_side_conn, new_order_params['Account'])
     new_order = Stubs.fix_act.placeOrderFIX(
         request=convert_to_request("Send new order", sell_side_conn, case_id,
@@ -98,8 +97,6 @@ def run_test_case():
             'MsgType': ('0', "NOT_EQUAL")
         }
     }
-
-    # Making an example PreFilter class
     pre_filter_sim = prefilter_to_grpc(pre_filter_sim_params)
 
     # message filter list for 2 types of Execution Report
@@ -141,7 +138,7 @@ def run_test_case():
     order_params_buys_side["ExDestination"] = "XPAR"
     message_filters_NOS = [filter_to_grpc("NewOrderSingle", order_params_buys_side, ["SecurityID"])]
 
-    # request for module check1, which compares the NOS message from the buy side
+    # request for module check1, which compares NOS message from the buy side
     Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
             description="Check buy side NOS message from Paris",
@@ -163,7 +160,7 @@ def run_test_case():
         "AvgPx": "0",
         "Text": "sim work",
         "LeavesQty": "0",
-        "TransactTime": datetime.utcnow().replace(microsecond=0).isoformat(),
+        "TransactTime": "*",
         "OrderQty": new_order_params["OrderQty"],
         "OrdType": new_order_params["OrdType"],
         "ClOrdID": "*",
@@ -185,9 +182,132 @@ def run_test_case():
         )
     )
 
+    cancel_order_params = {
+        "OrigClOrdID": new_order_params["ClOrdID"],
+        "ClOrdID": new_order_params["ClOrdID"],
+        "Instrument": new_order_params["Instrument"],
+        "TransactTime": datetime.utcnow().isoformat(),
+        "Side": new_order_params["Side"]
+    }
+    rule_ocr = rule_manager.add_OCR(buy_side_conn)
+    cancel_order = Stubs.fix_act.placeOrderCancelFIX(
+        request=convert_to_request("Send cancel order", sell_side_conn, case_id,
+                                   wrap_message(cancel_order_params, "OrderCancelRequest", sell_side_conn))
+    )
 
+    checkpoint_2 = cancel_order.checkpoint_id
+
+    # OCR execution report params
+    ocr_er_params = {
+        "OrigClOrdID": new_order_params["ClOrdID"],
+        "SettlDate": new_er_params["SettlDate"],
+        "SecondaryAlgoPolicyID": new_er_params["SecondaryAlgoPolicyID"],
+        "ExecID": "*",
+        "OrderQty": new_order_params["OrderQty"],
+        "LastQty": "0",
+        "OrderID": "*",
+        "TransactTime": "*",
+        "Side": new_order_params["Side"],
+        "AvgPx": "0",
+        "OrdStatus": "4",
+        "Currency": "EUR",
+        "TimeInForce": "0",
+        "ExecType": "4",
+        "HandlInst": new_order_params["HandlInst"],
+        "LeavesQty": "0",
+        'NoParty': pending_er_params["NoParty"],
+        "Instrument": new_order_params["Instrument"],
+        "CumQty": "0",
+        "LastPx": "0",
+        "OrdType": "2",
+        "ClOrdID": new_order_params["ClOrdID"],
+        "OrderCapacity": "A",
+        "QtyType": "0",
+        "Price": "20",
+        "TargetStrategy": new_order_params["TargetStrategy"],
+        "ExecRestatementReason": "4"
+    }
+
+    message_filters_cancel = [
+        filter_to_grpc("ExecutionReport", ocr_er_params)
+    ]
+
+    # Creating request for verification to check1
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check sell side message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filters_cancel,
+            checkpoint=checkpoint_2,
+            connectivity=sell_side_conn,
+            event_id=case_id
+        )
+    )
+
+    # Execution Report params from buy side
+    ocr_er_params_buy = {
+        "CumQty": "0",
+        "ExecID": "*",
+        "OrderQty": "150",
+        "ClOrdID": "*",
+        "Text": "sim work",
+        "OrderID": "*",
+        "TransactTime": "*",
+        "Side": ocr_er_params["Side"],
+        "ExecType": ocr_er_params["ExecType"],
+        "OrdStatus": ocr_er_params["ExecType"],
+        "AvgPx": "0",
+        "LeavesQty": "0",
+        "OrigClOrdID": "*"
+    }
+
+    message_filter_cancel_buy = [
+        filter_to_grpc('ExecutionReport', ocr_er_params_buy)
+    ]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filter_cancel_buy,
+            checkpoint=checkpoint_2,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            direction=Direction.Value("SECOND")
+        )
+    )
+
+    # OCR message from buy side
+    ocr_params_buy = {
+        "Side": "2",
+        "Account": "KEPLER",
+        "OrderQty": "150",
+        "ClOrdID": "*",
+        "Instrument": temp_instrument,
+        "OrderID": "*",
+        "ExDestination": "XPAR",
+        "ChildOrderID": "*",
+        "OrigClOrdID": "*",
+        "TransactTime": "*"
+    }
+
+    message_filter_cancel_buy = [
+        filter_to_grpc('OrderCancelRequest', ocr_params_buy)
+    ]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side message from Paris",
+            prefilter=pre_filter_sim,
+            msg_filters=message_filter_cancel_buy,
+            checkpoint=checkpoint_2,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+        )
+    )
 
     rule_manager.remove_rule(rule)
+    rule_manager.remove_rule(rule_ocr)
 
 
 if __name__ == '__main__':
