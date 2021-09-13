@@ -28,7 +28,8 @@ def get_bo_connectivity():
     return bo_connectivity
 
 
-def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None, insrument=None):
+def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, stop_price=None, no_allocs=None,
+                         instrument=None):
     fix_params = {
         'Account': client,
         # 'OrderQtyData': {'OrderQty': qty},
@@ -38,6 +39,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
         'OrdType': ord_type,
         'Side': side,
         'Price': price,
+        'StopPx': stop_price,
         'NoAllocs': no_allocs,
         'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
         'TransactTime': datetime.utcnow().isoformat(),
@@ -51,20 +53,23 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
     }
     if price is None:
         fix_params.pop('Price')
+    if stop_price is None:
+        fix_params.pop('StopPx')
     if no_allocs is None:
         fix_params.pop('NoAllocs')
-    if insrument is not None:
-        fix_params.update(Instrument=insrument)
+    if instrument is not None:
+        fix_params.update(Instrument=instrument)
     fix_message = FixMessage(fix_params)
     fix_message.add_random_ClOrdID()
     return fix_message.get_parameters()
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
-                         insrument=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
+                         instrument=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
-        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price, no_allocs, insrument)
+        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price,stop_price, no_allocs,
+                                          instrument)
         fix_message = FixMessage(fix_params)
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
         fix_params['response'] = response

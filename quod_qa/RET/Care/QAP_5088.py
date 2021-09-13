@@ -6,6 +6,8 @@ from datetime import datetime
 
 from th2_grpc_hand import rhbatch_pb2
 
+from custom import basic_custom_actions as bca
+
 from custom.basic_custom_actions import create_event, timestamps
 
 from stubs import Stubs
@@ -37,7 +39,7 @@ def execute(report_id):
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     session_id = set_session_id()
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
