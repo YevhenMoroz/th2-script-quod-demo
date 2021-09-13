@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation, SimpleRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, CreateBasketDetails
+    ReassignOrderDetails, CreateBasketDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -1155,11 +1155,6 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
-    try:
-        call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
 
     try:
         call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
@@ -1177,7 +1172,7 @@ def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [ba
 def mass_execution_summary_at_average_price(base_request, count: int):
     mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
     mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
-    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail.build())
 
 
 """
@@ -1198,3 +1193,19 @@ def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool =
         disclose_flag_details.manual()
     disclose_flag_details.set_row_numbers(row_numbers)
     call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
+
+
+"""
+Guys, السلام عليكم ,  
+via next method we can complete basket   
+"""
+
+
+def complete_basket(base_request, basket_id):
+    request = SimpleRequest(base_request, basket_id)
+    call(Stubs.win_act_basket_order_book.complete, request)
+
+
+def un_complete(base_request, basket_id):
+    request = SimpleRequest(base_request, basket_id)
+    call(Stubs.win_act_basket_order_book.uncomplete, request)
