@@ -27,7 +27,8 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
     direct_loc_request_correct, direct_moc_request_correct
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
+    MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -422,7 +423,7 @@ def base_verifier(case_id, printed_name, expected_value, actual_value,
     verifier.verify()
 
 
-def verify_order_value(request, case_id, column_name, expected_value, is_child=False,order_filter_list=None):
+def verify_order_value(request, case_id, column_name, expected_value, is_child=False, order_filter_list=None):
     order_details = OrdersDetails()
     order_details.set_default_params(request)
     order_details.set_extraction_id(column_name)
@@ -1138,7 +1139,28 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_basket_via_import', status="FAIL")
 
-def mass_execution_summary_at_average_price(base_request, count: int):
+
+def mass_execution_summary_at_average_price(base_request, count_of_rows: int):
     mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
-    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
+    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count_of_rows)
     call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+
+
+"""
+for method set_disclose_flag_via_order_book
+if type_disclose= True(Manual Disclose)
+if type_disclose= False(RealTime Disclose)
+if type_disclose= None(Disable Disclose)
+"""
+
+
+def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
+    disclose_flag_details = DiscloseFlagDetails(base_request=request)
+    if type_disclose is None:
+        disclose_flag_details.disable()
+    if type_disclose is False:
+        disclose_flag_details.real_time()
+    if type_disclose is True:
+        disclose_flag_details.manual()
+    disclose_flag_details.set_row_numbers(row_numbers)
+    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())

@@ -1,10 +1,10 @@
 {
-  "target_server_win": "quod_02q",
+  "target_server_win": "quod_XXq",
   "target_server_web": "web",
 
-  "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
-  "web_admin_login": "adm03",
-  "web_admin_password": "adm03",
+  "web_admin_url": "",
+  "web_admin_login": "",
+  "web_admin_password": "",
 
   "qf_trading_fe_folder": "C:\\Users\\ysamoilenko\\Desktop\\305_Quod_Financial_Trader_Front-end_64bits_20210511_5.1.129.142_rev1620665631_b6ec3519",
   "qf_trading_fe_user": "ysamoile",
