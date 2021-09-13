@@ -246,6 +246,21 @@
  ]
  }
 },
+    "Win_Act_Care_Order": {
+ "service-class": "CareOrdersServiceService",
+ "endpoints": {
+ "act_care_order": {
+     "host": "10.0.22.24",
+     "port": 32223
+ }
+ },
+ "strategy": {
+ "name": "robin",
+ "endpoints": [
+ "act_care_order"
+ ]
+ }
+},
     "SimulatorHttp": {
       "service-class": "SimTemplateService",
       "endpoints": {
