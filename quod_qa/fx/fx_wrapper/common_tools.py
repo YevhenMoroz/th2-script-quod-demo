@@ -103,7 +103,7 @@ def update_quod_settings(setting_value: str):
         # Print PostgreSQL details
 
         cursor.execute(
-            f"update quodsettings set settingvalue ={setting_value} where  settingkey= 'AutoRFQClientPricingFallback'")
+            f"update quodsettings set settingvalue ='{setting_value}' where  settingkey= 'AutoRFQClientPricingFallback'")
         connection.commit()
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
