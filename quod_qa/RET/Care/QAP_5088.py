@@ -97,6 +97,8 @@ def execute(report_id):
     verify_order_value(base_request, case_id, "Qty", "500", False)
     # endregion
 
+    # region Close FE
     close_fe(case_id, session_id2)
+    # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

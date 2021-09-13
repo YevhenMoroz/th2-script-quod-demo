@@ -46,7 +46,7 @@ def execute(session_id, report_id):
     # endregion
 
     # region Create POC child AO and extract error according to 1st step
-    direct_poc_error_extraction("LastTradedPrice", "0", "-50", "NSE")
+    direct_poc_error_extraction("LastTradedPrice", "0", " ", "NSE")
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
