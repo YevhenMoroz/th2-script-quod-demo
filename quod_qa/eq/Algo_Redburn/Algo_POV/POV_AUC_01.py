@@ -34,10 +34,11 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'TWAP-AUC_01',
             'QuodFlatParameters': {
-                'ParticipateInOpeningAuctions': '100',
-                'ParticipateInClosingAuctions': '1',
+                'ParticipateInOpeningAuctions': 'Y',
+                'ParticipateInClosingAuctions': 'Y',
                 'MaxParticipationOpen': '5',
                 'MaxParticipationClose': '1',
+                'MaxPercentageVolume': '10'
             }
         }
 

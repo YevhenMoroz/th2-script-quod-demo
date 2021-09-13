@@ -33,6 +33,9 @@ def execute(report_id):
             'TargetStrategy': 2, 
             'ExDestination': 'XLON',
             'Text': 'RB_TWAP-BA_01',
+            'QuodFlatParameters': {
+                'MaxPercentageVolume': '10'
+            }
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(
