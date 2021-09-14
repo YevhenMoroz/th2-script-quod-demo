@@ -1,5 +1,7 @@
 import logging
+import os
 
+from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.verifier import Verifier
 from win_gui_modules.application_wrappers import LoginDetailsRequest, OpenApplicationRequest
@@ -57,7 +59,7 @@ def execute(session_id, report_id):
 
     seconds, nanos = timestamps()  # Store case start time
 
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     expected_value = "code=QUOD-17512:User credentials are invalid"
 

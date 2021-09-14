@@ -27,59 +27,7 @@ from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesR
 
 api = Stubs.api_service
 
-md_entry_configured_bands = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19500,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19500,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19450,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19600,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19400,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19700,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                }
-            ]
-
-
-md_entry_unconfigured_bands = [
+md_entry = [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.19500,
@@ -214,12 +162,6 @@ def extract_pts_and_band(base_request, service, rows: int):
     extract_table_request.set_bid_extraction_field(ExtractionDetail("bidPx", "Px"))
     extract_table_request.set_ask_extraction_field(ExtractionDetail("askPx", "Px"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
-    ask_pts = response['askPx'].split('<size=10>')[1].split('<size=8>')     #
-    ask_pts = f'{ask_pts[0]}{ask_pts[1]}'                                   # Parsing unformatted string from FE
-    bid_pts = response['bidPx'].split('<size=10>')[1].split('<size=8>')     # TODO: Clear when issue fixed
-    bid_pts = f'{bid_pts[0]}{bid_pts[1]}'                                   #
-    response['askPx'] = ask_pts
-    response['bidPx'] = bid_pts
     deselect_rows_request = DeselectRowsRequest(details=base_request)
     call(service.deselectRows, deselect_rows_request.build())
     return [response['askPx'], response['bidPx'], response['bidBase']]
@@ -266,12 +208,12 @@ def execute(report_id, session_id):
         add_venue_rows(base_details, ar_service, venue)
 
         FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-            md_entry_configured_bands)).send_market_data_spot()
+            md_entry[:6])).send_market_data_spot()
         result = extract_pts_and_band(base_details, cp_service, rows_default)
         check_pts_default(case_id, ask_pts_exp, bid_pts_exp, result[0], result[1], result[2])
 
         FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-            md_entry_unconfigured_bands)).send_market_data_spot()
+            md_entry)).send_market_data_spot()
         result = extract_pts_and_band(base_details, cp_service, rows_with_new_md)
         check_pts_with_new_md(case_id, unconfigured_ask_pts_exp, unconfigured_bid_pts_exp, result[0], result[1], result[2])
 
@@ -286,6 +228,6 @@ def execute(report_id, session_id):
             # Set default parameters
             set_core_strategy_for_tier(case_id, core_spot_strategy_vwap)
             FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-                md_entry_configured_bands)).send_market_data_spot()
+                md_entry[:6])).send_market_data_spot()
         except Exception:
             logging.error("Error execution", exc_info=True)

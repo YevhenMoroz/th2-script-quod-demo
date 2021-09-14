@@ -4,7 +4,9 @@ import logging
 
 from datetime import datetime
 
-from custom.basic_custom_actions import create_event, timestamps
+from custom import basic_custom_actions as bca
+
+from custom.basic_custom_actions import timestamps
 
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
@@ -31,7 +33,7 @@ def execute(session_id, report_id):
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # endregion

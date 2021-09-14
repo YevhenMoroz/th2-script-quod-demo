@@ -99,6 +99,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, Qty, status_ex
 
     verifier.verify()
     ord_id = response[order_id.name]
+
     return ord_id
 
 
