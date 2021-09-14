@@ -280,7 +280,7 @@ def run_test_case():
         'OrdStatus': cancel_er_params['ExecType'],
         'ExecType': cancel_er_params['ExecType'],
         'LeavesQty': '0',
-        'OrigClOrdID': cancel_er_params['OrigClOrdID']
+        'OrigClOrdID': '*'
     }
 
     message_filters_cancel_buy_er = [
