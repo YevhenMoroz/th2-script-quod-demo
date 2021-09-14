@@ -25,7 +25,7 @@ timeouts = True
 
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1045"
     seconds, nanos = timestamps()  # Store case start time
 
@@ -37,13 +37,12 @@ def execute(report_id):
     price = "10"
     newPrice = "1"
     timeStart = datetime.utcnow().isoformat()
-    lookup = "PROL"
+    lookup = "VETO"
     client = "CLIENT1"
     # endregion
     # region Open FE
 
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -57,11 +56,10 @@ def execute(report_id):
     # endregionA
     # region Create order via FIX
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
+    nos_rule = rule_manager.add_NOS("fix-bs-310-columbia", "XPAR_CLIENT1")
 
-    connectivity = 'gtwquod5'
+    connectivity = 'fix-ss-310-columbia-standart'
     fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
     fix_params = {
         'Account': "CLIENT1",
         'HandlInst': "3",
@@ -92,7 +90,7 @@ def execute(report_id):
     order_details.set_default_params(base_request)
     order_details.set_extraction_id(before_order_details_id)
     order_status = ExtractionDetail("order_status", "Sts")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
+    order_price = ExtractionDetail("order_price", "Limit Price")
     order_qty = ExtractionDetail("order_qty", "Qty")
     order_id = ExtractionDetail("order_id", "Order ID")
     client_order_id = ExtractionDetail("client_order_id", "ClOrdID")

@@ -1,9 +1,7 @@
 import logging
 import time
 from pathlib import Path
-
 from th2_grpc_hand import rhbatch_pb2
-
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
@@ -42,13 +40,13 @@ def check_check_boxes(base_request, service, case_id, status):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     case_name = Path(__file__).name[:-3]
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     session_id_2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
@@ -64,11 +62,6 @@ def execute(report_id):
 
     case_sts_checked = "checked"
     case_sts_unchecked = "unchecked"
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -97,3 +90,4 @@ def execute(report_id):
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

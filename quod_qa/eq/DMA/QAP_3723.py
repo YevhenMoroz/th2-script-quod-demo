@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-3723"
 
     seconds, nanos = timestamps()  # Store case start time
@@ -31,12 +31,10 @@ def execute(report_id):
     # region Declarations
     qty = "800"
     price = "50"
-    lookup = "PROL"
-    client = "CLIENTSKYLPTOR"
+    client = "CLIENT4"
     # endregion
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -45,17 +43,28 @@ def execute(report_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregionA
 
-    # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
-    eq_wrappers.complete_order(base_request)
-    eq_wrappers.notify_dfd(base_request)
-    response = fix_message.pop('response')
+    # region Create order
+    try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
+                                                                             client + '_PARIS', 'XPAR', float(price))
+        nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
+                                                                      client + '_PARIS', 'XPAR', float(price),
+                                                                      traded_qty=int(int(qty) / 2), delay=0)
+        fix_message = eq_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        eq_wrappers.complete_order(base_request)
+        eq_wrappers.notify_dfd(base_request)
+        response = fix_message.pop('response')
+    finally:
+        time.sleep(8)
+        rule_manager.remove_rule(nos_rule)
+        rule_manager.remove_rule(nos_rule1)
     # endregion
 
     params = {
         'OrderQty': qty,
         'ExecType': '0',
-        # 'Account': '*',
+        'Account': client,
         'OrdStatus': '0',
         # 'TradeDate': '*',
         'Side': 1,
@@ -67,38 +76,34 @@ def execute(report_id):
         'OrderID': '*',
         'TransactTime': '*',
         'AvgPx': '*',
-        'SettlDate': '*',
         'Currency': '*',
         'HandlInst': '*',
         'LeavesQty': '*',
         'CumQty': '*',
         'LastPx': '*',
         'OrdType': '*',
-        'LastMkt': '*',
         'OrderCapacity': '*',
+        'ExpireDate': '*',
         'QtyType': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
         'NoParty': '*',
         'Instrument': '*',
-        'SecondaryOrderID': '*',
         'header': '*',
-
-        'Text': '*'
     }
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
+                                         key_parameters=['ExecType', 'OrdStatus'], direction='FIRST')
     params1 = {
         'OrderQty': qty,
         'ExecType': '3',
         'OrdStatus': '1',
+        'Account': client,
         'Side': 1,
         'Price': price,
         'TimeInForce': 1,
         'ClOrdID': eq_wrappers.get_cl_order_id(base_request),
         'ExecID': '*',
         'LastQty': '*',
+        'ExpireDate': '*',
         'OrderID': '*',
         'TransactTime': '*',
         'AvgPx': '*',
@@ -120,7 +125,6 @@ def execute(report_id):
         'header': '*',
     }
 
-
-    fix_verifier_ss = FixVerifier('fix-ss-310-columbia-standart', case_id)
+    fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params1, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

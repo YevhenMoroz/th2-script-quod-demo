@@ -43,7 +43,8 @@ def execute(report_id):
         extraction_request.extract_request_state("rfqDetails.requestState")
         extraction_request.extract_request_side("rfqDetails.requestSide")
 
-        call(service.getRFQDetails, extraction_request.build())
+        result = call(service.getRFQDetails, extraction_request.build())
+        print(result)
     except Exception:
         logger.error("Error execution", exc_info=True)
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

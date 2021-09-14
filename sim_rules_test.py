@@ -1,30 +1,33 @@
 from google.protobuf.empty_pb2 import Empty
+import grpc
 from stubs import Stubs
 from th2_grpc_sim_quod.sim_pb2 import *
-from th2_grpc_sim_quod.sim_service import *
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim.sim_pb2 import *
-
+from th2_grpc_sim import sim_pb2_grpc as core
 # start rule
 simulator = Stubs.simulator
 
-# DemoRule = simulator.createTemplateQuodDemoRule(
-#     request=TemplateQuodDemoRule(
-#         connection_id=infra_pb2.ConnectionID(session_alias='kch-qa-ret-child'),
-#         demo_field1=123,
-# #         demo_field2='KCH_QA_RET_CHILD'))
-#
-# OCR = simulator.createQuodOCRRule(
-#     request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris')))
-#
+NOS = simulator.createQuodNOSRule(
+      request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx'), account="TRQX_CLIENT1" ))
+
+
+OCR = simulator.createQuodOCRRule(
+    request=TemplateQuodOCRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx')))
+
+OCRR = simulator.createQuodOCRRRule(
+    request=TemplateQuodOCRRRule(connection_id=ConnectionID(session_alias='fix-bs-eq-trqx'), trade=False))
+
+
+# #
 # NOS = simulator.createQuodNOSRule(
 #     request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
-
-
+#
+#
 # RFQ = simulator.createQuodRFQRule(
 #     request=TemplateQuodRFQRule(connection_id=ConnectionID(session_alias='fix-fh-fx-rfq')))
-
+#
 # TRFQ = simulator.createQuodRFQTRADERule(
 #     request=TemplateQuodRFQTRADERule(connection_id=ConnectionID(session_alias='')))
 #
@@ -74,15 +77,15 @@ simulator = Stubs.simulator
 #     sender="QUOD_UTP",
 #     md_entry_size={1000: 1000},
 #     md_entry_px={40: 30}))
-
-
-## Use Def Rules for debug only
-# DefRule = simulator.createQuodDefMDRRule(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
-#     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-paris")
+#
+#
+# # Use Def Rules for debug only
+# DefRule = simulator.createQuodDefMDRRule(request=TemplateQuodDefMDRRule(
+#     connection_id=ConnectionID(session_alias="fix-fh-eq-paris")
 # ))
 #
-# DefRule1 = simulator.createQuodDefMDRRule1(request=quod_simulator_pb2.TemplateQuodDefMDRRule(
-#     connection_id=infra_pb2.ConnectionID(session_alias="fix-fh-eq-trqx")
+# DefRule1 = simulator.createQuodDefMDRRule1(request=TemplateQuodDefMDRRule(
+#     connection_id=ConnectionID(session_alias="fix-fh-eq-trqx")
 # ))
 # StoreNOS = simulator.createQuodNOSStoreRule(
 #     request=TemplateQuodNOSStoreRule(connection_id=ConnectionID(session_alias='fix-bs-eq-paris'), account="KEPLER"))
@@ -106,9 +109,9 @@ core = Stubs.core
 running_rules = core.getRulesInfo(request=Empty()).info
 print(running_rules, "Rules running:", len(running_rules))
 # remove rule
-for r in running_rules:
-    if r.id.id not in [1, 2]:
-        core.removeRule(RuleID(id=r.id.id))
+# for r in running_rules:
+#     if r.id.id not in [1, 2]:
+#         core.removeRule(RuleID(id=r.id.id))
 
 
 MDRefID = simulator.getMDRefIDForConnection(request=RequestMDRefID(

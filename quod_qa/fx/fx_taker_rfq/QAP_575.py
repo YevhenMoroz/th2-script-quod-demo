@@ -1,10 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-
 import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import next_working_day_after_25dec_front_end, next_monday_front_end
 from custom.verifier import Verifier
@@ -42,17 +39,12 @@ def check_date(exec_id, base_request, service, case_id, date):
     verifier.verify()
 
 
-def execute(report_id):
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     click_to_25dec = int(str(datetime(2021, 12, 25) - datetime.now()).split()[0])
     click_to_sunday = 7 - int(datetime.now().strftime('%w'))
     next_monday_front_end()
@@ -60,19 +52,15 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+        
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
@@ -83,9 +71,13 @@ def execute(report_id):
         modify_request.set_settlement_date(bca.get_t_plus_date(click_to_25dec, is_weekend_holiday=False))
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date("RFQ", base_rfq_details, ar_service, case_id, next_working_day_after_25dec_front_end())
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-    except Exception as e:
-        logging.error("Error execution", exc_info=True)
 
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+    except Exception:
+        logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

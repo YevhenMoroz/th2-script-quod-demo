@@ -29,7 +29,7 @@ def check_qty(base_request, service, case_id, near_qty):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
@@ -39,17 +39,13 @@ def execute(report_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(details=base_rfq_details)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
@@ -60,14 +56,17 @@ def execute(report_id):
         check_qty(base_rfq_details, ar_service, case_id, case_qty0)
         # Step 3
         modify_request.set_quantity(case_qty1)
-        modify_request.set_change_currency()
+        modify_request.set_change_currency(True)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty1)
         # Step 4
         modify_request.set_quantity(0)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_qty(base_rfq_details, ar_service, case_id, case_qty0)
+
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

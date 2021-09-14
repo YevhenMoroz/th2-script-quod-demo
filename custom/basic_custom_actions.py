@@ -17,6 +17,7 @@ from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMeta
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
 from th2_grpc_common.common_pb2 import ComparisonSettings
 from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
+from decimal import Decimal
 
 
 def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
@@ -94,6 +95,13 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                         }
                     )
                 )
+            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
+                         'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
+                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol']:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag, group, session_alias)))
+                content[tag] = Value(list_value=ListValue(values=content[tag]))
             else:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
@@ -113,7 +121,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
-            id=MessageID(connection_id=ConnectionID(session_alias=session_alias))
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
         ),
         fields=content
     )
@@ -214,6 +222,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
         elif isinstance(content[tag], dict):
             content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
+            print(type(content[tag]))
+            print(content[tag])
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
@@ -332,7 +342,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None) -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": "ERROR"}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -346,8 +356,8 @@ def create_event(event_name: str, parent_id: EventID = None) -> EventID:
     event = Event(
         id=event_id,
         name=event_name,
-        status='SUCCESS',
-        body=b"",
+        status=status,
+        body=bytes(body, 'utf8'),
         start_timestamp=Timestamp(seconds=seconds, nanos=nanos),
         # end_timestamp=current_timestamp,
         parent_id=parent_id)
@@ -377,6 +387,22 @@ def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
             )
+        elif isinstance(content[tag], list):
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=prefilter_to_grpc(content[tag][content[tag].index(group)], _nesting_level + 1)
+                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
+                            )
+                        )
+                    }
+                )
+            )
         elif isinstance(content[tag], ValueFilter):
             pass
     return PreFilter(fields=content) if _nesting_level == 0 else MessageFilter(fields=content)
@@ -391,3 +417,37 @@ def create_checkpoint_request(event_id: EventID, description: str = "Checkpoint"
             create_checkpoint_request (CheckpointRequest): grpc request with checkpoint
     """
     return CheckpointRequest(description=description, parent_event_id=event_id)
+
+
+def wrap_message(content, message_type=None, session_alias=None, direction=Direction.Value("SECOND")):
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if isinstance(value, str):
+                fields[tag] = Value(simple_value=value)
+            elif isinstance(value, (int, float, Decimal)):
+                fields[tag] = Value(simple_value=str(value))
+            elif isinstance(value, dict):
+                fields[tag] = Value(message_value=wrap_message(content=value))
+            elif isinstance(value, list):
+                fields[tag] = Value(list_value=wrap_message(content=value))
+        message = Message(fields=fields)
+        if message_type is not None:
+            message.metadata.message_type = message_type
+            message.metadata.id.direction = direction
+            if session_alias is not None:
+                message.metadata.id.connection_id.session_alias = session_alias
+        return message
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(Value(simple_value=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(Value(simple_value=str(element)))
+            elif isinstance(element, dict):
+                values.append(Value(message_value=wrap_message(content=element)))
+            elif isinstance(element, list):
+                values.append(Value(list_value=wrap_message(content=element)))
+        list_value = ListValue(values=values)
+        return list_value

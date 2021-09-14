@@ -1,33 +1,29 @@
 import logging
-from datetime import datetime
 
+from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
-from win_gui_modules.order_book_wrappers import OrdersDetails
-from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo,ModifyOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
-import time
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails
+from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.wrappers import verification, verify_ent
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-def execute(report_id):
+
+
+def execute(report_id, session_id):
     case_name = "QAP-3434"
-    seconds, nanos = timestamps()  # Store case start time
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
-    price = "20"
-    client = "CLIENT1"
-    lookup = "PROL"
-    last_mkt= 'DASI'
+    price = "30"
+    client = "CLIENT_FIX_CARE"
+    lookup = "VETO"
+    last_mkt = 'DASI'
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
@@ -76,11 +72,10 @@ def execute(report_id):
     main_order_details.set_filter(["Order ID", order_id2])
     order_exec_sts = ExtractionDetail('order_exec_sts', 'ExecSts')
     main_order_details.add_single_order_info(OrderInfo.create(
-    action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                         order_exec_sts
-                                                                                     ])))
+        action=ExtractionAction.create_extraction_action(extraction_details=[order_status,
+                                                                             order_exec_sts
+                                                                             ])))
 
     call(act.getOrdersDetails, main_order_details.request())
     call(common_act.verifyEntities, verification(order_info_extraction_cancel, "checking order2",
                                                  [verify_ent("Order ExecSts", order_exec_sts.name, "Filled")]))
-

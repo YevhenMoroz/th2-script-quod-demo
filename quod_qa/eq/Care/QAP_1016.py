@@ -2,6 +2,7 @@ import logging
 
 from datetime import datetime
 
+from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom.basic_custom_actions import create_event, timestamps
@@ -19,87 +20,35 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1016"
     seconds, nanos = timestamps()  # Store case start time
-
     # region Declarations
-    act = Stubs.win_act_order_book
     qty = "900"
     price = "20"
-    client = "CLIENT1"
+    client = "CLIENT_FIX_CARE"
     time = datetime.utcnow().isoformat()
-    lookup = "PROL"
+    lookup = "VETO"
+    order_type = "Limit"
     # endregion
-
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
+    eq_wrappers.open_fe(session_id,report_id,case_id,work_dir,username,password)
     # endregion
-
-    try:
-        # region Create CO
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
-
-        order_ticket = OrderTicketDetails()
-        order_ticket.set_quantity(qty)
-        order_ticket.set_limit(price)
-        order_ticket.set_client(client)
-        order_ticket.set_order_type("Limit")
-        order_ticket.set_care_order(Stubs.custom_config['qf_trading_fe_user'], True)
-
-        new_order_details = NewOrderDetails()
-        new_order_details.set_lookup_instr(lookup)
-        new_order_details.set_order_details(order_ticket)
-        new_order_details.set_default_params(base_request)
-
-        set_base(session_id, case_id)
-
-        order_ticket_service = Stubs.win_act_order_ticket
-        common_act = Stubs.win_act
-
-        call(order_ticket_service.placeOrder, new_order_details.build())
-        # endregion
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        rule_manager.remove_rule(nos_rule)
-
+    # region Create CO
+    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username,
+                             price=price,recipient_user=True)
+    # endregion
     # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_client = ExtractionDetail("oder_client", "Client")
-    order_price = ExtractionDetail("order_price", "LmtPrice")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_client,
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Qty", order_qty.name, qty),
-                                                  verify_ent("LmtPrice", order_price.name, price),
-                                                  verify_ent("Client", order_client.name, client)
-                                                  ]))
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Qty", qty)
+    eq_wrappers.verify_order_value(base_request, case_id, "Client Name", client)
+    eq_wrappers.verify_order_value(base_request, case_id, "Limit Price", price)
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

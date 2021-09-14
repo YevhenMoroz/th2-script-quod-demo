@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 import timestring
-import rule_management as rm
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1_front_end, spo_front_end
 from custom.verifier import Verifier
@@ -67,29 +66,27 @@ def check_currency(base_request, service, case_id, currency):
     verifier = Verifier(case_id)
     verifier.set_event_name("Check currency on RFQ tile")
     verifier.compare_values("Currency", currency, extract_currency)
+    verifier.verify()
 
 
 def check_currency_pair(base_request, service, case_id, currency_pair):
     extract_value = ExtractRFQTileValues(details=base_request)
     extraction_id = bca.client_orderid(4)
     extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_currency_pair("aggrRfqTile.currency")
+    extract_value.extract_currency_pair("aggrRfqTile.currencypair")
     response = call(service.extractRFQTileValues, extract_value.build())
     extract_currency_pair = response["aggrRfqTile.currencypair"]
 
     verifier = Verifier(case_id)
-    verifier.set_event_name("Check currency on RFQ tile")
+    verifier.set_event_name("Check currency pair on RFQ tile")
     verifier.compare_values("Currency", currency_pair, extract_currency_pair)
+    verifier.verify()
 
 
-def execute(report_id):
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+    
     set_base(session_id, case_id)
 
     case_base_request = get_base_request(session_id, case_id)
@@ -99,23 +96,20 @@ def execute(report_id):
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
     case_pair = case_from_currency + "/" + case_to_currency
     case_qty = 10000000
-    # TODO Wait to change type for qty field
-    case_qty2 = 1000000
-    case_qty3 = 100000
+    case_qty2 = "1m"
+    case_qty_1m = "1000000"
+    case_qty3 = "100k"
+    case_qty_100kk = "100000"
     case_tenor1 = "Spot"
     case_tenor2 = "1W"
     spo_front_end()
     wk1_front_end()
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
-
     try:
+
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
 
@@ -128,28 +122,35 @@ def execute(report_id):
         check_date(base_rfq_details, ar_service, case_id, spo_front_end())
 
         # Step 4
-        modify_request.set_change_currency()
+        modify_request.set_change_currency(True)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_currency(base_rfq_details, ar_service, case_id, case_to_currency)
 
         # Step 5
-        modify_request.set_quantity(case_qty2)
+        modify_request.set_quantity_as_string(case_qty2)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty2)
+        check_qty(base_rfq_details, ar_service, case_id, case_qty_1m)
 
         # Step 6
-        modify_request.set_quantity(case_qty3)
+        modify_request.set_quantity_as_string(case_qty3)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty3)
+        check_qty(base_rfq_details, ar_service, case_id, case_qty_100kk)
 
         # Step 7
         modify_request.set_near_tenor(case_tenor2)
+        modify_request.set_change_currency(False)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_date(base_rfq_details, ar_service, case_id, wk1_front_end())
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    finally:
+        try:
+            # Close tile
+            call(ar_service.closeRFQTile, base_rfq_details.build())
+        except Exception:
+            logging.error("Error execution", exc_info=True)

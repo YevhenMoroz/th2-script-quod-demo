@@ -12,25 +12,24 @@ from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
-
+from quod_qa.wrapper import eq_wrappers
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
-    #region Declarations
+def execute(report_id, session_id):
+    # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "1"
     price = "0.0001"
     freenotes_expected_text = "11673 'Price' (0.0001) must be a multiple of the instrument's tick size (0.001)"
-    #endregion
+    # endregion
 
-    #region Open FE
+    # region Open FE
     case_name = "QAP-2522"
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -41,13 +40,12 @@ def execute(report_id):
         prepare_fe(case_id, session_id, work_dir, username, password)
     else:
         get_opened_fe(case_id, session_id)
-    #endregion
+    # endregion
 
-    #region Create order via FIX
+    # region Create order via FIX
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NOS("fix-bs-eq-paris", "XPAR_CLIENT1")
-
-    connectivity = 'gtwquod5'
+    nos_rule = rule_manager.add_NOS('fix-bs-310-columbia', "XPAR_CLIENT1")
+    connectivity = eq_wrappers.buy_connectivity
     fix_manager_qtwquod5 = FixManager(connectivity, case_id)
 
     fix_params = {
@@ -73,9 +71,9 @@ def execute(report_id):
     fix_message.add_random_ClOrdID()
     fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
     rule_manager.remove_rule(nos_rule)
-    #endregion
+    # endregion
 
-    #region Check values in OrderBook
+    # region Check values in OrderBook
     before_order_details_id = "before_order_details"
 
     order_details = OrdersDetails()
@@ -97,5 +95,6 @@ def execute(report_id):
                                                  [verify_ent("Order Status", order_status.name, "Rejected"),
                                                   verify_ent("Order Qty", order_qty.name, qty),
                                                   verify_ent("Order Price", order_price.name, price),
-                                                  verify_ent("FreeNotes", order_freenotes.name, freenotes_expected_text)]))
-    #endregion
+                                                  verify_ent("FreeNotes", order_freenotes.name,
+                                                             freenotes_expected_text)]))
+    # endregion

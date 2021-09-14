@@ -1,17 +1,16 @@
 import logging
-import time
-import rule_management as rm
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+    ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -111,39 +110,28 @@ def cancel_rfq(base_request, service):
     call(service.cancelRFQ, base_request.build())
 
 
-def execute(report_id):
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    # print_active_rules()
-    case_name = "QAP-602"
-    quote_owner = "QA2"
+def execute(report_id, session_id):
+    case_name = Path(__file__).name[:-3]
+    quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_venue = "HSB"
     case_qty = 1000000
     case_near_tenor = "MAR IMM"
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
-    venue_list = ["CIT", "HSB"]
+    case_client = "ASPECT_CITI"
+    venue_list = ["CITI", "HSBC"]
     quote_sts_new = 'New'
     case_instr_type = 'FXForward'
     quote_quote_sts_accepted = "Accepted"
-    quote_quote_sts_terminated = "Terminated"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
     base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -161,7 +149,7 @@ def execute(report_id):
         check_quote_book("QB_0", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
 
         # Step 3
-        cancel_rfq(base_rfq_details, ar_service)
+
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_1", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue)
@@ -170,16 +158,10 @@ def execute(report_id):
         place_order_venue(base_rfq_details, ar_service, case_venue)
         ob_quote_id = check_order_book("OB_1", case_base_request, case_instr_type, ob_act, case_id, case_qty)
         check_quote_book("QB_1", case_base_request, ar_service, case_id, quote_owner, ob_quote_id)
-        cancel_rfq(base_rfq_details, ar_service)
 
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
-
-
-
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

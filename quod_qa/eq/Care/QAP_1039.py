@@ -5,6 +5,7 @@ from datetime import datetime
 import pyautogui
 from th2_grpc_act_gui_quod import order_ticket_service
 
+from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails, ManualExecutingDetails, ModifyOrderDetails
 
 from custom.basic_custom_actions import create_event, timestamps
@@ -23,7 +24,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     case_name = "QAP-1039"
     seconds, nanos = timestamps()  # Store case start time
     # region Declarations
@@ -32,13 +33,12 @@ def execute(report_id):
     qty = "900"
     qty2 = "901"
     price = "10"
-    client = "CLIENT1"
-    lookup = "PROL"
+    client = "CLIENT_FIX_CARE"
+    lookup = "VETO"
     time = datetime.utcnow().isoformat()
     # endregion
     # region Open FE
     case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -51,39 +51,8 @@ def execute(report_id):
         get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-paris",
-                                                                             "XPAR_" + client, "XPAR", 20)
-        connectivity = 'gtwquod5'
-        fix_manager_qtwquod5 = FixManager(connectivity, case_id)
-
-        fix_params = {
-            'Account': client,
-            'HandlInst': "3",
-            'Side': "2",
-            'OrderQty': qty,
-            'TimeInForce': "0",
-            'OrdType': 2,
-            'Price': price,
-            'TransactTime': time,
-            'Instrument': {
-                'Symbol': 'FR0004186856_EUR',
-                'SecurityID': 'FR0004186856',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XPAR'
-            },
-            'Currency': 'EUR',
-            'SecurityExchange': 'XPAR',
-        }
-        fix_message = FixMessage(fix_params)
-        fix_message.add_random_ClOrdID()
-        fix_manager_qtwquod5.Send_NewOrderSingle_FixMessage(fix_message)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
-
+    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message.pop("response")
     # endregion
     # region Accept CO
     call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
@@ -114,7 +83,7 @@ def execute(report_id):
                                                   ]))
     # endregion
     # region manual execution order
-    request = call(act.getOrdersDetails, order_details.request())
+    call(act.getOrdersDetails, order_details.request())
     manual_executing_details = ManualExecutingDetails(base_request)
     executions_details = manual_executing_details.add_executions_details()
     executions_details.set_quantity(qty)
@@ -125,13 +94,10 @@ def execute(report_id):
     call(act.manualExecution, manual_executing_details.build())
     # endregion
     # region Amend order
-    order_amend = OrderTicketDetails()
-    order_amend.set_quantity(qty2)
-    amend_order_details = ModifyOrderDetails()
-    amend_order_details.set_default_params(base_request)
-    amend_order_details.set_order_details(order_amend)
-    #amend_order_details.set_filter(["Order ID", order_id])
-    call(act.amendOrder, amend_order_details.build())
+    fix_message = FixMessage(fix_message)
+    param_list = {'OrderQty': qty2}
+    eq_wrappers.amend_order_via_fix(case_id, fix_message, param_list, client + "_PARIS")
+    eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
     # region Check order after Amending
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status
@@ -141,7 +107,7 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open"),
-                                                 verify_ent("ExecStatus", order_status.name, "PartiallyFilled")
+                                                  verify_ent("ExecStatus", order_status.name, "PartiallyFilled")
                                                   ]))
     # endregion
     # region manual execution order after amending
@@ -165,9 +131,9 @@ def execute(report_id):
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Status", order_status.name, "Open"),
-                                                 #verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
-                                                 #verify_ent("DoneForDay", order_dfd.name, "Yes"),
-                                                 #verify_ent("ExecSts", order_status.name, "Filled")
+                                                  verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
+                                                  verify_ent("DoneForDay", order_dfd.name, "Yes"),
+                                                  verify_ent("ExecSts", order_status.name, "Filled")
                                                   ]))
     # endregion
     # region Amend order after Complete

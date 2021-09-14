@@ -32,19 +32,19 @@ def execute(report_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-    # region create CO
-    responce=eq_wrappers.create_order_via_fix(case_id, 3, 1, dummy_client, 2, qty, 0, price)
+    # region create DMA
+    responce=eq_wrappers.create_order_via_fix(case_id, 1, 1, dummy_client, 2, qty, 0, price)
     # endregion
     # region verify values
-    eq_wrappers.verify_value(base_request,case_id,"Sts","Held")
-    eq_wrappers.verify_value(base_request,case_id,"Client ID", "DUMMY")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Held")
+    eq_wrappers.verify_order_value(base_request, case_id, "Client ID", "DUMMY")
     # endregion verify values
     # region GroupModify
     eq_wrappers.group_modify(base_request,client,account,route,"Free notes")
     # endregion
     # region verify values
-    eq_wrappers.verify_value(base_request, case_id, "Sts", "Open")
-    eq_wrappers.verify_value(base_request, case_id, "Client ID", client)
-    eq_wrappers.verify_value(base_request, case_id, "Account ID", account)
-    eq_wrappers.verify_value(base_request, case_id, "Routes", "ESBUYTH2")
+    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
+    eq_wrappers.verify_order_value(base_request, case_id, "Client ID", client)
+    eq_wrappers.verify_order_value(base_request, case_id, "Account ID", account)
+    eq_wrappers.verify_order_value(base_request, case_id, "Routes", "ESBUYTH2")
     # endregion verify values

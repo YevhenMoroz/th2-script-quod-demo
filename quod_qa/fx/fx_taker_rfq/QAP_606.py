@@ -1,20 +1,15 @@
 import logging
 from datetime import datetime
+from pathlib import Path
 
-import timestring
-
-import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, wk1
-from custom.verifier import Verifier, VerificationMethod
+from custom.tenor_settlement_date import spo_front_end, wk1_front_end
+from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
-    ContextAction, ExtractRFQTileValues
+from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -73,21 +68,16 @@ def check_tenor(exec_id, base_request, service, case_id, near_tenor, far_tenor):
     verifier.verify()
 
 
-def execute(report_id):
+def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
-    case_name = "QAP-606"
+    case_name = Path(__file__).name[:-3]
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_far_tenor = "1W"
-    # TODO Wait until QAP-3755
     case_blank_tenor = ""
-    case_near_date = spo()
-    case_far_date = wk1()
+    case_near_date = spo_front_end()
+    case_far_date = wk1_front_end()
     case_left_eur_label = "Sell EUR Far"
     case_right_eur_label = "Buy EUR Far"
     case_left_usd_label = "Buy USD Far"
@@ -95,21 +85,16 @@ def execute(report_id):
 
     case_from_currency = "EUR"
     case_to_currency = "USD"
-    case_client = "MMCLIENT2"
+    case_client = "ASPECT_CITI"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    session_id = set_session_id()
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
     modify_request = ModifyRFQTileRequest(base_rfq_details)
-
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
 
     try:
         # Step 1
@@ -132,13 +117,13 @@ def execute(report_id):
         check_labels("CL_0", base_rfq_details, ar_service, case_id, case_left_eur_label, case_right_eur_label)
 
         # Step 5
-        modify_request.set_change_currency()
+        modify_request.set_change_currency(True)
         call(ar_service.modifyRFQTile, modify_request.build())
         check_labels("CL_1", base_rfq_details, ar_service, case_id, case_left_usd_label, case_right_usd_label)
 
+        # Close tile
+        call(ar_service.closeRFQTile, base_rfq_details.build())
 
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
