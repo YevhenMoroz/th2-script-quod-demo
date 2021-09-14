@@ -28,6 +28,7 @@ class QAP_919(CommonTestCase):
         time.sleep(2)
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
+        time.sleep(2)
         users_page.click_on_more_actions()
         time.sleep(2)
         users_page.click_on_edit_at_more_actions()

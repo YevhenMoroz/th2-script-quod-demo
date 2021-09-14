@@ -28,10 +28,11 @@ class QuotingSessionsConstants:
     # Values tab
 
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="quotingSessionName"]'
-    VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_XPATH = '//*[@formcontrolname="concurrentlyActiveQuotes"]'
+    VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH = '//*[@formcontrolname="concurrentlyActiveQuoteAge"]'
     VALUES_TAB_QUOTE_UPDATE_INTERVAL_XPATH = '//*[@formcontrolname="updateInterval"]'
     VALUES_TAB_PUBLISHED_QUOTE_ID_FORMAT_XPATH = '//*[@formcontrolname="clientQuoteIDFormat"]'
     VALUES_TAB_QUOTE_UPDATE_FORMAT_XPATH = '//*[@id="MDUpdateType"]'
+
     # checkbox
     VALUES_TAB_ALWAYS_ACKNOWLEDGE_CHECKBOX = '//*[text()="Always Acknowledge Orders"]/preceding-sibling::span'
     VALUES_TAB_ALWAYS_USER_NEW_MD_ENTRY_ID_CHECKBOX = '//*[text()="Always Use New MDEntry ID"]/preceding-sibling::span'

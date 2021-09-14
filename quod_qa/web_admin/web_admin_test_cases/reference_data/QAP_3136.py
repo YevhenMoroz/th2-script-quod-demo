@@ -28,7 +28,7 @@ class QAP_3136(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = "15"
         self.type = "DarkPool"
-        self.mic = "test"
+        self.mic = "ALXP"
         self.country = "Albania"
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.negative_routes = ("ARCLAYS Trading", "BARCLAYS RFQ")

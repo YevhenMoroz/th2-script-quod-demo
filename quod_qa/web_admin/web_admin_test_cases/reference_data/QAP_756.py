@@ -24,9 +24,9 @@ class QAP_756(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = "15"
         self.type = "DarkPool"
-        self.mic = "test"
+        self.mic = "ALTX"
         self.country = "Albania"
-        self.new_mic = "mic"
+        self.new_mic = "AACA"
         self.new_country = "Angola"
 
     def precondition(self):

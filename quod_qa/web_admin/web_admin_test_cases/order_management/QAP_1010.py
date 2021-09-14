@@ -27,8 +27,9 @@ class QAP_1010(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMERICAN STOCK EXCHANGE"
+        self.venue = "EURONEXT AMSTERDAM"
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -80,7 +81,7 @@ class QAP_1010(CommonTestCase):
         time.sleep(1)
         conditions_sub_wizard.click_on_plus()
         time.sleep(1)
-        conditions_sub_wizard.set_name(self.condition_name)
+        conditions_sub_wizard.set_name(self.new_condition_name)
         time.sleep(1)
         conditions_sub_wizard.set_qty_precision("100")
         conditions_sub_wizard.click_on_add_condition()
@@ -92,17 +93,30 @@ class QAP_1010(CommonTestCase):
         conditions_sub_wizard.set_percentage("100")
         conditions_sub_wizard.click_on_checkmark_at_results_sub_wizard()
         time.sleep(1)
-        conditions_sub_wizard.click_on_checkmark()
-        time.sleep(1)
-        default_result_sub_wizard.set_default_result_name("test new name")
+
 
     def test_context(self):
 
         try:
             self.precondition()
             wizard = OrderManagementRulesWizard(self.web_driver_container)
+            page = OrderManagementRulesPage(self.web_driver_container)
+            conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
+            default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
             try:
+                conditions_sub_wizard.click_on_checkmark()
+                time.sleep(2)
+                default_result_sub_wizard.set_default_result_name("test new name")
+                time.sleep(2)
                 wizard.click_on_save_changes()
+                time.sleep(2)
+                page.set_name_filter(self.name)
+                time.sleep(2)
+                page.click_on_more_actions()
+                time.sleep(2)
+                page.click_on_enable_disable_button()
+                time.sleep(2)
+                page.click_on_ok_button()
                 self.verify("Entity created correctly", True, True)
             except Exception as e:
                 self.verify("Entity NOT created !!!", True, e.__class__.__name__)

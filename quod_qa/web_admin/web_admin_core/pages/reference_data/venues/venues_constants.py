@@ -39,7 +39,7 @@ class VenuesConstants:
     # --Description tab--
     DESCRIPTION_TAB_NAME_XPATH = '//*[@formcontrolname="venueName"]'
     DESCRIPTION_TAB_ID_XPATH = '//*[@formcontrolname="venueID"]'
-    DESCRIPTION_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]'
+    DESCRIPTION_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]//input'
     DESCRIPTION_TAB_COUNTRY_XPATH = '//*[@id="countryEnumTable"]'
     DESCRIPTION_TAB_CATEGORY_XPATH = '//*[@formcontrolname="venueCategory"]'
     DESCRIPTION_TAB_SHORT_NAME_XPATH = '//*[@formcontrolname="venueShortName"]'

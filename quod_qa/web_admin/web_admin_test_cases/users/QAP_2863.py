@@ -17,6 +17,7 @@ class QAP_2863(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
+        self.user_name= "buyside09"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -25,6 +26,9 @@ class QAP_2863(CommonTestCase):
         time.sleep(2)
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
+        time.sleep(2)
+        users_page.set_user_id(self.user_name)
+        time.sleep(2)
         users_page.click_on_enable_disable_button()
         time.sleep(2)
 
@@ -39,6 +43,11 @@ class QAP_2863(CommonTestCase):
             except TimeoutException as e:
                 error_name = e.__class__.__name__
                 self.verify("user can not edit Disabled Entities", "TimeoutException", error_name)
+
+            finally:
+                time.sleep(2)
+                users_page.click_on_enable_disable_button()
+
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,

@@ -27,6 +27,7 @@ class QAP_2461(CommonTestCase):
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMS"
         self.account_id_source = "BIC"
+        self.client = "ANDclient"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,6 +44,8 @@ class QAP_2461(CommonTestCase):
         values_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
         values_sub_wizard.set_client_id_source(self.client_id_source)
+        time.sleep(2)
+        values_sub_wizard.set_client(self.client)
         time.sleep(2)
         dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
         dimensions_sub_wizard.click_on_plus()

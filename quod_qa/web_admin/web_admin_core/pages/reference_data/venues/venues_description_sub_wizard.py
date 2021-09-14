@@ -62,7 +62,7 @@ class VenuesDescriptionSubWizard(CommonPage):
         return self.get_text_by_xpath(VenuesConstants.DESCRIPTION_TAB_COUNTERPART_XPATH)
 
     def set_mic(self, value):
-        self.set_text_by_xpath(VenuesConstants.DESCRIPTION_TAB_MIC_XPATH, value)
+        self.set_combobox_value(VenuesConstants.DESCRIPTION_TAB_MIC_XPATH, value)
 
     def get_mic(self):
         return self.get_text_by_xpath(VenuesConstants.DESCRIPTION_TAB_MIC_XPATH)
