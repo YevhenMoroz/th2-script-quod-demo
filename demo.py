@@ -11,7 +11,9 @@ from quod_qa.eq.Care import QAP_1013
 from quod_qa.eq.Test import TraidingSession_test, SendMarketData
 from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, TWAP_NAV_02, TWAP_NAV_01
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, VWAP_NAV_02, VWAP_WW_01
-from quod_qa.eq.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MaxP_01, POV_MinP_01, POV_NAV_01, POV_NAV_02, POV_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, POV_SCAP_01
+from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCAL_OFF_01, OPN_VO_01, OPN_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCAL_OFF_01, CLO_VO_01, CLO_WW_01
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -32,31 +34,42 @@ def test_run():
     report_id = bca.create_event('srublyov tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        TWAP_WW_01.execute(report_id)
-        TWAP_BA_01.execute(report_id)
-        TWAP_WW_01.execute(report_id)
-        TWAP_NAV_01.execute(report_id)
-        TWAP_NAV_02.execute(report_id)
-        TWAP_AUC_01.execute(report_id)
-        TWAP_MinP_01.execute(report_id)
-        TWAP_MaxP_01.execute(report_id)
+        # TWAP_BA_01.execute(report_id)
+        # TWAP_WW_01.execute(report_id)
+        # TWAP_NAV_01.execute(report_id)
+        # TWAP_NAV_02.execute(report_id)
+        #TWAP_AUC_01.execute(report_id)
+        # TWAP_MinP_01.execute(report_id)
+        # TWAP_MaxP_01.execute(report_id)
 
-        VWAP_BA_01.execute(report_id)
-        VWAP_WW_01.execute(report_id)
-        VWAP_NAV_01.execute(report_id)
-        VWAP_NAV_02.execute(report_id)
-        VWAP_AUC_01.execute(report_id)
-        VWAP_MinP_01.execute(report_id)
-        VWAP_MaxP_01.execute(report_id)
+        # VWAP_BA_01.execute(report_id)
+        # VWAP_WW_01.execute(report_id)
+        # VWAP_NAV_01.execute(report_id)
+        # VWAP_NAV_02.execute(report_id)
+        # VWAP_AUC_01.execute(report_id)
+        # VWAP_MinP_01.execute(report_id)
+        # VWAP_MaxP_01.execute(report_id)
 
         POV_BA_01.execute(report_id)
         POV_WW_01.execute(report_id)
         POV_NAV_01.execute(report_id)
         POV_NAV_02.execute(report_id)
         POV_AUC_01.execute(report_id)
-        POV_MinP_01.execute(report_id)
-        POV_MaxP_01.execute(report_id)
-        
+        POV_MinMax_01.execute(report_id)
+        POV_SCAP_01.execute(report_id)
+
+        # OPN_FPC_01.execute(report_id)
+        # OPN_LIM_01.execute(report_id)
+        # OPN_SCAL_OFF_01.execute(report_id)
+        #OPN_VO_01.execute(report_id)
+        # OPN_WW_01.execute(report_id)
+
+        # CLO_FPC_01.execute(report_id)
+        # CLO_LIM_01.execute(report_id)
+        # CLO_SCAL_OFF_01.execute(report_id)
+        #CLO_VO_01.execute(report_id)
+        # CLO_WW_01.execute(report_id)
+
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
         #     prepare_fe(report_id, session_id, work_dir, username, password)
