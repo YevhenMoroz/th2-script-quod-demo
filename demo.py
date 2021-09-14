@@ -55,13 +55,13 @@ def test_run():
 
         OPN_FPC_01.execute(report_id)
         OPN_LIM_01.execute(report_id)
-        OPN_SCAL_OFF_01.execute(report_id)
+        OPN_SCA_01.execute(report_id)
         OPN_VO_01.execute(report_id)
         OPN_WW_01.execute(report_id)
 
         CLO_FPC_01.execute(report_id)
         CLO_LIM_01.execute(report_id)
-        CLO_SCAL_OFF_01.execute(report_id)
+        CLO_SCO_01.execute(report_id)
         CLO_VO_01.execute(report_id)
         CLO_WW_01.execute(report_id)
 
@@ -71,22 +71,22 @@ def test_run():
         # else:
         #     get_opened_fe(report_id, session_id, work_dir)
 
-        #QAP_1324.execute(report_id, session_id)
+        # QAP_1324.execute(report_id, session_id)
         # QAP_1750.execute(report_id, session_id) 
         # QAP_2837.execute(report_id, session_id)
-        #QAP_2838.execute(report_id, session_id)
+        # QAP_2838.execute(report_id, session_id)
         # QAP_4605.execute(report_id)
         # QAP_1810.execute(report_id)
         # QAP_4395.execute(report_id)
-        #QAP_4646.execute(report_id) 
-        #TraidingSession_test.execute(report_id)
-        #SendMarketData.execute(report_id)
+        # QAP_4646.execute(report_id)
+        # TraidingSession_test.execute(report_id)
+        # SendMarketData.execute(report_id)
 
         # QAP_2842.execute(report_id, session_id)
         # QAP_2839.execute(report_id, session_id)
 
-        #region RB
-        #TWAP
+        # region RB
+        # TWAP
         # QAP_4612.execute(report_id)
         # QAP_4274.execute(report_id)
         # QAP_4582.execute(report_id)
@@ -110,7 +110,7 @@ def test_run():
         # QAP_4413.execute(report_id)
         # QAP_4750.execute(report_id)
         # QAP_4760.execute(report_id)
-        #POV
+        # POV
         # QAP_4624.execute(report_id)
         # QAP_4605.execute(report_id)
         # QAP_4606.execute(report_id)
@@ -129,7 +129,7 @@ def test_run():
         # QAP_4784.execute(report_id)
         # QAP_4751.execute(report_id)
         # QAP_4952.execute(report_id)
-        #VWAP
+        # VWAP
         # QAP_4699.execute(report_id)
         # QAP_4700.execute(report_id)
         # QAP_4733.execute(report_id)
@@ -139,33 +139,33 @@ def test_run():
         # QAP_4800.execute(report_id)
         # QAP_4801.execute(report_id)
         # QAP_4756.execute(report_id)
-        #endregion
+        # endregion
 
-        #region Iceberg
+        # region Iceberg
         # QAP_3056.execute(report_id)
         # QAP_3055.execute(report_id)
         # QAP_3054.execute(report_id)
         # QAP_3029.execute(report_id)
 
-        #VWAP
+        # VWAP
         # QAP_4699.execute(report_id)
         # QAP_4700.execute(report_id)
         # QAP_4733.execute(report_id)
         # QAP_4734.execute(report_id)
         # QAP_4735.execute(report_id)
-        #endregion
+        # endregion
 
-        #region Acceptance list
+        # region Acceptance list
         # QAP_2839.execute(report_id, session_id)
         # QAP_2842.execute(report_id, session_id)
         # QAP_2994.execute(report_id, session_id)
         # QAP_2995.execute(report_id, session_id)
         # QAP_2996.execute(report_id, session_id)
         # QAP_2997.execute(report_id, session_id)
-        #endregion
+        # endregion
 
-        #region %Vol tests
-        #FIX/FE
+        # region %Vol tests
+        # FIX/FE
         # QAP_1324.execute(report_id, session_id)
         # QAP_1510.execute(report_id, session_id)
         # QAP_1515.execute(report_id, session_id)
@@ -174,7 +174,7 @@ def test_run():
         # QAP_2552.execute(report_id, session_id)
         # QAP_2553.execute(report_id, session_id)
         # QAP_2838.execute(report_id, session_id)
-        #end FIX/FE
+        # end FIX/FE
         # QAP_1633.execute(report_id)
         # QAP_1634.execute(report_id)
         # QAP_2479.execute(report_id)
@@ -187,10 +187,10 @@ def test_run():
         # QAP_3116.execute(report_id)
         # QAP_3127.execute(report_id)
         # QAP_3530.execute(report_id)
-        #endregion
-        
-        #region TWAP tests
-        #FIX/FE
+        # endregion
+
+        # region TWAP tests
+        # FIX/FE
         # QAP_2864.execute(report_id, session_id)
         # QAP_2865.execute(report_id, session_id)
         # #end FIX/FE
@@ -207,9 +207,9 @@ def test_run():
         # QAP_3123.execute(report_id)
         # QAP_3124.execute(report_id)
         # QAP_3532.execute(report_id)
-        #endregion
-        
-        #region multilisting tests
+        # endregion
+
+        # region multilisting tests
         # QAP_1810.execute(report_id)
         # QAP_1951.execute(report_id)
         # QAP_1952.execute(report_id)
