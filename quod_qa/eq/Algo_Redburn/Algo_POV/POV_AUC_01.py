@@ -22,9 +22,9 @@ def execute(report_id):
             'ClOrdID': bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 100000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 120,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -36,10 +36,9 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
                 'ParticipateInClosingAuctions': 'Y',
-                'MaxParticipationOpen': '10',
-                'MaxParticipationClose': '10',
+                'MaxParticipationOpen': '5',
+                'MaxParticipationClose': '5',
                 'MaxPercentageVolume': '10',
-                'SaveForClosePercentage': '80'
             }
         }
 

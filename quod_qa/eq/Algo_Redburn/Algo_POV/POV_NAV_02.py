@@ -22,9 +22,9 @@ def execute(report_id):
             'ClOrdID': bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 100000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 120,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -38,7 +38,7 @@ def execute(report_id):
                 'NavigatorExecution': '1',
                 'NavigatorInitialSweepTime': '5',
                 'NavGuard': '1',
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '5'
             }
         }
 

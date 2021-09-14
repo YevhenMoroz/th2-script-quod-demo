@@ -22,19 +22,24 @@ def execute(report_id):
             'ClOrdID': bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 100000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 198,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Currency': "GBX",
-            'TargetStrategy': 2,
+            'TargetStrategy': 1015,
             'ExDestination': 'XLON',
-            'Text': 'POV-MaxP_01',
+            'Text': 'POV-SCAP_01',
             'QuodFlatParameters': {
+                'PricePoint1Price': '200',
+                'PricePoint1Participation': '10',
+                'PricePoint2Price': '202',
+                'PricePoint2Participation': '20',
                 'MaxPercentageVolume': '5',
+                'ExcludePricePoint2': '1'
             }
         }
 

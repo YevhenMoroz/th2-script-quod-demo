@@ -22,7 +22,7 @@ def execute(report_id):
             'ClOrdID': bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 100000,
             'TimeInForce': 0,
             'Price': 100,
             'OrdType': 2,
@@ -34,8 +34,8 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'POV-MinP_01',
             'QuodFlatParameters': {
-                'MinParticipation': '25',
-                'MaxPercentageVolume': '10'
+                'MinParticipation': '14',
+                'MaxPercentageVolume': '15'
             }
         }
 
