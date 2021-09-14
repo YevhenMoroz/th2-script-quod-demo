@@ -16,7 +16,7 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': bca.client_orderid(9),
+        'ClOrdID': 'CLO_SCAL_OFF_01' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 100,

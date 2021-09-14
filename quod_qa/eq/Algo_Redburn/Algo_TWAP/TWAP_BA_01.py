@@ -19,7 +19,7 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': bca.client_orderid(9),
+            'ClOrdID': 'TWAP-BA_01' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 10000,
@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1005, 
             'ExDestination': 'XLON',
-            'Text': 'RB_TWAP-BA_01',
+            'Text': 'TWAP-BA_01',
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(
