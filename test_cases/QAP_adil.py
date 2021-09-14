@@ -182,8 +182,6 @@ def run_test_case():
             direction=Direction.Value("SECOND")
         )
     )
-    print("flag")
-    time.sleep(5)
 
     amend_order_params = {
         "OrigClOrdID": new_order_params["ClOrdID"],
