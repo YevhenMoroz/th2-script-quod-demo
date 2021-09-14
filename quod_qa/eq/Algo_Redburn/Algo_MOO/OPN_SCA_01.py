@@ -16,7 +16,7 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'OPN_SCAL_OFF_01' + bca.client_orderid(9),
+        'ClOrdID': 'OPN_SCA_01 ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 10000000,
@@ -29,7 +29,7 @@ def execute(report_id):
         'Currency': "GBX",
         'TargetStrategy': 1012, # MOO
         'ExDestination': 'XLON',
-        'Text': 'OPN_SCAL_OFF_01',
+        'Text': 'OPN_SCA_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'PricePoint1Reference': 'LTP',
