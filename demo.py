@@ -1,14 +1,16 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCAL_OFF_01, CLO_VO_01, CLO_WW_01
-from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCAL_OFF_01, OPN_VO_01, OPN_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCO_01, CLO_VO_01, CLO_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCA_01, OPN_VO_01, OPN_WW_01
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_BA_01, POV_WW_01, POV_NAV_01, POV_NAV_02, POV_AUC_01, POV_MinMax_01, \
     POV_SCAP_01
 from quod_qa.eq.Care import QAP_1013
 from quod_qa.eq.Test import TraidingSession_test, SendMarketData
-from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, TWAP_NAV_02, TWAP_NAV_01
-from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, VWAP_NAV_02, VWAP_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
+    TWAP_NAV_02, TWAP_NAV_01
+from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
+    VWAP_NAV_02, VWAP_WW_01
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -23,6 +25,7 @@ username = Stubs.custom_config['qf_trading_fe_user']
 password = Stubs.custom_config['qf_trading_fe_password']
 
 channels = dict()
+
 
 def test_run():
     # Generation id and time for test run
