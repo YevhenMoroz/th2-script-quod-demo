@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1,
             'ExDestination': 'XLON',
-            'Text': 'RB_TWAP-WW_01',
+            'Text': 'VWAP-WW_01',
             'QuodFlatParameters': {
                 'TriggerPriceRed': '99',
             }

@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1, 
             'ExDestination': 'XLON',
-            'Text': 'RB_TWAP-BA_01',
+            'Text': 'VWAP-BA_01',
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(

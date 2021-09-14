@@ -32,12 +32,13 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-AUC_01',
+            'Text': 'VWAP-AUC_01',
             'QuodFlatParameters': {
-                'ParticipateInOpeningAuctions': '100',
-                'ParticipateInClosingAuctions': '1',
-                'MaxParticipationOpen': '5',
-                'MaxParticipationClose': '1',
+                'ParticipateInOpeningAuctions': 'Y',
+                'ParticipateInClosingAuctions': 'Y',
+                'MaxParticipationOpen': '10',
+                'MaxParticipationClose': '10',
+                'SaveForClosePercentage': '80'
             }
         }
 
