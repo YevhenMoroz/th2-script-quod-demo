@@ -1,18 +1,16 @@
 import logging
 from pathlib import Path
 
-import rule_management as rm
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
+from custom.verifier import Verifier
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest, \
     ContextAction
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, close_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 
 def create_or_get_rfq(base_request, service):
@@ -27,7 +25,7 @@ def modify_rfq_tile(base_request, service, qty, cur1, cur2, near_tenor, client, 
     modify_request = ModifyRFQTileRequest(details=base_request)
     action = ContextAction.create_venue_filters(venues)
     modify_request.add_context_action(action)
-    modify_request.set_change_currency()
+    modify_request.set_change_currency(True)
     modify_request.set_quantity(qty)
     modify_request.set_from_currency(cur1)
     modify_request.set_to_currency(cur2)
@@ -111,10 +109,6 @@ def execute(report_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     ob_act = Stubs.win_act_order_book
 
-    # Rules
-    rule_manager = rm.RuleManager()
-    RFQ = rule_manager.add_RFQ('fix-fh-fx-rfq')
-    TRFQ = rule_manager.add_TRFQ('fix-fh-fx-rfq')
     case_name = Path(__file__).name[:-3]
     case_client = "MMCLIENT2"
     case_from_currency = "EUR"
@@ -126,7 +120,7 @@ def execute(report_id):
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     case_instr_type = 'Spot'
-    quote_owner = "QA2"
+    quote_owner = Stubs.custom_config['qf_trading_fe_user_309']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -152,10 +146,9 @@ def execute(report_id):
         quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id,
                                     case_to_currency)
         check_quote_book("QB_O", case_base_request, ar_service, case_id, quote_owner, quote_id)
+
+        # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
-    for rule in [RFQ, TRFQ]:
-        rule_manager.remove_rule(rule)

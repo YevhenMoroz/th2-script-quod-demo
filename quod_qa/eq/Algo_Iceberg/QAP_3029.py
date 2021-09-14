@@ -47,11 +47,11 @@ def execute(report_id):
         },
         'OrderCapacity': 'A',
         'Currency': 'EUR',
-        'TargetStrategy': "1004",
-        "DisplayInstruction":
-            {
-                "DisplayQty": '50'
-            }
+        'TargetStrategy': "1004"
+        # "DisplayInstruction":
+        #     {
+        #         "DisplayQty": '50'
+        #     }
 
     }
     fix_message_iceberg = FixMessage(iceberg_params)
@@ -63,7 +63,6 @@ def execute(report_id):
         'ExecType': "0",
         'OrdStatus': '0',
         'OrderID': responce.response_messages_list[0].fields['OrderID'].simple_value,
-
     }
     fix_verifier_ss.CheckExecutionReport(er_params_new, responce)
     #Check on bs

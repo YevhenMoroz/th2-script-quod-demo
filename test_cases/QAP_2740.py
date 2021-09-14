@@ -1,8 +1,9 @@
 import logging
 from copy import deepcopy
 from datetime import datetime
+from time import sleep
 
-from th2_grpc_common.common_pb2 import ConnectionID
+from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodSingleExecRule, TemplateNoPartyIDs
 
 from custom.verifier import Verifier
@@ -51,6 +52,7 @@ def execute(report_id):
         'SenderCompID2': 'KCH_QA_RET_CHILD',
         'TargetCompID2': 'QUOD_QA_RET_CHILD',
         'Account': 'KEPLER',
+        'Account2': 'TRQX_KEPLER',
         'HandlInst': '2',
         'Side': '2',
         'OrderQty': 100,
@@ -77,6 +79,7 @@ def execute(report_id):
     }
     symbol_paris = "596"
     symbol_trqx = "3390"
+# Triggering rules for trade
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
@@ -104,7 +107,7 @@ def execute(report_id):
         symbol={"TRQX": symbol_trqx}
     ))
     try:
-        # Send MarketDataSnapshotFullRefresh message
+# Send MarketDataSnapshotFullRefresh message
 
         MDRefID_1 = simulator.getMDRefIDForConnection(request=RequestMDRefID(
             symbol=symbol_paris,
@@ -169,6 +172,7 @@ def execute(report_id):
             'TargetStrategy': case_params['TargetStrategy'],
             'Text': 'QAP-2740'
         }
+# Sending New Order
         new_sor_order = act.placeOrderFIX(
             bca.convert_to_request(
                 'Send NewSingleOrder',
@@ -177,13 +181,17 @@ def execute(report_id):
                 bca.message_to_grpc('NewOrderSingle', sor_order_params, case_params['TraderConnectivity'])
             ))
         checkpoint_1 = new_sor_order.checkpoint_id
+# Check ER with status Pending
         pending_er_params = {
             **reusable_order_params,
             'ClOrdID': sor_order_params['ClOrdID'],
             'OrderID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
+            'ExecID': new_sor_order.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'CumQty': '0',
             'LastPx': '0',
+            'OrderQty': case_params['OrderQty'],
+            'Price': case_params['Price'],
             'LastQty': '0',
             'QtyType': '0',
             'AvgPx': '0',
@@ -204,13 +212,17 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
+# Check ER with status New
 
+        del pending_er_params['Account']
         new_er_params = deepcopy(pending_er_params)
         new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
-        new_er_params['Instrument'] = {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        }
+        new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+        new_er_params['ExecID'] = '*'
+        new_er_params['ExecRestatementReason'] = '4'
+        new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+        new_er_params['Instrument'] = case_params['Instrument']
+        new_er_params['SettlDate'] = "*"
         verifier.submitCheckRule(
             bca.create_check_rule(
                 "ER New NewOrderSingle Received",
@@ -218,7 +230,150 @@ def execute(report_id):
                 checkpoint_1, case_params['TraderConnectivity'], case_id
             )
         )
+# Check ER with status Filled
+        del new_er_params['ExecRestatementReason']
+        exec_er_params = {
+            **new_er_params,
+            'OrdStatus': 2,
+            'ExecType': 'F',
+            'Account': sor_order_params['Account'],
+            'LastQty': sor_order_params['OrderQty'],
+            'CumQty': sor_order_params['OrderQty'],
+            'LeavesQty': 0,
+            'SecondaryOrderID': '*',
+            'LastMkt': 'TRQX',
+            'Text': 'Hello sim',
+            'ChildOrderID': '*',
+            'LastExecutionPolicy': 0,
+            'SecondaryExecID': '*',
+            'ExDestination': 'TRQX;BATD;CHID;XPAR',
+            'GrossTradeAmt': '*',
+            'TradeDate': '*',
+            'AvgPx': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'LastPx': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'NoParty': [{
+                'PartyID': '1',
+                'PartyIDSource': 'D',
+                'PartyRole': '2'
+            },
+                {
+                    'PartyID': 'gtwquod3',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '36'
+                },
+                {
+                    'PartyID': '2',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '3'
+                },
+                {
+                    'PartyID': 'KEPLER',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '1'
+                }]
+        }
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                "ER NOS Filled Received",
+                bca.filter_to_grpc("ExecutionReport", exec_er_params, ['ClOrdID', 'OrdStatus']),
+                checkpoint_1, case_params['TraderConnectivity'], case_id
+            )
+        )
+# Buy Side checks
+        instrument_bs = {
+            'SecurityType': 'CS',
+            'Symbol': 'CNLP_PA',
+            'SecurityID': case_params['Instrument']['SecurityID'],
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
 
+        nos_bs_params = {
+            'Account': case_params['Account2'],
+            'HandlInst': '1',
+            'Side': case_params['Side'],
+            'TimeInForce': 3,
+            'OrdType': case_params['OrdType'],
+            'OrderCapacity': 'A',
+            'SettlDate': "*",
+            'Currency': 'EUR',
+            'OrderQty': case_params['OrderQty'],
+            'Price': mdfr_params_1['NoMDEntries'][0]['MDEntryPx'],
+            'ClOrdID': '*',
+            'ChildOrderID': '*',
+            'TransactTime': '*',
+            'Instrument': instrument_bs,
+            'ExDestination': 'TRQX'
+
+        }
+
+# Check New Order Single received
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                'NewOrderSingle transmitted >> TRQX',
+                bca.filter_to_grpc('NewOrderSingle', nos_bs_params, ["ClOrdID"]),
+                checkpoint_1,
+                case_params['TraderConnectivity3'],
+                case_id
+            )
+        )
+# Check Buy Side ER with status New
+
+        er_bs_params = {
+            'Account': nos_bs_params['Account'],
+            'ClOrdID': '*',
+            'OrderID': '*',
+            'ExecID': '*',
+            'TransactTime': '*',
+            'CumQty': nos_bs_params['OrderQty'],
+            'Currency': 'EUR',
+            'OrderQty': nos_bs_params['OrderQty'],
+            'LastQty': nos_bs_params['OrderQty'],
+            'OrdType': case_params['OrdType'],
+            'Side': case_params['Side'],
+            'Price': nos_bs_params['Price'],
+            'LastPx': nos_bs_params['Price'],
+            "TimeInForce": nos_bs_params['TimeInForce'],
+            'AvgPx': nos_bs_params['Price'],
+            'OrdStatus': '2',
+            'OrderCapacity': 'A',
+            'ExecType': 'F',
+            'LeavesQty': '0',
+            'Text': 'Hello sim',
+            'Instrument': nos_bs_params['Instrument'],
+            'NoParty': [{
+                'PartyID': '1',
+                'PartyIDSource': 'D',
+                'PartyRole': '2'
+            },
+                {
+                    'PartyID': '2',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '3'
+                },
+                {
+                    'PartyID': 'KEPLER',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '1'
+                }]
+        }
+
+# Check ER with status Filled
+        logger.debug("Verify received Execution Report (OrdStatus = Filled)")
+        verifier.submitCheckRule(
+            bca.create_check_rule(
+                'ER NewOrderSingle Filled << TRQX',
+                bca.filter_to_grpc('ExecutionReport', er_bs_params, ),
+                checkpoint_1,
+                case_params['TraderConnectivity3'],
+                case_id,
+                Direction.Value("SECOND")
+
+            )
+        )
+
+
+# FE init
         work_dir = Stubs.custom_config['qf_trading_fe_folder_305']
         username = Stubs.custom_config['qf_trading_fe_user_305']
         password = Stubs.custom_config['qf_trading_fe_password_305']
@@ -271,11 +426,13 @@ def execute(report_id):
 
             venue = request[sub_lvl1_1_venue_OA.name]
             logger.info(venue)
+# Check parent order trade via GUI
             call(common_act.verifyEntities, verification(order_info_extraction, "Checking main order",
                                                          [verify_ent("Order ExecPcy", main_order_exec_pcy.name,
                                                                      "Synth (Quod LitDark)"),
                                                           verify_ent("Order LmtPrice", main_order_lmt_price.name, "25"),
                                                           verify_ent("Order Status", main_order_sts.name, "Filled")]))
+# Check child order lvl1 via GUI
             call(common_act.verifyEntities, verification(order_info_extraction, "Checking Lvl_2 orders",
                                                          [verify_ent("Sub Order 1 Lvl 1 ExecPcy",
                                                                      sub_lvl1_1_exec_pcy.name,
@@ -285,7 +442,7 @@ def execute(report_id):
                                                                      "Synth (Quod DarkPool)")
                                                           ]))
 
-            # check child orders
+# Check child order lvl2 and lvl3 via GUI
             sub_order_id = request[sub_order_id_dt.name]
             if not sub_order_id:
                 raise Exception("Sub order id is not returned")
@@ -334,3 +491,4 @@ def execute(report_id):
 
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))
+    sleep(10)

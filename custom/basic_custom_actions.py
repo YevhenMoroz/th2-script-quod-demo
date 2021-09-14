@@ -17,6 +17,7 @@ from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMeta
     EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
 from th2_grpc_common.common_pb2 import ComparisonSettings
 from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
+from decimal import Decimal
 
 
 def __find_closest_workday(from_date: date, is_weekend_holiday: bool) -> date:
@@ -414,3 +415,97 @@ def create_checkpoint_request(event_id: EventID, description: str = "Checkpoint"
             create_checkpoint_request (CheckpointRequest): grpc request with checkpoint
     """
     return CheckpointRequest(description=description, parent_event_id=event_id)
+
+
+def wrap_message(content, message_type=None, session_alias=None, direction=Direction.Value("SECOND")):
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if isinstance(value, str):
+                fields[tag] = Value(simple_value=value)
+            elif isinstance(value, (int, float, Decimal)):
+                fields[tag] = Value(simple_value=str(value))
+            elif isinstance(value, dict):
+                fields[tag] = Value(message_value=wrap_message(content=value))
+            elif isinstance(value, list):
+                fields[tag] = Value(list_value=wrap_message(content=value))
+        message = Message(fields=fields)
+        if message_type is not None:
+            message.metadata.message_type = message_type
+            message.metadata.id.direction = direction
+            if session_alias is not None:
+                message.metadata.id.connection_id.session_alias = session_alias
+        return message
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(Value(simple_value=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(Value(simple_value=str(element)))
+            elif isinstance(element, dict):
+                values.append(Value(message_value=wrap_message(content=element)))
+            elif isinstance(element, list):
+                values.append(Value(list_value=wrap_message(content=element)))
+        list_value = ListValue(values=values)
+        return list_value
+
+
+def wrap_filter(content, message_type=None, key_fields=None):
+    if key_fields is None:
+        key_fields = []
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if value == "*":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("NOT_EMPTY"))
+            elif value == "#":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("EMPTY"))
+            else:
+                if isinstance(value, str):
+                    fields[tag] = ValueFilter(simple_filter=value)
+                elif isinstance(value, (int, float, Decimal)):
+                    fields[tag] = ValueFilter(simple_filter=str(value))
+                elif isinstance(value, dict):
+                    fields[tag] = ValueFilter(message_filter=wrap_filter(content=value, key_fields=key_fields))
+                elif isinstance(value, list):
+                    fields[tag] = ValueFilter(list_filter=wrap_filter(content=value, key_fields=key_fields))
+                if tag in key_fields:
+                    fields[tag].key = True
+        msg_filter = MessageFilter(fields=fields)
+        if message_type is not None:
+            msg_filter.messageType = message_type
+        return msg_filter
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(ValueFilter(simple_filter=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(ValueFilter(simple_filter=str(element)))
+            elif isinstance(element, dict):
+                values.append(ValueFilter(message_filter=wrap_filter(content=element, key_fields=key_fields)))
+            elif isinstance(element, list):
+                values.append(ValueFilter(list_filter=wrap_filter(content=element, key_fields=key_fields)))
+        list_filter = ListValueFilter(values=values)
+        return list_filter
+
+
+def get_message_by_field_and_value(content, field: str, value: str, matched_list=None) -> list:
+    if matched_list is None:
+        matched_list = []
+    if isinstance(content, Message):
+        for f, v in content.fields.items():
+            if f == field and v.simple_value == value:
+                matched_list.append(content)
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    elif isinstance(content, ListValue):
+        for v in content.values:
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    return matched_list[0] if len(matched_list) > 0 else []

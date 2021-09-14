@@ -206,7 +206,7 @@ class TestCase:
             ]
         }
         self.api.sendMessage(
-            request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyVenue', modify_params, 'rest_wa303'),
+            request=SubmitMessageRequest(message=bca.wrap_message(modify_params, 'ModifyVenue', 'rest_wa303'),
                                          parent_event_id=self.case_id))
 
         modify_venue_params = {
@@ -223,10 +223,10 @@ class TestCase:
         }
         nos_response = self.api.sendMessage(
             request=SubmitMessageRequest(
-                message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa303'),
+                message=bca.wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa303'),
                 parent_event_id=self.case_id)
         )
-        # print(bca.message_to_grpc('ModifyVenueStatus', modify_venue_params,'rest_wa303'))
+        # print(wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa303'))
 
     # FE open method
     def prepare_frontend(self):

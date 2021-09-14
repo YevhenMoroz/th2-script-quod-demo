@@ -198,17 +198,16 @@ def execute(report_id):
                 case_id
             )
         )
-
+        del pending_er_params['Account']
         new_er_params = deepcopy(pending_er_params)
         new_er_params['OrdStatus'] = new_er_params['ExecType'] = '0'
         new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
         new_er_params['NoStrategyParameters'] = '*'
         new_er_params['ExecID'] = '*'
-        new_er_params['Instrument'] = {
-            'Symbol': case_params['Instrument']['Symbol'],
-            'SecurityExchange': case_params['Instrument']['SecurityExchange']
-        }
         new_er_params['ExecRestatementReason'] = '4'
+        new_er_params['SecondaryAlgoPolicyID'] = 'QA_SORPING'
+        new_er_params['Instrument'] = case_params['Instrument']
+        new_er_params['SettlDate'] = "*"
         verifier.submitCheckRule(
             bca.create_check_rule(
                 "ER New NewOrderSingle Received",
@@ -228,12 +227,14 @@ def execute(report_id):
         }
 
         nos_bs_params = {
+            'ShortCode': '*',
             'Account': case_params['Account'],
             'HandlInst': '1',
             'Side': case_params['Side'],
             'TimeInForce': case_params['TimeInForce'],
             'OrdType': case_params['OrdType'],
             'OrderCapacity': 'A',
+            'SettlDate': "*",
             'Currency': 'EUR',
             'OrderQty': case_params['OrderQty'],
             'Price': case_params['Price'],
@@ -267,7 +268,7 @@ def execute(report_id):
             'OrderQty': nos_bs_params['OrderQty'],
             'OrdType': case_params['OrdType'],
             'Side': case_params['Side'],
-            # 'LastPx': '0',
+            'Price': case_params['Price'],
             'AvgPx': '0',
             'OrdStatus': '0',
             'ExecType': '0',
@@ -310,32 +311,22 @@ def execute(report_id):
                 bca.message_to_grpc('OrderCancelReplaceRequest', replace_order_params, case_params['TraderConnectivity'])
             ))
         checkpoint2 = replace_order.checkpoint_id
+        del new_er_params['Instrument']
         replacement_er_params = {
-            **reusable_params,
+            **new_er_params,
             'ClOrdID': replace_order_params['ClOrdID'],
             'OrigClOrdID': new_order_single_params['ClOrdID'],
             'OrderID': pending_er_params['OrderID'],
             'ExecID': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'LastQty': '0',
-            'QtyType': '0',
-            'AvgPx': '0',
-            'OrdStatus': '0',
             'ExecType': '5',
-            'LeavesQty': case_params['OrderQty'],
-            'Instrument': {
-                'Symbol': case_params['Instrument']['Symbol'],
-                'SecurityExchange': case_params['Instrument']['SecurityExchange']
-            },
+            'Instrument': case_params['Instrument'],
             'ExecRestatementReason': '4',
             'Price': case_params['NewPrice'],
-            'OrderQty': case_params['OrderQty'],
-            'NoParty': '*',
+            'OrderQty': replace_order_params['OrderQty'],
+            'LeavesQty': replace_order_params['OrderQty'],
             'TransactTime': '*',
             'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID'],
             'NoStrategyParameters': new_er_params['NoStrategyParameters'],
-            'TargetStrategy': case_params['TargetStrategy']
         }
 
         logger.debug("Verify received Execution Report (OrdStatus = New, ExecType = Replaced)")
@@ -349,6 +340,7 @@ def execute(report_id):
             )
         )
         bs_cancel_replace_order_params = {
+            'ShortCode': '*',
             'Account': case_params['Account'],
             'Instrument': instrument_bs,
             'ClOrdID': '*',
@@ -412,7 +404,11 @@ def execute(report_id):
             'TransactTime': '*',
             'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
             'Instrument': instrument_bs,
-            'ExDestination': 'XPAR'
+            'ExDestination': 'XPAR',
+            'IClOrdIdCO': nos_bs_params['IClOrdIdCO'],
+            'IClOrdIdTO': nos_bs_params['IClOrdIdTO'],
+            'SettlDate': "*",
+            'ShortCode': '*'
 
         }
 
@@ -435,6 +431,7 @@ def execute(report_id):
             'OrderQty': replace_nos_bs_params['OrderQty'],
             'OrdType': case_params['OrdType'],
             'Side': case_params['Side'],
+            'Price': case_params['NewPrice'],
             # 'LastPx': '0',
             'AvgPx': '0',
             'OrdStatus': '0',
@@ -457,7 +454,7 @@ def execute(report_id):
 
         cancel_order_params = {
             'OrigClOrdID': new_order_single_params['ClOrdID'],
-            'ClOrdID': (new_order_single_params['ClOrdID']),
+            'ClOrdID': bca.client_orderid(9),
             'Instrument': new_order_single_params['Instrument'],
             'ExDestination': 'QDL1',
             'Side': case_params['Side'],
@@ -475,30 +472,16 @@ def execute(report_id):
             ))
 
         cancellation_er_params = {
-            **reusable_params,
-            'Instrument': {
-                'Symbol': case_params['Instrument']['Symbol'],
-                'SecurityExchange': case_params['Instrument']['SecurityExchange']
-            },
+            **replacement_er_params,
             'ClOrdID': cancel_order_params['ClOrdID'],
-            'OrderID': pending_er_params['OrderID'],
             'OrderQty': replace_order_params['OrderQty'],
             'Price': replace_order_params['Price'],
-            'TransactTime': '*',
-            'ExecID': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'LastQty': '0',
-            'QtyType': '0',
-            'AvgPx': '0',
             'OrdStatus': '4',
             'ExecType': '4',
             'LeavesQty': '0',
+            'Text': cancel_order_params['Text'],
+            'OrigClOrdID': replacement_er_params['OrigClOrdID'],
             'ExecRestatementReason': '4',
-            'NoParty': '*',
-            'NoStrategyParameters': new_er_params['NoStrategyParameters'],
-            'TargetStrategy': case_params['TargetStrategy'],
-            'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID']
         }
 
         verifier.submitCheckRule(
@@ -513,6 +496,7 @@ def execute(report_id):
 
         bs_cancel_order_params = {
             'Account': case_params['Account'],
+            'ShortCode': '*',
             'Instrument': instrument_bs,
             'ClOrdID': '*',
             'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
@@ -523,7 +507,8 @@ def execute(report_id):
             'TransactTime': '*',
             'OrderQty': replace_order_params['OrderQty'],
             'ChildOrderID': '*',
-            # 'ExDestination': new_order_single_params['ExDestination']
+            'OrigClOrdID': '*',
+            'ExDestination': replace_nos_bs_params['ExDestination']
         }
         verifier.submitCheckRule(
             bca.create_check_rule(
@@ -535,15 +520,6 @@ def execute(report_id):
             )
         )
 
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                'Cancellation ER Received',
-                bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
-                cancel_order.checkpoint_id,
-                case_params['TraderConnectivity'],
-                case_id
-            )
-        )
 
         pre_filter_sim_params = {
             'header': {
