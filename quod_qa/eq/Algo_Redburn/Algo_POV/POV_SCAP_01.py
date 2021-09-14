@@ -22,7 +22,7 @@ def execute(report_id):
             'ClOrdID': bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 100000,
+            'OrderQty': 400000,
             'TimeInForce': 0,
             'Price': 198,
             'OrdType': 2,
