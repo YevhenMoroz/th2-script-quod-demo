@@ -36,9 +36,10 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
                 'ParticipateInClosingAuctions': 'Y',
-                'MaxParticipationOpen': '5',
-                'MaxParticipationClose': '1',
-                'MaxPercentageVolume': '10'
+                'MaxParticipationOpen': '10',
+                'MaxParticipationClose': '10',
+                'MaxPercentageVolume': '10',
+                'SaveForClosePercentage': '80'
             }
         }
 
