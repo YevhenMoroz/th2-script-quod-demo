@@ -177,6 +177,142 @@ def run_test_case():
         )
     )
 
+    amend_params = {
+        'Side': new_order_params['Side'],
+        'Account': new_order_params['Account'],
+        'OrderQty': 1500,
+        'ClOrdID': new_order_params['ClOrdID'],
+        'Instrument': new_order_params['Instrument'],
+        'HandlInst': new_order_params['HandlInst'],
+        'TransactTime': datetime.utcnow().isoformat(),
+        'OrigClOrdID': new_order_params['ClOrdID'],
+        'OrdType': '2'
+    }
+
+    rule_amend = rule_manager.add_OCRR(buy_side_conn)
+    amend_order = Stubs.fix_act.placeOrderCancelFIX(
+        request=convert_to_request("Send amend order", sell_side_conn, case_id,
+                                   wrap_message(amend_params, "OrderCancelReplaceRequest", sell_side_conn)))
+
+    checkpoint_3 = amend_order.checkpoint_id
+
+    amend_er_params = {
+        'ExecID': '*',
+        'OrderQty': amend_params['OrderQty'],
+        'LastQty': '0',
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': new_order_params['Side'],
+        'AvgPx': '0',
+        'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID'],
+        'OrdStatus': '0',
+        'SettlDate': new_er_params['SettlDate'],
+        'Currency': 'EUR',
+        'TimeInForce': '0',
+        'ExecType': '5',
+        'HandlInst': new_order_params['HandlInst'],
+        'LeavesQty': amend_params['OrderQty'],
+        'NoParty': pending_er_params['NoParty'],
+        'CumQty': '0',
+        'LastPx': '0',
+        'OrdType': '2',
+        'ClOrdID': new_order_params['ClOrdID'],
+        'QtyType': '0',
+        'ExecRestatementReason': '4',
+        'Price': '20',
+        'TargetStrategy': new_order_params['TargetStrategy'],
+        'Instrument': new_order_params['Instrument'],
+        'OrigClOrdID': new_order_params['ClOrdID']
+
+    }
+
+    message_filters_amend_order = [
+        filter_to_grpc("ExecutionReport", amend_er_params)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check sell side",
+            prefilter=pre_filter,
+            msg_filters=message_filters_amend_order,
+            checkpoint=checkpoint_3,
+            connectivity=sell_side_conn,
+            event_id=case_id,
+            timeout=2000
+
+        )
+    )
+
+    amend_params_buy = {
+        'Side': '2',
+        'Account': 'KEPLER',
+        'OrderQty': amend_params['OrderQty'],
+        'ClOrdID': '*',
+        'Instrument': instrument_2,
+        'OrderID': '*',
+        'TransactTime': '*',
+        'ExDestination': 'XPAR',
+        'ChildOrderID': '*',
+        'OrigClOrdID': '*',
+        'OrdType': '2',
+        'OrderCapacity': 'A',
+        'Price': 20,
+        'TimeInForce': '0',
+        'HandlInst': '1',
+        'Currency': 'EUR'
+    }
+
+    message_filters_amend_buy = [
+        filter_to_grpc('OrderCancelReplaceRequest', amend_params_buy)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side",
+            prefilter=pre_filter,
+            msg_filters=message_filters_amend_buy,
+            checkpoint=checkpoint_3,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            timeout=2000
+
+        )
+    )
+
+    amend_params_buy_er = {
+        'CumQty': '0',
+        'ExecID': '*',
+        'OrderQty': amend_params['OrderQty'],
+        'OrdType': '2',
+        'ClOrdID': '*',
+        'Text': "OCRRRule",
+        'OrderID': '*',
+        'TransactTime': '*',
+        'Side': amend_er_params['Side'],
+        'AvgPx': '0',
+        'OrdStatus': '0',
+        'Price': 20,
+        'TimeInForce': '0',
+        'ExecType': amend_er_params['ExecType'],
+        'LeavesQty': amend_params['OrderQty'],
+        'OrigClOrdID': '*'
+    }
+
+    message_filters_amend_buy_er = [
+        filter_to_grpc('ExecutionReport', amend_params_buy_er)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check ExecutionReport",
+            prefilter=pre_filter,
+            msg_filters=message_filters_amend_buy_er,
+            checkpoint=checkpoint_3,
+            connectivity=buy_side_conn,
+            event_id=case_id,
+            direction=Direction.Value("SECOND"),
+            timeout=2000
+
+        )
+    )
+
     cancel_params = {
         'Side': new_order_params['Side'],
         'ClOrdID': new_order_params['ClOrdID'],
@@ -194,7 +330,7 @@ def run_test_case():
 
     cancel_er_params = {
         'ExecID': '*',
-        'OrderQty': new_order_params['OrderQty'],
+        'OrderQty': amend_params['OrderQty'],
         'LastQty': '0',
         'OrderID': '*',
         'TransactTime': '*',
@@ -213,7 +349,6 @@ def run_test_case():
         'LastPx': '0',
         'OrdType': '2',
         'ClOrdID': new_order_params['ClOrdID'],
-        'OrderCapacity': 'A',
         'QtyType': '0',
         'ExecRestatementReason': '4',
         'Price': '20',
@@ -241,7 +376,7 @@ def run_test_case():
     cancel_params_buy = {
         'Side': '2',
         'Account': 'KEPLER',
-        'OrderQty': '150',
+        'OrderQty': amend_params['OrderQty'],
         'ClOrdID': '*',
         'Instrument': instrument_2,
         'OrderID': '*',
@@ -270,7 +405,7 @@ def run_test_case():
     cancel_params_buy_er = {
         'CumQty': '0',
         'ExecID': '*',
-        'OrderQty': '150',
+        'OrderQty': amend_params['OrderQty'],
         'ClOrdID': '*',
         'Text': "sim work",
         'OrderID': '*',
@@ -301,6 +436,9 @@ def run_test_case():
     )
 
     rule_manager.remove_rule(rule)
+    print(f"Case {case_name} was executed")
+
+    rule_manager.remove_rule(rule_amend)
     print(f"Case {case_name} was executed")
 
     rule_manager.remove_rule(rule_cancel)
