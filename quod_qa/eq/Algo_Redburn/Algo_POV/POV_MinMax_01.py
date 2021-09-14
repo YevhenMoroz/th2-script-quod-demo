@@ -32,7 +32,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'POV-MinP_01',
+            'Text': 'POV-MinMax_01',
             'QuodFlatParameters': {
                 'MinParticipation': '14',
                 'MaxPercentageVolume': '15'
