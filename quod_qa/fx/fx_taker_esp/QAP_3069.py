@@ -89,7 +89,7 @@ def execute(report_id, session_id):
     curr_usd = "USD"
     tenor = "Spot"
     algo = "Quod TWAP"
-    strategy = "308TWAP"
+    strategy = "Default"
     child_strategy = "Hedging_Test"
 
     try:

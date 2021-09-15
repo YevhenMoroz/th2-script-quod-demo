@@ -25,7 +25,7 @@ def chek_date(base_request, service, case_id, date):
     extract_value = ExtractRatesTileDataRequest(base_request)
     extraction_id = bca.client_orderid(4)
     extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_tenor("ratesTile.TenorDate")
+    extract_value.extract_tenor_date("ratesTile.TenorDate")
     response = call(service.extractRatesTileValues, extract_value.build())
 
     extracted_date = response["ratesTile.TenorDate"]

@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382
+from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_2296, QAP_2101
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4061
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689
 from MyFiles import MyTest, SendMD, Test, StringThing
@@ -31,23 +31,23 @@ def rule_destroyer(list_rules):
             rule_manager.remove_rule(rule)
 
 
+def rule_check():
+    rm = RuleManager()
+    rm.print_active_rules()
+    rm.print_active_rules_sim_test()
+
+
 def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('aleksey tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-
     session_id = set_session_id()
     # rules = rule_creation()
     start = datetime.now()
     print(f'start time = {start}')
+    # rule_check()
     try:
-        case_params = {
-            'case_id': bca.create_event_id(),
-            'TraderConnectivity': 'fix-ss-rfq-314-luna-standard',
-            'Account': 'Iridium1',
-            'SenderCompID': 'QUODFX_UAT',
-            'TargetCompID': 'QUOD9',
-        }
+        pass
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
@@ -79,13 +79,14 @@ def test_run():
         # QAP_2382.execute(report_id)
         # QAP_3661.execute(report_id, session_id)
         # QAP_4061.execute(report_id, session_id)
-
+        # QAP_2296.execute(report_id, session_id)
+        QAP_2101.execute(report_id, session_id)
         # region my test files
         # SendMD.execute(report_id)
         # Test.execute(report_id)
         # ui_tests.execute(report_id, session_id)
         # StringThing.execute()
-        MyTest.execute(report_id, session_id)
+        # MyTest.execute(report_id, session_id)
         # endregion
     except Exception:
         logging.error("Error execution", exc_info=True)
