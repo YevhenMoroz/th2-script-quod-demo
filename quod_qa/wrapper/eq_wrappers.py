@@ -973,6 +973,24 @@ def release_order(base_request, filter=None):
         basic_custom_actions.create_event('Fail release_order', status="FAIL")
 
 
+def mass_execution_summary_at_average_price(base_request, count: int):
+    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
+    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+
+
+def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
+    disclose_flag_details = DiscloseFlagDetails(base_request=request)
+    if type_disclose is None:
+        disclose_flag_details.disable()
+    if type_disclose is False:
+        disclose_flag_details.real_time()
+    if type_disclose is True:
+        disclose_flag_details.manual()
+    disclose_flag_details.set_row_numbers(row_numbers)
+    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
+
+
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
     order_book_service = Stubs.win_act_order_book
@@ -1094,29 +1112,16 @@ def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [ba
     call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
 
 
-def mass_execution_summary_at_average_price(base_request, count: int):
-    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
-    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
-    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
-
-
-def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
-    disclose_flag_details = DiscloseFlagDetails(base_request=request)
-    if type_disclose is None:
-        disclose_flag_details.disable()
-    if type_disclose is False:
-        disclose_flag_details.real_time()
-    if type_disclose is True:
-        disclose_flag_details.manual()
-    disclose_flag_details.set_row_numbers(row_numbers)
-    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
-
-
-def complete_basket(base_request, filter_list):
+def complete_basket(base_request, filter_list=None):
     request = SimpleRequest(base_request, filter_list)
     call(Stubs.win_act_basket_order_book.complete, request)
 
 
-def un_complete(base_request, filter_list):
+def un_complete(base_request, filter_list=None):
     request = SimpleRequest(base_request, filter_list)
     call(Stubs.win_act_basket_order_book.uncomplete, request)
+
+
+def book_basket(request, filter_list=None):
+    request = SimpleRequest(request, filter_list)
+    call(Stubs.win_act_basket_order_book.book, request.build())
