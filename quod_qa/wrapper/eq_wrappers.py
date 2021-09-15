@@ -1038,8 +1038,8 @@ def remove_basket_template(request, name):
     call(Stubs.win_act_basket_ticket.removeTemplate, simple_request.build())
 
 
-def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
-                       capacity=None, stop_price=None):
+def basket_row_details(row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
+                       price=None, capacity=None, stop_price=None):
     if not remove_row:
         params = {}
         if symbol is not None:
@@ -1062,7 +1062,7 @@ def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None
     return result
 
 
-def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
+def create_basket_via_import(request, basket_name, basket_template_name, path, client, expire_date=None, tif=None,
                              is_csv=False, amend_rows_details: [basket_row_details] = None):
     if is_csv:
         file_type = 1

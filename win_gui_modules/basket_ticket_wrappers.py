@@ -138,7 +138,8 @@ class FileDetails:
 class RowDetails:
     def __init__(self, filtration_value: str = None, delete_row: bool = None, values: dict = None):
         self._request = basket_ticket_pb2.RowDetails()
-        self._request.filtrationValue = filtration_value
+        if filtration_value is not None:
+            self._request.filtrationValue = filtration_value
         self._request.deleteRow = delete_row
         if values is not None:
             self._request.values.update(values)
