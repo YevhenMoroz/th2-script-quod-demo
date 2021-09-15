@@ -152,4 +152,4 @@ def run_test_case():
 
 if __name__ == '__main__':
     run_test_case()
-    Stubs.factory.close()                
+    Stubs.factory.close()
