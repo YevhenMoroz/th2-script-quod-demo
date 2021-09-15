@@ -43,7 +43,7 @@ def run_test_case():
         'TargetStrategy': '1011'
     }
 
-    symbol_1 = "1411"
+    symbol_1 = "571"
 
     params_1 = {
         'MDReportID': '1',
