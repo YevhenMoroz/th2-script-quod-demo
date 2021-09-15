@@ -13,7 +13,7 @@ def run_test_case():
     case_name = "panyushkin_trade"
     sell_side_conn = "gtwquod3"
     buy_side_conn_1 = "fix-bs-eq-paris"
-    buy_side_conn_2 = "fix-bs-eq-paris"
+    buy_side_conn_2 = "fix-fh-eq-paris"
     rule_manager = RuleManager()
     simulator = Stubs.simulator
 
