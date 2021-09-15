@@ -1,5 +1,5 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation, SimpleRequest
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
     ReassignOrderDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
 
@@ -15,8 +15,8 @@ from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -983,46 +983,59 @@ def add_to_basket(request, list_row_numbers: [], basket_name=""):
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_policy='Care', symbol_source='ISIN',
-                        has_header=True, templ: {} = None):
-    if templ is None:
-        templ = {'Symbol': ['1', 'FR0004186856'], 'Quantity': ['2', '0'], 'Price': ['3', '0'],
-                 'Account': ['4', 'CLIENT_FIX_CARE_SA1'], 'Side': ['5', 'Buy'], 'OrdType': ['6', 'Limit'],
-                 'StopPrice': ['7', '0'], 'Capacity': ['8', 'Agency']}
-
-    fields_details = [
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
-                                        templ.get('Symbol')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
-                                        templ.get('Quantity')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
-                                        templ.get('Price')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
-                                        templ.get('Side')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
-                                        templ.get('OrdType')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
-                                        templ.get('StopPrice')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
-                                        templ.get('Account')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
-                                        templ.get('Capacity')[1]).build()
-    ]
-    details = ImportedFileMappingDetails(has_header, fields_details).build()
+def add_basket_template(request, templ_name, descrip=None, client=None, tif=None, exec_policy=None,
+                        symbol_source=None, has_header=True, templ: {} = None):
     templates_details = TemplatesDetails()
+    if templ is not None:
+        fields_details = [
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
+                                            templ.get('Symbol')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
+                                            templ.get('Quantity')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
+                                            templ.get('Price')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
+                                            templ.get('Side')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
+                                            templ.get('OrdType')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
+                                            templ.get('StopPrice')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
+                                            templ.get('Account')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
+                                            templ.get('Capacity')[1]).build()
+        ]
+        details = ImportedFileMappingDetails(has_header, fields_details).build()
+        templates_details.set_imported_file_mapping_details(details)
     templates_details.set_default_params(request)
     templates_details.set_name_value(templ_name)
-    templates_details.set_exec_policy(exec_policy)
-    templates_details.set_default_client(client)
-    templates_details.set_description(descrip)
-    templates_details.set_symbol_source(symbol_source)
-    templates_details.set_time_in_force(tif)
-    templates_details.set_imported_file_mapping_details(details)
+    if exec_policy is not None:
+        templates_details.set_exec_policy(exec_policy)
+    if client is not None:
+        templates_details.set_default_client(client)
+    if descrip is not None:
+        templates_details.set_description(descrip)
+    if symbol_source is not None:
+        templates_details.set_symbol_source(symbol_source)
+    if tif is not None:
+        templates_details.set_time_in_force(tif)
     try:
         call(Stubs.win_act_basket_ticket.manageTemplates, templates_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
+
+
+def get_basket_template_details(request, templ_name, column_names: []):
+    extract_template_details = ExtractTemplateDetails(request, {'Name': templ_name}, column_names)
+    basket_ticket_service = Stubs.win_act_basket_ticket
+    result = call(basket_ticket_service.extractTemplateData, extract_template_details.build())
+    return result
+
+
+def remove_basket_template(request, name):
+    simple_request = SimpleRequest(request, {'Name': name})
+    call(Stubs.win_act_basket_ticket.removeTemplate, simple_request.build())
 
 
 def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
