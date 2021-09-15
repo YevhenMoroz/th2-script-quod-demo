@@ -73,14 +73,14 @@ def run_test_case():
                                    wrap_message(params_1, "MarketDataSnapshotFullRefresh", buy_side_conn_2)))
 
 
-        trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
+    trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
         no_party_ids=[
             TemplateNoPartyIDs(party_id="KEPLER", party_id_source="D", party_role="1"),
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        cum_qty=int(case_params['OrderQty'] / 2),
+        cum_qty=int(new_order_params['OrderQty'] / 2),
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={500: 0},
         md_entry_px={30: 25},
