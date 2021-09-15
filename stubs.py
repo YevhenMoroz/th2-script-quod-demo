@@ -13,13 +13,13 @@ from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.middle_office_service import MiddleOfficeOperationsService
 # from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceService
-from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceService
+#from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceService
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
-from th2_grpc_act_gui_quod.trades_service import TradesServiceService
+#from th2_grpc_act_gui_quod.trades_service import TradesServiceService
 from th2_grpc_act_quod.act_fix_service import ActFixService
-from th2_grpc_act_rest_quod.rest_act_service import RestActService
+#from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
@@ -32,8 +32,8 @@ from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperation
 
 # from th2_grpc_sim_http.sim_template_service import SimTemplateService
 from th2_grpc_sim_http.sim_template_service import SimTemplateService
-from th2_grpc_act_rest_quod.rest_act_service import RestActService
-from th2_grpc_act_java_api_quod.act_service import ActService
+#from th2_grpc_act_rest_quod.rest_act_service import RestActService
+#from th2_grpc_act_java_api_quod.act_service import ActService
 
 from th2_grpc_sim_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
@@ -62,9 +62,9 @@ class Stubs:
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)
     # win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
-    win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
-    win_act_trades = factory.grpc_router.get_service(TradesServiceService)
-    win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
+    #win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
+    #win_act_trades = factory.grpc_router.get_service(TradesServiceService)
+    #win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
     win_act_order_ticket = factory.grpc_router.get_service(OrderTicketServiceService)
     win_act_order_ticket_fx = factory.grpc_router.get_service(OrderTicketFxServiceService)
     win_act_aggregated_rates_service = factory.grpc_router.get_service(AggregatedRatesOperationsService)
