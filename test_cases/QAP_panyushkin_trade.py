@@ -54,13 +54,13 @@ def run_test_case():
             'NoMDEntries': [
                 {
                     'MDEntryType': '0',
-                    'MDEntryPX': '12',
+                    'MDEntryPX': '10',
                     'MDEntrySize': '500',
                     'MDEntryPositionNo': '1'
                 },
                 {
                     'MDEntryType': '1',
-                    'MDEntryPX': '14',
+                    'MDEntryPX': '15',
                     'MDEntrySize': '600',
                     'MDEntryPositionNo': '1'
                 }
@@ -72,8 +72,6 @@ def run_test_case():
         request=convert_to_request("Send MarketDataSnapshotFullRefresh", buy_side_conn_2, case_id,
                                    wrap_message(params_1, "MarketDataSnapshotFullRefresh", buy_side_conn_2)))
 
-    # entry_size = {20:50}
-    # entry_price = {14:12}
 
     trade_rule_1 = simulator.createQuodSingleExecRule(request=TemplateQuodSingleExecRule(
         connection_id=ConnectionID(session_alias="fix-bs-eq-paris"),
