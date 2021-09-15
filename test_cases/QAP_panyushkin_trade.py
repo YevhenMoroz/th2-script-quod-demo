@@ -55,13 +55,13 @@ def run_test_case():
                 {
                     'MDEntryType': '0',
                     'MDEntryPX': '12',
-                    'MDEntrySize': '50',
+                    'MDEntrySize': '500',
                     'MDEntryPositionNo': '1'
                 },
                 {
                     'MDEntryType': '1',
                     'MDEntryPX': '14',
-                    'MDEntrySize': '60',
+                    'MDEntrySize': '600',
                     'MDEntryPositionNo': '1'
                 }
             ]
