@@ -24,7 +24,7 @@ def execute(report_id):
             'Side': 1,
             'OrderQty': 10000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 120,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -34,7 +34,7 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'TWAP-WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '99',
+                'TriggerPriceRed': '115.8',
             }
         }
 
