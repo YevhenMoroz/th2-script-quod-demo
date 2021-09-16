@@ -35,7 +35,8 @@ def execute(report_id):
             'Text': 'POV-MinMax_01',
             'QuodFlatParameters': {
                 'MinParticipation': '14',
-                'MaxPercentageVolume': '15'
+                'MaxPercentageVolume': '15',
+                'ExcludePricePoint2': '1'
             }
         }
 

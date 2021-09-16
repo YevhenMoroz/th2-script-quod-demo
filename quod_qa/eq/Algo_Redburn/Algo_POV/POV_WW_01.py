@@ -34,8 +34,9 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'POV-WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '200',
-                'MaxPercentageVolume': '5'
+                'TriggerPriceRed': '116',
+                'MaxPercentageVolume': '5',
+                'ExcludePricePoint2': '1'
             }
         }
 
