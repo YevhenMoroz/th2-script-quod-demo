@@ -54,14 +54,14 @@ def run_test_case():
             'NoMDEntries': [
                 {
                     'MDEntryType': '0',
-                    'MDEntryPX': '10',
+                    'MDEntryPX': '25',
                     'MDEntrySize': '500',
                     'MDEntryPositionNo': '1'
                 },
                 {
                     'MDEntryType': '1',
-                    'MDEntryPX': '15',
-                    'MDEntrySize': '600',
+                    'MDEntryPX': '30',
+                    'MDEntrySize': '500',
                     'MDEntryPositionNo': '1'
                 }
             ]
@@ -80,9 +80,9 @@ def run_test_case():
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        cum_qty=int(new_order_params['OrderQty'] / 2),
+        cum_qty= 500,
         mask_as_connectivity="fix-fh-eq-paris",
-        md_entry_size={500: 0},
+        md_entry_size={500: 500},
         md_entry_px={30: 25},
         symbol={"XPAR": symbol_1}
     ))
