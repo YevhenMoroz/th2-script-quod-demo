@@ -32,9 +32,9 @@ def execute():
         'Account': 'KEPLER',
         'HandlInst': '2',
         'Side': '2',
-        'OrderQty': 200,
+        'OrderQty': '200',
         'TimeInForce': '0',
-        'Price': 20,
+        'Price': '10',
         'OrdType': '2',
         'ClOrdID': client_orderid(9),
         'TransactTime': datetime.utcnow().isoformat(),
@@ -51,7 +51,7 @@ def execute():
         'MDReportID': 1,
         'MDReqID': rule_manager.get_MDReqID(symbol, mask_conn),
         'Instrument': {'Symbol': symbol},
-        'NoMDEntries':[
+        'NoMDEntries': [
             {
                 'MDEntryType': 0,
                 'MDEntryPX': 15,
@@ -75,18 +75,18 @@ def execute():
     cum_qty = 200
     entry_size = {200: 200}
     entry_price = {20: 15}
-    trade_rule = rule_manager.add_SingleExec(party_id=no_party_ids,
-                                             cum_qty=cum_qty,
-                                             md_entry_size=entry_size,
-                                             md_entry_px=entry_price,
-                                             symbol={'XPAR':symbol},
-                                             session=buy_side_conn,
-                                             mask_as_connectivity=mask_conn)
     act.sendMessage(
         request=convert_to_request("Send Market Data", mask_conn, case_id,
                                    wrap_message(mdr_params, "MarketDataSnapShot", mask_conn))
     )
-    new_order = Stubs.fix_act.placeOrderFIX(
+    trade_rule = rule_manager.add_SingleExec(party_id=no_party_ids,
+                                             cum_qty=cum_qty,
+                                             md_entry_size=entry_size,
+                                             md_entry_px=entry_price,
+                                             symbol={'XPAR': symbol},
+                                             session=buy_side_conn,
+                                             mask_as_connectivity=mask_conn)
+    act.placeOrderFIX(
         request=convert_to_request("Send new order", sell_side_conn, case_id,
                                    wrap_message(new_order_params, "NewOrderSingle", sell_side_conn))
     )
