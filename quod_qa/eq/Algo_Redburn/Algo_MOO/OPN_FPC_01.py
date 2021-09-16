@@ -32,9 +32,9 @@ def execute(report_id):
         'Text': 'OPN_FPC_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'PricePoint1Price': '200',
+            'PricePoint1Price': '117',
             'PricePoint1Participation': '12',
-            'PricePoint2Price': '202',
+            'PricePoint2Price': '116',
             'PricePoint2Participation': '14',
         }
     }
