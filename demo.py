@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCO_01, CLO_VO_01, CLO_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01
 from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCA_01, OPN_VO_01, OPN_WW_01
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_BA_01, POV_WW_01, POV_NAV_01, POV_NAV_02, POV_AUC_01, POV_MinMax_01, \
     POV_SCAP_01
@@ -32,41 +33,48 @@ def test_run():
     report_id = bca.create_event('srublyov tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # TWAP_BA_01.execute(report_id)
-        # TWAP_WW_01.execute(report_id)
-        # TWAP_NAV_01.execute(report_id)
-        # TWAP_NAV_02.execute(report_id)
-        # TWAP_AUC_01.execute(report_id)
-        # TWAP_MinP_01.execute(report_id)
-        # TWAP_MaxP_01.execute(report_id)
-        #
-        # VWAP_BA_01.execute(report_id)
-        # VWAP_WW_01.execute(report_id)
-        # VWAP_NAV_01.execute(report_id)
-        # VWAP_NAV_02.execute(report_id)
-        # VWAP_AUC_01.execute(report_id)
-        # VWAP_MinP_01.execute(report_id)
-        # VWAP_MaxP_01.execute(report_id)
-        #
-        # POV_BA_01.execute(report_id)
-        # POV_WW_01.execute(report_id)
-        # POV_NAV_01.execute(report_id)
-        # POV_NAV_02.execute(report_id)
-        # POV_AUC_01.execute(report_id)
-        # POV_MinMax_01.execute(report_id)
-        # POV_SCAP_01.execute(report_id)
+        EXP_LIM_01.execute(report_id)
+        EXP_VO_01.execute(report_id)
+        EXP_WW_01.execute(report_id)
+        EXP_WW_02.execute(report_id)
+        EXP_FPC_01.execute(report_id)
+        EXP_SCO_01.execute(report_id)
 
-        # OPN_FPC_01.execute(report_id)
-        # OPN_LIM_01.execute(report_id)
-        # OPN_SCA_01.execute(report_id)
-        # OPN_VO_01.execute(report_id)
-        # OPN_WW_01.execute(report_id)
+        TWAP_BA_01.execute(report_id)
+        TWAP_WW_01.execute(report_id)
+        TWAP_NAV_01.execute(report_id)
+        TWAP_NAV_02.execute(report_id)
+        TWAP_AUC_01.execute(report_id)
+        TWAP_MinP_01.execute(report_id)
+        TWAP_MaxP_01.execute(report_id)
+
+        VWAP_BA_01.execute(report_id)
+        VWAP_WW_01.execute(report_id)
+        VWAP_NAV_01.execute(report_id)
+        VWAP_NAV_02.execute(report_id)
+        VWAP_AUC_01.execute(report_id)
+        VWAP_MinP_01.execute(report_id)
+        VWAP_MaxP_01.execute(report_id)
+
+        POV_BA_01.execute(report_id)
+        POV_WW_01.execute(report_id)
+        POV_NAV_01.execute(report_id)
+        POV_NAV_02.execute(report_id)
+        POV_AUC_01.execute(report_id)
+        POV_MinMax_01.execute(report_id)
+        POV_SCAP_01.execute(report_id)
+
+        OPN_FPC_01.execute(report_id)
+        OPN_LIM_01.execute(report_id)
+        OPN_SCA_01.execute(report_id)
+        OPN_VO_01.execute(report_id)
+        OPN_WW_01.execute(report_id)
 
         CLO_FPC_01.execute(report_id)
-        # CLO_LIM_01.execute(report_id)
-        # CLO_SCO_01.execute(report_id)
-        # CLO_VO_01.execute(report_id)
-        # CLO_WW_01.execute(report_id)
+        CLO_LIM_01.execute(report_id)
+        CLO_SCO_01.execute(report_id)
+        CLO_VO_01.execute(report_id)
+        CLO_WW_01.execute(report_id)
 
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
