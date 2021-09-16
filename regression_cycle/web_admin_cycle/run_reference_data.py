@@ -20,6 +20,9 @@ from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_75
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_759 import QAP_759
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP_760
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
 
 
 class ReferenceData:
@@ -37,6 +40,9 @@ class ReferenceData:
             # QAP_758(self.web_driver_container, self.second_lvl_id).run()
             # QAP_759(self.web_driver_container, self.second_lvl_id).run()
             # QAP_760(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_761(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_762(self.web_driver_container, self.second_lvl_id).run()
+            QAP_763(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1727(self.web_driver_container, self.second_lvl_id).run()
             #QAP_1729(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1731(self.web_driver_container, self.second_lvl_id).run()
@@ -46,7 +52,7 @@ class ReferenceData:
             # QAP_2904(self.web_driver_container, self.second_lvl_id).run()
             #QAP_2905(self.web_driver_container, self.second_lvl_id).run()
             #QAP_2971(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3136(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_3136(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3399(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
