@@ -18,16 +18,16 @@ password = Stubs.custom_config['qf_trading_fe_password']
 
 def test_run(parent_id= None):
     report_id = bca.create_event('TWAP ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
-    try:                
+    try:
         session_id = set_session_id()
         if not Stubs.frontend_is_open:
             prepare_fe(report_id, session_id, work_dir, username, password)
         else:
             get_opened_fe(report_id, session_id, work_dir)
-            
+
         QAP_2706.execute(report_id)
         QAP_2478.execute(report_id)
-        QAP_2955.execute(report_id) 
+        QAP_2955.execute(report_id)
         QAP_2977.execute(report_id)
         QAP_3032.execute(report_id)
         QAP_3117.execute(report_id)

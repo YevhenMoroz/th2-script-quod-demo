@@ -19,26 +19,28 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP-AUC_01 ' + bca.client_orderid(9),
+            'ClOrdID': 'POV-SCAO_01' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000000,
+            'OrderQty': 400000,
             'TimeInForce': 0,
-            'Price': 117,
+            'Price': 198,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Currency': "GBX",
-            'TargetStrategy': 1005,
+            'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-AUC_01',
+            'Text': 'POV-SCAO_01',
             'QuodFlatParameters': {
-                'ParticipateInOpeningAuctions': 'Y',
-                'ParticipateInClosingAuctions': 'Y',
-                'MaxParticipationOpen': '10',
-                'MaxParticipationClose': '10',
-                'SaveForClosePercentage': '80'
+                'PricePoint1Reference': 'LTP',
+                'PricePoint1Participation': '10',
+                'PricePoint2Reference': 'LTP',
+                'PricePoint2Offset': '5',
+                'PricePoint2Participation': '20',
+                'MaxPercentageVolume': '5',
+                #'ExcludePricePoint2': '1'
             }
         }
 
