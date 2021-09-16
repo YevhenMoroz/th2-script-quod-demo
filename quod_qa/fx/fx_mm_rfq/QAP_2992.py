@@ -204,7 +204,7 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params_swap)
         rfq.send_request_for_quote_swap_no_reply()
         # Step 2
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", "31000000", today)
+        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_1, today)
         check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
         assign_firs_request(case_base_request, dealer_service)
         # Step 3
