@@ -106,7 +106,7 @@ def test_run():
 
 
         # QAP_2103.execute(report_id)
-        # java_api_MDReq.TestCase().execute(report_id)
+        java_api_MDReq.TestCase().execute(report_id)
         # rfq_swap_1w_2w.execute(report_id)
         # java_api.TestCase(report_id).execute()
 
@@ -118,8 +118,9 @@ def test_run():
 
         # clone.execute(report_id)
 
-        QAP_1518.execute(report_id)
+        # QAP_1518.execute(report_id)
         # QAP_2382.execute(report_id)
+        # SendMD.execute(report_id)
 
 
         # QAP_2250.execute(report_id,session_id)
@@ -139,22 +140,25 @@ def test_run():
 
 
 
-
+        #
         # rm = RuleManager()
-        # rm.remove_rule_by_id(2)
+        # rm.print_active_rules()
+        # rm.print_active_rules_sim_test()
+
+        # rm.remove_rule_by_id(4)
+        # rm.remove_rule_by_id(5)
+
+        # rm.remove_rule_by_id(10)
+        # rm.remove_rule_by_id_test_sim(5)
+        # rm.remove_rule_by_id_test_sim(6)
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
         # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
         # rm.add_fx_md_to('fix-fh-q-314-luna')
-        # rm.print_active_rules_sim_test()
+        # rm.add_fx_md_to_test_sim('fix-fh-314-luna')
+        # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
         # # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
         # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
         # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-
-        # rm.print_active_rules()
-        #
-        # rm.remove_rule_by_id_test_sim(1)
-        # rm.print_active_rules_sim_test()
-
         # # rm.remove_rule_by_id(574)
         # rm.print_active_rules()
 
