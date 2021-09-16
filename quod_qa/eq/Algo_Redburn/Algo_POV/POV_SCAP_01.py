@@ -30,7 +30,7 @@ def execute(report_id):
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Currency': "GBX",
-            'TargetStrategy': 1015,
+            'TargetStrategy': 2,
             'ExDestination': 'XLON',
             'Text': 'POV-SCAP_01',
             'QuodFlatParameters': {
@@ -39,7 +39,7 @@ def execute(report_id):
                 'PricePoint2Price': '202',
                 'PricePoint2Participation': '20',
                 'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1'
+                #'ExcludePricePoint2': '1'
             }
         }
 
