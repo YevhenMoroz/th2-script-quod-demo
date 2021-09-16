@@ -32,41 +32,41 @@ def test_run():
     report_id = bca.create_event('srublyov tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        TWAP_BA_01.execute(report_id)
-        TWAP_WW_01.execute(report_id)
-        TWAP_NAV_01.execute(report_id)
-        TWAP_NAV_02.execute(report_id)
-        TWAP_AUC_01.execute(report_id)
-        TWAP_MinP_01.execute(report_id)
-        TWAP_MaxP_01.execute(report_id)
+        # TWAP_BA_01.execute(report_id)
+        # TWAP_WW_01.execute(report_id)
+        # TWAP_NAV_01.execute(report_id)
+        # TWAP_NAV_02.execute(report_id)
+        # TWAP_AUC_01.execute(report_id)
+        # TWAP_MinP_01.execute(report_id)
+        # TWAP_MaxP_01.execute(report_id)
+        #
+        # VWAP_BA_01.execute(report_id)
+        # VWAP_WW_01.execute(report_id)
+        # VWAP_NAV_01.execute(report_id)
+        # VWAP_NAV_02.execute(report_id)
+        # VWAP_AUC_01.execute(report_id)
+        # VWAP_MinP_01.execute(report_id)
+        # VWAP_MaxP_01.execute(report_id)
+        #
+        # POV_BA_01.execute(report_id)
+        # POV_WW_01.execute(report_id)
+        # POV_NAV_01.execute(report_id)
+        # POV_NAV_02.execute(report_id)
+        # POV_AUC_01.execute(report_id)
+        # POV_MinMax_01.execute(report_id)
+        # POV_SCAP_01.execute(report_id)
 
-        VWAP_BA_01.execute(report_id)
-        VWAP_WW_01.execute(report_id)
-        VWAP_NAV_01.execute(report_id)
-        VWAP_NAV_02.execute(report_id)
-        VWAP_AUC_01.execute(report_id)
-        VWAP_MinP_01.execute(report_id)
-        VWAP_MaxP_01.execute(report_id)
-
-        POV_BA_01.execute(report_id)
-        POV_WW_01.execute(report_id)
-        POV_NAV_01.execute(report_id)
-        POV_NAV_02.execute(report_id)
-        POV_AUC_01.execute(report_id)
-        POV_MinMax_01.execute(report_id)
-        POV_SCAP_01.execute(report_id)
-
-        OPN_FPC_01.execute(report_id)
-        OPN_LIM_01.execute(report_id)
-        OPN_SCA_01.execute(report_id)
-        OPN_VO_01.execute(report_id)
-        OPN_WW_01.execute(report_id)
+        # OPN_FPC_01.execute(report_id)
+        # OPN_LIM_01.execute(report_id)
+        # OPN_SCA_01.execute(report_id)
+        # OPN_VO_01.execute(report_id)
+        # OPN_WW_01.execute(report_id)
 
         CLO_FPC_01.execute(report_id)
-        CLO_LIM_01.execute(report_id)
-        CLO_SCO_01.execute(report_id)
-        CLO_VO_01.execute(report_id)
-        CLO_WW_01.execute(report_id)
+        # CLO_LIM_01.execute(report_id)
+        # CLO_SCO_01.execute(report_id)
+        # CLO_VO_01.execute(report_id)
+        # CLO_WW_01.execute(report_id)
 
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
@@ -257,12 +257,98 @@ def test_run():
         # QAP_3028.execute(report_id)
         # QAP_3058.execute(report_id)
         # QAP_3134.execute(report_id)
-        #endregion
-    except Exception:
-        #bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
-        logging.error("Error execution",exc_info=True)
+        # endregion
 
-if __name__ == '__main__': 
+        # new_order_single_params = {
+        #     # 'Account': "REDBURN",
+        #     # 'ClOrdID': 'CLO_FPC_01' + bca.client_orderid(9),
+        #     # 'HandlInst': 2,
+        #     # 'Side': 1,
+        #     # 'OrderQty': 10000000,
+        #     # 'TimeInForce': 0,
+        #     # 'Price': 120,
+        #     # 'OrdType': 2,
+        #     # 'TransactTime': datetime.utcnow().isoformat(),
+        #     # 'OrderCapacity': 'A',
+        #     # 'Currency': "GBX",
+        #     # 'TargetStrategy': 1015,  # MOC
+        #     # 'ExDestination': 'XLON',
+        #     # 'Text': 'CLO_FPC_01',
+        #     # 'QuodFlatParameters': {
+        #     #     'MaxParticipation': '10',
+        #     #     'PricePoint1Price': '118',
+        #     #     'PricePoint1Participation': '12',
+        #     #     'PricePoint2Price': '117',
+        #     #     'PricePoint2Participation': '14',
+        #     # },
+        #     'NoStrategyParameters': [
+        #         {
+        #             'StrategyParameterName': 'MaxParticipation',
+        #             'StrategyParameterType': '6',
+        #             'StrategyParameterValue': "12"
+        #         }
+        #     ]
+        # }
+        # message = bca.message_to_grpc('NewOrderSingle', new_order_single_params, "fix-sell-side-redburn")
+        #
+        # new_order_single_params_test = {
+        #     'Account': "REDBURN",
+        #     'ClOrdID': 'CLO_FPC_01' + bca.client_orderid(9),
+        #     'HandlInst': 2,
+        #     'Side': 1,
+        #     'OrderQtyData': {'OrderQty': 1000},
+        #     'TimeInForce': 0,
+        #     'Price': 120,
+        #     'OrdType': 2,
+        #     'TransactTime': datetime.utcnow().isoformat(),
+        #     'OrderCapacity': 'A',
+        #     'Currency': "GBX",
+        #     'TargetStrategy': 2,  # MOC
+        #     'ExDestination': 'XLON',
+        #     'Text': 'CLO_FPC_01',
+        #     'QuodFlatParameters': {
+        #         'MaxParticipation': '10',
+        #         'PricePoint1Price': '118',
+        #         'PricePoint1Participation': '12',
+        #         'PricePoint2Price': '117',
+        #         'PricePoint2Participation': '14',
+        #     },
+        #     'StrategyParametersGrp': {
+        #         'NoStrategyParameters': [
+        #             {
+        #                 'StrategyParameterName': 'StartDate',
+        #                 'StrategyParameterType': '19',
+        #                 'StrategyParameterValue': "10"
+        #             },
+        #             {
+        #                 'StrategyParameterName': 'MaxParticipation',
+        #                 'StrategyParameterType': '6',
+        #                 'StrategyParameterValue': "12"
+        #             },
+        #             {
+        #                 'StrategyParameterName': 'AuctionInitialSliceMultiplier',
+        #                 'StrategyParameterType': '6',
+        #                 'StrategyParameterValue': "13"
+        #             }
+        #         ]
+        #     }
+        # }
+        # response = Stubs.fix_act.placeOrderFIX(
+        #     request=bca.convert_to_request(
+        #         "test",
+        #         "fix-sell-317-standard-test",
+        #         report_id,
+        #         bca.message_to_grpc_test('NewOrderSingle', new_order_single_params_test, "fix-sell-317-standard-test")
+        #     ))
+        # message_test = bca.message_to_grpc_test('NewOrderSingle', new_order_single_params_test, "fix-sell-317-standard-test")
+
+        print()
+    except Exception:
+        # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
+        logging.error("Error execution", exc_info=True)
+
+
+if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
