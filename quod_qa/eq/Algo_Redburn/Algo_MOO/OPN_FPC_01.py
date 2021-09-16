@@ -21,7 +21,7 @@ def execute(report_id):
         'Side': 1,
         'OrderQty': 10000000,
         'TimeInForce': 0,
-        'Price': 120,
+        'Price': 117,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
@@ -32,9 +32,9 @@ def execute(report_id):
         'Text': 'OPN_FPC_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'PricePoint1Price': '117',
+            'PricePoint1Price': '116',
             'PricePoint1Participation': '12',
-            'PricePoint2Price': '116',
+            'PricePoint2Price': '115',
             'PricePoint2Participation': '14',
         }
     }
