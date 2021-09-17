@@ -134,8 +134,7 @@ def run_test_case():
     pre_filter_params = {'header': {'MsgType': ('0', "NOT_EQUAL")}}
     pre_filter = prefilter_to_grpc(pre_filter_params)
     message_filters_sell_side = [
-        filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus']),
-        filter_to_grpc("ExecutionReport", new_er_params, ['ClOrdID', 'OrdStatus'])]
+        filter_to_grpc("ExecutionReport", pending_er_params, ['ClOrdID', 'OrdStatus'])]
 
     Stubs.verifier.submitCheckSequenceRule(
         create_check_sequence_rule(
