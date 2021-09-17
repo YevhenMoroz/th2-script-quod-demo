@@ -6,6 +6,7 @@ from copy import deepcopy
 from rule_management import RuleManager
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs, RequestMDRefID
+from th2_grpc_common.common_pb2 import Direction
 
 
 def run_test_case():
@@ -80,7 +81,7 @@ def run_test_case():
             TemplateNoPartyIDs(party_id="1", party_id_source="D", party_role="2"),
             TemplateNoPartyIDs(party_id="2", party_id_source="D", party_role="3")
         ],
-        cum_qty= 500,
+        cum_qty = 500,
         mask_as_connectivity="fix-fh-eq-paris",
         md_entry_size={500: 500},
         md_entry_px={30: 25},
@@ -149,7 +150,109 @@ def run_test_case():
         )
     )
 
+    rule = rule_manager.add_NOS(buy_side_conn_2, new_order_params['Account'])
+    new_order = Stubs.fix_act.placeOrderFIX(
+        request=convert_to_request("Send new order", sell_side_conn, case_id,
+                                   wrap_message(new_order_params, "NewOrderSingle", sell_side_conn))
+    )
+
+    instrument_2 = {
+        'SecurityType': 'CS',
+        'Symbol': 'GARD',
+        'SecurityID': 'FR0000065435',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XPAR'
+    }
+
+    trailer_1 = {
+        'CheckSum': '*'
+    }
+
+    order_params_buy_side = deepcopy(new_order_params)
+    order_params_buy_side['ExDestination'] = '*'
+    order_params_buy_side['ChildOrderID'] = '*'
+    order_params_buy_side['HandlInst'] = '1'
+    order_params_buy_side['ClOrdID'] = '*'
+    order_params_buy_side['SettlDate'] = '*'
+    order_params_buy_side['TransactTime'] = '*'
+    order_params_buy_side['TimeInForce'] = '0'
+    order_params_buy_side['OrderCapacity'] = 'A'
+    order_params_buy_side['Currency'] = 'EUR'
+    order_params_buy_side['trailer'] = trailer_1
+    order_params_buy_side['Instrument'] = instrument_2
+    order_params_buy_side.pop('ClientAlgoPolicyID')
+    order_params_buy_side.pop('ComplianceID')
+    order_params_buy_side.pop('TargetStrategy')
+
+    message_filters_buy_side = [filter_to_grpc("NewOrderSingle", order_params_buy_side)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check buy side",
+            prefilter=pre_filter,
+            msg_filters=message_filters_buy_side,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn_1,
+            event_id=case_id,
+            timeout=2000
+
+        )
+    )
+
+    params_buy_side_er = {
+        'NoParty': [{
+            'PartyID': 'KEPLER',
+            'PartyIDSource': 'D',
+            'PartyRole': '1'},
+            {
+                'PartyID': '1',
+                'PartyIDSource': 'D',
+                'PartyRole': '2'},
+            {
+                'PartyID': '2',
+                'PartyIDSource': 'D',
+                'PartyRole': '3'}],
+        'Account': new_order_params['Account'],
+        'CumQty': 500,
+        'LastPx': '*',
+        'ExecID': '*',
+        'OrderQty': new_order_params['OrderQty'],
+        'OrdType': new_order_params['OrdType'],
+        'ClOrdID': '*',
+        'LastQty': 500,
+        'Text': "Hello sim",
+        'OrderCapacity': 'A',
+        'TransactTime': '*',
+        'Side': new_order_params['Side'],
+        'OrderID': '*',
+        'AvgPx': '20',
+        'OrdStatus': '1',
+        'TimeInForce': '*',
+        'Instrument': instrument_2,
+        'Price': new_order_params['Price'],
+        'Currency': 'EUR',
+        'ExecType': 'F',
+        'LeavesQty': '*'
+    }
+
+    message_filters_er = [filter_to_grpc("ExecutionReport", params_buy_side_er)]
+
+    Stubs.verifier.submitCheckSequenceRule(
+        create_check_sequence_rule(
+            description="Check ExecutionReport",
+            prefilter=pre_filter,
+            msg_filters=message_filters_er,
+            checkpoint=checkpoint_1,
+            connectivity=buy_side_conn_1,
+            event_id=case_id,
+            direction=Direction.Value('SECOND'),
+            timeout=2000
+    ))
+
     rule_manager.remove_rule(trade_rule_1)
+    print(f"Case {case_name} was executed")
+
+    rule_manager.remove_rule(rule)
     print(f"Case {case_name} was executed")
 
 
