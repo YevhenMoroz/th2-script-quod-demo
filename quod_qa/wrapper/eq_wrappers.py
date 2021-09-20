@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation, SimpleRequest
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, CreateBasketDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -15,8 +15,8 @@ from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -28,7 +28,7 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
     SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
-    MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
+    CreateBasketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -89,15 +89,10 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
     order_ticket_service = Stubs.win_act_order_ticket
     try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
-                                                                             client + "_PARIS", "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_order', status="FAIL")
-    finally:
-        rule_manager.remove_rule(nos_rule)
 
 
 '''
@@ -628,86 +623,6 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
         basic_custom_actions.create_event('Fail book_order', status="FAIL")
 
 
-def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
-                settlement_type=None,
-                settlement_currency=None, exchange_rate=None, exchange_rate_calc=None, settlement_date=None, pset=None,
-                comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None, fee_type=None, fee_category=None,
-                misc_arr: [] = None, remove_commissions=False, remove_fees=False):
-    middle_office_service = Stubs.win_act_middle_office_service
-    modify_request = ModifyTicketDetails(base=request)
-
-    ticket_details = modify_request.add_ticket_details()
-    if net_gross_ind is not None:
-        ticket_details.set_net_gross_ind(net_gross_ind)
-    if agreed_price is not None:
-        ticket_details.set_agreed_price(agreed_price)
-    if trade_date is not None:
-        ticket_details.set_trade_date(trade_date)
-    if give_up_broker is not None:
-        ticket_details.set_give_up_broker(give_up_broker)
-    if net_gross_ind is not None:
-        ticket_details.set_net_gross_ind(net_gross_ind)
-    if agreed_price is not None:
-        ticket_details.set_agreed_price(agreed_price)
-
-    settlement_details = modify_request.add_settlement_details()
-    if settlement_type is not None:
-        settlement_details.set_settlement_currency(settlement_type)
-    if settlement_currency is not None:
-        settlement_details.set_settlement_currency(settlement_currency)
-    if exchange_rate is not None:
-        settlement_details.set_exchange_rate(exchange_rate)
-    if exchange_rate_calc is not None:
-        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
-    if settlement_date is not None:
-        settlement_details.toggle_settlement_date()
-        settlement_details.set_settlement_date(settlement_date)
-    if pset is not None:
-        settlement_details.set_pset(pset)
-
-    if remove_commissions:
-        commissions_details = modify_request.add_commissions_details()
-        commissions_details.remove_commissions()
-    if remove_fees:
-        fees_details = modify_request.add_fees_details()
-        fees_details.remove_fees()
-    if comm_basis and comm_rate is not None:
-        commissions_details = modify_request.add_commissions_details()
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] != 'checked':
-            commissions_details.toggle_manual()
-        commissions_details.add_commission(comm_basis, comm_rate)
-    if fees_basis and fees_rate is not None:
-        fees_details = modify_request.add_fees_details()
-        fees_details.add_fees(fee_type, fees_basis, fees_rate, category=fee_category)
-
-    if misc_arr is not None:
-        misc_details = modify_request.add_misc_details()
-        misc_details.set_bo_field_1(misc_arr[0])
-        misc_details.set_bo_field_2(misc_arr[1])
-        misc_details.set_bo_field_3(misc_arr[2])
-        misc_details.set_bo_field_4(misc_arr[3])
-        misc_details.set_bo_field_5(misc_arr[4])
-
-    extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("BookExtractionId", )
-    extraction_details.extract_net_price("book.netPrice")
-    extraction_details.extract_net_amount("book.netAmount")
-    extraction_details.extract_total_comm("book.totalComm")
-    extraction_details.extract_gross_amount("book.grossAmount")
-    extraction_details.extract_total_fees("book.totalFees")
-    extraction_details.extract_agreed_price("book.agreedPrice")
-    extraction_details.extract_pset_bic("book.psetBic")
-    extraction_details.extract_exchange_rate("book.settlementType")
-    extraction_details.extract_settlement_type("book.exchangeRate")
-
-    try:
-        return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
-
-
 def unbook_order(request):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
@@ -715,7 +630,7 @@ def unbook_order(request):
         call(middle_office_service.unBookOrder, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
+        basic_custom_actions.create_event('Fail unbook_order', status="FAIL")
 
 
 def allocate_order(request, arr_allocation_param: [] = None):
@@ -753,7 +668,7 @@ def amend_allocate(request, account=None, agreed_price=None, settlement_currency
     amend_allocations_details = modify_request.add_amend_allocations_details()
     ticket_details = modify_request.add_ticket_details()
     if account is not None:
-        amend_allocations_details.set_allocations_filter({"Account ID": account})
+        amend_allocations_details.set_filter({"Account ID": account})
     if agreed_price is not None:
         ticket_details.set_agreed_price(agreed_price)
     settlement_details = modify_request.add_settlement_details()
@@ -914,9 +829,7 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
                 settlement_currency=None, exchange_rate=None, exchange_rate_calc=None, settlement_date=None, pset=None,
                 comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None, fee_type=None, fee_category=None,
                 misc_arr: [] = None, remove_commissions=False, remove_fees=False):
-    middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
-
     ticket_details = modify_request.add_ticket_details()
     if net_gross_ind is not None:
         ticket_details.set_net_gross_ind(net_gross_ind)
@@ -931,20 +844,20 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
     if agreed_price is not None:
         ticket_details.set_agreed_price(agreed_price)
 
-    settlement_details = modify_request.add_settlement_details()
-    if settlement_type is not None:
-        settlement_details.set_settlement_currency(settlement_type)
-    if settlement_currency is not None:
-        settlement_details.set_settlement_currency(settlement_currency)
-    if exchange_rate is not None:
-        settlement_details.set_exchange_rate(exchange_rate)
-    if exchange_rate_calc is not None:
-        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
-    if settlement_date is not None:
-        settlement_details.toggle_settlement_date()
-        settlement_details.set_settlement_date(settlement_date)
-    if pset is not None:
-        settlement_details.set_pset(pset)
+    # settlement_details = modify_request.add_settlement_details()
+    # if settlement_type is not None:
+    #     settlement_details.set_settlement_currency(settlement_type)
+    # if settlement_currency is not None:
+    #     settlement_details.set_settlement_currency(settlement_currency)
+    # if exchange_rate is not None:
+    #     settlement_details.set_exchange_rate(exchange_rate)
+    # if exchange_rate_calc is not None:
+    #     settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    # if settlement_date is not None:
+    #     settlement_details.toggle_settlement_date()
+    #     settlement_details.set_settlement_date(settlement_date)
+    # if pset is not None:
+    #     settlement_details.set_pset(pset)
 
     if remove_commissions:
         commissions_details = modify_request.add_commissions_details()
@@ -970,16 +883,16 @@ def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=N
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
 
-    extraction_details = modify_request.add_extraction_details()
-    extraction_details.set_extraction_id("BookExtractionId", )
-    extraction_details.extract_net_price("book.netPrice")
-    extraction_details.extract_net_amount("book.netAmount")
-    extraction_details.extract_total_comm("book.totalComm")
-    extraction_details.extract_gross_amount("book.grossAmount")
-    extraction_details.extract_total_fees("book.totalFees")
-    extraction_details.extract_agreed_price("book.agreedPrice")
+    # extraction_details = modify_request.add_extraction_details()
+    # extraction_details.set_extraction_id("BookExtractionId")
+    # extraction_details.extract_net_price("book.netPrice")
+    # extraction_details.extract_net_amount("book.netAmount")
+    # extraction_details.extract_total_comm("book.totalComm")
+    # extraction_details.extract_gross_amount("book.grossAmount")
+    # extraction_details.extract_total_fees("book.totalFees")
+    # extraction_details.extract_agreed_price("book.agreedPrice")
     try:
-        return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+        return call(Stubs.win_act_middle_office_service.amendMiddleOfficeTicket, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail amend_block', status="FAIL")
@@ -1060,6 +973,24 @@ def release_order(base_request, filter=None):
         basic_custom_actions.create_event('Fail release_order', status="FAIL")
 
 
+def mass_execution_summary_at_average_price(base_request, count: int):
+    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
+    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+
+
+def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
+    disclose_flag_details = DiscloseFlagDetails(base_request=request)
+    if type_disclose is None:
+        disclose_flag_details.disable()
+    if type_disclose is False:
+        disclose_flag_details.real_time()
+    if type_disclose is True:
+        disclose_flag_details.manual()
+    disclose_flag_details.set_row_numbers(row_numbers)
+    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
+
+
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
     order_book_service = Stubs.win_act_order_book
@@ -1070,41 +1001,42 @@ def add_to_basket(request, list_row_numbers: [], basket_name=""):
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_policy='Care', symbol_source='ISIN',
-                        has_header=True, templ: {} = None):
-    if templ is None:
-        templ = {'Symbol': ['1', 'FR0004186856'], 'Quantity': ['2', '0'], 'Price': ['3', '0'],
-                 'Account': ['4', 'CLIENT_FIX_CARE_SA1'], 'Side': ['5', 'Buy'], 'OrdType': ['6', 'Limit'],
-                 'StopPrice': ['7', '0'], 'Capacity': ['8', 'Agency']}
-
-    fields_details = [
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
-                                        templ.get('Symbol')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
-                                        templ.get('Quantity')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
-                                        templ.get('Price')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
-                                        templ.get('Side')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
-                                        templ.get('OrdType')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
-                                        templ.get('StopPrice')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
-                                        templ.get('Account')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
-                                        templ.get('Capacity')[1]).build()
-    ]
-    details = ImportedFileMappingDetails(has_header, fields_details).build()
+def add_basket_template(request, templ_name, descrip=None, client=None, tif=None, exec_policy=None,
+                        symbol_source=None, has_header=True, templ: {} = None):
     templates_details = TemplatesDetails()
+    if templ is not None:
+        fields_details = [
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
+                                            templ.get('Symbol')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
+                                            templ.get('Quantity')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
+                                            templ.get('Price')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
+                                            templ.get('Side')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
+                                            templ.get('OrdType')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
+                                            templ.get('StopPrice')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
+                                            templ.get('Account')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
+                                            templ.get('Capacity')[1]).build()
+        ]
+        details = ImportedFileMappingDetails(has_header, fields_details).build()
+        templates_details.set_imported_file_mapping_details(details)
     templates_details.set_default_params(request)
     templates_details.set_name_value(templ_name)
-    templates_details.set_exec_policy(exec_policy)
-    templates_details.set_default_client(client)
-    templates_details.set_description(descrip)
-    templates_details.set_symbol_source(symbol_source)
-    templates_details.set_time_in_force(tif)
-    templates_details.set_imported_file_mapping_details(details)
+    if exec_policy is not None:
+        templates_details.set_exec_policy(exec_policy)
+    if client is not None:
+        templates_details.set_default_client(client)
+    if descrip is not None:
+        templates_details.set_description(descrip)
+    if symbol_source is not None:
+        templates_details.set_symbol_source(symbol_source)
+    if tif is not None:
+        templates_details.set_time_in_force(tif)
     try:
         call(Stubs.win_act_basket_ticket.manageTemplates, templates_details.build())
     except Exception:
@@ -1112,8 +1044,20 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
-                       capacity=None, stop_price=None):
+def get_basket_template_details(request, templ_name, column_names: []):
+    extract_template_details = ExtractTemplateDetails(request, {'Name': templ_name}, column_names)
+    basket_ticket_service = Stubs.win_act_basket_ticket
+    result = call(basket_ticket_service.extractTemplateData, extract_template_details.build())
+    return result
+
+
+def remove_basket_template(request, name):
+    simple_request = SimpleRequest(request, {'Name': name})
+    call(Stubs.win_act_basket_ticket.removeTemplate, simple_request.build())
+
+
+def basket_row_details(row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
+                       price=None, capacity=None, stop_price=None):
     if not remove_row:
         params = {}
         if symbol is not None:
@@ -1136,7 +1080,7 @@ def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None
     return result
 
 
-def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
+def create_basket_via_import(request, basket_name, basket_template_name, path, client, expire_date=None, tif=None,
                              is_csv=False, amend_rows_details: [basket_row_details] = None):
     if is_csv:
         file_type = 1
@@ -1149,13 +1093,13 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
     basket_ticket_details.set_name_value(basket_name)
     basket_ticket_details.set_basket_template_name(basket_template_name)
     basket_ticket_details.set_client_value(client)
+
     if expire_date is not None:
         basket_ticket_details.set_date_value(expire_date)
     if tif is not None:
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
-
     try:
         call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
     except Exception:
@@ -1165,47 +1109,19 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
 
 def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [basket_row_details] = None):
     create_basket_details = CreateBasketDetails(request, orders_rows, basket_name, amend_rows_details)
-    order_book_service = Stubs.win_act_order_book
-    call(order_book_service.createBasket, create_basket_details.build())
+    call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
 
 
-def mass_execution_summary_at_average_price(base_request, count: int):
-    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
-    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
-    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail.build())
-
-
-"""
-for method set_disclose_flag_via_order_book
-if type_disclose= True(Manual Disclose)
-if type_disclose= False(RealTime Disclose)
-if type_disclose= None(Disable Disclose)
-"""
-
-
-def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
-    disclose_flag_details = DiscloseFlagDetails(base_request=request)
-    if type_disclose is None:
-        disclose_flag_details.disable()
-    if type_disclose is False:
-        disclose_flag_details.real_time()
-    if type_disclose is True:
-        disclose_flag_details.manual()
-    disclose_flag_details.set_row_numbers(row_numbers)
-    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
-
-
-"""
-Guys, السلام عليكم ,  
-via next method we can complete basket   
-"""
-
-
-def complete_basket(base_request, basket_id):
-    request = SimpleRequest(base_request, basket_id)
+def complete_basket(base_request, filter_list=None):
+    request = SimpleRequest(base_request, filter_list)
     call(Stubs.win_act_basket_order_book.complete, request)
 
 
-def un_complete(base_request, basket_id):
-    request = SimpleRequest(base_request, basket_id)
+def un_complete(base_request, filter_list=None):
+    request = SimpleRequest(base_request, filter_list)
     call(Stubs.win_act_basket_order_book.uncomplete, request)
+
+
+def book_basket(request, filter_list=None):
+    request = SimpleRequest(request, filter_list)
+    call(Stubs.win_act_basket_order_book.book, request.build())
