@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
+from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation, SimpleRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
+    ReassignOrderDetails, CreateBasketDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -28,7 +28,7 @@ from win_gui_modules.wrappers import direct_order_request, reject_order_request,
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
     SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
-    CreateBasketDetails
+    MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -89,10 +89,15 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     new_order_details.set_default_params(base_request)
     order_ticket_service = Stubs.win_act_order_ticket
     try:
+        rule_manager = RuleManager()
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(sell_connectivity,
+                                                                             client + "_PARIS", "XPAR", int(price))
         call(order_ticket_service.placeOrder, new_order_details.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail create_order', status="FAIL")
+    finally:
+        rule_manager.remove_rule(nos_rule)
 
 
 '''
@@ -1144,13 +1149,13 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
     basket_ticket_details.set_name_value(basket_name)
     basket_ticket_details.set_basket_template_name(basket_template_name)
     basket_ticket_details.set_client_value(client)
-
     if expire_date is not None:
         basket_ticket_details.set_date_value(expire_date)
     if tif is not None:
         basket_ticket_details.set_time_in_force_value(tif)
     if amend_rows_details is not None:
         basket_ticket_details.set_row_details(amend_rows_details)
+
     try:
         call(Stubs.win_act_basket_ticket.createBasketViaImport, basket_ticket_details.build())
     except Exception:
@@ -1160,10 +1165,47 @@ def create_basket_via_import(request, basket_name, basket_template_name, path, c
 
 def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [basket_row_details] = None):
     create_basket_details = CreateBasketDetails(request, orders_rows, basket_name, amend_rows_details)
-    call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
+    order_book_service = Stubs.win_act_order_book
+    call(order_book_service.createBasket, create_basket_details.build())
 
 
 def mass_execution_summary_at_average_price(base_request, count: int):
     mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
     mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
-    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail.build())
+
+
+"""
+for method set_disclose_flag_via_order_book
+if type_disclose= True(Manual Disclose)
+if type_disclose= False(RealTime Disclose)
+if type_disclose= None(Disable Disclose)
+"""
+
+
+def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
+    disclose_flag_details = DiscloseFlagDetails(base_request=request)
+    if type_disclose is None:
+        disclose_flag_details.disable()
+    if type_disclose is False:
+        disclose_flag_details.real_time()
+    if type_disclose is True:
+        disclose_flag_details.manual()
+    disclose_flag_details.set_row_numbers(row_numbers)
+    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
+
+
+"""
+Guys, السلام عليكم ,  
+via next method we can complete basket   
+"""
+
+
+def complete_basket(base_request, basket_id):
+    request = SimpleRequest(base_request, basket_id)
+    call(Stubs.win_act_basket_order_book.complete, request)
+
+
+def un_complete(base_request, basket_id):
+    request = SimpleRequest(base_request, basket_id)
+    call(Stubs.win_act_basket_order_book.uncomplete, request)
