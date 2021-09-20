@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_Iceberg import QAP_4289, QAP_5120, QAP_5122, QAP_5123, QAP_5175
+from quod_qa.RET.Algo.Algo_Iceberg import QAP_5120, QAP_5122, QAP_5123, QAP_5138, QAP_5175, QAP_5185, QAP_5302
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -11,14 +11,15 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Algo Iceberg', parent_id)
-
+    report_id = bca.create_event('DMA', parent_id)
     try:
-        QAP_4289.execute(session_id, report_id)
         QAP_5120.execute(session_id, report_id)
         QAP_5122.execute(session_id, report_id)
         QAP_5123.execute(session_id, report_id)
+        QAP_5138.execute(session_id, report_id)
         QAP_5175.execute(session_id, report_id)
+        QAP_5185.execute(session_id, report_id)
+        QAP_5302.execute(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
