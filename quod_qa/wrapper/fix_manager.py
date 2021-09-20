@@ -16,9 +16,6 @@ class FixManager:
     def get_case_id(self):
         return self.case_id
 
-    def set_case_id(self, case_id):
-        self.case_id = case_id
-
 
     def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle', case = None):
         if case == None:
@@ -66,6 +63,7 @@ class FixManager:
             connection_id=ConnectionID(session_alias=self.TraderConnectivity)
         )).MDRefID
 
+        # fix_message.add_tag({'Instrument': {'Symbol': symbol}})
         fix_message.add_tag({'MDReqID': MDReqID})
 
         response = self.act.sendMessage(
@@ -111,5 +109,4 @@ class FixManager:
         ))
         for i in allMDRefID.PairsMDRefID:
             print({i.symbol: i.MDRefID}, type({i.symbol: i.MDRefID}))
-
 
