@@ -126,6 +126,44 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         fields=content
     )
 
+def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
+    content = dict(deepcopy(content))
+    for tag in dict(content):
+        # field
+        if isinstance(content[tag], (str, int, float)):
+            content[tag] = Value(simple_value=str(content[tag]))
+        elif isinstance(content[tag], dict):
+            # level 1 component
+            name = next(iter(content[tag].items()))[0]
+            if isinstance(next(iter(content[tag].items()))[1], list):
+                # level 2 repeating group
+                for group in content[tag][name]:
+                    content[tag][name][content[tag][name].index(group)] = Value(
+                        message_value=(message_to_grpc(name, group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            name: Value(
+                                list_value=ListValue(
+                                    values=content[tag][name]
+                                )
+                            )
+                        }
+                    )
+                )
+            else:
+                # level 2 field
+                content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+    return Message(
+        metadata=MessageMetadata(
+            message_type=message_type,
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
+        ),
+        fields=content
+    )
+
+
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter without fail unexpected
