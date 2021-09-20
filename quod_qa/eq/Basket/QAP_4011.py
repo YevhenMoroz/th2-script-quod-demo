@@ -52,7 +52,7 @@ def execute(report_id, session_id):
     printed_name = "Add to Basket button presence"
     verifier = Verifier(case_id)
     verifier.set_event_name("Check: " + printed_name)
-    actual_value = eq_wrappers.is_menu_item_present(base_request, expected_value)
+    actual_value = eq_wrappers.is_menu_item_present(base_request, "Add to Basket")
     verifier.compare_values(printed_name, expected_value, actual_value['isMenuItemPresent'])
     verifier.verify()
 
