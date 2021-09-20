@@ -1,12 +1,11 @@
 import logging
 from datetime import date
 from pathlib import Path
-from random import randint
 
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo
+from custom.tenor_settlement_date import wk1, spo
 from custom.verifier import Verifier
-from quod_qa.common_tools import random_qty
+from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
@@ -25,10 +24,10 @@ def check_order_book(base_request, act_ob, case_id, qty):
     ob_side = ExtractionDetail("orderBook.side", "Side")
     ob_ord_type = ExtractionDetail("orderBook.ordType", "OrdType")
     ob_currency = ExtractionDetail("orderBook.currency", "Currency")
-
+    ob_last_mkt = ExtractionDetail("orderBook.LastMkt", "LastMkt")
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_side, ob_ord_type, ob_currency])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_side, ob_ord_type, ob_currency, ob_last_mkt])))
     response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
@@ -36,6 +35,7 @@ def check_order_book(base_request, act_ob, case_id, qty):
     verifier.compare_values("Order side", "Buy", response[ob_side.name])
     verifier.compare_values("Order type", "PreviouslyQuoted", response[ob_ord_type.name])
     verifier.compare_values("Order currency", "GBP", response[ob_currency.name])
+    verifier.compare_values("Order LastMkt", "XQFX", response[ob_last_mkt.name])
     verifier.verify()
 
 

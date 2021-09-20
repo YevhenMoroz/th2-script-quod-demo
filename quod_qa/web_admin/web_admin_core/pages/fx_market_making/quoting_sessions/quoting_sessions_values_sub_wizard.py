@@ -15,11 +15,11 @@ class QuotingSessionsValuesSubWizard(CommonPage):
     def get_name(self):
         return self.get_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_NAME_XPATH)
 
-    def set_concurrently_active_quotes(self, value: int):
-        self.set_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_XPATH, str(value))
+    def set_concurrently_active_quotes_age(self, value):
+        self.set_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH, value)
 
     def get_concurrently_active_quotes(self):
-        return self.get_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_XPATH)
+        return self.get_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH)
 
     def set_quote_update_interval(self, value: int):
         self.set_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_QUOTE_UPDATE_INTERVAL_XPATH, str(value))

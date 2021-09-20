@@ -1,12 +1,10 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3, broken_1, broken_w1w2
-from custom.verifier import Verifier
-from quod_qa.common_tools import random_qty
+from custom.tenor_settlement_date import broken_2
+from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from win_gui_modules.wrappers import set_base
 
 client = 'Argentina1'
 account = 'Argentina1_1'
@@ -30,7 +28,8 @@ def send_rfq_and_filled_order_broken(case_id, qty_1):
     rfq.verify_quote_pending()
     price = rfq.extract_filed("OfferPx")
     rfq.send_new_order_single(price)
-    rfq.verify_order_pending().verify_order_filled_fwd()
+    rfq.verify_order_pending().\
+        verify_order_filled_fwd()
 
 
 def execute(report_id):

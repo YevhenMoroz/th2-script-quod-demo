@@ -34,7 +34,6 @@ def execute(report_id, session_id):
     # region Open FE
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
-
     # region Create CO
     quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
@@ -74,16 +73,15 @@ def execute(report_id, session_id):
                                                   verify_ent("ExecSts",order_es.name, "Filled")
                                                   ]))
     # endregion
-
     # region Extract
-    order_id = eq_wrappers.get_order_id(base_request)
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
+
     # region cancel CO
-    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
+    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
     # endregion
     # region Accept Cancel
-    eq_wrappers.accept_order(lookup, qty, price)
+    eq_wrappers.accept_cancel(lookup, qty, price)
     # endregion
 
     # region Check values in OrderBook

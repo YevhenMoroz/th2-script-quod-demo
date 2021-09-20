@@ -39,7 +39,7 @@ class QAP_2626(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
         values_sub_wizard.set_name(self.name)
-        values_sub_wizard.set_concurrently_active_quotes(self.concurrently_active_quotes)
+        values_sub_wizard.set_concurrently_active_quotes_age(self.concurrently_active_quotes)
         values_sub_wizard.set_quote_update_interval(self.quote_update_interval)
         time.sleep(1)
 

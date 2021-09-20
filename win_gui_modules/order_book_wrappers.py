@@ -1,8 +1,9 @@
+from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 
 from .order_ticket import OrderTicketDetails, FXOrderDetails
-from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2, care_orders_pb2
 from .order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
@@ -36,6 +37,32 @@ class ModifyOrderDetails:
         return self.modify_order_details
 
 
+class MassExecSummaryDetails:
+    def __init__(self, base: EmptyRequest = None, count_of_selected_rows: int = None, reported_price_value: str = None):
+        if base is not None:
+            self._request = order_book_pb2.MassExecSummaryDetails(base=base)
+        else:
+            self._request = order_book_pb2.MassExecSummaryDetails()
+
+        if count_of_selected_rows is not None:
+            self._request.countOfSelectedRows = count_of_selected_rows
+
+        if reported_price_value is not None:
+            self._request.reportedPrice = reported_price_value
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_count_of_selected_rows(self, count: int):
+        self._request.countOfSelectedRows = count
+
+    def set_reported_price_value(self, reported_price: str):
+        self._request.reportedPrice = reported_price
+
+    def build(self):
+        return self._request
+
+
 class ModifyFXOrderDetails:
     def __init__(self, base_request):
         self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
@@ -85,6 +112,7 @@ class ModifyFXOrderDetails:
 
     def build(self):
         return self.modify_order_details
+
 
 class ModifyFXOrderDetails:
     def __init__(self, base_request):
@@ -214,27 +242,45 @@ class TransferOrderDetails:
     def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
         self.transfer_order_details.desk = desk
         self.transfer_order_details.partialDesk = partial_desk
-class ReleaseFXOrderDetails:
-    def __init__(self, base_request):
-        self.release_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-        self.release_order_details.base.CopyFrom(base_request)
+
+
+class TransferPoolDetailsCLass:
+
+    def __init__(self):
+        self.order = care_orders_pb2.TransferPoolDetails()
+
+    def confirm_ticket_accept(self):
+        self.order.confirm = TransferPoolDetails.Confirmation.ACCEPT
+
+    def cancel_ticket_reject(self):
+        self.order.confirm = TransferPoolDetails.Confirmation.REJECT
+
+    def build(self):
+        return self.order
+
+
+class InternalTransferActionDetails:
+
+    def __init__(self, base_request, order_details: TransferPoolDetails):
+        self.internal_transfer_details = care_orders_pb2.InternalTransferActionDetails()
+        self.internal_transfer_details.base.CopyFrom(base_request)
+        self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details)
+
+    def set_default_params(self, base_request):
+        self.internal_transfer_details.base.CopyFrom(base_request)
 
     def set_filter(self, filter_list: list):
         length = len(filter_list)
         i = 0
         while i < length:
-            self.release_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.internal_transfer_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
-    def set_selected_row_count(self, selected_row_count: int):
-        self.release_order_details.multipleRowSelection = True
-        self.release_order_details.selectedRowCount = selected_row_count
-
-    def set_order_details(self, order_details: FXOrderDetails):
-        self.release_order_details.orderDetails.CopyFrom(order_details.build())
+    def add_transfer_pool_details(self, order_details: TransferPoolDetails):
+        return self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details.build())
 
     def build(self):
-        return self.release_order_details
+        return self.internal_transfer_details
 
 
 @dataclass
@@ -363,6 +409,24 @@ class ExtractEventRows:
 
     def build(self):
         return self.extract_action
+
+
+class SuspendOrderDetails:
+
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+        else:
+            self._request = order_book_pb2.SuspendOrderDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_cancel_children(self, cancel_children: bool):
+        self._request.cancelChildren = cancel_children
+
+    def build(self):
+        return self._request
 
 
 class OrderAnalysisAction:
@@ -496,6 +560,52 @@ class OrderInfo:
         return self.order_info
 
 
+class MassExecSummaryAveragePriceDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base)
+        else:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_count_of_selected_rows(self, count: int):
+        self._request.countOfSelectedRows = count
+
+    def build(self):
+        return self._request
+
+
+class DiscloseFlagDetails:
+    def __init__(self, base_request=None, row_numbers: list = None):
+        self._request = order_book_pb2.DiscloseFlagDetails()
+        self._request.base.CopyFrom(base_request)
+
+        if row_numbers is not None:
+            for number in row_numbers:
+                self._request.rowNumbers.append(number)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def manual(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.MANUAL
+
+    def real_time(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.REAL_TIME
+
+    def disable(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.DISABLE
+
+    def build(self):
+        return self._request
+
+
 class ExecutionsDetails:
     def __init__(self, request: order_book_pb2.ManualExecutionDetails.ExecutionDetails):
         self.request = request
@@ -562,6 +672,9 @@ class ManualExecutingDetails:
         var = self._request.executionDetails.add()
         return ExecutionsDetails(var)
 
+    def set_error_expected(self, error_expected: bool):
+        self._request.errorExpected = error_expected
+
     def build(self):
         return self._request
 
@@ -611,10 +724,13 @@ class ManualCrossDetails:
             self._request = order_book_pb2.ManualCrossDetails(base=base)
         else:
             self._request = order_book_pb2.ManualCrossDetails()
-        self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
+        # self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
 
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
+
+    def set_extract_manual_cross_value(self, manual_cross_value):
+        self._request.manualCrossValues.CopyFrom(manual_cross_value)
 
     def set_filter(self, table_filter: dict):
         self._request.filter.update(table_filter)
@@ -634,6 +750,42 @@ class ManualCrossDetails:
     def set_selected_rows(self, row_numbers: list):
         for row in row_numbers:
             self._request.selectedRows.append(row)
+
+    def build(self):
+        return self._request
+
+
+class ExtractManualCrossValuesRequest:
+    def __init__(self, extraction_id: int = None, manual_cross_extracted_value: list = None):
+        self._request = order_book_pb2.ExtractManualCrossValuesRequest()
+        if extraction_id is not None:
+            self._request.extractionId = extraction_id
+        if manual_cross_extracted_value is not None:
+            for value in manual_cross_extracted_value:
+                self._request.extractedValues.append(value)
+
+    def set_extraction_id(self, extraction_id: int):
+        self._request.extractionId = extraction_id
+
+    def set_manual_cross_extracted_value(self, manual_cross_extracted_value: list):
+        for value in manual_cross_extracted_value:
+            self._request.extractedValues.append(value)
+
+    def build(self):
+        return self._request
+
+
+class ManualCrossExtractedValue:
+    def __init__(self, type=None, name: str = None):
+        self._request = order_book_pb2.ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
+        self._request.type = type
+        self._request.name = name
+
+    def set_type(self, type):
+        self._request.type = type
+
+    def set_name(self, name: str):
+        self._request.name = name
 
     def build(self):
         return self._request
@@ -750,6 +902,65 @@ class SuspendOrderDetails:
     def build(self):
         return self._request
 
+
+class AddToBasketDetails:
+    def __init__(self, base: EmptyRequest = None, row_numbers: list = None, basket_name: str = None):
+        if base is not None:
+            self._request = order_book_pb2.AddToBasketDetails(base=base)
+        else:
+            self._request = order_book_pb2.CancelOrderDetails()
+
+        if row_numbers is not None:
+            for numbers in row_numbers:
+                self._request.rowNumbers.append(numbers)
+
+        if basket_name is not None:
+            self._request.basketName = basket_name
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def set_basket_name(self, basket_name: str):
+        self._request.basketName = basket_name
+
+    def build(self):
+        return self._request
+
+
+class CreateBasketDetails:
+    def __init__(self, base_request=None, row_numbers: list = None, name: str = None, row_details: list = None):
+        self._request = order_book_pb2.CreateBasketDetails()
+        self._request.base.CopyFrom(base_request)
+        self._request.name = name
+
+        if row_numbers is not None:
+            for number in row_numbers:
+                self._request.rowNumbers.append(number)
+
+        if row_details is not None:
+            for detail in row_details:
+                self._request.rowsDetails.append(detail)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def set_name(self, name: str):
+        self._request.name = name
+
+    def set_row_details(self, row_details: list):
+        for detail in row_details:
+            self._request.rowsDetails.append(detail)
+
+    def build(self):
+        return self._request
 
 # class QuoteRequestDetails:
 #     def __init__(self):

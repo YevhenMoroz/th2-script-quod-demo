@@ -27,7 +27,7 @@ class QAP_948(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMERICAN STOCK EXCHANGE"
+        self.venue = "EURONEXT AMSTERDAM"
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -45,8 +45,8 @@ class QAP_948(CommonTestCase):
         values_sub_wizard.set_name(self.name)
         time.sleep(2)
         values_sub_wizard.set_venue(self.venue)
-        time.sleep(1)
-        values_sub_wizard.set_listing_group("Banking_KSE")
+        # time.sleep(1)
+        # values_sub_wizard.set_listing_group("Banking_KSE") this field removed
         time.sleep(1)
         conditions_sub_wizard.click_on_plus()
         time.sleep(1)

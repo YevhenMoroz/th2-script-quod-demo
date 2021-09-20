@@ -4,7 +4,9 @@ import logging
 
 from datetime import datetime
 
-from custom.basic_custom_actions import create_event, timestamps
+from custom import basic_custom_actions as bca
+
+from custom.basic_custom_actions import timestamps
 
 from stubs import Stubs
 
@@ -29,18 +31,18 @@ def execute(session_id, report_id):
     # region Declarations
     order_book_service = Stubs.win_act_order_book
 
-    lookup = "RELIANCE"
+    lookup = "SPICEJET"
     order_type = "Limit"
     price = "15"
-    qty = "20000001"
+    qty = "5000001"
     tif = "Day"
-    client = "HAKKIM"
+    client = "POOJA"
     recipient = "RIN-DESK (CL)"
     free_notes = "11822 Calculated CumOrdQty"
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # end region

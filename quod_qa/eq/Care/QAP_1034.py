@@ -1,24 +1,14 @@
 import logging
-import os
-from copy import deepcopy
 from datetime import datetime
 
-from th2_grpc_act_gui_quod import order_ticket_service
-
 import quod_qa.wrapper.eq_fix_wrappers
-from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
-
 from custom.basic_custom_actions import create_event, timestamps
-import time
-from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,7 +26,6 @@ def execute(report_id, session_id):
     newQty = "100"
     price = "10"
     newPrice = "1"
-    time = datetime.utcnow().isoformat()
     lookup = "VETO"
     client = "CLIENT_FIX_CARE"
     # endregion
@@ -73,7 +62,7 @@ def execute(report_id, session_id):
     # region Send OrderCancelReplaceRequest
     fix_message = FixMessage(fix_message)
     params = {'Price': newPrice, 'OrderQty': newQty}
-    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params, client + "_PARIS")
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params)
     # endregion
     # region Accept CO
     eq_wrappers.accept_modify(lookup, qty, price)

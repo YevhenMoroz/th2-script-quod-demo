@@ -7,10 +7,6 @@ def tom():
     return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
 
 
-def broken_1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y%m%d')
-
-
 def broken_2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=4)).date().strftime('%Y%m%d')
 
@@ -56,7 +52,7 @@ def wk3():
 
 
 def m1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=25)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d')
 
 
 def m2():
@@ -121,7 +117,7 @@ def wk3_front_end():
 
 
 def m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=25)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def m2_front_end():

@@ -6,13 +6,14 @@ from datetime import datetime
 
 from th2_grpc_hand import rhbatch_pb2
 
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
+from custom import basic_custom_actions as bca
 
+from custom.basic_custom_actions import create_event, timestamps
+
+from stubs import Stubs
 
 from win_gui_modules.utils import get_base_request, set_session_id, prepare_fe, get_opened_fe, close_fe
 from win_gui_modules.wrappers import set_base
-
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from quod_qa.wrapper.ret_wrappers import switch_user, create_order, verify_order_value, amend_order, get_order_id
@@ -38,7 +39,7 @@ def execute(report_id):
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     session_id = set_session_id()
     session_id2 = Stubs.win_act.register(
         rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
@@ -96,6 +97,8 @@ def execute(report_id):
     verify_order_value(base_request, case_id, "Qty", "500", False)
     # endregion
 
+    # region Close FE
     close_fe(case_id, session_id2)
+    # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

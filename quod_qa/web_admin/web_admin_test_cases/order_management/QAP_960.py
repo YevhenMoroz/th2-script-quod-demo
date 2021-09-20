@@ -24,12 +24,13 @@ class QAP_960(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm02")
+        login_page.set_password("adm02")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
+        time.sleep(2)
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)

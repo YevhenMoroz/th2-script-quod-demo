@@ -2,9 +2,7 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
@@ -28,21 +26,21 @@ def set_price_slippage(service, case_id, status, pip):
         "alive": "true",
         "clientTierInstrSymbolQty": [
             {
-                "upperQty": 5000000,
-                "indiceUpperQty": 2,
+                "upperQty": 1000000,
+                "indiceUpperQty": 1,
                 "publishPrices": "true"
             },
             {
-                "upperQty": 1000000,
-                "indiceUpperQty": 1,
+                "upperQty": 5000000,
+                "indiceUpperQty": 2,
                 "publishPrices": "true"
             }
         ],
         "clientTierInstrSymbolTenor": [
             {
                 "tenor": "SPO",
-                "minSpread": 0,
-                "maxSpread": 300,
+                "minSpread": "0",
+                "maxSpread": "300.5",
                 "marginPriceType": "PIP",
                 "lastUpdateTime": timestamp,
                 "MDQuoteType": "TRD",
@@ -64,8 +62,8 @@ def set_price_slippage(service, case_id, status, pip):
             },
             {
                 "tenor": "WK1",
-                "minSpread": 0,
-                "maxSpread": 250,
+                "minSpread": "0",
+                "maxSpread": "250",
                 "marginPriceType": "PIP",
                 "lastUpdateTime": timestamp,
                 "MDQuoteType": "TRD",
@@ -147,7 +145,7 @@ def execute(report_id, session_id):
     symbol = "EUR/GBP"
     security_type_spo = "FXSPOT"
     settle_date = spo()
-    settle_type = 0
+    settle_type = "0"
     currency = "EUR"
     settle_currency = "GBP"
     side = "1"
@@ -157,6 +155,7 @@ def execute(report_id, session_id):
         # Step 1
         set_price_slippage(api_service, case_id, "true", 2)
         # Step 2
+        time.sleep(3)
         params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
                                    securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
                                    currency=currency, side=side, securityid=symbol, settlcurrency=settle_currency,
@@ -178,7 +177,8 @@ def execute(report_id, session_id):
         check_order_book(case_base_request, ob_service, case_id, qty, "Terminated", "")
         # Step 4
         set_price_slippage(api_service, case_id, "false", 2)
-        # # Step 5
+        time.sleep(3)
+        # Step 5
         new_params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
                                        securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
                                        currency=currency, side=side, securityid=symbol, settlcurrency=settle_currency,

@@ -4,10 +4,25 @@ from datetime import timedelta
 
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1727 import QAP_1727
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1729 import QAP_1729
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1731 import QAP_1731
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1732 import QAP_1732
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1733 import QAP_1733
 from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2302 import QAP_2302
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2904 import QAP_2904
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2905 import QAP_2905
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2971 import QAP_2971
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_3136 import QAP_3136
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_3399 import QAP_3399
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_755 import QAP_755
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_756
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_759 import QAP_759
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP_760
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
+from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
 
 
 class ReferenceData:
@@ -20,10 +35,25 @@ class ReferenceData:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_1731(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1732(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1733(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2302(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_755(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_756(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_758(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_759(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_760(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_761(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_762(self.web_driver_container, self.second_lvl_id).run()
+            QAP_763(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1727(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_1729(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1731(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1732(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1733(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2302(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2904(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_2905(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_2971(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_3136(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3399(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
