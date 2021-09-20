@@ -31,12 +31,12 @@ def execute(session_id, report_id):
     # region Declarations
     order_book_service = Stubs.win_act_order_book
 
-    lookup = "RELIANCE"
+    lookup = "SPICEJET"
     order_type = "Limit"
     price = "15"
-    qty = "20000001"
+    qty = "5000001"
     tif = "Day"
-    client = "HAKKIM"
+    client = "POOJA"
     recipient = "RIN-DESK (CL)"
     free_notes = "11822 Calculated CumOrdQty"
     # endregion

@@ -3,6 +3,7 @@ import os
 from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
+from quod_qa.wrapper.ret_wrappers import close_order_book
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, direct_order_request
@@ -52,6 +53,8 @@ def execute(session_id, report_id):
     # region direct order according with step 9
     call(order_book_service.orderBookDirectOrder, direct_order_request(lookup, qty, price, "100"))
     # end region
+
+    close_order_book(base_request, Stubs.win_act_order_book)
 
     # region Check value in child order according with step 10
     eq_wrappers.verify_value(base_request, case_id, "Sts", "Open", True)

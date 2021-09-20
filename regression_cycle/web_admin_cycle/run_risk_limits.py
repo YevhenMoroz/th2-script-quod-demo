@@ -18,7 +18,7 @@ class RunRiskLimits:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_2455(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_2455(self.web_driver_container, self.second_lvl_id).run()
             QAP_4851(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()

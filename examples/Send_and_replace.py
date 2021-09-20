@@ -23,22 +23,21 @@ def execute(report_id):
 
     seconds, nanos = bca.timestamps()  # Store case start time
 
-    case_name = "QAP-2702"
+    case_name = "Send and replace with cancel test"
 
-    NOS1 = rule_man.add_NOS('fix-bs-eq-paris')
-    # NOS2 = rule_man.add_NOS('fix-bs-eq-trqx', 'TRQX_CLIENT1')
-    OCR1 = rule_man.add_OCR('fix-bs-eq-paris')
-    OCRR = rule_man.add_OCRR('fix-bs-eq-paris')
+    NOS1 = rule_man.add_NOS('fix-bs-eq-trqx', "TRQX_CLIENT1")
+    # NOS1 = rule_man.add_NOS(conn)
+    OCR1 = rule_man.add_OCR('fix-bs-eq-trqx')
+    OCRR = rule_man.add_OCRR('fix-bs-eq-trqx')
     logger.info(f"Start rules with id's: \n {NOS1}, {OCR1}, {OCRR}")
     case_params = {
-        'TraderConnectivity': 'gtwquod3',
-        'TraderConnectivity2': 'fix-bs-eq-paris',
-        'Sender': '',
-        'SenderCompID': 'QUOD3',
+        'TraderConnectivity': 'gtwquod5',
+        'TraderConnectivity2': 'fix-bs-eq-trqx',
+        'SenderCompID': 'QUOD5',
         'TargetCompID': 'QUODFX_UAT',
         'SenderCompID2': 'KCH_QA_RET_CHILD',
         'TargetCompID2': 'QUOD_QA_RET_CHILD',
-        'Account': 'KEPLER',
+        'Account': 'CLIENT1',
         'HandlInst': '2',
         'Side': '2',
         'OrderQty': '1000',
@@ -47,11 +46,11 @@ def execute(report_id):
         'NewPrice': '26',
         'TimeInForce': '0',
         'Instrument': {
-            'Symbol': 'FR0000063018_EUR',
-            'SecurityID': 'FR0000063018',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        },
+            'Symbol': 'SE0000634321_SEK',
+            'SecurityID': 'SE0000634321',
+            'SecurityIDSource': 4,
+            'SecurityExchange': 'XSTO'
+        }
     }
 
     reusable_params = {
@@ -61,7 +60,7 @@ def execute(report_id):
         'TimeInForce': case_params['TimeInForce'],
         'OrdType': case_params['OrdType'],
         'OrderCapacity': 'A',
-        'Currency': 'EUR',
+        'Currency': 'SEK',
     }
 
     case_id = bca.create_event(case_name, report_id)
@@ -88,15 +87,6 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'OrderQty': case_params['OrderQty'],
             'Price': case_params['Price'],
-            'ComplianceID': 'FX5',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'StrategyName': 'SORPING',
-            'IClOrdIdTO': '19864',
-            'AlgoCst01': 'KEPLER06',
-            'AlgoCst02': 'KEPLER07',
-            'AlgoCst03': 'KEPLER10',
         }
 
         logger.debug(f"Send new order with ClOrdID = {new_order_single_params['ClOrdID']}")
@@ -183,9 +173,6 @@ def execute(report_id):
             'ClOrdID': '*',
             'ChildOrderID': '*',
             'TransactTime': '*',
-            'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
-            'IClOrdIdAO': new_order_single_params['IClOrdIdAO'],
-            'IClOrdIdTO': new_order_single_params['IClOrdIdTO'],
             'Instrument': instrument_bs,
 
         }
@@ -297,9 +284,9 @@ def execute(report_id):
             'Side': case_params['Side'],
             'TransactTime': '*',
             'OrderQty': replace_order_params['OrderQty'],
-            'IClOrdIdCO': nos_bs_params['IClOrdIdCO'],
-            'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
-            'IClOrdIdTO': nos_bs_params['IClOrdIdTO'],
+            # # 'IClOrdIdCO': nos_bs_params['IClOrdIdCO'],
+            # 'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
+            # 'IClOrdIdTO': nos_bs_params['IClOrdIdTO'],
             'OrigClOrdID': '*',
             'ChildOrderID': '*',
         }
@@ -350,7 +337,7 @@ def execute(report_id):
             'ClOrdID': '*',
             'ChildOrderID': '*',
             'TransactTime': '*',
-            'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
+            # 'IClOrdIdAO': nos_bs_params['IClOrdIdAO'],
             'Instrument': instrument_bs,
             'ExDestination': 'XPAR'
 
@@ -414,102 +401,32 @@ def execute(report_id):
                 bca.message_to_grpc('OrderCancelRequest', cancel_order_params, case_params['TraderConnectivity']),
             ))
 
-        cancellation_er_params = {
-            **reusable_params,
-            'Instrument': {
-                'Symbol': case_params['Instrument']['Symbol'],
-                'SecurityExchange': case_params['Instrument']['SecurityExchange']
-            },
-            'ClOrdID': cancel_order_params['ClOrdID'],
-            'OrderID': pending_er_params['OrderID'],
-            'OrderQty': '*',
-            'Price': '*',
-            'TransactTime': '*',
-            'ExecID': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'LastQty': '0',
-            'QtyType': '0',
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'ExecRestatementReason': '4',
-            'NoParty': '*',
-            'NoStrategyParameters': new_er_params['NoStrategyParameters'],
-            'SecondaryAlgoPolicyID': new_er_params['SecondaryAlgoPolicyID']
-        }
-
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                'Cancellation ER Received',
-                bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
-                cancel_order.checkpoint_id,
-                case_params['TraderConnectivity'],
-                case_id
-            )
-        )
-
-        bs_cancel_order_params = {
-            'Account': case_params['Account'],
-            'Instrument': instrument_bs,
-            'ClOrdID': '*',
-            'IClOrdIdCO': new_order_single_params['IClOrdIdCO'],
-            'IClOrdIdAO': new_order_single_params['IClOrdIdAO'],
-            'IClOrdIdTO': new_order_single_params['IClOrdIdTO'],
-            'OrderID': '*',
-            'Side': case_params['Side'],
-            'TransactTime': '*',
-            'OrderQty': "*",
-            'ChildOrderID': '*',
-            # 'ExDestination': new_order_single_params['ExDestination']
-        }
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                'Check OrderCancelRequest >> PARIS',
-                bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
-                cancel_order.checkpoint_id,
-                case_params['TraderConnectivity2'],
-                case_id
-            )
-        )
-
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                'Cancellation ER Received',
-                bca.filter_to_grpc('ExecutionReport', cancellation_er_params, ["ClOrdID", "OrdStatus"]),
-                cancel_order.checkpoint_id,
-                case_params['TraderConnectivity'],
-                case_id
-            )
-        )
-
-        pre_filter_sim_params = {
-            'header': {
-                'MsgType': ('0', "NOT_EQUAL"),
-                'SenderCompID': case_params['SenderCompID2'],
-                'TargetCompID': case_params['TargetCompID2']
-            },
-            # 'TestReqID': ('TEST', "NOT_EQUAL")
-        }
-        pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
-        message_filters_sim = [
-            bca.filter_to_grpc('NewOrderSingle', nos_bs_params),
-            bca.filter_to_grpc('OrderCancelRequest', bs_cancel_replace_order_params),
-            bca.filter_to_grpc('NewOrderSingle', replace_nos_bs_params),
-            bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
-        ]
-        verifier.submitCheckSequenceRule(
-            bca.create_check_sequence_rule(
-                description="Check buy side messages from Paris",
-                prefilter=pre_filter_sim,
-                msg_filters=message_filters_sim,
-                checkpoint=checkpoint,
-                connectivity=case_params['TraderConnectivity2'],
-                event_id=case_id,
-                timeout=2000
-            )
-        )
+        # pre_filter_sim_params = {
+        #     'header': {
+        #         'MsgType': ('0', "NOT_EQUAL"),
+        #         'SenderCompID': case_params['SenderCompID2'],
+        #         'TargetCompID': case_params['TargetCompID2']
+        #     },
+        #     # 'TestReqID': ('TEST', "NOT_EQUAL")
+        # }
+        # pre_filter_sim = bca.prefilter_to_grpc(pre_filter_sim_params)
+        # message_filters_sim = [
+        #     bca.filter_to_grpc('NewOrderSingle', nos_bs_params),
+        #     bca.filter_to_grpc('OrderCancelRequest', bs_cancel_replace_order_params),
+        #     bca.filter_to_grpc('NewOrderSingle', replace_nos_bs_params),
+        #     bca.filter_to_grpc('OrderCancelRequest', bs_cancel_order_params),
+        # ]
+        # verifier.submitCheckSequenceRule(
+        #     bca.create_check_sequence_rule(
+        #         description="Check buy side messages from Paris",
+        #         prefilter=pre_filter_sim,
+        #         msg_filters=message_filters_sim,
+        #         checkpoint=checkpoint,
+        #         connectivity=case_params['TraderConnectivity2'],
+        #         event_id=case_id,
+        #         timeout=2000
+        #     )
+        # )
         # rule_man.remove_rule(trade_rule_1)
     except Exception as e:
         logging.error("Error execution", exc_info=True)
@@ -517,9 +434,9 @@ def execute(report_id):
     if timeouts:
         sleep(5)
 
-    # rule_man.remove_rule(NOS1)
+    rule_man.remove_rule(NOS1)
     # rule_man.remove_rule(NOS2)
-    # rule_man.remove_rule(OCR1)
+    rule_man.remove_rule(OCR1)
     rule_man.remove_rule(OCRR)
     rule_man.print_active_rules()
 
