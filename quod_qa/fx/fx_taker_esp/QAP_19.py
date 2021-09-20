@@ -105,7 +105,7 @@ def check_order_book(base_request, act_ob, case_id, owner, qty, sts, price):
             action=ExtractionAction.create_extraction_action(
                 extraction_details=[ob_sts, ob_lmt_price, ob_qty, ob_ord_id]),
             sub_order_details=child_details))
-    response = call(act_ob.getMyOrdersDetails, ob.request())
+    response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book")
@@ -143,7 +143,7 @@ def check_order_after_amend(base_request, act_ob, case_id, order_id, qty, sts):
             action=ExtractionAction.create_extraction_action(
                 extraction_details=[ob_sts, ob_qty, ob_ord_id]),
             sub_order_details=child_details))
-    response = call(act_ob.getMyOrdersDetails, ob.request())
+    response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Order book after Amend")
