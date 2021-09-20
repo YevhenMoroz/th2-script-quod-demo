@@ -2,10 +2,15 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNewOrdSingleExecutionReportTrade, \
     TemplateNewOrdSingleExecutionReportPendingAndNew
 from th2_grpc_sim.sim_pb2 import RuleID
+from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-
+import logging
 from stubs import Stubs
 from google.protobuf.empty_pb2 import Empty
+from grpc import RpcError
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class RuleManager:
@@ -89,7 +94,7 @@ class RuleManager:
 
     @staticmethod
     def add_NewOrdSingleExecutionReportTrade(session: str, account: str, venue: str, price: int, traded_qty: int,
-                                             delay: int, ):
+                                             delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTrade(
             request=TemplateNewOrdSingleExecutionReportTrade(connection_id=ConnectionID(session_alias=session),
                                                              account=account,
@@ -147,6 +152,16 @@ class RuleManager:
                 symbol=symbol))
 
     # ------------------------
+    @staticmethod
+    def get_MDReqID(symbol: str, session_alias: str):
+        try:
+            return Stubs.simulator.getMDRefIDForConnection(
+                request=RequestMDRefID(
+                    symbol=symbol,
+                    connection_id=ConnectionID(session_alias=session_alias)
+                )).MDRefID
+        except RpcError:
+            logger.error(f"There's no MDReqID for symbol {symbol}!")
 
 
 if __name__ == '__main__':
