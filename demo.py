@@ -106,7 +106,7 @@ def test_run():
 
 
         # QAP_2103.execute(report_id)
-        java_api_MDReq.TestCase().execute(report_id)
+        # java_api_MDReq.TestCase().execute(report_id)
         # rfq_swap_1w_2w.execute(report_id)
         # java_api.TestCase(report_id).execute()
 
@@ -141,18 +141,18 @@ def test_run():
 
 
         #
-        # rm = RuleManager()
-        # rm.print_active_rules()
-        # rm.print_active_rules_sim_test()
+        rm = RuleManager()
+        rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
+        rm.print_active_rules()
+        rm.print_active_rules_sim_test()
 
         # rm.remove_rule_by_id(4)
         # rm.remove_rule_by_id(5)
 
         # rm.remove_rule_by_id(10)
-        # rm.remove_rule_by_id_test_sim(5)
-        # rm.remove_rule_by_id_test_sim(6)
+        # rm.remove_rule_by_id_test_sim(2)
+        # rm.remove_rule_by_id_test_sim(3)
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
         # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
