@@ -1,15 +1,10 @@
 import logging
+import time
 from pathlib import Path
-
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import wk1, wk2, spo
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 
@@ -38,6 +33,7 @@ venue_ms = 'MS'
 mic_ms = 'MS-SW'
 api = Stubs.api_service
 
+
 def change_venue_status_msr(case_id, health, metric):
     modify_venue_params = {
         "venueID": "MS",
@@ -55,6 +51,7 @@ def change_venue_status_msr(case_id, health, metric):
         request=SubmitMessageRequest(
             message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa314luna'),
             parent_event_id=case_id))
+
 
 def change_venue_status_ms(case_id, health, metric):
     modify_venue_params = {
@@ -79,7 +76,7 @@ def send_swap_and_filled(case_id):
     # Precondition
     change_venue_status_ms(case_id, 'true', '-1')
     change_venue_status_msr(case_id, 'true', '-1')
-
+    time.sleep(3)
     params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
                                     orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
                                     currency=currency, settlcurrency=settle_currency,
@@ -94,11 +91,12 @@ def send_swap_and_filled(case_id):
     rfq = FixClientSellRfq(params_swap)
     rfq.send_request_for_quote_swap()
     # Step 2
-    rfq.verify_quote_reject(text='failed to get forward points through RFQ')
-
+    rfq.verify_quote_reject(text="no bid forward points for client tier `2600011' on EUR/USD WK2 on QUODFX")
 
     change_venue_status_ms(case_id, 'false', '0')
     change_venue_status_msr(case_id, 'false', '0')
+
+
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -107,5 +105,3 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-
-

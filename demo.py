@@ -1,24 +1,11 @@
 import logging
-import os
 from datetime import datetime
-import pickle
-
-import th2_grpc_hand
-from th2_grpc_hand.rhbatch_pb2 import RhSessionID
-from google.protobuf import message as _message
 
 from custom import basic_custom_actions as bca
-from examples import example_java_api
-from quod_qa import test
-from quod_qa.eq.Algo_PercentageVolume import QAP_1324
-from quod_qa.eq.Care import QAP_1072
 from quod_qa.eq.PostTrade import QAP_3361
 from rule_management import RuleManager
 from stubs import Stubs
-from stubs import Stubs
-from test_cases import QAP_2618
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe, \
-    prepare_fe_2
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

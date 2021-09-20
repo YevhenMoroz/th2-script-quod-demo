@@ -34,16 +34,18 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create Basket via import
-    amend_row1_details = eq_wrappers.basket_row_details("GB0005405286", symbol=new_isin, side="B", ord_type="Market",
+    amend_row1_details = eq_wrappers.basket_row_details(None, symbol=new_isin, side="B", ord_type="Market",
                                                         qty=new_qty, price="0", capacity=new_capacity)
+
     eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_xlsx, client,
                                          amend_rows_details=[amend_row1_details])
     # endregion
     # region Verify
-    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name, {'Basket Name': basket_name})
     orders_id = eq_wrappers.get_basket_orders_values(base_request, 2, "Id", {'Basket Name': basket_name})
+    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name, {'Basket Name': basket_name})
     eq_wrappers.verify_order_value(base_request, case_id, "ISIN", new_isin,
                                    order_filter_list=["Order ID", orders_id["1"]])
     eq_wrappers.verify_order_value(base_request, case_id, "Capacity", new_capacity)
     eq_wrappers.verify_order_value(base_request, case_id, "OrdType", "Market")
+    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name)
     # endregion
