@@ -69,7 +69,7 @@ def set_send_hedge_order(case_id, status):
                 "instrSymbol": "EUR/USD",
                 "longUpperQty": 2000000,
                 "longLowerQty": 0,
-                "maintainHedgePositions": status,
+                "maintainHedgePositions": 'true',
                 "crossCurrPairHedgingPolicy": "DIR",
                 "useSameLongShortQty": "true",
                 "hedgingStrategy": "POS",
@@ -77,7 +77,7 @@ def set_send_hedge_order(case_id, status):
                 "shortLowerQty": 0,
                 "shortUpperQty": 0,
                 "timeInForce": "DAY",
-                "sendHedgeOrders": 'true',
+                "sendHedgeOrders": status,
                 "exposureDuration": 120,
                 "hedgeOrderDestination": "EXT"
             }
@@ -159,7 +159,7 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
             action=ExtractionAction.create_extraction_action(extraction_details=[status, order_id])))
     response = call(act_ob.getOrdersDetails, ob.request())
     verifier = Verifier(case_id)
-    verifier.set_event_name('Checking that there is no new orders')
+    verifier.set_event_name('Checking that order cancelled')
     verifier.compare_values('Sts', 'Cancelled', response[status.name])
     verifier.compare_values('ID', ord_id, response[order_id.name])
     verifier.verify()
@@ -194,8 +194,6 @@ def execute(report_id, session_id):
     try:
         # Step 1
         set_send_hedge_order(case_id, status_true)
-        pos_osmium_null = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
-        pos_quod_null = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         initial_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
         initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         call(cp_service.createRatesTile, base_details.build())
@@ -203,49 +201,23 @@ def execute(report_id, session_id):
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
         place_order(base_details, cp_service, client)
         # Step 2
-        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position(
-            'Checking positions', case_id,
-            initial_pos_quod, extracted_pos_quod,
-            initial_pos_osmium, extracted_pos_osmium,
-            account_quod, account_osmium,
-            verification_not_equal, verification_not_equal
-        )
-        # Step 3
-        set_send_hedge_order(case_id, status_false)
-        initial_pos_osmium = extracted_pos_osmium
-        initial_pos_quod = extracted_pos_quod
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
-        place_order(base_details, cp_service, client)
-        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position(
-            'Checking positions', case_id,
-            initial_pos_quod, extracted_pos_quod,
-            initial_pos_osmium, extracted_pos_osmium,
-            account_quod, account_osmium,
-            verification_equal, verification_not_equal
-        )
-        # Step 4
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
-        place_order(base_details, cp_service, client)
-        set_send_hedge_order(case_id, status_true)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
-        place_order(base_details, cp_service, client)
         ord_id = check_order_book_ao('Checking order',
                                      case_id, case_base_request, ob_act, 'test')
-        cancel_order(ob_act, case_base_request, ord_id)
+        # Step 3
+        set_send_hedge_order(case_id, status_false)
         check_order_book_no_new_order(case_id, case_base_request, ob_act, ord_id)
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
+        place_order(base_details, cp_service, client)
         extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account_osmium)
         extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         compare_position(
             'Checking positions', case_id,
-            pos_quod_null, extracted_pos_quod,
-            pos_osmium_null, extracted_pos_osmium,
+            initial_pos_quod, extracted_pos_quod,
+            initial_pos_osmium, extracted_pos_osmium,
             account_quod, account_osmium,
             verification_equal, verification_equal
         )
+        # Step 4
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
