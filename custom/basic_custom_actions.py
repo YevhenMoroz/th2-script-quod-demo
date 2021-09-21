@@ -70,34 +70,54 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         Returns:
             message_to_grpc (Message): grpc wrapper for message
     """
-    content = dict(deepcopy(content))
-    for tag in dict(content):
-        # field
+    content = deepcopy(content)
+    for tag in content:
         if isinstance(content[tag], (str, int, float)):
             content[tag] = Value(simple_value=str(content[tag]))
+
         elif isinstance(content[tag], dict):
-            # level 1 component
-            name = next(iter(content[tag].items()))[0]
-            if isinstance(next(iter(content[tag].items()))[1], list):
-                # level 2 repeating group
-                for group in content[tag][name]:
-                    content[tag][name][content[tag][name].index(group)] = Value(
-                        message_value=(message_to_grpc(name, group, session_alias)))
-                content[tag][name] = Value(
+            content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+
+        elif isinstance(content[tag], list):
+            if tag == 'NoMDEntriesIR':
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
                     message_value=Message(
                         metadata=MessageMetadata(message_type=tag),
                         fields={
-                            tag: Value(
+                            'NoMDEntries': Value(
                                 list_value=ListValue(
-                                    values=content[tag][name]
+                                    values=content[tag]
                                 )
                             )
                         }
                     )
                 )
+            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
+                         'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
+                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol']:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag, group, session_alias)))
+                content[tag] = Value(list_value=ListValue(values=content[tag]))
             else:
-                # level 2 field
-                content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            tag: Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
+                            )
+                        }
+                    )
+                )
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
