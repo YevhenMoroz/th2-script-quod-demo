@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.fx.fx_mm_autohedging import QAP_2292
 from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_2296, QAP_2101, QAP_2091, QAP_5345
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2750, QAP_4094
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689
@@ -86,7 +87,8 @@ def test_run():
         # QAP_4094.execute(report_id)
         # QAP_2091.execute(report_id)
         # QAP_5345.execute(report_id)
-        QAP_2761.execute(report_id, session_id)
+        # QAP_2761.execute(report_id, session_id)
+        QAP_2292.execute(report_id, session_id)
 
 
         # region my test files
