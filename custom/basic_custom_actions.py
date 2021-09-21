@@ -70,6 +70,63 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         Returns:
             message_to_grpc (Message): grpc wrapper for message
     """
+    content = deepcopy(content)
+    for tag in content:
+        if isinstance(content[tag], (str, int, float)):
+            content[tag] = Value(simple_value=str(content[tag]))
+
+        elif isinstance(content[tag], dict):
+            content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+
+        elif isinstance(content[tag], list):
+            if tag == 'NoMDEntriesIR':
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            'NoMDEntries': Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
+                            )
+                        }
+                    )
+                )
+            elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
+                         'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
+                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol', 'MDSymbolBlock']:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag, group, session_alias)))
+                content[tag] = Value(list_value=ListValue(values=content[tag]))
+            else:
+                for group in content[tag]:
+                    content[tag][content[tag].index(group)] = Value(
+                        message_value=(message_to_grpc(tag + '_' + tag + 'IDs', group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            tag: Value(
+                                list_value=ListValue(
+                                    values=content[tag]
+                                )
+                            )
+                        }
+                    )
+                )
+    return Message(
+        metadata=MessageMetadata(
+            message_type=message_type,
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
+        ),
+        fields=content
+    )
+
+def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
     content = dict(deepcopy(content))
     for tag in dict(content):
         # field
@@ -83,11 +140,11 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                 for group in content[tag][name]:
                     content[tag][name][content[tag][name].index(group)] = Value(
                         message_value=(message_to_grpc(name, group, session_alias)))
-                content[tag][name] = Value(
+                content[tag] = Value(
                     message_value=Message(
                         metadata=MessageMetadata(message_type=tag),
                         fields={
-                            tag: Value(
+                            name: Value(
                                 list_value=ListValue(
                                     values=content[tag][name]
                                 )
@@ -105,6 +162,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         ),
         fields=content
     )
+
 
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
