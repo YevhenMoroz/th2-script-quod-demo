@@ -142,6 +142,18 @@ class ContextActionRatesTile:
         context_action.add_action(action)
         return context_action
 
+
+    @staticmethod
+    def open_full_amount(context_action_types=[ContextActionType.CHECK_FULL_AMOUNT.value]
+                             ):
+        action = ar_operations_pb2.ContextActionRatesTile.ClickContextActionType()
+        for act in context_action_types:
+            action.actionType.append(act)
+        context_action = ContextActionRatesTile()
+        context_action.add_action(action)
+        return context_action
+
+
     def add_action(self, action):
         if isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterVenues):
             self.request.filterVenues.CopyFrom(action)
@@ -159,6 +171,7 @@ class ContextActionRatesTile:
             self.request.clickContextActionType.CopyFrom(action)
         elif isinstance(action, ar_operations_pb2.ContextActionRatesTile.FilterSyntheticCombinations):
             self.request.filterSyntheticCombinations.CopyFrom(action)
+
 
     @staticmethod
     def filter_synthetic_combination(currenc_pair: str):
@@ -198,6 +211,24 @@ class ActionsRatesTile:
     def click_to_bid_esp_order(venue: str):
         action = ar_operations_pb2.ActionsRatesTile.ClickToBidESPOrder()
         action.venue = venue
+        action_rates = ActionsRatesTile()
+        action_rates.add_action(action)
+        return action_rates
+
+
+    @staticmethod
+    def click_on_full_amounts_sell_button(qty: str):
+        action = ar_operations_pb2.ActionsRatesTile.ClickOnFullAmountsSellButton()
+        action.quantity = qty
+        action_rates = ActionsRatesTile()
+        action_rates.add_action(action)
+        return action_rates
+
+
+    @staticmethod
+    def click_on_full_amounts_buy_button(qty: str):
+        action = ar_operations_pb2.ActionsRatesTile.ClickOnFullAmountsBuyButton()
+        action.quantity = qty
         action_rates = ActionsRatesTile()
         action_rates.add_action(action)
         return action_rates
@@ -258,6 +289,10 @@ class ActionsRatesTile:
             self.request.clickToDirectVenueRemoveRawCorrect2.CopyFrom(action)
         elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickToRestingOrdersCheckBox):
             self.request.clickToRestingOrdersCheckBox.CopyFrom(action)
+        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickOnFullAmountsSellButton):
+            self.request.clickOnFullAmountsSellButton.CopyFrom(action)
+        elif isinstance(action, ar_operations_pb2.ActionsRatesTile.ClickOnFullAmountsBuyButton):
+            self.request.clickOnFullAmountsBuyButton.CopyFrom(action)
 
     def build(self):
         return self.request
@@ -320,6 +355,9 @@ class ModifyRFQTileRequest:
 
     def set_quantity(self, quantity: int):
         self.modify_request.quantity.value = quantity
+
+    def set_quantity2(self, quantity: int):
+        self.modify_request.farLegQuantity.value = quantity
 
     def set_quantity_as_string(self, quantity: str):
         self.modify_request.quantityAsString = quantity
@@ -392,6 +430,19 @@ class ModifyRatesTileRequest:
     def add_context_actions(self, context_actions: list):
         for context_action in context_actions:
             self.add_context_action(context_action)
+
+    def clear_quantity(self, clear_quantity: bool):
+        self.modify_request.clearQuantity = clear_quantity
+
+    # def set_instrument(self, need_to_set_instrument: bool, from_currency: str, to_currency: str, set_tenor: str):
+    #     self.modify_request.changeInstrument = need_to_set_instrument
+    #     self.modify_request.fromCurrency = from_currency
+    #     self.modify_request.toCurrency = to_currency
+    #     self.modify_request.tenor = set_tenor
+
+    def set_quantity_(self, need_to_set_quantity: bool, quantity: str):
+        self.modify_request.changeQty = need_to_set_quantity
+        self.modify_request.quantityAsString = quantity
 
     def add_action(self, actions_rates: ActionsRatesTile):
         self.modify_request.actions.append(actions_rates.build())
