@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2250
+from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255
 
 from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
@@ -11,10 +11,11 @@ from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850, QAP_4234, \
     QAP_3766, QAP_3747, QAP_3806, QAP_3807
 from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3740
-from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot, rfq_swap_1w_2w
+from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot, rfq_swap_1w_2w, \
+    java_api_Subscribe
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -80,15 +81,20 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
+        QAP_2255.execute(report_id,session_id)
+
+
+
 
         # QAP_2092WIP.execute(report_id,session_id)
         # QAP_1558.execute(report_id)
 
         # java_api.TestCase(report_id).execute()
+        # java_api_Subscribe.TestCase().execute(report_id)
         # example_java_api.TestCase(report_id).execute()
 
 
@@ -140,23 +146,24 @@ def test_run():
 
 
 
-        #
-        rm = RuleManager()
-        rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
-        rm.print_active_rules()
-        rm.print_active_rules_sim_test()
+        # rm = RuleManager()
+        # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
+        # rm.print_active_rules()
+        # rm.print_active_rules_sim_test()
+
+
 
         # rm.remove_rule_by_id(4)
         # rm.remove_rule_by_id(5)
 
         # rm.remove_rule_by_id(10)
-        # rm.remove_rule_by_id_test_sim(2)
+        # rm.remove_rule_by_id_test_sim(4)
         # rm.remove_rule_by_id_test_sim(3)
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
         # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
-        # # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
+        # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
         # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
         # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
         # # rm.remove_rule_by_id(574)

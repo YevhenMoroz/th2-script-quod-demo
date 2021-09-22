@@ -527,6 +527,7 @@ class CaseParamsSellRfq:
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'
         self.order_filled['TradeDate'] = tsd.today()
+        self.order_filled['LastMkt'] = 'XQFX'
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
         if self.securitytype == 'FXNDF':
