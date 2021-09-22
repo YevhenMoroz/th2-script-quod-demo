@@ -580,6 +580,11 @@ class CaseParamsSellRfq:
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
         if self.leg1_settltype == '0':
             self.order_filled_swap['NoLegs'][0].pop('LegLastForwardPoints')
+        if self.securitytype=='FXNDS':
+            self.order_filled_swap['Instrument']['SecurityType']='FXNDS'
+            self.order_filled_swap.pop('SettlType')
+            self.order_filled_swap['NoLegs'][0]['InstrumentLeg']['LegMaturityDate'] = '*'
+            self.order_filled_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate'] = '*'
 
     def prepare_order_swap_filled_taker(self):
         self.set_order_exec_rep_params_swap()
@@ -721,6 +726,7 @@ class CaseParamsSellRfq:
         # Specific part only for NDS
         if self.securitytype == 'FXNDS':
             self.quote_params_swap.pop('ValidUntilTime')
+            self.quote_params_swap['NoLegs'][0]['InstrumentLeg']['LegMaturityDate'] = '*'
             self.quote_params_swap['NoLegs'][1]['InstrumentLeg']['LegMaturityDate'] = '*'
 
     def prepare_quote_reject_report(self):
