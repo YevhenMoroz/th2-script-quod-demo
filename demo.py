@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCO_01, CLO_VO_01, CLO_WW_01
 from quod_qa.eq.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01
 from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCA_01, OPN_VO_01, OPN_WW_01
@@ -75,6 +76,25 @@ def test_run():
         CLO_SCO_01.execute(report_id)
         CLO_VO_01.execute(report_id)
         CLO_WW_01.execute(report_id)
+
+        #region Cancel order
+        cancel_ss_param = {
+            'Side': "1",
+            'Account': "REDBURN",
+            'ClOrdID': "AO1210922053619022001",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrigClOrdID': "AO1210922053619022001"
+        }
+
+        Stubs.fix_act.sendMessage(request=convert_to_request(
+            'Send OrderCancelRequest',
+            "fix-sell-side-redburn",
+            report_id,
+            message_to_grpc('OrderCancelRequest', cancel_ss_param,
+                            "fix-sell-side-redburn")
+        ))
+        #endregion
+
 
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
@@ -349,7 +369,7 @@ def test_run():
         #         bca.message_to_grpc_test('NewOrderSingle', new_order_single_params_test, "fix-sell-317-standard-test")
         #     ))
         # message_test = bca.message_to_grpc_test('NewOrderSingle', new_order_single_params_test, "fix-sell-317-standard-test")
-
+        # SendMarketData.execute(report_id)
         print()
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
