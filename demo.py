@@ -1,12 +1,12 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2292, QAP_2291
+from quod_qa.fx.fx_mm_autohedging import QAP_2292, QAP_2291, QAP_2265
 from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_2296, QAP_2101, QAP_2091, QAP_5345
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2750, QAP_4094
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689
 from MyFiles import MyTest, SendMD, Test, StringThing, send_rfq
-from quod_qa.fx.fx_taker_esp import QAP_2373, QAP_2761
+from quod_qa.fx.fx_taker_esp import QAP_2373, QAP_2761, QAP_2812
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe_2, get_opened_fe
@@ -89,7 +89,9 @@ def test_run():
         # QAP_5345.execute(report_id)
         # QAP_2761.execute(report_id, session_id)
         # QAP_2292.execute(report_id, session_id)
-        QAP_2291.execute(report_id, session_id)
+        # QAP_2291.execute(report_id, session_id)
+        # QAP_2265.execute(report_id, session_id)
+        QAP_2812.execute(report_id, session_id)
 
 
         # region my test files
