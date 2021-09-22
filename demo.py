@@ -50,10 +50,10 @@ def test_run():
     # rule_check()
     try:
         pass
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
         # QAP_1591.execute(report_id, session_id)
         # QAP_105.execute(report_id, session_id)
         # QAP_1511.execute(report_id, session_id)
@@ -87,13 +87,13 @@ def test_run():
         # QAP_2750.execute(report_id)
         # QAP_4094.execute(report_id)
         # QAP_2091.execute(report_id)
-        QAP_5345.execute(report_id)
+        # QAP_5345.execute(report_id)
         # QAP_2761.execute(report_id, session_id)
         # QAP_2292.execute(report_id, session_id)
         # QAP_2291.execute(report_id, session_id)
         # QAP_2265.execute(report_id, session_id)
         # QAP_2812.execute(report_id, session_id)
-        # QAP_2844.execute(report_id, session_id)
+        QAP_2844.execute(report_id, session_id)
 
         # region my test files
         # SendMD.execute(report_id)
