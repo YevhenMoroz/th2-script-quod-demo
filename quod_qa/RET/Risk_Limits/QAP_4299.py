@@ -5,6 +5,7 @@ from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
+from quod_qa.wrapper.ret_wrappers import close_order_book
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -69,7 +70,7 @@ def execute(session_id, report_id):
 
     # region Extract error in order ticket
     result_amend_qty = extract_error_message_order_ticket(base_request, order_ticket_service)
-    print(result_amend_qty)
+    close_order_book(base_request, Stubs.win_act_order_book)
     # end region extract
 
     # region verify details(expected result in step 3)

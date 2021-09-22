@@ -76,16 +76,16 @@ def execute(report_id, session_id):
         create_or_get_rates_tile(base_esp_details, ar_service)
         place_order(base_esp_details, ar_service)
         modify_order_ticket(case_base_request, order_ticket_service, "1m")
-        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000")
+        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000.00")
         # Step 2
         modify_order_ticket(case_base_request, order_ticket_service, "1k")
-        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000")
+        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000.00")
         # Step 3
         modify_order_ticket(case_base_request, order_ticket_service, "1b")
-        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000000")
+        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000000.00")
         # Step 4
         modify_order_ticket(case_base_request, order_ticket_service, "1kk")
-        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000")
+        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000.00")
         close_order_ticket(case_base_request, order_ticket_service)
 
     except Exception:

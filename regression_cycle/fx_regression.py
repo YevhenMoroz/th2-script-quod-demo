@@ -9,10 +9,10 @@ def test_run(parent_id=None):
     report_id = bca.create_event('Regression', parent_id)
     try:
         # rfq_taker_regression.test_run(report_id)
-        # esp_mm_regression.test_run(report_id)
+        esp_mm_regression.test_run(report_id)
         # esp_taker_regression.test_run(report_id)
         # mm_positions_regression.test_run(report_id)
-        fx_mm_rfq_regression.test_run(report_id)
+        # fx_mm_rfq_regression.test_run(report_id)
         # fx_mm_AH_regression.test_run(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)

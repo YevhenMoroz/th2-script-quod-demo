@@ -3,6 +3,8 @@ import os
 
 from custom import basic_custom_actions as bca
 from datetime import datetime
+
+from quod_qa.wrapper.ret_wrappers import close_order_book
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -90,5 +92,7 @@ def execute(session_id, report_id):
     # region Amend order according with step 4
     amend_negative_ex(base_request, order_book_service)
     # endregion
+
+    close_order_book(base_request, Stubs.win_act_order_book)
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -11,33 +11,35 @@ logger.setLevel(logging.INFO)
 
 def execute(report_id, session_id):
     qty = "1300"
-    client = "CLIENT_iPal"
+    client = "MOClient"#"CLIENT_FIX_CARE"
     handle_inst = 3
     side = 1
     ord_type = 4
     case_name = "QAP-4661"
     tif = 1
+    stop_price = "200"
+    price = "300"
     case_id = create_event(case_name, report_id)
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     precondition_fix_message = eq_fix_wrappers.create_order_via_fix(case_id, handle_inst, side, client, ord_type, qty,
                                                                     tif,
-                                                                    stop_price=300, price=300)
+                                                                    stop_price=price, price=price)
     response = precondition_fix_message.pop("response")
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    eq_wrappers.accept_order("VETO", qty, "300")
+    eq_wrappers.accept_order("VETO", qty, price)
     eq_fix_wrappers.amend_order_via_fix(case_id, precondition_fix_message,
-                                        parametr_list={"TimeInForce": 0, "StopPx": 200})
-    eq_wrappers.accept_modify("VETO", qty, "300")
+                                        parametr_list={"TimeInForce": 0, "StopPx": stop_price})
+    eq_wrappers.accept_modify("VETO", qty, price)
     params = {
         'OrderQty': "*",
         'OrdStatus': '0',
-        'TimeInForce': 0,
+        'TimeInForce': '0',
         'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'SettlType': '0',
-        "StopPx": 200,
-        "ExecType": 5,
+        "StopPx": stop_price,
+        "ExecType": '5',
         "NoParty": "*",
         "Account": "*",
         "ExecID": "*",
@@ -48,6 +50,7 @@ def execute(report_id, session_id):
         "AvgPx": "*",
         "SettlDate": "*",
         "Currency": "*",
+        'OrderCapacity': "*",
         "HandlInst": "*",
         "LeavesQty": "*",
         "CumQty": "*",

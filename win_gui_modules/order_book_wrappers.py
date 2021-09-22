@@ -37,6 +37,32 @@ class ModifyOrderDetails:
         return self.modify_order_details
 
 
+class MassExecSummaryDetails:
+    def __init__(self, base: EmptyRequest = None, count_of_selected_rows: int = None, reported_price_value: str = None):
+        if base is not None:
+            self._request = order_book_pb2.MassExecSummaryDetails(base=base)
+        else:
+            self._request = order_book_pb2.MassExecSummaryDetails()
+
+        if count_of_selected_rows is not None:
+            self._request.countOfSelectedRows = count_of_selected_rows
+
+        if reported_price_value is not None:
+            self._request.reportedPrice = reported_price_value
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_count_of_selected_rows(self, count: int):
+        self._request.countOfSelectedRows = count
+
+    def set_reported_price_value(self, reported_price: str):
+        self._request.reportedPrice = reported_price
+
+    def build(self):
+        return self._request
+
+
 class ModifyFXOrderDetails:
     def __init__(self, base_request):
         self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
@@ -385,6 +411,24 @@ class ExtractEventRows:
         return self.extract_action
 
 
+class SuspendOrderDetails:
+
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+        else:
+            self._request = order_book_pb2.SuspendOrderDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_cancel_children(self, cancel_children: bool):
+        self._request.cancelChildren = cancel_children
+
+    def build(self):
+        return self._request
+
+
 class OrderAnalysisAction:
     def __init__(self):
         self.order_analysis_action = order_book_pb2.OrderAnalysisAction()
@@ -516,6 +560,52 @@ class OrderInfo:
         return self.order_info
 
 
+class MassExecSummaryAveragePriceDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base)
+        else:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_count_of_selected_rows(self, count: int):
+        self._request.countOfSelectedRows = count
+
+    def build(self):
+        return self._request
+
+
+class DiscloseFlagDetails:
+    def __init__(self, base_request=None, row_numbers: list = None):
+        self._request = order_book_pb2.DiscloseFlagDetails()
+        self._request.base.CopyFrom(base_request)
+
+        if row_numbers is not None:
+            for number in row_numbers:
+                self._request.rowNumbers.append(number)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def manual(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.MANUAL
+
+    def real_time(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.REAL_TIME
+
+    def disable(self):
+        self._request.flagOption = order_book_pb2.DiscloseFlagDetails.FlagOption.DISABLE
+
+    def build(self):
+        return self._request
+
+
 class ExecutionsDetails:
     def __init__(self, request: order_book_pb2.ManualExecutionDetails.ExecutionDetails):
         self.request = request
@@ -582,6 +672,9 @@ class ManualExecutingDetails:
         var = self._request.executionDetails.add()
         return ExecutionsDetails(var)
 
+    def set_error_expected(self, error_expected: bool):
+        self._request.errorExpected = error_expected
+
     def build(self):
         return self._request
 
@@ -631,10 +724,13 @@ class ManualCrossDetails:
             self._request = order_book_pb2.ManualCrossDetails(base=base)
         else:
             self._request = order_book_pb2.ManualCrossDetails()
-        self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
+        # self.manualCrossValues = order_book_pb2.ExtractManualCrossValuesRequest()
 
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
+
+    def set_extract_manual_cross_value(self, manual_cross_value):
+        self._request.manualCrossValues.CopyFrom(manual_cross_value)
 
     def set_filter(self, table_filter: dict):
         self._request.filter.update(table_filter)
@@ -654,6 +750,42 @@ class ManualCrossDetails:
     def set_selected_rows(self, row_numbers: list):
         for row in row_numbers:
             self._request.selectedRows.append(row)
+
+    def build(self):
+        return self._request
+
+
+class ExtractManualCrossValuesRequest:
+    def __init__(self, extraction_id: int = None, manual_cross_extracted_value: list = None):
+        self._request = order_book_pb2.ExtractManualCrossValuesRequest()
+        if extraction_id is not None:
+            self._request.extractionId = extraction_id
+        if manual_cross_extracted_value is not None:
+            for value in manual_cross_extracted_value:
+                self._request.extractedValues.append(value)
+
+    def set_extraction_id(self, extraction_id: int):
+        self._request.extractionId = extraction_id
+
+    def set_manual_cross_extracted_value(self, manual_cross_extracted_value: list):
+        for value in manual_cross_extracted_value:
+            self._request.extractedValues.append(value)
+
+    def build(self):
+        return self._request
+
+
+class ManualCrossExtractedValue:
+    def __init__(self, type=None, name: str = None):
+        self._request = order_book_pb2.ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
+        self._request.type = type
+        self._request.name = name
+
+    def set_type(self, type):
+        self._request.type = type
+
+    def set_name(self, name: str):
+        self._request.name = name
 
     def build(self):
         return self._request

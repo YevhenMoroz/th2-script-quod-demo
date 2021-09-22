@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
 
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
@@ -15,8 +15,8 @@ from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -732,7 +732,7 @@ def unbook_order(request):
         call(middle_office_service.unBookOrder, modify_request.build())
     except Exception:
         logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
+        basic_custom_actions.create_event('Fail unbook_order', status="FAIL")
 
 
 def allocate_order(request, arr_allocation_param: [] = None):
@@ -770,7 +770,7 @@ def amend_allocate(request, account=None, agreed_price=None, settlement_currency
     amend_allocations_details = modify_request.add_amend_allocations_details()
     ticket_details = modify_request.add_ticket_details()
     if account is not None:
-        amend_allocations_details.set_allocations_filter({"Account ID": account})
+        amend_allocations_details.set_filter({"Account ID": account})
     if agreed_price is not None:
         ticket_details.set_agreed_price(agreed_price)
     settlement_details = modify_request.add_settlement_details()
@@ -1000,6 +1000,24 @@ def release_order(base_request, filter=None):
         basic_custom_actions.create_event('Fail release_order', status="FAIL")
 
 
+def mass_execution_summary_at_average_price(base_request, count: int):
+    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
+    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
+    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+
+
+def set_disclose_flag_via_order_book(request, row_numbers, type_disclose: bool = None):
+    disclose_flag_details = DiscloseFlagDetails(base_request=request)
+    if type_disclose is None:
+        disclose_flag_details.disable()
+    if type_disclose is False:
+        disclose_flag_details.real_time()
+    if type_disclose is True:
+        disclose_flag_details.manual()
+    disclose_flag_details.set_row_numbers(row_numbers)
+    call(Stubs.win_act_order_book.discloseFlag, disclose_flag_details.build())
+
+
 def add_to_basket(request, list_row_numbers: [], basket_name=""):
     add_to_basket_details = AddToBasketDetails(request, list_row_numbers, basket_name)
     order_book_service = Stubs.win_act_order_book
@@ -1010,41 +1028,42 @@ def add_to_basket(request, list_row_numbers: [], basket_name=""):
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_policy='Care', symbol_source='ISIN',
-                        has_header=True, templ: {} = None):
-    if templ is None:
-        templ = {'Symbol': ['1', 'FR0004186856'], 'Quantity': ['2', '0'], 'Price': ['3', '0'],
-                 'Account': ['4', 'CLIENT_FIX_CARE_SA1'], 'Side': ['5', 'Buy'], 'OrdType': ['6', 'Limit'],
-                 'StopPrice': ['7', '0'], 'Capacity': ['8', 'Agency']}
-
-    fields_details = [
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
-                                        templ.get('Symbol')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
-                                        templ.get('Quantity')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
-                                        templ.get('Price')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
-                                        templ.get('Side')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
-                                        templ.get('OrdType')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
-                                        templ.get('StopPrice')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
-                                        templ.get('Account')[1]).build(),
-        ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
-                                        templ.get('Capacity')[1]).build()
-    ]
-    details = ImportedFileMappingDetails(has_header, fields_details).build()
+def add_basket_template(request, templ_name, descrip=None, client=None, tif=None, exec_policy=None,
+                        symbol_source=None, has_header=True, templ: {} = None):
     templates_details = TemplatesDetails()
+    if templ is not None:
+        fields_details = [
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SYMBOL, templ.get('Symbol')[0],
+                                            templ.get('Symbol')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.QUANTITY, templ.get('Quantity')[0],
+                                            templ.get('Quantity')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.PRICE, templ.get('Price')[0],
+                                            templ.get('Price')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.SIDE, templ.get('Side')[0],
+                                            templ.get('Side')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ORD_TYPE, templ.get('OrdType')[0],
+                                            templ.get('OrdType')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.STOP_PRICE, templ.get('StopPrice')[0],
+                                            templ.get('StopPrice')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.ACCOUNT, templ.get('Account')[0],
+                                            templ.get('Account')[1]).build(),
+            ImportedFileMappingFieldDetails(ImportedFileMappingField.CAPACITY, templ.get('Capacity')[0],
+                                            templ.get('Capacity')[1]).build()
+        ]
+        details = ImportedFileMappingDetails(has_header, fields_details).build()
+        templates_details.set_imported_file_mapping_details(details)
     templates_details.set_default_params(request)
     templates_details.set_name_value(templ_name)
-    templates_details.set_exec_policy(exec_policy)
-    templates_details.set_default_client(client)
-    templates_details.set_description(descrip)
-    templates_details.set_symbol_source(symbol_source)
-    templates_details.set_time_in_force(tif)
-    templates_details.set_imported_file_mapping_details(details)
+    if exec_policy is not None:
+        templates_details.set_exec_policy(exec_policy)
+    if client is not None:
+        templates_details.set_default_client(client)
+    if descrip is not None:
+        templates_details.set_description(descrip)
+    if symbol_source is not None:
+        templates_details.set_symbol_source(symbol_source)
+    if tif is not None:
+        templates_details.set_time_in_force(tif)
     try:
         call(Stubs.win_act_basket_ticket.manageTemplates, templates_details.build())
     except Exception:
@@ -1052,8 +1071,20 @@ def add_basket_template(request, client, templ_name, descrip, tif='Day', exec_po
         basic_custom_actions.create_event('Fail add_to_basket', status="FAIL")
 
 
-def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None, qty=None, ord_type=None, price=None,
-                       capacity=None, stop_price=None):
+def get_basket_template_details(request, templ_name, column_names: []):
+    extract_template_details = ExtractTemplateDetails(request, {'Name': templ_name}, column_names)
+    basket_ticket_service = Stubs.win_act_basket_ticket
+    result = call(basket_ticket_service.extractTemplateData, extract_template_details.build())
+    return result
+
+
+def remove_basket_template(request, name):
+    simple_request = SimpleRequest(request, {'Name': name})
+    call(Stubs.win_act_basket_ticket.removeTemplate, simple_request.build())
+
+
+def basket_row_details(row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
+                       price=None, capacity=None, stop_price=None):
     if not remove_row:
         params = {}
         if symbol is not None:
@@ -1076,7 +1107,7 @@ def basket_row_details(row_filter: str, remove_row=False, symbol=None, side=None
     return result
 
 
-def create_basket_via_import(request, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
+def create_basket_via_import(request, basket_name, basket_template_name, path, client, expire_date=None, tif=None,
                              is_csv=False, amend_rows_details: [basket_row_details] = None):
     if is_csv:
         file_type = 1
@@ -1108,7 +1139,16 @@ def create_basket(request, orders_rows: [], basket_name, amend_rows_details: [ba
     call(Stubs.win_act_order_book.createBasket, create_basket_details.build())
 
 
-def mass_execution_summary_at_average_price(base_request, count: int):
-    mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(base_request)
-    mass_exec_summary_average_price_detail.set_count_of_selected_rows(count)
-    call(Stubs.win_act_order_book.massExecSummaryAtAveragePrice, mass_exec_summary_average_price_detail)
+def complete_basket(base_request, filter_list=None):
+    request = SimpleRequest(base_request, filter_list)
+    call(Stubs.win_act_basket_order_book.complete, request)
+
+
+def un_complete(base_request, filter_list=None):
+    request = SimpleRequest(base_request, filter_list)
+    call(Stubs.win_act_basket_order_book.uncomplete, request)
+
+
+def book_basket(request, filter_list=None):
+    request = SimpleRequest(request, filter_list)
+    call(Stubs.win_act_basket_order_book.book, request.build())

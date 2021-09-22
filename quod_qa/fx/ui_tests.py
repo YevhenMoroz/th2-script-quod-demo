@@ -574,7 +574,7 @@ def set_value_di_panel(base_request, dealer_interventions_service):
     # modify_request.widen_spread()
     # modify_request.skew_towards_ask()
     # modify_request.skew_towards_bid()
-    # modify_request.send()
+    modify_request.send()
     # modify_request.reject()
 
     call(dealer_interventions_service.modifyAssignedRFQ, modify_request.build())
@@ -958,7 +958,7 @@ def execute(report_id, session_id):
 
         # region Dealer Intervention
         # extract_di_panel(base_request, dealer_interventions_service)
-        # set_value_di_panel(base_request, dealer_interventions_service)
+        set_value_di_panel(base_request, dealer_interventions_service)
         # close_dmi_window(base_request, dealer_interventions_service)
         # endregion
 

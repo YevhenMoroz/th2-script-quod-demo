@@ -129,7 +129,7 @@ class FixClientSellRfq():
         return self
 
     # Send New Order Multi LEg
-    def send_new_order_multi_leg(self, price='', side=''):
+    def send_new_order_multi_leg(self, price='', side='', ccy1='', ccy2=''):
         tif = prepeare_tif(self.case_params_sell_rfq.timeinforce)
         self.price = price
         self.case_params_sell_rfq.order_multi_leg_params['Price'] = self.price
@@ -139,6 +139,10 @@ class FixClientSellRfq():
         self.case_params_sell_rfq.order_multi_leg_params['QuoteID'] = self.quote_id
         if side != '':
             self.case_params_sell_rfq.order_multi_leg_params['Side'] = side
+        if ccy1 != '':
+            self.case_params_sell_rfq.order_multi_leg_params['Currency'] = ccy1
+        if ccy2 != '':
+            self.case_params_sell_rfq.order_multi_leg_params['SettlCurrency'] = ccy2
         print('Send an order', self.case_params_sell_rfq.order_multi_leg_params)
 
         self.new_order = self.fix_act.placeOrderMultilegFIX(
@@ -325,7 +329,7 @@ class FixClientSellRfq():
         )
         return self
 
-    def verify_order_pending_swap(self, price='', qty='', side=''):
+    def verify_order_pending_swap(self, price='', qty='', side='',ccy1='', ccy2=''):
         self.case_params_sell_rfq.prepare_order_pending_report()
         self.case_params_sell_rfq.order_pending['Price'] = self.price
         self.case_params_sell_rfq.order_pending['Side'] = self.case_params_sell_rfq.leg2_side
@@ -335,6 +339,10 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_pending['Side'] = side
         if price == '':
             self.case_params_sell_rfq.order_pending.pop('Price')
+        if ccy1 != '':
+            self.case_params_sell_rfq.order_pending['Currency'] = ccy1
+        if ccy2 != '':
+            self.case_params_sell_rfq.order_pending['SettlCurrency'] = ccy2
         if qty != '':
             self.case_params_sell_rfq.order_pending['OrderQty'] = qty
             self.case_params_sell_rfq.order_pending['LeavesQty'] = qty
@@ -442,7 +450,7 @@ class FixClientSellRfq():
         return self
 
     def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', last_spot_rate='', leg_last_px_near='',
-                                 leg_last_px_far='', last_swap_points='', avg_px='', last_px=''):
+                                 leg_last_px_far='', last_swap_points='', avg_px='', last_px='',ccy1='', ccy2=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()
         self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
         self.case_params_sell_rfq.order_filled_swap['AvgPx'] = self.price
@@ -455,6 +463,10 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_filled_swap['LastSwapPoints'] = price
         if price == '':
             self.case_params_sell_rfq.order_filled_swap.pop('Price')
+        if ccy1 != '':
+            self.case_params_sell_rfq.order_filled_swap['Currency'] = ccy1
+        if ccy2 != '':
+            self.case_params_sell_rfq.order_filled_swap['SettlCurrency'] = ccy2
         if spot_rate != '':
             self.case_params_sell_rfq.order_filled_swap['LastSpotRate'] = spot_rate
         if last_swap_points != '':
