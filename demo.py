@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2292, QAP_2291, QAP_2265, QAP_3902
+from quod_qa.fx.fx_mm_autohedging import QAP_2292, QAP_2291, QAP_2265, QAP_3902, QAP_2470
 from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_2296, QAP_2101, QAP_2091, QAP_5345
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2750, QAP_4094, QAP_2844, QAP_3394
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689
@@ -51,10 +51,10 @@ def test_run():
     # rule_check()
     try:
         pass
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
         # QAP_1591.execute(report_id, session_id)
         # QAP_105.execute(report_id, session_id)
         # QAP_1511.execute(report_id, session_id)
@@ -68,7 +68,7 @@ def test_run():
         # QAP_2252.execute(report_id, session_id)
         # QAP_2035.execute(report_id, session_id)
         # QAP_2556.execute(report_id, session_id)
-        QAP_4768.execute(report_id, session_id)
+        # QAP_4768.execute(report_id, session_id)
         # QAP_4794.execute(report_id, session_id)
         # QAP_4748.execute(report_id, session_id)
         # QAP_2958.execute(report_id, session_id)
@@ -97,8 +97,8 @@ def test_run():
         # QAP_2844.execute(report_id, session_id)
         # QAP_3394.execute(report_id, session_id)
         # QAP_2836.execute(report_id, session_id)
-        # QAP_3902.execute(report_id, session_id)
-
+        QAP_3902.execute(report_id, session_id)
+        QAP_2470.execute(report_id, session_id)
 
 
         # region my test files
