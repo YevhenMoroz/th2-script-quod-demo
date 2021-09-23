@@ -33,6 +33,7 @@ def execute(report_id):
             'TargetStrategy': 1005, 
             'ExDestination': 'XLON',
             'Text': 'TWAP-BA_01',
+            'AllowedVenues': 'XLON'
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(

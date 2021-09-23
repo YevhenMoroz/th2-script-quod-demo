@@ -35,6 +35,7 @@ def execute(report_id):
             'Text': 'TWAP-WW_01',
             'QuodFlatParameters': {
                 'TriggerPriceRed': '115.8',
+                'AllowedVenues': 'XLON'
             }
         }
 

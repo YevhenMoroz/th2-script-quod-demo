@@ -38,6 +38,7 @@ def execute(report_id):
                 'NavigatorExecution': '1',
                 'NavigatorInitialSweepTime': '5',
                 'NavGuard': '0',
+                'AllowedVenues': 'XLON'
             }
         }
 

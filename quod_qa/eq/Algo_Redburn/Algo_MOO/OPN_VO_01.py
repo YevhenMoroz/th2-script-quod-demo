@@ -19,9 +19,9 @@ def execute(report_id):
         'ClOrdID': 'OPN_VO_01' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 10000,
+        'OrderQty': 100000,
         'TimeInForce': 0,
-        'Price': 100,
+        'Price': 117,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
@@ -32,7 +32,8 @@ def execute(report_id):
         'Text': 'OPN_VO_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'ExcludePricePoint2': '1'
+            'ExcludePricePoint2': '1',
+            'AllowedVenues': 'XLON'
         }
     }
 

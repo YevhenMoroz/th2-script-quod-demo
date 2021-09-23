@@ -18,7 +18,7 @@ def execute(report_id):
         'Account': "REDBURN",
         'ClOrdID': 'CLO_LIM_01' + bca.client_orderid(9),
         'HandlInst': 2,
-        'Side': 1,
+        'Side': 2,
         'OrderQty': 100,
         'TimeInForce': 0,
         'Price': 20,
@@ -33,8 +33,9 @@ def execute(report_id):
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'LimitPriceReference': 'LTP',
-            'LimitPriceOffset': '2',
-            'ExcludePricePoint2': '1'
+            'LimitPriceOffset': '-2',
+            'ExcludePricePoint2': '1',
+            'AllowedVenues': 'XLON'
         }
     }
 

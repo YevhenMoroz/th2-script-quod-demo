@@ -8,27 +8,27 @@ timeouts = True
 
 def execute(report_id):
     instrument = {
-        'Symbol': 'FR0000121121_EUR',
-        'SecurityID': 'FR0000121121',
-        'SecurityIDSource': '4',
-        'SecurityExchange': 'XPAR'
+    'Symbol': 'GB00BH4HKS39-XLON',
+    'SecurityID': 'GB00BH4HKS39',
+    'SecurityIDSource': '4',
+    'SecurityExchange': 'XLON'
     }
 
     new_order_single_params = {
         'Account': "REDBURN",
         'ClOrdID': 'CLO_SCAL_OFF_01' + bca.client_orderid(9),
         'HandlInst': 2,
-        'Side': 1,
-        'OrderQty': 100,
+        'Side': 2,
+        'OrderQty': 600000,
         'TimeInForce': 0,
-        'Price': 20,
+        'Price': 100,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
-        'Currency': "EUR",
+        'Currency': "GBX",
         'TargetStrategy': 1015, # MOC
-        'ExDestination': 'XPAR',
+        'ExDestination': 'XLON',
         'Text': 'CLO_SCAL_OFF_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
@@ -38,6 +38,7 @@ def execute(report_id):
             'PricePoint2Reference': 'LTP',
             'PricePoint2Offset': '25',
             'PricePoint2Participation': '14',
+            'AllowedVenues': 'XLON'
         }
     }
 

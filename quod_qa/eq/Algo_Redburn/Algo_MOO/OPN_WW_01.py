@@ -34,7 +34,8 @@ def execute(report_id):
             'MaxParticipation': '10',
             'WouldInAuction': '1',
             'TriggerPriceRed': '18',
-            'ExcludePricePoint2': '1'
+            'ExcludePricePoint2': '1',
+            'AllowedVenues': 'XLON'
         }
     }
 

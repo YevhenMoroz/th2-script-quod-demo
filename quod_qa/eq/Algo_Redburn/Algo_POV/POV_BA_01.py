@@ -35,7 +35,7 @@ def execute(report_id):
             'Text': 'POV-BA_01',
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1'
+                'AllowedVenues': 'XLON'
             }
         }
 

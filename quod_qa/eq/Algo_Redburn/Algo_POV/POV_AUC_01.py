@@ -22,9 +22,9 @@ def execute(report_id):
             'ClOrdID': 'POV-AUC_01' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 100000,
+            'OrderQty': 200000,
             'TimeInForce': 0,
-            'Price': 120,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -36,9 +36,10 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
                 'ParticipateInClosingAuctions': 'Y',
-                'MaxParticipationOpen': '5',
-                'MaxParticipationClose': '5',
-                'MaxPercentageVolume': '10',
+                'MaxParticipationOpen': '10',
+                'MaxParticipationClose': '15',
+                'MaxPercentageVolume': '30',
+                'AllowedVenues': 'XLON'
             }
         }
 

@@ -36,7 +36,7 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'TriggerPriceRed': '116',
                 'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1'
+                'AllowedVenues': 'XLON'
             }
         }
 

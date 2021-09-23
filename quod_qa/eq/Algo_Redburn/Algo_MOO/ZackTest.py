@@ -8,36 +8,33 @@ timeouts = True
 
 def execute(report_id):
     instrument = {
-        'Symbol': 'FR0000121121_EUR',
-        'SecurityID': 'FR0000121121',
+        'Symbol': 'GB00BH4HKS39-XLON',
+        'SecurityID': 'GB00BH4HKS39',
         'SecurityIDSource': '4',
-        'SecurityExchange': 'XPAR'
+        'SecurityExchange': 'XLON'
     }
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'OPN_SCAL_OFF_01' + bca.client_orderid(9),
+        'ClOrdID': 'TestZ_' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 100,
+        'OrderQty': 2000000,
         'TimeInForce': 0,
-        'Price': 20,
+        'Price': 45,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
-        'Currency': "EUR",
+        'Currency': "GBX",
         'TargetStrategy': 1012, # MOO
-        'ExDestination': 'XPAR',
-        'Text': 'OPN_SCAL_OFF_01',
         'QuodFlatParameters': {
-            'MaxParticipation': '10',
-            'PricePoint1Reference': 'LTP',
-            'PricePoint1Offset': '0',
-            'PricePoint1Participation': '12',
-            'PricePoint2Reference': 'LTP',
-            'PricePoint2Offset': '25',
-            'PricePoint2Participation': '14',
+            'MaxParticipation': '5',
+            'PricePoint1Price': '44',
+            'PricePoint1Participation': '10',
+            'PricePoint2Price': '43',
+            'PricePoint2Participation': '15',
+            'NumberOfLevels': '3',
             'AllowedVenues': 'XLON'
         }
     }

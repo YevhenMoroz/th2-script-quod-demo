@@ -36,7 +36,7 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'MinParticipation': '14',
                 'MaxPercentageVolume': '15',
-                'ExcludePricePoint2': '1'
+                'AllowedVenues': 'XLON'
             }
         }
 

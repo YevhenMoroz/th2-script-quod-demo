@@ -35,6 +35,7 @@ def execute(report_id):
             'Text': 'VWAP-WW_01',
             'QuodFlatParameters': {
                 'TriggerPriceRed': '99',
+                'AllowedVenues': 'XLON'
             }
         }
 
