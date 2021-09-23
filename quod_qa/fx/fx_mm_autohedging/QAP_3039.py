@@ -58,16 +58,15 @@ def check_order_book_AO(even_name, case_id, base_request, act_ob, qty_exp, statu
     ob.set_filter(
         ["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "Hedging_Test", "Symbol", symbol, "Client ID", client])
     qty = ExtractionDetail("orderBook.qty", "Qty")
-    instr_type = ExtractionDetail("orderBook.instr_type", "InstrType")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    tif = ExtractionDetail("orderBook.tif", "FillOrKill")
+    tif = ExtractionDetail("orderBook.tif", "TIF")
     ord_type = ExtractionDetail("orderBook.ord_type", "OrdType")
     status = ExtractionDetail("orderBook.sts", "Sts")
     exec_pcy = ExtractionDetail("orderBook.exec_pcy", "ExecPcy")
 
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, instr_type, order_id])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id, tif, ord_type, exec_pcy])))
     response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
@@ -90,7 +89,7 @@ def check_order_book_MO(even_name, case_id, base_request, act_ob, qty_exp, statu
     ob.set_default_params(base_request)
     ob.set_filter(["Order ID", 'MO', "Orig", 'AutoHedger', "Symbol", symbol, "Client ID", client])
     qty = ExtractionDetail("orderBook.qty", "Qty")
-    tif = ExtractionDetail("orderBook.tif", "FillOrKill")
+    tif = ExtractionDetail("orderBook.tif", "TIF")
     ord_type = ExtractionDetail("orderBook.ord_type", "OrdType")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -99,7 +98,7 @@ def check_order_book_MO(even_name, case_id, base_request, act_ob, qty_exp, statu
 
     ob.add_single_order_info(
         OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id])))
+            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id, exec_pcy, tif, ord_type, strategy])))
     response = call(act_ob.getOrdersDetails, ob.request())
 
     verifier = Verifier(case_id)
@@ -145,7 +144,7 @@ def execute(report_id, session_id):
         compare_position('Checking positions Quod QUOD4_1', case_id, '0', actual_pos_quod)
         actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                  account_client_intern)
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, qty, actual_pos_client_intern)
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, '-1000000', actual_pos_client_intern)
 
         # Step 9
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
@@ -156,10 +155,10 @@ def execute(report_id, session_id):
         rfq = FixClientSellRfq(params_spot)
         rfq.send_request_for_quote()
         rfq.verify_quote_pending()
-        price = rfq.extract_filed("BidPx")
-        rfq.send_new_order_single(price=price). \
-            verify_order_pending(). \
-            verify_order_filled()
+        price = rfq.extract_filed("OfferPx")
+        rfq.send_new_order_single(price=price)
+        rfq.verify_order_pending()
+        rfq.verify_order_filled()
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
         compare_position('Checking positions Client AURUM1_1', case_id, '2000000', actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
@@ -167,7 +166,7 @@ def execute(report_id, session_id):
         actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                  account_client_intern)
         compare_position('Checking positions Quod QUOD_INT_1', case_id, '0', actual_pos_client_intern)
-        check_order_book_AO('Checking placed order AO', case_id, case_base_request, ob_act, qty, "Terminated",
+        check_order_book_AO('Checking placed order AO', case_id, case_base_request, ob_act, '2000000', "Terminated",
                             "QUOD_INT")
 
 
