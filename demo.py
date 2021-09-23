@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255
+from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255, QAP_3939, QAP_3039
 
 from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
@@ -24,46 +24,9 @@ timeouts = False
 
 channels = dict()
 
-def fx_mm_esp_fix(report_id):
-    QAP_1518.execute(report_id)
-    QAP_1558.execute(report_id)
-    QAP_1559.execute(report_id)
-    QAP_2797.execute(report_id)
-    QAP_2082.execute(report_id)
-    QAP_2084.execute(report_id)
-    QAP_2086.execute(report_id)
-    QAP_2085.execute(report_id)
-    QAP_2079.execute(report_id)
-    QAP_2078.execute(report_id)
-    QAP_3841.execute(report_id)
-    QAP_1554.execute(report_id)
-    QAP_1597.execute(report_id)
-    QAP_3390.execute(report_id)
-    QAP_2750.execute(report_id)
-    QAP_2823.execute(report_id)
-    QAP_2874.execute(report_id)
-    QAP_2876.execute(report_id)
-    QAP_2880.execute(report_id)
-    QAP_2879.execute(report_id)
-    QAP_2873.execute(report_id)
-    QAP_2872.execute(report_id)
-    QAP_2966.execute(report_id)
-    QAP_3848.execute(report_id)
-    QAP_2012.execute(report_id)
-    # QAP_2082.execute(report_id)
-
-def fx_mm_rfq_fix(report_id):
-    QAP_1746.execute(report_id)
-    QAP_1978.execute(report_id)
-    QAP_2089.execute(report_id)
-    QAP_2090.execute(report_id)
-    QAP_1755.execute(report_id)
-
-
 def test_run():
     # Generation id and time for test run
 
-    # report_id = bca.create_event(' tests ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     report_id = bca.create_event('KKL    ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
@@ -81,12 +44,12 @@ def test_run():
 
     session_id=set_session_id()
     try:
-    #     if not Stubs.frontend_is_open:
-    #         prepare_fe_2(report_id, session_id)
-    #     else:
-    #         get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
-        QAP_5345.execute(report_id)
+        QAP_3039.execute(report_id,session_id)
 
 
 
@@ -108,43 +71,6 @@ def test_run():
 
         # QAP_3805.execute(report_id)
         # QAP_3689.execute(report_id)
-
-
-
-
-        # QAP_2103.execute(report_id)
-        # java_api_MDReq.TestCase().execute(report_id)
-        # rfq_swap_1w_2w.execute(report_id)
-        # java_api.TestCase(report_id).execute()
-
-        # rfq_spot.execute(report_id)
-        # QAP_3734.execute(report_id,session_id)
-
-        # QAP_2104.execute(report_id,session_id)
-
-
-        # clone.execute(report_id)
-
-        # QAP_1518.execute(report_id)
-        # QAP_2382.execute(report_id)
-        # SendMD.execute(report_id)
-
-
-        # QAP_2250.execute(report_id,session_id)
-        # QAP_2035.execute(report_id, session_id)
-
-
-
-        # QAP_2089.execute(report_id)
-        # QAP_3841.execute(report_id)
-        # QAP_1518.execute(report_id)
-        # QAP_404.execute(report_id)
-        # SendMD.execute(report_id)
-
-        # QAP_2290.execute(report_id,session_id)
-
-
-
 
 
         # rm = RuleManager()
