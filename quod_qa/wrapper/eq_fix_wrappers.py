@@ -1,17 +1,19 @@
+from copy import deepcopy
 from datetime import datetime, timedelta
 from custom import basic_custom_actions
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from custom import basic_custom_actions as bca
 import logging
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-buy-317ganymede-standard"  # fix-ss-back-office fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard # gtwquod5 fix-ss-310-columbia-standart
-# fix-sell-317-standard-test
-bo_connectivity = "fix-sell-317-backoffice"
+buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
+# fix-sell-317-standard-test  fix-sell-310-newdict
+bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
 
 
 def get_buy_connectivity():
@@ -26,16 +28,18 @@ def get_bo_connectivity():
     return bo_connectivity
 
 
-def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None, insrument=None):
+def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, stop_price=None, no_allocs=None,
+                         instrument=None):
     fix_params = {
         'Account': client,
-        #'OrderQtyData': {'OrderQty': qty},
+        # 'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
         'OrdType': ord_type,
         'Side': side,
         'Price': price,
+        'StopPx': stop_price,
         'NoAllocs': no_allocs,
         'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
         'TransactTime': datetime.utcnow().isoformat(),
@@ -49,20 +53,23 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
     }
     if price is None:
         fix_params.pop('Price')
+    if stop_price is None:
+        fix_params.pop('StopPx')
     if no_allocs is None:
         fix_params.pop('NoAllocs')
-    if insrument is not None:
-        fix_params.update(Instrument=insrument)
+    if instrument is not None:
+        fix_params.update(Instrument=instrument)
     fix_message = FixMessage(fix_params)
     fix_message.add_random_ClOrdID()
     return fix_message.get_parameters()
 
 
-def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None, no_allocs=None,
-                         insrument=None):
+def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
+                         instrument=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
-        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price, no_allocs, insrument)
+        fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price,stop_price, no_allocs,
+                                          instrument)
         fix_message = FixMessage(fix_params)
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
         fix_params['response'] = response
@@ -74,10 +81,11 @@ def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, 
 
 def amend_order_via_fix(case_id, fix_message, parametr_list):
     fix_manager = FixManager(sell_connectivity, case_id)
+    fix_message = FixMessage(fix_message)
+    fix_modify_message = deepcopy(fix_message)
+    fix_modify_message.change_parameters(parametr_list)
+    fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
     try:
-        fix_modify_message = FixMessage(fix_message)
-        fix_modify_message.change_parameters(parametr_list)
-        fix_modify_message.add_tag({'OrigClOrdID': fix_modify_message.get_ClOrdID()})
         fix_manager.Send_OrderCancelReplaceRequest_FixMessage(fix_modify_message, case=case_id)
     except Exception:
         logger.error("Error execution", exc_info=True)

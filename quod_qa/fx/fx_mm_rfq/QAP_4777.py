@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from custom.tenor_settlement_date import spo
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ClientRFQTileOrderDetails, \
     ModifyClientRFQTileRequest, SelectRowsRequest
@@ -11,21 +16,76 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
 from win_gui_modules.utils import call, get_base_request
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-instrument_spot = 'GBP/USD-Spot'
-instrument_forward = 'GBP/USD-2W'
-tier = 'Iridium1'
-near_tenor='Spot'
-far_tenor='2W'
-from_curr='GBP'
-to_curr = 'USD'
-client_tier='Iridium1'
-client='Iridium1'
-qty='300000000'
+instrument_spot = 'EUR/JPY-Spot'
+instrument_forward = 'EUR/JPY-1W'
+tier = "Iridium1"
+near_tenor = "Spot"
+far_tenor = "1W"
+from_curr = "EUR"
+to_curr = "JPY"
+client_tier = "Iridium1"
+client = "Iridium1"
+qty = "300000000"
+symbol = "EUR/JPY"
+security_type = "FXSPOT"
+owner = Stubs.custom_config['qf_trading_fe_user']
+simulator = Stubs.simulator
+act = Stubs.fix_act
+default_md_symbol_spo = "EUR/JPY:SPO:REG:CITI"
+no_md_entries_eur_jpy_citi = [
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 104.632,
+        "MDEntrySize": 1000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 104.633,
+        "MDEntrySize": 1000000,
+        "MDEntryPositionNo": 1,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 104.630,
+        "MDEntrySize": 5000000,
+        "MDEntryPositionNo": 2,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 104.635,
+        "MDEntrySize": 5000000,
+        "MDEntryPositionNo": 2,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "0",
+        "MDEntryPx": 104.628,
+        "MDEntrySize": 320000000,
+        "MDEntryPositionNo": 3,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    },
+    {
+        "MDEntryType": "1",
+        "MDEntryPx": 104.639,
+        "MDEntrySize": 320000000,
+        "MDEntryPositionNo": 3,
+        'SettlDate': spo(),
+        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+    }
+]
 
 
 def create_or_get_pricing_tile(base_request, service):
@@ -84,7 +144,7 @@ def send_client_rfq(cp_service, base_tile_data):
 def check_quote_request_b(base_request, service, case_id,
                           status="Terminated", venue="QUODFX", quote_status='Filled'):
     qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_filter(["Venue", venue, "User", "QA5", 'Status', status, 'Qty', qty])
+    qrb.set_filter(["Venue", venue, "User", owner, 'Status', status, 'Qty', qty])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
@@ -98,7 +158,7 @@ def check_quote_request_b(base_request, service, case_id,
     verifier.verify()
 
 
-def check_order_book(base_request, act_ob, venue='QUODFX', owner='QA5', sts='Terminated'):
+def check_order_book(base_request, act_ob, venue='QUODFX', sts='Terminated'):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
@@ -114,8 +174,7 @@ def check_order_book(base_request, act_ob, venue='QUODFX', owner='QA5', sts='Ter
     verifier.set_event_name('Checking that order executed')
     verifier.compare_values('Status', sts, response[order_sts.name])
     verifier.compare_values('ID', response[order_id.name], response[order_id.name])
-    ord_id = response[order_id.name]
-    return ord_id
+    verifier.verify()
 
 
 def execute(report_id, session_id):
@@ -123,16 +182,18 @@ def execute(report_id, session_id):
     case_id = bca.create_event(case_name, report_id)
     case_base_request = get_base_request(session_id, case_id)
     base_tile_data = BaseTileData(base=case_base_request)
-    base_detail = BaseTileDetails(base=case_base_request)
     details_tile_spot = BaseTileDetails(base=case_base_request, window_index=0)
     details_tile_forward = BaseTileDetails(base=case_base_request, window_index=1)
     ob_act = Stubs.win_act_order_book
     cp_service = Stubs.win_act_cp_service
     ar_service = Stubs.win_act_aggregated_rates_service
-    pos_service = Stubs.act_fx_dealing_positions
     try:
-        create_or_get_pricing_tile(base_detail, cp_service)
-        modify_rates_tile(base_detail, cp_service, instrument_spot, tier)
+        # Preconditions
+        FixClientBuy(CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type)). \
+            send_market_data_spot('Custom Market Data from BUY SIDE USD/JPY')
+
+        FixClientBuy(CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type).
+                     prepare_custom_md_spot(no_md_entries_eur_jpy_citi)).send_market_data_spot()
         create_or_get_pricing_tile(details_tile_spot, cp_service)
         create_or_get_pricing_tile(details_tile_forward, cp_service)
         modify_rates_tile(details_tile_spot, cp_service, instrument_spot, tier)
@@ -149,14 +210,12 @@ def execute(report_id, session_id):
         place_client_rfq_order(cp_service, base_tile_data)
         check_quote_request_b(case_base_request, ar_service, case_id)
         check_order_book(case_base_request, ob_act)
-    except Exception as e:
+    except Exception:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         try:
             close_client_rfq_tile(cp_service, base_tile_data)
-            create_or_get_pricing_tile(base_detail, cp_service)
-            modify_rates_tile(base_detail, cp_service, instrument_spot, tier)
             create_or_get_pricing_tile(details_tile_spot, cp_service)
             create_or_get_pricing_tile(details_tile_forward, cp_service)
             modify_rates_tile(details_tile_spot, cp_service, instrument_spot, tier)

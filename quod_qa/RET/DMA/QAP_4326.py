@@ -1,5 +1,7 @@
 import logging
+import os
 
+from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.verifier import Verifier
 from custom.basic_custom_actions import create_event, timestamps
@@ -8,6 +10,7 @@ from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from quod_qa.wrapper import eq_wrappers
+from quod_qa.wrapper.ret_wrappers import close_order_book
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -50,7 +53,7 @@ def execute(session_id, report_id):
     # end region
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 
@@ -68,5 +71,7 @@ def execute(session_id, report_id):
     verifier_field_state(case_id, "False", field_state_response["EDIT_VENUE"])
     verifier_field_state(case_id, "False", field_state_response["CLIENT"])
     # end region
+
+    close_order_book(base_request, Stubs.win_act_order_book)
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

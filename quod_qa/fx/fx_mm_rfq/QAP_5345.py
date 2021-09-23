@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo, wk1, wk1_ndf, wk2_ndf
@@ -26,7 +27,8 @@ def execute(report_id):
     settle_date_leg2 = wk2_ndf()
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-
+    presentday = datetime.now()
+    tomorrow = (presentday + timedelta(1)).strftime('%Y%m%d')
     try:
         params_swap = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
                                         orderqty=order_qty, leg1_ordqty=order_qty, leg2_ordqty=order_qty,
@@ -41,10 +43,10 @@ def execute(report_id):
         rfq = FixClientSellRfq(params_swap)
         rfq.send_request_for_quote_swap()
         rfq.verify_quote_pending_swap()
-        price = rfq.extract_filed("BidPx")
-        rfq.send_new_order_multi_leg(price, side=side)
+        price = rfq.extract_filed("OfferPx")
+        rfq.send_new_order_multi_leg(price=price, side=side)
         rfq.verify_order_pending_swap(price)
-        rfq.verify_order_filled_swap()
+        rfq.verify_order_filled_swap(spot_settl_d=tomorrow, price=price)
     # Step 2
 
     except Exception:

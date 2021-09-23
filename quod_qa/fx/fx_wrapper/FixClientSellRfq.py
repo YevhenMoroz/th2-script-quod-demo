@@ -450,7 +450,7 @@ class FixClientSellRfq():
         return self
 
     def verify_order_filled_swap(self, price='', qty='', side='', spot_rate='', last_spot_rate='', leg_last_px_near='',
-                                 leg_last_px_far='', last_swap_points='', avg_px='', last_px='',ccy1='', ccy2=''):
+                                 leg_last_px_far='', last_swap_points='', avg_px='', last_px='',ccy1='', ccy2='', spot_settl_d=''):
         self.case_params_sell_rfq.prepare_order_swap_filled_report()
         self.case_params_sell_rfq.order_filled_swap['Price'] = self.price
         self.case_params_sell_rfq.order_filled_swap['AvgPx'] = self.price
@@ -487,6 +487,8 @@ class FixClientSellRfq():
             self.case_params_sell_rfq.order_filled_swap['Side'] = side
             self.case_params_sell_rfq.order_filled_swap['NoLegs'][0]['LegSide'] = '1'
             self.case_params_sell_rfq.order_filled_swap['NoLegs'][1]['LegSide'] = '2'
+        if spot_settl_d !='':
+            self.case_params_sell_rfq.order_filled_swap['SpotSettlDate'] = spot_settl_d
 
         print('SWAP FILLED \t', self.case_params_sell_rfq.order_filled_swap)
 

@@ -1,3 +1,5 @@
+import os
+
 from custom.verifier import Verifier
 from win_gui_modules.order_book_wrappers import OrdersDetails,\
     OrderInfo, ExtractionAction, ExtractionDetail, CancelOrderDetails
@@ -7,7 +9,7 @@ from stubs import Stubs
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-
+from custom import basic_custom_actions as bca
 
 def get_order_id(request):
     order_details = OrdersDetails()
@@ -107,7 +109,7 @@ def execute(session_id, report_id):
     # endregion
 
     order_book_service = Stubs.win_act_order_book
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 
