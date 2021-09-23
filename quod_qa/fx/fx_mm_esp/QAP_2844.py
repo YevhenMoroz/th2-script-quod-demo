@@ -1,29 +1,12 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
-
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
-from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
-
-from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier, VerificationMethod
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-
-
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
-    ModifyRatesTileRequest
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.utils import get_base_request, call
 
 api = Stubs.api_service
 ob_act = Stubs.win_act_order_book
@@ -127,10 +110,7 @@ def modify_venue_instrsymbol(status, case_id, service, venue):
         ],
         "clientTierInstrSymbolActGrp": [
             {
-                "accountGroupID": "QUOD3"
-            },
-            {
-                "accountGroupID": "Osmium1"
+                "accountGroupID": "Silver1"
             }
         ],
         "clientTierInstrSymbolFwdVenue": [
