@@ -6,7 +6,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_229
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2750, QAP_4094, QAP_2844, QAP_3394
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689
 from MyFiles import MyTest, SendMD, Test, StringThing, send_rfq
-from quod_qa.fx.fx_taker_esp import QAP_2373, QAP_2761, QAP_2812
+from quod_qa.fx.fx_taker_esp import QAP_2373, QAP_2761, QAP_2812, QAP_4768
 from quod_qa.fx.fx_taker_rfq import QAP_2836
 from rule_management import RuleManager
 from stubs import Stubs
@@ -68,7 +68,7 @@ def test_run():
         # QAP_2252.execute(report_id, session_id)
         # QAP_2035.execute(report_id, session_id)
         # QAP_2556.execute(report_id, session_id)
-        # QAP_4768.execute(report_id, session_id)
+        QAP_4768.execute(report_id, session_id)
         # QAP_4794.execute(report_id, session_id)
         # QAP_4748.execute(report_id, session_id)
         # QAP_2958.execute(report_id, session_id)
@@ -97,7 +97,7 @@ def test_run():
         # QAP_2844.execute(report_id, session_id)
         # QAP_3394.execute(report_id, session_id)
         # QAP_2836.execute(report_id, session_id)
-        QAP_3902.execute(report_id, session_id)
+        # QAP_3902.execute(report_id, session_id)
 
 
 
