@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255, QAP_3939, QAP_3039
+from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255, QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, \
+    QAP_2326
 
 from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
@@ -49,7 +50,7 @@ def test_run():
         else:
             get_opened_fe(report_id, session_id)
 
-        QAP_3039.execute(report_id,session_id)
+        QAP_2326.execute(report_id, session_id)
 
 
 
