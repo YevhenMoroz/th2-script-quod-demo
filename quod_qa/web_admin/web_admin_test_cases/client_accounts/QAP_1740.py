@@ -23,10 +23,10 @@ class QAP_1740(CommonTestCase):
         self.password = "adm02"
         self.id = "TEST"
         self.ext_id_client = "tst1"
-        self.client = "BROKER"
+        self.client = "CLIENT1"
         self.client_id_source = "BIC"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = "DB RFQ"
+        self.route = "Direct"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,7 +38,7 @@ class QAP_1740(CommonTestCase):
         time.sleep(2)
         accounts_main_page.click_new_button()
         time.sleep(2)
-        values_tab  = AccountsWizard(self.web_driver_container)
+        values_tab = AccountsWizard(self.web_driver_container)
         values_tab.set_id(self.id)
         time.sleep(1)
         values_tab.set_ext_id_client(self.ext_id_client)

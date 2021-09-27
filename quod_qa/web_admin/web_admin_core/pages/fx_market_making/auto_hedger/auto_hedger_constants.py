@@ -96,6 +96,6 @@ class AutoHedgerConstants:
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_FIELD_XPATH = '//*[@id ="hedgeOrderDestination"]'
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-auto-hedger/ngx-ah-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[5]/nb-accordion-item-body/div/div/ngx-ah-instrument-form/div/div[2]/form/div[3]/div[3]/div/div[1]/nb-checkbox/label/span[1]'
     INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGE_FIELD_XPATH = '//*[text()="Synthetic Combination to Auto-Hedge"]'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy"]'
+    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy"]/preceding-sibling::input'
     INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy TIF"]'
     INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy Max Duration (sec)"]'

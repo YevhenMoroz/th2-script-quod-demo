@@ -26,7 +26,7 @@ class QAP_4239(CommonTestCase):
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.password_field = "333"
         self.perm_role = "Permissions for Head of Sale-Dealers role"
-        self.desks = ("Desk of SalesDealers 1", "Desk of SalesDealers 2")
+        self.desks = ("DESK A", "Quod Desk")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

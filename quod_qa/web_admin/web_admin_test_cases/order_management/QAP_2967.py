@@ -22,15 +22,15 @@ class QAP_2967(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.parameter_at_dark_block = "DarkBrokerStrategies"
-        self.first_strategy = "ExtCust1"
+        self.first_strategy = "TestSuperStrategy1"
         self.first_value = "2"
-        self.second_strategy = "ExtCust2"
+        self.second_strategy = "test1582"
         self.second_value = "1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -69,7 +69,7 @@ class QAP_2967(CommonTestCase):
             self.precondition()
             main_menu = ExecutionStrategiesPage(self.web_driver_container)
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-            expected_parameter_at_dark_block = "ExtCust1=2/ExtCust2=1"
+            expected_parameter_at_dark_block = "TestSuperStrategy1=2/test1582=1"
             expected_parameter_and_value_at_dark_block = ["DarkBrokerStrategies: ", expected_parameter_at_dark_block]
             actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
                                                         strategies_wizard.get_parameter_value_at_dark_block()]

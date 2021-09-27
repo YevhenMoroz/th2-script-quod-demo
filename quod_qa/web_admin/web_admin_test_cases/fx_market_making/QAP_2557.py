@@ -20,8 +20,8 @@ class QAP_2557(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.name = "Bronze"
         self.symbol = "EUR/USD"
         self.tenor_filter = "Spot"

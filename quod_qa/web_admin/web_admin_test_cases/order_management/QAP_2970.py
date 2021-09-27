@@ -23,15 +23,15 @@ class QAP_2970(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.parameter_at_dark_block = "DarkBrokerStrategies"
-        self.first_strategy = "ExtCust1"
+        self.first_strategy = "TestSuperStrategy1"
         self.first_value = "2"
-        self.second_strategy = "ExtCust2"
+        self.second_strategy = "test1582"
         self.second_value = "1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -61,16 +61,16 @@ class QAP_2970(CommonTestCase):
             self.precondition()
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
             dark_block = ExecutionStrategiesDarkSubWizard(self.web_driver_container)
-            expected_parameter_at_dark_block = "ExtCust1=2/ExtCust2=1"
+            expected_parameter_at_dark_block = "TestSuperStrategy1=2/test1582=1"
             self.verify("Saved dark broker strategy", expected_parameter_at_dark_block, dark_block.get_value())
             dark_block.click_on_go_back_button()
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
             lit_general.set_parameter("BrokerStrategy")
-            lit_general.set_value_by_dropdown_list_at_sub_wizard("ExtCust2")
+            lit_general.set_value_by_dropdown_list_at_sub_wizard("TestSuperStrategy1")
             lit_general.click_on_checkmark_button()
-            expected_parameter_at_lit_general_block = "ExtCust2"
+            expected_parameter_at_lit_general_block = "TestSuperStrategy1"
             self.verify("Saved BrokerStrategy", expected_parameter_at_lit_general_block, lit_general.get_value())
             lit_general.click_on_go_back_button()
             expected_parameter_and_value_at_dark_block = ["DarkBrokerStrategies: ", expected_parameter_at_dark_block]

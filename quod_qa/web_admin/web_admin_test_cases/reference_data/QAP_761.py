@@ -12,6 +12,10 @@ from quod_qa.web_admin.web_admin_core.pages.reference_data.listing_groups.listin
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listing_groups.listing_groups_page import ListingGroupsPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listing_groups.listing_groups_wizard import \
     ListingGroupsWizard
+from quod_qa.web_admin.web_admin_core.pages.reference_data.subvenues.subvenues_description_sub_wizard import \
+    SubVenuesDescriptionSubWizard
+from quod_qa.web_admin.web_admin_core.pages.reference_data.subvenues.subvenues_page import SubVenuesPage
+from quod_qa.web_admin.web_admin_core.pages.reference_data.subvenues.subvenues_wizard import SubVenuesWizard
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -29,14 +33,26 @@ class QAP_761(CommonTestCase):
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.trading_status = "Suspended"
         self.trading_phase = "201"
-        self.price_limit_profile = "TestVenues"
-        self.tick_size_profile = "0.000000001"
+        self.price_limit_profile = "test"
+        self.tick_size_profile = "0.000000010"
         self.trading_phase_profile = "JSE"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_subvenues_page()
+        time.sleep(2)
+        page = SubVenuesPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+        description_sub_wizard.set_name("Forward")
+        time.sleep(2)
+        description_sub_wizard.set_venue("ASE")
+        time.sleep(2)
+        wizard = SubVenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
         time.sleep(2)
         side_menu.open_listing_groups_page()
         time.sleep(2)
@@ -65,7 +81,7 @@ class QAP_761(CommonTestCase):
             self.precondition()
             page = ListingGroupsPage(self.web_driver_container)
             wizard = ListingGroupsWizard(self.web_driver_container)
-            expected_pdf_values = [self.name,
+            expected_pdf_values = ["test",
                                    self.sub_venue,
                                    self.ext_id_client,
                                    self.trading_status,
