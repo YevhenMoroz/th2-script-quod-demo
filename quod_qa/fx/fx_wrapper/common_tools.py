@@ -114,6 +114,36 @@ def update_quod_settings(setting_value: str):
             print("PostgreSQL connection is closed")
 
 
+def clear_position():
+    """
+    Clear position on quod314
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.42",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+
+        cursor.execute("DELETE FROM FXCURRPAIRPOSIT")
+        connection.commit()
+        cursor.execute("DELETE FROM FXCURRPOSIT")
+        connection.commit()
+
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 def restart_component_on_back():
     """
     Restart QS_RFQ_STANDARD_SELL component on quod314 backend
@@ -123,6 +153,20 @@ def restart_component_on_back():
     ssh.connect("10.0.22.34", 22, "quod314", "quod314")
 
     stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.QS_RFQ_FIX_TH2")
+    for line in stdout.read().splitlines():
+        print(line)
+    stdin.close()
+
+
+def restart_pks():
+    """
+    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    """
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
+
+    stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.PKS")
     for line in stdout.read().splitlines():
         print(line)
     stdin.close()
