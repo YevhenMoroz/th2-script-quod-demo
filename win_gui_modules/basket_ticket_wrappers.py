@@ -85,6 +85,7 @@ class ImportedFieldMappingField(Enum):
     ACCOUNT = basket_ticket_pb2.ImportedFileMappingField.ACCOUNT
     CAPACITY = basket_ticket_pb2.ImportedFileMappingField.CAPACITY
 
+
 class BasketTicketDetails:
     def __init__(self):
         self._request = basket_ticket_pb2.BasketTicketDetails()
@@ -137,7 +138,8 @@ class FileDetails:
 class RowDetails:
     def __init__(self, filtration_value: str = None, delete_row: bool = None, values: dict = None):
         self._request = basket_ticket_pb2.RowDetails()
-        self._request.filtrationValue = filtration_value
+        if filtration_value is not None:
+            self._request.filtrationValue = filtration_value
         self._request.deleteRow = delete_row
         if values is not None:
             self._request.values.update(values)
@@ -150,6 +152,34 @@ class RowDetails:
 
     def set_values(self, values: dict):
         self._request.values = values
+
+    def build(self):
+        return self._request
+
+
+class ExtractTemplateDetails:
+
+    def __init__(self, base_request=None, filter: dict = None, column_names: list = None):
+        if base_request is not None:
+            self._request = basket_ticket_pb2.ExtractTemplateDetails(base=base_request)
+        else:
+            self._request = basket_ticket_pb2.ExtractTemplateDetails()
+        if filter is not None:
+            self._request.filter.update(filter)
+
+        if column_names is not None:
+            for column in column_names:
+                self._request.columnNames.append(column)
+
+    def set_base_details(self, base_details):
+        self._request.base.CopyFrom(base_details)
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+    def set_column_names(self, column_names: list):
+        for column in column_names:
+            self._request.columnNames.append(column)
 
     def build(self):
         return self._request

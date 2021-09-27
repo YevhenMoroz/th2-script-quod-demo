@@ -26,7 +26,7 @@ from win_gui_modules.wash_book_positions_wrappers import GetWashBookDetailsReque
 from win_gui_modules.wrappers import set_base, accept_order_request, direct_order_request, reject_order_request, \
     direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct, BaseParams
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails
+    ForceCancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
@@ -69,7 +69,6 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
 
 
 def extract_error_message_order_ticket(base_request, order_ticket_service):
-
     extract_errors_request = ExtractOrderTicketErrorsRequest(base_request)
     extract_errors_request.extract_error_message()
     result = call(order_ticket_service.extractOrderTicketErrors, extract_errors_request.build())
@@ -97,7 +96,6 @@ def check_order_benchmark_book(base_request, case_id, ob_act, order_id, column_n
 
 
 def cancel_negative_ex(base_request, order_book_service):
-
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(base_request)
     cancel_order_details.cancel_by_icon()
@@ -214,10 +212,17 @@ def amend_order(request, order_id=None, order_type=None, qty=None, price=None, c
 def cancel_order(request, order_id=None):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
-    cancel_order_details.set_cancel_children(True)
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
+
+
+def force_cancel_order(request, order_id=None):
+    cancel_order_details = ForceCancelOrderDetails()
+    cancel_order_details.set_default_params(request)
+    if order_id:
+        cancel_order_details.set_filter(["Order ID", order_id])
+    call(Stubs.win_act_order_book.forceCancelOrder, cancel_order_details.build())
 
 
 def complete_order(request, order_id):
