@@ -224,7 +224,7 @@ class TransferPoolDetailsCLass:
         self.order = care_orders_pb2.TransferPoolDetails()
 
     def confirm_ticket_accept(self):
-       self.order.confirm = TransferPoolDetails.Confirmation.ACCEPT
+        self.order.confirm = TransferPoolDetails.Confirmation.ACCEPT
 
     def cancel_ticket_reject(self):
         self.order.confirm = TransferPoolDetails.Confirmation.REJECT
@@ -236,9 +236,9 @@ class TransferPoolDetailsCLass:
 class InternalTransferActionDetails:
 
     def __init__(self, base_request, order_details: TransferPoolDetails):
-         self.internal_transfer_details = care_orders_pb2.InternalTransferActionDetails()
-         self.internal_transfer_details.base.CopyFrom(base_request)
-         self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details)
+        self.internal_transfer_details = care_orders_pb2.InternalTransferActionDetails()
+        self.internal_transfer_details.base.CopyFrom(base_request)
+        self.internal_transfer_details.transferPoolDetails.CopyFrom(order_details)
 
     def set_default_params(self, base_request):
         self.internal_transfer_details.base.CopyFrom(base_request)
@@ -255,6 +255,7 @@ class InternalTransferActionDetails:
 
     def build(self):
         return self.internal_transfer_details
+
 
 @dataclass
 class ExtractionDetail:
@@ -793,6 +794,38 @@ class AddToBasketDetails:
 
     def set_basket_name(self, basket_name: str):
         self._request.basketName = basket_name
+
+    def build(self):
+        return self._request
+
+
+class CreateBasketDetails:
+    def __init__(self, base_request=None, row_numbers: list = None, name: str = None, row_details: list = None):
+        self._request = order_book_pb2.CreateBasketDetails()
+        self._request.base.CopyFrom(base_request)
+        self._request.name = name
+
+        if row_numbers is not None:
+            for number in row_numbers:
+                self._request.rowNumbers.append(number)
+
+        if row_details is not None:
+            for detail in row_details:
+                self._request.rowsDetails.append(detail)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_row_numbers(self, row_numbers: list):
+        for number in row_numbers:
+            self._request.rowNumbers.append(number)
+
+    def set_name(self, name: str):
+        self._request.name = name
+
+    def set_row_details(self, row_details: list):
+        for detail in row_details:
+            self._request.rowsDetails.append(detail)
 
     def build(self):
         return self._request

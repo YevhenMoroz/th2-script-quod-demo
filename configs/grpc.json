@@ -85,7 +85,7 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -100,7 +100,7 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -115,7 +115,7 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -130,7 +130,7 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -145,7 +145,7 @@
       "service-class": "OrderBookFXServiceService",
       "endpoints": {
         "act_order_book_fx": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -160,7 +160,7 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -175,7 +175,7 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_client_pricing": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -190,7 +190,7 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_middle_office": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -205,7 +205,7 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_dealer_interventions": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -220,7 +220,7 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
@@ -235,7 +235,7 @@
  "service-class": "TradesServiceService",
  "endpoints": {
  "win_wct_trades_service": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
  }
  },

@@ -48,7 +48,7 @@ def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_ca
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
     if is_care:
-        order_ticket.set_care_order(recipient, False, disclose_flag)
+        order_ticket.set_care_order(recipient, False, disclose_flag)  # True for User / False for Desk
     order_ticket.set_tif(tif)
     if sell_side:
         order_ticket.sell()
@@ -104,12 +104,13 @@ def cancel_negative_ex(base_request, order_book_service):
     call(order_book_service.cancelOrder, cancel_order_details.build())
 
 
-def amend_negative_ex(base_request, order_book_service):
-
+def amend_negative_ex(base_request, order_book_service, order_id=None):
     order_amend = OrderTicketDetails()
     amend_order_details = ModifyOrderDetails()
     amend_order_details.set_order_details(order_amend)
     amend_order_details.set_default_params(base_request)
+    if order_id:
+        amend_order_details.set_filter(["Order ID", order_id])
     amend_order_details.amend_by_icon()
     call(order_book_service.amendOrder, amend_order_details.build())
 
@@ -175,12 +176,11 @@ def direct_poc_error_extraction(reference_price, percentage, qty_percentage, rou
     error_message = ExtractDirectsValuesRequest.DirectsExtractedValue()
     error_message.name = "ErrorMessage"
     error_message.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
-    request = ExtractDirectsValuesRequest()
-    request.extractionId = "DirectErrorMessageExtractionID"
-    request.extractedValues.append(error_message)
-    response = call(Stubs.win_act_order_book.orderBookDirectPoc,
-                    direct_poc_request_correct('UnmatchedQty', reference_price, percentage, qty_percentage, route))
-    print(response)
+    extract_errors_request = ExtractDirectsValuesRequest()
+    extract_errors_request.extractionId = "DirectErrorMessageExtractionID"
+    extract_errors_request.extractedValues.append(error_message)
+    call(Stubs.win_act.clientInboxDirectPoc,
+         direct_poc_request_correct("UnmatchedQty", reference_price, percentage, qty_percentage, route))
 
 
 def reject_order(lookup, qty, price):
@@ -191,8 +191,10 @@ def direct_order(lookup, qty, price, qty_percent):
     call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
 
 
-def amend_order(request, order_id, client=None, qty=None, price=None, account=None):
+def amend_order(request, order_id=None, order_type=None, qty=None, price=None, client=None, account=None):
     order_amend = OrderTicketDetails()
+    if order_type is not None:
+        order_amend.set_order_type(order_type)
     if qty is not None:
         order_amend.set_quantity(qty)
     if price is not None:
@@ -202,16 +204,19 @@ def amend_order(request, order_id, client=None, qty=None, price=None, account=No
     if account is not None:
         order_amend.set_account(account)
     amend_order_details = ModifyOrderDetails()
-    amend_order_details.set_filter(["Order ID", order_id])
+    if order_id is not None:
+        amend_order_details.set_filter(["Order ID", order_id])
     amend_order_details.set_default_params(request)
     amend_order_details.set_order_details(order_amend)
     call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
 
 
-def cancel_order(request):
+def cancel_order(request, order_id=None):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
     cancel_order_details.set_cancel_children(True)
+    if order_id:
+        cancel_order_details.set_filter(["Order ID", order_id])
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
 
@@ -296,11 +301,12 @@ def get_wash_book_positions_details(security_account, column_name, act, base_req
     return response[column_name]
 
 
-def extract_parent_order_details(base_request, column_name, extraction_id, order_id):
+def extract_parent_order_details(base_request, column_name, extraction_id, order_id=None):
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
     order_details.set_extraction_id(extraction_id)
-    order_details.set_filter(['Order ID', order_id])
+    if order_id:
+        order_details.set_filter(['Order ID', order_id])
     value = ExtractionDetail(column_name, column_name)
     order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[value])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
@@ -339,9 +345,37 @@ def extract_child_lvl2_order_details(base_request, column_name, order_book_servi
     return request[column_name]
 
 
+def check_order_algo_parameters_book(base_request, order_id, act, row_number):
+    ob = OrdersDetails()
+    execution_id = bca.client_orderid(4)
+    ob.set_filter(["Order ID", order_id])
+    ob.set_default_params(base_request)
+    ob.set_extraction_id(execution_id)
+    ob_exec_sts = ExtractionDetail("orderBook.symbol", "Symbol")
+    sub_order_ob_par_name = ExtractionDetail("ParametersName", "ParameterName")
+    sub_order_ob_par_value = ExtractionDetail("ParametersValue", "ParameterValue")
+
+    lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[
+        sub_order_ob_par_name,
+        sub_order_ob_par_value]))
+    lvl1_info.set_number(row_number)
+    lvl1_details = OrdersDetails.create(info=lvl1_info)
+
+    ob.add_single_order_info(
+        OrderInfo.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts]),
+            sub_order_details=lvl1_details))
+    response = call(act.getAlgoParametersTabDetails, ob.request())
+    return response["ParametersValue"]
+
+
 def verifier(case_id, event_name, expected_value, actual_value):
     # region verifier
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Value")
     verifier.compare_values(event_name, expected_value, actual_value)
     verifier.verify()
+
+
+def close_order_book(base_request, act_order_book):
+    call(act_order_book.closeWindow, base_request)

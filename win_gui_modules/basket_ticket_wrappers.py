@@ -116,6 +116,8 @@ class BasketTicketDetails:
 
     def build(self):
         return self._request
+
+
 class FileDetails:
     def __init__(self, file_type=None, path_to_file: str = None):
         self._request = basket_ticket_pb2.FileDetails()

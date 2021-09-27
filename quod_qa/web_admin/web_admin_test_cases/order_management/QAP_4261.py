@@ -27,6 +27,7 @@ class QAP_4261(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
+        time.sleep(2)
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)

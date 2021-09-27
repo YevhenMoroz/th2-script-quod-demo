@@ -45,7 +45,7 @@ def execute(session_id, report_id):
                  True, recipient, price, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # endregion
 
-    # region Create POC child AO and extracting error according to 1st step
+    # region Create POC child AO and extract error according to 1st step
     direct_poc_error_extraction("LastTradedPrice", "0", "-50", "NSE")
     # endregion
 

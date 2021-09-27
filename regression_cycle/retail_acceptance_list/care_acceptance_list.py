@@ -1,5 +1,4 @@
-from quod_qa.RET.Care import QAP_1719, QAP_4286, QAP_4313, QAP_5087, QAP_5088, QAP_493, QAP_5139, QAP_5142, QAP_5143, \
-    QAP_495, QAP_494, QAP_496, QAP_497, QAP_5144, QAP_5145, QAP_5146, QAP_5147
+from quod_qa.RET.Care import QAP_4286, QAP_4313
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

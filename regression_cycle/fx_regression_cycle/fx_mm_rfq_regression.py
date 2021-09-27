@@ -5,7 +5,7 @@ from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_154
     QAP_2177, QAP_2294, QAP_2295, QAP_2296, QAP_2297, QAP_2353, QAP_2670, QAP_2866, QAP_2867, QAP_2868, QAP_2958, \
     QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_2992, QAP_3003, QAP_3005, QAP_3106, QAP_3107, QAP_3108, \
     QAP_3109, QAP_3110, QAP_3111, QAP_3112, QAP_3113, QAP_3234, QAP_3250, QAP_3409, QAP_3494, QAP_3704, QAP_4085, \
-    QAP_4228, QAP_4509, QAP_4510
+    QAP_4228, QAP_4509, QAP_4510, QAP_5345, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_5345
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, QAP_4234, \
     QAP_3807, QAP_3850, QAP_3811, QAP_3851, QAP_3806
 from quod_qa.fx.fx_mm_rfq.manual_intervention import QAP_3721
@@ -93,11 +93,31 @@ def test_run(parent_id=None):
         QAP_4228.execute(report_id)
         QAP_4509.execute(report_id)
         QAP_4510.execute(report_id)
+        QAP_5345.execute(report_id)
 
         QAP_1537.execute(report_id, case_params)
         QAP_1539.execute(report_id, session_id)
         QAP_1540.execute(report_id, case_params)
         QAP_1542.execute(report_id, case_params)
+        # QAP_1552.execute(report_id)
+        # QAP_1746.execute(report_id)
+        # QAP_1755.execute(report_id)
+        # QAP_1978.execute(report_id)
+        # QAP_2089.execute(report_id)
+        # QAP_2090.execute(report_id)
+        # QAP_2091.execute(report_id)
+        # QAP_2103.execute(report_id)
+        # QAP_2177.execute(report_id)
+        # QAP_2295.execute(report_id)
+        # QAP_2297.execute(report_id)
+        # QAP_2345.execute(report_id)
+        # QAP_2353.execute(report_id)
+        # QAP_3739.execute(report_id)
+        # QAP_3565.execute(report_id)
+        # QAP_2382.execute(report_id)
+        # QAP_2103.execute(report_id)
+        QAP_5345.execute(report_id)
+
 
         QAP_1545.execute(report_id, case_params, session_id)
         QAP_1547.execute(report_id, case_params, session_id)

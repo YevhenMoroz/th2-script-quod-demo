@@ -15,6 +15,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, check_value, \
     create_order_analysis_events_request, create_verification_request
+from quod_qa.wrapper.ret_wrappers import close_order_book
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -190,6 +191,8 @@ def execute(session_id, report_id):
 
     call(order_book_service.amendOrder, amend_order_details.build())
     # end region
+
+    close_order_book(base_request, Stubs.win_act_order_book)
 
     # region Extract parent order status after amend according with step 5
     parent_display_qty_after_amend = extract_parent_order_details(base_request, 'DisplQty', parent_order_details_id)
