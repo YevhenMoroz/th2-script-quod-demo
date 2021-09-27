@@ -122,7 +122,7 @@ def restart_component_on_back():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect("10.0.22.34", 22, "quod314", "quod314")
 
-    stdin, stdout, stderr = ssh.exec_command("qrestart  QUOD.QS_RFQ_STANDARD_SELL")
+    stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.QS_RFQ_FIX_TH2")
     for line in stdout.read().splitlines():
         print(line)
     stdin.close()
