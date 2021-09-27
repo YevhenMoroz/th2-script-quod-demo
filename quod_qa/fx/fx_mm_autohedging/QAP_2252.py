@@ -208,6 +208,7 @@ def execute(report_id, session_id):
         # Step 1
         expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
         set_send_hedge_order(case_id, ttl_null)
+        time.sleep(3)
         call(cp_service.createRatesTile, base_details.build())
         modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
@@ -218,6 +219,7 @@ def execute(report_id, session_id):
         check_order_book_after_ttl_expire(case_id, case_base_request, ob_act, ord_id)
         # Step 3
         set_send_hedge_order(case_id, ttl_test)
+        time.sleep(3)
         ord_id = check_order_book_ao('Extracting order ID for cancelling', case_id, case_base_request, ob_act)
         cancel_order(ob_act, case_base_request, ord_id)
         ord_id = check_order_book_ao('Extracting order ID with new TTL', case_id, case_base_request, ob_act)
