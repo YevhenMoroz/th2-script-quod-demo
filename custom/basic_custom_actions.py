@@ -451,7 +451,10 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
         return list_value
 
 
-def wrap_filter(content, message_type=None, key_fields=None):
+def wrap_filter(content, message_type=None, key_fields=None, ignore_fields=None,
+                fail_unexpected: int = FIELDS_AND_MESSAGES):
+    if ignore_fields is None:
+        ignore_fields = ["header", "trailer"]
     if key_fields is None:
         key_fields = []
     if isinstance(content, dict):
@@ -475,6 +478,9 @@ def wrap_filter(content, message_type=None, key_fields=None):
         msg_filter = MessageFilter(fields=fields)
         if message_type is not None:
             msg_filter.messageType = message_type
+            for field in ignore_fields:
+                msg_filter.comparison_settings.ignore_fields.append(field)
+            msg_filter.comparison_settings.fail_unexpected = fail_unexpected
         return msg_filter
     elif isinstance(content, list):
         values = []
