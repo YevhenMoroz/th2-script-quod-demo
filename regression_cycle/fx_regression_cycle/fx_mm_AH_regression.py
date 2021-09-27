@@ -38,6 +38,10 @@ def test_run(parent_id=None):
         QAP_2255.execute(report_id, session_id)
         QAP_3939.execute(report_id, session_id)
         QAP_3039.execute(report_id, session_id)
+        QAP_3354.execute(report_id, session_id)
+        QAP_3067.execute(report_id, session_id)
+        QAP_1762.execute(report_id, session_id)
+        QAP_2326.execute(report_id, session_id)
         QAP_2470.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
