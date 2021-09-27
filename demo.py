@@ -3,15 +3,16 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_autohedging import QAP_2228, QAP_2290, QAP_2250
 from quod_qa.fx.fx_mm_esp import QAP_1418, QAP_4094, QAP_2082, QAP_2078, QAP_2797, QAP_1518, QAP_2825, QAP_1558, \
-    QAP_1559
-from quod_qa.fx.fx_mm_positions import QAP_1898
+    QAP_1559, QAP_2966, QAP_1599, QAP_2750, QAP_3661
+from quod_qa.fx.fx_mm_positions import QAP_1898, QAP_2500
 from quod_qa.fx.fx_mm_rfq import QAP_1552, QAP_1539, QAP_2091, QAP_2101, QAP_2104, QAP_2105, QAP_2295, QAP_2296, \
     QAP_2297, QAP_2958, QAP_1746, QAP_1540, QAP_1562, QAP_1563, QAP_1970, QAP_2103, QAP_2177, QAP_3565, QAP_2877, \
     QAP_4228, QAP_4085, QAP_3106, QAP_3107, QAP_3108, QAP_3109, QAP_2382, QAP_3110, QAP_3111, QAP_3112, QAP_3113, \
-    QAP_3234, QAP_3250, QAP_1978, QAP_3409, QAP_3494, QAP_2353, QAP_3704, QAP_3003, QAP_4509, QAP_4510
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3766, QAP_3805
-from quod_qa.fx.fx_mm_rfq.rejection import QAP_3735
-from quod_qa.fx.fx_taker_esp import QAP_2949, QAP_3157
+    QAP_3234, QAP_3250, QAP_1978, QAP_3409, QAP_3494, QAP_2353, QAP_3704, QAP_3003, QAP_4509, QAP_4510, QAP_2090, \
+    QAP_2345, QAP_4777
+from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3766, QAP_3805, QAP_3747
+from quod_qa.fx.fx_mm_rfq.rejection import QAP_3735, QAP_3740
+from quod_qa.fx.fx_taker_esp import QAP_2949, QAP_3157, QAP_3414_notReady, QAP_2373
 from quod_qa.fx.fx_taker_rfq import QAP_2826, QAP_3048
 from quod_qa.fx.my_methods import send_rfq, send_md, sequence_test
 
@@ -67,9 +68,9 @@ def test_run():
         #     get_opened_fe(report_id, session_id)
 
         # rm = RuleManager()
-        # # rm.remove_rule_by_id(2)
+        # rm.remove_rule_by_id_test_sim(6)
         # rm.print_active_rules()
-        # rm.add_fx_md_to_test_sim("fix-fh-314-luna")
+        #
         # rm.print_active_rules_sim_test()
          # Add scripts
         # QAP_3409.execute(report_id, session_id)
@@ -85,8 +86,10 @@ def test_run():
         # QAP_2353.execute(report_id)
         # QAP_3704.execute(report_id, session_id)
         # sequence_test.execute(report_id)
-        # send_rfq.execute(report_id)
+
         # QAP_1746.execute(report_id)
+
+        # QAP_3805.execute(report_id)
         # QAP_2082.execute(report_id)
         # QAP_2797.execute(report_id)
         # QAP_1518.execute(report_id)
@@ -95,10 +98,25 @@ def test_run():
         # QAP_1559.execute(report_id)
         # QAP_3157.execute(report_id, session_id)
 
-        # send_md.execute(report_id)
+        send_md.execute(report_id)
+        # send_rfq.execute(report_id)
+        # QAP_3414_notReady.execute(report_id)
+        # QAP_2500.execute(report_id, session_id)
 
-        QAP_2250.execute(report_id, session_id)
+        # QAP_2250.execute(report_id, session_id)
+        # QAP_2296.execute(report_id, session_id)
+        # QAP_2090.execute(report_id)
+        # QAP_2382.execute(report_id)
+        # QAP_2345.execute(report_id)
+        # QAP_2966.execute(report_id)
+        # QAP_3747.execute(report_id)
 
+        # QAP_3735.execute(report_id, session_id)
+        # QAP_1599.execute(report_id, session_id)
+        # QAP_4777.execute(report_id, session_id)
+        # QAP_3740.execute(report_id)
+        # QAP_2750.execute(report_id)
+        # QAP_3661.execute(report_id, session_id)
 
         print('duration time = ' + str(datetime.now() - start))
 
