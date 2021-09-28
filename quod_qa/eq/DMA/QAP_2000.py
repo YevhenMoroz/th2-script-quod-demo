@@ -34,7 +34,8 @@ def execute(report_id, session_id):
     # endregion
     # region Check values in OrderBook
     params = {
-        'OrderQtyData': {'OrderQty': qty},
+        'Account': client,
+        # 'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'ExecType': '4',
         'OrdStatus': '4',
@@ -46,7 +47,6 @@ def execute(report_id, session_id):
         'OrderID': '*',
         'TransactTime': '*',
         'ExpireDate': '*',
-        'Text': '*',
         'AvgPx': '*',
         'SettlDate': '*',
         'Currency': '*',
@@ -64,7 +64,6 @@ def execute(report_id, session_id):
         'CxlQty': qty,
         'SettlType': '0'
     }
-    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=None)
+    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss.CheckExecutionReport(params, response,['ClOrdID','OrdStatus'])
     # endregion
