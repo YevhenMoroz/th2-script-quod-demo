@@ -31,7 +31,7 @@ def execute(report_id):
         'ExDestination': 'XLON',
         'Text': 'CLO_VO_01',
         'QuodFlatParameters': {
-            'MaxParticipation': '120',
+            'MaxParticipation': '10',
             'PricePoint1Price': '102',
             'PricePoint1Participation': '20',
             'PricePoint2Price': '104',

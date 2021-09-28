@@ -8,10 +8,10 @@ timeouts = True
 
 def execute(report_id):
     instrument = {
-        'Symbol': 'FR0000121121_EUR',
-        'SecurityID': 'FR0000121121',
-        'SecurityIDSource': '4',
-        'SecurityExchange': 'XPAR'
+    'Symbol': 'GB00BH4HKS39-XLON',
+    'SecurityID': 'GB00BH4HKS39',
+    'SecurityIDSource': '4',
+    'SecurityExchange': 'XLON'
     }
 
     new_order_single_params = {
@@ -19,16 +19,16 @@ def execute(report_id):
         'ClOrdID': 'CLO_WW_01' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 100,
+        'OrderQty': 10000000,
         'TimeInForce': 0,
-        'Price': 20,
+        'Price': 117,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
-        'Currency': "EUR",
+        'Currency': "GBX",
         'TargetStrategy': 1015, # MOC
-        'ExDestination': 'XPAR',
+        'ExDestination': 'XLON',
         'Text': 'CLO_WW_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',

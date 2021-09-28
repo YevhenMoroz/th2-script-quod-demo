@@ -19,12 +19,12 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'Test_POV_' + bca.client_orderid(9),
+            'ClOrdID': 'POV_SCAP_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 2,
             'OrderQty': 400000,
             'TimeInForce': 0,
-            'Price': 1,
+            'Price': 100,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -34,9 +34,9 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'POV-SCAP_01',
             'QuodFlatParameters': {
-                'PricePoint1Price': '3',
+                'PricePoint1Price': '102',
                 'PricePoint1Participation': '10',
-                'PricePoint2Price': '5',
+                'PricePoint2Price': '104',
                 'PricePoint2Participation': '20',
                 'MaxPercentageVolume': '5',
                 'ExcludePricePoint2': '1',
