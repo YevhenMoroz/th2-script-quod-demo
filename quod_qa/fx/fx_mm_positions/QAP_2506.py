@@ -55,10 +55,11 @@ def place_order(base_request, service, qty, slippage, client):
     call(service.placeFxOrder, new_order_details.build())
 
 
-def check_order_book(base_request, act_ob):
+def check_order_book(base_request, act_ob, owner, client):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_default_params(base_request)
+    ob.set_filter(["Owner", owner, "Client ID", client])
     ob.set_extraction_id(extraction_id)
     sub_order_qty = ExtractionDetail("subOrder_lvl_1.id", "Qty")
     sub_order_price = ExtractionDetail("subOrder_lvl_1.execprice", "ExecPrice")
@@ -119,6 +120,7 @@ def execute(report_id, session_id):
     qty_2m = "2000000"
     qty_8m = "8000000"
     qty_3m = "3000000"
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -136,14 +138,14 @@ def execute(report_id, session_id):
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         place_order_buy(base_details, cp_service, qty_6m, slippage, client)
         pos_after_6m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * -abs(float(qty_6m))
         compare_position(case_id, pos_before["dealingpositions.position"], position,
                          pos_before["dealingpositions.mktPx"], pos_after_6m["dealingpositions.positionUSD"])
         # Step 2
         place_order_buy(base_details, cp_service, qty_2m, slippage, client)
         pos_after_2m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * -abs(float(qty_2m))
         compare_position(case_id, pos_after_6m["dealingpositions.position"], position,
                          pos_after_6m["dealingpositions.mktPx"], pos_after_2m["dealingpositions.positionUSD"])
@@ -151,7 +153,7 @@ def execute(report_id, session_id):
         open_order_ticket_sell(base_tile_data, cp_service, 3)
         place_order(case_base_request, order_ticket_service, qty_8m, slippage, client)
         pos_after_8m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * abs(float(qty_8m))
         compare_position(case_id, pos_after_2m["dealingpositions.position"], position,
                          pos_after_8m["dealingpositions.mktPx"], pos_after_8m["dealingpositions.positionUSD"])
@@ -159,7 +161,7 @@ def execute(report_id, session_id):
         open_order_ticket_sell(base_tile_data, cp_service, 2)
         place_order(case_base_request, order_ticket_service, qty_3m, slippage, client)
         pos_after_3m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * abs(float(qty_3m))
         compare_position(case_id, pos_after_8m["dealingpositions.position"], position,
                          pos_after_8m["dealingpositions.mktPx"], pos_after_3m["dealingpositions.positionUSD"])
