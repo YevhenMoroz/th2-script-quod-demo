@@ -35,7 +35,7 @@ def test_run(parent_id=None):
 
         # content
         web_driver_container = WebDriverContainer()
-        RunPositions(web_driver_container, parent_id).execute()
+        #RunPositions(web_driver_container, parent_id).execute()
         #RunClientsAccounts(web_driver_container, parent_id).execute()
         #RunOthers(web_driver_container, parent_id).execute()
         #RunOrderManagement(web_driver_container, parent_id).execute()

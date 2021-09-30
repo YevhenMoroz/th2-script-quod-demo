@@ -21,8 +21,8 @@ class QAP_2166(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = "Equity"
         self.execution_policy = "Care"
-        self.account = "TEST"
-        self.client = "ANDclient"
+        self.account = "Test_client_SA1"
+        self.client = "CLIENT1"
         self.user = "adm01"
         self.desk = "Desk of Dealers 1"
 

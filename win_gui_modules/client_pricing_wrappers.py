@@ -1,7 +1,8 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import cp_operations_pb2
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from win_gui_modules.common_wrappers import BaseTileDetails, SpreadAction
 from win_gui_modules.order_book_wrappers import ExtractionDetail
