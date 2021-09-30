@@ -1,35 +1,35 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from custom import basic_custom_actions
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
 from demo import logger
-from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
+from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity
 from rule_management import RuleManager
 from stubs import Stubs
-from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+    TemplatesDetails, RowDetails, FileDetails, BasketTicketDetails, ExtractTemplateDetails
 from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
+    CreateBasketDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request_correct, direct_moc_request_correct
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
-    CreateBasketDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 
@@ -924,6 +924,7 @@ def approve_block(request):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail approve_block', status="FAIL")
+
 
 def is_menu_item_present(request, menu_item, filter=None):
     menu_item_details = MenuItemDetails(request)
