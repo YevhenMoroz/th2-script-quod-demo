@@ -2,8 +2,7 @@ import logging
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from quod_qa.eq.PostTrade import QAP_3361
-from rule_management import RuleManager
+from quod_qa.eq.Care import QAP_1045
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id
 
@@ -11,12 +10,6 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-timeouts = False
-work_dir = Stubs.custom_config['qf_trading_fe_folder']
-username = Stubs.custom_config['qf_trading_fe_user']
-password = Stubs.custom_config['qf_trading_fe_password']
-
-channels = dict()
 
 def test_run():
     # Generation id and time for test run
@@ -39,7 +32,10 @@ def test_run():
     finally:
         Stubs.win_act.unregister(session_id)
 
+
 if __name__ == '__main__':
-    logging.basicConfig()
-    test_run()
-    Stubs.factory.close()
+    try:
+        logging.basicConfig()
+        test_run()
+    finally:
+        Stubs.factory.close()
