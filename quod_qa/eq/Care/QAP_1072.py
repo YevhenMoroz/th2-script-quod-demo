@@ -22,7 +22,7 @@ def execute(report_id, session_id):
     new_price = "1"
     datetime.utcnow().isoformat()
     lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
+    client = "MOClient"
     # endregion
     # region Open FE
 
@@ -43,9 +43,8 @@ def execute(report_id, session_id):
     fix_message.pop('response')
     # endregion
     # regionAmend fix order
-    fix_message1 = FixMessage(fix_message)
     param_list = {'Price': new_price}
-    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, "PARIS_" + client)
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
     # endregion
     # region accept amend
     eq_wrappers.accept_modify(lookup, qty, price)
