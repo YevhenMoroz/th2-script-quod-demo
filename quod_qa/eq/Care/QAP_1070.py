@@ -22,7 +22,7 @@ def execute(report_id, session_id):
     price = "10"
     new_price = "1"
     lookup = "VETO"
-    client = "MOClient"
+    client = "CLIENT_FIX_CARE"
     # endregion
     # region Open FE
     case_id = create_event(case_name, report_id)

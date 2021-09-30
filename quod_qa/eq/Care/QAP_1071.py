@@ -25,7 +25,7 @@ def execute(report_id, session_id):
     new_price = "1"
     datetime.utcnow().isoformat()
     lookup = "VETO"
-    client = "MOClient"
+    client = "CLIENT_FIX_CARE"
     # endregion
     # region Open FE
     case_id = create_event(case_name, report_id)
