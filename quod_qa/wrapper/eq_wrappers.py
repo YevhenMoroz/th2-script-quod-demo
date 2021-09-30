@@ -229,7 +229,7 @@ def reject_order(lookup, qty, price):
 
 def direct_order(lookup, qty, price, qty_percent):
     try:
-        call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
+        call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         basic_custom_actions.create_event('Fail direct_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
