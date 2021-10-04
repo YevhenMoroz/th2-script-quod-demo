@@ -6,15 +6,16 @@ from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCO_01,
     QA_CLO_InitialSlice_01, QA_CLO_InitialSlice_02, QA_CLO_InitialSlice_03, QA_CLO_WouldShares, QA_CLO_WouldPercentage, \
     QA_CLO_WouldRef, QA_CLO_WouldRef_Unavaliable, QA_CLO_Perc_for_Close90, QA_CLO_Perc_for_Close100, \
     QA_CLO_AuctionWouldCap, QA_CLO_AuctionWouldCapMaxWouldPerc, QA_CLO_WouldAtLast, QA_CLO_WouldAtLast2, \
-    QA_CLO_AuctionWouldCap0, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCapMaxWouldShares
+    QA_CLO_AuctionWouldCap0, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCapMaxWouldShares, QA_CLO_Market
 from quod_qa.eq.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01
 from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCA_01, OPN_VO_01, OPN_WW_01, \
     QA_OPN_AuctionWouldCap, QA_OPN_AuctionWouldCap100, QA_OPN_AuctionWouldCapMaxWouldPerc, \
     QA_OPN_AuctionWouldCapMaxWouldShares, QA_OPN_InitialSlice_01, QA_OPN_InitialSlice_02, QA_OPN_InitialSlice_03, \
-    QA_OPN_WouldPercentage, QA_OPN_WouldRef, QA_OPN_WouldShares, QA_OPN_LIM_MID, QA_OPN_LIM_MKT, QA_OPN_LIM_PRM
+    QA_OPN_WouldPercentage, QA_OPN_WouldRef, QA_OPN_WouldShares, QA_OPN_LIM_MID, QA_OPN_LIM_MKT, QA_OPN_LIM_PRM, \
+    QA_OPN_Market
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_BA_01, POV_WW_01, POV_NAV_01, POV_NAV_02, POV_AUC_01, POV_MinMax_01, \
     POV_SCAP_01
-from quod_qa.eq.Algo_Redburn.Temp import CLO_SCO_MID, CLO_SCO_MKT, CLO_SCO_PRM, QA_CLO_AtLast, TestBehalf
+from quod_qa.eq.Algo_Redburn.Temp import CLO_SCO_MID, CLO_SCO_MKT, CLO_SCO_PRM, QA_CLO_AtLast
 from quod_qa.eq.Care import QAP_1013
 from quod_qa.eq.Test import TraidingSession_test, SendMarketData
 from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
@@ -55,6 +56,7 @@ def test_run():
         QA_OPN_LIM_MID.execute(report_id)
         QA_OPN_LIM_MKT.execute(report_id)
         QA_OPN_LIM_PRM.execute(report_id)
+        QA_OPN_Market.execute(report_id)
 
         CLO_SCO_MID.execute(report_id)
         CLO_SCO_MKT.execute(report_id)
@@ -76,6 +78,7 @@ def test_run():
         QA_CLO_WouldAtLast.execute(report_id)
         QA_CLO_WouldAtLast2.execute(report_id)
         QA_CLO_AtLast.execute(report_id)
+        QA_CLO_Market.execute(report_id)
 
         EXP_LIM_01.execute(report_id)
         EXP_VO_01.execute(report_id)
