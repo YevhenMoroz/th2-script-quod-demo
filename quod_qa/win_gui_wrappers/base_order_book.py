@@ -9,9 +9,9 @@ class BaseOrderBook(BaseWindow):
     def __init__(self, case_id, base_request):
         super().__init__(case_id, base_request)
         # Need to override
-        self.order_details = OrdersDetails()
-        self.order_info = OrderInfo()
-        self.grpc_call = Stubs.win_act_order_book.getOrdersDetails
+        self.order_details = None
+        self.order_info = None
+        self.grpc_call = None
 
     def set_order_details(self):
         self.order_details.set_extraction_id(self.extraction_id)
