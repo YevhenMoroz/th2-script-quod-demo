@@ -12,8 +12,8 @@ from quod_qa.web_admin.web_admin_test_cases.site.QAP_5364 import QAP_5364
 class RunSite:
     def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
         self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
-        self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
+        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
+        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
         self.web_driver_container = web_driver_container
 
     def execute(self):

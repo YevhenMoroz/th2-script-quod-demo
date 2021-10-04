@@ -49,7 +49,7 @@ class RunFxMarketMaking:
             #QAP_1688(self.web_driver_container, self.second_lvl_id).run()
             #QAP_1693(self.web_driver_container, self.second_lvl_id).run()
             #QAP_1695(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1756(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1756(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1757(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1758(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2004(self.web_driver_container, self.second_lvl_id).run()

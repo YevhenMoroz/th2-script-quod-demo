@@ -19,6 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2474 import QAP_
 from custom import basic_custom_actions as bca
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_3007 import QAP_3007
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_4864 import QAP_4864
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_5443 import QAP_5443
 
 
 class RunClientsAccounts:
@@ -32,20 +33,21 @@ class RunClientsAccounts:
         try:
 
             start_time = time.monotonic()
-            QAP_1740(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2181(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2182(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2195(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2196(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2197(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2202(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2203(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2224(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2225(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2461(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2474(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3007(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4864(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1740(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2181(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2182(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2195(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2196(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2197(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2202(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2203(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2224(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2225(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2461(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2474(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3007(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4864(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5443(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

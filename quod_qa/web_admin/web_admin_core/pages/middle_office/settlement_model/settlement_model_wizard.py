@@ -28,3 +28,6 @@ class SettlementModelWizard(CommonPage):
         self.find_by_xpath(SettlementModelConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def get_incorrect_or_missing_values_exception(self):
+        return self.find_by_xpath(SettlementModelConstants.INCORRECT_OR_MISSING_VALUES_EXCEPTION).text

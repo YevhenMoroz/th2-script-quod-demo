@@ -26,7 +26,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    # report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    report_id = bca.create_event('Web Admin regression_cycle', parent_id)
     try:
         start_time = time.monotonic()
         # Generation ID and time for test run
@@ -36,13 +36,13 @@ def test_run(parent_id=None):
 
         # content
         web_driver_container = WebDriverContainer()
-        # RunGeneral(web_driver_container, parent_id).execute()
-        RunSite(web_driver_container, parent_id).execute()
-        # RunUsers(web_driver_container, parent_id).execute()
-        # ReferenceData(web_driver_container, parent_id).execute()
-        # RunClientsAccounts(web_driver_container, parent_id).execute()
-        # RunOrderManagement(web_driver_container, parent_id).execute()
-        # RunMiddleOffice(web_driver_container, parent_id).execute()
+        #RunGeneral(web_driver_container, parent_id).execute()
+        #RunSite(web_driver_container, report_id).execute()
+        #RunUsers(web_driver_container, parent_id).execute()
+        #ReferenceData(web_driver_container, parent_id).execute()
+        RunClientsAccounts(web_driver_container, parent_id).execute()
+        #RunOrderManagement(web_driver_container, parent_id).execute()
+        #RunMiddleOffice(web_driver_container, parent_id).execute()
         #RunFxMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
         #RunPositions(web_driver_container, parent_id).execute()
