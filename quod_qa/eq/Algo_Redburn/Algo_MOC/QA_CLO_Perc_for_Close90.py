@@ -6,17 +6,17 @@ from stubs import Stubs
 timeouts = True
 
 
-def     execute(report_id):
+def execute(report_id):
     instrument = {
-    'Symbol': 'GB00BH4HKS39-XLON',
-    'SecurityID': 'GB00BH4HKS39',
-    'SecurityIDSource': '4',
-    'SecurityExchange': 'XLON'
+        'Symbol': 'GB00BH4HKS39-XLON',
+        'SecurityID': 'GB00BH4HKS39',
+        'SecurityIDSource': '4',
+        'SecurityExchange': 'XLON'
     }
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'CLO_WW_01 ' + bca.client_orderid(9),
+        'ClOrdID': 'QA_CLO_Perc_for_Close90 ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 10000000,
@@ -29,12 +29,11 @@ def     execute(report_id):
         'Currency': "GBX",
         'TargetStrategy': 1015, # MOC
         'ExDestination': 'XLON',
-        'Text': 'CLO_WW_01',
+        'Text': 'QA_CLO_Perc_for_Close',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'WouldInAuction': '1',
-            'TriggerPriceRed': '116.5',
-            'ExcludePricePoint2': '1'
+            'ExcludePricePoint2': '1',
+            'PercentageForClose': '90',
         }
     }
 

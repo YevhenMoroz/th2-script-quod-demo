@@ -16,7 +16,7 @@ def     execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'CLO_WW_01 ' + bca.client_orderid(9),
+        'ClOrdID': 'QA_CLO_WouldPercentage ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 10000000,
@@ -34,7 +34,8 @@ def     execute(report_id):
             'MaxParticipation': '10',
             'WouldInAuction': '1',
             'TriggerPriceRed': '116.5',
-            'ExcludePricePoint2': '1'
+            'MaxWouldPercentage': '20',
+            'ExcludePricePoint2': '1',
         }
     }
 

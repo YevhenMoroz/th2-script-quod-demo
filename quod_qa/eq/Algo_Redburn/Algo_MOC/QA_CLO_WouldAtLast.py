@@ -16,7 +16,7 @@ def     execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'CLO_WW_01 ' + bca.client_orderid(9),
+        'ClOrdID': 'QA_CLO_WouldAtLast ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 10000000,
@@ -29,12 +29,13 @@ def     execute(report_id):
         'Currency': "GBX",
         'TargetStrategy': 1015, # MOC
         'ExDestination': 'XLON',
-        'Text': 'CLO_WW_01',
+        'Text': 'QA_CLO_WouldAtLast',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'WouldInAuction': '1',
+            'ExcludePricePoint2': '1',
+            'AtLast': '1',
             'TriggerPriceRed': '116.5',
-            'ExcludePricePoint2': '1'
         }
     }
 
