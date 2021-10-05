@@ -74,7 +74,7 @@ from quod_qa.web_admin.web_admin_core.pages.risk_limits.fx_position_limits.fx_po
     FxPositionsLimitsConstants
 from quod_qa.web_admin.web_admin_core.pages.risk_limits.listing_cumtrdlmt_counter.listing_cumtrdlmt_counter_constants import \
     ListingCumTrdLmtCounterConstants
-from quod_qa.web_admin.web_admin_core.pages.risk_limits.position_limits.positions_limits_constants import \
+from quod_qa.web_admin.web_admin_core.pages.risk_limits.position_limits.position_limits_constants import \
     PositionsLimitsConstants
 from quod_qa.web_admin.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_constants import \
     PriceToleranceControlConstants
