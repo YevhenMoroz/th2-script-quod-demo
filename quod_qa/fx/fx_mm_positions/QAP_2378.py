@@ -128,7 +128,6 @@ def execute(report_id, session_id):
         compare_position(case_id, pos_after_6m, qty_6m, pos_after_2wk)
         compare_position_quod(case_id, pos_after_6m_quod, qty_6m, pos_after_2wk_quod)
 
-
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
