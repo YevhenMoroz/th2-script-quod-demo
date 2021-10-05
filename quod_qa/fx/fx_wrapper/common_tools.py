@@ -145,7 +145,7 @@ def clear_position():
             print("PostgreSQL connection is closed")
 
 
-def restart_component_on_back():
+def restart_qs_rfq_fix_th2():
     """
     Restart QS_RFQ_STANDARD_SELL component on quod314 backend
     """
