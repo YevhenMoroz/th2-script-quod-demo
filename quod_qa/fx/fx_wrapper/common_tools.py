@@ -147,7 +147,7 @@ def clear_position():
 
 def restart_qs_rfq_fix_th2():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Restart QUOD.QS_RFQ_FIX_TH2 component on quod314 backend
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
