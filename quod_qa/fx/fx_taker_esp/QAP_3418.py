@@ -2,15 +2,11 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.common_tools import read_median_file
 from stubs import Stubs
 
