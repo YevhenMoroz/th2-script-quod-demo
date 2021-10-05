@@ -170,3 +170,44 @@ def restart_pks():
     for line in stdout.read().splitlines():
         print(line)
     stdin.close()
+
+
+def stop_fxfh():
+    """
+    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    """
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
+
+    stdin, stdout, stderr = ssh.exec_command("qstop -id QUOD.FXFH")
+    for line in stdout.read().splitlines():
+        print(line)
+    stdin.close()
+
+
+def start_fxfh():
+    """
+    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    """
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
+
+    stdin, stdout, stderr = ssh.exec_command("qstart FXFH")
+    for line in stdout.read().splitlines():
+        print(line)
+    stdin.close()
+
+
+def read_median_file():
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
+
+    stdin, stdout, stderr = ssh.exec_command("cat /home/quod314/mda/median_data.csv")
+    list_of_values = []
+    for line in stdout.read().splitlines():
+        list_of_values.append(line)
+    stdin.close()
+    return str(list_of_values[-1])
