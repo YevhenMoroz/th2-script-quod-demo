@@ -1,6 +1,7 @@
 import math
 import random
 import re
+import time
 from datetime import datetime
 from random import randint
 import psycopg2
@@ -184,6 +185,7 @@ def stop_fxfh():
     for line in stdout.read().splitlines():
         print(line)
     stdin.close()
+    time.sleep(10)
 
 
 def start_fxfh():
@@ -198,6 +200,7 @@ def start_fxfh():
     for line in stdout.read().splitlines():
         print(line)
     stdin.close()
+    time.sleep(10)
 
 
 def read_median_file():
