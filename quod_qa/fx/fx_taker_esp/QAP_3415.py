@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -7,9 +8,18 @@ from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
 
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
+from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.common_tools import read_median_file
 from stubs import Stubs
+
+
+def verify_median(case_id, expected, actual):
+    verifier = Verifier(case_id)
+    verifier.set_event_name("Compare median")
+    verifier.compare_values("Median", expected, actual)
+    verifier.verify()
 
 
 def execute(report_id):
@@ -19,13 +29,14 @@ def execute(report_id):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
-    simulator = Stubs.test_sim
+    simulator = Stubs.simulator
     act = Stubs.fix_act
     connectivity = "fix-fh-q-314-luna"
     security_type = 'FXSPOT'
     symbol = 'EUR/USD'
     default_md_symbol_db = 'EUR/USD:SPO:REG:DB'
     default_md_symbol_ebs = 'EUR/USD:SPO:REG:EBS-CITI'
+    expected_median = "EUR/USD;EXC;;1.185;6000000;1.19629;12000000'"
 
     try:
         mdu_params_spo = {
@@ -162,7 +173,9 @@ def execute(report_id):
                 case_id,
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo_ebs, connectivity)
             ))
-
+        time.sleep(10)
+        actual_median = read_median_file()[45:]
+        verify_median(case_id, expected_median, actual_median)
 
     except Exception:
         logging.error('Error execution', exc_info=True)
