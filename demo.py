@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.fx import for_Daria
 from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255, QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, \
-    QAP_2326
+    QAP_2326, QAP_5551, QAP_2322, QAP_2290
 
 from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
     QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
@@ -13,7 +14,7 @@ from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP
     QAP_3766, QAP_3747, QAP_3806, QAP_3807
 from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3740
 from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot, rfq_swap_1w_2w, \
-    java_api_Subscribe
+    java_api_Subscribe, esp_1W, SendMD_QAP_5537
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -50,14 +51,21 @@ def test_run():
         else:
             get_opened_fe(report_id, session_id)
 
-        QAP_2326.execute(report_id, session_id)
+        # QAP_2290.execute(report_id, session_id)
+        #
+        # SendMD_QAP_5537.execute(report_id)
+        for_Daria.execute(report_id,session_id)
 
 
 
 
         # QAP_2092WIP.execute(report_id,session_id)
         # QAP_1558.execute(report_id)
-
+        # QAP_2290.execute(report_id,session_id)
+        # QAP_2322.execute(report_id, session_id)
+        # java_api_MDReq.TestCase().execute(report_id)
+        # rfq_spot.execute(report_id)
+        # esp_1W.execute(report_id)
         # java_api.TestCase(report_id).execute()
         # java_api_Subscribe.TestCase().execute(report_id)
         # example_java_api.TestCase(report_id).execute()
@@ -74,7 +82,8 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        # rm = RuleManager()
+        rm = RuleManager()
+
         # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
         # rm.print_active_rules()
         # rm.print_active_rules_sim_test()

@@ -1,5 +1,5 @@
 from quod_qa.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2159, QAP_2255, \
-    QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, QAP_2326
+    QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, QAP_2326, QAP_5551, QAP_2322
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -37,6 +37,8 @@ def test_run(parent_id=None):
         QAP_3067.execute(report_id, session_id)
         QAP_1762.execute(report_id, session_id)
         QAP_2326.execute(report_id, session_id)
+        QAP_5551.execute(report_id, session_id)
+        QAP_2322.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
