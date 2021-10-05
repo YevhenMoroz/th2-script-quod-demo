@@ -87,8 +87,8 @@ def execute(report_id, session_id):
     client_tier = "Argentum"
     instrument_spot = "USD/CAD-SPOT"
     instrument_2w = "USD/CAD-2W"
-    client = "SILVER1"
-    quod_client = "QUOD_1"
+    client = "Silver1"
+    quod_client = "DEFAULT1_1"
     symbol = instrument_spot[:7]
     slippage = "2"
     qty_6m = "6000000"
