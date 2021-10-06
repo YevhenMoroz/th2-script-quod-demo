@@ -19,16 +19,15 @@ settle_type_spo = "0"
 currency = "EUR"
 settle_currency = "NOK"
 
-side = "1"
-leg1_side = "2"
-leg2_side = "1"
+side_b = "1"
+side_s = "2"
 
 
-def send_rfq_and_filled_order(case_id, qty_1):
+def send_rfq_and_filled_order_buy(case_id, qty_1):
     params_spot = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1, symbol=symbol,
                                     securitytype=security_type_spo, settldate=settle_date_spo,
                                     settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                    currency=currency, side=side,
+                                    currency=currency, side=side_b,
                                     account=account)
 
     rfq = FixClientSellRfq(params_spot)
@@ -37,6 +36,23 @@ def send_rfq_and_filled_order(case_id, qty_1):
     rfq.verify_quote_pending()
 
     price = rfq.extract_filed("OfferPx")
+    rfq.send_new_order_single(price)
+    rfq.verify_order_pending().verify_order_filled()
+
+
+def send_rfq_and_filled_order_sell(case_id, qty_1):
+    params_spot = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1, symbol=symbol,
+                                    securitytype=security_type_spo, settldate=settle_date_spo,
+                                    settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
+                                    currency=currency, side=side_s,
+                                    account=account)
+
+    rfq = FixClientSellRfq(params_spot)
+    rfq.send_request_for_quote()
+
+    rfq.verify_quote_pending()
+
+    price = rfq.extract_filed("BidPx")
     rfq.send_new_order_single(price)
     rfq.verify_order_pending().verify_order_filled()
 
@@ -71,7 +87,7 @@ def execute(report_id, session_id):
         # Step 1
         checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id1 = checkpoint_response1.checkpoint
-        send_rfq_and_filled_order(case_id, "1000000")
+        send_rfq_and_filled_order_buy(case_id, "1000000")
         order_id = check_order_book(case_base_request, ob_service, orig, client)
 
         order_params = {
@@ -129,6 +145,7 @@ def execute(report_id, session_id):
                                   connectivity_drop_copy,
                                   case_id)
         )
+        send_rfq_and_filled_order_sell(case_id, "1000000")
 
     except Exception:
         logging.error("Error execution", exc_info=True)
