@@ -24,7 +24,7 @@ class QAP_760(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMEX"
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_venue = "ANZ"
+        self.new_venue = "ASE"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

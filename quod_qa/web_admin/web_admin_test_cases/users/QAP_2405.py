@@ -24,7 +24,7 @@ class QAP_2405(CommonTestCase):
         self.user_id = ''.join("test " + str(random.randint(1, 1000)))
         self.password_at_login_wizard = ''.join("pass" + str(random.randint(1, 1000)))
         self.perm_role = "Permissions for administrator users"
-        self.desks = ("Desk of Dealers 1", "Desk of Dealers 2")
+        self.desks = ("DESK A", "Quod Desk")
         self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
         self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
 

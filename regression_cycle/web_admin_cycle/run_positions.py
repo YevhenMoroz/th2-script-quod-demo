@@ -20,10 +20,10 @@ class RunPositions:
     def execute(self):
         try:
             start_time = time.monotonic()
-            #QAP_2165(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2166(self.web_driver_container, self.second_lvl_id).run()
-           # QAP_2167(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_2168(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2165(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2166(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2167(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2168(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run Positions ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

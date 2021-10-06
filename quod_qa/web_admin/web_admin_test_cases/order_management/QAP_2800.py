@@ -33,6 +33,7 @@ class QAP_2800(CommonTestCase):
         side_menu.open_order_management_rules_page()
         page = OrderManagementRulesPage(self.web_driver_container)
         page.click_on_new_button()
+        time.sleep(2)
 
     def test_context(self):
 
@@ -44,13 +45,13 @@ class QAP_2800(CommonTestCase):
             while i < 12:
                 i += 1
                 conditions_sub_wizard.click_on_plus()
-                time.sleep(1)
-                conditions_sub_wizard.set_name(self.condition_name + str(random.randint(0, 100)))
+                time.sleep(2)
+                conditions_sub_wizard.set_name(self.condition_name + str(i))
                 time.sleep(1)
                 conditions_sub_wizard.set_qty_precision("100")
                 conditions_sub_wizard.click_on_add_condition()
                 time.sleep(2)
-                conditions_sub_wizard.set_client("ANDclient")
+                conditions_sub_wizard.set_client("CLIENT1")
                 conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
                 conditions_sub_wizard.set_exec_policy("DMA")
                 time.sleep(1)

@@ -8,7 +8,7 @@ class ZonesAssignmentsSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_institution(self, value):
-        self.set_text_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_INSTITUTION_XPATH, value)
+        self.set_combobox_value(ZonesConstants.ASSIGNMENTS_TAB_INSTITUTION_XPATH, value)
 
     def get_institution(self):
         return self.get_text_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_INSTITUTION_XPATH)
