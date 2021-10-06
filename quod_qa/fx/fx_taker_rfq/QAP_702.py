@@ -168,7 +168,7 @@ def execute(report_id, session_id):
         order_info = check_order_book(case_base_request, case_instr_type, ob_act, case_id,
                                       quote_owner, case_beneficiary)
         check_quote_book(case_base_request, ar_service, case_id, quote_owner, order_info["orderBook.quoteid"])
-        get_my_orders_details(ob_act, case_base_request, case_id, order_info["orderbook.orderid"], case_beneficiary)
+        # get_my_orders_details(ob_act, case_base_request, case_id, order_info["orderbook.orderid"], case_beneficiary)
 
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())
