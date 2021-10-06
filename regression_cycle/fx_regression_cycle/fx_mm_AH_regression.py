@@ -1,7 +1,8 @@
 from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2255, \
-    QAP_3939, QAP_3039, QAP_2470, QAP_3354, QAP_3067, QAP_1762, QAP_2326
+    QAP_3939, QAP_3039, QAP_2470, QAP_3354, QAP_3067, QAP_1762, QAP_2326, import_AH_layout, AH_Precondition
 from quod_qa.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2291, QAP_2292, \
     QAP_3902
+from quod_qa.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -21,10 +22,15 @@ def test_run(parent_id=None):
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
 
     try:
+        prepare_position()
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
             get_opened_fe(report_id, session_id)
+
+        import_AH_layout.execute(report_id, session_id)
+        AH_Precondition.execute(report_id)
+
         QAP_2113.execute(report_id, session_id)
         QAP_2228.execute(report_id, session_id)
         QAP_2250.execute(report_id, session_id)
