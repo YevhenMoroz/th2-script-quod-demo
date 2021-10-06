@@ -151,3 +151,23 @@ class GridScrollingDetails:
 
     def build(self):
         return self._request
+
+
+class SimpleRequest:
+    def __init__(self, base: EmptyRequest = None, filter: dict = None):
+        if base is not None:
+            self._request = common_pb2.SimpleRequest(base=base)
+        else:
+            self._request = common_pb2.SimpleRequest()
+
+        if filter is not None:
+            self._request.filter.update(filter)
+
+    def set_default_params(self, base):
+        self._request.base.CopyFrom(base)
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+    def build(self):
+        return self._request

@@ -87,8 +87,8 @@ def execute(report_id, session_id):
     client_tier = "Argentum"
     instrument_spot = "USD/CAD-SPOT"
     instrument_2w = "USD/CAD-2W"
-    client = "SILVER1"
-    quod_client = "QUOD_1"
+    client = "Silver1"
+    quod_client = "DEFAULT1_1"
     symbol = instrument_spot[:7]
     slippage = "2"
     qty_6m = "6000000"
@@ -104,10 +104,6 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
 
-    if not Stubs.frontend_is_open:
-        prepare_fe_2(case_id, session_id)
-    else:
-        get_opened_fe(case_id, session_id)
     try:
         # Step 1
         pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client, date_spo)
@@ -131,7 +127,6 @@ def execute(report_id, session_id):
 
         compare_position(case_id, pos_after_6m, qty_6m, pos_after_2wk)
         compare_position_quod(case_id, pos_after_6m_quod, qty_6m, pos_after_2wk_quod)
-
 
     except Exception:
         logging.error("Error execution", exc_info=True)
