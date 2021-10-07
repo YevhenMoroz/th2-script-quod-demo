@@ -28,8 +28,6 @@ class CrossedVenueRatesConstants:
     MAIN_PAGE_SYMBOL_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
 
-    MAIN_PAGE_MIN_QTY_XPATH = '//*[@col-id="minHardQty"]//span//span[4]'
-
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="priceCleansingRuleName"]//span//span[4]'
     MAIN_PAGE_REMOVE_DETECTED_PRICE_UPDATES_XPATH = '//*[@class="custom-checkbox checked"]'
     MAIN_PAGE_VENUE_XPATH = '//*[@col-id="venue.venueID"]//span//span[4]'
