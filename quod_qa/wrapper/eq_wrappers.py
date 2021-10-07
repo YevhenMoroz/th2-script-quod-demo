@@ -19,7 +19,7 @@ from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetai
 from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, DiscloseFlagDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
     SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
