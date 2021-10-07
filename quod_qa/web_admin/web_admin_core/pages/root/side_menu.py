@@ -7,6 +7,8 @@ from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_groups.client
     ClientGroupsConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
+from quod_qa.web_admin.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
+    CashPositionsConstants
 from quod_qa.web_admin.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_constants import \
     OrderVelocityLimitConstants
 from quod_qa.web_admin.web_admin_core.pages.site.desks.desks_constants import DesksConstants
@@ -374,3 +376,9 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.ORDER_VELOCITY_LIMIT_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(OrderVelocityLimitConstants.ORDER_VELOCITY_LIMIT_PAGE_TITLE_XPATH)
+
+    def open_cash_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.CASH_POSITIONS_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(CashPositionsConstants.CASH_POSITIONS_PAGE_TITLE_XPATH)
+
