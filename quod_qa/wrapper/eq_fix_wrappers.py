@@ -10,11 +10,10 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317ganymede-standard"  # fix-buy-317ganymede-standard fix-bs-310-columbia
+sell_connectivity = "fix-sell-317ganymede-standard"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
 # fix-sell-317-standard-test  fix-sell-310-newdict
 bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
-
 
 def get_buy_connectivity():
     return buy_connectivity
@@ -29,10 +28,10 @@ def get_bo_connectivity():
 
 
 def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, stop_price=None, no_allocs=None,
-                         instrument=None):
+                         instrument=None,currency='EUR'):
     fix_params = {
         'Account': client,
-        # 'OrderQtyData': {'OrderQty': qty},
+        #'OrderQtyData': {'OrderQty': qty},
         'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
@@ -49,7 +48,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
             'SecurityIDSource': '4',
             'SecurityExchange': 'XPAR'
         },
-        'Currency': 'EUR',
+        'Currency': currency,
     }
     if price is None:
         fix_params.pop('Price')
@@ -65,11 +64,11 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
 
 
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
-                         instrument=None):
+                         instrument=None, currency=None):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price,stop_price, no_allocs,
-                                          instrument)
+                                          instrument,currency)
         fix_message = FixMessage(fix_params)
         response = fix_manager.Send_NewOrderSingle_FixMessage(fix_message)
         fix_params['response'] = response
