@@ -55,11 +55,11 @@ def check_log_period(params: dict):
         for m in mapped_messages:
             idx += 1
 
-            # check timestamp of messages
+            # checking timestamp of messages
             log_time = datetime.strptime(m['timestamp'][:-10], '%Y-%m-%d %H:%M:%S')
             passed = START_CHECK_TIME <= log_time <= END_CHECK_TIME
 
-            # create MessageID of each message for showing in report event
+            # creating MessageID of each message for showing in report event
             msg_id = m['id'].split(':')
             ids.append(
                 MessageID(
@@ -70,7 +70,7 @@ def check_log_period(params: dict):
                     sequence=int(msg_id[2]),
                     subsequence=0))
 
-            # create lines in report event with checking data for each message
+            # creating lines in report event with checking data for each message
             body_fields[f'Message [{idx}]'] = {
                 "expected": f"{START_CHECK_TIME} - {END_CHECK_TIME}",
                 "actual": 'log_time',
@@ -81,14 +81,14 @@ def check_log_period(params: dict):
 
             body = {"fields": body_fields, "type": "verification"}
 
-    # create root report event
+    # creating root report event
     case_name = f"Checking timestamp of message in '{params['Session-alias']}' log"
     parent_id = create_event(case_name)
     event_body = bytes(json.dumps([body]), 'utf-8')
     seconds, nanos = timestamps()
     event_id = create_event_id()
 
-    # create child report event
+    # creating child report event
     event = Event(
         id=event_id,
         name=f"Message '{params['Message']}'",
@@ -113,78 +113,6 @@ def execute():
 
     check_log_period(log_msg_params)
 
-
-log_msg = {'type': 'message',
-           'timestamp': {
-               'nano': 570242672,
-               'epochSecond': 1633094530},
-           'direction': 'IN',
-           'sessionId': 'log305-sats-amend',
-           'messageType': 'Csv_Header/Csv_Message',
-           'attachedEventIds': [],
-           'body': {
-               'metadata': {
-                   'id': {
-                       'connectionId': {
-                           'sessionAlias': 'log305-sats-amend'
-                       },
-                       'sequence': '1633094859182928001',
-                       'subsequence': [1, 2]
-                   },
-                   'timestamp': '2021-10-01T13:22:10.570242672Z',
-                   'messageType': 'Csv_Header/Csv_Message',
-                   'properties': {
-                       'logTimestamp': '2021-10-01 13:22:10.570242672'
-                   }
-               },
-               'fields': {
-                   'Csv_Header': {
-                       'messageValue': {
-                           'fields': {
-                               'Header': {
-                                   'listValue': {
-                                       'values': [
-                                           {
-                                               'simpleValue': 'MsgType'
-                                           },
-                                           {
-                                               'simpleValue': 'NewQty'
-                                           },
-                                           {
-                                               'simpleValue': 'OldQty'
-                                           },
-                                           {
-                                               'simpleValue': 'OrderID'
-                                           }
-                                       ]
-                                   }
-                               }
-                           }
-                       }
-                   },
-                   'Csv_Message': {
-                       'messageValue': {
-                           'fields': {
-                               'MsgType': {
-                                   'simpleValue': 'SATSAmendQty'
-                               },
-                               'NewQty': {
-                                   'simpleValue': '1'
-                               },
-                               'OldQty': {
-                                   'simpleValue': '2'
-                               },
-                               'OrderID': {
-                                   'simpleValue': 'AO1211001132204153001'
-                               }
-
-                           }
-                       }
-                   }
-               }
-           },
-           'bodyBase64': 'Ik1zZ1R5cGUiOyJOZXdRdHkiOyJPbGRRdHkiOyJPcmRlcklEIgoiU0FUU0FtZW5kUXR5IjsiMSI7IjIiOyJBTzEyMTEwMDExMzIyMDQxNTMwMDEi',
-           'messageId': 'log305-sats-amend:first:1633094859182928001'}
 
 if __name__ == "__main__":
     execute()
