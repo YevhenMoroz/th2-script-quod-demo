@@ -307,15 +307,18 @@ def internal_transfer(base_request, transfer_accept: bool = True, order_book_fil
         logger.error("Error execution", exc_info=True)
 
 
-def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
+def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm",
+                     last_capacity="Agency"):
     manual_executing_details = ManualExecutingDetails(request)
     executions_details = manual_executing_details.add_executions_details()
     executions_details.set_quantity(qty)
     executions_details.set_price(price)
-    executions_details.set_executing_firm(execution_firm)
-    executions_details.set_contra_firm(contra_firm)
+    if execution_firm is not None:
+        executions_details.set_executing_firm(execution_firm)
+    if contra_firm is not None:
+        executions_details.set_contra_firm(contra_firm)
     executions_details.set_settlement_date_offset(1)
-    executions_details.set_last_capacity("Agency")
+    executions_details.set_last_capacity(last_capacity)
     try:
         call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
     except Exception:
@@ -1125,3 +1128,9 @@ def un_complete(base_request, filter_list=None):
 def book_basket(request, filter_list=None):
     request = SimpleRequest(request, filter_list)
     call(Stubs.win_act_basket_order_book.book, request.build())
+
+
+def cancel_basket(base_request, filter_list=None):
+    simple_request = SimpleRequest(base_request, filter_list)
+    basket_book_service = Stubs.win_act_basket_order_book
+    call(basket_book_service.cancelBasket, simple_request.build())
