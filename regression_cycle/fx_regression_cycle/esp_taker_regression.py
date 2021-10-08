@@ -1,7 +1,8 @@
 from quod_qa.fx.fx_taker_esp import QAP_110, QAP_1115, QAP_3364, QAP_382, QAP_2854, QAP_2947, QAP_231, QAP_3042, \
     QAP_492, QAP_2948, QAP_1591, QAP_2949, QAP_833, QAP_4156, QAP_404, QAP_2373, QAP_2416, QAP_4677, QAP_4673, QAP_4768, \
     QAP_2, QAP_19, QAP_105, QAP_228, QAP_458, QAP_530, QAP_851, QAP_3066, QAP_3068, QAP_3069, QAP_3157, QAP_3644, \
-    QAP_3742, QAP_2812, QAP_2761
+    QAP_3742, QAP_2812, QAP_2761, QAP_3414, QAP_3415, QAP_3418
+from quod_qa.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -65,6 +66,12 @@ def test_run(parent_id=None):
         QAP_4673.execute(report_id, session_id)
         QAP_4677.execute(report_id, session_id)
         QAP_4768.execute(report_id, session_id)
+
+        stop_fxfh()
+        QAP_3414.execute(report_id)
+        QAP_3415.execute(report_id)
+        QAP_3418.execute(report_id)
+        start_fxfh()
 
         # run_full_amount(report_id, session_id)
     except Exception:

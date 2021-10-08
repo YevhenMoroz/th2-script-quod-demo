@@ -1,14 +1,20 @@
 import logging
 from pathlib import Path
+
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest
+from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
+    PlaceRateTileTableOrderRequest, RatesTileTableOrdSide
 
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     PositionsInfo, ExtractionPositionsAction
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
+from win_gui_modules.order_ticket import FXOrderDetails
+from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 
 from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
 from win_gui_modules.wrappers import set_base
@@ -34,19 +40,26 @@ def place_order_buy(base_request, service, qty, slippage, client):
     call(service.placeRatesTileOrder, place_request.build())
 
 
-def place_order_sell(base_request, service, qty, slippage, client):
-    place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_quantity(qty)
-    place_request.set_slippage(slippage)
-    place_request.set_client(client)
-    place_request.sell()
-    call(service.placeRatesTileOrder, place_request.build())
+def open_order_ticket_sell(btd, service, row):
+    request = PlaceRateTileTableOrderRequest(btd, row, RatesTileTableOrdSide.SELL)
+    call(service.placeRateTileTableOrder, request.build())
 
 
-def check_order_book(base_request, act_ob):
+def place_order(base_request, service, qty, slippage, client):
+    order_ticket = FXOrderDetails()
+    order_ticket.set_qty(qty)
+    order_ticket.set_client(client)
+    order_ticket.set_slippage(slippage)
+    order_ticket.set_place()
+    new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
+    call(service.placeFxOrder, new_order_details.build())
+
+
+def check_order_book(base_request, act_ob, owner, client):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_default_params(base_request)
+    ob.set_filter(["Owner", owner, "Client ID", client])
     ob.set_extraction_id(extraction_id)
     sub_order_qty = ExtractionDetail("subOrder_lvl_1.id", "Qty")
     sub_order_price = ExtractionDetail("subOrder_lvl_1.execprice", "ExecPrice")
@@ -90,6 +103,7 @@ def execute(report_id, session_id):
     cp_service = Stubs.win_act_cp_service
     ob_act = Stubs.win_act_order_book
     pos_service = Stubs.act_fx_dealing_positions
+    order_ticket_service = Stubs.win_act_order_ticket_fx
 
     case_name = Path(__file__).name[:-3]
     client_tier = "Argentum"
@@ -101,6 +115,7 @@ def execute(report_id, session_id):
     qty_2m = "2000000"
     qty_8m = "8000000"
     qty_3m = "3000000"
+    owner = Stubs.custom_config['qf_trading_fe_user']
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
@@ -108,6 +123,7 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
+    base_tile_data = BaseTileData(base=case_base_request)
 
     try:
         # Step 1
@@ -116,25 +132,27 @@ def execute(report_id, session_id):
         modify_rates_tile(base_details, cp_service, instrument, client_tier)
         place_order_buy(base_details, cp_service, qty_6m, slippage, client)
         pos_after_6m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * -abs(float(qty_6m))
         compare_position(case_id, pos_before, position, pos_after_6m)
         # Step 2
         place_order_buy(base_details, cp_service, qty_2m, slippage, client)
         pos_after_2m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * -abs(float(qty_2m))
         compare_position(case_id, pos_after_6m, position, pos_after_2m)
         # Step 3
-        place_order_sell(base_details, cp_service, qty_8m, slippage, client)
+        open_order_ticket_sell(base_tile_data, cp_service, 3)
+        place_order(case_base_request, order_ticket_service, qty_8m, slippage, client)
         pos_after_8m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * abs(float(qty_8m))
         compare_position(case_id, pos_after_2m, position, pos_after_8m)
         # Step 4
-        place_order_sell(base_details, cp_service, qty_3m, slippage, client)
+        open_order_ticket_sell(base_tile_data, cp_service, 2)
+        place_order(case_base_request, order_ticket_service, qty_3m, slippage, client)
         pos_after_3m = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        price = check_order_book(case_base_request, ob_act)
+        price = check_order_book(case_base_request, ob_act, owner, client)
         position = price * abs(float(qty_3m))
         compare_position(case_id, pos_after_8m, position, pos_after_3m)
 

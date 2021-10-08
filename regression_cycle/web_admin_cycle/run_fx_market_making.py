@@ -32,6 +32,7 @@ from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3009 import QAP
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3010 import QAP_3010
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3274 import QAP_3274
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3275 import QAP_3275
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_4439 import QAP_4439
 
 
 class RunFxMarketMaking:
@@ -73,7 +74,7 @@ class RunFxMarketMaking:
             # QAP_3010(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3274(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3275(self.web_driver_container, self.second_lvl_id).run()
-
+            QAP_4439(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run FXMM ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
         except Exception:
