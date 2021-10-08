@@ -1,7 +1,6 @@
 from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import FXOrdersDetails, FXOrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.utils import call
+from win_gui_modules.order_book_wrappers import FXOrdersDetails, FXOrderInfo
 
 
 class FXOrderBook(BaseOrderBook):

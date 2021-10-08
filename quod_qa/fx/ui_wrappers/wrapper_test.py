@@ -5,7 +5,6 @@ from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3, broken_w1
 from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from quod_qa.fx.ui_wrappers.forex_order_book import FxOrderBook
 from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from win_gui_modules.utils import get_base_request
@@ -51,8 +50,8 @@ def execute(report_id, session_id):
         # send_rfq_and_filled_order(case_id, qty)
 
         order_book = FXOrderBook(case_id, case_base_request)
-        order_book.set_filter(["Qty", "1000000"]).check_order_filled("Terminated", "Filled")
-
+        # order_book.set_filter(["Qty", "1000000"])
+        order_book.check_order_fields_list({"Sts": "TEST", "Venue":"HSBCR"})
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

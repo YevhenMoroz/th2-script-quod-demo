@@ -12,12 +12,12 @@ from win_gui_modules.wrappers import set_base
 client_tier = "AURUM1"
 account = "AURUM1_1"
 
-symbol = "EUR/NOK"
+symbol = "GBP/DKK"
 security_type_spo = "FXSPOT"
 settle_date_spo = spo()
 settle_type_spo = "0"
-currency = "EUR"
-settle_currency = "NOK"
+currency = "GBP"
+settle_currency = "DKK"
 
 side_b = "1"
 side_s = "2"
@@ -60,9 +60,9 @@ def send_rfq_and_filled_order_sell(case_id, qty_1):
 def check_order_book(base_request, act_ob, orig, client):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_filter(["Orig", orig, "Client ID", client])
+    ob.set_default_params(base_request=base_request)
     ob.set_extraction_id(extraction_id)
+    ob.set_filter(["Orig", orig, "Client ID", client])
     order_id = ExtractionDetail("orderBook.id", "Order ID")
 
     ob.add_single_order_info(
@@ -100,14 +100,13 @@ def execute(report_id, session_id):
             'Side': '*',
             'AvgPx': '*',
             'OrdStatus': '2',
-            'LastExecutionPolicy': '*',
             'SettlCurrency': settle_currency,
             'SettlDate': spo(),
             'Currency': currency,
             'TimeInForce': '4',
             'TradeDate': '*',
             'ExecType': 'F',
-            'HandlInst': '2',
+            'HandlInst': '1',
             'LeavesQty': '0',
             'NoParty': [{
                 'PartyID': 'AH_TECHNICAL_USER',
@@ -118,12 +117,9 @@ def execute(report_id, session_id):
             'LastPx': '*',
             'SpotSettlDate': spo(),
             'OrdType': "1",
-            'Text': "*",
+            'LastMkt': "*",
             'ClOrdID': order_id,
-            'SecondaryOrderID': '*',
             'QtyType': '*',
-            'StrategyName': '*',
-            'TargetStrategy': '*',
             'SettlType': '*',
             'Instrument': {
                 'SecurityType': 'FXSPOT',
@@ -133,7 +129,6 @@ def execute(report_id, session_id):
                 'SecurityIDSource': '8',
                 'SecurityExchange': '*'
             },
-            'SecondaryExecID': '*',
             'ExDestination': '*',
             'GrossTradeAmt': '*',
         }
