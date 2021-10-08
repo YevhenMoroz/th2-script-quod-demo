@@ -19,7 +19,8 @@ from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetai
 from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, DiscloseFlagDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, DiscloseFlagDetails, \
+    CancelChildOrdersDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
     SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
@@ -232,6 +233,17 @@ def direct_order(lookup, qty, price, qty_percent):
         call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         basic_custom_actions.create_event('Fail direct_order', status="FAIL")
+        logger.error("Error execution", exc_info=True)
+
+
+def cancel_child_orders(base_request, order_book_filter: dict = {}):
+    cancel_child_orders_details = CancelChildOrdersDetails(base_request)
+    cancel_child_orders_details.set_default_params(base_request)
+    cancel_child_orders_details.set_filter(order_book_filter)
+    try:
+        call(Stubs.win_act_order_book.cancelChildOrders, cancel_child_orders_details.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail cancel_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
