@@ -60,20 +60,29 @@ class BaseOrderBook(BaseWindow):
         return response[field.name]
 
     def check_order_fields_list(self, expected_fields: dict):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
         actual_list = self.extract_fields_list(expected_fields)
         for items in expected_fields.items():
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name("Check Order Book")
-            # HERE IS PROBLEM in ACTUAL
-            self.verifier.compare_values(key, value, actual_list[value])
+            self.verifier.compare_values(key, value, actual_list[key])
         self.verifier.verify()
 
     def extract_fields_list(self, list_fields: dict) -> dict:
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and return new dict where
+        key = key and value is extracted field from FE
+        """
         list_of_fields = []
         for field in list_fields.items():
             key = list(field)[0]
-            field = ExtractionDetail("orderBook." + key, key)
+            field = ExtractionDetail(key, key)
             list_of_fields.append(field)
         self.order_details.add_single_order_info(
             self.order_info.create(
