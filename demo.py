@@ -1,23 +1,11 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx import for_Daria
-from quod_qa.fx.fx_mm_autohedging import QAP_2250, QAP_2159, QAP_2255, QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, \
-    QAP_2326, QAP_5551, QAP_2322, QAP_2290
 
-from quod_qa.fx.fx_mm_esp import QAP_1518, QAP_1558, QAP_1559, QAP_2797, QAP_2082, QAP_2084, QAP_2086, \
-    QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2823, QAP_2750, QAP_2874, QAP_2876, QAP_2880, \
-    QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_2078, QAP_2034, QAP_2035
-from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_1978, QAP_2089, QAP_2090, \
-    QAP_1755, QAP_2103, QAP_2382, QAP_2353, QAP_3908_BLOCKED_BY_PCON_2405, QAP_5353, QAP_5345
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3734, QAP_3689, QAP_3851, QAP_3805, QAP_3850, QAP_4234, \
-    QAP_3766, QAP_3747, QAP_3806, QAP_3807
-from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3740
-from quod_qa.fx.qs_fx_routine import SendMD, clone, java_api_MDReq, java_api, rfq_spot, rfq_swap_1w_2w, \
-    java_api_Subscribe, esp_1W, SendMD_QAP_5537
+from quod_qa.fx.fx_taker_esp import QAP_5537_not_ready, QAP_5635_not_ready
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -46,15 +34,16 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
         #
-        # SendMD_QAP_5537.execute(report_id)
-        for_Daria.execute(report_id,session_id)
+        QAP_5635_not_ready.execute(report_id)
+        # QAP_5537_not_ready.execute(report_id)
+        # for_Daria.execute(report_id,session_id)
 
 
 
