@@ -24,7 +24,7 @@ class QAP_1727(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.trading_phase = "PreClosed"
+        self.trading_phase = "Regular"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

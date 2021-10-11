@@ -521,7 +521,7 @@ class OrderInfo:
         self.order_info = order_book_pb2.OrderInfo()
 
     @staticmethod
-    def create(action=None, actions: list = None, sub_order_details: OrdersDetails = None):
+    def create(action=None, actions: list = None, sub_order_details: OrdersDetails = None, row_number = None):
         order_info = OrderInfo()
         if action is not None:
             order_info.add_single_order_action(action)
@@ -531,7 +531,8 @@ class OrderInfo:
 
         if sub_order_details is not None:
             order_info.set_sub_orders_details(sub_order_details)
-
+        if row_number is not None:
+            order_info.set_number(row_number)
         return order_info
 
     def set_sub_orders_details(self, sub_order_details: OrdersDetails):
@@ -711,8 +712,12 @@ class BaseOrdersDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self._request.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
 
     def build(self):
         return self._request

@@ -5,6 +5,7 @@ from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from stubs import Stubs
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -52,6 +53,7 @@ def verifier(case_id, event_name, filed_name, expected_result, actual_result):
     verifier_step1.verify()
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4209"
 

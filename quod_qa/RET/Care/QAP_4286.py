@@ -3,7 +3,7 @@ import os
 from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper.ret_wrappers import close_order_book
+from quod_qa.wrapper.ret_wrappers import close_order_book, decorator_try_except
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, direct_order_request
@@ -15,6 +15,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4286"
 

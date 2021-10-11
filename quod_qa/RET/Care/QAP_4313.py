@@ -3,6 +3,7 @@ import os
 from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
@@ -13,6 +14,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4313"
 

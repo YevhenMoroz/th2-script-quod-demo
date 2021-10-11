@@ -280,6 +280,21 @@ def split_order(request, qty, type, price):
         logger.error("Error execution", exc_info=True)
 
 
+def child_care(request, qty, ord_type, price):
+    order_care = OrderTicketDetails()
+    order_care.set_quantity(qty)
+    order_care.set_order_type(ord_type)
+    order_care.set_limit(price)
+    order_details = ModifyOrderDetails()
+    order_details.set_default_params(request)
+    order_details.set_order_details(order_care)
+    try:
+        call(Stubs.win_act_order_book.childCare, order_details.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail child_care', status="FAIL")
+        logger.error("Error execution", exc_info=True)
+
+
 def transfer_order(request, user):
     transfer_order_details = TransferOrderDetails()
     transfer_order_details.set_default_params(request)

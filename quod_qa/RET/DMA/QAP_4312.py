@@ -11,8 +11,8 @@ from stubs import Stubs
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-from quod_qa.wrapper.ret_wrappers import extract_parent_order_details, verifier, amend_negative_ex, get_order_id,\
-    extract_error_message_order_ticket
+from quod_qa.wrapper.ret_wrappers import extract_parent_order_details, verifier, amend_negative_ex, get_order_id, \
+    extract_error_message_order_ticket, decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -43,6 +43,7 @@ def create_order(base_request, lookup, client, price, order_type, qty, tif, side
     call(order_ticket_service.placeOrder, new_order_details.build())
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP-4312"
 
