@@ -22,12 +22,12 @@ class QAP_2964(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.parameter_at_lit_general_block = "BrokerStrategy"
-        self.value = "ExtCust1"
+        self.value = "TestSuperStrategy1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)

@@ -38,8 +38,8 @@ class QAP_835(CommonTestCase):
 
             main_page.click_on_delete_and_confirmation(False)
             time.sleep(2)
-            main_page.set_symbol_at_filter("AUD/CAD")
-            time.sleep(2)
+            # main_page.set_symbol_at_filter("AUD/CAD")
+            # time.sleep(2)
             main_page.click_on_more_actions()
             time.sleep(2)
             try:

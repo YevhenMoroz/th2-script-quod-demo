@@ -26,9 +26,9 @@ class QAP_4439(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
-        self.strategy = "Default"
+        self.login = "adm03"
+        self.password = "adm03"
+        self.strategy = "BasicMaker"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,6 +47,7 @@ class QAP_4439(CommonTestCase):
             self.precondition()
             instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
             instruments_sub_wizard.click_on_plus_button()
+            time.sleep(2)
             try:
                 instruments_sub_wizard.set_hedging_execution_strategy(self.strategy)
                 self.verify("Default strategy selected correctly", True, True)

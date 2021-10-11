@@ -93,7 +93,7 @@ class UsersConstants:
     DATE_OF_BIRTH = '//*[text()="Date of Birth"]/preceding-sibling::input'
 
     # Assignments
-    DESKS_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Desks *']/parent::div//button"
+    DESKS_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Desks']/parent::div//button"
     DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@class="cdk-overlay-container"]//*[text()="{}"]'
     LOCATION_AT_ASSIGNMENTS_SUB_WIZARD = '//*[text()="Location"]/preceding-sibling::input'
     ZONE_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Zone']/preceding-sibling::input"

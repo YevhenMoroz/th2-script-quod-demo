@@ -18,8 +18,8 @@ class QAP_4158(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -48,7 +48,7 @@ class QAP_4158(CommonTestCase):
             try:
                 values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
                 values_sub_wizard.set_venue("AMERICAN STOCK EXCHANGE")
-                values_sub_wizard.set_listing_group("Banking_KSE")
+                values_sub_wizard.set_listing_group("test")
                 values_sub_wizard.set_instr_type("Bond")
                 self.verify("Criteria changed correctly and displayed at wizard", True, True)
             except Exception as e:

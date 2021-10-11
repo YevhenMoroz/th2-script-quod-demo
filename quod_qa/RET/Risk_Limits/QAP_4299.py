@@ -5,7 +5,7 @@ from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
-from quod_qa.wrapper.ret_wrappers import close_order_book
+from quod_qa.wrapper.ret_wrappers import close_order_book, decorator_try_except
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -26,6 +26,7 @@ def extract_error_message_order_ticket(base_request, order_ticket_service):
     return result
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4299"
 

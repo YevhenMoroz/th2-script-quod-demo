@@ -40,6 +40,7 @@ class QAP_2578(CommonTestCase):
         users_login_wizard.set_password_expiration("")
         users_wizard = UsersWizard(self.web_driver_container)
         users_wizard.click_on_save_changes()
+        time.sleep(2)
         users_page.set_user_id(self.user_id)
         time.sleep(2)
 
@@ -47,10 +48,6 @@ class QAP_2578(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            if users_page.get_password_expiry_date() == "":
-                self.verify(
-                    "Is password expiry date empty after clear, based on error name,in this case xpath not found    ",
-                    None, None)
             users_page.click_on_more_actions()
             time.sleep(2)
             users_page.click_on_edit_at_more_actions()
@@ -60,6 +57,8 @@ class QAP_2578(CommonTestCase):
             users_wizard = UsersWizard(self.web_driver_container)
             time.sleep(2)
             users_wizard.click_on_save_changes()
+            time.sleep(2)
+            users_page.set_user_id(self.user_id)
             time.sleep(2)
             self.verify("Is password expiry date contains value", self.password_expiration,
                         users_page.get_password_expiry_date())

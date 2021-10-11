@@ -13,7 +13,7 @@ class QAP_2451(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.disabled_massage = "User adm03 Disabled"
+        self.disabled_massage = "User adm_desk Disabled"
         self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
@@ -31,7 +31,7 @@ class QAP_2451(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id("adm03")
+            users_page.set_user_id("adm_desk")
             time.sleep(2)
             users_page.click_on_enable_disable_button()
             self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())

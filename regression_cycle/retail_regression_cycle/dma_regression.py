@@ -1,4 +1,4 @@
-from quod_qa.RET.DMA import RIN_1188, RIN_1189, QAP_4169, QAP_4172, QAP_4654, QAP_5106, QAP_5170
+from quod_qa.RET.DMA import RIN_1188, RIN_1189, QAP_4169, QAP_4172, QAP_4654, QAP_5106, QAP_5170, QAP_5425, QAP_5426
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -20,6 +20,8 @@ def test_run(session_id, parent_id=None):
         QAP_4654.execute(session_id, report_id)
         QAP_5106.execute(session_id, report_id)
         QAP_5170.execute(session_id, report_id)
+        QAP_5425.execute(report_id)
+        QAP_5426.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

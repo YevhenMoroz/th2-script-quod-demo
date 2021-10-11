@@ -1,14 +1,22 @@
+import logging
+import os
+import random
 from datetime import datetime
+from functools import wraps
 from urllib import request
 
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod import act_ui_win_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
 from copy import deepcopy
+
+from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
+
 from custom import basic_custom_actions
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
-
+from custom import basic_custom_actions as bca
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
@@ -16,7 +24,7 @@ from rule_management import RuleManager
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.application_wrappers import FEDetailsRequest, CloseApplicationRequest
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest, \
     ExtractOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
@@ -27,7 +35,7 @@ from win_gui_modules.wrappers import set_base, accept_order_request, direct_orde
     direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct, BaseParams
 from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
     ForceCancelOrderDetails, ManualCrossDetails, ManualExecutingDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, BaseOrdersDetails
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
 
@@ -38,6 +46,18 @@ def open_fe(session_id, report_id, case_id, folder, user, password):
         prepare_fe(init_event, session_id, folder, user, password)
     else:
         get_opened_fe(case_id, session_id)
+
+
+def close_fe(main_event, session):
+    stub = Stubs.win_act
+    disposing_event = create_event("Disposing", main_event)
+    try:
+        stub.closeApplication(CloseApplicationRequest())
+
+    except Exception as e:
+        logging.error("Error disposing application", exc_info=True)
+    stub.unregister(session)
+    Stubs.frontend_is_open = False
 
 
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
@@ -212,6 +232,7 @@ def amend_order(request, order_id=None, order_type=None, qty=None, price=None, c
 def cancel_order(request, order_id=None):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
+    cancel_order_details.set_cancel_children(True)
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
@@ -223,6 +244,13 @@ def force_cancel_order(request, order_id=None):
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
     call(Stubs.win_act_order_book.forceCancelOrder, cancel_order_details.build())
+
+
+def mark_reviewed(base_request, order_id=None):
+    order = BaseOrdersDetails()
+    order.set_default_params(base_request)
+    order.set_filter(["Order ID", order_id])
+    call(Stubs.win_act_order_book.markReviewed, order.build())
 
 
 def complete_order(request, order_id):
@@ -374,12 +402,75 @@ def check_order_algo_parameters_book(base_request, order_id, act, row_number):
     return response["ParametersValue"]
 
 
+def activate_gating_rule_for_dma(case_id, gating_rule_id, gating_rule_name):
+    api = Stubs.api_service
+
+    enable_params = {
+
+        "accountGroupID": "HAKKIM",
+        "gatingRuleDescription": "to manage DMA orders",
+        "gatingRuleName": gating_rule_name,
+        "gatingRuleID": gating_rule_id,
+        "alive": 'false',
+        "gatingRuleCondition": [
+            {
+                "gatingRuleCondExp": "AND(ExecutionPolicy=DMA,OrdQty<1000)",
+                "gatingRuleCondName": "DMATinyQty",
+                "holdOrder": 'true',
+                "qtyPrecision": 100,
+                "alive": 'false',
+                "gatingRuleCondIndice": 1,
+                "gatingRuleResult": [
+                    {
+                        "alive": 'false',
+                        "gatingRuleResultIndice": 1,
+                        "splitRatio": 1,
+                        "gatingRuleExecPolicyResult": "DMA"
+                    }
+                ]
+            },
+            {
+                "gatingRuleCondName": "DMADefResult",
+                "alive": 'false',
+                "gatingRuleCondIndice": 2,
+                "gatingRuleResult": [
+                    {
+                        "alive": 'false',
+                        "gatingRuleResultIndice": 1,
+                        "splitRatio": 1,
+                        "gatingRuleExecPolicyResult": "DMA"
+                    }
+                ]
+            }
+        ]
+    }
+
+    api.sendMessage(request=SubmitMessageRequest(message=bca.wrap_message(content=enable_params,
+                                                                          message_type='EnableGatingRule',
+                                                                          session_alias='rest_wa315luna'),
+                                                 parent_event_id=case_id))
+
+
 def verifier(case_id, event_name, expected_value, actual_value):
     # region verifier
     verifier = Verifier(case_id)
     verifier.set_event_name("Check Value")
     verifier.compare_values(event_name, expected_value, actual_value)
     verifier.verify()
+
+
+def decorator_try_except(test_id):
+    def _safe(f):
+        @wraps(f)
+        def safe_f(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except:
+                print(f"Test {test_id} was failed")
+            finally:
+                pass
+        return safe_f
+    return _safe
 
 
 def close_order_book(base_request, act_order_book):

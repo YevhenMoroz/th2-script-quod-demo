@@ -26,7 +26,7 @@ class QAP_756(CommonTestCase):
         self.type = "DarkPool"
         self.mic = "ALTX"
         self.country = "Albania"
-        self.new_mic = "AACA"
+        self.new_mic = "ALXA"
         self.new_country = "Angola"
 
     def precondition(self):

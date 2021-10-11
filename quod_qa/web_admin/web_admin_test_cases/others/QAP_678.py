@@ -31,7 +31,7 @@ class QAP_678(CommonTestCase):
         self.venue_counterpart_id = "2"
         self.party_role = "Exchange"
         self.party_role_qualifier = "Bank"
-        self.venue = "ANZ"
+        self.venue = "AMEX"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

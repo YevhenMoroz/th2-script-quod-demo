@@ -28,7 +28,7 @@ class QAP_2971(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = "15"
         self.type = "DarkPool"
-        self.mic = "AACA"
+        self.mic = "ALXP"
         self.country = "Albania"
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.trading_phase = "Auction"

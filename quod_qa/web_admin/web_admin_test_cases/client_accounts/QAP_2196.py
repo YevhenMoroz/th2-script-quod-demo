@@ -25,8 +25,8 @@ class QAP_2196(CommonTestCase):
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client_id_source = "BIC"
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMS"
-        self.client = "BROKER"
+        self.venue = "AMSTERDAM"
+        self.client = "CLIENT1"
         self.account_id_source = "BIC"
 
     def precondition(self):
@@ -65,13 +65,13 @@ class QAP_2196(CommonTestCase):
         main_page.click_edit_entity_button()
         time.sleep(2)
 
-
     def test_context(self):
         try:
             self.precondition()
             main_page = AccountsPage(self.web_driver_container)
             wizard = AccountsWizard(self.web_driver_container)
             dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
+            time.sleep(5)
             dimensions_sub_wizard.click_delete_button()
             time.sleep(2)
             expected_pdf_content = [
@@ -89,7 +89,7 @@ class QAP_2196(CommonTestCase):
             time.sleep(2)
             try:
                 dimensions_sub_wizard.click_delete_button()
-                self.verify("Error , check test !!!", True, False)
+                self.verify("Error Venue account not  deleted !", True, False)
             except Exception:
                 self.verify("Venue account deleted correctly", True, True)
         except Exception:
