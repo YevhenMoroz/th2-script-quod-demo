@@ -130,8 +130,8 @@ def execute(report_id, session_id):
                                                                   account_client)
         actual_pos_usd_sek_quod = get_dealing_positions_details(pos_service, case_base_request, "USD/SEK", account_quod)
 
-        compare_position('Checking positions Client QUOD4_1 CHF/THB EQUAL', case_id, qty, actual_pos_usd_sek_client)
-        compare_position('Checking positions Client QUOD4_1 CHF/THB EQUAL', case_id, "0", actual_pos_usd_sek_quod)
+        compare_position('Checking positions Client QUOD4_1 USD/SEK EQUAL', case_id, qty, actual_pos_usd_sek_client)
+        compare_position('Checking positions Client QUOD4_1 USD/SEK EQUAL', case_id, "0", actual_pos_usd_sek_quod)
 
         check_order_book_AO('Checking placed order AO USD/SEK', case_id, case_base_request, ob_act, qty,
                             "Terminated", "QUOD4", "USD/SEK-SPO.SPO", "Buy")

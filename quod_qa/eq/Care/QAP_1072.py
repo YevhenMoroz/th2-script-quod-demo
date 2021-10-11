@@ -4,9 +4,8 @@ from datetime import datetime
 import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_message import FixMessage
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, get_base_request
+from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
@@ -36,16 +35,15 @@ def execute(report_id, session_id):
     # endregion
     # region Create CO
     fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    eq_wrappers.accept_order(lookup,qty,price)
+    eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, str(int((int(qty) / 2))), price)
     fix_message.pop('response')
     # endregion
     # regionAmend fix order
-    fix_message1 = FixMessage(fix_message)
     param_list = {'Price': new_price}
-    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, "PARIS_" + client)
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
     # endregion
     # region accept amend
     eq_wrappers.accept_modify(lookup, qty, price)

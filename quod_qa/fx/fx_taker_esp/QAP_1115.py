@@ -102,7 +102,7 @@ def execute(report_id, session_id):
         place_order(base_esp_details, ar_service)
         modify_order_ticket(case_base_request, order_ticket_service)
         # Step 2-3
-        get_my_orders_details(case_base_request, ob_act, case_id, owner)
+        # get_my_orders_details(case_base_request, ob_act, case_id, owner)
         # Step 4-5
         check_order_book(case_base_request, ob_act, case_id, "Spot", owner)
 

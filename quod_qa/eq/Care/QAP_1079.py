@@ -72,15 +72,13 @@ def execute(report_id, session_id):
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
     # Cancel order
-    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
+    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, order_id, cl_order_id, client, 1)
     # region Accept Cancel message
-    eq_wrappers.accept_order(lookup, qty, price)
+    eq_wrappers.accept_cancel(lookup, qty, price)
     # endregion
     # Check order
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent('Order LeavesQty', order_leaves_qty.name,
-                                                             str(int(int(qty) / 2)))
-                                                  ]))
+                                                 [verify_ent("Order Status", order_status.name, "Cancelled"),
+                                                  verify_ent('Order LeavesQty', order_leaves_qty.name, "0")]))
     # endregion

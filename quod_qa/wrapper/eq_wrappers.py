@@ -1,35 +1,36 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest, GroupModifyDetails, \
-    ReassignOrderDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails
+    ReassignOrderDetails, MassExecSummaryAveragePriceDetails
+from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from custom import basic_custom_actions
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
-# from demo import logger
-from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, sell_connectivity
+from demo import logger
+from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity
 from rule_management import RuleManager
 from stubs import Stubs
-from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from custom import basic_custom_actions as bca
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+    TemplatesDetails, RowDetails, FileDetails, BasketTicketDetails, ExtractTemplateDetails
 from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, DiscloseFlagDetails, \
+    CancelChildOrdersDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
+    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
+    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
+    CreateBasketDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
     direct_loc_request_correct, direct_moc_request_correct
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ManualCrossDetails, ManualExecutingDetails, MenuItemDetails, TransferOrderDetails, BaseOrdersDetails, \
-    SuspendOrderDetails, AddToBasketDetails, TransferPoolDetailsCLass, InternalTransferActionDetails, \
-    CreateBasketDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 
@@ -229,9 +230,20 @@ def reject_order(lookup, qty, price):
 
 def direct_order(lookup, qty, price, qty_percent):
     try:
-        call(Stubs.win_act.Direct, direct_order_request(lookup, qty, price, qty_percent))
+        call(Stubs.win_act.clientInboxDirectOrder, direct_order_request(lookup, qty, price, qty_percent))
     except Exception:
         basic_custom_actions.create_event('Fail direct_order', status="FAIL")
+        logger.error("Error execution", exc_info=True)
+
+
+def cancel_child_orders(base_request, order_book_filter: dict = {}):
+    cancel_child_orders_details = CancelChildOrdersDetails(base_request)
+    cancel_child_orders_details.set_default_params(base_request)
+    cancel_child_orders_details.set_filter(order_book_filter)
+    try:
+        call(Stubs.win_act_order_book.cancelChildOrders, cancel_child_orders_details.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail cancel_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
 
 
@@ -423,6 +435,16 @@ def get_basket_orders_values(request, row_count: int, extract_value, basket_book
     return result
 
 
+def get_block_value(request, column_name):
+    ext_id = "MiddleOfficeExtractionId"
+    middle_office_service = Stubs.win_act_middle_office_service
+    extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=request)
+    extract_request.set_extraction_id(ext_id)
+    extraction_detail = ExtractionDetail(column_name, column_name)
+    extract_request.add_extraction_details([extraction_detail])
+    return call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
+
+
 def base_verifier(case_id, printed_name, expected_value, actual_value,
                   verification_method: VerificationMethod = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
@@ -548,7 +570,7 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
                settlement_date=None, pset=None, toggle_recompute=False, comm_basis=None, comm_rate=None,
                fees_basis=None,
                fees_rate=None, fees_type=None, fees_category=None, misc_arr: [] = None, remove_commission=False,
-               remove_fees=False, selected_row_count=None):
+               remove_fees=False, selected_row_count=None, bo_notes=None):
     middle_office_service = Stubs.win_act_middle_office_service
     modify_request = ModifyTicketDetails(base=request)
     if selected_row_count is not None:
@@ -595,13 +617,20 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     # if remove_fees:
     #     fees_details.remove_fees()
 
-    if misc_arr is not None:
+    misc_details = None
+
+    if misc_arr is not None or bo_notes is not None:
         misc_details = modify_request.add_misc_details()
+
+    if misc_arr is not None:
         misc_details.set_bo_field_1(misc_arr[0])
         misc_details.set_bo_field_2(misc_arr[1])
         misc_details.set_bo_field_3(misc_arr[2])
         misc_details.set_bo_field_4(misc_arr[3])
         misc_details.set_bo_field_5(misc_arr[4])
+
+    if bo_notes is not None:
+        misc_details.set_bo_notes_value(bo_notes)
 
     extraction_details = modify_request.add_extraction_details()
     extraction_details.set_extraction_id("BookExtractionId")
@@ -621,6 +650,91 @@ def book_order(request, client, agreed_price, net_gross_ind="Gross", give_up_bro
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail book_order', status="FAIL")
+
+
+def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
+                settlement_type=None,
+                settlement_currency=None, exchange_rate=None, exchange_rate_calc=None, settlement_date=None, pset=None,
+                comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None, fee_type=None, fee_category=None,
+                misc_arr: [] = None, remove_commissions=False, remove_fees=False, bo_notes=None):
+    middle_office_service = Stubs.win_act_middle_office_service
+    modify_request = ModifyTicketDetails(base=request)
+
+    ticket_details = modify_request.add_ticket_details()
+    if net_gross_ind is not None:
+        ticket_details.set_net_gross_ind(net_gross_ind)
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
+    if trade_date is not None:
+        ticket_details.set_trade_date(trade_date)
+    if give_up_broker is not None:
+        ticket_details.set_give_up_broker(give_up_broker)
+    if net_gross_ind is not None:
+        ticket_details.set_net_gross_ind(net_gross_ind)
+    if agreed_price is not None:
+        ticket_details.set_agreed_price(agreed_price)
+
+    settlement_details = modify_request.add_settlement_details()
+    if settlement_type is not None:
+        settlement_details.set_settlement_currency(settlement_type)
+    if settlement_currency is not None:
+        settlement_details.set_settlement_currency(settlement_currency)
+    if exchange_rate is not None:
+        settlement_details.set_exchange_rate(exchange_rate)
+    if exchange_rate_calc is not None:
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+    if settlement_date is not None:
+        settlement_details.toggle_settlement_date()
+        settlement_details.set_settlement_date(settlement_date)
+    if pset is not None:
+        settlement_details.set_pset(pset)
+
+    if remove_commissions:
+        commissions_details = modify_request.add_commissions_details()
+        commissions_details.remove_commissions()
+    if remove_fees:
+        fees_details = modify_request.add_fees_details()
+        fees_details.remove_fees()
+    if comm_basis and comm_rate is not None:
+        commissions_details = modify_request.add_commissions_details()
+        response = check_booking_toggle_manual(request)
+        if response['book.manualCheckboxState'] != 'checked':
+            commissions_details.toggle_manual()
+        commissions_details.add_commission(comm_basis, comm_rate)
+    if fees_basis and fees_rate is not None:
+        fees_details = modify_request.add_fees_details()
+        fees_details.add_fees(fee_type, fees_basis, fees_rate, category=fee_category)
+
+    if misc_arr is not None or bo_notes is not None:
+        misc_details = modify_request.add_misc_details()
+
+    if misc_arr is not None:
+        misc_details.set_bo_field_1(misc_arr[0])
+        misc_details.set_bo_field_2(misc_arr[1])
+        misc_details.set_bo_field_3(misc_arr[2])
+        misc_details.set_bo_field_4(misc_arr[3])
+        misc_details.set_bo_field_5(misc_arr[4])
+
+    if bo_notes is not None:
+        misc_details.set_bo_notes_value(bo_notes)
+
+    extraction_details = modify_request.add_extraction_details()
+    extraction_details.set_extraction_id("BookExtractionId", )
+    extraction_details.extract_net_price("book.netPrice")
+    extraction_details.extract_net_amount("book.netAmount")
+    extraction_details.extract_total_comm("book.totalComm")
+    extraction_details.extract_gross_amount("book.grossAmount")
+    extraction_details.extract_total_fees("book.totalFees")
+    extraction_details.extract_agreed_price("book.agreedPrice")
+    extraction_details.extract_pset_bic("book.psetBic")
+    extraction_details.extract_exchange_rate("book.settlementType")
+    extraction_details.extract_settlement_type("book.exchangeRate")
+
+    try:
+        return call(middle_office_service.amendMiddleOfficeTicket, modify_request.build())
+    except Exception:
+        logger.error("Error execution", exc_info=True)
+        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
 
 def unbook_order(request):
@@ -822,80 +936,6 @@ def approve_block(request):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail approve_block', status="FAIL")
-
-
-def amend_block(request, agreed_price=None, net_gross_ind=None, give_up_broker=None, trade_date=None,
-                settlement_type=None,
-                settlement_currency=None, exchange_rate=None, exchange_rate_calc=None, settlement_date=None, pset=None,
-                comm_basis=None, comm_rate=None, fees_basis=None, fees_rate=None, fee_type=None, fee_category=None,
-                misc_arr: [] = None, remove_commissions=False, remove_fees=False):
-    modify_request = ModifyTicketDetails(base=request)
-    ticket_details = modify_request.add_ticket_details()
-    if net_gross_ind is not None:
-        ticket_details.set_net_gross_ind(net_gross_ind)
-    if agreed_price is not None:
-        ticket_details.set_agreed_price(agreed_price)
-    if trade_date is not None:
-        ticket_details.set_trade_date(trade_date)
-    if give_up_broker is not None:
-        ticket_details.set_give_up_broker(give_up_broker)
-    if net_gross_ind is not None:
-        ticket_details.set_net_gross_ind(net_gross_ind)
-    if agreed_price is not None:
-        ticket_details.set_agreed_price(agreed_price)
-
-    # settlement_details = modify_request.add_settlement_details()
-    # if settlement_type is not None:
-    #     settlement_details.set_settlement_currency(settlement_type)
-    # if settlement_currency is not None:
-    #     settlement_details.set_settlement_currency(settlement_currency)
-    # if exchange_rate is not None:
-    #     settlement_details.set_exchange_rate(exchange_rate)
-    # if exchange_rate_calc is not None:
-    #     settlement_details.set_exchange_rate_calc(exchange_rate_calc)
-    # if settlement_date is not None:
-    #     settlement_details.toggle_settlement_date()
-    #     settlement_details.set_settlement_date(settlement_date)
-    # if pset is not None:
-    #     settlement_details.set_pset(pset)
-
-    if remove_commissions:
-        commissions_details = modify_request.add_commissions_details()
-        commissions_details.remove_commissions()
-    if remove_fees:
-        fees_details = modify_request.add_fees_details()
-        fees_details.remove_fees()
-    if comm_basis and comm_rate is not None:
-        commissions_details = modify_request.add_commissions_details()
-        response = check_booking_toggle_manual(request)
-        if response['book.manualCheckboxState'] != 'checked':
-            commissions_details.toggle_manual()
-        commissions_details.add_commission(comm_basis, comm_rate)
-    if fees_basis and fees_rate is not None:
-        fees_details = modify_request.add_fees_details()
-        fees_details.add_fees(fee_type, fees_basis, fees_rate, category=fee_category)
-
-    if misc_arr is not None:
-        misc_details = modify_request.add_misc_details()
-        misc_details.set_bo_field_1(misc_arr[0])
-        misc_details.set_bo_field_2(misc_arr[1])
-        misc_details.set_bo_field_3(misc_arr[2])
-        misc_details.set_bo_field_4(misc_arr[3])
-        misc_details.set_bo_field_5(misc_arr[4])
-
-    # extraction_details = modify_request.add_extraction_details()
-    # extraction_details.set_extraction_id("BookExtractionId")
-    # extraction_details.extract_net_price("book.netPrice")
-    # extraction_details.extract_net_amount("book.netAmount")
-    # extraction_details.extract_total_comm("book.totalComm")
-    # extraction_details.extract_gross_amount("book.grossAmount")
-    # extraction_details.extract_total_fees("book.totalFees")
-    # extraction_details.extract_agreed_price("book.agreedPrice")
-    try:
-        return call(Stubs.win_act_middle_office_service.amendMiddleOfficeTicket, modify_request.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-        basic_custom_actions.create_event('Fail amend_block', status="FAIL")
 
 
 def is_menu_item_present(request, menu_item, filter=None):

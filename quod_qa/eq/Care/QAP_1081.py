@@ -80,7 +80,7 @@ def execute(report_id, session_id):
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
     # endregion
     # region cancel CO
-    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(order_id, cl_order_id, client, case_id, 1)
+    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, order_id, cl_order_id, client, 1)
     # endregion
     # region Reject Cancel
     eq_wrappers.reject_order(lookup, qty, price)
@@ -88,6 +88,6 @@ def execute(report_id, session_id):
     # region Check values in OrderBook
     call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Cancelled")
+                                                 [verify_ent("Order Status", order_status.name, "Open")
                                                   ]))
     # endregion

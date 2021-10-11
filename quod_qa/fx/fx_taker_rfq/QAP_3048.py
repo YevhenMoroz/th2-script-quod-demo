@@ -153,7 +153,7 @@ def execute(report_id, session_id):
         place_order_tob(base_rfq_details, ar_service)
         # Step 2
         check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "Spot", "", "")
-        check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "", "")
+        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "", "")
         check_trades_book(case_base_request, ob_act, case_id, qty_1, "Spot", "", "")
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "Spot", "", "")
         # Step 3
@@ -162,7 +162,7 @@ def execute(report_id, session_id):
         send_rfq(base_rfq_details, ar_service)
         place_order_tob(base_rfq_details, ar_service)
         check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "1W", "", "")
-        check_my_orders(case_base_request, ob_act, case_id, qty_1, "1W", "", "")
+        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "1W", "", "")
         check_trades_book(case_base_request, ob_act, case_id, qty_1, "1W", "", "")
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "1W", "", "")
         # Step 4
@@ -172,7 +172,7 @@ def execute(report_id, session_id):
         send_rfq(base_rfq_details, ar_service)
         place_order_tob(base_rfq_details, ar_service)
         check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "Spot", "Spot", "1W")
-        check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "Spot", "1W")
+        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "Spot", "1W")
         check_trades_book(case_base_request, ob_act, case_id, qty_1, "Spot", "Spot", "1W")
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "Spot", "Spot", "1W")
         # Step 5
@@ -182,7 +182,7 @@ def execute(report_id, session_id):
         send_rfq(base_rfq_details, ar_service)
         place_order_tob(base_rfq_details, ar_service)
         check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "TOM,", "TOM", "2W")
-        check_my_orders(case_base_request, ob_act, case_id, qty_1, "TOM,", "TOM", "2W")
+        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "TOM,", "TOM", "2W")
         check_trades_book(case_base_request, ob_act, case_id, qty_1, "TOM", "TOM", "2W")
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "TOM", "TOM", "2W")
 
