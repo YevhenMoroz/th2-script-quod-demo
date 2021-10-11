@@ -7,6 +7,10 @@ from custom import basic_custom_actions as bca
 from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
 from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
 from quod_qa.web_admin.web_admin_test_cases.site.QAP_5364 import QAP_5364
+from quod_qa.web_admin.web_admin_test_cases.site.QAP_5578 import QAP_5578
+from quod_qa.web_admin.web_admin_test_cases.site.QAP_5579 import QAP_5579
+from quod_qa.web_admin.web_admin_test_cases.site.QAP_5580 import QAP_5580
+from quod_qa.web_admin.web_admin_test_cases.site.QAP_5583 import QAP_5583
 
 
 class RunSite:
@@ -19,7 +23,11 @@ class RunSite:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_5364(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5364(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5578(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5579(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5580(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5583(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run Site ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

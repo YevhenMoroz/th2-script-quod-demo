@@ -18,6 +18,7 @@ class CommissionsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -27,6 +28,17 @@ class CommissionsConstants:
     MAIN_PAGE_SIDE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_VIRTUAL_POLICY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
+    MAIN_PAGE_CLIENT_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[8]//input'
+
+    MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
+    MAIN_PAGE_CLIENT_LIST_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
+    MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
+    MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[8]//input'
+    MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH = '//*[@class="boolean-filter ng-untouched ng-pristine ng-valid"]'
+
+
+
+
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
 
     # dimensions tab

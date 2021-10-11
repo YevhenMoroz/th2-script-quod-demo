@@ -13,6 +13,8 @@ from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3223 import QAP_32
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3225 import QAP_3225
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_4858 import QAP_4858
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5448 import QAP_5448
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5665 import QAP_5665
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5666 import QAP_5666
 
 
 class RunMiddleOffice:
@@ -31,9 +33,11 @@ class RunMiddleOffice:
             # QAP_3219(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3222(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3223(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3225(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_3225(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4858(self.web_driver_container, self.second_lvl_id).run()
             #QAP_5448(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5665(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5666(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Middle Office ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

@@ -28,3 +28,6 @@ class ZonesConstants:
 
     # Assignments tab
     ASSIGNMENTS_TAB_INSTITUTION_XPATH = '//*[@id="institution"]'
+    ASSIGNMENTS_TAB_LOCATIONS_LINK_XPATH = '//a[text()="{}"]'
+    ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'
+
