@@ -33,10 +33,10 @@ def execute(report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # endregion
     # region Create CO
     quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    # endregion
+    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")

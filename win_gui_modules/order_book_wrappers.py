@@ -711,8 +711,12 @@ class BaseOrdersDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self._request.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
 
     def build(self):
         return self._request
@@ -961,6 +965,24 @@ class CreateBasketDetails:
 
     def build(self):
         return self._request
+
+
+class CancelChildOrdersDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self._request = order_book_pb2.CancelChildOrdersDetails(base=base)
+        else:
+            self._request = order_book_pb2.CancelOrderDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+    def build(self):
+        return self._request
+
 
 # class QuoteRequestDetails:
 #     def __init__(self):

@@ -246,6 +246,9 @@ class MiscDetails:
     def set_bo_field_5(self, value: str):
         self.request.boField5 = value
 
+    def set_bo_notes_value(self, value: str):
+        self.request.backOfficeNotesValue = value
+
 
 class CheckContextAction:
     def __init__(self, request: common_pb2.CheckContextActionDetails()):

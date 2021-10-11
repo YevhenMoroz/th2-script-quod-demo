@@ -18,7 +18,7 @@ from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_
     ClientTierConstants
 from quod_qa.web_admin.web_admin_core.pages.fx_market_making.quoting_sessions.quoting_sessions_constants import \
     QuotingSessionsConstants
-from quod_qa.web_admin.web_admin_core.pages.general.admin_command.admin_command_constants import AdminCommendConstants
+from quod_qa.web_admin.web_admin_core.pages.general.admin_command.admin_command_constants import AdminCommandConstants
 from quod_qa.web_admin.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \
     MDEntitlementsConstants
 from quod_qa.web_admin.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -168,7 +168,7 @@ class SideMenu(CommonPage):
     def open_admin_command_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ADMIN_COMMAND_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AdminCommendConstants.ADMIN_COMMAND_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AdminCommandConstants.ADMIN_COMMAND_PAGE_TITLE_XPATH)
 
     def open_mdentitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.MDENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,

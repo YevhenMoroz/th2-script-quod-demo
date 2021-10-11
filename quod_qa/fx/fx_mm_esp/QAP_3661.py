@@ -191,12 +191,9 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     case_base_request = get_base_request(session_id, case_id)
-    base_tile_data = BaseTileData(base=case_base_request)
     base_details = BaseTileDetails(base=case_base_request)
-    ob_act = Stubs.win_act_order_book
     cp_service = Stubs.win_act_cp_service
     ar_service = Stubs.win_act_aggregated_rates_service
-    pos_service = Stubs.act_fx_dealing_positions
     try:
         call(cp_service.createRatesTile, base_details.build())
         call(ar_service.createRatesTile, base_details.build())

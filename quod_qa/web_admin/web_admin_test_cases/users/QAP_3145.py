@@ -6,6 +6,7 @@ from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
@@ -15,7 +16,7 @@ class QAP_3145(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
-        self.perm_role = "Permissions for administrator users"
+        self.perm_role = "Permissions for FIX Clients"
         self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
@@ -40,7 +41,18 @@ class QAP_3145(CommonTestCase):
         try:
             self.precondition()
             role_wizard = UsersRoleSubWizard(self.web_driver_container)
-            self.verify("Is Perm Role contains value ?", self.perm_role, role_wizard.get_perm_role())
+            users_page = UsersPage(self.web_driver_container)
+            role_wizard.set_perm_role(self.perm_role)
+            wizard = UsersWizard(self.web_driver_container)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            users_page.set_user_id(self.user_id)
+            time.sleep(3)
+            users_page.click_on_more_actions()
+            time.sleep(2)
+            users_page.click_on_edit_at_more_actions()
+            time.sleep(2)
+            self.verify("Is Perm Role saved correctly ?", self.perm_role, role_wizard.get_perm_role())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
                                               status='FAILED')

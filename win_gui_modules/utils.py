@@ -62,8 +62,8 @@ def prepare_fe303(main_event, session, working_dir: str, username: str, password
         parentEventId=init_event,
         username=username,
         password=password,
-        mainWindowName=Stubs.custom_config['qf_trading_fe_main_win_name_303'],
-        loginWindowName=Stubs.custom_config['qf_trading_fe_login_win_name_303'])
+        mainWindowName=Stubs.custom_config['qf_trading_fe_main_win_name'],
+        loginWindowName=Stubs.custom_config['qf_trading_fe_login_win_name'])
     logging.debug("RPC login:\n%s", stub.login(login_details))
     Stubs.frontend_is_open = False
 

@@ -1,33 +1,17 @@
-import logging
 import time
-from pathlib import Path
-
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
-from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
+from custom.verifier import Verifier
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
-    CancelFXOrderDetails, ModifyFXOrderDetails
-from win_gui_modules.order_ticket import FXOrderDetails
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
+    CancelFXOrderDetails
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, \
     ModifyRatesTileRequest, PlaceRateTileTableOrderRequest, RatesTileTableOrdSide, PlaceRatesTileOrderRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.utils import get_base_request, call
 import logging
-from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -208,6 +192,7 @@ def execute(report_id, session_id):
         # Step 1
         expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
         set_send_hedge_order(case_id, ttl_null)
+        time.sleep(3)
         call(cp_service.createRatesTile, base_details.build())
         modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
@@ -218,6 +203,7 @@ def execute(report_id, session_id):
         check_order_book_after_ttl_expire(case_id, case_base_request, ob_act, ord_id)
         # Step 3
         set_send_hedge_order(case_id, ttl_test)
+        time.sleep(3)
         ord_id = check_order_book_ao('Extracting order ID for cancelling', case_id, case_base_request, ob_act)
         cancel_order(ob_act, case_base_request, ord_id)
         ord_id = check_order_book_ao('Extracting order ID with new TTL', case_id, case_base_request, ob_act)

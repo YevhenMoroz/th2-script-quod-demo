@@ -16,7 +16,7 @@ class QAP_3100(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
         self.password = "adm02"
-        self.user_id = "hod01"
+        self.user_id = "acameron"
         self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):

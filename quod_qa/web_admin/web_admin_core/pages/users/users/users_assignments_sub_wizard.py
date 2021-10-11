@@ -10,7 +10,7 @@ class UsersAssignmentsSubWizard(CommonPage):
     def click_on_desks(self):
         self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).click()
 
-    def set_desks(self, value: tuple):
+    def set_desks(self, value):
         result = self.set_checkbox_list(UsersConstants.DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD, value)
         for item in range(len(result)):
             self.find_by_xpath(result[item]).click()

@@ -24,7 +24,7 @@ class QAP_1567(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.first_parameter = "AllowedAggressiveVenues"
-        self.first_venue = "DARK POOL 1"
+        self.first_venue = "EURONEXT AMSTERDAM"
 
         self.new_name = "TestSuperStrategy1"
         self.new_user = "QA2"
@@ -34,8 +34,8 @@ class QAP_1567(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)

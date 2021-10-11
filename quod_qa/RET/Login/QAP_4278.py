@@ -4,6 +4,7 @@ import os
 from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.verifier import Verifier
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.application_wrappers import LoginDetailsRequest, OpenApplicationRequest
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -54,6 +55,7 @@ def login_fe(stub, session_id, init_event, case_id, username, password, expected
     # end region
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "RIN_4278"
 

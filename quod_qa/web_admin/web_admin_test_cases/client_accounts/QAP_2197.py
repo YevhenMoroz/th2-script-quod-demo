@@ -19,18 +19,18 @@ class QAP_2197(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
         self.account = f"QAP-2197_{str(uuid1())}"
-        self.client = "BROKER2"
+        self.client = "CLIENT1"
         self.client_id_source = "Other"
 
         self.venue_account = "TestVenueAccount"
         self.venue = "AMEX"
         self.account_id_source = "BIC"
-        self.default_route = "360T Quote Request and Trading"
+        self.default_route = "Direct"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
 
@@ -55,10 +55,6 @@ class QAP_2197(CommonTestCase):
 
         accounts_wizard.click_save_button()
 
-        # TODO: set up logout workflow
-        # logout
-        # self.web_driver_container.get_driver().delete_all_cookies()
-        # login
 
     def test_context(self):
         try:
@@ -67,9 +63,8 @@ class QAP_2197(CommonTestCase):
             new_venue_account = "TestVenueAccount2"
             new_venue = "PARIS"
             new_account_id_source = "Other"
-            new_default_route = "ChiX direct access"
-            expected_pdf_content = "PARIS - TestVenueAccount2 - Other  - ESCHIX"
-
+            new_default_route = "Credit Suisse"
+            expected_pdf_content = ["PARIS,TestVenueAccount2,Other,Credit Suisse"]
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_accounts_page()
 
@@ -77,34 +72,39 @@ class QAP_2197(CommonTestCase):
             accounts_page.filter_grid(self.account)
             accounts_page.click_more_actions_button()
             accounts_page.click_edit_entity_button()
+            time.sleep(2)
 
             accounts_wizard = AccountsWizard(self.web_driver_container)
 
             accounts_dimensions_subwizard = AccountsDimensionsSubWizard(self.web_driver_container)
+            accounts_dimensions_subwizard.click_delete_button()
+            time.sleep(2)
             accounts_dimensions_subwizard.filter_dimensions(venue_account=self.venue_account,
                                                             venue=self.venue,
                                                             account_id_source=self.account_id_source,
                                                             default_route=self.default_route)
 
-            accounts_dimensions_subwizard.click_edit_button()
+            accounts_dimensions_subwizard.click_on_plus()
             accounts_dimensions_subwizard.set_venue_account(new_venue_account)
             accounts_dimensions_subwizard.set_venue(new_venue)
             accounts_dimensions_subwizard.set_account_id_source(new_account_id_source)
             accounts_dimensions_subwizard.set_default_route(new_default_route)
             accounts_dimensions_subwizard.click_create_entity_button()
-            time.sleep(5)
+            time.sleep(2)
             accounts_wizard.click_save_button()
             time.sleep(2)
             self.verify("Popup context", "Account changes saved", accounts_page.get_popup_text())
 
             accounts_page.filter_grid(self.account)
-
+            time.sleep(2)
             accounts_page.click_more_actions_button()
-            self.verify(f"Is PDF contains {expected_pdf_content}", True, accounts_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-
-            accounts_page.click_more_actions_button()
+            time.sleep(2)
             accounts_page.click_edit_entity_button()
+            time.sleep(2)
+            self.verify(f"Is PDF contains {expected_pdf_content}", True,
+            accounts_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
+            time.sleep(5)
             accounts_dimensions_subwizard.filter_dimensions(venue_account=new_venue_account,
                                                             venue=new_venue,
                                                             account_id_source=new_account_id_source,

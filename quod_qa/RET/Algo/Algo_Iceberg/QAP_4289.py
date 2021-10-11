@@ -1,6 +1,7 @@
 import os
 
 from custom.verifier import Verifier
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.order_book_wrappers import OrdersDetails,\
     OrderInfo, ExtractionAction, ExtractionDetail, CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
@@ -10,6 +11,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from custom import basic_custom_actions as bca
+
 
 def get_order_id(request):
     order_details = OrdersDetails()
@@ -92,6 +94,7 @@ def verifier(case_id, event_name, expected_value, actual_value):
     verifier.verify()
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4289"
 

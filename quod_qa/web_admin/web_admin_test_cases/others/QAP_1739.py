@@ -20,7 +20,7 @@ class QAP_1739(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.first_venue = "EURONEXT AMSTERDAM"
-        self.second_venue = "BAML"
+        self.second_venue = "AMERICAN STOCK EXCHANGE"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

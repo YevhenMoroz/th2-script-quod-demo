@@ -23,7 +23,7 @@ class QAP_2474(CommonTestCase):
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMEX"
         self.account_id_source = "BIC"
-        self.default_route = "BARCLAYS RFQ"
+        self.default_route = "Direct"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

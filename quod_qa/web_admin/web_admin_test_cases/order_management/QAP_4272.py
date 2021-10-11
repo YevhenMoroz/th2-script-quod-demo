@@ -29,12 +29,12 @@ class QAP_4272(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.strategy_type = "Quod MultiListing"
         self.user = "adm08"
-        self.client = "BROKER"
+        self.client = "CLIENT1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -92,13 +92,13 @@ class QAP_4272(CommonTestCase):
                         expected_parameter_and_value_at_lit_passive_block,
                         actual_parameter_and_value_at_lit_passive_block)
             # step 7
-            execution_strategies_wizard.click_on_general()
-            execution_strategies_general = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
-            execution_strategies_general.click_on_plus_button()
-            execution_strategies_general.set_parameter("SweepingPercentage")
-            execution_strategies_general.set_value_at_sub_wizard("33")
-            execution_strategies_general.click_on_checkmark_button()
-            execution_strategies_general.click_on_go_back_button()
+            # execution_strategies_wizard.click_on_general()
+            # execution_strategies_general = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
+            # execution_strategies_general.click_on_plus_button()
+            # execution_strategies_general.set_parameter("SweepingPercentage")
+            # execution_strategies_general.set_value_at_sub_wizard("33")
+            # execution_strategies_general.click_on_checkmark_button()
+            # execution_strategies_general.click_on_go_back_button()
 
             execution_strategies_wizard.click_on_lit_general()
             execution_strategies_lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
@@ -134,14 +134,14 @@ class QAP_4272(CommonTestCase):
             time.sleep(2)
             execution_strategies_main_menu.click_on_more_actions()
             execution_strategies_main_menu.click_on_edit_at_more_actions()
-            expected_parameter_and_value_at_general_block = ["SweepingPercentage: ", "33"]
-            actual_parameter_and_value_at_general_block = [
-                execution_strategies_wizard.get_parameter_name_at_general_block(),
-                execution_strategies_wizard.get_parameter_value_at_general_block()]
+            # expected_parameter_and_value_at_general_block = ["SweepingPercentage: ", "33"]
+            # actual_parameter_and_value_at_general_block = [
+            #     execution_strategies_wizard.get_parameter_name_at_general_block(),
+            #     execution_strategies_wizard.get_parameter_value_at_general_block()]
 
-            self.verify("Check that values correctly saved  in General block after click on save changes button",
-                        expected_parameter_and_value_at_general_block,
-                        actual_parameter_and_value_at_general_block)
+            # self.verify("Check that values correctly saved  in General block after click on save changes button",
+            #             expected_parameter_and_value_at_general_block,
+            #             actual_parameter_and_value_at_general_block)
 
             expected_parameter_and_value_at_lit_general_block = ["CrossCurrency: ", "Default"]
             actual_parameter_and_value_at_lit_general_block = [

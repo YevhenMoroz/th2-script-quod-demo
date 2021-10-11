@@ -37,16 +37,16 @@ class QAP_1695(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/CAD"
         self.rfq_response_stream_ttl = 2
-        self.venue_at_spot_venues_tab = "BARCLAYS"
-        self.venue_at_forward_venues_tab = "BAMLR"
+        self.venue_at_spot_venues_tab = "MS RFQ"
+        self.venue_at_forward_venues_tab = "BTMU FA"
         self.client_at_external_clients_tab = "CLIENT1"
-        self.client_at_internal_clients_tab = "ANDclient"
+        self.client_at_internal_clients_tab = "HouseFill"
         self.quantity = 1000000
         self.tenor = "Spot"
         self.min_spread = 50

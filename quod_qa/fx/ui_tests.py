@@ -922,7 +922,7 @@ def execute(report_id, session_id):
         # region OrderTicket
         # place_fx_order(base_request,order_ticket_service)
         # set_fx_order_ticket_value(base_request,order_ticket_service)
-        # extract_order_ticket_values(base_tile_data, order_ticket_service)
+        extract_order_ticket_values(base_tile_data, order_ticket_service)
         # close_fx_order(base_request,order_ticket_service);
         # endregion
 
