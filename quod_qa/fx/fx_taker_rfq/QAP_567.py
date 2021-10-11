@@ -41,7 +41,7 @@ def check_value_in_tob(base_request, service, case_id):
     tob_len = len(response["ar_rfq.extract_best_bid"][2:])
     verifier = Verifier(case_id)
     verifier.set_event_name("Check digits in TOB")
-    verifier.compare_values("Number of digits in TOB", "5", str(tob_len))
+    verifier.compare_values("Number of digits in TOB", "7", str(tob_len))
     verifier.verify()
 
 
@@ -61,7 +61,7 @@ def check_value_dist(base_request, service, case_id, venue):
     extracted_bid = extract_bid["ar_rfq.extract_best_bid_small"]
     extracted_dist = extract_table["DistSell"]
     extracted_pts = extract_table["PTSSell"]
-    distance = float(extracted_bid) - float(extracted_pts)
+    distance = round(float(extracted_bid) - float(extracted_pts), 3)
     verifier = Verifier(case_id)
     verifier.set_event_name("Check column Pts and Dist")
     verifier.compare_values("Dist", str(distance), extracted_dist)
@@ -134,7 +134,7 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-    
+
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
