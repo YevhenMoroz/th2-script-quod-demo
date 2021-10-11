@@ -35,6 +35,7 @@ def execute(report_id):
             'Text': 'TWAP_MaxP_01',
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '5',
+                'AllowedVenues': 'XLON'
             }
         }
 

@@ -38,7 +38,8 @@ def execute(report_id):
                 'ParticipateInClosingAuctions': 'Y',
                 'MaxParticipationOpen': '5',
                 'MaxParticipationClose': '1',
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '10',
+                'AllowedVenues': 'XLON'
             }
         }
 

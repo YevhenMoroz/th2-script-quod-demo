@@ -34,7 +34,8 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'POV_BA_01',
             'QuodFlatParameters': {
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '10',
+                'AllowedVenues': 'XLON'
             }
         }
 

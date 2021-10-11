@@ -33,6 +33,9 @@ def execute(report_id):
             'TargetStrategy': 1005, 
             'ExDestination': 'XLON',
             'Text': 'TWAP_BA_01',
+            'QuodFlatParameters': {
+                'AllowedVenues': 'XLON'
+            }
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(

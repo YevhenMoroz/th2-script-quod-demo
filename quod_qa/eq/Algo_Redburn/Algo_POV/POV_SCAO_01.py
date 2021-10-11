@@ -40,7 +40,7 @@ def execute(report_id):
                 'PricePoint2Offset': '5',
                 'PricePoint2Participation': '20',
                 'MaxPercentageVolume': '5',
-                #'ExcludePricePoint2': '1'
+                'AllowedVenues': 'XLON'
             }
         }
 

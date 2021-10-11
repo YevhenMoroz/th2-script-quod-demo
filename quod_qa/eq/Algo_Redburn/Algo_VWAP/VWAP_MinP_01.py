@@ -35,6 +35,7 @@ def execute(report_id):
             'Text': 'VWAP-MinP_01',
             'QuodFlatParameters': {
                 'MinParticipation': '25',
+                'AllowedVenues': 'XLON'
             }
         }
 

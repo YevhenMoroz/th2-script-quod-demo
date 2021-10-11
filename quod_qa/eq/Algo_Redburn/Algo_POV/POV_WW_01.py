@@ -35,7 +35,8 @@ def execute(report_id):
             'Text': 'POV_WW_01',
             'QuodFlatParameters': {
                 'TriggerPriceRed': '99',
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '10',
+                'AllowedVenues': 'XLON'
             }
         }
 
