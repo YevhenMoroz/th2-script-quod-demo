@@ -18,6 +18,9 @@ instrument = {
 def execute(report_id):
     try:
         new_order_single_params = {
+            'header': {
+                'OnBehalfOfCompID': 'kames_ul_DCOI'
+            },
             'Account': "REDBURN",
             'ClOrdID': 'VWAP_NAV_02 ' + bca.client_orderid(9),
             'HandlInst': 2,
