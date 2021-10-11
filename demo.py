@@ -6,13 +6,14 @@ from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCO_01,
     QA_CLO_InitialSlice_01, QA_CLO_InitialSlice_02, QA_CLO_InitialSlice_03, QA_CLO_WouldShares, QA_CLO_WouldPercentage, \
     QA_CLO_WouldRef, QA_CLO_WouldRef_Unavaliable, QA_CLO_Perc_for_Close90, QA_CLO_Perc_for_Close100, \
     QA_CLO_AuctionWouldCap, QA_CLO_AuctionWouldCapMaxWouldPerc, QA_CLO_WouldAtLast, QA_CLO_WouldAtLast2, \
-    QA_CLO_AuctionWouldCap0, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCapMaxWouldShares, QA_CLO_Market
+    QA_CLO_AuctionWouldCap0, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCapMaxWouldShares, QA_CLO_Market, \
+    QA_CLO_FPC_MKT, QA_SCAL_LTP
 from quod_qa.eq.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01
 from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCA_01, OPN_VO_01, OPN_WW_01, \
     QA_OPN_AuctionWouldCap, QA_OPN_AuctionWouldCap100, QA_OPN_AuctionWouldCapMaxWouldPerc, \
     QA_OPN_AuctionWouldCapMaxWouldShares, QA_OPN_InitialSlice_01, QA_OPN_InitialSlice_02, QA_OPN_InitialSlice_03, \
     QA_OPN_WouldPercentage, QA_OPN_WouldRef, QA_OPN_WouldShares, QA_OPN_LIM_MID, QA_OPN_LIM_MKT, QA_OPN_LIM_PRM, \
-    QA_OPN_Market
+    QA_OPN_Market, QA_OPN_PDAT_724
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_BA_01, POV_WW_01, POV_NAV_01, POV_NAV_02, POV_AUC_01, POV_MinMax_01, \
     POV_SCAP_01
 from quod_qa.eq.Algo_Redburn.Temp import CLO_SCO_MID, CLO_SCO_MKT, CLO_SCO_PRM, QA_CLO_AtLast
@@ -22,6 +23,8 @@ from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_0
     TWAP_NAV_02, TWAP_NAV_01
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
     VWAP_NAV_02, VWAP_WW_01
+from quod_qa.wrapper_test.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -43,6 +46,21 @@ def test_run():
     report_id = bca.create_event('Red tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
+
+        # nos = FixMessageNewOrderSingleAlgo()
+        # nos.set_default_TWAP()
+        #
+        # ex = FixMessageExecutionReportAlgo(new_order_single=nos)
+        #
+        # temp = dict(
+        #     ExecType="A",
+        #     OrdStatus="A"
+        # )
+        # ex1 = FixMessageExecutionReportAlgo(parameters=temp)
+        # ex2 = FixMessageExecutionReportAlgo(new_order_single=nos)
+        # ex2.change_from_new_to_pendingnew()
+        # print()
+        #
         QA_OPN_AuctionWouldCap.execute(report_id)
         QA_OPN_AuctionWouldCap100.execute(report_id)
         QA_OPN_AuctionWouldCapMaxWouldPerc.execute(report_id)
@@ -58,6 +76,8 @@ def test_run():
         QA_OPN_LIM_PRM.execute(report_id)
         QA_OPN_Market.execute(report_id)
 
+        QA_OPN_PDAT_724.execute(report_id)
+        #
         CLO_SCO_MID.execute(report_id)
         CLO_SCO_MKT.execute(report_id)
         CLO_SCO_PRM.execute(report_id)
@@ -80,6 +100,9 @@ def test_run():
         QA_CLO_AtLast.execute(report_id)
         QA_CLO_Market.execute(report_id)
 
+        QA_CLO_FPC_MKT.execute(report_id)
+        QA_SCAL_LTP.execute(report_id)
+
         EXP_LIM_01.execute(report_id)
         EXP_VO_01.execute(report_id)
         EXP_WW_01.execute(report_id)
@@ -89,7 +112,7 @@ def test_run():
 
         TWAP_BA_01.execute(report_id)
         TWAP_WW_01.execute(report_id)
-        TWAP_NAV_01.execute(report_id)
+        TWAP_NAV_01.execu:qte(report_id)
         TWAP_NAV_02.execute(report_id)
         TWAP_AUC_01.execute(report_id)
         TWAP_MinP_01.execute(report_id)
@@ -123,6 +146,9 @@ def test_run():
         CLO_VO_01.execute(report_id)
         CLO_WW_01.execute(report_id)
 
+        TWAP_AUC_01.execute(report_id)
+        VWAP_AUC_01.execute(report_id)
+        POV_AUC_01.execute(report_id)
         print()
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
