@@ -123,7 +123,7 @@ def execute(report_id, session_id):
     case_currency_usd = "USD"
     case_currency_cad = "CAD"
     case_client = "ASPECT_CITI"
-    venues_hsb = ["HSBC"]
+    venues_hsb = ["CITI"]
     venues_cit = ["CITI"]
     quote_sts_new = 'New'
     quote_sts_terminated = 'Terminated'

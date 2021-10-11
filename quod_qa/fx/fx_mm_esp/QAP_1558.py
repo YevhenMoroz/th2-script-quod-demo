@@ -87,7 +87,7 @@ def execute(report_id):
                 send_md_request(). \
                 verify_md_pending()
             price1 = md1.extract_filed('Price')
-            text = 'empty book'
+            text = 'not tradeable'
             md1.send_new_order_single(price1). \
                 verify_order_pending(). \
                 verify_order_rejected(text). \
