@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 def check_log_period(params: dict):
     data_source = DataSource(f"http://10.0.22.22:31622")  # rpt-data-provider address
     success = True
+    passed = False
     ids = []
     idx = 0
     body = {}
@@ -45,7 +46,8 @@ def check_log_period(params: dict):
     mapped_messages = filtered_messages.map(map_function)
 
     # checking for count of messages
-    if len(mapped_messages) == 0:
+    msg_count = len(mapped_messages)
+    if msg_count == 0:
         success = False
         body = {
             "type": "message",
@@ -73,13 +75,16 @@ def check_log_period(params: dict):
             # creating lines in report event with checking data for each message
             body_fields[f'Message [{idx}]'] = {
                 "expected": f"{START_CHECK_TIME} - {END_CHECK_TIME}",
-                "actual": 'log_time',
+                "actual": str(log_time),
                 "key": False,
                 "type": "field",
                 "status": "PASSED" if passed else "FAILED"
             }
 
             body = {"fields": body_fields, "type": "verification"}
+
+    if msg_count == 1:
+        success &= passed
 
     # creating root report event
     case_name = f"Checking timestamp of message in '{params['Session-alias']}' log"
@@ -106,9 +111,9 @@ def check_log_period(params: dict):
 def execute():
     log_msg_params = {
         'Session-alias': 'log305-sats-comments',
-        'Start_time': '2021-10-08 10:47:57',
-        'End_time': '2021-10-08 10:48:58',
-        'Message': 'AO1211008104756151001 - Cancelling ASOR child order AO1211008104756153001'
+        'Start_time': '2021-10-11 06:24:48',
+        'End_time': '2021-10-11 06:28:58',
+        'Message': 'Cancelling ASOR child order AO1211011062431153001'
     }
 
     check_log_period(log_msg_params)
