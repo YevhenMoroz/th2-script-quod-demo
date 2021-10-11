@@ -1,18 +1,29 @@
 import logging
+import time
 from pathlib import Path
+
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
+from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
+
 from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, \
+from win_gui_modules.wrappers import set_base
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
     ModifyRatesTileRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
 
 api = Stubs.api_service
 ob_act = Stubs.win_act_order_book
@@ -37,7 +48,7 @@ security_type_spo = 'FXSPOT'
 securityidsource = '8'
 securityid = 'EUR/USD'
 instrument_tier = 'EUR/USD-SPOT'
-qty = 2145362
+qty = 2000000
 ordqty = 0
 clOrdID = ''
 ord_status = 'Filled'
@@ -113,12 +124,12 @@ def compare_position(even_name, case_id, expected_pos, actual_pos):
     verifier.verify()
 
 
-def check_order_book(even_name, case_id, base_request, act_ob, threshold, status_exp, qty):
+def check_order_book(even_name, case_id, base_request, act_ob, threshold, status_exp):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test", "Qty", qty])
+    ob.set_filter(["Order ID", 'OK', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -153,54 +164,15 @@ def execute(report_id, session_id):
 
         try:
             # Preconditions
-            call(cp_service.createRatesTile, base_details.build())
-            modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-            call(cp_service.closeRatesTile, base_details.build())
 
 
-            # Step 1
-            set_send_hedge_order("true", case_id, 400018)
 
-            # Step 2
-            params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                            securitytype=security_type_spo, settldate=settle_date_spo,
-                                            settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                            currency=currency, side=side,
-                                            account=account_client)
-            rfq = FixClientSellRfq(params_spot)
-            rfq.send_request_for_quote()
-            rfq.verify_quote_pending()
-            price = rfq.extract_filed("OfferPx")
-            rfq.send_new_order_single(price=price). \
-                verify_order_pending(). \
-                verify_order_filled()
 
-            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client, "Position")
-            compare_position("Compare position is equal to threshold", case_id, qty, actual_pos)
+
             check_order_book("Check AH is in Order book with OPEN Status", case_id, case_base_request, ob_act,
                              qty, status_open)
+            actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client, "Position")
 
-            # Step 3
-            set_send_hedge_order("false", case_id, 400018)
-            order_id_before = check_order_book("Check AH is in Order book with CANCELLED Status", case_id,
-                                               case_base_request, ob_act, qty, status_cnld)
-
-            # Step 4
-            params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                            securitytype=security_type_spo, settldate=settle_date_spo,
-                                            settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                            currency=currency, side=side,
-                                            account=account_client)
-            rfq = FixClientSellRfq(params_spot)
-            rfq.send_request_for_quote()
-            rfq.verify_quote_pending()
-            price = rfq.extract_filed("OfferPx")
-            rfq.send_new_order_single(price=price). \
-                verify_order_pending(). \
-                verify_order_filled()
-            order_id_after = check_order_book("Check AH in Order book is the same", case_id, case_base_request, ob_act,
-                                              qty, status_cnld)
-            verify_auto_hedger(case_id, order_id_before, order_id_after)
 
 
 
@@ -210,20 +182,8 @@ def execute(report_id, session_id):
             logging.error('Error execution', exc_info=True)
             bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         finally:
-            # Post Condition
-            set_send_hedge_order("true", case_id, 400019)
-            params_spot = CaseParamsSellRfq(client, case_id, orderqty="4290724", symbol=symbol,
-                                            securitytype=security_type_spo, settldate=settle_date_spo,
-                                            settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                            currency=currency, side="2",
-                                            account=account_client)
-            rfq = FixClientSellRfq(params_spot)
-            rfq.send_request_for_quote()
-            rfq.verify_quote_pending()
-            price = rfq.extract_filed("BidPx")
-            rfq.send_new_order_single(price=price). \
-                verify_order_pending(). \
-                verify_order_filled()
+            pass
+
     except Exception as e:
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
         logging.error('Error execution', exc_info=True)
