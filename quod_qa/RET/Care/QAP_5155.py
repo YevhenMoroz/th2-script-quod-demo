@@ -12,7 +12,7 @@ from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
-from quod_qa.wrapper.ret_wrappers import create_order, direct_poc_order_via_inbox, verify_order_value, get_order_id, \
+from quod_qa.wrapper.ret_wrappers import create_order, direct_loc_order_via_inbox, verify_order_value, get_order_id, \
     force_cancel_order
 
 logger = logging.getLogger(__name__)
@@ -46,8 +46,8 @@ def execute(session_id, report_id):
                  True, recipient, price, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # endregion
 
-    # region Create POC child AO
-    direct_poc_order_via_inbox("LastTradedPrice", "50", "50", "NSE")
+    # region Create LOC child MO
+    direct_loc_order_via_inbox("50", "NSE")
     # endregion
 
     # region Check values of child MO in OrderBook (Child Orders) according to 1st step
@@ -56,10 +56,10 @@ def execute(session_id, report_id):
 
     # region Cancel order via FE according to 2nd step
     order_id = get_order_id(base_request)
-    force_cancel_order(base_request, order_id)
+    force_cancel_order(base_request, order_id, True)
     # endregion
 
-    # region Check values of child AO in OrderBook (Child Orders) according to 2nd step
+    # region Check values of child MO in OrderBook (Child Orders) according to 2nd step
     verify_order_value(base_request, case_id, "Sts", "Cancelled", True)
     # endregion
 

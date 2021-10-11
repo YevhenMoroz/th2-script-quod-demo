@@ -103,6 +103,7 @@ class TestCase:
             'QuoteConditionStatus':'*',
             'MDReqID':'*',
             'OrigVenueID':'*',
+            'OrigQuoteEntryID':'*',
             'OrigMDTime':'*',
             'MarketDataFullList': {
                 'MarketDataFullBlock':

@@ -4,7 +4,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from quod_qa.eq.Care import QAP_1045
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

@@ -56,7 +56,7 @@
       "service-class": "TemplateSimulatorServiceTestService",
       "endpoints": {
         "simulator_test": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32314
         }
       },
@@ -70,7 +70,7 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.24",
           "port": 32223
         }
       },
