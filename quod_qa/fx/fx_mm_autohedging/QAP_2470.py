@@ -57,7 +57,7 @@ def send_order(base_request, service):
     order_ticket = FXOrderDetails()
     order_ticket.set_place()
     order_ticket.set_client(firm_account)
-    order_ticket.set_strategy('test')
+    order_ticket.set_strategy('Hedging_Test')
     order_ticket.set_tif('GoodTillCancel')
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())
@@ -191,7 +191,6 @@ def execute(report_id, session_id):
         compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
 
         # Step 2-3
-        initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
         initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
         create_or_get_esp_tile(base_details, ar_service)
@@ -201,7 +200,7 @@ def execute(report_id, session_id):
         check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
                             '3000000', "Terminated", ah_client, order_id)
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        expected_pos_cl= str((int(initial_pos_client)+3000000))
+        expected_pos_cl= actual_pos_client
         compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_cl, actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         expected_pos_qv= str((int(initial_pos_quod)+0))
