@@ -17,8 +17,8 @@ class QAP_1758(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.published_quote_id_format = "#20d"
         self.quote_update_format = "FullRefresh"

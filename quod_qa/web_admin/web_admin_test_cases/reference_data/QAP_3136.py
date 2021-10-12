@@ -31,8 +31,8 @@ class QAP_3136(CommonTestCase):
         self.mic = "ALXP"
         self.country = "Albania"
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.negative_routes = ("ARCLAYS Trading", "BARCLAYS RFQ")
-        self.positive_routes = ("FSS RFQ", "FSS for order")
+        self.negative_routes = ("Direct", "Fixed income Route")
+        self.positive_routes = ("Credit Suisse", "JP Morgan")
         self.parameter = "All"
         self.value = "test"
 

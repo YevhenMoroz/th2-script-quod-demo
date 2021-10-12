@@ -15,7 +15,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, check_value, \
     create_order_analysis_events_request, create_verification_request
-from quod_qa.wrapper.ret_wrappers import close_order_book
+from quod_qa.wrapper.ret_wrappers import close_order_book, decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -112,6 +112,7 @@ def extract_child_lvl3_order_details(base_request, column_name, order_book_servi
     return request
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4298"
 

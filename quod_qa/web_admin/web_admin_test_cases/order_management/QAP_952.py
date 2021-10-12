@@ -19,22 +19,24 @@ class QAP_952(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
         self.expected_error = "Incorrect or missing values"
-        self.strategy_type = "Quod LitDark"
+        self.strategy_type = "External AMBUSH"
         self.user = "adm01"
-        self.client = "BROKER"
+        self.client = "BrokerACA"
         self.default_tif = "Day"
         self.aggressor_indicator = "True"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
+        time.sleep(2)
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
+        time.sleep(2)
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
         strategies_wizard.click_on_save_changes()
 
@@ -50,9 +52,13 @@ class QAP_952(CommonTestCase):
             self.verify("After click on save without name", self.expected_error,
                         strategies_wizard.get_error_type_after_empty_saved())
             strategies_wizard.set_user(self.user)
+            time.sleep(1)
             strategies_wizard.set_client(self.client)
+            time.sleep(1)
             strategies_wizard.set_default_tif(self.default_tif)
+            time.sleep(1)
             strategies_wizard.set_aggressor_indicator(self.aggressor_indicator)
+            time.sleep(1)
             strategies_wizard.click_on_general()
             general_block = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
             general_block.click_on_plus_button()

@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('Benchmark regression', parent_id)
+    report_id = bca.create_event('Benchmark', parent_id)
     try:
         QAP_4303.execute(session_id, report_id)
 

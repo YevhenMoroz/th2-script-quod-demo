@@ -144,8 +144,8 @@ def execute(report_id, session_id):
     case_from_currency = "USD"
     case_to_currency = "PHP"
     case_tenor = "1M"
-    case_venue = ["HSBC"]
-    case_filter_venue = "HSBC"
+    case_venue = ["CITI"]
+    case_filter_venue = "CITI"
     case_qty = 2000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"

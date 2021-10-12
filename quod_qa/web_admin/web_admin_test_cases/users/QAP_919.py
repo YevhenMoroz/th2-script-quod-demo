@@ -18,7 +18,7 @@ class QAP_919(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.client = "ANDclient"
+        self.client = "CLIENT1"
         self.type = "Holder"
 
     def precondition(self):

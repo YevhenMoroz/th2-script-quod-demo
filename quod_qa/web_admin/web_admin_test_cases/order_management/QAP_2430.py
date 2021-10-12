@@ -28,14 +28,14 @@ class QAP_2430(CommonTestCase):
         self.first_parameter = "AllowedAggressiveVenues"
         self.second_parameter = "AllowedPassiveVenues"
         self.third_parameter = "InitialDarkAllowedVenues"
-        self.first_venue = "DARK POOL 1"
+        self.first_venue = "AMERICAN STOCK EXCHANGE"
         self.second_venue = "EURONEXT AMSTERDAM"
-        self.third_venue = "BATS Dark Pool"
+        self.third_venue = "BATS"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -72,7 +72,7 @@ class QAP_2430(CommonTestCase):
             aggressive_lit_block = ExecutionStrategiesLitAggressiveSubWizard(self.web_driver_container)
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
             expected_parameter_and_value_at_lit_passive_block = ["AllowedAggressiveVenues: ",
-                                                                 "DARK POOL 1/EURONEXT AMSTERDAM/BATS Dark Pool"]
+                                                                 "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
             actual_parameter_and_value_at_lit_passive_block = [
                 strategies_wizard.get_parameter_name_at_lit_aggressive_block(),
                 strategies_wizard.get_parameter_value_at_lit_aggressive_block()]
@@ -94,7 +94,7 @@ class QAP_2430(CommonTestCase):
             aggressive_lit_block.click_on_checkmark_button()
             aggressive_lit_block.click_on_go_back_button()
             expected_parameter_and_value_at_lit_passive_block_second = ["AllowedPassiveVenues: ",
-                                                                        "DARK POOL 1/EURONEXT AMSTERDAM/BATS Dark Pool"]
+                                                                        "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
             actual_parameter_and_value_at_lit_passive_block_second = [
                 strategies_wizard.get_parameter_name_at_lit_passive_block(),
                 strategies_wizard.get_parameter_value_at_lit_passive_block()]
@@ -118,7 +118,7 @@ class QAP_2430(CommonTestCase):
             dark_lit_block.click_on_checkmark_button()
             dark_lit_block.click_on_go_back_button()
             expected_parameter_and_value_at_lit_passive_block_third = ["InitialDarkAllowedVenues: ",
-                                                                       "DARK POOL 1/EURONEXT AMSTERDAM/BATS Dark Pool"]
+                                                                       "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
             actual_parameter_and_value_at_lit_passive_block_third = [
                 strategies_wizard.get_parameter_name_at_lit_dark_block(),
                 strategies_wizard.get_parameter_value_at_lit_dark_block()]

@@ -22,8 +22,8 @@ class QAP_2905(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "ANZ"
-        self.feed_source = "MarketPrizm"
+        self.venue = "AMEX"
+        self.feed_source = "Native Market"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -55,7 +55,8 @@ class QAP_2905(CommonTestCase):
         try:
             self.precondition()
             description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-            self.verify("Entity deleted correctly", self.feed_source, description_sub_wizard.get_feed_source())
+            self.verify("Feed Source is not editable ", self.feed_source, description_sub_wizard.get_feed_source())
+            time.sleep(5)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
                                               status='FAILED')
