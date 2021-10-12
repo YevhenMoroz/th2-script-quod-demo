@@ -28,9 +28,8 @@ currency = "USD"
 settle_currency = "ZAR"
 side = "1"
 
-
 expected_pos_client = qty
-expected_pos_quod= '676'
+expected_pos_quod = '676'
 expected_pos_client_intern = '-1257000'
 
 expected_pos_client_2 = "2512648"
@@ -46,6 +45,7 @@ def send_rfq_order_spot(params_spot):
     rfq.send_new_order_single(price=price). \
         verify_order_pending(). \
         verify_order_filled()
+
 
 def send_rfq_order_fwd(params_fwd):
     rfq = FixClientSellRfq(params_fwd)
@@ -138,6 +138,11 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     case_base_request = get_base_request(session_id, case_id)
     try:
+        # Precondition
+        initial_pos_cl = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_qv = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        initial_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                  account_client_intern)
         # Step 4
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
@@ -145,26 +150,43 @@ def execute(report_id, session_id):
                                         currency=currency, side=side,
                                         account=account_client)
         send_rfq_order_spot(params_spot)
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        actual_pos_client = str(int(actual_pos_client_) + int(initial_pos_cl))
         compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
-        actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client_intern)
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern, actual_pos_client_intern)
 
+        actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        actual_pos_quod = str(int(actual_pos_quod_) + int(initial_pos_qv))
+        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
+
+        actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                 account_client_intern)
+        actual_pos_client_intern= str(int(initial_pos_client_intern)+int(actual_pos_client_intern_))
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern,
+                         actual_pos_client_intern)
+
+        # Precondition
+        initial_pos_cl = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_qv = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        initial_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                  account_client_intern)
         # Step 6
         params_fwd = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                        securitytype=security_type_fwd, settldate=settle_date_1w,
-                                        settltype=settle_type_w1, securityid=symbol, settlcurrency=settle_currency,
-                                        currency=currency, side=side,
-                                        account=account_client)
+                                       securitytype=security_type_fwd, settldate=settle_date_1w,
+                                       settltype=settle_type_w1, securityid=symbol, settlcurrency=settle_currency,
+                                       currency=currency, side=side,
+                                       account=account_client)
         send_rfq_order_fwd(params_fwd)
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        actual_pos_client = str(int(actual_pos_client_) + int(initial_pos_cl))
         compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client_2, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        actual_pos_quod = str(int(actual_pos_quod_) + int(initial_pos_qv))
         compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod_2, actual_pos_quod)
-        actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client_intern)
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern_2, actual_pos_client_intern)
+        actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                 account_client_intern)
+        actual_pos_client_intern = str(int(initial_pos_client_intern) + int(actual_pos_client_intern_))
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern_2,
+                         actual_pos_client_intern)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -100,6 +100,8 @@ def execute(report_id, session_id):
             'Side': '*',
             'AvgPx': '*',
             'OrdStatus': '2',
+            'ReplyReceivedTime': '*',
+            'TradeReportingIndicator': '0',
             'LastExecutionPolicy': '*',
             'SettlCurrency': settle_currency,
             'SettlDate': spo(),

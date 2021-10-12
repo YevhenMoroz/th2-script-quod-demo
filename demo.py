@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147
 
 from quod_qa.fx.fx_taker_esp import QAP_5537_not_ready, QAP_5635_not_ready
-from quod_qa.fx.qs_fx_routine import SendMD
+from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot
 from quod_qa.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
@@ -36,10 +37,10 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
         #
@@ -47,7 +48,12 @@ def test_run():
         # wrapper_test.execute(report_id,session_id)
         # QAP_5537_not_ready.execute(report_id)
         # for_Daria.execute(report_id,session_id)
-        SendMD.execute(report_id)
+        # SendMD.execute(report_id)
+        # rfq_spot.execute(report_id)
+
+        # QAP_3939.execute(report_id, session_id)
+        QAP_2470.execute(report_id, session_id)
+
 
 
 
