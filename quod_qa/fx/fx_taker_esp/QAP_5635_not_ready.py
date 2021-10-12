@@ -132,13 +132,14 @@ def execute(report_id):
                 },
             ]
         }
-        # act.sendMessage(
-        #     bca.convert_to_request(
-        #         'Send Market Data SPOT',
-        #         'fix-fh-314-luna',
-        #         case_id,
-        #         bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo2, alias)
-        #     ))
+        print(mdu_params_spo2)
+        act.sendMessage(
+            bca.convert_to_request(
+                'Send Market Data SPOT',
+                alias,
+                case_id,
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo2, alias)
+            ))
 
 
 

@@ -3,9 +3,11 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 
 from quod_qa.fx.fx_taker_esp import QAP_5537_not_ready, QAP_5635_not_ready
+from quod_qa.fx.qs_fx_routine import SendMD
+from quod_qa.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -41,10 +43,11 @@ def test_run():
 
         # QAP_2290.execute(report_id, session_id)
         #
-        QAP_5635_not_ready.execute(report_id)
+        # QAP_5635_not_ready.execute(report_id)
+        # wrapper_test.execute(report_id,session_id)
         # QAP_5537_not_ready.execute(report_id)
         # for_Daria.execute(report_id,session_id)
-
+        SendMD.execute(report_id)
 
 
 
