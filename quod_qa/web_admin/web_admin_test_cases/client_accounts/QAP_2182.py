@@ -21,8 +21,8 @@ class QAP_2182(CommonTestCase):
         self.password = "adm02"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.route = "DB RFQ"
-        self.client = "ANDclient"
-        self.clearing_type = "Firm"
+        self.client = "CLIENT1"
+        self.clearing_type = "Institutional"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

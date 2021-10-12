@@ -10,7 +10,7 @@ from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.ret_wrappers import close_order_book
+from quod_qa.wrapper.ret_wrappers import close_order_book, decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -37,6 +37,7 @@ def extract_main_panel_order_ticket_fields_state(base_request, order_ticket_serv
     return result
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4326"
 

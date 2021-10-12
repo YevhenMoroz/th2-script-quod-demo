@@ -113,7 +113,7 @@ def cancel_rfq(base_request, service):
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user']
-    case_venue = "HSB"
+    case_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "MAR IMM"
     case_from_currency = "EUR"

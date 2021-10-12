@@ -152,7 +152,7 @@ def execute(report_id, session_id):
     base_esp_details = BaseTileDetails(base=case_base_request)
     base_data = BaseTileData(base=case_base_request)
 
-    owner = 'QA5'
+    owner = Stubs.custom_config['qf_trading_fe_user']
     from_curr = "EUR"
     to_curr = "USD"
     tenor = "Spot"

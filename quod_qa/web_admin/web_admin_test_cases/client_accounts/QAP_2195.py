@@ -22,7 +22,7 @@ class QAP_2195(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "ANZ"
+        self.venue = "AMEX"
         self.account_id_source = "BIC"
 
     def precondition(self):

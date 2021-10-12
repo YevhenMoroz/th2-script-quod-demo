@@ -39,7 +39,7 @@ def check_venue(base_request, service, case_id, hsb, cit, ms):
     verifier.set_event_name("Check Venues")
     verifier.compare_values("Venue CIT", "found", response["aggrRfqTile.citVenue"])
     verifier.compare_values("Venue MS", "not found", response["aggrRfqTile.msVenue"])
-    verifier.compare_values("Venue HSB", "found", response["aggrRfqTile.hsbVenue"])
+    verifier.compare_values("Venue GS", "found", response["aggrRfqTile.hsbVenue"])
     verifier.verify()
 
 
@@ -47,11 +47,11 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
 
     case_name = Path(__file__).name[:-3]
-    case_venues_filter = ["HSBC", "CITI"]
+    case_venues_filter = ["GS", "CITI"]
     case_from_curr = "EUR"
     case_to_curr = "USD"
     venue_cit = "CITI"
-    venue_hsb = "HSBC"
+    venue_gs = "GS"
     venue_ms = "MS"
 
     # Create sub-report for case
@@ -70,12 +70,12 @@ def execute(report_id, session_id):
         # Step 1
         create_or_get_rfq(base_rfq_details, ar_service)
         modify_rfq_tile(base_rfq_details, ar_service, case_from_curr, case_to_curr, case_venues_filter)
-        check_venue(base_rfq_details, ar_service, case_id, venue_hsb, venue_cit, venue_ms)
+        check_venue(base_rfq_details, ar_service, case_id, venue_gs, venue_cit, venue_ms)
         close_fe(case_id, session_id)
         time.sleep(5)
         prepare_fe_2(case_id, session_id2)
         create_or_get_rfq(base_rfq_details_2, ar_service)
-        check_venue(base_rfq_details_2, ar_service, case_id, venue_hsb, venue_cit, venue_ms)
+        check_venue(base_rfq_details_2, ar_service, case_id, venue_gs, venue_cit, venue_ms)
 
         # Close tile
         call(ar_service.closeRFQTile, base_rfq_details.build())

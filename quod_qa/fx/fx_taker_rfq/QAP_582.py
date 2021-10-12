@@ -114,13 +114,13 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "Spot"
-    case_venue = "HSBC"
+    case_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
-    venues = ["HSBC"]
+    venues = ["CITI"]
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"
     quote_quote_sts_expired = "Expired"

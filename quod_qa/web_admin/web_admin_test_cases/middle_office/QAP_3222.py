@@ -23,20 +23,20 @@ class QAP_3222(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.settl_location = 'CASH'
         self.settl_location_bic = "test"
         self.instr_type = "Bond"
         self.country_code = "ABW"
-        self.client_group = "Group1"
-        self.account = "FAC_1"
-        self.client = "36ONE"
+        self.client_group = "DEMO"
+        self.account = "DEMO_MO1"
+        self.client = "CLIENT1"
         self.venue = "AMERICAN STOCK EXCHANGE"
         self.instrument = "INSURANCE"
-        self.instrument_group = "12"
+        self.instrument_group = "TC Danish"
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -44,12 +44,12 @@ class QAP_3222(CommonTestCase):
         self.new_settl_location_bic = "test2"
         self.new_instr_type = "Certificate"
         self.new_country_code = "AIA"
-        self.new_client_group = "Group2"
-        self.new_account = "Facilitation"
-        self.new_client = "AEON"
-        self.new_venue = "AMSTERDAM"
+        self.new_client_group = "Kepler"
+        self.new_account = "DEMO_MO2"
+        self.new_client = "CLIENT2"
+        self.new_venue = "BLOOMBERG"
         self.new_instrument = "EUR"
-        self.new_instrument_group = "new"
+        self.new_instrument_group = "TC Instr Grp"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -75,7 +75,7 @@ class QAP_3222(CommonTestCase):
         dimensions_sub_wizard.set_account(self.account)
         dimensions_sub_wizard.set_client(self.client)
         dimensions_sub_wizard.set_venue(self.venue)
-        dimensions_sub_wizard.set_instrument(self.instrument)
+        #dimensions_sub_wizard.set_instrument(self.instrument)
         dimensions_sub_wizard.set_instrument_group(self.instrument_group)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -95,7 +95,7 @@ class QAP_3222(CommonTestCase):
         dimensions_sub_wizard.set_account(self.new_account)
         dimensions_sub_wizard.set_client(self.new_client)
         dimensions_sub_wizard.set_venue(self.new_venue)
-        dimensions_sub_wizard.set_instrument(self.new_instrument)
+        #dimensions_sub_wizard.set_instrument(self.new_instrument)
         dimensions_sub_wizard.set_instrument_group(self.new_instrument_group)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -119,7 +119,7 @@ class QAP_3222(CommonTestCase):
                                    self.new_account,
                                    self.new_client,
                                    self.new_venue,
-                                   self.new_instrument,
+                                   #self.new_instrument,
                                    self.new_instrument_group
 
                                    ]
