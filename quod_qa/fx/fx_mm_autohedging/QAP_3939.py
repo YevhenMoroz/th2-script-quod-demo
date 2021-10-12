@@ -155,7 +155,7 @@ def execute(report_id, session_id):
         compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
 
         actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        actual_pos_quod = str(int(actual_pos_quod_) + int(initial_pos_qv))
+        expected_pos_quod = str(int(expected_pos_quod) + int(initial_pos_qv))
         compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
 
         actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,

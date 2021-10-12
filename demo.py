@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147
+from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
+    QAP_5551
 
 from quod_qa.fx.fx_taker_esp import QAP_5537_not_ready, QAP_5635_not_ready
 from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot
@@ -52,7 +53,7 @@ def test_run():
         # rfq_spot.execute(report_id)
 
         # QAP_3939.execute(report_id, session_id)
-        QAP_2470.execute(report_id, session_id)
+        QAP_5551.execute(report_id, session_id)
 
 
 
