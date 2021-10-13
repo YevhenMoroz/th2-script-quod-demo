@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, \
@@ -48,6 +49,20 @@ class BaseOrderBook(BaseWindow):
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
             self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    def check_order_fields_list_not_equal(self, expected_fields: dict, event_name="Check Order Book Not Equal"):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_fields_list(expected_fields)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key], VerificationMethod.NOT_EQUALS)
         self.verifier.verify()
 
     def extract_fields_list(self, list_fields: dict) -> dict:
