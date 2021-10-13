@@ -16,7 +16,7 @@ from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
     TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
+from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest, RowsNumbersForGrid
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest
@@ -649,6 +649,16 @@ def unbook_order(request):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail unbook_order', status="FAIL")
+
+
+def mass_book(request, row_list: []):
+    rows_numbers_for_grid = RowsNumbersForGrid(request, row_list)
+    call(Stubs.win_act_order_book.massBook, rows_numbers_for_grid.build())
+
+
+def mass_un_book(request, row_list: []):
+    rows_numbers_for_grid = RowsNumbersForGrid(request, row_list)
+    call(Stubs.win_act_order_book.massUnbook, rows_numbers_for_grid.build())
 
 
 def allocate_order(request, arr_allocation_param: [] = None):

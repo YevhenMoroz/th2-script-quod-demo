@@ -171,3 +171,25 @@ class SimpleRequest:
 
     def build(self):
         return self._request
+
+
+class RowsNumbersForGrid:
+    def __init__(self, base: EmptyRequest = None, rows_numbers: list = None):
+        if base is not None:
+            self._request = common_pb2.RowsNumbersForGrid(base=base)
+        else:
+            self._request = common_pb2.RowsNumbersForGrid()
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self._request.rowsNumbers.append(number)
+
+    def set_default_params(self, base):
+        self._request.base.CopyFrom(base)
+
+    def set_rows_numbers(self, rows_numbers: list):
+        for number in rows_numbers:
+            self._request.rowsNumbers.append(number)
+
+    def build(self):
+        return self._request
