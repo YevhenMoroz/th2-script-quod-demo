@@ -61,7 +61,6 @@ def check_order_book_AO(even_name, case_id, base_request, act_ob, qty_exp, statu
     status = ExtractionDetail("orderBook.sts", "Sts")
     side = ExtractionDetail("orderBook.side", "Side")
 
-
     ob.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id, side])))
@@ -72,7 +71,6 @@ def check_order_book_AO(even_name, case_id, base_request, act_ob, qty_exp, statu
     verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
     verifier.compare_values('Sts', status_exp, response[status.name])
     verifier.compare_values('Side', exp_side, response[side.name])
-
 
     verifier.verify()
     time.sleep(0.5)
@@ -86,6 +84,8 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     ob_act = Stubs.win_act_order_book
     try:
+        actual_pos_client_initial = get_dealing_positions_details(pos_service, case_base_request, "USD/DKK",
+                                                                  account_client)
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
                                         settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
@@ -99,15 +99,17 @@ def execute(report_id, session_id):
             verify_order_pending(). \
             verify_order_filled()
 
-        check_order_book_AO('Checking placed order AO USD/DKK', case_id, case_base_request, ob_act, "2000000", "Terminated", "DEFAULT1", "USD/DKK-SPO.SPO", "Buy")
-        actual_pos_client_usd_dkk = get_dealing_positions_details(pos_service, case_base_request, "USD/DKK", account_client)
+        check_order_book_AO('Checking placed order AO USD/DKK', case_id, case_base_request, ob_act, "2000000",
+                            "Terminated", "DEFAULT1", "USD/DKK-SPO.SPO", "Buy")
+        actual_pos_client_usd_dkk = get_dealing_positions_details(pos_service, case_base_request, "USD/DKK",
+                                                                  account_client)
         actual_pos_quod_usd_dkk = get_dealing_positions_details(pos_service, case_base_request, "USD/DKK", account_quod)
 
-        compare_position('Checking positions Palladium1_1 USD/DKK', case_id, "2000000", actual_pos_client_usd_dkk)
+        expected= str((2000000 + int(actual_pos_client_initial)))
+        compare_position('Checking positions Palladium1_1 USD/DKK', case_id, expected, actual_pos_client_usd_dkk)
         compare_position('Checking positions DEFAULT1_1 USD/DKK', case_id, "0", actual_pos_quod_usd_dkk)
 
-
-        #PostConditions
+        # PostConditions
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
                                         settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,

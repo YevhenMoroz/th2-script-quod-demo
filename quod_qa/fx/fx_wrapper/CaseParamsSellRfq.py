@@ -577,7 +577,7 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
-
+        self.order_filled_swap['TradeReportingIndicator'] = '0'
         self.order_filled_swap['NoLegs'][0]['LegLastForwardPoints'] = '*'
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
         if self.leg1_settltype == '0':

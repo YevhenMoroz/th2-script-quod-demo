@@ -20,7 +20,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('FX MM Positions regression', parent_id)
+    report_id = bca.create_event('ESP MM AH regression', parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     fe_dir = Stubs.custom_config['qf_trading_fe_folder']
@@ -28,37 +28,39 @@ def test_run(parent_id=None):
     fe_password = Stubs.custom_config['qf_trading_fe_password']
 
     try:
-        prepare_position()
-        Stubs.frontend_is_open = False
+        # prepare_position()
+        Stubs.frontend_is_open = True
         if not Stubs.frontend_is_open:
             prepare_fe(report_id, session_id, fe_dir, fe_user, fe_password)
         else:
             get_opened_fe(report_id, session_id)
 
-        import_AH_layout.execute(report_id, session_id)
-        AH_Precondition.execute(report_id)
-        QAP_1762.execute(report_id, session_id)
-        QAP_2113.execute(report_id, session_id)
+        # import_AH_layout.execute(report_id, session_id)
+        # AH_Precondition.execute(report_id)
+        # QAP_1762.execute(report_id, session_id)
+        # QAP_2113.execute(report_id, session_id)
         QAP_2159.execute(report_id, session_id)
-        QAP_2228.execute(report_id, session_id)
-        QAP_2250.execute(report_id, session_id)
-        QAP_2251.execute(report_id, session_id)
-        QAP_2252.execute(report_id, session_id)
-        QAP_2255.execute(report_id, session_id)
-        QAP_2290.execute(report_id, session_id)
-        QAP_2291.execute(report_id, session_id)
-        QAP_2292.execute(report_id, session_id)
-        QAP_2322.execute(report_id, session_id)
-        QAP_3902.execute(report_id, session_id)
-        QAP_3939.execute(report_id, session_id)
-        QAP_3039.execute(report_id, session_id)
-        QAP_3354.execute(report_id, session_id)
-        QAP_3067.execute(report_id, session_id)
-        QAP_2326.execute(report_id, session_id)
-        QAP_5551.execute(report_id, session_id)
-        QAP_2470.execute(report_id, session_id)
-        QAP_3147.execute(report_id, session_id)
-        QAP_3146.execute(report_id, session_id)
+        # QAP_2228.execute(report_id, session_id)
+        # QAP_2255.execute(report_id, session_id)
+        # QAP_2322.execute(report_id, session_id)
+        # QAP_3939.execute(report_id, session_id)
+        # QAP_3039.execute(report_id, session_id)
+        # QAP_3354.execute(report_id, session_id)
+        # QAP_3067.execute(report_id, session_id)
+        # QAP_2326.execute(report_id, session_id)
+        # QAP_5551.execute(report_id, session_id)
+        # QAP_2470.execute(report_id, session_id)
+        # QAP_3147.execute(report_id, session_id)
+        # QAP_3146.execute(report_id, session_id)
+
+        # Rest API
+        # QAP_3902.execute(report_id, session_id)
+        # QAP_2292.execute(report_id, session_id)
+        # QAP_2291.execute(report_id, session_id)
+        # QAP_2290.execute(report_id, session_id)
+        # QAP_2252.execute(report_id, session_id)
+        # QAP_2251.execute(report_id, session_id)
+        # QAP_2250.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
