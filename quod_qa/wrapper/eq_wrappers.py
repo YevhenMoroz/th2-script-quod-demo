@@ -480,11 +480,12 @@ def verify_execution_value(request, case_id, column_name, expected_value, trades
     base_verifier(case_id, column_name, expected_value, response[column_name])
 
 
-def verify_block_value(request, case_id, column_name, expected_value):
+def verify_block_value(request, case_id, column_name, expected_value,block_filter_list):
     ext_id = "MiddleOfficeExtractionId"
     middle_office_service = Stubs.win_act_middle_office_service
     extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=request)
     extract_request.set_extraction_id(ext_id)
+    extract_request.set_filter(block_filter_list)
     extraction_detail = ExtractionDetail(column_name, column_name)
     extract_request.add_extraction_details([extraction_detail])
     request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
