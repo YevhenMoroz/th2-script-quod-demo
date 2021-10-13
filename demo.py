@@ -52,9 +52,9 @@ def test_run():
         # SendMD.execute(report_id)
         # rfq_spot.execute(report_id)
 
-        # QAP_3939.execute(report_id, session_id)
+        QAP_3939.execute(report_id, session_id)
         # QAP_5551.execute(report_id, session_id)
-        QAP_2470.execute(report_id, session_id)
+        # QAP_2470.execute(report_id, session_id)
 
 
 

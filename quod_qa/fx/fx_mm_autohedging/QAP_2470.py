@@ -164,62 +164,62 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     order_id = ''
     try:
-        #Precondition
-        # initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        # initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        #
-        # # Step 1
-        # params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-        #                                 securitytype=security_type_spo, settldate=settle_date_spo,
-        #                                 settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-        #                                 currency=currency, side=side,
-        #                                 account=account_client)
-        # rfq = FixClientSellRfq(params_spot)
-        # rfq.send_request_for_quote()
-        # rfq.verify_quote_pending()
-        # price = rfq.extract_filed("OfferPx")
-        # rfq.send_new_order_single(price=price). \
-        #     verify_order_pending(). \
-        #     verify_order_filled()
-        # time.sleep(5)
-        # order_id = check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
-        #                     '3000000', "Terminated", ah_client, order_id)
-        # actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        # expected_pos_client = str(int(qty)+int(initial_pos_client))
-        # compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
-        # actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        # expected_pos_quod = str(0 + int(initial_pos_quod))
-        # compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
-        #
-        # # Step 2-3
-        # initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        #
-        # create_or_get_esp_tile(base_details, ar_service)
+        Precondition
+        initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+
+        # Step 1
+        params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
+                                        securitytype=security_type_spo, settldate=settle_date_spo,
+                                        settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
+                                        currency=currency, side=side,
+                                        account=account_client)
+        rfq = FixClientSellRfq(params_spot)
+        rfq.send_request_for_quote()
+        rfq.verify_quote_pending()
+        price = rfq.extract_filed("OfferPx")
+        rfq.send_new_order_single(price=price). \
+            verify_order_pending(). \
+            verify_order_filled()
+        time.sleep(5)
+        order_id = check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
+                            '3000000', "Terminated", ah_client, order_id)
+        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        expected_pos_client = str(int(qty)+int(initial_pos_client))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
+        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        expected_pos_quod = str(0 + int(initial_pos_quod))
+        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
+
+        # Step 2-3
+        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+
+        create_or_get_esp_tile(base_details, ar_service)
         modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, qty)
         place_order_esp(base_details, ar_service)
         send_order(case_base_request, order_ticket_service)
-        # check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
-        #                     '3000000', "Terminated", ah_client, order_id)
-        # actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        # expected_pos_cl= actual_pos_client
-        # compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_cl, actual_pos_client)
-        # actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        # expected_pos_qv= str((int(initial_pos_quod)+0))
-        # compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_qv, actual_pos_quod)
-        #
-        # # PostConditions
-        # params_spot = CaseParamsSellRfq(client, case_id, orderqty='3000000', symbol=symbol,
-        #                                 securitytype=security_type_spo, settldate=settle_date_spo,
-        #                                 settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-        #                                 currency=currency, side='2',
-        #                                 account=account_client)
-        # rfq = FixClientSellRfq(params_spot)
-        # rfq.send_request_for_quote()
-        # rfq.verify_quote_pending()
-        # price = rfq.extract_filed("BidPx")
-        # rfq.send_new_order_single(price=price). \
-        #     verify_order_pending(). \
-        #     verify_order_filled()
+        check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
+                            '3000000', "Terminated", ah_client, order_id)
+        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        expected_pos_cl= actual_pos_client
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_cl, actual_pos_client)
+        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        expected_pos_qv= str((int(initial_pos_quod)+0))
+        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_qv, actual_pos_quod)
+
+        # PostConditions
+        params_spot = CaseParamsSellRfq(client, case_id, orderqty='3000000', symbol=symbol,
+                                        securitytype=security_type_spo, settldate=settle_date_spo,
+                                        settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
+                                        currency=currency, side='2',
+                                        account=account_client)
+        rfq = FixClientSellRfq(params_spot)
+        rfq.send_request_for_quote()
+        rfq.verify_quote_pending()
+        price = rfq.extract_filed("BidPx")
+        rfq.send_new_order_single(price=price). \
+            verify_order_pending(). \
+            verify_order_filled()
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

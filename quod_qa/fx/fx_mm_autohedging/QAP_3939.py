@@ -151,18 +151,26 @@ def execute(report_id, session_id):
                                         account=account_client)
         send_rfq_order_spot(params_spot)
         actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        actual_pos_client = str(int(actual_pos_client_) + int(initial_pos_cl))
-        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
+        expected_pos_client = str(int(qty) + int(initial_pos_cl))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client_)
 
         actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        expected_pos_quod = str(int(expected_pos_quod) + int(initial_pos_qv))
-        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
+        expected_pos_quod = 676 + int(initial_pos_qv)
+        if expected_pos_quod>1000:
+            expected_pos_quod=expected_pos_quod-1000
+        compare_position('Checking positions Quod QUOD4_1', case_id, str(expected_pos_quod), actual_pos_quod_)
 
         actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                  account_client_intern)
-        actual_pos_client_intern= str(int(initial_pos_client_intern)+int(actual_pos_client_intern_))
+
+
+
+
         compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern,
-                         actual_pos_client_intern)
+                         actual_pos_client_intern_)
+        print("Initial  " + str(initial_pos_client_intern))
+        print("Actual  " + str(actual_pos_client_intern_))
+        print("Expected  " + str(expected_pos_client_intern))
 
         # Precondition
         initial_pos_cl = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
@@ -177,16 +185,24 @@ def execute(report_id, session_id):
                                        account=account_client)
         send_rfq_order_fwd(params_fwd)
         actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        actual_pos_client = str(int(actual_pos_client_) + int(initial_pos_cl))
-        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client_2, actual_pos_client)
+        expected_pos_client = str(int(qty) + int(initial_pos_cl))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client_)
         actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        actual_pos_quod = str(int(actual_pos_quod_) + int(initial_pos_qv))
-        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod_2, actual_pos_quod)
+        expected_pos_quod = 676 + int(initial_pos_qv)
+        if expected_pos_quod > 1000:
+            expected_pos_quod = expected_pos_quod - 1000
+        compare_position('Checking positions Quod QUOD4_1', case_id, str(expected_pos_quod), actual_pos_quod_)
         actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                  account_client_intern)
-        actual_pos_client_intern = str(int(initial_pos_client_intern) + int(actual_pos_client_intern_))
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern_2,
-                         actual_pos_client_intern)
+
+
+
+
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern,
+                         actual_pos_client_intern_)
+        print("Initial Internal     " + str(initial_pos_client_intern))
+        print("Actual Internal      " + str(actual_pos_client_intern_))
+        print("Expected Internal    " + str(expected_pos_client_intern))
 
     except Exception:
         logging.error("Error execution", exc_info=True)
