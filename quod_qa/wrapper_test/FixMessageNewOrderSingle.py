@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from quod_qa.wrapper_test.FixMessage import FixMessage
+from quod_qa.wrapper_test.Instrument import Instrument
 
 
 class FixMessageNewOrderSingle(FixMessage):
@@ -17,6 +18,7 @@ class FixMessageNewOrderSingle(FixMessage):
             "OrderQty": "1000",
             "TimeInForce": "0",
             "OrdType": "2",
+            "Instrument": Instrument.FR0010436584,
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
