@@ -2,6 +2,7 @@ import logging
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
+from quod_qa.win_gui_wrappers.equity.eq_order_book import EQOrderBook
 from quod_qa.wrapper import eq_wrappers, eq_fix_wrappers
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, call
@@ -12,7 +13,7 @@ timeouts = True
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-480"
+    case_name = "example"
     # region Declarations
     qty = "900"
     price = "40"
@@ -28,19 +29,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    #eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
-    # region DirectMOC split
-    error_message = ExtractDirectsValuesRequest.DirectsExtractedValue()
-    error_message.name = "ErrorMessage"
-    error_message.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
-    request = ExtractDirectsValuesRequest()
-    request.extractionId = "DirectErrorMessageExtractionID"
-    request.extractedValues.append(error_message)
-    response = call(Stubs.win_act_order_book.orderBookDirectLoc,
-                direct_loc_request('UnmatchedQty', '0', 'ChiX direct access', request))
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('Error_message', 'Error - Qty Percentage should be greater than zero (0)', response['ErrorMessage'])
-    verifier.verify()
-    # endregion
+    order_book = EQOrderBook(case_name,base_request)
+    order_book.cancel_order(False)
