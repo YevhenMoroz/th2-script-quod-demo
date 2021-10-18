@@ -9,9 +9,15 @@ class BaseOrderBook(BaseWindow):
     def __init__(self, case_id, base_request):
         super().__init__(case_id, base_request)
         # Need to override
-        self.order_details = None
         self.order_info = None
-        self.grpc_call = None
+        self.order_details = None
+        self.cancel_order_details = None
+        self.get_orders_details_call = None
+        self.cancel_order_call = None
+
+
+
+
 
     def set_order_details(self):
         self.order_details.set_extraction_id(self.extraction_id)
@@ -56,7 +62,7 @@ class BaseOrderBook(BaseWindow):
                 action=ExtractionAction.create_extraction_action(extraction_details=[field])
             )
         )
-        response = call(self.grpc_call, self.order_details.request())
+        response = call(self.get_orders_details_call, self.order_details.request())
         return response[field.name]
 
     def check_order_fields_list(self, expected_fields: dict):
@@ -89,5 +95,10 @@ class BaseOrderBook(BaseWindow):
                 action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields)
             )
         )
-        response = call(self.grpc_call, self.order_details.request())
+        response = call(self.get_orders_details_call, self.order_details.request())
         return response
+
+    def cancel_order(self, cancel_children: bool):
+        self.cancel_order_details.set_default_params(self.base_request)
+        self.cancel_order_details.set_cancel_children(cancel_children)
+        call(self.cancel_order_call, self.cancel_order_details.build())

@@ -1,18 +1,19 @@
 import hashlib
 import base64
+from datetime import datetime
 
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 
-
+rep_id = bca.create_event('java_api_example ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 class TestCase:
     def __init__(self, report_id):
         self.case_id = bca.create_event('java api test', report_id)
         self.act_java_api = Stubs.act_java_api
-        self.connectivity = 'quod_http'
-        self.login = 'HD3'
-        self.password = 'HD3'
+        self.connectivity = '317_java_api'
+        self.login = 'JavaApiUser'
+        self.password = 'JavaApiUser'
 
     def get_hashed_password(self):
         hashed_password = hashlib.sha256()
@@ -35,3 +36,7 @@ class TestCase:
     # Main method
     def execute(self):
         self.send_login()
+
+if __name__ == '__main__':
+    TestCase(rep_id).execute()
+    pass

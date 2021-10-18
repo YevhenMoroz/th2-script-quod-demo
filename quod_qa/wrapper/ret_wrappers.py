@@ -240,6 +240,7 @@ def amend_order(request, order_id=None, order_type=None, qty=None, price=None, c
 def cancel_order(request, order_id=None, is_child=bool):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
+    cancel_order_details.set_cancel_children(True)
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
     if is_child:

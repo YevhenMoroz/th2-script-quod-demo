@@ -43,6 +43,7 @@ def execute(report_id, session_id):
             float(price), int(qty), 1)
         fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
+        res
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
