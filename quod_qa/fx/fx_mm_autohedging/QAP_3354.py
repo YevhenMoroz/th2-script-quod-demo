@@ -51,34 +51,6 @@ def compare_position(even_name, case_id, expected_pos, actual_pos, method = Veri
     verifier.verify()
 
 
-def check_order_book_AO(even_name, case_id, base_request, act_ob, qty_exp, status_exp, client, lookup, exp_side):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(
-        ["Order ID", 'AO', "Orig", 'AutoHedger', "Lookup", lookup, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    side = ExtractionDetail("orderBook.side", "Side")
-
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id, side])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
-    verifier.compare_values('Side', exp_side, response[side.name])
-
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
-
-
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
