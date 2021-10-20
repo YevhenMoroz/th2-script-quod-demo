@@ -29,3 +29,7 @@ class FixMessage:
 
     def remove_parameter(self, parameter_name: str) -> None:
         self.__parameters.pop(parameter_name)
+
+    def print_parameters(self) -> None:
+        #TODO
+        pass
