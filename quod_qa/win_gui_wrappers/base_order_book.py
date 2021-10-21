@@ -85,7 +85,7 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Actions
-    def cancel_order(self, cancel_children: False, row_count: int = None, comment=None,
+    def cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
                      filter_list: list = None):
         if cancel_children is not None:
             self.cancel_order_details.set_cancel_children(cancel_children)
