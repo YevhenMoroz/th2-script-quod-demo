@@ -180,6 +180,14 @@ def direct_poc_order(reference_price, percentage, qty_percentage, route):
                                                                                  percentage, qty_percentage, route))
 
 
+def direct_loc_order_via_inbox(qty_percentage, route):
+    call(Stubs.win_act.clientInboxDirectLoc, direct_loc_request_correct("UnmatchedQty", qty_percentage, route))
+
+
+def direct_moc_order_via_inbox(qty_percentage, route):
+    call(Stubs.win_act.clientInboxDirectMoc, direct_moc_request_correct("UnmatchedQty", qty_percentage, route))
+
+
 def direct_poc_order_via_inbox(reference_price, percentage, qty_percentage, route):
     call(Stubs.win_act.clientInboxDirectPoc, direct_poc_request_correct("UnmatchedQty", reference_price,
                                                                         percentage, qty_percentage, route))
@@ -229,20 +237,30 @@ def amend_order(request, order_id=None, order_type=None, qty=None, price=None, c
     call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
 
 
-def cancel_order(request, order_id=None):
+def cancel_order(request, order_id=None, is_child=bool):
     cancel_order_details = CancelOrderDetails()
     cancel_order_details.set_default_params(request)
     cancel_order_details.set_cancel_children(True)
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
+    if is_child:
+        sub_lv1_1_info = OrdersDetails()
+        sub_lv1_1_info.set_default_params(request)
+        cancel_order_details.add_sub_order_info(sub_lv1_1_info)
+
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
 
 
-def force_cancel_order(request, order_id=None):
+def force_cancel_order(request, order_id=None, is_child=bool):
     cancel_order_details = ForceCancelOrderDetails()
     cancel_order_details.set_default_params(request)
     if order_id:
         cancel_order_details.set_filter(["Order ID", order_id])
+    if is_child:
+        sub_lv1_1_info = OrdersDetails()
+        sub_lv1_1_info.set_default_params(request)
+        cancel_order_details.add_sub_order_info(sub_lv1_1_info)
+
     call(Stubs.win_act_order_book.forceCancelOrder, cancel_order_details.build())
 
 

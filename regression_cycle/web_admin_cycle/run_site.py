@@ -2,10 +2,8 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
+from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.site.QAP_5364 import QAP_5364
 
 
