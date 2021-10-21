@@ -22,12 +22,12 @@ def execute(report_id):
                 'OnBehalfOfCompID': 'kames_ul_DCOI'
             },
             'Account': "REDBURN",
-            'ClOrdID': 'QA_TWAP_NAV_WW_01 ' + bca.client_orderid(9),
+            'ClOrdID': 'QA_TWAP_NAV_WW_MAXShares ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 1000000,
             'TimeInForce': 0,
-            'Price': 110,
+            'Price': 111,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -35,14 +35,14 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1005,
             'ExDestination': 'XLON',
-            'Text': 'TWAP_NAV_01',
+            'Text': 'QA_TWAP_NAV_WW_MAXShares',
             'QuodFlatParameters': {
                 'NavigatorPercentage': '100',
                 'NavigatorExecution': '1',
                 'NavigatorInitialSweepTime': '5',
                 'AllowedVenues': 'XLON',
-                'TriggerPriceRed': '109.6',
-
+                'TriggerPriceRed': '110.04',
+                'MaxWouldShares': '109.6',
             }
         }
 
