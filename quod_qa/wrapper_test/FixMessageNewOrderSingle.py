@@ -18,7 +18,7 @@ class FixMessageNewOrderSingle(FixMessage):
             "OrderQty": "1000",
             "TimeInForce": "0",
             "OrdType": "2",
-            "Instrument": Instrument.FR0010436584,
+            "Instrument": Instrument.FR0010436584.value,
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",

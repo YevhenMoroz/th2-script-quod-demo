@@ -19,7 +19,7 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'VWAP-AUC_01 ' + bca.client_orderid(9),
+            'ClOrdID': 'QA_PDAT-894_VWAP_AUC_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 10000,
@@ -38,7 +38,6 @@ def execute(report_id):
                 'ParticipateInClosingAuctions': 'Y',
                 'MaxParticipationOpen': '10',
                 'MaxParticipationClose': '10',
-                'SaveForClosePercentage': '80',
                 'AllowedVenues': 'XLON'
             }
         }
