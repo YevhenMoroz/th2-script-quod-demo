@@ -19,13 +19,22 @@ from quod_qa.eq.Algo_Redburn.Algo_POV import POV_BA_01, POV_WW_01, POV_NAV_01, P
     POV_SCAP_01
 from quod_qa.eq.Algo_Redburn.Temp import CLO_SCO_MID, CLO_SCO_MKT, CLO_SCO_PRM, QA_CLO_AtLast
 from quod_qa.eq.Care import QAP_1013
-from quod_qa.eq.Test import TraidingSession_test, SendMarketData
+from quod_qa.eq.Test import TraidingSession_test, SendMarketData, MD_test
 from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
-    TWAP_NAV_02, TWAP_NAV_01
+    TWAP_NAV_02, TWAP_NAV_01, QA_TWAP_NAV_WW_01_sell, QA_TWAP_NAV_Validation_buy, QA_TWAP_NAV_WW_MAXShares, \
+    QA_TWAP_NAV_WW_01_buy, QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, QA_TWAP_NAV_WW_02_buy, \
+    QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_buy, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_MAXPercentage
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
     VWAP_NAV_02, VWAP_WW_01
+from quod_qa.eq.Test.TH2_examples import Market_1, Limit_2, Limit_3, Limit_4, Limit_7, Limit_5, Limit_6, Display_8, \
+    Algo_1, Algo_3, Algo_4, Algo_2, Care_1, Algo_5, Algo_6
+from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from quod_qa.wrapper_test.Instrument import Instrument
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -45,23 +54,22 @@ channels = dict()
 def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('Red tests')
-    logger.info(f"Root event was created (id = {report_id.id})")
     try:
 
-        # nos = FixMessageNewOrderSingleAlgo()
-        # nos.set_default_TWAP()
-        #
-        # ex = FixMessageExecutionReportAlgo(new_order_single=nos)
-        #
-        # temp = dict(
-        #     ExecType="A",
-        #     OrdStatus="A"
-        # )
-        # ex1 = FixMessageExecutionReportAlgo(parameters=temp)
-        # ex2 = FixMessageExecutionReportAlgo(new_order_single=nos)
-        # ex2.change_from_new_to_pendingnew()
-        # print()
-        #
+        # region TWAP NAV WW
+        QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
+        QA_TWAP_NAV_WW_MAXShares.execute(report_id)
+        QA_TWAP_NAV_WW_01_sell.execute(report_id)
+        QA_TWAP_NAV_WW_02_sell.execute(report_id)
+        QA_TWAP_NAV_WW_03_sell.execute(report_id)
+        QA_TWAP_NAV_WW_01_buy.execute(report_id)
+        QA_TWAP_NAV_WW_02_buy.execute(report_id)
+        QA_TWAP_NAV_WW_03_buy.execute(report_id)
+        QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
+        QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
+        # endregion
+
+        # region OPN Additional
         QA_OPN_AuctionWouldCap.execute(report_id)
         QA_OPN_AuctionWouldCap100.execute(report_id)
         QA_OPN_AuctionWouldCapMaxWouldPerc.execute(report_id)
@@ -76,9 +84,9 @@ def test_run():
         QA_OPN_LIM_MKT.execute(report_id)
         QA_OPN_LIM_PRM.execute(report_id)
         QA_OPN_Market.execute(report_id)
+        # endregion
 
-        QA_OPN_PDAT_724.execute(report_id)
-        #
+        # region CLO Additional
         CLO_SCO_MID.execute(report_id)
         CLO_SCO_MKT.execute(report_id)
         CLO_SCO_PRM.execute(report_id)
@@ -100,26 +108,28 @@ def test_run():
         QA_CLO_WouldAtLast2.execute(report_id)
         QA_CLO_AtLast.execute(report_id)
         QA_CLO_Market.execute(report_id)
+        # endregion
 
-        QA_CLO_FPC_MKT.execute(report_id)
-        QA_SCAL_LTP.execute(report_id)
-
+        # region Expiry Client requirement
         EXP_LIM_01.execute(report_id)
         EXP_VO_01.execute(report_id)
         EXP_WW_01.execute(report_id)
         EXP_WW_02.execute(report_id)
         EXP_FPC_01.execute(report_id)
         EXP_SCO_01.execute(report_id)
+        # endregion
 
+        # region TWAP Client requirement
         TWAP_BA_01.execute(report_id)
         TWAP_WW_01.execute(report_id)
-        TWAP_NAV_01.execute(report_id)
         TWAP_NAV_01.execute(report_id)
         TWAP_NAV_02.execute(report_id)
         TWAP_AUC_01.execute(report_id)
         TWAP_MinP_01.execute(report_id)
         TWAP_MaxP_01.execute(report_id)
+        # endregion
 
+        # region VWAP Client requirement
         VWAP_BA_01.execute(report_id)
         VWAP_WW_01.execute(report_id)
         VWAP_NAV_01.execute(report_id)
@@ -127,7 +137,9 @@ def test_run():
         VWAP_AUC_01.execute(report_id)
         VWAP_MinP_01.execute(report_id)
         VWAP_MaxP_01.execute(report_id)
+        # endregion
 
+        # region Pov Client requirement
         POV_BA_01.execute(report_id)
         POV_WW_01.execute(report_id)
         POV_NAV_01.execute(report_id)
@@ -135,30 +147,37 @@ def test_run():
         POV_AUC_01.execute(report_id)
         POV_MinMax_01.execute(report_id)
         POV_SCAP_01.execute(report_id)
+        # endregion
 
+        # region OPN Client
         OPN_FPC_01.execute(report_id)
         OPN_LIM_01.execute(report_id)
         OPN_SCA_01.execute(report_id)
         OPN_VO_01.execute(report_id)
         OPN_WW_01.execute(report_id)
+        # endregion
 
+        # region CLO Client
         CLO_FPC_01.execute(report_id)
         CLO_LIM_01.execute(report_id)
         CLO_SCO_01.execute(report_id)
         CLO_VO_01.execute(report_id)
         CLO_WW_01.execute(report_id)
+        # endregion
 
+        # region benchmark with Auction
         TWAP_AUC_01.execute(report_id)
         VWAP_AUC_01.execute(report_id)
         POV_AUC_01.execute(report_id)
+        # endregion
         print()
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
         logging.error("Error execution", exc_info=True)
+    logger.info(f"Root event was created (id = {report_id.id})")
 
 
 if __name__ == '__main__':
     logging.basicConfig()
     test_run()
     Stubs.factory.close()
-
