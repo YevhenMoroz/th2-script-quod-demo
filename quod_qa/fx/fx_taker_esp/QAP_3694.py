@@ -1,20 +1,16 @@
 import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.common_tools import random_qty
 from quod_qa.win_gui_wrappers.columns_names import OrderBookColumns
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, ActionsRatesTile, \
-    PlaceESPOrder, ESPTileOrderSide
+from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
 from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
 
