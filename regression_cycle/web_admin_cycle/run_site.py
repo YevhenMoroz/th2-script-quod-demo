@@ -23,11 +23,11 @@ class RunSite:
     def execute(self):
         try:
             start_time = time.monotonic()
-            #QAP_5364(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5578(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5579(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5580(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5583(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5364(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5578(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5579(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5580(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5583(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run Site ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

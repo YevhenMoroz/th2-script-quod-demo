@@ -18,22 +18,22 @@ from quod_qa.web_admin.web_admin_test_cases.general.QAP_797 import QAP_797
 class RunGeneral:
     def __init__(self, web_driver_container: WebDriverContainer,root_report_id):
         self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
-        self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
+        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
+        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
         self.web_driver_container = web_driver_container
 
     def execute(self):
         try:
             start_time = time.monotonic()
 
-            #QAP_680(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_796(self.web_driver_container, self.second_lvl_id).run()
+            QAP_680(self.web_driver_container, self.second_lvl_id).run()
+            QAP_796(self.web_driver_container, self.second_lvl_id).run()
             QAP_797(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2450(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2509(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2544(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2624(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2631(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2450(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2509(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2544(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2624(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2631(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

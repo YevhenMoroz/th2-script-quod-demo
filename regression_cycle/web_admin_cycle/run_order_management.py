@@ -44,8 +44,8 @@ from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_960 import QAP_
 class RunOrderManagement:
     def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
         self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
-        self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
+        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
+        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
         self.web_driver_container = web_driver_container
 
     def execute(self):
@@ -55,7 +55,7 @@ class RunOrderManagement:
             # QAP_950(self.web_driver_container, self.second_lvl_id).run()
             # QAP_952(self.web_driver_container, self.second_lvl_id).run()
             # QAP_958(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_960(self.web_driver_container, self.second_lvl_id).run()
+            QAP_960(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1010(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1411(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1567(self.web_driver_container, self.second_lvl_id).run()
@@ -79,13 +79,13 @@ class RunOrderManagement:
             # QAP_3363(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4158(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4261(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4262(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4264(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4262(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4264(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4265(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4272(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4854(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4856(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5207(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5207(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Order Management ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
