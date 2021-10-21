@@ -18,7 +18,7 @@ class QAP_2256(CommonTestCase):
         self.user_id = "adm01"
         self.venue = "JSE"
         self.venue_trader_name = "AW9RSTOWN03_03426"
-        self.console_error_lvl_id = second_lvl_id
+
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -52,6 +52,6 @@ class QAP_2256(CommonTestCase):
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

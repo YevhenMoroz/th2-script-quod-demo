@@ -52,7 +52,7 @@ class LocationsPage(CommonPage):
     def set_name(self, value):
         self.set_text_by_xpath(LocationsConstants.MAIN_PAGE_NAME_FILTER_XPATH, value)
 
-    def set_institution(self, value):
+    def set_zone(self, value):
         self.set_text_by_xpath(LocationsConstants.MAIN_PAGE_ZONE_FILTER_XPATH, value)
 
     def set_enabled(self, value):

@@ -18,9 +18,8 @@ class QAP_5578(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.institution_name = "QUOD FINANCIAL"
         self.zone = "WEST-ZONE"
         self.location = "WEST-LOCATION-B"
@@ -39,7 +38,7 @@ class QAP_5578(CommonTestCase):
             self.precondition()
             try:
                 institution_page = InstitutionsPage(self.web_driver_container)
-                institution_page.set_institution_name(self.web_driver_container)
+                institution_page.set_institution_name(self.institution_name)
                 time.sleep(2)
                 institution_page.click_on_more_actions()
                 time.sleep(2)
@@ -49,12 +48,13 @@ class QAP_5578(CommonTestCase):
                 time.sleep(2)
                 zone_assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
                 zone_assignments_sub_wizard.click_on_locations(self.location)
+                time.sleep(2)
                 locations_assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
                 locations_assignments_sub_wizard.click_on_desks(self.desk)
             except Exception as e:
                 self.verify("Some link not active", True, e.__class__.__name__)
 
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

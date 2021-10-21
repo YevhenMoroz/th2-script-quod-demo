@@ -30,5 +30,5 @@ class LocationsConstants:
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONE_XPATH = '//*[@id="zone"]'
-    ASSIGNMENTS_TAB_DESKS_XPATH = '//a[text()="{}"]'
+    ASSIGNMENTS_TAB_DESKS_XPATH = '//a[text()=" {} "]'
     ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'

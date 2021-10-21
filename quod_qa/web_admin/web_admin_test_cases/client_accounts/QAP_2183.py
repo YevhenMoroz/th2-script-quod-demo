@@ -12,16 +12,17 @@ from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
-#TODO: PADM-849 Error !!!! Check!!
+
 class QAP_2183(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.id = f"QAP-2183_{str(uuid1())}"
         self.client = "CLIENT1"
+        self.client_id_source = "BIC"
+        self.ext_id_client = "122"
         self.clearing_type = "Firm"
 
     def precondition(self):
@@ -35,9 +36,15 @@ class QAP_2183(CommonTestCase):
         time.sleep(2)
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_id(self.id)
-        accounts_wizard.set_client(self.client)
-        accounts_wizard.set_clearing_account_type(self.clearing_type)
+        time.sleep(2)
+        accounts_wizard.set_client_id_source(self.client_id_source)
+        time.sleep(2)
+        accounts_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
+        accounts_wizard.set_clearing_account_type(self.clearing_type)
+        time.sleep(2)
+        accounts_wizard.set_client(self.client)
+        time.sleep(2)
 
 
     def test_context(self):
@@ -56,6 +63,6 @@ class QAP_2183(CommonTestCase):
                 self.verify("Problem in Save Changes", True, e.__class__.__name__)
 
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

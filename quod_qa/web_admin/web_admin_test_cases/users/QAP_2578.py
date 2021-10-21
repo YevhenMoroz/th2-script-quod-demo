@@ -17,7 +17,7 @@ class QAP_2578(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
         self.password_expiration = "8/8/2026"
-        self.console_error_lvl_id = second_lvl_id
+
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -63,6 +63,6 @@ class QAP_2578(CommonTestCase):
             self.verify("Is password expiry date contains value", self.password_expiration,
                         users_page.get_password_expiry_date())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

@@ -43,5 +43,5 @@ class InstitutionsConstants:
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
 
     # Assignments tab
-    ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()="{}"]'
+    ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'
     ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'

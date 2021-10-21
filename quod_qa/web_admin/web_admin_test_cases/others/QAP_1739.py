@@ -17,7 +17,6 @@ class QAP_1739(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.first_venue = "EURONEXT AMSTERDAM"
         self.second_venue = "AMERICAN STOCK EXCHANGE"
@@ -70,6 +69,6 @@ class QAP_1739(CommonTestCase):
             time.sleep(1)
             routes_main_menu.click_on_delete_at_more_actions()
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
