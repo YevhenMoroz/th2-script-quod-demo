@@ -3,6 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.common_tools import random_qty
+from quod_qa.win_gui_wrappers.base_window import decorator_try_except
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
@@ -53,6 +54,7 @@ def set_order_ticket_options(option_service, base_request, client):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
+# @decorator_try_except(test_id=Path(__file__).name[:-3])
 def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     option_service = Stubs.win_act_options
@@ -71,7 +73,6 @@ def execute(report_id, session_id):
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
-
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
     base_rfq_details = BaseTileDetails(base=case_base_request)
@@ -85,13 +86,15 @@ def execute(report_id, session_id):
                         case_client, case_near_tenor, case_venue)
         send_rfq(base_rfq_details, ar_service)
         quote_request_book = FXQuoteRequestBook(case_id, case_base_request)
-        quote_request_book.set_filter(["Qty", "10000000"])
+        quote_request_book.set_filter(["Qty", case_qty])
         quote_request_book.check_quote_book_fields_list({"Venue": case_venue,
                                                          "Status": quote_sts_new,
                                                          "QuoteStatus": quote_sts_accepted})
         # Step 5
         place_order_tob(base_rfq_details, ar_service)
+
         quote_id = FXOrderBook(case_id, case_base_request).set_filter(["Qty", "2368459"]).extract_field("QuoteID")
+
         order_book = FXOrderBook(case_id, case_base_request)
         order_book.check_order_fields_list({"ExecSts": "Filled", "Client ID": case_client})
 
