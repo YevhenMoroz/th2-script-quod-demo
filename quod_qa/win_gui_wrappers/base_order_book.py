@@ -93,7 +93,7 @@ class BaseOrderBook(BaseWindow):
             self.cancel_order_details.set_comment(comment)
         if filter_list is not None:
             self.cancel_order_details.set_filter(filter_list)
-        call(self.cancel_order_call, self.cancel_order_details.build())
+        call(self.cancel_order_call.cancelOrder, self.cancel_order_details.build())
 
     def complete_order(self, filter_list=None, row_count=None):
         self.modify_order_details.set_default_params(self.base_request)
