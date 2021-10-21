@@ -9,4 +9,4 @@ class FXOrderBook(BaseOrderBook):
         self.order_details = FXOrdersDetails()
         self.order_info = FXOrderInfo()
         self.set_order_details()
-        self.grpc_call = Stubs.win_act_order_book_fx.getOrdersDetails
+        self.get_orders_details_call = Stubs.win_act_order_book_fx.getOrdersDetails
