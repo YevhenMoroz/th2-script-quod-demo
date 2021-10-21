@@ -90,54 +90,6 @@ class ModifyFXOrderDetails:
         return self.modify_order_details
 
 
-class ModifyFXOrderDetails:
-    def __init__(self, base_request):
-        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-
-        self.modify_order_details.base.CopyFrom(base_request)
-
-    def set_order_details(self, order_details: FXOrderDetails):
-        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
-
-    def set_filter(self, filter_list: list):
-        length = len(filter_list)
-        i = 0
-        while i < length:
-            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
-            i += 2
-
-    def set_selected_row_count(self, selected_row_count: int):
-        self.modify_order_details.multipleRowSelection = True
-        self.modify_order_details.selectedRowCount = selected_row_count
-
-    def build(self):
-        return self.modify_order_details
-
-
-class ModifyFXOrderDetails:
-    def __init__(self, base_request):
-        self.modify_order_details = order_book_fx_pb2.ModifyFXOrderDetails()
-
-        self.modify_order_details.base.CopyFrom(base_request)
-
-    def set_order_details(self, order_details: FXOrderDetails):
-        self.modify_order_details.orderDetails.CopyFrom(order_details.build())
-
-    def set_filter(self, filter_list: list):
-        length = len(filter_list)
-        i = 0
-        while i < length:
-            self.modify_order_details.filter[filter_list[i]] = filter_list[i + 1]
-            i += 2
-
-    def set_selected_row_count(self, selected_row_count: int):
-        self.modify_order_details.multipleRowSelection = True
-        self.modify_order_details.selectedRowCount = selected_row_count
-
-    def build(self):
-        return self.modify_order_details
-
-
 class CancelOrderDetails:
     def __init__(self):
         self.cancel_order_details = order_book_pb2.CancelOrderDetails()
