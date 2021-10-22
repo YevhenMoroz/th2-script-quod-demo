@@ -17,116 +17,72 @@ def execute(report_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
         simulator = Stubs.simulator
-        # simulator = Stubs.test_sim
         act = Stubs.fix_act
-        alias = "fix-fh-q-314-luna"
-        # alias = "fix-fh-314-luna"
+        alias = "fix-fh-314-luna"
 
 
-        mdu_params_spo = {
-            "MDReqID": simulator.getMDRefIDForConnection314(
-                request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:EBS-CITI",
-                    connection_id=ConnectionID(session_alias=alias))).MDRefID,
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-            },
-            "NoMDEntries": [
-                {
-                    "MDEntryType": "0",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid1",
-                    "MDEntryPx": 1.18066,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer1",
-                    "MDEntryPx": 1.18146,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid2",
-                    "MDEntryPx": 1.18061,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer2",
-                    "MDEntryPx": 1.18149,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
-        }
-        print(mdu_params_spo)
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data SPOT',
-                alias,
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, alias)
-            ))
 
         mdu_params_spo2 = {
             "MDReqID": simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:DB",
+                    symbol="GBP/NOK:SPO:REG:BARX",
                     connection_id=ConnectionID(session_alias=alias))).MDRefID,
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': 'GBP/NOK',
                 'SecurityType': 'FXSPOT'
             },
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.18075,
+                    "MDEntryPx": 1.19599,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
+                    "MDQuoteType": 0,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.18141,
+                    "MDEntryPx": 1.1981,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
+                    "MDQuoteType": 0,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.18071,
-                    "MDEntrySize": 2000000,
+                    "MDEntryPx": 1.19397,
+                    "MDEntrySize": 6000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
+                    "MDQuoteType": 0,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.18145,
-                    "MDEntrySize": 2000000,
+                    "MDEntryPx": 1.19909,
+                    "MDEntrySize": 6000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
+                    "MDQuoteType": 0,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.19301,
+                    "MDEntrySize": 12000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 0,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.19999,
+                    "MDEntrySize": 12000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 0,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
@@ -141,9 +97,80 @@ def execute(report_id):
                 bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo2, alias)
             ))
 
-
-
-
+        mdu_params_spo3 = {
+            "MDReqID": simulator.getMDRefIDForConnection314(
+                request=RequestMDRefID(
+                    symbol="GBP/NOK:SPO:REG:BARX",
+                    connection_id=ConnectionID(session_alias=alias))).MDRefID,
+            'Instrument': {
+                'Symbol': 'GBP/NOK',
+                'SecurityType': 'FXSPOT'
+            },
+            "NoMDEntries": [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.19599,
+                    "MDEntrySize": 1000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.1981,
+                    "MDEntrySize": 1000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.19397,
+                    "MDEntrySize": 6000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.19909,
+                    "MDEntrySize": 6000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.19301,
+                    "MDEntrySize": 12000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.19999,
+                    "MDEntrySize": 12000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+            ]
+        }
+        print(mdu_params_spo3)
+        act.sendMessage(
+            bca.convert_to_request(
+                'Send Market Data SPOT',
+                alias,
+                case_id,
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo3, alias)
+            ))
 
 
 

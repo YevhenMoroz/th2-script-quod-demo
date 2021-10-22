@@ -3,7 +3,7 @@ th2-common==3.2.0
 th2-grpc-common==3.1.2
 th2_grpc_check1==3.1.4
 th2-grpc-act-quod==3.0.5
-th2-grpc-sim-quod==3.0.39
+th2-grpc-sim-quod==3.0.50
 th2-grpc-sim==3.1.1
 th2-grpc-sim-http==3.0.17
 th2-grpc-act-gui-quod==1.13.10-quod-dev.546
@@ -12,7 +12,7 @@ th2-grpc-act-rest-quod==0.0.7
 th2-grpc-act-java-api-quod==0.0.4
 
 grpcio
-grpcio-tools
+grpcio-tools==1.33.1
 google-api-core
 pandas~=1.2.1
 utils~=1.0.1

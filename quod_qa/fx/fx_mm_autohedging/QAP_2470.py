@@ -57,8 +57,9 @@ def send_order(base_request, service):
     order_ticket = FXOrderDetails()
     order_ticket.set_place()
     order_ticket.set_client(firm_account)
-    order_ticket.set_strategy('test')
+    order_ticket.set_strategy('Hedging_Test')
     order_ticket.set_tif('GoodTillCancel')
+    order_ticket.set_order_type('Market')
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())
 
@@ -163,7 +164,11 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     order_id = ''
     try:
-        # Step 7
+        Precondition
+        initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+
+        # Step 1
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
                                         settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
@@ -179,14 +184,16 @@ def execute(report_id, session_id):
         time.sleep(5)
         order_id = check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
                             '3000000', "Terminated", ah_client, order_id)
-
-        # Step 8
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions Client AURUM1_1', case_id, qty, actual_pos_client)
+        expected_pos_client = str(int(qty)+int(initial_pos_client))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions Quod QUOD4_1', case_id, '0', actual_pos_quod)
+        expected_pos_quod = str(0 + int(initial_pos_quod))
+        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
 
-        # Step 9
+        # Step 2-3
+        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+
         create_or_get_esp_tile(base_details, ar_service)
         modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, qty)
         place_order_esp(base_details, ar_service)
@@ -194,9 +201,11 @@ def execute(report_id, session_id):
         check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
                             '3000000', "Terminated", ah_client, order_id)
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions Client AURUM1_1', case_id, '3000000', actual_pos_client)
+        expected_pos_cl= actual_pos_client
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_cl, actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions Quod QUOD4_1', case_id, '0', actual_pos_quod)
+        expected_pos_qv= str((int(initial_pos_quod)+0))
+        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_qv, actual_pos_quod)
 
         # PostConditions
         params_spot = CaseParamsSellRfq(client, case_id, orderqty='3000000', symbol=symbol,

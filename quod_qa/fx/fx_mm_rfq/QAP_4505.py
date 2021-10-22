@@ -19,15 +19,15 @@ def execute(report_id):
         simulator = Stubs.simulator
         # simulator = Stubs.test_sim
         act = Stubs.fix_act
-        alias = "fix-fh-q-314-luna"
-        # alias = "fix-fh-314-luna"
+        # alias = "fix-fh-q-314-luna"
+        alias = "fix-fh-314-luna"
 
 
-        mdu_params_spo = {
+        mdu_params_spo3 = {
             "MDReqID": simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:EBS-CITI",
-                    connection_id=ConnectionID(session_alias=alias))).MDRefID,
+                    symbol="EUR/USD:SPO:REG:CITI",
+                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
             'Instrument': {
                 'Symbol': 'EUR/USD',
                 'SecurityType': 'FXSPOT'
@@ -35,8 +35,7 @@ def execute(report_id):
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid1",
-                    "MDEntryPx": 1.18066,
+                    "MDEntryPx": 1.18079,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
@@ -45,18 +44,37 @@ def execute(report_id):
                 },
                 {
                     "MDEntryType": "1",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer1",
-                    "MDEntryPx": 1.18146,
+                    "MDEntryPx": 1.18140,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
+            ]
+        }
+        # simulator.updateStorage(mdu_params_spo3)
+        act.sendMessage(
+            bca.convert_to_request(
+                'Send Market Data SPOT',
+                'fix-fh-314-luna',
+                case_id,
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo3, 'fix-fh-314-luna')
+            ))
+
+        mdu_params_spo3 = {
+            "MDReqID": simulator.getMDRefIDForConnection314(
+                request=RequestMDRefID(
+                    symbol="EUR/USD:SPO:REG:CITI",
+                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'SecurityType': 'FXSPOT'
+            },
+            "NoMDEntries": [
                 {
                     "MDEntryType": "0",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid2",
-                    "MDEntryPx": 1.18061,
+                    "MDEntryPx": 1.17079,
                     "MDEntrySize": 2000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
@@ -65,8 +83,7 @@ def execute(report_id):
                 },
                 {
                     "MDEntryType": "1",
-                    "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer2",
-                    "MDEntryPx": 1.18149,
+                    "MDEntryPx": 1.17140,
                     "MDEntrySize": 2000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
@@ -75,20 +92,20 @@ def execute(report_id):
                 },
             ]
         }
-        print(mdu_params_spo)
+        # simulator.updateStorage(mdu_params_spo3)
         act.sendMessage(
             bca.convert_to_request(
                 'Send Market Data SPOT',
-                alias,
+                'fix-fh-314-luna',
                 case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, alias)
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo3, 'fix-fh-314-luna')
             ))
 
-        mdu_params_spo2 = {
+        mdu_params_spo3 = {
             "MDReqID": simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:DB",
-                    connection_id=ConnectionID(session_alias=alias))).MDRefID,
+                    symbol="EUR/USD:SPO:REG:CITI",
+                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
             'Instrument': {
                 'Symbol': 'EUR/USD',
                 'SecurityType': 'FXSPOT'
@@ -96,8 +113,8 @@ def execute(report_id):
             "NoMDEntries": [
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.18075,
-                    "MDEntrySize": 1000000,
+                    "MDEntryPx": 1.16079,
+                    "MDEntrySize": 3000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
                     'SettlDate': tsd.spo(),
@@ -105,26 +122,8 @@ def execute(report_id):
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.18141,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.18071,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18145,
-                    "MDEntrySize": 2000000,
+                    "MDEntryPx": 1.16140,
+                    "MDEntrySize": 3000000,
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
                     'SettlDate': tsd.spo(),
@@ -132,18 +131,53 @@ def execute(report_id):
                 },
             ]
         }
-        print(mdu_params_spo2)
+        # simulator.updateStorage(mdu_params_spo3)
         act.sendMessage(
             bca.convert_to_request(
                 'Send Market Data SPOT',
-                alias,
+                'fix-fh-314-luna',
                 case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo2, alias)
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo3, 'fix-fh-314-luna')
             ))
 
-
-
-
+        mdu_params_spo3 = {
+            "MDReqID": simulator.getMDRefIDForConnection314(
+                request=RequestMDRefID(
+                    symbol="EUR/USD:SPO:REG:CITI",
+                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
+            'Instrument': {
+                'Symbol': 'EUR/USD',
+                'SecurityType': 'FXSPOT'
+            },
+            "NoMDEntries": [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.15079,
+                    "MDEntrySize": 3000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.15140,
+                    "MDEntrySize": 3000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+            ]
+        }
+        # simulator.updateStorage(mdu_params_spo3)
+        act.sendMessage(
+            bca.convert_to_request(
+                'Send Market Data SPOT',
+                'fix-fh-314-luna',
+                case_id,
+                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo3, 'fix-fh-314-luna')
+            ))
 
 
 
