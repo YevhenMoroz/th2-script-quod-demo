@@ -1,7 +1,7 @@
 from functools import wraps
 import collections
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from win_gui_modules.wrappers import set_base
 
 
@@ -14,15 +14,15 @@ class BaseWindow:
 
     def compare_values(self, expected_values: dict, actual_values: dict, event_name,
                     verification_method: VerificationMethod = VerificationMethod.EQUALS):
-    self.verifier.set_event_name(event_name)
-    expected_values = collections.OrderedDict(sorted(expected_values.items()))
-    actual_values = collections.OrderedDict(sorted(actual_values.items()))
-    for exp_items, act_items in zip(expected_values.items(), actual_values.items()):
-        self.verifier.compare_values("Compare: " + exp_items[0], exp_items[1], act_items[1], verification_method)
-    self.verifier.verify()
+        self.verifier.set_event_name(event_name)
+        expected_values = collections.OrderedDict(sorted(expected_values.items()))
+        actual_values = collections.OrderedDict(sorted(actual_values.items()))
+        for exp_items, act_items in zip(expected_values.items(), actual_values.items()):
+            self.verifier.compare_values("Compare: " + exp_items[0], exp_items[1], act_items[1], verification_method)
+        self.verifier.verify()
 
 
-    def decorator_try_except(test_id):
+def decorator_try_except(test_id):
     def _safe(f):
         @wraps(f)
         def safe_f(*args, **kwargs):
@@ -42,4 +42,4 @@ class BaseWindow:
 
         return safe_f
 
-    return _safe
+        return _safe
