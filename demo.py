@@ -49,10 +49,10 @@ def test_run():
         # QAP_5635_not_ready.execute(report_id)
         # wrapper_test.execute(report_id,session_id)
         # QAP_5537_not_ready.execute(report_id)
-        # for_Daria.execute(report_id,session_id)
-        SendMD.execute(report_id)
+        # for_Daria.execute(report_id,session_id)c
+        # SendMD.execute(report_id)
         # QAP_5369_not_ready.execute(report_id)
-        # QAP_5564_not_ready.execute(report_id)
+        QAP_5537_not_ready.execute(report_id)
         # rfq_spot.execute(report_id)
 
         # QAP_2326.execute(report_id, session_id)
