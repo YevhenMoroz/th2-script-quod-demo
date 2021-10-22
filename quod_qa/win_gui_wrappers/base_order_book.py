@@ -44,7 +44,7 @@ class BaseOrderBook(BaseWindow):
         response = call(self.get_orders_details_call, self.order_details.request())
         return response[field.name]
 
-    def extract_fields_list(self, list_fields: dict) -> dict:
+    def extract_fields_list(self, list_fields: dict, row_number: int) -> dict:
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and return new dict where
@@ -55,10 +55,33 @@ class BaseOrderBook(BaseWindow):
             key = list(field)[0]
             field = ExtractionDetail(key, key)
             list_of_fields.append(field)
+        info = self.order_info.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
+        info.set_number(row_number)
+        self.order_details.add_single_order_info(info)
+        response = call(self.get_orders_details_call, self.order_details.request())
+        return response
+
+    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int) -> dict:
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and return new dict where
+        key = key and value is extracted field from FE
+        """
+        list_of_fields = []
+        for field in list_fields.items():
+            key = list(field)[0]
+            field = ExtractionDetail(key, key)
+            list_of_fields.append(field)
+
+        child_info = self.order_info.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
+        child_info.set_number(row_number)
+        child_details = self.order_details.create(info=child_info)
+
         self.order_details.add_single_order_info(
             self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields)
-            )
+                action=ExtractionAction.create_extraction_action(), sub_order_details=child_details)
         )
         response = call(self.get_orders_details_call, self.order_details.request())
         return response
@@ -66,13 +89,29 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Check
-    def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book"):
+    def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book",
+                                row_number: int = 1):
         """
         Receives dict as an argument, where the key is column name what
-        we extract from GUI and value is expected result
+        we extract from GUI and value is expected result and row_number to check, 1 by default
         For example {"Sts": "Terminated", "Owner": "QA1", etc}
         """
-        actual_list = self.extract_fields_list(expected_fields)
+        actual_list = self.extract_fields_list(expected_fields, row_number)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+                                     row_number: int = 1):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result and row_number to check, 1 by default
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_second_lvl_fields_list(expected_fields, row_number)
         for items in expected_fields.items():
             key = list(items)[0]
             value = list(items)[1]
