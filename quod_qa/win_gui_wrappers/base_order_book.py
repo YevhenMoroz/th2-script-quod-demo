@@ -14,8 +14,12 @@ class BaseOrderBook(BaseWindow):
         self.cancel_order_details = None
         self.reassign_order_details = None
         self.get_orders_details_call = None
+        self.groupModifyOrder_call = None
+        self.unCompleteOrder_call = None
+        self.notifyDFDOrder_call = None
+        self.reassignOrder_call = None
+        self.completeOrder_call = None
         self.cancel_order_call = None
-        self.order_book = None
 
     # region Common func
     def set_order_details(self):
@@ -101,7 +105,7 @@ class BaseOrderBook(BaseWindow):
             self.modify_order_details.set_filter()
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
-        call(self.order_book.completeOrder, self.modify_order_details.build())
+        call(self.completeOrder_call, self.modify_order_details.build())
 
     def un_complete_order(self, filter_list=None, row_count=None):
         self.modify_order_details.set_default_params(self.base_request)
@@ -109,7 +113,7 @@ class BaseOrderBook(BaseWindow):
             self.modify_order_details.set_filter()
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
-        call(self.order_book.unCompleteOrder, self.modify_order_details.build())
+        call(self.unCompleteOrder_call, self.modify_order_details.build())
 
     def notify_dfd(self, filter_list=None, row_count=None):
         self.modify_order_details.set_default_params(self.base_request)
@@ -117,7 +121,7 @@ class BaseOrderBook(BaseWindow):
             self.modify_order_details.set_filter()
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
-        call(self.order_book.notifyDFD, self.modify_order_details.build())
+        call(self.notifyDFDOrder_call, self.modify_order_details.build())
 
     def group_modify(self, client=None, security_account=None, routes=None, free_notes=None):
         self.modify_order_details.set_default_params(self.base_request)
@@ -129,10 +133,10 @@ class BaseOrderBook(BaseWindow):
             self.modify_order_details.routes = routes
         if free_notes is not None:
             self.modify_order_details.freeNotes = free_notes
-        call(self.order_book.groupModify, self.modify_order_details.build())
+        call(self.groupModifyOrder_call, self.modify_order_details.build())
 
     def reassign_order(self, recipient):
         self.reassign_order_details.base.CopyFrom(self.base_request)
         self.reassign_order_details.desk = recipient
-        call(self.order_book.reassignOrder, self.reassign_order_details)
+        call(self.reassignOrder_call, self.reassign_order_details)
     # endregion
