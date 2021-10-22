@@ -16,10 +16,10 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'OPN_SCAL_OFF_01' + bca.client_orderid(9),
+        'ClOrdID': 'Teest_OPN_SCAL_OFF_01' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 10000000,
+        'OrderQty': 30000,
         'TimeInForce': 0,
         'Price': 117,
         'OrdType': 2,
@@ -31,13 +31,17 @@ def execute(report_id):
         'ExDestination': 'XLON',
         'Text': 'OPN_SCAL_OFF_01',
         'QuodFlatParameters': {
-            'MaxParticipation': '10',
-            'PricePoint1Reference': 'LTP',
-            'PricePoint1Offset': '0',
-            'PricePoint1Participation': '12',
-            'PricePoint2Reference': 'LTP',
-            'PricePoint2Offset': '25',
-            'PricePoint2Participation': '14',
+            'MaxParticipation': '5',
+            'PricePoint1Price': '115',
+            'PricePoint1Participation': '10',
+            'PricePoint2Price': '113',
+            'PricePoint2Participation': '15',
+            # 'PricePoint1Reference': 'LTP',
+            # 'PricePoint1Offset': '0',
+            # 'PricePoint1Participation': '12',
+            # 'PricePoint2Reference': 'LTP',
+            # 'PricePoint2Offset': '25',
+            # 'PricePoint2Participation': '14',
             'AllowedVenues': 'XLON'
         }
     }

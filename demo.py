@@ -12,8 +12,11 @@ from quod_qa.eq.Test import TraidingSession_test, SendMarketData
 from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, TWAP_NAV_02, TWAP_NAV_01
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, VWAP_NAV_02, VWAP_WW_01
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, POV_SCAP_01, POV_SCAO_01
-from quod_qa.eq.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_SCAL_OFF_01, OPN_VO_01, OPN_WW_01
-from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCAL_OFF_01, CLO_VO_01, CLO_WW_01
+from quod_qa.eq.Algo_Redburn.Algo_MOO import ZackTest, OPN_FPC_01, OPN_LIM_01, OPN_SCAL_OFF_01, OPN_VO_01, OPN_WW_01, OPN_SCAL_MKT_LTP
+from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_SCAL_OFF_01, CLO_VO_01, CLO_WW_01, CLO_SCAL_MKT_LTP
+from quod_qa.eq.Algo_Redburn.Test.Start import TWAP_FULL, VWAP_FULL, POV_FULL
+from quod_qa.eq.Algo_Redburn.Test.PDAT_516 import TWAP_AUC_516_1, TWAP_AUC_516_2, POV_AUC_516_1, POV_AUC_516_2, VWAP_AUC_516_1, VWAP_AUC_516_2
+from quod_qa.eq.Algo_Redburn.Test.PDAT_728 import TWAP_NAV_REF, VWAP_NAV_REF, POV_NAV_REF
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
@@ -34,42 +37,60 @@ def test_run():
     report_id = bca.create_event('srublyov tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        TWAP_BA_01.execute(report_id)
-        TWAP_WW_01.execute(report_id)
-        TWAP_NAV_01.execute(report_id)
-        TWAP_NAV_02.execute(report_id)
-        TWAP_AUC_01.execute(report_id)
-        TWAP_MinP_01.execute(report_id)
-        TWAP_MaxP_01.execute(report_id)
+         #TWAP_BA_01.execute(report_id)
+        # TWAP_WW_01.execute(report_id)
+        # TWAP_NAV_01.execute(report_id)
+        # TWAP_NAV_02.execute(report_id)
+        # TWAP_AUC_01.execute(report_id)
+        # TWAP_MinP_01.execute(report_id)
+        # TWAP_MaxP_01.execute(report_id)
 
-        VWAP_BA_01.execute(report_id)
-        VWAP_WW_01.execute(report_id)
-        VWAP_NAV_01.execute(report_id)
-        VWAP_NAV_02.execute(report_id)
-        VWAP_AUC_01.execute(report_id)
-        VWAP_MinP_01.execute(report_id)
-        VWAP_MaxP_01.execute(report_id)
+        # VWAP_BA_01.execute(report_id)
+        # VWAP_WW_01.execute(report_id)
+        # VWAP_NAV_01.execute(report_id)
+        # VWAP_NAV_02.execute(report_id)
+        # VWAP_AUC_01.execute(report_id)
+        # VWAP_MinP_01.execute(report_id)
+        # VWAP_MaxP_01.execute(report_id)
 
-        POV_BA_01.execute(report_id)
-        POV_WW_01.execute(report_id)
-        POV_NAV_01.execute(report_id)
-        POV_NAV_02.execute(report_id)
-        POV_AUC_01.execute(report_id)
-        POV_MinMax_01.execute(report_id)
-        POV_SCAP_01.execute(report_id)
-        POV_SCAO_01.execute(report_id)
+        # POV_BA_01.execute(report_id)
+        # POV_WW_01.execute(report_id)
+        # POV_NAV_01.execute(report_id)
+        # POV_NAV_02.execute(report_id)
+        # POV_AUC_01.execute(report_id)
+        # POV_MinMax_01.execute(report_id)
+        # POV_SCAP_01.execute(report_id)
+        # POV_SCAO_01.execute(report_id)
 
-        OPN_FPC_01.execute(report_id)
-        OPN_LIM_01.execute(report_id)
-        OPN_SCAL_OFF_01.execute(report_id)
-        OPN_VO_01.execute(report_id)
-        OPN_WW_01.execute(report_id)
+        # OPN_FPC_01.execute(report_id)
+        # OPN_LIM_01.execute(report_id)
+        # OPN_SCAL_OFF_01.execute(report_id)
+        # OPN_VO_01.execute(report_id)
+        # OPN_WW_01.execute(report_id)
+        # OPN_SCAL_MKT_LTP.execute(report_id)
+        # ZackTest.execute(report_id)
 
-        CLO_FPC_01.execute(report_id)
-        CLO_LIM_01.execute(report_id)
-        CLO_SCAL_OFF_01.execute(report_id)
-        CLO_VO_01.execute(report_id)
-        CLO_WW_01.execute(report_id)
+        # POV_FULL.execute(report_id)
+        # TWAP_FULL.execute(report_id)
+        # VWAP_FULL.execute(report_id)
+        #TWAP_NAV_REF.execute(report_id)
+        VWAP_NAV_REF.execute(report_id)
+        #POV_NAV_REF.execute(report_id)
+
+        # TWAP_AUC_516_1.execute(report_id)
+        # TWAP_AUC_516_2.execute(report_id)
+        # POV_AUC_516_1.execute(report_id)
+        # POV_AUC_516_2.execute(report_id)
+        # VWAP_AUC_516_1.execute(report_id)
+        # VWAP_AUC_516_2.execute(report_id)
+
+        # CLO_FPC_01.execute(report_id)
+        # CLO_LIM_01.execute(report_id)
+        # CLO_SCAL_OFF_01.execute(report_id)
+        # CLO_VO_01.execute(report_id)
+        # CLO_WW_01.execute(report_id)
+        # CLO_SCAL_MKT_LTP.execute(report_id)
+
 
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:
@@ -80,7 +101,7 @@ def test_run():
         #QAP_1324.execute(report_id, session_id)
         # QAP_1750.execute(report_id, session_id) 
         # QAP_2837.execute(report_id, session_id)
-        #QAP_2838.execute(report_id, session_id)
+        # QAP_2838.execute(report_id, session_id)
         # QAP_4605.execute(report_id)
         # QAP_1810.execute(report_id)
         # QAP_4395.execute(report_id)

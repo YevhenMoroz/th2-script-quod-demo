@@ -18,16 +18,13 @@ instrument = {
 def execute(report_id):
     try:
         new_order_single_params = {
-            'header': {
-                'OnBehalfOfCompID': 'kames_ul_DCOI'
-            },
             'Account': "REDBURN",
-            'ClOrdID': 'POV_SCAP_' + bca.client_orderid(9),
+            'ClOrdID': 'Test2_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 500000,
+            'OrderQty': 200000,
             'TimeInForce': 0,
-            'Price': 110.52,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -35,16 +32,14 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'POV-SCAP_01',
+            'Text': 'POV-AUC_01',
             'QuodFlatParameters': {
-                'PricePoint1Price': '110',
-                'PricePoint1Participation': '10',
-                'PricePoint2Price': '108',
-                'PricePoint2Participation': '20',
-                'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1',
-                'AllowedVenues': 'XLON',
-                'StartDate2': '20211021-15:29:00.000',
+                'ParticipateInOpeningAuctions': 'Y',
+                'ParticipateInClosingAuctions': 'Y',
+                'MaxParticipationOpen': '10',
+                'MaxParticipationClose': '15',
+                'MaxPercentageVolume': '30',
+                'AllowedVenues': 'XLON'
             }
         }
 

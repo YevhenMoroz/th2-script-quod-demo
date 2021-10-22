@@ -24,7 +24,7 @@ def execute(report_id):
             'Side': 1,
             'OrderQty': 100000,
             'TimeInForce': 0,
-            'Price': 120,
+            'Price': 112,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -34,7 +34,7 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'POV-WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '116',
+                'TriggerPriceRed': '109.72',
                 'MaxPercentageVolume': '5',
                 'AllowedVenues': 'XLON'
             }

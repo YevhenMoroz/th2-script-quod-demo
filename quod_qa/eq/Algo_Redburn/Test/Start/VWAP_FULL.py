@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
@@ -17,34 +17,36 @@ instrument = {
 
 def execute(report_id):
     try:
+        now = datetime.today() - timedelta(hours=3)
         new_order_single_params = {
-            'header': {
-                'OnBehalfOfCompID': 'kames_ul_DCOI'
-            },
             'Account': "REDBURN",
-            'ClOrdID': 'POV_SCAP_' + bca.client_orderid(9),
+            'ClOrdID': 'TestVWAP_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 500000,
+            'OrderQty': 10000,
             'TimeInForce': 0,
-            'Price': 110.52,
+            'Price': 100,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
             'Currency': "GBX",
-            'TargetStrategy': 2,
+            'TargetStrategy': 1,
             'ExDestination': 'XLON',
-            'Text': 'POV-SCAP_01',
+            'Text': 'VWAP-AUC_01',
             'QuodFlatParameters': {
-                'PricePoint1Price': '110',
-                'PricePoint1Participation': '10',
-                'PricePoint2Price': '108',
-                'PricePoint2Participation': '20',
-                'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1',
-                'AllowedVenues': 'XLON',
-                'StartDate2': '20211021-15:29:00.000',
+                'ParticipateInOpeningAuctions': 'Y',
+                'ParticipateInClosingAuctions': 'Y',
+                'MaxParticipationOpen': '10',
+                'MaxParticipationClose': '10',
+                'SaveForClosePercentage': '80',
+                'SaveForCloseShares': '800',
+                'AuctionInitalSliceMultiplier': '200',
+                'WouldInAuction': '1',
+                'AuctionWouldCap': '150',
+                'StartDate2': '20210921-09:30:00.000',
+                'AtLast': '0',
+                'AllowedVenues': 'XLON'
             }
         }
 
