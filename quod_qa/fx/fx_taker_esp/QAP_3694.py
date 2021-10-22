@@ -3,7 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from quod_qa.fx.fx_wrapper.common_tools import random_qty
-from quod_qa.win_gui_wrappers.columns_names import OrderBookColumns
+from quod_qa.win_gui_wrappers.data_set import OrderBookColumns
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide
