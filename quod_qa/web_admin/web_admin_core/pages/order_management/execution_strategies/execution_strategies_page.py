@@ -97,3 +97,6 @@ class ExecutionStrategiesPage(CommonPage):
         self.select_value_from_dropdown_list(ExecutionStrategiesConstants.ENABLED_FILTER_AT_MAIN_MENU_XPATH, value)
 
         # self.find_by_xpath(ExecutionStrategiesConstants.ENABLED_FILTER_AT_MAIN_MENU_XPATH).select_by_value(value)
+
+    def click_on_enabled_filter(self):
+        self.find_by_xpath(ExecutionStrategiesConstants.ENABLED_FILTER_AT_MAIN_MENU_XPATH).click()

@@ -1,19 +1,13 @@
 import logging
-import os
 from datetime import datetime
 
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
-from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
+from win_gui_modules.order_book_wrappers import OrdersDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
+from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+from win_gui_modules.utils import get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
@@ -26,7 +20,6 @@ def execute(report_id, session_id):
     seconds, nanos = timestamps()  # Store case start tim
     # region Declarations
     act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
     qty = "50"
     price = "2"
     client = "SBK"
@@ -71,7 +64,6 @@ def execute(report_id, session_id):
     main_order_details = OrdersDetails()
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(extraction_id)
-    main_order_details.set_filter(["Lookup", lookup])
 
     call(order_book_service.getOrdersDetails, main_order_details.request())
 

@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 
 import quod_qa.wrapper.eq_fix_wrappers
@@ -60,7 +61,6 @@ def execute(report_id, session_id):
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region Send OrderCancelReplaceRequest
-    fix_message = FixMessage(fix_message)
     params = {'Price': newPrice, 'OrderQty': newQty}
     quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params)
     # endregion

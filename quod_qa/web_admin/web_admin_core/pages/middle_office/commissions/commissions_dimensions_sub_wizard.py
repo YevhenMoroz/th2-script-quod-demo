@@ -1,3 +1,5 @@
+from selenium.webdriver.common.keys import Keys
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -69,3 +71,10 @@ class CommissionsDimensionsSubWizard(CommonPage):
 
     def click_on_manage_commission_profile(self):
         self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH).click()
+
+    def clear_client_list_field(self):
+        self.set_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH," ")
+
+    def is_client_list_contains_text(self):
+         return self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH).get_attribute("value") == ""
+

@@ -39,7 +39,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # # endregion
     # region Create order via FIX
-    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, no_allocs)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)#,no_allocs
     response = fix_message.pop('response')
     eq_wrappers.accept_order('VETO', qty, price)
     # endregion

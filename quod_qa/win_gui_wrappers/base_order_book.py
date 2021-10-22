@@ -1,7 +1,5 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, \
-    OrdersDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import call
 
 
@@ -11,9 +9,13 @@ class BaseOrderBook(BaseWindow):
         # Need to override
         self.order_info = None
         self.order_details = None
+        self.new_order_details = None
+        self.modify_order_details = None
         self.cancel_order_details = None
+        self.reassign_order_details = None
         self.get_orders_details_call = None
         self.cancel_order_call = None
+        self.order_book = None
 
     # region Common func
     def set_order_details(self):
@@ -81,8 +83,56 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Actions
-    def cancel_order(self, cancel_children: bool):
-        self.cancel_order_details.set_default_params(self.base_request)
-        self.cancel_order_details.set_cancel_children(cancel_children)
+    def cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
+                     filter_list: list = None):
+        if cancel_children is not None:
+            self.cancel_order_details.set_cancel_children(cancel_children)
+        if row_count is not None:
+            self.cancel_order_details.set_selected_row_count(row_count)
+        if comment is not None:
+            self.cancel_order_details.set_comment(comment)
+        if filter_list is not None:
+            self.cancel_order_details.set_filter(filter_list)
         call(self.cancel_order_call, self.cancel_order_details.build())
+
+    def complete_order(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.order_book.completeOrder, self.modify_order_details.build())
+
+    def un_complete_order(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.order_book.unCompleteOrder, self.modify_order_details.build())
+
+    def notify_dfd(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.order_book.notifyDFD, self.modify_order_details.build())
+
+    def group_modify(self, client=None, security_account=None, routes=None, free_notes=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if client is not None:
+            self.modify_order_details.client = client
+        if security_account is not None:
+            self.modify_order_details.securityAccount = security_account
+        if routes is not None:
+            self.modify_order_details.routes = routes
+        if free_notes is not None:
+            self.modify_order_details.freeNotes = free_notes
+        call(self.order_book.groupModify, self.modify_order_details.build())
+
+    def reassign_order(self, recipient):
+        self.reassign_order_details.base.CopyFrom(self.base_request)
+        self.reassign_order_details.desk = recipient
+        call(self.order_book.reassignOrder, self.reassign_order_details)
     # endregion

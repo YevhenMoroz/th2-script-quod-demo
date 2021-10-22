@@ -18,6 +18,7 @@ class LocationsConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
 
 
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -25,7 +26,9 @@ class LocationsConstants:
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//select'
 
     # Values tab
-    VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="zoneName"]'
+    VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="locationName"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONE_XPATH = '//*[@id="zone"]'
+    ASSIGNMENTS_TAB_DESKS_XPATH = '//a[text()="{}"]'
+    ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'

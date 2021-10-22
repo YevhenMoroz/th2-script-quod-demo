@@ -18,6 +18,12 @@ class ListingsPage(CommonPage):
     def click_on_clone(self):
         self.find_by_xpath(ListingsConstants.CLONE_XPATH).click()
 
+    def click_on_enable_disable_button(self):
+        self.find_by_xpath(ListingsConstants.ENABLE_DISABLE_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(ListingsConstants.OK_BUTTON_XPATH).click()
+
+
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
         self.find_by_xpath(ListingsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
@@ -85,3 +91,11 @@ class ListingsPage(CommonPage):
 
     def get_tenor(self):
         return self.find_by_xpath(ListingsConstants.MAIN_PAGE_TENOR_XPATH).text
+
+
+    def set_listing_in_global_filter(self,value):
+        self.set_text_by_xpath(ListingsConstants.MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH,value)
+
+    def click_on_load(self):
+        self.find_by_xpath(ListingsConstants.MAIN_PAGE_LOAD_BUTTON_XPATH).click()
+        time.sleep(2)

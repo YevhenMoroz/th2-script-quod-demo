@@ -1,38 +1,28 @@
 import logging
-import os
-from copy import deepcopy
 from datetime import datetime
-from th2_grpc_act_gui_quod import order_ticket_service
 
 import quod_qa.wrapper.eq_fix_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
-from custom.basic_custom_actions import create_event, timestamps
-import time
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
-from rule_management import RuleManager
+from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.order_book_wrappers import OrdersDetails
+from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 def execute(report_id, session_id):
     case_name = "QAP-1071"
-
-    seconds, nanos = timestamps()  # Store case start time
-
     # region Declarations
     act = Stubs.win_act_order_book
     common_act = Stubs.win_act
     qty = "900"
     price = "10"
-    newPrice = "1"
+    new_price = "1"
     datetime.utcnow().isoformat()
     lookup = "VETO"
     client = "CLIENT_FIX_CARE"
@@ -48,14 +38,16 @@ def execute(report_id, session_id):
     # endregion
     # region Create CO
     fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    param_list = {'Price': newPrice}
-    #Amend fix order
-    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(fix_message, case_id, param_list)
+    fix_message.pop('response')
+    eq_wrappers.accept_order(lookup, qty, price)
+    param_list = {'Price': new_price}
+    # Amend fix order
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
     # endregion
     # region Reject amend
     eq_wrappers.reject_order(lookup, qty, price)
     # endregion
-    #region CheckOrder
+    # region CheckOrder
     before_order_details_id = "before_order_details"
     order_details = OrdersDetails()
     order_details.set_default_params(base_request)
@@ -70,8 +62,8 @@ def execute(report_id, session_id):
                                                                                             order_price
                                                                                             ])
     order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    request = call(act.getOrdersDetails, order_details.request())
+    call(act.getOrdersDetails, order_details.request())
     call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
                                                  [verify_ent("Order Price", order_price.name, price)
                                                   ]))
-    #endregion
+    # endregion

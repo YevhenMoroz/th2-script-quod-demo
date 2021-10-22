@@ -246,6 +246,9 @@ class MiscDetails:
     def set_bo_field_5(self, value: str):
         self.request.boField5 = value
 
+    def set_bo_notes_value(self, value: str):
+        self.request.backOfficeNotesValue = value
+
 
 class CheckContextAction:
     def __init__(self, request: common_pb2.CheckContextActionDetails()):
@@ -404,4 +407,71 @@ class AllocationsTableCheckDetails:
 
     def build(self):
         self._request.tableCheckDetails.CopyFrom(self.table_check_details.build())
+        return self._request
+
+
+class ExtractionPanelDetails:
+    def __init__(self, base: EmptyRequest = None, filter: dict = None, panels: list = None):
+        if base is not None:
+            self._request = middle_office_pb2.ExtractionPanelDetails(base=base)
+        else:
+            self._request = middle_office_pb2.ExtractionPanelDetails()
+
+        if filter is not None:
+            self._request.filter.update(filter)
+
+        if panels is not None:
+            for panel in panels:
+                self._request.panels.append(panel)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+
+    def set_panels(self, panels: list):
+        for panel in panels:
+            self._request.panels.append(panel)
+
+
+    def build(self):
+        return self._request
+
+
+class AllocationBlockExtractionDetails:
+    def __init__(self, base: EmptyRequest = None, filter_middle_office_grid: dict = None,
+                 filter_allocations_grid: dict = None,
+                 panels: list = None):
+        if base is not None:
+            self._request = middle_office_pb2.AllocationBlockExtractionDetails(base=base)
+        else:
+            self._request = middle_office_pb2.AllocationBlockExtractionDetails()
+
+        if filter_middle_office_grid is not None:
+            self._request.filterMiddleOfficeGrid.update(filter_middle_office_grid)
+
+        if filter_allocations_grid is not None:
+            self._request.filterAllocationsGrid.update(filter_allocations_grid)
+
+        if panels is not None:
+            for panel in panels:
+                self._request.panels.append(panel)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter_middle_office_grid(self, filter_middle_office: dict):
+        self._request.filterMiddleOfficeGrid.update(filter_middle_office)
+
+    def set_filter_allocations_grid(self, filter_allocations_grid: dict):
+        self._request.filterAllocationsGrid.update(filter_allocations_grid)
+
+    def set_panels(self, panels: list):
+        for panel in panels:
+            self._request.panels.append(panel)
+
+    def build(self):
         return self._request
