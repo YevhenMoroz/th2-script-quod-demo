@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
     QAP_5551, QAP_3354, QAP_3067, QAP_2326
 
-from quod_qa.fx.fx_taker_esp import QAP_5537_not_ready, QAP_5635_not_ready, QAP_5600_not_ready, QAP_5589_not_ready, \
+from quod_qa.fx.fx_taker_esp import QAP_5537, QAP_5635_not_ready, QAP_5600_not_ready, QAP_5589_not_ready, \
     QAP_5369_not_ready, QAP_5564_not_ready
 from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot
 from quod_qa.fx.ui_wrappers import wrapper_test
@@ -39,10 +39,10 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
         #
@@ -52,7 +52,7 @@ def test_run():
         # for_Daria.execute(report_id,session_id)c
         # SendMD.execute(report_id)
         # QAP_5369_not_ready.execute(report_id)
-        QAP_5537_not_ready.execute(report_id)
+        QAP_5537.execute(report_id, session_id)
         # rfq_spot.execute(report_id)
 
         # QAP_2326.execute(report_id, session_id)

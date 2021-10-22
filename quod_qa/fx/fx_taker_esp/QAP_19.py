@@ -133,6 +133,7 @@ def check_order_after_amend(base_request, act_ob, case_id, order_id, qty, sts):
     child_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[child_ord_id,
                                                                                                        child_sts,
                                                                                                        child_qty]))
+
     child_details = OrdersDetails.create(info=child_info)
 
     ob_ord_id = ExtractionDetail("OrderBook.ordId", "Order ID")
