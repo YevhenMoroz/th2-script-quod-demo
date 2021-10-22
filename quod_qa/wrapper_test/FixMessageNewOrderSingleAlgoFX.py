@@ -11,7 +11,7 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_default_SOR(self) -> dict:
+    def set_default_SOR(self) -> FixMessageNewOrderSingle:
         instrument = dict(
             Symbol='EUR/USD',                                    #55
             SecurityType='FXSPOT',                               #167
@@ -21,7 +21,7 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
             "Account": "TH2_Taker",                              #1
             "HandlInst": "2",                                    #21
             "Side": "1",                                         #54
-            "OrderQty": "2000000",                               #38
+            "OrderQty": "1000000",                               #38
             "TimeInForce": "0",                                  #59
             "OrdType": "2",                                      #40
             "TransactTime": datetime.utcnow().isoformat(),       #60
@@ -38,8 +38,6 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
                     'StrategyParameterValue': 'EBS-CITI/DB'      #960
                 }
             ]
-
-
         }
         super().change_parameters(base_parameters)
-        return self.get_parameters()
+        return self

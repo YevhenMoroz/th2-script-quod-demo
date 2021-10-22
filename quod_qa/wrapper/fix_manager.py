@@ -19,6 +19,7 @@ class FixManager:
         if case == None:
             case = self.case_id
 
+        print(fix_message.get_parameters())
         response = self.act.placeOrderFIX(
             request=bca.convert_to_request(
                 message_name,

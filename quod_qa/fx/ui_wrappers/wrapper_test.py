@@ -1,7 +1,6 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from quod_qa.win_gui_wrappers.columns_names import OrderBookColumns
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
