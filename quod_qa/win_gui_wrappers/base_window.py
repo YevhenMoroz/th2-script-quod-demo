@@ -1,5 +1,5 @@
 from functools import wraps
-
+import collections
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from win_gui_modules.wrappers import set_base
@@ -12,9 +12,13 @@ class BaseWindow:
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
 
-    def compare_values(self, expected_value, actual_value, event_name):
+        def compare_values(self, expected_values: dict, actual_values: dict, event_name,
+                       verification_method: VerificationMethod = VerificationMethod.EQUALS):
         self.verifier.set_event_name(event_name)
-        self.verifier.compare_values("Compare values", expected_value, actual_value)
+        expected_values = collections.OrderedDict(sorted(expected_values.items()))
+        actual_values = collections.OrderedDict(sorted(actual_values.items()))
+        for exp_items, act_items in zip(expected_values.items(), actual_values.items()):
+            self.verifier.compare_values("Compare: " + exp_items[0], exp_items[1], act_items[1], verification_method)
         self.verifier.verify()
 
 
