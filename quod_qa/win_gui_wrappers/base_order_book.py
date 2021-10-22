@@ -57,7 +57,7 @@ class BaseOrderBook(BaseWindow):
             list_of_fields.append(field)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
-        info.set_row_number(row_number)
+        info.set_number(row_number)
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         return response
