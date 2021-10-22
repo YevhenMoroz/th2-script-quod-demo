@@ -22,7 +22,7 @@ class BaseWindow:
     self.verifier.verify()
 
 
-def decorator_try_except(test_id):
+    def decorator_try_except(test_id):
     def _safe(f):
         @wraps(f)
         def safe_f(*args, **kwargs):
