@@ -26,7 +26,7 @@ from quod_qa.eq.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_VO_01, 
     QA_CLO_WouldPercentage, QA_CLO_WouldRef, QA_CLO_WouldRef_Unavaliable, QA_CLO_Perc_for_Close90, \
     QA_CLO_Perc_for_Close100, QA_CLO_AuctionWouldCap, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCap0, \
     QA_CLO_AuctionWouldCapMaxWouldPerc, QA_CLO_AuctionWouldCapMaxWouldShares, QA_CLO_WouldAtLast, QA_CLO_WouldAtLast2, \
-    QA_CLO_Market, CLO_SCO_01
+    QA_CLO_Market, CLO_SCO_01, QA_CLO_AtLast, CLO_SCO_PRM, CLO_SCO_MKT, CLO_SCO_MID
 from quod_qa.eq.Algo_Redburn.Test.Start import TWAP_FULL, VWAP_FULL, POV_FULL
 from quod_qa.eq.Algo_Redburn.Test.PDAT_516 import TWAP_AUC_516_1, TWAP_AUC_516_2, POV_AUC_516_1, POV_AUC_516_2, VWAP_AUC_516_1, VWAP_AUC_516_2
 from quod_qa.eq.Algo_Redburn.Test.PDAT_728 import TWAP_NAV_REF, VWAP_NAV_REF, POV_NAV_REF
@@ -82,9 +82,9 @@ def test_run():
         # endregion
 
         # region CLO Additional
-        #CLO_SCO_MID.execute(report_id)
-       # CLO_SCO_MKT.execute(report_id)
-        #CLO_SCO_PRM.execute(report_id)
+        CLO_SCO_MID.execute(report_id)
+        CLO_SCO_MKT.execute(report_id)
+        CLO_SCO_PRM.execute(report_id)
         QA_CLO_InitialSlice_01.execute(report_id)
         QA_CLO_InitialSlice_02.execute(report_id)
         QA_CLO_InitialSlice_03.execute(report_id)
@@ -101,7 +101,7 @@ def test_run():
         QA_CLO_AuctionWouldCapMaxWouldShares.execute(report_id)
         QA_CLO_WouldAtLast.execute(report_id)
         QA_CLO_WouldAtLast2.execute(report_id)
-        #QA_CLO_AtLast.execute(report_id)
+        QA_CLO_AtLast.execute(report_id)
         QA_CLO_Market.execute(report_id)
         # endregion
 
