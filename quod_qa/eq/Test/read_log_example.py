@@ -20,8 +20,9 @@ def execute(report_id):
         verifier = Stubs.verifier
         checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(report_id))
         checkpoint_id1 = checkpoint_response1.checkpoint
-        time.sleep(120)
+        # time.sleep(120)
 
+        # 5XRAA7DXZg14IOkuNrAfsg = VETO.[PARIS]
 
         readlog_nos_params = {
             "AuthenticationBlock": {
@@ -47,14 +48,23 @@ def execute(report_id):
                 "TimeInForce": "Day",
                 "Currency": "EUR",
                 "PositionEffect": "Open",
-                "InstrID": "Tw0YIXMh7qxfYws80U9DCA",
+                "SettlCurrency": "EUR",
+                "OrdCapacity": "Agency",
+                "TransactTime": "*",
+                "MaxPriceLevels": "1",
+                "ExecutionOnly": "No",
+                "ClientInstructionsOnly": "No",
+                "BookingType": "RegularBooking",
+                "OrdQty": '{:.9f}'.format(int("800")),
+                "AccountGroupID": "CLIENT1",
+                "InstrID": "5XRAA7DXZg14IOkuNrAfsg",
                 "ExecutionPolicy": "DMA",
                 "ExternalCare": "No"
             }
         }
         verifier.submitCheckRule(
             bca.create_check_rule(
-                "Readlog NewOrderSingle Received",
+                "Readlog check OrderSubmit",
                 bca.filter_to_grpc("OrderSubmit", readlog_nos_params),
                 checkpoint_id1,
                 'log305-ors',

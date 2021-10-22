@@ -2,13 +2,15 @@
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
 # from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
-from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2, ar_operations_pb2
+from enum import Enum
+
+from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
-from .algo_strategies import TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy
-from .common_wrappers import CommissionsDetails, BaseTileDetails
-from enum import Enum
+from .algo_strategies import (TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy, FXMultilistingStrategy,
+                              FXTWAPStrategy)
+from .common_wrappers import CommissionsDetails
 
 from .utils import call
 
@@ -97,14 +99,11 @@ class OrderTicketDetails:
             order_ticket_pb2.QuodParticipationStrategyParams())
         return QuodParticipationStrategy(self.order.algoOrderParams.quodParticipationStrategyParams)
 
-    def set_care_order(self, desk: str, partial_desk: bool = False,
-                       disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
-        self.order.careOrderParams.desk = desk
-        self.order.careOrderParams.partialDesk = partial_desk
-        self.order.careOrderParams.discloseFlag = disclose_flag
-
     def set_washbook(self, washbook: str):
         self.order.advOrdParams.washbook = washbook
+
+    def set_capacity(self, capacity: str):
+        self.order.advOrdParams.capacity = capacity
 
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
@@ -175,11 +174,38 @@ class FXOrderDetails:
     def set_child_strategy(self, childStrategy: str):
         self.order.childStrategy = childStrategy
 
+    def click_pips(self, click_pips: int):
+        self.order.clickPips = click_pips
+
+    def click_qty(self, click_qty: int):
+        self.order.clickQty = click_qty
+
+    def click_slippage(self, click_slippage: int):
+        self.order.clickSlippage = click_slippage
+
+    def click_stop_price(self, click_stop_price: int):
+        self.order.clickStopPrice = click_stop_price
+
+    def click_display_qty(self, click_display_qty: int):
+        self.order.clickDisplayQty = click_display_qty
+
     def set_care_order(self, desk: str, partial_desk: bool = False,
                        disclose_flag: DiscloseFlagEnum = DiscloseFlagEnum.DEFAULT_VALUE):
         self.order.careOrderParams.desk = desk
         self.order.careOrderParams.partialDesk = partial_desk
         self.order.careOrderParams.discloseFlag = disclose_flag
+
+    def add_multilisting_strategy(self, strategy_type: str) -> FXMultilistingStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_fx_pb2.FXAlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.multilistingStrategy.CopyFrom(order_ticket_fx_pb2.FXMultilistingStrategy())
+        return FXMultilistingStrategy(self.order.algoOrderParams.multilistingStrategy)
+
+    def add_twap_strategy(self, strategy_type: str) -> FXTWAPStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_fx_pb2.FXAlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.twapStrategy.CopyFrom(order_ticket_fx_pb2.FXTWAPStrategyParams())
+        return FXTWAPStrategy(self.order.algoOrderParams.twapStrategy)
 
     def build(self):
         return self.order
@@ -201,6 +227,7 @@ class OrderTicketValues(Enum):
     CHILD_STRATEGY = types.CHILD_STRATEGY
     IS_ALGO_CHECKED = types.IS_ALGO_CHECKED
     ERROR_MESSAGE_TEXT = types.ERROR_MESSAGE_TEXT
+    BUY_SELL_BUTTON_TEXT = types.BUY_SELL_BUTTON_TEXT
 
 
 class ExtractFxOrderTicketValuesRequest:
@@ -251,6 +278,9 @@ class ExtractFxOrderTicketValuesRequest:
 
     def get_error_message_text(self, is_algo_checked: str = 'fx_order_ticket.error_message_text'):
         self.get_extract_value(is_algo_checked, OrderTicketValues.ERROR_MESSAGE_TEXT)
+
+    def get_send_btn_text(self, is_algo_checked: str = 'fx_order_ticket.send_btn_text'):
+        self.get_extract_value(is_algo_checked, OrderTicketValues.BUY_SELL_BUTTON_TEXT)
 
     def get_extract_value(self, name: str, field: OrderTicketValues):
         extracted_value = order_ticket_fx_pb2.ExtractFxOrderTicketValuesRequest.ExtractedValue()

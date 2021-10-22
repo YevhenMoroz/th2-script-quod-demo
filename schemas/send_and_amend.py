@@ -31,7 +31,7 @@ def execute(case_name, report_id, case_params):
         'Currency': 'EUR',
         'TargetStrategy': '1004'
     }
-    specific_order_params = {   # There are reusable and specific for submition parameters
+    specific_order_params = {   # There are reusable and specific for submission parameters
         **reusable_order_params,
         'ClOrdID': bca.client_orderid(9),
         'TransactTime': (datetime.utcnow().isoformat()),

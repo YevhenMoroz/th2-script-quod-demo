@@ -18,13 +18,16 @@ instrument = {
 def execute(report_id):
     try:
         new_order_single_params = {
+            'header': {
+                'OnBehalfOfCompID': 'kames_ul_DCOI'
+            },
             'Account': "REDBURN",
-            'ClOrdID': 'POV-NAV_01' + bca.client_orderid(9),
+            'ClOrdID': 'POV_NAV_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 100000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 120,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -32,15 +35,16 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'POV-NAV_01',
+            'Text': 'POV_NAV_01',
             'QuodFlatParameters': {
                 'NavigatorPercentage': '100',
                 'NavigatorExecution': '1',
                 'NavigatorInitialSweepTime': '5',
                 'NavGuard': '0',
-                'MaxPercentageVolume': '5',
+                'MaxPercentageVolume': '10',
                 'AllowedVenues': 'XLON'
             }
+
         }
 
         Stubs.fix_act.sendMessage(request=convert_to_request(

@@ -19,12 +19,12 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'VWAP-WW_01' + bca.client_orderid(9),
+            'ClOrdID': 'VWAP_WW_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 10000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,

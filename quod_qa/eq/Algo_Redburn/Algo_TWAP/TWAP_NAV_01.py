@@ -18,13 +18,16 @@ instrument = {
 def execute(report_id):
     try:
         new_order_single_params = {
+            'header': {
+                'OnBehalfOfCompID': 'kames_ul_DCOI'
+            },
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP-NAV_01' + bca.client_orderid(9),
+            'ClOrdID': 'TWAP_NAV_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 100,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -32,7 +35,7 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1005,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-NAV_01',
+            'Text': 'TWAP_NAV_01',
             'QuodFlatParameters': {
                 'NavigatorPercentage': '100',
                 'NavigatorExecution': '1',

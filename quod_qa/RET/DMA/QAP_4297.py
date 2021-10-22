@@ -4,7 +4,9 @@ import logging
 
 from datetime import datetime
 
-from custom.basic_custom_actions import create_event, timestamps
+from custom import basic_custom_actions as bca
+
+from custom.basic_custom_actions import timestamps
 
 from stubs import Stubs
 
@@ -12,7 +14,8 @@ from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketE
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-from quod_qa.wrapper.eq_wrappers import verify_order_value
+
+from quod_qa.wrapper.ret_wrappers import verify_order_value, decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,7 +30,8 @@ def extract_error_message_order_ticket(base_request, order_ticket_service):
     return result
 
 
-def execute(report_id, session_id):
+@decorator_try_except(test_id=os.path.basename(__file__))
+def execute(session_id, report_id):
     case_name = os.path.basename(__file__)
 
     seconds, nanos = timestamps()  # Store case start time
@@ -41,11 +45,11 @@ def execute(report_id, session_id):
     stop_price = ["20", "abc"]
     qty = "400"
     client = "HAKKIM"
-    symbol = "T55FD"
+    symbol = "RELIANCE"
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # endregion

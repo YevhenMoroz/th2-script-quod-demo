@@ -1,6 +1,10 @@
 import logging
+import os
 
+from custom import basic_custom_actions as bca
 from datetime import datetime
+
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.order_book_wrappers import CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -22,6 +26,7 @@ def cancel_negative_ex(base_request, order_book_service):
     # endregion
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4302"
 
@@ -38,7 +43,7 @@ def execute(session_id, report_id):
     # end region
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 

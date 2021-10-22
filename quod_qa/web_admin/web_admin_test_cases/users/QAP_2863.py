@@ -18,6 +18,7 @@ class QAP_2863(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
 
+
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
@@ -25,6 +26,7 @@ class QAP_2863(CommonTestCase):
         time.sleep(2)
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
+        time.sleep(2)
         users_page.click_on_enable_disable_button()
         time.sleep(2)
 
@@ -34,11 +36,18 @@ class QAP_2863(CommonTestCase):
             self.precondition()
             try:
                 users_page.click_on_more_actions()
+                time.sleep(2)
                 users_page.click_on_edit_at_more_actions()
-                print("You must disabled first entity at users")
+                self.verify("Error, disabled entity can change ", True, False)
             except TimeoutException as e:
                 error_name = e.__class__.__name__
                 self.verify("user can not edit Disabled Entities", "TimeoutException", error_name)
+
+            finally:
+                time.sleep(2)
+                users_page.click_on_enable_disable_button()
+
+
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,

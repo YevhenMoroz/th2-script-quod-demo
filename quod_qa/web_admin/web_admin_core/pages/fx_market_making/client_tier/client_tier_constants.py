@@ -61,7 +61,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_MORE_ACTIONS_XPATH = "//*[@class='ctis-grid']//*[@data-name='more-vertical']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_EDIT_XPATH = "//*[@data-name='edit']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CLONE_XPATH = "//*[@data-name='copy']"
-    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_PDF_XPATH = "//*[@data-name='download']"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_PDF_XPATH = "//*[@nbtooltip='Download PDF']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_CSV_XPATH = "//*[@class='ctis-grid']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH = "//*[@class='ctis-grid']//*[text()='New']"
@@ -71,6 +71,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[3]//input"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[1]//select"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_DISABLED_BUTTON_XPATH = "//*[@class='ag-pinned-left-cols-container']//span"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_XPATH = "//*[@class='ctis-grid']//*[@col-id='pricingMethod']//span//span[4]"
 
     # region wizard
     # values tab
@@ -159,7 +160,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="nb-trash"]'
 
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH = '//*[@placeholder ="Tenor *"]'
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH = '//*[@class ="tenor-table-body"]//*[@class="form-control ng-pristine ng-valid ng-touched"]'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH = '//*[@class ="tenor-table-body"]//input'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MIN_SPREAD_XPATH = '//*[@formcontrolname ="minSpread"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAX_SPREAD_XPATH = '//*[@formcontrolname ="maxSpread"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MARGIN_FORMAT_XPATH = '//*[@id ="marginPriceType"]'
@@ -171,8 +172,8 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MINIMUM_PRICE_XPATH = '//*[@formcontrolname ="validateMinPrice"]/input'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAXIMUM_PRICE_CHECKBOX_XPATH = '//*[@formcontrolname ="validateMaxPrice"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MAXIMUM_PRICE_XPATH = '//*[@formcontrolname ="validateMaxPrice"]/input'
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_AUTOMATED_MARGIN_STRATEGIES_ENABLED_CHECKBOX_XPATH = '//*[text()="Automated Margin Strategies Enabled"]//parent::span'
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_POSITION_BASED_MARGINS_CHECKBOX_XPATH = '//*[text()="Position Based Margins"]//parent::span'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_AUTOMATED_MARGIN_STRATEGIES_ENABLED_CHECKBOX_XPATH = '//*[text()="Automated Margin Strategies Enabled"]//preceding-sibling::span'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_POSITION_BASED_MARGINS_CHECKBOX_XPATH = '//*[text()="Position Based Margins"]//preceding-sibling::span'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_POSITION_BOOK_XPATH = '//*[@id ="monitoredPosAccountGroup"]'
 
     # base margins sub tab

@@ -11,7 +11,7 @@ from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
                                                           ExtractionDetailsRequest, RFQExtractionDetailsRequest)
 from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
@@ -37,11 +37,11 @@ def execute(report_id, case_params, session_id):
             'Symbol': 'EUR/USD',
             'SecurityType': 'FXSPOT',
             'Product': '4',
-            },
+        },
         'SettlDate': tsd.spo(),
         'SettlType': '0',
         'OrderQty': '25000000'
-        }
+    }
 
     try:
 
@@ -52,20 +52,21 @@ def execute(report_id, case_params, session_id):
                 **reusable_params,
                 'Currency': 'EUR',
                 'QuoteType': '1',
+                'Account': reusable_params['Account'],
                 'OrderQty': reusable_params['OrderQty'],
                 'OrdType': 'D',
                 'ExpireTime': get_expire_time(ttl),
                 'TransactTime': (datetime.utcnow().isoformat())}]
-            }
+        }
         logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
 
         send_rfq = act.sendMessage(
-                bca.convert_to_request(
-                        text_messages['sendQR'],
-                        case_params['TraderConnectivity'],
-                        case_id,
-                        bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                        ))
+            bca.convert_to_request(
+                text_messages['sendQR'],
+                case_params['TraderConnectivity'],
+                case_id,
+                bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
+            ))
         # endregion
 
         # region  prepare fe
@@ -103,9 +104,14 @@ def execute(report_id, case_params, session_id):
         extraction_request.set_extraction_id("ExtractionId")
         extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
         extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+        extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
 
-        pips1 = call(service.getRFQDetails, extraction_request.build())
-        print(pips1)
+        response = call(service.getRFQDetails, extraction_request.build())
+        pips1 = response["rfqDetails.askPricePips"]
+        large = response["rfqDetails.askPriceLarge"]
+        price = large + pips1
+        print(price)
+
         # endregion
 
         # region  send quote
@@ -136,34 +142,35 @@ def execute(report_id, case_params, session_id):
         # region Catch Quote message 35=S with new old prices
         quote_params = {
             'QuoteReqID': rfq_params['QuoteReqID'],
+            'QuoteMsgID': '*',
             'OfferPx': '*',
             'BidPx': '0',
             'BidSpotRate': '0',
             'OfferSize': reusable_params['OrderQty'],
             'BidSize': reusable_params['OrderQty'],
             'QuoteID': '*',
-            'OfferSpotRate': '*',
+            'OfferSpotRate': price,
             'ValidUntilTime': '*',
             'Currency': 'EUR',
             'Instrument': reusable_params['Instrument'],
-            'Account': reusable_params['Account']
-
-            }
+        }
 
         verifier.submitCheckRule(
-                bca.create_check_rule(
-                        text_messages['recQ'],
-                        bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                        send_rfq.checkpoint_id,
-                        case_params['TraderConnectivity'],
-                        case_id
-                        )
-                )
+            bca.create_check_rule(
+                text_messages['recQ'],
+                bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
+                send_rfq.checkpoint_id,
+                case_params['TraderConnectivity'],
+                case_id
+            )
+        )
         # endregion
 
         # region Modify and ReSend Quote
         modify_request = ModificationRequest(base=base_request)
         modify_request.increase_ask()
+        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        checkpoint_id1 = checkpoint_response1.checkpoint
         modify_request.send()
         call(service.modifyAssignedRFQ, modify_request.build())
         # endregion
@@ -173,51 +180,44 @@ def execute(report_id, case_params, session_id):
         extraction_request.set_extraction_id("ExtractionId")
         extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
         extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
+        extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
 
-        pips2 = call(service.getRFQDetails, extraction_request.build())
-        print(pips2)
+        response = call(service.getRFQDetails, extraction_request.build())
+        pips2 = response["rfqDetails.askPricePips"]
+        large2 = response["rfqDetails.askPriceLarge"]
+        price2 = large2 + pips2
+        print(price2)
         # endregion
 
         # region Catch Quote message 35=S with new prices
+        quote_params["OfferSpotRate"] = price2
         verifier.submitCheckRule(
-                bca.create_check_rule(
-                        text_messages['recQ'],
-                        bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                        send_rfq.checkpoint_id,
-                        case_params['TraderConnectivity'],
-                        case_id
-                        )
-                )
+            bca.create_check_rule(
+                text_messages['recQ'],
+                bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
+                checkpoint_id1,
+                case_params['TraderConnectivity'],
+                case_id
+            )
+        )
         # endregion
 
         # region check of pips
         verifier = Verifier(case_id)
         verifier.set_event_name("Check pips")
-        verifier.compare_values('pips',
-                                pips1['rfqDetails.askPricePips'],
-                                pips2['rfqDetails.askPricePips'],
+        verifier.compare_values('Pips',
+                                pips1,
+                                pips2,
                                 VerificationMethod.NOT_EQUALS)
         verifier.verify()
         # endregion
 
-
-
-
-    except Exception as e:
+    except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         try:
-            # region Clear Filters
-            base_data = BaseTableDataRequest(base=base_request)
-            base_data.set_row_number(1)
-
-            extraction_request = ExtractionDetailsRequest(base_data)
-            extraction_request.set_clear_flag()
-
-            response = call(service.getAssignedRFQDetails, extraction_request.build())
-            response = call(service.getUnassignedRFQDetails, extraction_request.build())
-            # endregion
+            call(service.closeWindow, base_request)
         except Exception:
             logging.error("Error execution", exc_info=True)
     logger.info("Case {} was executed in {} sec.".format(
-            case_name, str(round(datetime.now().timestamp() - seconds))))
+        case_name, str(round(datetime.now().timestamp() - seconds))))

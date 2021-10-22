@@ -1,6 +1,7 @@
 import logging
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
@@ -34,7 +35,7 @@ def execute(report_id,session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order(lookup,qty,price)
     # endregions
 
@@ -44,8 +45,9 @@ def execute(report_id,session_id):
     # region DirectLOC split
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_PARIS', "XPAR", float(price))
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_PARIS', "XPAR", float(price))
         eq_wrappers.direct_loc_order('50', 'Route via FIXBUYTH2 - component used by TH2 simulator and autotests')
     except Exception:
         logger.error("Error execution", exc_info=True)

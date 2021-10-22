@@ -19,10 +19,10 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP-AUC_01' + bca.client_orderid(9),
+            'ClOrdID': 'TWAP-AUC_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 200000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
             'Price': 117,
             'OrdType': 2,
@@ -37,7 +37,7 @@ def execute(report_id):
                 'ParticipateInOpeningAuctions': 'Y',
                 'ParticipateInClosingAuctions': 'Y',
                 'MaxParticipationOpen': '10',
-                'MaxParticipationClose': '15',
+                'MaxParticipationClose': '10',
                 'SaveForClosePercentage': '80',
                 'AllowedVenues': 'XLON'
             }

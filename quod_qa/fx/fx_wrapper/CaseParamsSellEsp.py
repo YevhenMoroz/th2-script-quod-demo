@@ -49,7 +49,6 @@ class CaseParamsSellEsp:
         self.mdreqid = bca.client_orderid(10)
         self.clordid = bca.client_orderid(9)
         self.quote_reqid = bca.client_orderid(9)
-
         self.set_market_data_params()
         self.set_new_order_single_params()
         self.set_md_subscribe_response()
@@ -76,6 +75,8 @@ class CaseParamsSellEsp:
                 }
             ]
         }
+        if self.settltype!='B':
+            self.md_params['NoRelatedSymbols'][0].pop('SettlDate')
 
     # Set New Order Single parameters
     def set_new_order_single_params(self):
@@ -291,6 +292,7 @@ class CaseParamsSellEsp:
         self.order_filled['LastQty'] = self.orderqty
         self.order_filled['CumQty'] = self.orderqty
         self.order_filled['LeavesQty'] = '0'
+        self.order_filled['LastMkt'] = 'XQFX'
         self.order_filled['TradeDate'] = '*'
         self.order_filled['SpotSettlDate'] = '*'
         self.order_filled['ExDestination'] = 'XQFX'

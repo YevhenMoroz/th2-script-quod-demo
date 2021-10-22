@@ -24,7 +24,7 @@ class QAP_1567(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.first_parameter = "AllowedAggressiveVenues"
-        self.first_venue = "DARK POOL 1"
+        self.first_venue = "EURONEXT AMSTERDAM"
 
         self.new_name = "TestSuperStrategy1"
         self.new_user = "QA2"
@@ -34,8 +34,8 @@ class QAP_1567(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -94,10 +94,12 @@ class QAP_1567(CommonTestCase):
             main_menu = ExecutionStrategiesPage(self.web_driver_container)
             main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.new_name)
-            expected_pdf_content = "Strategy: \"TestSuperStrategy1\"Strategy Type    Description: External CUSTOM1Values    " \
-                                   "Name: TestSuperStrategy1    Default TIF:     Description:     Ext ID Client:     " \
-                                   "Ext ID Venue:     Aggressor Indicator:     Pegged:     User: QA2ParametersStrategy " \
-                                   "ParametersGeneralDarkLit (General)Lit (Aggressive)Lit (Passive)Lit (Sweeping)Lit (Dark)"
+            expected_pdf_content = [
+                                self.new_name,
+                                self.new_user,
+                                self.new_strategy_type,
+                                self.new_parameter,
+                                self.new_value]
             time.sleep(2)
             main_menu.click_on_more_actions()
             self.verify("Data in pdf after edited", True,

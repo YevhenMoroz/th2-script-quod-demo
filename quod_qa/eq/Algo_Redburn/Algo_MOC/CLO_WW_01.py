@@ -6,7 +6,7 @@ from stubs import Stubs
 timeouts = True
 
 
-def execute(report_id):
+def     execute(report_id):
     instrument = {
     'Symbol': 'GB00BH4HKS39-XLON',
     'SecurityID': 'GB00BH4HKS39',
@@ -16,7 +16,7 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'CLO_WW_01' + bca.client_orderid(9),
+        'ClOrdID': 'CLO_WW_01 ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
         'OrderQty': 10000000,
@@ -33,9 +33,8 @@ def execute(report_id):
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'WouldInAuction': '1',
-            'TriggerPriceRed': '18',
-            'ExcludePricePoint2': '1',
-            'AllowedVenues': 'XLON'
+            'TriggerPriceRed': '116.5',
+            'ExcludePricePoint2': '1'
         }
     }
 

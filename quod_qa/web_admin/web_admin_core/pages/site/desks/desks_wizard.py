@@ -12,21 +12,3 @@ class DesksWizard(CommonPage):
 
     def click_on_revert_changes(self):
         self.find_by_xpath(DesksConstants.REVERT_CHANGES_BUTTON_XPATH).click()
-
-    def set_name_at_description_tab(self, value):
-        self.set_text_by_xpath(DesksConstants.NAME_AT_DESCRIPTION_TAB_XPATH, value)
-
-    def get_name_at_description_tab(self):
-        return self.get_text_by_xpath(DesksConstants.NAME_AT_DESCRIPTION_TAB_XPATH)
-
-    def set_desk_mode_at_description_tab(self, value):
-        self.set_combobox_value(DesksConstants.DESK_MODE_AT_DESCRIPTION_TAB_XPATH, value)
-
-    def get_desk_mode_at_description_tab(self):
-        return self.get_text_by_xpath(DesksConstants.DESK_MODE_AT_DESCRIPTION_TAB_XPATH)
-
-    def set_location_at_description_tab(self, value):
-        self.set_combobox_value(DesksConstants.LOCATION_AT_DESCRIPTION_TAB_XPATH, value)
-
-    def get_location_at_description_tab(self):
-        return self.get_text_by_xpath(DesksConstants.LOCATION_AT_DESCRIPTION_TAB_XPATH)

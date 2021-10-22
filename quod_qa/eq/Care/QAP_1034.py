@@ -1,23 +1,15 @@
 import logging
-import os
-from copy import deepcopy
+import time
 from datetime import datetime
 
-from th2_grpc_act_gui_quod import order_ticket_service
-
-from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from win_gui_modules.order_book_wrappers import OrdersDetails, CancelOrderDetails
-
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
-import time
-from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,7 +27,6 @@ def execute(report_id, session_id):
     newQty = "100"
     price = "10"
     newPrice = "1"
-    time = datetime.utcnow().isoformat()
     lookup = "VETO"
     client = "CLIENT_FIX_CARE"
     # endregion
@@ -55,9 +46,10 @@ def execute(report_id, session_id):
     # region Create CO
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + "_PARIS", "XPAR", 20)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + "_PARIS", "XPAR", 20)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
         fix_message.pop("response")
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -69,9 +61,8 @@ def execute(report_id, session_id):
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region Send OrderCancelReplaceRequest
-    fix_message = FixMessage(fix_message)
     params = {'Price': newPrice, 'OrderQty': newQty}
-    eq_wrappers.amend_order_via_fix(case_id, fix_message, params, client + "_PARIS")
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params)
     # endregion
     # region Accept CO
     eq_wrappers.accept_modify(lookup, qty, price)
@@ -83,7 +74,7 @@ def execute(report_id, session_id):
     # endregion
     # region Cancelling order
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
-    eq_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
+    quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
     eq_wrappers.accept_cancel(lookup, qty, price)
     # endregion
     # region Check values after Cancel

@@ -19,12 +19,12 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'POV-WW_01' + bca.client_orderid(9),
+            'ClOrdID': 'POV_WW_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 100000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 112,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -32,10 +32,10 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 2,
             'ExDestination': 'XLON',
-            'Text': 'POV-WW_01',
+            'Text': 'POV_WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '109.72',
-                'MaxPercentageVolume': '5',
+                'TriggerPriceRed': '99',
+                'MaxPercentageVolume': '10',
                 'AllowedVenues': 'XLON'
             }
         }

@@ -33,8 +33,8 @@ def execute(report_id):
         rfq.verify_quote_pending()
         # Step 3
         price = rfq.extract_filed("OfferPx")
-        range_above = str(float(price) + 0.0001)
-        range_bellow = str(float(price) - 0.0001)
+        range_above = str(round(float(price) + 0.0001, 5))
+        range_bellow = str(round(float(price) - 0.0001, 5))
         price_above = str(float(price) + 0.002)
         rfq.send_new_order_single(price_above)
         rfq.verify_order_rejected(text=f"order price is not ranging in [{range_bellow}, {range_above}]")

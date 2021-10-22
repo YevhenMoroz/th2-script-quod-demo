@@ -1,28 +1,19 @@
 import logging
 import time
 from pathlib import Path
-
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
-from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
-
 from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from custom.verifier import Verifier
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
     CancelFXOrderDetails
-from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails, \
     ModifyRatesTileRequest
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.utils import get_base_request, call
 
 api = Stubs.api_service
 ob_act = Stubs.win_act_order_book
@@ -97,7 +88,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, threshold, sta
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", order_id, "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -158,7 +149,7 @@ def execute(report_id, session_id):
             # Step 1
             params_sell = CaseParamsSellEsp(client, case_id, side=side, ordtype=ordtype, timeinforce=timeinforce,
                                             currency=currency, settlcurrency=settlcurrency, settltype=settltype,
-                                            settldate=settldate, symbol=symbol, securitytype=securitytype,
+                                            symbol=symbol, securitytype=securitytype,
                                             securityid=securityid, account=account)
             params_sell.prepare_md_for_verification(bands)
             md = FixClientSellEsp(params_sell). \
@@ -173,9 +164,7 @@ def execute(report_id, session_id):
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
-
-            # CHECK POSITION AFTER 1 ORDER
-            first_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            first_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
             compare_position("Compare position is equal to threshold", case_id, threshold, first_pos)
 
             # CHECK AO ORDER IS CREATED
@@ -192,7 +181,7 @@ def execute(report_id, session_id):
                 verify_order_pending(qty=ordqty). \
                 verify_order_new(qty=ordqty). \
                 verify_order_filled(qty=ordqty)
-            second_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, client, "Position")
+            second_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account, "Position")
 
             # CHECK POSITION
             ordqty = threshold * 2

@@ -1,7 +1,8 @@
 from th2_grpc_check1.check1_pb2 import PreFilter
+from th2_grpc_common.common_pb2 import Direction, ValueFilter, MessageFilter, FilterOperation
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from th2_grpc_common.common_pb2 import Direction, ValueFilter, MessageFilter, FilterOperation
 
 
 class FixVerifier:
@@ -28,7 +29,7 @@ class FixVerifier:
         )
 
     def CheckAllocationInstruction(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
-                             message_name='Check AllocationInstruction', direction='FIRST', case=None):
+                                   message_name='Check AllocationInstruction', direction='FIRST', case=None):
         if case == None:
             case = self.case_id
 
@@ -44,7 +45,7 @@ class FixVerifier:
         )
 
     def CheckConfirmation(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
-                              message_name='Check Confirmation', direction='FIRST', case=None):
+                          message_name='Check Confirmation', direction='FIRST', case=None):
         if case == None:
             case = self.case_id
 
@@ -59,6 +60,53 @@ class FixVerifier:
             )
         )
 
+    def CheckBusinessMessageReject(self, parameters, response, key_parameters=['Text', 'RefMsgType'],
+                                   message_name='Check BusinessMessageReject', direction='FIRST', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("BusinessMessageReject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    def CheckOrderCancelRequest(self, parameters, response, key_parameters=['ClOrdID', 'OrigClOrdID'],
+                                direction='FIRST', message_name='Check OrderCancelRequest', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
+
+    def CheckListStatusRequest(self, parameters, response, key_parameters=['ListID', 'ListOrderStatus'],
+                               direction='FIRST', message_name='Check ListStatusRequest', case=None):
+        if case == None:
+            case = self.case_id
+
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("ListStatusRequest", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                case,
+                Direction.Value(direction)
+            )
+        )
 
     def CheckExecutionReportSequence(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
                                      message_name='Check ExecutionReport', direction='FIRST', case=None):
@@ -105,16 +153,16 @@ class FixVerifier:
         )
 
     def CheckCancelReject(self, parameters, response, key_parameters=['ClOrdID', 'OrdStatus'],
-                        message_name='Check Reject'):
-            self.verifier.submitCheckRule(
-                bca.create_check_rule(
-                    message_name,
-                    bca.filter_to_grpc("OrderCancelReject", parameters, key_parameters),
-                    response.checkpoint_id,
-                    self.TraderConnectivity,
-                    self.case_id
-                )
+                          message_name='Check Reject'):
+        self.verifier.submitCheckRule(
+            bca.create_check_rule(
+                message_name,
+                bca.filter_to_grpc("OrderCancelReject", parameters, key_parameters),
+                response.checkpoint_id,
+                self.TraderConnectivity,
+                self.case_id
             )
+        )
 
     def CheckNewOrderSingle(self, parameters, response, key_parameters=['ClOrdID'], message_name='Check NewOrderSingle',
                             direction='FIRST', case=None):
@@ -167,7 +215,7 @@ class FixVerifier:
     def CheckOrderCancelRequest(self, parameters, response, key_parameters=['ClOrdID', 'OrigClOrdID'],
                                 direction='FIRST', message_name='Check OrderCancelRequest', case=None):
         if case == None:
-                case = self.case_id
+            case = self.case_id
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(

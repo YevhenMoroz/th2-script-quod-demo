@@ -21,6 +21,12 @@ def modify_rates_tile(base_request, service, instrument, client, pips):
     call(service.modifyRatesTile, modify_request.build())
 
 
+def use_default(base_request, service):
+    modify_request = ModifyRatesTileRequest(details=base_request)
+    modify_request.press_use_defaults()
+    call(service.modifyRatesTile, modify_request.build())
+
+
 def modify_spread(base_request, service, *args):
     modify_request = ModifyRatesTileRequest(details=base_request)
     if "increase_ask" in args:
@@ -89,7 +95,7 @@ def check_spread(base_request, service, case_id):
     bid = float(response["rates_tile.bid_large"]) + float(response["rates_tile.bid_pips"])
     ask = float(response["rates_tile.ask_large"]) + float(response["rates_tile.ask_pips"])
     extracted_spread = response["rates_tile.spread"]
-    calculated_spread = round((ask - bid) * 10000, 1)
+    calculated_spread = round((ask - bid)/10, 1)
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check calculation of spread")
@@ -131,7 +137,7 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     instrument = "EUR/USD-Spot"
     client_tier = "Silver"
-    pips = "2"
+    pips = "0.5"
 
     try:
         # Step 1
@@ -172,6 +178,7 @@ def execute(report_id, session_id):
         ask_after = check_ask(base_details, cp_service)
         bid_after = check_bid(base_details, cp_service)
         compare_prices(case_id, ask_before, bid_before, ask_after, bid_after, pips)
+        use_default(base_details, cp_service)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -18,8 +18,8 @@ class QAP_796(CommonTestCase):
     def test_context(self):
         try:
             login_page = LoginPage(self.web_driver_container)
-            login_page.set_login("adm03")
-            login_page.set_password("adm03")
+            login_page.set_login("adm02")
+            login_page.set_password("adm02")
             login_page.click_login_button()
             login_page.check_is_login_successful()
             self.verify("Login successful", True, True)

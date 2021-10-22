@@ -16,9 +16,9 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'CLO_LIM_01' + bca.client_orderid(9),
+        'ClOrdID': 'CLO_LIM_01 ' + bca.client_orderid(9),
         'HandlInst': 2,
-        'Side': 2,
+        'Side': 1,
         'OrderQty': 10000000,
         'TimeInForce': 0,
         'Price': 117,
@@ -33,9 +33,8 @@ def execute(report_id):
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'LimitPriceReference': 'LTP',
-            'LimitPriceOffset': '-2',
-            'ExcludePricePoint2': '1',
-            'AllowedVenues': 'XLON'
+            'LimitPriceOffset': '2',
+            'ExcludePricePoint2': '1'
         }
     }
 

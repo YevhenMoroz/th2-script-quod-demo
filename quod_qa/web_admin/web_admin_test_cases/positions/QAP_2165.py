@@ -23,13 +23,13 @@ class QAP_2165(CommonTestCase):
         iteration_value = now.strftime("%d/%m/%Y %H:%M:%S")
         self.id = "test 2165: " + str(iteration_value)
         self.ext_id_client = "65: " + str(iteration_value)
-        self.client = "BROKER"
+        self.client = "CLIENT1"
         self.client_id_source = "BIC"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm07")
-        login_page.set_password("adm07")
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -51,7 +51,7 @@ class QAP_2165(CommonTestCase):
         time.sleep(1)
         wash_book_main_menu.set_id_filter(self.id)
         wash_book_main_menu.set_enabled_filter("true")
-        time.sleep(1)
+        time.sleep(2)
         wash_book_main_menu.click_on_more_actions()
 
     def test_context(self):

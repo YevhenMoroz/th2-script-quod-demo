@@ -18,7 +18,7 @@ class QAP_919(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.client = "ANDclient"
+        self.client = "CLIENT1"
         self.type = "Holder"
 
     def precondition(self):
@@ -28,6 +28,7 @@ class QAP_919(CommonTestCase):
         time.sleep(2)
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
+        time.sleep(2)
         users_page.click_on_more_actions()
         time.sleep(2)
         users_page.click_on_edit_at_more_actions()

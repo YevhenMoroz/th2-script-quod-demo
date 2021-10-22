@@ -47,6 +47,18 @@ class ModifyTradesDetails:
     def build(self):
         return self.modify_trades_details
 
+class CancelManualExecutionDetails:
+    def __init__(self):
+        self.cancel_manual_execution_details = trades_pb2.CancelManualExecutionDetails()
+
+    def set_filter(self, filter: dict):
+        self.cancel_manual_execution_details.tradesWindowFilter.update(filter)
+
+    def set_default_params(self, base_request):
+        self.cancel_manual_execution_details.base.CopyFrom(base_request)
+
+    def build(self):
+        return self.cancel_manual_execution_details
 
 
 

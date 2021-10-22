@@ -83,8 +83,8 @@ def extract_column_base(base_request, service):
     extraction_id = bca.client_orderid(4)
     extract_table_request.set_extraction_id(extraction_id)
     extract_table_request.set_row_number(1)
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
+    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
+    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
     response = call(service.extractRatesTileTableValues, extract_table_request.build())
 
     bid_base = float(response["rateTile.bidBase"])
@@ -159,7 +159,7 @@ def execute(report_id, session_id):
     instrument = "GBP/AUD-1W"
     client_tier = "Silver"
 
-    def_md_symbol_gbp_aud = "GBP/AUD:SPO:REG:HSBC"
+    def_md_symbol_gbp_aud = "GBP/AUD:FXF:WK1:HSBC"
     symbol_gbp_aud = "GBP/AUD"
 
     try:

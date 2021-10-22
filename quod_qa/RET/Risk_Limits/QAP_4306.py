@@ -4,7 +4,9 @@ import logging
 
 from datetime import datetime
 
-from custom.basic_custom_actions import create_event, timestamps
+from custom import basic_custom_actions as bca
+
+from custom.basic_custom_actions import timestamps
 
 from stubs import Stubs
 
@@ -13,7 +15,7 @@ from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
-from quod_qa.wrapper.eq_wrappers import create_order, get_order_id, verify_order_value
+from quod_qa.wrapper.ret_wrappers import create_order, get_order_id, verify_order_value, decorator_try_except
 from custom.verifier import Verifier
 
 logger = logging.getLogger(__name__)
@@ -21,6 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = os.path.basename(__file__)
 
@@ -29,25 +32,25 @@ def execute(session_id, report_id):
     # region Declarations
     order_book_service = Stubs.win_act_order_book
 
-    lookup = "RELIANCE"
+    lookup = "SPICEJET"
     order_type = "Limit"
     price = "15"
-    qty = "20000001"
+    qty = "5000001"
     tif = "Day"
-    client = "HAKKIM"
+    client = "POOJA"
     recipient = "RIN-DESK (CL)"
     free_notes = "11822 Calculated CumOrdQty"
     # endregion
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
     # end region
 
     # region Create order via FE according to 1st step
     create_order(base_request, qty, client, lookup, order_type, tif,
-                 True, recipient, price, None, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None, False)
+                 True, recipient, price, None, False, DiscloseFlagEnum.DEFAULT_VALUE, None)
     # end region
 
     order_id = get_order_id(base_request)

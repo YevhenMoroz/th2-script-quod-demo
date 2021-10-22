@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -29,7 +31,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region Create CO
-    eq_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     eq_wrappers.is_menu_item_present(base_request)
     # endregion
 

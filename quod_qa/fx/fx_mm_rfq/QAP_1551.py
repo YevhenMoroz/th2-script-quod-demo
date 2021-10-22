@@ -159,9 +159,6 @@ def execute(report_id, case_params, session_id):
     except Exception as e:
         logging.error("Error execution", exc_info=True)
 
-    except Exception as e:
-        logging.error("Error execution", exc_info=True)
-
     finally:
         try:
             clear_filters(base_request, service)

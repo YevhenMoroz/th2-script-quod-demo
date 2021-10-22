@@ -18,16 +18,13 @@ instrument = {
 def execute(report_id):
     try:
         new_order_single_params = {
-            'header': {
-                'OnBehalfOfCompID': 'kames_ul_DCOI'
-            },
             'Account': "REDBURN",
             'ClOrdID': 'POV-SCAO_01' + bca.client_orderid(9),
             'HandlInst': 2,
-            'Side': 2,
+            'Side': 1,
             'OrderQty': 400000,
             'TimeInForce': 0,
-            'Price': 113,
+            'Price': 198,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -40,10 +37,9 @@ def execute(report_id):
                 'PricePoint1Reference': 'LTP',
                 'PricePoint1Participation': '10',
                 'PricePoint2Reference': 'LTP',
-                'PricePoint2Offset': '100',
+                'PricePoint2Offset': '5',
                 'PricePoint2Participation': '20',
                 'MaxPercentageVolume': '5',
-                'ExcludePricePoint2': '1',
                 'AllowedVenues': 'XLON'
             }
         }

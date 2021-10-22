@@ -21,8 +21,12 @@ class QAP_1740(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
+        self.id = "TEST"
+        self.ext_id_client = "tst1"
+        self.client = "CLIENT1"
+        self.client_id_source = "BIC"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = "DB RFQ"
+        self.route = "Direct"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -31,6 +35,23 @@ class QAP_1740(CommonTestCase):
         time.sleep(2)
         side_menu.open_accounts_page()
         accounts_main_page = AccountsPage(self.web_driver_container)
+        time.sleep(2)
+        accounts_main_page.click_new_button()
+        time.sleep(2)
+        values_tab = AccountsWizard(self.web_driver_container)
+        values_tab.set_id(self.id)
+        time.sleep(1)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        time.sleep(1)
+        values_tab.set_client(self.client)
+        time.sleep(1)
+        values_tab.set_client_id_source(self.client_id_source)
+        time.sleep(2)
+        accounts_wizard = AccountsWizard(self.web_driver_container)
+        accounts_wizard.click_save_button()
+        time.sleep(2)
+        accounts_main_page.set_id(self.id)
+        time.sleep(2)
         accounts_main_page.click_more_actions_button()
         time.sleep(1)
         accounts_main_page.click_edit_entity_button()

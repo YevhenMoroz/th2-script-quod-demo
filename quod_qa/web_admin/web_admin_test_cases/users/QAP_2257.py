@@ -30,10 +30,12 @@ class QAP_2257(CommonTestCase):
         time.sleep(2)
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
+        time.sleep(2)
         users_page.click_on_more_actions()
         users_page.click_on_edit_at_more_actions()
+        time.sleep(2)
         venue_trader_sub_wizard = UsersVenueTraderSubWizard(self.web_driver_container)
-        venue_trader_sub_wizard.click_on_edit_button()
+        venue_trader_sub_wizard.click_on_plus_button()
         time.sleep(2)
         venue_trader_sub_wizard.set_venue(self.venue)
         venue_trader_sub_wizard.set_venue_trader_name(self.new_venue_trader_name)
@@ -44,10 +46,20 @@ class QAP_2257(CommonTestCase):
         try:
             self.precondition()
             users_wizard = UsersWizard(self.web_driver_container)
+            venue_trader_sub_wizard = UsersVenueTraderSubWizard(self.web_driver_container)
+            users_page = UsersPage(self.web_driver_container)
             expected_pdf_content = [self.venue, self.new_venue_trader_name]
 
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            users_wizard.click_on_save_changes()
+            time.sleep(2)
+            users_page.click_on_more_actions()
+            time.sleep(2)
+            users_page.click_on_edit_at_more_actions()
+            time.sleep(2)
+            venue_trader_sub_wizard.click_on_delete_button()
+            time.sleep(2)
             users_wizard.click_on_save_changes()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,

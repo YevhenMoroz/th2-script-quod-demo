@@ -16,10 +16,10 @@ def execute(report_id):
 
     new_order_single_params = {
         'Account': "REDBURN",
-        'ClOrdID': 'OPN_VO_01' + bca.client_orderid(9),
+        'ClOrdID': 'OPN_VO_01 ' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 1000000,
+        'OrderQty': 10000000,
         'TimeInForce': 0,
         'Price': 117,
         'OrdType': 2,
@@ -32,8 +32,7 @@ def execute(report_id):
         'Text': 'OPN_VO_01',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'ExcludePricePoint2': '1',
-            'AllowedVenues': 'XLON'
+            'ExcludePricePoint2': '1'
         }
     }
 

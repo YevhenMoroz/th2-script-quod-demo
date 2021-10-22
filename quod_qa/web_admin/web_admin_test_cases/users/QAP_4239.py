@@ -26,7 +26,7 @@ class QAP_4239(CommonTestCase):
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.password_field = "333"
         self.perm_role = "Permissions for Head of Sale-Dealers role"
-        self.desks = ("Desk of SalesDealers 1", "Desk of SalesDealers 2")
+        self.desks = ("DESK A", "Quod Desk")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -34,6 +34,7 @@ class QAP_4239(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_users_page()
+        time.sleep(2)
         users_page = UsersPage(self.web_driver_container)
         users_page.click_on_more_actions()
         time.sleep(1)
@@ -57,6 +58,7 @@ class QAP_4239(CommonTestCase):
             time.sleep(2)
             assignments_sub_wizard.set_desks(self.desks)
             users_wizard = UsersWizard(self.web_driver_container)
+            time.sleep(2)
             users_wizard.click_on_save_changes()
             time.sleep(2)
             users_page.set_user_id(self.user_id)

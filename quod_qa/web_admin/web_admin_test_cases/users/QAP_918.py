@@ -19,7 +19,7 @@ class QAP_918(CommonTestCase):
         self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
-        self.desks = ("Desk Market Marking FX", "Desk of Dealers 1")
+        self.desks = ["DESK A", "Quod Desk"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,7 +38,6 @@ class QAP_918(CommonTestCase):
     def test_context(self):
         assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
         users_wizard = UsersWizard(self.web_driver_container)
-        expected_pdf_content = self.desks
         try:
             self.precondition()
             try:
@@ -51,7 +50,7 @@ class QAP_918(CommonTestCase):
 
             try:
                 self.verify("after click on download PDF button", True,
-                            users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+                            users_wizard.click_download_pdf_entity_button_and_check_pdf(self.desks))
             except IndexError as e:
                 print(e.__class__.__name__)
                 self.verify("Download button is deactivated", True, False)

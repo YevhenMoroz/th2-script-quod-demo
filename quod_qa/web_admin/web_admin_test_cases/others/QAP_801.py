@@ -30,8 +30,8 @@ class QAP_801(CommonTestCase):
         self.venue_counterpart_id = "2"
         self.party_role = "Exchange"
         self.party_role_qualifier = "Bank"
-        self.venue = "ANZ"
-        self.new_name_at_value_tab = 'don\'t touch just for autotest!'
+        self.venue = "AMEX"
+        self.new_name_at_value_tab = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -63,7 +63,7 @@ class QAP_801(CommonTestCase):
         party_roles_wizard.set_party_role_at_party_roles_tab("Exchange")
         party_roles_wizard.set_ext_id_client_at_party_roles_tab("7")
         party_roles_wizard.set_party_role_qualifier_at_party_roles_tab("Bank")
-        party_roles_wizard.set_venue_at_party_roles_tab("ANZ")
+        party_roles_wizard.set_venue_at_party_roles_tab("BAMLF")
         counterparts_wizard.click_on_check_mark()
         time.sleep(2)
         counterparts_wizard.click_on_save_changes()
@@ -108,7 +108,7 @@ class QAP_801(CommonTestCase):
                                     self.venue_counterpart_id,
                                     self.party_role,
                                     self.party_role_qualifier,
-                                    "Australia And New Zealand Banking Group Limited",
+                                    "AMERICAN STOCK EXCHANGE",
                                     ]
             counterparts_wizard = CounterpartsWizard(self.web_driver_container)
             sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
@@ -127,7 +127,7 @@ class QAP_801(CommonTestCase):
                         counterparts_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
             counterparts_wizard.click_on_save_changes()
             counterparts_main_menu = CounterpartsPage(self.web_driver_container)
-            counterparts_main_menu.set_name_filter_value("don\'t touch just for autotest!")
+            counterparts_main_menu.set_name_filter_value(self.new_name_at_value_tab)
             time.sleep(2)
             self.verify("Name after saved", self.new_name_at_value_tab, counterparts_main_menu.get_name_value())
             counterparts_main_menu.click_on_more_actions()

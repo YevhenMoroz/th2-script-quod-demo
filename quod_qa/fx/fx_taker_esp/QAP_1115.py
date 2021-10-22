@@ -41,13 +41,14 @@ def get_my_orders_details(base_request, ob_act, case_id, owner):
     execution_id = bca.client_orderid(4)
     main_order_details.set_default_params(base_request)
     main_order_details.set_extraction_id(execution_id)
+    main_order_details.set_filter(['Owner', owner])
     ob_owner = ExtractionDetail("myorderbook.owner", "Owner")
     ob_display_px = ExtractionDetail("myorderbook.px", "DisplayPx")
     main_order_details.add_single_order_info(
         OrderInfo.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_owner,
                                                                                  ob_display_px])))
-    response = call(ob_act.getMyOrdersDetails, main_order_details.request())
+    response = call(ob_act.getOrdersDetails, main_order_details.request())
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check My Order book")
@@ -101,7 +102,7 @@ def execute(report_id, session_id):
         place_order(base_esp_details, ar_service)
         modify_order_ticket(case_base_request, order_ticket_service)
         # Step 2-3
-        get_my_orders_details(case_base_request, ob_act, case_id, owner)
+        # get_my_orders_details(case_base_request, ob_act, case_id, owner)
         # Step 4-5
         check_order_book(case_base_request, ob_act, case_id, "Spot", owner)
 

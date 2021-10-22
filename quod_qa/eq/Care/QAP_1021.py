@@ -3,6 +3,7 @@ import time
 from copy import deepcopy
 from datetime import datetime
 
+import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
@@ -42,7 +43,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
@@ -60,16 +61,16 @@ def execute(report_id, session_id):
     request = fix_message.pop('response')
     fix_message1 = FixMessage(fix_message)
     param_list = {'OrderQty': qty2, 'Price': price2}
-    eq_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, client + "_PARIS")
+    quod_qa.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message1, param_list, client + "_PARIS")
     eq_wrappers.accept_modify(lookup, price2, qty2)
     # endregion
     # region Cancel order
     rule_manager = RuleManager()
     cl_order_id = request.response_messages_list[0].fields['ClOrdID'].simple_value
     try:
-        rule = rule_manager.add_OrderCancelRequest(eq_wrappers.get_sell_connectivity(), client + "_PARIS",
+        rule = rule_manager.add_OrderCancelRequest(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), client + "_PARIS",
                                                    "XPAR", True)
-        eq_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 2)
+        quod_qa.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 2)
     finally:
         time.sleep(1)
         rule_manager.remove_rule(rule)

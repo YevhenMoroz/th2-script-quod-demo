@@ -110,4 +110,3 @@ class FixManager:
         for i in allMDRefID.PairsMDRefID:
             print({i.symbol: i.MDRefID}, type({i.symbol: i.MDRefID}))
 
-

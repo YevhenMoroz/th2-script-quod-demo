@@ -3,6 +3,7 @@ from datetime import datetime
 
 from th2_grpc_act_gui_quod import order_ticket_service
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
@@ -42,7 +43,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order('VETO', qty, price)
     # endregion
 

@@ -1,5 +1,6 @@
 import time
 
+import quod_qa.wrapper.eq_fix_wrappers
 from custom.verifier import Verifier
 from quod_qa.wrapper import eq_wrappers
 from rule_management import RuleManager
@@ -20,30 +21,32 @@ def execute(report_id, session_id):
     qty = "900"
     price = "10"
     lookup = "VETO"
-    client = "CLIENT_FEES_1"
+    client = "CLIENT_FEES_2"
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     base_request = get_base_request(session_id, case_id)
     instrument ={
-                'Symbol': 'IS0000000001_EUR',
-                'SecurityID': 'IS0000000001',
+                'Symbol': 'VOD',
+                'SecurityID': '133215',
                 'SecurityIDSource': '4',
-                'SecurityExchange': 'XEUR'
+                'SecurityExchange': 'XLON'
             }
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    #eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create Order
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + '_EUREX', "XEUR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_wrappers.get_buy_connectivity(),
-                                                                      client + '_EUREX', 'XEUR',
-                                                                      float(price), int(qty), 1)
-        fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, insrument=instrument)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_LSE', "XLON", float(price))
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
+            quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            client + '_LSE', 'XLON',
+            float(price), int(qty), 1)
+        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, insrument=instrument)
         response = fix_message.pop('response')
         order_id=eq_wrappers.get_order_id(base_request)
     except Exception:

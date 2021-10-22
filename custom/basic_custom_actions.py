@@ -97,7 +97,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
                 )
             elif tag in ['venueStatusMetric', 'venuePhaseSession', 'venuePhaseSessionTypeTIF',
                          'venuePhaseSessionPegPriceType', 'venueOrdCapacity',
-                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol']:
+                         'ListingBlock', 'hedgedAccountGroup', 'autoHedgerInstrSymbol', 'MDSymbolBlock']:
                 for group in content[tag]:
                     content[tag][content[tag].index(group)] = Value(
                         message_value=(message_to_grpc(tag, group, session_alias)))
@@ -125,6 +125,44 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         ),
         fields=content
     )
+
+def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
+    content = dict(deepcopy(content))
+    for tag in dict(content):
+        # field
+        if isinstance(content[tag], (str, int, float)):
+            content[tag] = Value(simple_value=str(content[tag]))
+        elif isinstance(content[tag], dict):
+            # level 1 component
+            name = next(iter(content[tag].items()))[0]
+            if isinstance(next(iter(content[tag].items()))[1], list):
+                # level 2 repeating group
+                for group in content[tag][name]:
+                    content[tag][name][content[tag][name].index(group)] = Value(
+                        message_value=(message_to_grpc(name, group, session_alias)))
+                content[tag] = Value(
+                    message_value=Message(
+                        metadata=MessageMetadata(message_type=tag),
+                        fields={
+                            name: Value(
+                                list_value=ListValue(
+                                    values=content[tag][name]
+                                )
+                            )
+                        }
+                    )
+                )
+            else:
+                # level 2 field
+                content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+    return Message(
+        metadata=MessageMetadata(
+            message_type=message_type,
+            id=MessageID(connection_id=ConnectionID(session_alias=session_alias)),
+        ),
+        fields=content
+    )
+
 
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
@@ -342,7 +380,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": "ERROR"}') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": ""}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -451,3 +489,62 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
+
+def wrap_filter(content, message_type=None, key_fields=None):
+    if key_fields is None:
+        key_fields = []
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if value == "*":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("NOT_EMPTY"))
+            elif value == "#":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("EMPTY"))
+            else:
+                if isinstance(value, str):
+                    fields[tag] = ValueFilter(simple_filter=value)
+                elif isinstance(value, (int, float, Decimal)):
+                    fields[tag] = ValueFilter(simple_filter=str(value))
+                elif isinstance(value, dict):
+                    fields[tag] = ValueFilter(message_filter=wrap_filter(content=value, key_fields=key_fields))
+                elif isinstance(value, list):
+                    fields[tag] = ValueFilter(list_filter=wrap_filter(content=value, key_fields=key_fields))
+                if tag in key_fields:
+                    fields[tag].key = True
+        msg_filter = MessageFilter(fields=fields)
+        if message_type is not None:
+            msg_filter.messageType = message_type
+        return msg_filter
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(ValueFilter(simple_filter=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(ValueFilter(simple_filter=str(element)))
+            elif isinstance(element, dict):
+                values.append(ValueFilter(message_filter=wrap_filter(content=element, key_fields=key_fields)))
+            elif isinstance(element, list):
+                values.append(ValueFilter(list_filter=wrap_filter(content=element, key_fields=key_fields)))
+        list_filter = ListValueFilter(values=values)
+        return list_filter
+
+
+def get_message_by_field_and_value(content, field: str, value: str, matched_list=None) -> list:
+    if matched_list is None:
+        matched_list = []
+    if isinstance(content, Message):
+        for f, v in content.fields.items():
+            if f == field and v.simple_value == value:
+                matched_list.append(content)
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    elif isinstance(content, ListValue):
+        for v in content.values:
+            if v.message_value != Message():
+                get_message_by_field_and_value(v.message_value, field, value, matched_list)
+            elif v.list_value != ListValue():
+                get_message_by_field_and_value(v.list_value, field, value, matched_list)
+    return matched_list[0] if len(matched_list) > 0 else []

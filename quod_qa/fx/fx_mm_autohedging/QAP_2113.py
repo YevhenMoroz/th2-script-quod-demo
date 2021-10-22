@@ -1,33 +1,16 @@
-import logging
-import time
-from pathlib import Path
-
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import VenueStatusesRequest
-from th2_grpc_act_gui_quod.ar_operations_pb2 import ExtractOrderTicketValuesRequest, ExtractDirectVenueExecutionRequest
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
-from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier, VerificationMethod
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
     CancelFXOrderDetails, ModifyFXOrderDetails
 from win_gui_modules.order_ticket import FXOrderDetails
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest, \
+from win_gui_modules.client_pricing_wrappers import BaseTileDetails,\
     ModifyRatesTileRequest, PlaceRateTileTableOrderRequest, RatesTileTableOrdSide, PlaceRatesTileOrderRequest
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import set_session_id, get_base_request, call, close_fe, prepare_fe303
+from win_gui_modules.utils import get_base_request, call
 import logging
-from datetime import datetime
 from pathlib import Path
 
 
@@ -38,8 +21,8 @@ logger.setLevel(logging.INFO)
 client = 'Osmium1'
 client_tier = 'Osmium'
 account = 'Osmium1_1'
-symbol = 'EUR/GBP'
-instrument_tier = 'EUR/GBP-SPOT'
+symbol = 'EUR/USD'
+instrument_tier = 'EUR/USD-SPOT'
 status_open = 'Open'
 row = 2
 SELL = RatesTileTableOrdSide.SELL
@@ -82,7 +65,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, Qty, status_ex
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -99,6 +82,7 @@ def check_order_book_ao(even_name, case_id, base_request, act_ob, Qty, status_ex
 
     verifier.verify()
     ord_id = response[order_id.name]
+
     return ord_id
 
 
@@ -126,7 +110,7 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Owner", 'AH_TECHNICAL_USER', "Strategy", "test"])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test"])
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     ob.add_single_order_info(

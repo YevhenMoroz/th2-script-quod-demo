@@ -1,13 +1,15 @@
 import logging
+import os
 import time
 
 from datetime import datetime
 
+from quod_qa.wrapper.ret_wrappers import decorator_try_except
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-
+from custom import basic_custom_actions as bca
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_ticket import OrderTicketDetails
@@ -19,6 +21,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4317"
 
@@ -37,7 +40,7 @@ def execute(session_id, report_id):
     # end region
 
     # region Open FE
-    case_id = create_event(case_name, report_id)
+    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
     set_base(session_id, case_id)
     base_request = get_base_request(session_id, case_id)
 

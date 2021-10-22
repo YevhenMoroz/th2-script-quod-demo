@@ -19,12 +19,12 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP-WW_01' + bca.client_orderid(9),
+            'ClOrdID': 'TWAP_WW_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 120,
+            'Price': 117,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -32,9 +32,9 @@ def execute(report_id):
             'Currency': "GBX",
             'TargetStrategy': 1005,
             'ExDestination': 'XLON',
-            'Text': 'TWAP-WW_01',
+            'Text': 'TWAP_WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '115.8',
+                'TriggerPriceRed': '99',
                 'AllowedVenues': 'XLON'
             }
         }
