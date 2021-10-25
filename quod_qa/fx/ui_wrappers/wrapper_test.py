@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from quod_qa.win_gui_wrappers.columns_names import OrderBookColumns
+from quod_qa.win_gui_wrappers.data_set import OrderBookColumns
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
@@ -19,9 +19,8 @@ def execute(report_id, session_id):
     try:
 
         order_book = FXOrderBook(case_id, case_base_request)
-        order_book.set_filter([OrderBookColumns.qty.value, "1000000"]).check_order_fields_list(
-            {"Sts": "1", "ExecSts": "2"})
-        order_book.cancel_order()
+        order_book.set_filter([OrderBookColumns.qty.value, "5000000"]).check_order_fields_list(
+            {"Sts": "Terminated", "ExecSts": "2"}, row_number=1)
 
         quote_book = FXQuoteBook(case_id, case_base_request)
         quote_book.set_filter(["BidSize", "2000000"]).check_quote_book_fields_list({"BidPx": "1.181161"})
