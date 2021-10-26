@@ -105,6 +105,9 @@ class UsersConstants:
     GROUP_AT_ROLE_SUB_WIZARD ='//*[text()="Group"]/preceding-sibling::input'
     PERM_OP_AT_ROLE_SUB_WIZARD ='//*[text()="Perm Op"]/preceding-sibling::input'
 
+    #Must not be visible
+    ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
+
 
     # Client
     PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'

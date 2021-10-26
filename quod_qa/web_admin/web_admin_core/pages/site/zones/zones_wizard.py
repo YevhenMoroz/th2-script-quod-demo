@@ -27,3 +27,22 @@ class ZonesWizard(CommonPage):
         self.find_by_xpath(ZonesConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_incorrect_or_missing_value_message_displayed(self):
+        if self.find_by_xpath(
+                ZonesConstants.INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH).text == "Incorrect or missing values":
+            return True
+        else:
+            return False
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(ZonesConstants.OK_BUTTON_XPATH).click()
+
+    def is_such_record_exists_massage_displayed(self):
+        if self.find_by_xpath(
+                ZonesConstants.SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH).text == "Such a record already exists":
+            return True
+        else:
+            return False
+
+

@@ -46,5 +46,3 @@ class CommonTestCase:
         for item in range(len(event_name)):
             verifier.compare_values(event_name[item], expected_result[item], actual_result[item])
         verifier.verify()
-
-

@@ -8,7 +8,7 @@ from custom import basic_custom_actions
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
-from demo import logger
+# from demo import logger
 from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity
 from rule_management import RuleManager
 from stubs import Stubs
