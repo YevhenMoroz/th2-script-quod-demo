@@ -34,3 +34,4 @@ class UnbalancedRatesWizard(CommonPage):
             return True
         else:
             return False
+
