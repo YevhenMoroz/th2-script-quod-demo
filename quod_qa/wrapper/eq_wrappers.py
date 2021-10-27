@@ -15,8 +15,8 @@ from stubs import Stubs
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, BasketTicketDetails, ExtractTemplateDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest
+    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest, RowsNumbersForGrid
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, DiscloseFlagDetails, \
@@ -292,6 +292,21 @@ def split_order(request, qty, type, price):
         logger.error("Error execution", exc_info=True)
 
 
+def child_care(request, qty, ord_type, price):
+    order_care = OrderTicketDetails()
+    order_care.set_quantity(qty)
+    order_care.set_order_type(ord_type)
+    order_care.set_limit(price)
+    order_details = ModifyOrderDetails()
+    order_details.set_default_params(request)
+    order_details.set_order_details(order_care)
+    try:
+        call(Stubs.win_act_order_book.childCare, order_details.build())
+    except Exception:
+        basic_custom_actions.create_event('Fail child_care', status="FAIL")
+        logger.error("Error execution", exc_info=True)
+
+
 def transfer_order(request, user):
     transfer_order_details = TransferOrderDetails()
     transfer_order_details.set_default_params(request)
@@ -319,15 +334,18 @@ def internal_transfer(base_request, transfer_accept: bool = True, order_book_fil
         logger.error("Error execution", exc_info=True)
 
 
-def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm"):
+def manual_execution(request, qty, price, execution_firm='ExecutingTrader', contra_firm="Contra Firm",
+                     last_capacity="Agency"):
     manual_executing_details = ManualExecutingDetails(request)
     executions_details = manual_executing_details.add_executions_details()
     executions_details.set_quantity(qty)
     executions_details.set_price(price)
-    executions_details.set_executing_firm(execution_firm)
-    executions_details.set_contra_firm(contra_firm)
+    if execution_firm is not None:
+        executions_details.set_executing_firm(execution_firm)
+    if contra_firm is not None:
+        executions_details.set_contra_firm(contra_firm)
     executions_details.set_settlement_date_offset(1)
-    executions_details.set_last_capacity("Agency")
+    executions_details.set_last_capacity(last_capacity)
     try:
         call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
     except Exception:
@@ -484,11 +502,12 @@ def verify_execution_value(request, case_id, column_name, expected_value, trades
     base_verifier(case_id, column_name, expected_value, response[column_name])
 
 
-def verify_block_value(request, case_id, column_name, expected_value):
+def verify_block_value(request, case_id, column_name, expected_value,block_filter_list):
     ext_id = "MiddleOfficeExtractionId"
     middle_office_service = Stubs.win_act_middle_office_service
     extract_request = ExtractMiddleOfficeBlotterValuesRequest(base=request)
     extract_request.set_extraction_id(ext_id)
+    extract_request.set_filter(block_filter_list)
     extraction_detail = ExtractionDetail(column_name, column_name)
     extract_request.add_extraction_details([extraction_detail])
     request = call(middle_office_service.extractMiddleOfficeBlotterValues, extract_request.build())
@@ -745,6 +764,16 @@ def unbook_order(request):
     except Exception:
         logger.error("Error execution", exc_info=True)
         basic_custom_actions.create_event('Fail unbook_order', status="FAIL")
+
+
+def mass_book(request, row_list: []):
+    rows_numbers_for_grid = RowsNumbersForGrid(request, row_list)
+    call(Stubs.win_act_order_book.massBook, rows_numbers_for_grid.build())
+
+
+def mass_un_book(request, row_list: []):
+    rows_numbers_for_grid = RowsNumbersForGrid(request, row_list)
+    call(Stubs.win_act_order_book.massUnbook, rows_numbers_for_grid.build())
 
 
 def allocate_order(request, arr_allocation_param: [] = None):
@@ -1165,3 +1194,9 @@ def un_complete(base_request, filter_list=None):
 def book_basket(request, filter_list=None):
     request = SimpleRequest(request, filter_list)
     call(Stubs.win_act_basket_order_book.book, request.build())
+
+
+def cancel_basket(base_request, filter_list=None):
+    simple_request = SimpleRequest(base_request, filter_list)
+    basket_book_service = Stubs.win_act_basket_order_book
+    call(basket_book_service.cancelBasket, simple_request.build())

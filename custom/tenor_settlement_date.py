@@ -56,15 +56,15 @@ def wk3():
 
 
 def m1():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=25)).date().strftime('%Y%m%d')
 
 
 def m2():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=45)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=47)).date().strftime('%Y%m%d')
 
 
 def m3():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=68)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=70)).date().strftime('%Y%m%d')
 
 
 def m4():
