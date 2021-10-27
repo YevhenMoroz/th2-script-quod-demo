@@ -80,7 +80,7 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
 
     base_rfq_details = BaseTileDetails(base=case_base_request)
-    venue = "HSBC"
+    venue = "CITI"
 
     try:
         # Step 1

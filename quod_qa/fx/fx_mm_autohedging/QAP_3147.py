@@ -106,6 +106,7 @@ def execute(report_id, session_id):
             'TimeInForce': '4',
             'TradeDate': '*',
             'ExecType': 'F',
+            'TradeReportingIndicator': '0',
             'HandlInst': '1',
             'LeavesQty': '0',
             'NoParty': [{

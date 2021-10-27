@@ -55,6 +55,8 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     case_base_request = get_base_request(session_id, case_id)
     try:
+        initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, "EUR/USD", account_client)
+        initial_pos_quod= get_dealing_positions_details(pos_service, case_base_request, "EUR/USD", account_quod)
         # Step 2
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
@@ -71,9 +73,10 @@ def execute(report_id, session_id):
 
         actual_pos_client_eur_usd = get_dealing_positions_details(pos_service, case_base_request, "EUR/USD", account_client)
         actual_pos_quod_eur_usd = get_dealing_positions_details(pos_service, case_base_request, "EUR/USD", account_quod)
-
-        compare_position('Checking positions Palladium1_1 EUR/USD', case_id, "1000000", actual_pos_client_eur_usd)
-        compare_position('Checking positions DEFAULT1_1 EUR/USD', case_id, "-1000000", actual_pos_quod_eur_usd)
+        expected_pos_client = str(1000000+int(initial_pos_client))
+        expected_pos_quod = str(-1000000+int(initial_pos_quod))
+        compare_position('Checking positions Palladium1_1 EUR/USD', case_id, expected_pos_client, actual_pos_client_eur_usd)
+        compare_position('Checking positions DEFAULT1_1 EUR/USD', case_id, expected_pos_quod, actual_pos_quod_eur_usd)
 
         # PostConditions
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,

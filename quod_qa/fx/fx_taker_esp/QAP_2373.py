@@ -93,7 +93,7 @@ def execute(report_id, session_id):
     from_curr = "GBP"
     to_curr = "USD"
     tenor = "Spot"
-    venue = "HSBC"
+    venue = "HSB"
     instrument = "GBP/USD-Spot"
     client_tier = "Silver"
     bid_margin=300

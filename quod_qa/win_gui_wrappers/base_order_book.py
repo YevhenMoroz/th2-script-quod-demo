@@ -1,7 +1,5 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, \
-    OrdersDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import call
 
 
@@ -9,10 +7,21 @@ class BaseOrderBook(BaseWindow):
     def __init__(self, case_id, base_request):
         super().__init__(case_id, base_request)
         # Need to override
-        self.order_details = None
         self.order_info = None
-        self.grpc_call = None
+        self.order_details = None
+        self.new_order_details = None
+        self.modify_order_details = None
+        self.cancel_order_details = None
+        self.reassign_order_details = None
+        self.get_orders_details_call = None
+        self.groupModifyOrder_call = None
+        self.unCompleteOrder_call = None
+        self.notifyDFDOrder_call = None
+        self.reassignOrder_call = None
+        self.completeOrder_call = None
+        self.cancel_order_call = None
 
+    # region Common func
     def set_order_details(self):
         self.order_details.set_extraction_id(self.extraction_id)
         self.order_details.set_default_params(base_request=self.base_request)
@@ -26,54 +35,20 @@ class BaseOrderBook(BaseWindow):
         self.order_details.set_filter(filter_list)
         return self
 
-    # def check_order_filled(self, expected_sts, expected_exec_sts):
-    #     sts = ExtractionDetail("orderBook.Sts", "column_name")
-    #     exec_sts = ExtractionDetail("orderBook.ExecSts", "ExecSts")
-    #     self.order_details.add_single_order_info(
-    #         self.order_info.create(
-    #             action=ExtractionAction.create_extraction_action(extraction_details=[sts, exec_sts])
-    #         )
-    #     )
-    #     response = call(self.grpc_call, self.order_details.request())
-    #     self.verifier.set_event_name("Check Order Book")
-    #     self.verifier.compare_values("Status", expected_sts, response[sts.name])
-    #     self.verifier.compare_values("Exec Status", expected_exec_sts, response[exec_sts.name])
-    #     self.verifier.verify()
+    # endregion
 
-    def check_order_field(self, expected_field: dict):
-        actual_value = self.extract_field(expected_field)
-        key, value = list(expected_field.items())[0]
-        self.verifier.set_event_name("Check Order Book")
-        self.verifier.compare_values(key, value, actual_value)
-        self.verifier.verify()
-
-    def extract_field(self, column_name: dict) -> str:
-        key = list(column_name.keys())[0]
-        # key = next(iter(column_name.keys()))
-        field = ExtractionDetail("orderBook." + key, key)
+    # region Get
+    def extract_field(self, column_name: str) -> str:
+        field = ExtractionDetail("orderBook." + column_name, column_name)
         self.order_details.add_single_order_info(
             self.order_info.create(
                 action=ExtractionAction.create_extraction_action(extraction_details=[field])
             )
         )
-        response = call(self.grpc_call, self.order_details.request())
+        response = call(self.get_orders_details_call, self.order_details.request())
         return response[field.name]
 
-    def check_order_fields_list(self, expected_fields: dict):
-        """
-        Receives dict as an argument, where the key is column name what
-        we extract from GUI and value is expected result
-        For example {"Sts": "Terminated", "Owner": "QA1", etc}
-        """
-        actual_list = self.extract_fields_list(expected_fields)
-        for items in expected_fields.items():
-            key = list(items)[0]
-            value = list(items)[1]
-            self.verifier.set_event_name("Check Order Book")
-            self.verifier.compare_values(key, value, actual_list[key])
-        self.verifier.verify()
-
-    def extract_fields_list(self, list_fields: dict) -> dict:
+    def extract_fields_list(self, list_fields: dict, row_number: int) -> dict:
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and return new dict where
@@ -84,10 +59,123 @@ class BaseOrderBook(BaseWindow):
             key = list(field)[0]
             field = ExtractionDetail(key, key)
             list_of_fields.append(field)
+        info = self.order_info.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
+        info.set_number(row_number)
+        self.order_details.add_single_order_info(info)
+        response = call(self.get_orders_details_call, self.order_details.request())
+        return response
+
+    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int) -> dict:
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and return new dict where
+        key = key and value is extracted field from FE
+        """
+        list_of_fields = []
+        for field in list_fields.items():
+            key = list(field)[0]
+            field = ExtractionDetail(key, key)
+            list_of_fields.append(field)
+
+        child_info = self.order_info.create(
+            action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
+        child_info.set_number(row_number)
+        child_details = self.order_details.create(info=child_info)
+
         self.order_details.add_single_order_info(
             self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields)
-            )
+                action=ExtractionAction.create_extraction_action(), sub_order_details=child_details)
         )
-        response = call(self.grpc_call, self.order_details.request())
+        response = call(self.get_orders_details_call, self.order_details.request())
         return response
+
+    # endregion
+
+    # region Check
+    def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book",
+                                row_number: int = 1):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result and row_number to check, 1 by default
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_fields_list(expected_fields, row_number)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+                                     row_number: int = 1):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result and row_number to check, 1 by default
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_second_lvl_fields_list(expected_fields, row_number)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    # endregion
+
+    # region Actions
+    def cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
+                     filter_list: list = None):
+        if cancel_children is not None:
+            self.cancel_order_details.set_cancel_children(cancel_children)
+        if row_count is not None:
+            self.cancel_order_details.set_selected_row_count(row_count)
+        if comment is not None:
+            self.cancel_order_details.set_comment(comment)
+        if filter_list is not None:
+            self.cancel_order_details.set_filter(filter_list)
+        call(self.cancel_order_call, self.cancel_order_details.build())
+
+    def complete_order(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.completeOrder_call, self.modify_order_details.build())
+
+    def un_complete_order(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.unCompleteOrder_call, self.modify_order_details.build())
+
+    def notify_dfd(self, filter_list=None, row_count=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.modify_order_details.set_filter()
+        if row_count is not None:
+            self.modify_order_details.set_selected_row_count()
+        call(self.notifyDFDOrder_call, self.modify_order_details.build())
+
+    def group_modify(self, client=None, security_account=None, routes=None, free_notes=None):
+        self.modify_order_details.set_default_params(self.base_request)
+        if client is not None:
+            self.modify_order_details.client = client
+        if security_account is not None:
+            self.modify_order_details.securityAccount = security_account
+        if routes is not None:
+            self.modify_order_details.routes = routes
+        if free_notes is not None:
+            self.modify_order_details.freeNotes = free_notes
+        call(self.groupModifyOrder_call, self.modify_order_details.build())
+
+    def reassign_order(self, recipient):
+        self.reassign_order_details.base.CopyFrom(self.base_request)
+        self.reassign_order_details.desk = recipient
+        call(self.reassignOrder_call, self.reassign_order_details)
+    # endregion

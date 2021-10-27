@@ -337,6 +337,7 @@ class CaseParamsSellRfq:
             'OrderCapacity': 'A',
             'Currency': self.currency,
             'Instrument': {
+                'SecurityType': self.securitytype,
                 'Symbol': self.symbol,
                 'SecurityIDSource': self.securityidsource,
                 'SecurityID': self.securityid,
@@ -516,7 +517,7 @@ class CaseParamsSellRfq:
     def prepare_order_filled_report(self):
         self.set_order_exec_rep_params()
         self.order_filled = self.order_exec_report
-        # self.order_filled['Account'] = self.account
+        self.order_filled['Account'] = self.account
         self.order_filled['OrdStatus'] = '2'
         self.order_filled['ExecType'] = 'F'
         self.order_filled['Instrument']['SecurityType'] = self.securitytype
@@ -528,6 +529,7 @@ class CaseParamsSellRfq:
         self.order_filled['LeavesQty'] = '0'
         self.order_filled['TradeDate'] = tsd.today()
         self.order_filled['LastMkt'] = 'XQFX'
+        self.order_filled['TradeReportingIndicator'] = '0'
         self.order_filled['ExDestination'] = 'XQFX'
         self.order_filled['GrossTradeAmt'] = '*'
         if self.securitytype == 'FXNDF':
@@ -575,7 +577,7 @@ class CaseParamsSellRfq:
     def prepare_order_swap_filled_report(self):
         self.set_order_exec_rep_params_swap()
         self.order_filled_swap = self.order_exec_report_swap
-
+        self.order_filled_swap['TradeReportingIndicator'] = '0'
         self.order_filled_swap['NoLegs'][0]['LegLastForwardPoints'] = '*'
         self.order_filled_swap['NoLegs'][1]['LegLastForwardPoints'] = '*'
         if self.leg1_settltype == '0':

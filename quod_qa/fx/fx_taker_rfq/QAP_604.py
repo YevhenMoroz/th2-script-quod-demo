@@ -128,7 +128,7 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "Spot"
-    case_filter_venue = "HSBC"
+    case_filter_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_venue = ["CITI", "HSBC"]

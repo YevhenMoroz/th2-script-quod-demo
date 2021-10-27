@@ -39,7 +39,7 @@ class CumTrdLmtCounterConstants:
     WIZARD_CUM_ORD_QTY_XPATH = '//*[@formcontrolname="cumOrdQty"]'
     WIZARD_CUM_SELL_ORD_AMT_XPATH = '//*[@formcontrolname="cumSellOrdAmt"]'
 
-    
+
 
 
 
