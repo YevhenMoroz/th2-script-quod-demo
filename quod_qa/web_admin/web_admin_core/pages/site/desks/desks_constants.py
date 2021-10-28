@@ -7,7 +7,9 @@ class DesksConstants:
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
+    INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
 
     #Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']//div[2]//div[1]//div/input"
@@ -19,7 +21,7 @@ class DesksConstants:
     DESK_MODE_AT_VALUES_TAB_XPATH = '//*[text()="Desk mode *"]/preceding-sibling::input'
 
 
-    LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[text()="Location"]/preceding-sibling::input'
+    LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[@id="location"]'
     ASSIGNMENTS_TAB_LOCATION_LINK_XPATH = '//*[normalize-space(text())="{}"]'
     ASSIGNMENTS_TAB_USER_LINK_XPATH = '//*[normalize-space(text())="{}"]'
 
