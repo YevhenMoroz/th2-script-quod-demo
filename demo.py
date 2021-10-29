@@ -46,6 +46,7 @@ from quod_qa.eq.Algo_Redburn.Test.PDAT_516 import TWAP_AUC_516_1, TWAP_AUC_516_2
     VWAP_AUC_516_1, VWAP_AUC_516_2
 from quod_qa.eq.Algo_Redburn.Test.PDAT_728 import TWAP_NAV_REF, VWAP_NAV_REF, POV_NAV_REF
 from rule_management import RuleManager
+from quod_qa.eq.Algo_Redburn.Test import TWAP_NAV_316
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 
@@ -223,9 +224,10 @@ def test_run():
         # POV_FULL.execute(report_id)
         # TWAP_FULL.execute(report_id)
         # VWAP_FULL.execute(report_id)
-        TWAP_NAV_REF.execute(report_id)
+        # TWAP_NAV_REF.execute(report_id)
         # VWAP_NAV_REF.execute(report_id)
         # POV_NAV_REF.execute(report_id)
+        # TWAP_NAV_316.execute(report_id)
 
         # TWAP_AUC_516_1.execute(report_id)
         # TWAP_AUC_516_2.execute(report_id)
@@ -268,8 +270,8 @@ def test_run():
         # QAP_4582.execute(report_id)
         # QAP_4583.execute(report_id)
         # QAP_4584.execute(report_id)
-        # QAP_4893.execute(report_id)
-        # QAP_4951.execute(report_id)
+        QAP_4893.execute(report_id)
+        #2 QAP_4951.execute(report_id)
         # QAP_4333.execute(report_id)
         # QAP_4335.execute(report_id)
         # QAP_4336.execute(report_id)
@@ -286,7 +288,7 @@ def test_run():
         # QAP_4413.execute(report_id)
         # QAP_4750.execute(report_id)
         # QAP_4760.execute(report_id)
-        # POV
+        # # POV
         # QAP_4624.execute(report_id)
         # QAP_4605.execute(report_id)
         # QAP_4606.execute(report_id)
@@ -305,7 +307,7 @@ def test_run():
         # QAP_4784.execute(report_id)
         # QAP_4751.execute(report_id)
         # QAP_4952.execute(report_id)
-        # VWAP
+        # # VWAP
         # QAP_4699.execute(report_id)
         # QAP_4700.execute(report_id)
         # QAP_4733.execute(report_id)
@@ -315,7 +317,7 @@ def test_run():
         # QAP_4800.execute(report_id)
         # QAP_4801.execute(report_id)
         # QAP_4756.execute(report_id)
-        # endregion
+        # # endregion
 
         # region Iceberg
         # QAP_3056.execute(report_id)
@@ -372,7 +374,7 @@ def test_run():
         # #end FIX/FE
         # QAP_2706.execute(report_id)
         # QAP_2478.execute(report_id)
-        # QAP_2955.execute(report_id) 
+        # QAP_2955.execute(report_id)
         # QAP_2977.execute(report_id)
         # QAP_3032.execute(report_id)
         # QAP_3117.execute(report_id)

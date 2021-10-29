@@ -1,4 +1,4 @@
-from regression_cycle import retail_regression, fx_regression, algo_regression, eq_regression, web_admin_regression
+from regression_cycle import algo_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -15,14 +15,14 @@ def test_run(name, algo=True, equity=False, forex=False, retail=False, web_admin
 
         if algo:
             algo_regression.test_run(report_id)
-        if equity:
-            eq_regression.test_run(report_id)
-        if forex:
-            fx_regression.test_run(report_id)
-        if retail:
-            retail_regression.test_run(report_id)
-        if web_admin:
-            web_admin_regression.test_run(report_id)
+        # if equity:
+        #     eq_regression.test_run(report_id)
+        # if forex:
+        #     fx_regression.test_run(report_id)
+        # if retail:
+        #     retail_regression.test_run(report_id)
+        # if web_admin:
+        #     web_admin_regression.test_run(report_id)
 
 
         print('duration time = ' + str(datetime.now() - start))

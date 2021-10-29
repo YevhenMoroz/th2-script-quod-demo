@@ -157,6 +157,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4612_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -203,7 +204,7 @@ def execute(report_id):
         fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
-        time.sleep(1)
+        time.sleep(3)
 
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),
@@ -337,7 +338,7 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 IOC Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
-        time.sleep(2)
+        time.sleep(3)
     
         #region Cancel Algo Order
         case_id_5 = bca.create_event("Fill Algo Order", case_id)

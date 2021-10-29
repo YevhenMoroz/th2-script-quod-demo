@@ -34,7 +34,7 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'TWAP_WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '99',
+                'TriggerPriceRed': '111',
                 'AllowedVenues': 'XLON'
             }
         }

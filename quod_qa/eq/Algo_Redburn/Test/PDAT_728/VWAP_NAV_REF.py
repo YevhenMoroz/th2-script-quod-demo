@@ -32,7 +32,7 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Currency': "GBX",
+            'Currency': "GBP",
             'TargetStrategy': 1,
             'ExDestination': 'XLON',
             'Text': 'VWAP-NAV_01',
@@ -50,8 +50,8 @@ def execute(report_id):
                 # 'NavigatorMinBookReloadSeconds': '10',
                 #'NavigatorRebalanceTime': '10',
                 'AllowedVenues': 'XLON',
-                #'StartDate2': '20211021-15:29:00.000',
-                'EndDate2': '20211022-12:08:00.000',
+                # 'StartDate2': '20211021-15:29:00.000',
+                # 'EndDate2': '20211022-12:08:00.000',
                 # 'Waves': '4'
             }
         }
