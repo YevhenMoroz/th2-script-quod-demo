@@ -54,7 +54,6 @@ def test_run():
     # Generation id and time for test run
     report_id = bca.create_event('Red tests')
     try:
-        TradingSession_test.execute(report_id)
         # region TWAP NAV WW
         QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
         QA_TWAP_NAV_WW_MAXShares.execute(report_id)
