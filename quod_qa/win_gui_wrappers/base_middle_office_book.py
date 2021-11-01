@@ -15,18 +15,15 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.rows_numbers_for_grid = None
         self.view_order_extraction_details = None
         self.extract_middle_office_blotter_values_request = None
-        self.middle_office_service_allocate_call = None
-        self.middle_office_service_mass_book_call = None
-        self.middle_office_service_mass_book_call = None
-        self.middle_office_service_book_order_call = None
-        self.middle_office_service_amend_block_call = None
-        self.middle_office_service_mass_unbook_call = None
-        self.middle_office_service_un_book_order_call = None
-        self.middle_office_service_approve_block_call = None
-        self.middle_office_service_amend_allocate_call = None
-        self.middle_office_service_amend_unallocate_call = None
-        self.middle_office_service_extract_view_orders_table_data_call = None
-        self.middle_office_service_extract_middle_office_blotter_values_call = None
+        self.allocate_block_call = None
+        self.book_order_call = None
+        self.amend_block_call = None
+        self.unbook_order_call = None
+        self.approve_block_call = None
+        self.amend_allocate_call = None
+        self.amend_unallocate_call = None
+        self.extract_view_orders_table_data_call = None
+        self.extract_middle_office_blotter_values_call = None
 
     # endregion
     # region Common func
@@ -44,7 +41,7 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     def check_error_in_book(self):
         self.modify_ticket_details.set_partial_error_message("error_in_book")
-        error = call(self.middle_office_service_book_order_call, self.modify_ticket_details.build())
+        error = call(self.book_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return error
 
@@ -56,7 +53,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
         self.extract_middle_office_blotter_values_request.set_filter(filter_list)
         self.extract_middle_office_blotter_values_request.set_row_number(row_number)
-        response = call(self.middle_office_service_extract_middle_office_blotter_values_call,
+        response = call(self.extract_middle_office_blotter_values_call,
                         self.extract_middle_office_blotter_values_request.build())
         self.clear_details([self.extract_middle_office_blotter_values_request])
         return response
@@ -133,41 +130,31 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     # region Action
     def book_order(self):
-        response = call(self.middle_office_service_book_order_call, self.modify_ticket_details.build())
+        response = call(self.book_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
     def amend_block(self):
-        response = call(self.middle_office_service_amend_block_call, self.modify_ticket_details.build())
+        response = call(self.amend_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
     def un_book_order(self):
-        call(self.middle_office_service_un_book_order_call, self.modify_ticket_details.build())
-        self.clear_details([self.modify_ticket_details])
-
-    def mass_book(self, row_list: list):
-        self.rows_numbers_for_grid.set_rows_numbers(row_list)
-        call(self.middle_office_service_mass_book_call, self.rows_numbers_for_grid.build())
-        self.clear_details([self.modify_ticket_details])
-
-    def mass_unbook(self, row_list: list):
-        self.rows_numbers_for_grid.set_rows_numbers(row_list)
-        call(self.middle_office_service_mass_unbook_call, self.rows_numbers_for_grid.build())
+        call(self.unbook_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
 
     def allocate_block(self):
-        response = call(self.middle_office_service_allocate_call, self.modify_ticket_details.build())
+        response = call(self.allocate_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
     def amend_allocate(self):
-        response = call(self.middle_office_service_amend_allocate_call, self.modify_ticket_details.build())
+        response = call(self.amend_allocate_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
     def unallocate_order(self):
-        response = call(self.middle_office_service_amend_unallocate_call, self.modify_ticket_details.build())
+        response = call(self.amend_unallocate_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
@@ -178,12 +165,12 @@ class BaseMiddleOfficeBook(BaseWindow):
             order_details.set_order_number(i)
             dma_order_id_view = self.extraction_detail("middleOffice.orderId", "Order ID")
             order_details.add_extraction_detail(dma_order_id_view)
-        response = call(self.middle_office_service_extract_view_orders_table_data_call,
+        response = call(self.extract_view_orders_table_data_call,
                         self.view_order_extraction_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
     def approve_block(self):
-        call(self.middle_office_service_approve_block_call, self.view_order_extraction_details.build())
+        call(self.approve_block_call, self.view_order_extraction_details.build())
         self.clear_details([self.modify_ticket_details])
     # endregion

@@ -16,6 +16,7 @@ class BaseOrderBook(BaseWindow):
         self.basket_row_details = None
         self.modify_order_details = None
         self.cancel_order_details = None
+        self.rows_numbers_for_grid = None
         self.suspend_order_details = None
         self.disclose_flag_details = None
         self.add_to_basket_details = None
@@ -43,6 +44,8 @@ class BaseOrderBook(BaseWindow):
         self.add_to_basket_call = None
         self.create_basket_call = None
         self.cancel_order_call = None
+        self.mass_unbook_call = None
+        self.mass_book_call = None
 
     # endregion
     # region Common func
@@ -271,4 +274,14 @@ class BaseOrderBook(BaseWindow):
         if last_capacity is not None:
             self.manual_executing_details.add_executions_details().set_last_capacity(last_capacity)
         call(self.manual_execution_order_call, self.manual_executing_details.build())
+
+    def mass_book(self, row_list: list):
+        self.rows_numbers_for_grid.set_rows_numbers(row_list)
+        call(self.mass_book_call, self.rows_numbers_for_grid.build())
+        self.clear_details([self.rows_numbers_for_grid])
+
+    def mass_unbook(self, row_list: list):
+        self.rows_numbers_for_grid.set_rows_numbers(row_list)
+        call(self.mass_unbook_call, self.rows_numbers_for_grid.build())
+        self.clear_details([self.rows_numbers_for_grid])
     # endregion
