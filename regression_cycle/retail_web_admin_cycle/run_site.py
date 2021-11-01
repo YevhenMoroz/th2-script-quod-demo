@@ -14,6 +14,9 @@ from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4719 import QAP_4719
 from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4724 import QAP_4724
 from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5304 import QAP_5304
 from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5315 import QAP_5315
+from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5681 import QAP_5681
+from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5682 import QAP_5682
+from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5695 import QAP_5695
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -28,7 +31,7 @@ class RunSite:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_4662(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_4662(self.web_driver_container, self.second_lvl_id).run()
             #QAP_4663(self.web_driver_container, self.second_lvl_id).run()
             #QAP_4666(self.web_driver_container, self.second_lvl_id).run()
             #QAP_4668(self.web_driver_container, self.second_lvl_id).run()
@@ -40,6 +43,9 @@ class RunSite:
             #QAP_4713(self.web_driver_container, self.second_lvl_id).run()
             #QAP_5304(self.web_driver_container, self.second_lvl_id).run()
             #QAP_5315(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5681(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5682(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_5695(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Site Retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

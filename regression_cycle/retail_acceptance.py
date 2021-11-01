@@ -27,9 +27,11 @@ def test_run(parent_id=None):
         twap_acceptance_list.test_run(session_id, report_id)
         benchmark_acceptance_list.test_run(session_id, report_id)
         washbook_acceptance_list.test_run(session_id, report_id)
-        # close_fe(report_id, session_id)
-        # gating_rules_acceptance_list.test_run(session_id, report_id)
-    except Exception:
+        # Close FE for gating_rules block
+        close_fe(report_id, session_id)
+        gating_rules_acceptance_list.test_run(report_id)
+    except Exception as error:
+        print(error)
         logging.error("Error execution", exc_info=True)
 
 
