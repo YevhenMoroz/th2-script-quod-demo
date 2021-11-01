@@ -84,7 +84,7 @@ class CommissionsPage(CommonPage):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_LIST_FILTER_XPATH, value)
 
     def set_commission_amount_type(self, value):
-        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH, value)
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH, value)
 
     def set_commission_profile(self, value):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH, value)

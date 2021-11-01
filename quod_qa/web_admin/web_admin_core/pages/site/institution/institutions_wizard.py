@@ -27,3 +27,10 @@ class InstitutionsWizard(CommonPage):
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
+    def is_such_record_exists_massage_displayed(self):
+        if self.find_by_xpath(
+                InstitutionsConstants.SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH).text == "Such a record already exists":
+            return True
+        else:
+            return False
+

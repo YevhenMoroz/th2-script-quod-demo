@@ -9,7 +9,7 @@ class TradingLimitsValuesSubWizardPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def set_descripton(self, value):
+    def set_description(self, value):
         self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_DESCRIPTION_XPATH, value)
 
     def get_description(self):

@@ -7,17 +7,22 @@ class DesksConstants:
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
 
     #Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']//div[2]//div[1]//div/input"
     MODE_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']//div[2]//div[2]//div/input"
     LOCATION_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']//div[2]//div[3]//div/input"
 
-    #Wizard
-    NAME_AT_DESCRIPTION_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
-    DESK_MODE_AT_DESCRIPTION_TAB_XPATH = '//*[text()="Desk mode *"]/preceding-sibling::input'
-    LOCATION_AT_DESCRIPTION_TAB_XPATH = '//*[text()="Location"]/preceding-sibling::input'
+    #Values tab
+    NAME_AT_VALUES_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
+    DESK_MODE_AT_VALUES_TAB_XPATH = '//*[text()="Desk mode *"]/preceding-sibling::input'
+
+
+    LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[text()="Location"]/preceding-sibling::input'
+    ASSIGNMENTS_TAB_LOCATION_LINK_XPATH = '//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_USER_LINK_XPATH = '//*[normalize-space(text())="{}"]'
+
 
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     REVERT_CHANGES_BUTTON_XPATH  = "//*[text()='Revert Changes']"

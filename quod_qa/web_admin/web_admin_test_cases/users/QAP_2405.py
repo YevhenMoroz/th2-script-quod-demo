@@ -18,7 +18,6 @@ class QAP_2405(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.user_id = ''.join("test " + str(random.randint(1, 1000)))
@@ -27,6 +26,7 @@ class QAP_2405(CommonTestCase):
         self.desks = ("DESK A", "Quod Desk")
         self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
         self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
+        self.pin_code = "333"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,7 +41,7 @@ class QAP_2405(CommonTestCase):
         time.sleep(2)
         login_sub_wizard.set_user_id(self.user_id)
         time.sleep(2)
-        login_sub_wizard.set_generate_pin_code_checkbox()
+        login_sub_wizard.set_pin_code(self.pin_code)
         time.sleep(1)
         login_sub_wizard.set_password(self.password)
         time.sleep(2)
@@ -63,7 +63,7 @@ class QAP_2405(CommonTestCase):
         time.sleep(2)
         login_sub_wizard.set_user_id(self.new_user_id)
         time.sleep(2)
-        login_sub_wizard.set_generate_pin_code_checkbox()
+        login_sub_wizard.set_pin_code(self.pin_code)
         time.sleep(2)
         login_sub_wizard.set_password(self.new_password)
         time.sleep(2)
@@ -82,6 +82,6 @@ class QAP_2405(CommonTestCase):
             login_page = LoginPage(self.web_driver_container)
             self.verify("Login to web adm with new user", True, login_page.check_is_web_admin_preloaded())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

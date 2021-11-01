@@ -166,3 +166,4 @@ class UsersPage(CommonPage):
 
     def get_connected(self):
         return self.find_by_xpath(UsersConstants.CONNECTED_AT_MAIN_PAGE).text
+

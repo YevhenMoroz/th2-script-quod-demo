@@ -20,7 +20,6 @@ class QAP_4864(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm03"
         self.password = "adm03"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -28,7 +27,7 @@ class QAP_4864(CommonTestCase):
         self.disclose_exec = 'Manual'
         self.email_address = "email"
         self.trade_confirm_generation = "Automatic"
-        self.trade_confirm_preference = "Automatic"
+        self.trade_confirm_preference = "Excel"
         self.net_gross_ind_type = "Net"
         self.recipient_types = "CC"
 
@@ -87,6 +86,6 @@ class QAP_4864(CommonTestCase):
             self.verify("Is pdf contains correctly values", True,
                         main_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

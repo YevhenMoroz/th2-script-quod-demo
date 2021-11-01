@@ -6,7 +6,7 @@ class LocationsConstants:
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
@@ -19,7 +19,7 @@ class LocationsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
-
+    INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
 
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_ZONE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
@@ -30,5 +30,6 @@ class LocationsConstants:
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONE_XPATH = '//*[@id="zone"]'
-    ASSIGNMENTS_TAB_DESKS_XPATH = '//a[text()="{}"]'
+    ASSIGNMENTS_TAB_DESKS_XPATH = '//a[text()=" {} "]'
     ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'
+    ASSIGNMENTS_TAB_ZONE_LINK_XPATH = '//a[text()=normalize-space(" {} ")]'

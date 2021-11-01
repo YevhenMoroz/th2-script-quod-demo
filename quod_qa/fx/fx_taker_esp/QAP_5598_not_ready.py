@@ -19,7 +19,8 @@ def execute(report_id):
         simulator = Stubs.simulator
         # simulator = Stubs.test_sim
         act = Stubs.fix_act
-        alias = "fix-fh-314-luna"
+        alias = "fix-fh-q-314-luna"
+        # alias = "fix-fh-314-luna"
 
 
         mdu_params_spo = {
@@ -62,7 +63,7 @@ def execute(report_id):
         mdu_params_spo2 = {
             "MDReqID": simulator.getMDRefIDForConnection314(
                 request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:CITI",
+                    symbol="EUR/USD:SPO:REG:DB",
                     connection_id=ConnectionID(session_alias=alias))).MDRefID,
             'Instrument': {
                 'Symbol': 'EUR/USD',
@@ -87,27 +88,6 @@ def execute(report_id):
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
-               ]
-        }
-        print(mdu_params_spo2)
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data SPOT',
-                alias,
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo2, alias)
-            ))
-
-        mdu_params_spo3 = {
-            "MDReqID": simulator.getMDRefIDForConnection314(
-                request=RequestMDRefID(
-                    symbol="EUR/USD:SPO:REG:BARX",
-                    connection_id=ConnectionID(session_alias=alias))).MDRefID,
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-            },
-            "NoMDEntries": [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.18066,

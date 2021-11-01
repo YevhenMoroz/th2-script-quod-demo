@@ -38,17 +38,17 @@ from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_4439 import QAP
 class RunFxMarketMaking:
     def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
         self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.folder_name, root_report_id)
-        self.second_lvl_id = bca.create_event(self.__class__.__name__, self.first_lvl_id)
+        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
+        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
         self.web_driver_container = web_driver_container
 
     def execute(self):
         try:
             start_time = time.monotonic()
             # QAP_1647(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_1688(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_1693(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_1695(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1688(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1693(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1695(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1756(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1757(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1758(self.web_driver_container, self.second_lvl_id).run()
