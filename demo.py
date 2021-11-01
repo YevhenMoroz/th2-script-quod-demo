@@ -169,7 +169,6 @@ def test_run():
         VWAP_AUC_01.execute(report_id)
         POV_AUC_01.execute(report_id)
         # endregion
-        print()
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
         logging.error("Error execution", exc_info=True)
