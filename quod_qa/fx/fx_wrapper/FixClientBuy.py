@@ -12,10 +12,10 @@ class FixClientBuy():
 
 
     def send_market_data_spot(self, even_name_custom=''):
-        even_name = 'Send Market Data SPOT'
+        even_name = 'Send Market Data SPOT  '
         if even_name_custom!='':
             even_name=even_name_custom
-        print('Market Data we sent to BUY SPOT      ',self.case_params_buy.market_d_params_spot)
+        print(even_name ,self.case_params_buy.market_d_params_spot)
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 even_name,
@@ -27,9 +27,10 @@ class FixClientBuy():
 
     def send_market_data_fwd(self, even_name_custom=''):
         tenor = self.case_params_buy.defaultmdsymbol[11:15]
+        even_name = 'Send Market Data FORWARD   '
         if even_name_custom!='':
             even_name=even_name_custom
-        print('Market Data we sent to BUY FORWARD   ',self.case_params_buy.market_d_params_fwd)
+        print(even_name,self.case_params_buy.market_d_params_fwd)
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 'Send Market Data '+tenor,

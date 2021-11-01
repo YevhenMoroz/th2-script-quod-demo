@@ -24,3 +24,10 @@ class CommonPage(CommonPage):
 
     def click_on_send_button_at_feedback_area(self):
         self.find_by_xpath(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH).click()
+
+    def click_on_logout(self):
+        self.find_by_xpath(CommonConstants.LOGOUT_BUTTON_XPATH).click()
+
+    def click_on_user_icon(self):
+        self.find_by_xpath(CommonConstants.USER_ICON_AT_RIGHT_CORNER).click()
+

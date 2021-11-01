@@ -17,7 +17,7 @@ class QAP_3100(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.user_id = "acameron"
-        self.console_error_lvl_id = second_lvl_id
+
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,6 +50,6 @@ class QAP_3100(CommonTestCase):
             time.sleep(2)
             self.verify("After enabled ", "User {} Enabled".format(self.user_id), users_page.get_enabled_massage())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

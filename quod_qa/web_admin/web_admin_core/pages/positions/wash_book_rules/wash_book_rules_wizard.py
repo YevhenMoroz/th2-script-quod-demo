@@ -74,6 +74,9 @@ class WashBookRulesWizard(CommonPage):
     def set_desk(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_DESK_XPATH, value)
 
+    def set_institution(self,value):
+        self.set_combobox_value(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH,value)
+
     def get_desk(self):
         return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_DESK_XPATH)
 

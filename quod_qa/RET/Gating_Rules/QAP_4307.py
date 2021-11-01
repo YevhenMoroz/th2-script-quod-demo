@@ -7,15 +7,39 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 
 from custom.basic_custom_actions import timestamps
+from stubs import Stubs
+from win_gui_modules.order_ticket import OrderTicketDetails
+from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
-from win_gui_modules.utils import get_base_request
+from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
-from quod_qa.wrapper.ret_wrappers import create_order, verify_order_value
+from quod_qa.wrapper.ret_wrappers import extract_parent_order_details, verifier
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+
+def create_order(base_request, qty, client, order_type, price, tif, side, lookup):
+    order_ticket_service = Stubs.win_act_order_ticket
+    order_ticket = OrderTicketDetails()
+    order_ticket.set_quantity(qty)
+    order_ticket.set_client(client)
+    order_ticket.set_order_type(order_type)
+    order_ticket.set_limit(price)
+    order_ticket.set_tif(tif)
+    if side == 'Buy':
+        order_ticket.buy()
+    else:
+        order_ticket.sell()
+
+    new_order_details = NewOrderDetails()
+    new_order_details.set_lookup_instr(lookup)
+    new_order_details.set_order_details(order_ticket)
+    new_order_details.set_default_params(base_request)
+
+    call(order_ticket_service.placeOrder, new_order_details.build())
 
 
 def execute(session_id, report_id):
@@ -24,12 +48,13 @@ def execute(session_id, report_id):
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations
-    lookup = "RELIANCE"  # Setting values for all orders
+    lookup = "TCS"  # Setting values for all orders
     order_type = "Limit"
     price = "10"
     qty = "200"
     tif = "Day"
     client = "HAKKIM"
+    side = "Buy"
     # endregion
 
     # region Open FE
@@ -39,14 +64,22 @@ def execute(session_id, report_id):
     # endregion
 
     # region Create order via FE according to 1st step
-    create_order(base_request, qty, client, lookup, order_type, tif,
-                 False, None, price, None, False, None, None)
+    create_order(base_request, qty, client, order_type, price, tif, side, lookup)
     # endregion
 
     # region Check values in OrderBook according to 2nd step
-    verify_order_value(base_request, case_id, "Sts", "Held", False)
-    verify_order_value(base_request, case_id, "GatingRuleName", "QAP-4307(Gr_for_DMA)", False)
-    verify_order_value(base_request, case_id, "GatingRuleCondName", "DMATinyQty", False)
+    order_sts = extract_parent_order_details(base_request, column_name='Sts', extraction_id='Sts')
+    verifier(case_id, event_name='Check order Status', expected_value='Held', actual_value=order_sts)
+
+    order_gating_rule_name = extract_parent_order_details(base_request, column_name='GatingRuleName',
+                                                          extraction_id='GatingRuleName')
+    verifier(case_id, event_name='Check order GatingRuleName', expected_value='QAP-4307(Gr_for_DMA)',
+             actual_value=order_gating_rule_name)
+
+    order_gating_rule_condname = extract_parent_order_details(base_request, column_name='GatingRuleCondName',
+                                                              extraction_id='GatingRuleCondName')
+    verifier(case_id, event_name='Check order GatingRuleCondName', expected_value='DMATinyQty',
+             actual_value=order_gating_rule_condname)
     # endregion
 
     logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

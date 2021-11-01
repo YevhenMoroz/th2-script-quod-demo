@@ -26,5 +26,8 @@ class UsersWizard(CommonPage):
         return self.is_pdf_contains_value(value)
 
     def get_incorrect_or_missing_values_exception(self):
-        return self.find_by_xpath(UsersConstants.INCORRECT_OR_MISSING_VALUES_EXCEPTION).text
-
+        if self.find_by_xpath(
+                    UsersConstants.INCORRECT_OR_MISSING_VALUES_EXCEPTION).text == "Incorrect or missing values":
+            return True
+        else:
+            return False

@@ -43,7 +43,7 @@ class WashBookRulesConstants:
     WIZARD_CLIENT_XPATH = "//*[text()='Client']/preceding-sibling::input"
     WIZARD_USER_XPATH = "//*[text()='User']/preceding-sibling::input"
     WIZARD_DESK_XPATH = "//*[text()='Desk']/preceding-sibling::input"
-
+    WIZARD_INSTITUTION_XPATH = "//*[@id='institution']"
     WIZARD_CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
 
     SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'

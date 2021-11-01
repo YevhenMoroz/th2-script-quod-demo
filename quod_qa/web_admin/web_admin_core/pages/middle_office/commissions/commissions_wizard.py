@@ -26,3 +26,10 @@ class CommissionsWizard(CommonPage):
         self.find_by_xpath(CommissionsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_incorrect_or_missing_value_message_displayed(self):
+        if self.find_by_xpath(
+                CommissionsConstants.INCORRECT_OR_MISSING_VALUES_XPATH).text == "Incorrect or missing values":
+            return True
+        else:
+            return False

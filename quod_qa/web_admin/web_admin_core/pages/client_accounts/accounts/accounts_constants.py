@@ -24,6 +24,7 @@ class AccountsConstants:
     WIZARD_COUNTERPART_COMBOBOX_XPATH = "//input[@id='counterpart']"
     WIZARD_DEFAULT_ROUTE_COMBOBOX_XPATH = "//input[@id='defaultRoute']"
     WIZARD_SAVE_BUTTON_XPATH = "//button[text()='Save Changes']"
+    INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
 
     ADD_DIMENSIONS_ENTITY_BUTTON_XPATH = "//nb-accordion-item[2]/nb-accordion-item-body/div/div/ng2-smart-table/table/thead/tr[2]/th[1]/a"
     ADD_ROUTES_ENTITY_BUTTON_XPATH = "//nb-accordion-item[3]/nb-accordion-item-body/div/div/ng2-smart-table/table/thead/tr[2]/th[1]/a"

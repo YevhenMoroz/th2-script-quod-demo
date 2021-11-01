@@ -18,7 +18,6 @@ class QAP_2196(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -93,6 +92,6 @@ class QAP_2196(CommonTestCase):
             except Exception:
                 self.verify("Venue account deleted correctly", True, True)
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

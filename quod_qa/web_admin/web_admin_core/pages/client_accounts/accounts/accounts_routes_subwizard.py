@@ -33,7 +33,7 @@ class AccountsRoutesSubWizard(CommonPage):
         return self.get_text_by_xpath(AccountsConstants.ROUTES_ROUTE_ACCOUNT_NAME_INPUT_XPATH)
 
     def set_route(self, value: str):
-        self.set_text_by_xpath(AccountsConstants.ROUTES_ROUTE_COMBOBOX_XPATH, value)
+        self.set_combobox_value(AccountsConstants.ROUTES_ROUTE_COMBOBOX_XPATH, value)
 
     def get_route(self):
         return self.get_text_by_xpath(AccountsConstants.ROUTES_ROUTE_COMBOBOX_XPATH)

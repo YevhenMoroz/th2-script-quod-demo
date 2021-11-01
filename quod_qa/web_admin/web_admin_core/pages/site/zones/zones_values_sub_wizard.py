@@ -12,3 +12,6 @@ class ZonesValuesSubWizard(CommonPage):
 
     def get_name(self):
         return self.get_text_by_xpath(ZonesConstants.VALUES_TAB_NAME_XPATH)
+
+    def click_on_values_tab(self):
+        self.find_by_xpath(ZonesConstants.VALUES_TAB_XPATH).click()

@@ -5,6 +5,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from custom.tenor_settlement_date import spo, wk1
 from custom.verifier import Verifier, VerificationMethod
+from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
@@ -41,40 +42,12 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     return float(response["dealingpositions.position"].replace(",", ""))
 
 
-def compare_position(even_name, case_id, expected_pos, actual_pos):
+def compare_position(even_name, case_id, expected_pos, actual_pos,method = VerificationMethod.EQUALS):
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values("Quote position", str(float(expected_pos)), str(actual_pos))
+    verifier.compare_values("Quote position", str(float(expected_pos)), str(actual_pos), method)
 
     verifier.verify()
-
-
-def check_order_book_MO(even_name, case_id, base_request, act_ob, qty_exp, status_exp, client, lookup, exp_side):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(
-        ["Order ID", 'MO', "Orig", 'FIX', "Lookup", lookup, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    side = ExtractionDetail("orderBook.side", "Side")
-
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id, side])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
-    verifier.compare_values('Side', exp_side, response[side.name])
-
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
 
 
 def execute(report_id, session_id):
@@ -84,6 +57,10 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     ob_act = Stubs.win_act_order_book
     try:
+        initial_pos_eur_chf_client = get_dealing_positions_details(pos_service, case_base_request, "EUR/CHF",account_client)
+        initial_pos_eur_usd_quod = get_dealing_positions_details(pos_service, case_base_request, "EUR/USD",account_quod)
+        initial_pos_usd_chf_quod = get_dealing_positions_details(pos_service, case_base_request, "USD/CHF",account_quod)
+
         # Step 1 - 3
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
@@ -98,23 +75,22 @@ def execute(report_id, session_id):
             verify_order_pending(). \
             verify_order_filled()
 
-        actual_pos_eur_chf_client = get_dealing_positions_details(pos_service, case_base_request, "EUR/CHF",
-                                                                  account_client)
+        actual_pos_eur_chf_client = get_dealing_positions_details(pos_service, case_base_request, "EUR/CHF", account_client)
         actual_pos_eur_usd_quod = get_dealing_positions_details(pos_service, case_base_request, "EUR/USD", account_quod)
         actual_pos_usd_chf_quod = get_dealing_positions_details(pos_service, case_base_request, "USD/CHF", account_quod)
 
-        compare_position('Checking positions Client QUOD4_1 EUR/CHF EQUAL', case_id, "1000000",
-                         actual_pos_eur_chf_client)
-        compare_position('Checking positions Client QUOD4_1 EUR/USD EQUAL', case_id, "-1000000",
-                         actual_pos_eur_usd_quod)
-        compare_position('Checking positions Client QUOD4_1 USD/CHF EQUAL', case_id, "-1181610",
-                         actual_pos_usd_chf_quod)
+        compare_position('Checking positions Client QUOD4_1 EUR/CHF NOT EQUAL', case_id, initial_pos_eur_chf_client,
+                         actual_pos_eur_chf_client, VerificationMethod.NOT_EQUALS)
+        compare_position('Checking positions Client QUOD4_1 EUR/USD NOT EQUAL', case_id, initial_pos_eur_usd_quod,
+                         actual_pos_eur_usd_quod, VerificationMethod.NOT_EQUALS)
+        compare_position('Checking positions Client QUOD4_1 USD/CHF NOT EQUAL', case_id, initial_pos_usd_chf_quod,
+                         actual_pos_usd_chf_quod, VerificationMethod.NOT_EQUALS)
 
+        FXOrderBook(case_id, case_base_request).set_filter(
+            ["Order ID", "MO", "Orig", "FIX", "Lookup", "EUR/CHF-SPO.SPO", "Client ID", "AURUM1"]). \
+            check_order_fields_list({"Sts": "Terminated", "Side": "Buy"},
+                                    "Checking placed order MO USD/SEK")
 
-
-        check_order_book_MO('Checking placed order MO USD/SEK', case_id, case_base_request, ob_act, qty,
-                            "Terminated", "AURUM1", "EUR/CHF-SPO.SPO", "Buy")
-        #
         # PostConditions
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,

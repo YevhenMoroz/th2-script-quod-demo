@@ -10,7 +10,7 @@ class WebDriverContainer:
 
     DOWNLOAD_DIRECTORY_NAME = "downloads"
 
-    INITIAL_URL = "http://10.0.22.40:3480/quodadmin/saturn/#/auth/login"
+    INITIAL_URL = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
 
     def __init__(self):
         current_dir = os.getcwd()

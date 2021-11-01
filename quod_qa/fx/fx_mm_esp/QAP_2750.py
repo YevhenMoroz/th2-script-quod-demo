@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 client = 'Palladium2'
 settltype_spo = '0'
-settltype_mo1 = 'MO1'
+settltype_mo1 = 'M1'
 symbol = 'EUR/USD'
 securitytype_spo = 'FXSPOT'
 securitytype_fwd = 'FXFWD'
