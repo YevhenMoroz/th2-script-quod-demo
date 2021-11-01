@@ -25,7 +25,7 @@ from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_0
     QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_buy, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_MAXPercentage
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
     VWAP_NAV_02, VWAP_WW_01
-from quod_qa.eq.Test.TH2_examples import Market_1, Limit_2, Limit_3, Limit_4, Limit_7, Limit_5, Limit_6, Display_8, \
+from quod_qa.eq.Test.TH2_examples_fix_analysis import Market_1, Limit_2, Limit_3, Limit_4, Limit_7, Limit_5, Limit_6, Display_8, \
     Algo_1, Algo_3, Algo_4, Algo_2, Care_1, Algo_5, Algo_6
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
