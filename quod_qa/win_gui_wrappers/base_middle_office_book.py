@@ -1,8 +1,4 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
-from stubs import Stubs
-from win_gui_modules.common_wrappers import RowsNumbersForGrid
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
