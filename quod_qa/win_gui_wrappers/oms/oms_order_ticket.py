@@ -8,7 +8,8 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import call
 
 
-class EqOrderTicket(BaseOrderTicket):
+class OMSOrderTicket(BaseOrderTicket):
+    # region Constructor
     def __init__(self, case_id, base_request):
         super().__init__(case_id, base_request)
         # Need to override
@@ -29,44 +30,32 @@ class EqOrderTicket(BaseOrderTicket):
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
 
+    # endregion
+    # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
                           capacity=None, desk=None, partial_desk=False, disclose_flag: DiscloseFlagEnum = None):
-        order_details = self.order_details
-        if client is not None:
-            order_details.set_client(client)
-        if qty is not None:
-            order_details.set_quantity(qty)
-        if order_type is not None:
-            order_details.set_order_type(order_type)
-        if is_sell_side:
-            order_details.sell()
-        if tif is not None:
-            order_details.set_tif(tif)
+        self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
+                                                  order_type=order_type, tif=tif, account=account,
+                                                  display_qty=display_qty, is_sell_side=is_sell_side)
         if expire_date is not None:
-            order_details.set_expire_date(expire_date)
-        if limit is not None:
-            order_details.set_expire_date(limit)
-        if stop_price is not None:
-            order_details.set_stop_price(stop_price)
-        if account is not None:
-            order_details.set_account(account)
-        if display_qty is not None:
-            order_details.set_display_qty(display_qty)
+            self.order_details.set_expire_date(expire_date)
         if instrument is not None:
-            order_details.set_instrument(instrument)
+            self.order_details.set_instrument(instrument)
         if washbook is not None:
-            order_details.set_washbook(washbook)
+            self.order_details.set_washbook(washbook)
         if capacity is not None:
-            order_details.set_capacity(capacity)
+            self.order_details.set_capacity(capacity)
         if desk is not None:
-            order_details.set_care_order(desk, partial_desk, disclose_flag)
-        return order_details
+            self.order_details.set_care_order(desk, partial_desk, disclose_flag)
+        return self
 
-    def create_order(self, lookup, order_details: OrderTicketDetails()):
+    # endregion
+    # region Actions
+    def oms_create_order(self, lookup):
         new_order_details = self.new_order_details
         new_order_details.set_lookup_instr(lookup)
-        new_order_details.set_order_details(order_details)
+        new_order_details.set_order_details(self.order_details)
         call(self.place_order_call, self.new_order_details.build())
-
-
+        self.clear_details([self.new_order_details, self.order_details])
+    # endregion
