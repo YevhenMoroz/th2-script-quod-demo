@@ -55,120 +55,120 @@ def test_run():
     report_id = bca.create_event('Red tests')
     try:
         TradingSession_test.execute(report_id)
-        # # region TWAP NAV WW
-        # QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
-        # QA_TWAP_NAV_WW_MAXShares.execute(report_id)
-        # QA_TWAP_NAV_WW_01_sell.execute(report_id)
-        # QA_TWAP_NAV_WW_02_sell.execute(report_id)
-        # QA_TWAP_NAV_WW_03_sell.execute(report_id)
-        # QA_TWAP_NAV_WW_01_buy.execute(report_id)
-        # QA_TWAP_NAV_WW_02_buy.execute(report_id)
-        # QA_TWAP_NAV_WW_03_buy.execute(report_id)
-        # QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
-        # QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
-        # # endregion
-        #
-        # # region OPN Additional
-        # QA_OPN_AuctionWouldCap.execute(report_id)
-        # QA_OPN_AuctionWouldCap100.execute(report_id)
-        # QA_OPN_AuctionWouldCapMaxWouldPerc.execute(report_id)
-        # QA_OPN_AuctionWouldCapMaxWouldShares.execute(report_id)
-        # QA_OPN_InitialSlice_01.execute(report_id)
-        # QA_OPN_InitialSlice_02.execute(report_id)
-        # QA_OPN_InitialSlice_03.execute(report_id)
-        # QA_OPN_WouldPercentage.execute(report_id)
-        # QA_OPN_WouldRef.execute(report_id)
-        # QA_OPN_WouldShares.execute(report_id)
-        # QA_OPN_LIM_MID.execute(report_id)
-        # QA_OPN_LIM_MKT.execute(report_id)
-        # QA_OPN_LIM_PRM.execute(report_id)
-        # QA_OPN_Market.execute(report_id)
-        # # endregion
-        #
-        # # region CLO Additional
-        # CLO_SCO_MID.execute(report_id)
-        # CLO_SCO_MKT.execute(report_id)
-        # CLO_SCO_PRM.execute(report_id)
-        # QA_CLO_InitialSlice_01.execute(report_id)
-        # QA_CLO_InitialSlice_02.execute(report_id)
-        # QA_CLO_InitialSlice_03.execute(report_id)
-        # QA_CLO_WouldShares.execute(report_id)
-        # QA_CLO_WouldPercentage.execute(report_id)
-        # QA_CLO_WouldRef.execute(report_id)
-        # QA_CLO_WouldRef_Unavaliable.execute(report_id)
-        # QA_CLO_Perc_for_Close90.execute(report_id)
-        # QA_CLO_Perc_for_Close100.execute(report_id)
-        # QA_CLO_AuctionWouldCap.execute(report_id)
-        # QA_CLO_AuctionWouldCap100.execute(report_id)
-        # QA_CLO_AuctionWouldCap0.execute(report_id)
-        # QA_CLO_AuctionWouldCapMaxWouldPerc.execute(report_id)
-        # QA_CLO_AuctionWouldCapMaxWouldShares.execute(report_id)
-        # QA_CLO_WouldAtLast.execute(report_id)
-        # QA_CLO_WouldAtLast2.execute(report_id)
-        # QA_CLO_AtLast.execute(report_id)
-        # QA_CLO_Market.execute(report_id)
-        # # endregion
-        #
-        # # region Expiry Client requirement
-        # EXP_LIM_01.execute(report_id)
-        # EXP_VO_01.execute(report_id)
-        # EXP_WW_01.execute(report_id)
-        # EXP_WW_02.execute(report_id)
-        # EXP_FPC_01.execute(report_id)
-        # EXP_SCO_01.execute(report_id)
-        # # endregion
-        #
-        # # region TWAP Client requirement
-        # TWAP_BA_01.execute(report_id)
-        # TWAP_WW_01.execute(report_id)
-        # TWAP_NAV_01.execute(report_id)
-        # TWAP_NAV_02.execute(report_id)
-        # TWAP_AUC_01.execute(report_id)
-        # TWAP_MinP_01.execute(report_id)
-        # TWAP_MaxP_01.execute(report_id)
-        # # endregion
-        #
-        # # region VWAP Client requirement
-        # VWAP_BA_01.execute(report_id)
-        # VWAP_WW_01.execute(report_id)
-        # VWAP_NAV_01.execute(report_id)
-        # VWAP_NAV_02.execute(report_id)
-        # VWAP_AUC_01.execute(report_id)
-        # VWAP_MinP_01.execute(report_id)
-        # VWAP_MaxP_01.execute(report_id)
-        # # endregion
-        #
-        # # region Pov Client requirement
-        # POV_BA_01.execute(report_id)
-        # POV_WW_01.execute(report_id)
-        # POV_NAV_01.execute(report_id)
-        # POV_NAV_02.execute(report_id)
-        # POV_AUC_01.execute(report_id)
-        # POV_MinMax_01.execute(report_id)
-        # POV_SCAP_01.execute(report_id)
-        # # endregion
-        #
-        # # region OPN Client
-        # OPN_FPC_01.execute(report_id)
-        # OPN_LIM_01.execute(report_id)
-        # OPN_SCA_01.execute(report_id)
-        # OPN_VO_01.execute(report_id)
-        # OPN_WW_01.execute(report_id)
-        # # endregion
-        #
-        # # region CLO Client
-        # CLO_FPC_01.execute(report_id)
-        # CLO_LIM_01.execute(report_id)
-        # CLO_SCO_01.execute(report_id)
-        # CLO_VO_01.execute(report_id)
-        # CLO_WW_01.execute(report_id)
-        # # endregion
-        #
-        # # region benchmark with Auction
-        # TWAP_AUC_01.execute(report_id)
-        # VWAP_AUC_01.execute(report_id)
-        # POV_AUC_01.execute(report_id)
-        # # endregion
+        # region TWAP NAV WW
+        QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
+        QA_TWAP_NAV_WW_MAXShares.execute(report_id)
+        QA_TWAP_NAV_WW_01_sell.execute(report_id)
+        QA_TWAP_NAV_WW_02_sell.execute(report_id)
+        QA_TWAP_NAV_WW_03_sell.execute(report_id)
+        QA_TWAP_NAV_WW_01_buy.execute(report_id)
+        QA_TWAP_NAV_WW_02_buy.execute(report_id)
+        QA_TWAP_NAV_WW_03_buy.execute(report_id)
+        QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
+        QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
+        # endregion
+
+        # region OPN Additional
+        QA_OPN_AuctionWouldCap.execute(report_id)
+        QA_OPN_AuctionWouldCap100.execute(report_id)
+        QA_OPN_AuctionWouldCapMaxWouldPerc.execute(report_id)
+        QA_OPN_AuctionWouldCapMaxWouldShares.execute(report_id)
+        QA_OPN_InitialSlice_01.execute(report_id)
+        QA_OPN_InitialSlice_02.execute(report_id)
+        QA_OPN_InitialSlice_03.execute(report_id)
+        QA_OPN_WouldPercentage.execute(report_id)
+        QA_OPN_WouldRef.execute(report_id)
+        QA_OPN_WouldShares.execute(report_id)
+        QA_OPN_LIM_MID.execute(report_id)
+        QA_OPN_LIM_MKT.execute(report_id)
+        QA_OPN_LIM_PRM.execute(report_id)
+        QA_OPN_Market.execute(report_id)
+        # endregion
+
+        # region CLO Additional
+        CLO_SCO_MID.execute(report_id)
+        CLO_SCO_MKT.execute(report_id)
+        CLO_SCO_PRM.execute(report_id)
+        QA_CLO_InitialSlice_01.execute(report_id)
+        QA_CLO_InitialSlice_02.execute(report_id)
+        QA_CLO_InitialSlice_03.execute(report_id)
+        QA_CLO_WouldShares.execute(report_id)
+        QA_CLO_WouldPercentage.execute(report_id)
+        QA_CLO_WouldRef.execute(report_id)
+        QA_CLO_WouldRef_Unavaliable.execute(report_id)
+        QA_CLO_Perc_for_Close90.execute(report_id)
+        QA_CLO_Perc_for_Close100.execute(report_id)
+        QA_CLO_AuctionWouldCap.execute(report_id)
+        QA_CLO_AuctionWouldCap100.execute(report_id)
+        QA_CLO_AuctionWouldCap0.execute(report_id)
+        QA_CLO_AuctionWouldCapMaxWouldPerc.execute(report_id)
+        QA_CLO_AuctionWouldCapMaxWouldShares.execute(report_id)
+        QA_CLO_WouldAtLast.execute(report_id)
+        QA_CLO_WouldAtLast2.execute(report_id)
+        QA_CLO_AtLast.execute(report_id)
+        QA_CLO_Market.execute(report_id)
+        # endregion
+
+        # region Expiry Client requirement
+        EXP_LIM_01.execute(report_id)
+        EXP_VO_01.execute(report_id)
+        EXP_WW_01.execute(report_id)
+        EXP_WW_02.execute(report_id)
+        EXP_FPC_01.execute(report_id)
+        EXP_SCO_01.execute(report_id)
+        # endregion
+
+        # region TWAP Client requirement
+        TWAP_BA_01.execute(report_id)
+        TWAP_WW_01.execute(report_id)
+        TWAP_NAV_01.execute(report_id)
+        TWAP_NAV_02.execute(report_id)
+        TWAP_AUC_01.execute(report_id)
+        TWAP_MinP_01.execute(report_id)
+        TWAP_MaxP_01.execute(report_id)
+        # endregion
+
+        # region VWAP Client requirement
+        VWAP_BA_01.execute(report_id)
+        VWAP_WW_01.execute(report_id)
+        VWAP_NAV_01.execute(report_id)
+        VWAP_NAV_02.execute(report_id)
+        VWAP_AUC_01.execute(report_id)
+        VWAP_MinP_01.execute(report_id)
+        VWAP_MaxP_01.execute(report_id)
+        # endregion
+
+        # region Pov Client requirement
+        POV_BA_01.execute(report_id)
+        POV_WW_01.execute(report_id)
+        POV_NAV_01.execute(report_id)
+        POV_NAV_02.execute(report_id)
+        POV_AUC_01.execute(report_id)
+        POV_MinMax_01.execute(report_id)
+        POV_SCAP_01.execute(report_id)
+        # endregion
+
+        # region OPN Client
+        OPN_FPC_01.execute(report_id)
+        OPN_LIM_01.execute(report_id)
+        OPN_SCA_01.execute(report_id)
+        OPN_VO_01.execute(report_id)
+        OPN_WW_01.execute(report_id)
+        # endregion
+
+        # region CLO Client
+        CLO_FPC_01.execute(report_id)
+        CLO_LIM_01.execute(report_id)
+        CLO_SCO_01.execute(report_id)
+        CLO_VO_01.execute(report_id)
+        CLO_WW_01.execute(report_id)
+        # endregion
+
+        # region benchmark with Auction
+        TWAP_AUC_01.execute(report_id)
+        VWAP_AUC_01.execute(report_id)
+        POV_AUC_01.execute(report_id)
+        # endregion
         print()
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
