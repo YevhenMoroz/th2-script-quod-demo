@@ -10,6 +10,8 @@ class RFQTile(AggregatesRatesTile):
         super().__init__(case_id, base_request, index)
         self.modify_request = ModifyRFQTileRequest(details=self.base_details)
         self.place_order_request = PlaceRFQRequest(details=self.base_details)
+        self.create_tile_call = self.ar_service.createRFQTile
+        self.close_tile_call = self.ar_service.closeRFQTile
 
     # region Actions
     def modify_rfq_tile(self, from_cur: str = None, to_cur: str = None, near_qty: str = None, far_qty: str = None,
