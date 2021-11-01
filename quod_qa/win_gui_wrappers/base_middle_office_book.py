@@ -1,6 +1,8 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
 from stubs import Stubs
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.common_wrappers import RowsNumbersForGrid
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
@@ -11,26 +13,66 @@ class BaseMiddleOfficeBook(BaseWindow):
         # Need to override
         self.order_info = None
         self.order_details = None
-        self.modify_ticket_details = None #ModifyTicketDetails()
-        self.book_order_call = None #Stubs.win_act_middle_office_service.bookOrder
+        self.book_order_call = None
+        self.extraction_detail = None
+        self.modify_ticket_details = None
+        self.rows_numbers_for_grid = None
+        self.view_order_extraction_details = None
+        self.extract_middle_office_blotter_values_request = None
+        self.middle_office_service_allocate_call = None
+        self.middle_office_service_mass_book_call = None
+        self.middle_office_service_mass_book_call = None
+        self.middle_office_service_book_order_call = None
+        self.middle_office_service_amend_block_call = None
+        self.middle_office_service_mass_unbook_call = None
+        self.middle_office_service_un_book_order_call = None
+        self.middle_office_service_approve_block_call = None
+        self.middle_office_service_amend_allocate_call = None
+        self.middle_office_service_amend_unallocate_call = None
+        self.middle_office_service_extract_view_orders_table_data_call = None
+        self.middle_office_service_extract_middle_office_blotter_values_call = None
+
+    # endregion
+    # region Common func
+    def set_filter(self, filter_list: list):
+        self.extract_middle_office_blotter_values_request.set_filter(filter_list)
+
+    # endregion
+    # region Check
+    def check_booking_toggle_manual(self):
+        self.modify_ticket_details.add_commissions_details()
+        extraction_details = self.modify_ticket_details.add_extraction_details()
+        extraction_details.set_extraction_id("BookExtractionId")
+        extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
+        return call(self.book_order_call, self.modify_ticket_details.build())
+
+    def check_error_in_book(self):
+        self.modify_ticket_details.set_partial_error_message("error_in_book")
+        error = call(self.middle_office_service_book_order_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return error
 
     # endregion
     # region Get
-    def check_booking_toggle_manual(self):
-        modify_request = self.modify_ticket_details.set_default_params(self.base_request)
-        modify_request.add_commissions_details()
-        extraction_details = modify_request.add_extraction_details()
-        extraction_details.set_extraction_id("BookExtractionId")
-        extraction_details.extract_manual_checkbox_state("book.manualCheckboxState")
-        return call(self.book_order_call, modify_request.build())
+    def extract_block_field(self, column_name, filter_list: list, row_number: int):
+        self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
+        extraction_detail = self.extraction_detail(column_name, column_name)
+        self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
+        self.extract_middle_office_blotter_values_request.set_filter(filter_list)
+        self.extract_middle_office_blotter_values_request.set_row_number(row_number)
+        response = call(self.middle_office_service_extract_middle_office_blotter_values_call,
+                        self.extract_middle_office_blotter_values_request.build())
+        self.clear_details([self.extract_middle_office_blotter_values_request])
+        return response
 
     # endregion
     # region Set
     def set_modify_ticket_details(self, client=None, trade_date=None, agreed_price=None, net_gross_ind=None,
                                   give_up_broker=None, selected_row_count=None, comm_basis=None, comm_rate=None,
-                                  remove_comm=False,fee_type=None, fee_basis=None, fee_rate=None, fee_category=None,
-                                  remove_fee=False,settl_type=None, settl_date=None, settl_amount=None,
-                                  settl_currency=None, misc_trade_date=None, bo_fields: list = None):
+                                  remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None, fee_category=None,
+                                  remove_fee=False, settl_type=None, settl_date=None, settl_amount=None, bo_notes=None,
+                                  settl_currency=None, misc_trade_date=None, bo_fields: list = None, extract_data=None):
+        """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
         ticket_details = self.modify_ticket_details.add_ticket_details()
@@ -66,7 +108,7 @@ class BaseMiddleOfficeBook(BaseWindow):
             settlement_details.set_settlement_amount(settl_amount)
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
-        if misc_trade_date or bo_fields is not None:
+        if misc_trade_date or bo_fields or bo_notes is not None:
             misc_details = self.modify_ticket_details.add_misc_details()
             if misc_trade_date is not None:
                 misc_details.set_trade_type(misc_trade_date)
@@ -75,7 +117,77 @@ class BaseMiddleOfficeBook(BaseWindow):
                 for field in bo_fields:
                     i += 1
                     getattr(misc_details, "set_bo_field_" + str(i))(field)
+            if bo_notes is not None:
+                misc_details.set_bo_notes_value(bo_notes)
+        extraction_details = self.modify_ticket_details.add_extraction_details()
+        extraction_details.set_extraction_id("BookExtractionId")
+        extraction_details.extract_net_price(extract_data + ".totalAllocQty")
+        extraction_details.extract_net_price(extract_data + ".netPrice")
+        extraction_details.extract_net_amount(extract_data + ".netAmount")
+        extraction_details.extract_total_comm(extract_data + ".totalComm")
+        extraction_details.extract_gross_amount(extract_data + ".grossAmount")
+        extraction_details.extract_total_fees(extract_data + ".totalFees")
+        extraction_details.extract_agreed_price(extract_data + ".agreedPrice")
+        extraction_details.extract_pset_bic(extract_data + ".psetBic")
+        extraction_details.extract_exchange_rate(extract_data + ".settlementType")
+        extraction_details.extract_settlement_type(extract_data + ".exchangeRate")
+        return self.modify_ticket_details
 
     # endregion
+
     # region Action
+    def book_order(self):
+        response = call(self.middle_office_service_book_order_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def amend_block(self):
+        response = call(self.middle_office_service_amend_block_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def un_book_order(self):
+        call(self.middle_office_service_un_book_order_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def mass_book(self, row_list: list):
+        self.rows_numbers_for_grid.set_rows_numbers(row_list)
+        call(self.middle_office_service_mass_book_call, self.rows_numbers_for_grid.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def mass_unbook(self, row_list: list):
+        self.rows_numbers_for_grid.set_rows_numbers(row_list)
+        call(self.middle_office_service_mass_unbook_call, self.rows_numbers_for_grid.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def allocate_block(self):
+        response = call(self.middle_office_service_allocate_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def amend_allocate(self):
+        response = call(self.middle_office_service_amend_allocate_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def unallocate_order(self):
+        response = call(self.middle_office_service_amend_unallocate_call, self.modify_ticket_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def view_orders_for_block(self, count: int):
+        self.view_order_extraction_details.extract_length("middleOffice.viewOrdersCount")
+        for i in range(1, count + 1):
+            order_details = self.view_order_extraction_details.add_order_details()
+            order_details.set_order_number(i)
+            dma_order_id_view = self.extraction_detail("middleOffice.orderId", "Order ID")
+            order_details.add_extraction_detail(dma_order_id_view)
+        response = call(self.middle_office_service_extract_view_orders_table_data_call,
+                        self.view_order_extraction_details.build())
+        self.clear_details([self.modify_ticket_details])
+        return response
+
+    def approve_block(self):
+        call(self.middle_office_service_approve_block_call, self.view_order_extraction_details.build())
+        self.clear_details([self.modify_ticket_details])
     # endregion
