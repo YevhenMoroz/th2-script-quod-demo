@@ -1,5 +1,8 @@
+from functools import wraps
+
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
+from win_gui_modules.wrappers import set_base
 
 
 class BaseWindow:
