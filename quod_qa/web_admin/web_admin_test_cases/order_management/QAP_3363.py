@@ -53,7 +53,7 @@ class QAP_3363(CommonTestCase):
         conditions_sub_wizard.set_qty_precision("100")
         conditions_sub_wizard.click_on_add_condition()
         time.sleep(2)
-        conditions_sub_wizard.set_client("CLIENT1")
+        conditions_sub_wizard.set_right_side_at_conditional_logic("CLIENT1")
         conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
         conditions_sub_wizard.set_exec_policy("DMA")
         time.sleep(1)
@@ -95,9 +95,8 @@ class QAP_3363(CommonTestCase):
                 time.sleep(2)
                 page.set_name_filter(self.name)
                 time.sleep(2)
-                page.click_on_enable_disable_button()
+                page.click_on_enabled_disable(True)
                 time.sleep(2)
-                page.click_on_ok_button()
 
             except Exception as e:
                 self.verify("Entity NOT created !!!", True, e.__class__.__name__)
