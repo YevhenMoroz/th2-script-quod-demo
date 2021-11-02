@@ -3,7 +3,7 @@ th2-common==3.2.0
 th2-grpc-common==3.1.2
 th2_grpc_check1==3.1.4
 th2-grpc-act-quod==3.0.5
-th2-grpc-sim-quod==3.0.54
+th2_grpc_sim_fix_quod==3.1.6
 th2-grpc-sim==3.1.1
 th2-grpc-sim-http==3.0.17
 th2-grpc-act-gui-quod==1.13.10-quod-dev.546
