@@ -4,7 +4,7 @@ from pathlib import Path
 
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo

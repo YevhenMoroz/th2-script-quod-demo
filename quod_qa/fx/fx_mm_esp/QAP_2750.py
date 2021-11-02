@@ -8,7 +8,7 @@ from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
