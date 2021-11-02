@@ -895,8 +895,10 @@ class AddToBasketDetails:
 class CreateBasketDetails:
     def __init__(self, base_request=None, row_numbers: list = None, name: str = None, row_details: list = None):
         self._request = order_book_pb2.CreateBasketDetails()
-        self._request.base.CopyFrom(base_request)
-        self._request.name = name
+        if base_request is not None:
+            self._request.base.CopyFrom(base_request)
+        if name is not None:
+            self._request.name = name
 
         if row_numbers is not None:
             for number in row_numbers:
