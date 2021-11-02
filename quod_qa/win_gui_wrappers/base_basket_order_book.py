@@ -60,7 +60,6 @@ class BaseBasketOrderBook(BaseWindow):
             result = self.row_details(row_filter, False, params).build()
         else:
             result = self.row_details(row_filter, True).build()
-        self.clear_details([self.row_details])
         return result
 
     # endregion
