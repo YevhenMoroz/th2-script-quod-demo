@@ -14,7 +14,6 @@ class BaseOrderBook(BaseWindow):
         self.new_order_details = None
         self.menu_item_details = None
         self.base_order_details = None
-        self.basket_row_details = None
         self.scrolling_operation = None
         self.modify_order_details = None
         self.cancel_order_details = None
