@@ -326,9 +326,9 @@ class ModifyTicketDetails:
 
 
 class ExtractMiddleOfficeBlotterValuesRequest:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = middle_office_pb2.ExtractMiddleOfficeBlotterValuesRequest(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = middle_office_pb2.ExtractMiddleOfficeBlotterValuesRequest(base=base_request)
         else:
             self._request = middle_office_pb2.ExtractMiddleOfficeBlotterValuesRequest()
 
