@@ -67,6 +67,7 @@ class BaseOrderBook(BaseWindow):
     def scroll_order_book(self, count: int = 1):
         scrolling_details = self.scrolling_details(self.scrolling_operation.UP, count, self.base_request)
         call(self.order_book_grid_scrolling_call, scrolling_details.build())
+
     # endregion
     # region Get
     def extract_field(self, column_name: str) -> str:
@@ -100,7 +101,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.order_details])
         return response
 
-    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int= None) -> dict:
+    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
             Receives dict as an argument, where the key is column name what
             we extract from GUI and return new dict where
