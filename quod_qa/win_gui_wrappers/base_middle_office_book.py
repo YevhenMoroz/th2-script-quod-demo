@@ -150,7 +150,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         return response
 
     def unallocate_order(self):
-        response = call(self.unallocate_call, self.modify_ticket_details.build())
+        response = call(self.unallocate_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
