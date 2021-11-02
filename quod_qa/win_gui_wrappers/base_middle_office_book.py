@@ -9,7 +9,6 @@ class BaseMiddleOfficeBook(BaseWindow):
         # Need to override
         self.extraction_detail = None
         self.modify_ticket_details = None
-        self.rows_numbers_for_grid = None
         self.view_order_extraction_details = None
         self.extract_middle_office_blotter_values_request = None
         self.book_order_call = None
@@ -17,8 +16,8 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.unbook_order_call = None
         self.approve_block_call = None
         self.amend_allocate_call = None
-        self.amend_unallocate_call = None
         self.allocate_block_call = None
+        self.unallocate_block_call = None
         self.extract_view_orders_table_data_call = None
         self.extract_middle_office_blotter_values_call = None
 
@@ -151,7 +150,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         return response
 
     def unallocate_order(self):
-        response = call(self.amend_unallocate_call, self.modify_ticket_details.build())
+        response = call(self.unallocate_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
