@@ -17,7 +17,7 @@ instrument = {
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         new_order_single_params = {
             'Account': "REDBURN",
             'ClOrdID': 'TestVWAP_' + bca.client_orderid(9),
