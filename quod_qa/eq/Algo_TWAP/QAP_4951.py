@@ -386,7 +386,7 @@ def execute(report_id):
             {
                 'MDEntryType': '1',
                 'MDEntryPx': price_2,
-                'MDEntrySize': would_price_qty,
+                'MDEntrySize': 350,
                 'MDEntryPositionNo': '1'
             }
         ]
