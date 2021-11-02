@@ -86,7 +86,7 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         startdate = now.strftime("%Y%m%d-%H:%M:%S")
         enddate = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
 

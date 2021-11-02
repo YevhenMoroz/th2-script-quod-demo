@@ -42,7 +42,7 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
 
-now = datetime.today() - timedelta(hours=3)
+now = datetime.today() - timedelta(hours=2)
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"

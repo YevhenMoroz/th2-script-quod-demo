@@ -84,7 +84,7 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         
         rule_list = rule_creation();
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)

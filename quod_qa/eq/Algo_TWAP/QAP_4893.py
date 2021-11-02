@@ -116,7 +116,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         waves = 3
 
         rule_list = rule_creation()

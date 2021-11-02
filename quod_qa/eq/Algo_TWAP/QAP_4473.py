@@ -87,7 +87,7 @@ def send_incremental(symbol: str, case_id: str, market_data):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         case_id = bca.create_event(os.path.basename(__file__), report_id)
 
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
