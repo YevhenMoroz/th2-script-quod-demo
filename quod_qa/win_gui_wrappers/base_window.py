@@ -3,7 +3,11 @@ from functools import wraps
 from inspect import signature
 
 from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
+from stubs import Stubs
+from win_gui_modules.application_wrappers import FEDetailsRequest
+from win_gui_modules.utils import prepare_fe, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
 
@@ -32,6 +36,21 @@ class BaseWindow:
             print("Element: " + k + " not found")
         self.verifier.verify()
         self.verifier = Verifier(self.case_id)
+
+    def open_fe(self, session_id, report_id, folder, user, password, is_open=True):
+        init_event = create_event("Initialization", parent_id=report_id)
+        set_base(session_id, self.case_id)
+        if not is_open:
+            prepare_fe(init_event, session_id, folder, user, password)
+        else:
+            get_opened_fe(self.case_id, session_id)
+
+    def switch_user(self, session_id):
+        search_fe_req = FEDetailsRequest()
+        search_fe_req.set_session_id(session_id)
+        search_fe_req.set_parent_event_id(self.case_id)
+        Stubs.win_act.moveToActiveFE(search_fe_req.build())
+        set_base(session_id, self.case_id)
 
 
 def split_2lvl_values(split_values):
