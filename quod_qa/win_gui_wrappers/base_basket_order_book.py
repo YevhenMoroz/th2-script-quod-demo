@@ -25,7 +25,9 @@ class BaseBasketOrderBook(BaseWindow):
 
     # endregion
     # region Common func
-
+    def set_filter(self, filter_dict: dict):
+        self.extract_template_details(self.base_request, filter_dict)
+        self.clear_details([self.extract_template_details])
     # endregion
 
     # region Get
@@ -34,8 +36,8 @@ class BaseBasketOrderBook(BaseWindow):
         result = call(self.extract_template_data_call, self.extract_template_details.build())
         self.clear_details([self.extract_template_details])
         return result
-
     # endregion
+
     # region Set
     def basket_row_details(self, row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
                            price=None, capacity=None, stop_price=None):
@@ -58,6 +60,7 @@ class BaseBasketOrderBook(BaseWindow):
             result = self.row_details(row_filter, False, params).build()
         else:
             result = self.row_details(row_filter, True).build()
+        self.clear_details([self.row_details])
         return result
 
     # endregion
@@ -110,7 +113,7 @@ class BaseBasketOrderBook(BaseWindow):
         if tif is not None:
             self.templates_details.set_time_in_force(tif)
         call(self.manage_templates_call, self.templates_details.build())
-        self.clear_details([self.templates_details,self.imported_file_mapping_field_details])
+        self.clear_details([self.templates_details, self.imported_file_mapping_field_details])
 
     def remove_basket_template(self, name):
         self.simple_request(self.base_request, {'Name': name})
