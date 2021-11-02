@@ -7,21 +7,18 @@ class BaseMiddleOfficeBook(BaseWindow):
     def __init__(self, case_id, base_request):
         super().__init__(case_id, base_request)
         # Need to override
-        self.order_info = None
-        self.order_details = None
-        self.book_order_call = None
         self.extraction_detail = None
         self.modify_ticket_details = None
         self.rows_numbers_for_grid = None
         self.view_order_extraction_details = None
         self.extract_middle_office_blotter_values_request = None
-        self.allocate_block_call = None
         self.book_order_call = None
         self.amend_block_call = None
         self.unbook_order_call = None
         self.approve_block_call = None
         self.amend_allocate_call = None
         self.amend_unallocate_call = None
+        self.allocate_block_call = None
         self.extract_view_orders_table_data_call = None
         self.extract_middle_office_blotter_values_call = None
 
