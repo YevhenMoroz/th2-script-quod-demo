@@ -23,6 +23,7 @@ class OMSOrderBook(BaseOrderBook):
         self.scrolling_operation = ScrollingOperation
         self.modify_order_details = ModifyOrderDetails(base_request)
         self.cancel_order_details = CancelOrderDetails(base_request)
+        self.rows_numbers_for_grid = None
         self.suspend_order_details = SuspendOrderDetails(base_request)
         self.disclose_flag_details = DiscloseFlagDetails(base_request)
         self.add_to_basket_details = AddToBasketDetails(base_request)
@@ -37,18 +38,21 @@ class OMSOrderBook(BaseOrderBook):
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
         self.manual_execution_order_call = Stubs.win_act_order_book.manualExecution
         self.is_menu_item_present_call = Stubs.win_act_order_book.isMenuItemPresent
-        self.get_orders_details_call = Stubs.win_act_order_book.getOrdersDetails
         self.group_modify_order_call = Stubs.win_act_order_book.groupModify
+        self.get_orders_details_call = Stubs.win_act_order_book.getOrdersDetails
         self.un_complete_order_call = Stubs.win_act_order_book.unCompleteOrder
-        self.check_out_order_call = Stubs.win_act_order_book.checkOutOrder
-        self.check_in_order_call = Stubs.win_act_order_book.checkInOrder
         self.notify_dfd_order_call = Stubs.win_act_order_book.notifyDFD
+        self.check_out_order_call = Stubs.win_act_order_book.checkOutOrder
         self.reassign_order_call = Stubs.win_act_order_book.reassignOrder
         self.complete_order_call = Stubs.win_act_order_book.completeOrder
+        self.check_in_order_call = Stubs.win_act_order_book.checkInOrder
         self.suspend_order_call = Stubs.win_act_order_book.suspendOrder
         self.release_order_call = Stubs.win_act_order_book.releaseOrder
         self.disclose_flag_call = Stubs.win_act_order_book.discloseFlag
+        self.add_to_basket_call = None
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
+        self.mass_unbook_call = None
+        self.mass_book_call = None
     # endregion
 
