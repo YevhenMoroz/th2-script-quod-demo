@@ -3,9 +3,10 @@ from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 from th2_grpc_act_gui_quod import basket_book_pb2
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2, care_orders_pb2
-from order_ticket import OrderTicketDetails, FXOrderDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
+
 
 
 class ModifyOrderDetails:
