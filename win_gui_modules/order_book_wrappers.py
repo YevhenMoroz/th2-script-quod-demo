@@ -10,8 +10,10 @@ from dataclasses import dataclass
 
 
 class ModifyOrderDetails:
-    def __init__(self):
+    def __init__(self, base_request=None):
         self.modify_order_details = order_book_pb2.ModifyOrderDetails()
+        if base_request is not None:
+            self.modify_order_details.base.CopyFrom(base_request)
 
     def set_order_details(self, order_details: OrderTicketDetails):
         self.modify_order_details.orderDetails.CopyFrom(order_details.build())
@@ -91,8 +93,10 @@ class ModifyFXOrderDetails:
 
 
 class CancelOrderDetails:
-    def __init__(self):
+    def __init__(self, base_request):
         self.cancel_order_details = order_book_pb2.CancelOrderDetails()
+        if base_request is not None:
+            self.cancel_order_details.base.CopyFrom(base_request)
 
     def set_filter(self, filter_list: list):
         length = len(filter_list)

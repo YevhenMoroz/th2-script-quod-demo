@@ -10,10 +10,12 @@ class BaseOrderBook(BaseWindow):
         # Need to override
         self.order_info = None
         self.order_details = None
+        self.scrolling_details = None
         self.new_order_details = None
         self.menu_item_details = None
         self.base_order_details = None
         self.basket_row_details = None
+        self.scrolling_operation = None
         self.modify_order_details = None
         self.cancel_order_details = None
         self.rows_numbers_for_grid = None
@@ -28,6 +30,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_exec_summary_average_price_detail = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
+        self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
         self.is_menu_item_present_call = None
         self.group_modify_order_call = None
@@ -62,6 +65,9 @@ class BaseOrderBook(BaseWindow):
         self.order_details.set_filter(filter_list)
         return self
 
+    def scroll_order_book(self, count: int = 1):
+        scrolling_details = self.scrolling_details(self.scrolling_operation.UP, count, self.base_request)
+        call(self.order_book_grid_scrolling_call, scrolling_details.build())
     # endregion
     # region Get
     def extract_field(self, column_name: str) -> str:
