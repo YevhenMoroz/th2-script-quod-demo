@@ -72,9 +72,10 @@ class BaseOrderBook(BaseWindow):
             )
         )
         response = call(self.get_orders_details_call, self.order_details.request())
+        self.clear_details([self.order_details])
         return response[field.name]
 
-    def extract_fields_list(self, list_fields: dict, row_number: int) -> dict:
+    def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and return new dict where
@@ -87,12 +88,14 @@ class BaseOrderBook(BaseWindow):
             list_of_fields.append(field)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
-        info.set_number(row_number)
+        if row_number is not None:
+            info.set_number(row_number)
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
+        self.clear_details([self.order_details])
         return response
 
-    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int) -> dict:
+    def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int= None) -> dict:
         """
             Receives dict as an argument, where the key is column name what
             we extract from GUI and return new dict where
@@ -106,7 +109,8 @@ class BaseOrderBook(BaseWindow):
 
         child_info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=list_of_fields))
-        child_info.set_number(row_number)
+        if row_number is not None:
+            child_info.set_number(row_number)
         child_details = self.order_details.create(info=child_info)
 
         self.order_details.add_single_order_info(
@@ -114,6 +118,7 @@ class BaseOrderBook(BaseWindow):
                 action=ExtractionAction.create_extraction_action(), sub_order_details=child_details)
         )
         response = call(self.get_orders_details_call, self.order_details.request())
+        self.clear_details([self.order_details])
         return response
 
     def extract_2lvl_fields(self, tab: str, column_names: [str], rows: [int], filter_dict: dict = None):
@@ -153,8 +158,9 @@ class BaseOrderBook(BaseWindow):
         """
         self.menu_item_details.set_menu_item(menu_item)
         if filter_list is not None:
-            self.menu_item_details.set_filter(filter)
+            self.menu_item_details.set_filter(filter_list)
         result = call(self.is_menu_item_present_call, self.menu_item_details.build())
+        self.clear_details([self.menu_item_details])
         return result['isMenuItemPresent']
 
     # endregion
@@ -170,6 +176,7 @@ class BaseOrderBook(BaseWindow):
         if filter_list is not None:
             self.cancel_order_details.set_filter(filter_list)
         call(self.cancel_order_call, self.cancel_order_details.build())
+        self.clear_details([self.cancel_order_details])
 
     def complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
@@ -177,6 +184,7 @@ class BaseOrderBook(BaseWindow):
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
         call(self.complete_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def un_complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
@@ -184,6 +192,7 @@ class BaseOrderBook(BaseWindow):
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
         call(self.un_complete_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def notify_dfd(self, row_count=None, filter_list=None):
         if filter_list is not None:
@@ -191,6 +200,7 @@ class BaseOrderBook(BaseWindow):
         if row_count is not None:
             self.modify_order_details.set_selected_row_count()
         call(self.notify_dfd_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def group_modify(self, client=None, security_account=None, routes=None, free_notes=None, filter_list=None):
         if filter_list is not None:
@@ -204,6 +214,7 @@ class BaseOrderBook(BaseWindow):
         if free_notes is not None:
             self.modify_order_details.freeNotes = free_notes
         call(self.group_modify_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def reassign_order(self, recipient):
         self.reassign_order_details.base.CopyFrom(self.base_request)
@@ -214,11 +225,13 @@ class BaseOrderBook(BaseWindow):
         if filter_list is not None:
             self.modify_order_details.set_filter()
         call(self.check_in_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def check_out_order(self, filter_list=None):
         if filter_list is not None:
             self.modify_order_details.set_filter()
         call(self.check_out_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def suspend_order(self, cancel_children: bool = None, filter_list=None):
         if filter_list is not None:
@@ -226,21 +239,25 @@ class BaseOrderBook(BaseWindow):
         if cancel_children is not None:
             self.suspend_order_details.set_cancel_children(cancel_children)
         call(self.suspend_order_call, self.suspend_order_details.build())
+        self.clear_details([self.suspend_order_details])
 
     def release_order(self, filter_list=None):
         if filter_list is not None:
             self.base_order_details.set_filter(filter_list)
         call(self.release_order_call, self.base_order_details.build())
+        self.clear_details([self.base_order_details])
 
     def mass_execution_summary_at_average_price(self, row_count: int):
         self.mass_exec_summary_average_price_detail.set_count_of_selected_rows(row_count)
         call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail)
+        self.clear_details([self.mass_exec_summary_average_price_detail])
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
         """ type_disclose - can have next values: disable, real_time, manual """
         self.disclose_flag_details = getattr(self.disclose_flag_details, type_disclose)
         self.disclose_flag_details.set_row_numbers(row_numbers)
         call(self.cancel_order_call, self.disclose_flag_details.build())
+        self.clear_details([self.disclose_flag_details])
 
     def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
         if basket_name is not None:
@@ -248,6 +265,7 @@ class BaseOrderBook(BaseWindow):
         if list_row_numbers is not None:
             self.add_to_basket_details.set_row_numbers(list_row_numbers)
         call(self.add_to_basket_call, self.add_to_basket_details.build())
+        self.clear_details([self.add_to_basket_details])
 
     def create_basket(self, orders_rows: [] = None, basket_name=None):
         """
@@ -258,6 +276,7 @@ class BaseOrderBook(BaseWindow):
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
         call(self.create_basket_call, self.create_basket_details.build())
+        self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
                          last_capacity=None, settl_date: int = None):
@@ -274,6 +293,7 @@ class BaseOrderBook(BaseWindow):
         if last_capacity is not None:
             self.manual_executing_details.add_executions_details().set_last_capacity(last_capacity)
         call(self.manual_execution_order_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
