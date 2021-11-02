@@ -941,6 +941,63 @@ class CancelChildOrdersDetails:
         return self._request
 
 
+class SecondLevelExtractionDetails:
+    def __init__(self, base=None, filter: dict = None, tabs_details: list = None):
+        if base is not None:
+            self.request = order_book_pb2.SecondLevelExtractionDetails(base=base)
+        else:
+            self.request = order_book_pb2.SecondLevelExtractionDetails()
+
+        if filter is not None:
+            self.request.filter.update(filter)
+
+        if tabs_details is not None:
+            for details in tabs_details:
+                self.request.tabsDetails.append(details)
+
+    def set_default_params(self, base_request):
+        self.request.base.CopyFrom(base_request)
+
+    def set_filter(self, filter: dict):
+        self.request.filter.update(filter)
+
+    def set_tabs_details(self, tabs_details: list):
+        for detail in tabs_details:
+            self.request.tabsDetails.append(detail)
+
+    def build(self):
+        return self.request
+
+
+class SecondLevelTabDetails:
+    def __init__(self, tab_name: str = None, columns_names: list = None, rows_numbers: list = None):
+        self.request = order_book_pb2.SecondLevelTabDetails()
+
+        if tab_name is not None:
+            self.request.tabName = tab_name
+
+        if columns_names is not None:
+            for name in columns_names:
+                self.request.columnsNames.append(name)
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self.request.rowsNumbers.append(number)
+
+    def set_tab_name(self, tab_name: str):
+        self.request.tabName = tab_name
+
+    def set_columns_names(self, columns_names: list):
+        for name in columns_names:
+            self.request.columnsNames.append(name)
+
+    def set_rows_numbers(self, rows_numbers: list):
+        for number in rows_numbers:
+            self.request.rowsNumbers.append(number)
+
+    def build(self):
+        return self.request
+
 # class QuoteRequestDetails:
 #     def __init__(self):
 #         self.base = None
