@@ -19,6 +19,7 @@ class InstitutionsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
+    ENABLE_DISABLE_TOGGLE_INPUT_XPATH = "//*[contains(@role, 'switch')]"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
 
 

@@ -1,4 +1,5 @@
-from regression_cycle.retail_regression_cycle import dma_regression, care_regression, iceberg_regression
+from regression_cycle.retail_regression_cycle import dma_regression, care_regression, iceberg_regression, \
+    multilisted_regression
 
 from stubs import Stubs
 import logging
@@ -15,6 +16,7 @@ def test_run(parent_id=None):
         care_regression.test_run(session_id, report_id)
         dma_regression.test_run(session_id, report_id)
         iceberg_regression.test_run(session_id, report_id)
+        multilisted_regression.test_run(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

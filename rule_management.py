@@ -1,11 +1,11 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, \
     TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, \
     TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
     TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
     TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject, \
     TemplateMarketNewOrdSingleFOK, TemplateQuodDefMDRRule, TemplateNewOrdSingleIOCMarketData, \
-    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule
+    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule, TemplateMDAnswerRule
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -203,6 +203,11 @@ class RuleManager:
                                                      TemplateQuodESPTradeRule(connection_id=
                                                                               ConnectionID(session_alias=session)))
 
+    @staticmethod
+    def add_QuodMDAnswerRule(session: str):
+        return Stubs.simulator.createQuodMDAnswerRule(request=
+                                                      TemplateMDAnswerRule(connection_id=
+                                                                               ConnectionID(session_alias=session)))
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
         return Stubs.simulator.createQuodSingleExecRule(

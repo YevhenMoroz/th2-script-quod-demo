@@ -5,7 +5,7 @@ import math
 from datetime import datetime, timedelta
 from copy import deepcopy
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import NoMDEntries, RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_sim_fix_quod.sim_pb2 import NoMDEntries, RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -516,6 +516,8 @@ def execute(report_id):
             }
         ]
         send_market_dataT(s_par, case_id_5, market_data6)
+        
+        time.sleep(2)
 
         waves -= 1
         #region Slice 3

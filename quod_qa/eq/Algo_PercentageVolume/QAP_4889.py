@@ -4,7 +4,7 @@ import time
 import math
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, NoMDEntries
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -439,7 +439,7 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_4, market_data6)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region WouldPrice childs and MKD
         case_id_5 = bca.create_event("Check WouldPrice childs and MKD", case_id)

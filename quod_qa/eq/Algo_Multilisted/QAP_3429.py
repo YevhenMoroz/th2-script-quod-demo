@@ -5,7 +5,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from th2_grpc_common.common_pb2 import ConnectionID, Message
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import convert_to_request, message_to_grpc
@@ -19,19 +19,24 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#order param
 qty = 1100
 display_qty = 100
 price = 45
 side = 1
+order_type = "Limit"
+
+#venue param
 ex_destination_1 = "QL1"
 client = "KEPLER"
-order_type = "Limit"
+QDL2_id = "9400000038"
+QDL1_id = "9400000036"
+
 case_name = os.path.basename(__file__)
 connectivity_feed_handler = "fix-fh-310-columbia"
 connectivity_buy_side = "fix-bs-310-columbia"
 connectivity_sell_side = "fix-ss-310-columbia-standart"
-QDL2_id = "9400000038"
-QDL1_id = "9400000036"
+
 
 instrument = {
             'Symbol': "QUODTESTQA00",

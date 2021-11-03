@@ -36,3 +36,8 @@ class QuoteBookColumns(Enum):
 
 class QuoteRequestBookColumns(Enum):
     pass
+
+
+class Side(Enum):
+    sell = "Sell"
+    buy = "Buy"

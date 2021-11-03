@@ -11,7 +11,7 @@ from logging import getLogger, INFO
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps, create_event, message_to_grpc, convert_to_request
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier

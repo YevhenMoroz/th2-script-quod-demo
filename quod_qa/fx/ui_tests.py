@@ -35,6 +35,8 @@ from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
+
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 

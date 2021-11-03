@@ -14,7 +14,7 @@ timeouts = False
 channels = dict()
 
 def test_run(parent_id= None):
-    report_id = bca.create_event((os.path.basename(__file__)[:-3]) + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+    report_id = bca.create_event('Algo', parent_id)
     try:
         QAP_1810.execute(report_id)
         QAP_1951.execute(report_id)
