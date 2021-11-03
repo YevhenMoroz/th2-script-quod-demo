@@ -1,4 +1,5 @@
 from functools import wraps
+from inspect import signature
 
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
@@ -11,6 +12,13 @@ class BaseWindow:
         self.base_request = base_request
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
+
+    def clear_details(self, details_list: list):
+        for detail in details_list:
+            if str(signature(detail.__init__)).find("base_request") != -1:
+                detail.__init__(self.base_request)
+            else:
+                detail.__init__()
 
     def compare_values(self, expected_values: dict, actual_values: dict, event_name,
                        verification_method: VerificationMethod = VerificationMethod.EQUALS):
