@@ -5,11 +5,9 @@ from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 import logging
 from datetime import datetime
 from pathlib import Path
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import (ExtractionDetail)
 from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 from win_gui_modules.utils import get_base_request, call
@@ -111,13 +109,8 @@ def execute(report_id, session_id):
 
     set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-    base_tile_data = BaseTileData(base=case_base_request)
-    base_tile_details = BaseTileDetails(base=case_base_request)
 
     ar_service = Stubs.win_act_aggregated_rates_service
-    ob_fx_act = Stubs.win_act_order_book_fx
-    ob_act = Stubs.win_act_order_book
-    cp_service = Stubs.win_act_cp_service
     try:
         rfq = send_rfq_and_reject_broken(case_id, qty_1)
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, venue_quodfx)
