@@ -332,15 +332,6 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    #rule_manager.remove_rule_by_id()
-    # rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard","CLIENT_YMOROZ"+ "_PARIS",
-    #                                                                     "XPAR",True)
-    #rule_manager.remove_rules_by_id_range()
-    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
-    #                                                           "CLIENT_YMOROZ" + "_PARIS",
-    #                                                                      "XPAR", 10)
-    # rule_manager.add_NewOrdSingleExecutionReportTrade("fix-buy-317ganymede-standard",
-    #                                                            "CLIENT_YMOROZ" + "_PARIS",
-    #                                                                      "XPAR", 10,900,1)
+    # nos_rule = rule_manager.add_NewOrdSingle_Market("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", True, 0, 0)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", 20)
     rule_manager.print_active_rules()
-    #rule_manager.remove_all_rules()
