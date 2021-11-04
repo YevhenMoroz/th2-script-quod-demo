@@ -22,7 +22,7 @@ class QAP_2183(CommonTestCase):
         self.id = f"QAP-2183_{str(uuid1())}"
         self.client = "CLIENT1"
         self.client_id_source = "BIC"
-        self.ext_id_client = "122"
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.clearing_type = "Firm"
 
     def precondition(self):

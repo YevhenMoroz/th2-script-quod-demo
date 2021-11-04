@@ -6,6 +6,7 @@ from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -17,7 +18,7 @@ class QAP_3145(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
         self.perm_role = "Permissions for FIX Clients"
-
+        self.email = "test"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -42,6 +43,9 @@ class QAP_3145(CommonTestCase):
             self.precondition()
             role_wizard = UsersRoleSubWizard(self.web_driver_container)
             users_page = UsersPage(self.web_driver_container)
+            details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
+            details_sub_wizard.set_mail(self.email)
+            time.sleep(1)
             role_wizard.set_perm_role(self.perm_role)
             wizard = UsersWizard(self.web_driver_container)
             wizard.click_on_save_changes()

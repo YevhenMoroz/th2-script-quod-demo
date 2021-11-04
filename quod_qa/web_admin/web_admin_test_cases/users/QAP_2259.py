@@ -20,7 +20,7 @@ class QAP_2259(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.user_id = "buyside03"
-        self.venue = "JSE"
+        self.venue = "AMEX"
         self.venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -51,7 +51,7 @@ class QAP_2259(CommonTestCase):
             '''
             expected result "Wrong item->JSE" displayed us that pdf does not contain venue, and venue trader is empty
             '''
-            self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->JSE",
+            self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->AMEX",
                         users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
             users_wizard.click_on_save_changes()

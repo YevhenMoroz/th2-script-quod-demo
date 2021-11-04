@@ -86,7 +86,7 @@ class UsersConstants:
     FIRST_NAME_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="First Name"]/preceding-sibling::input'
     LAST_NAME_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Last Name"]/preceding-sibling::input'
     ADDRESS_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Address"]/preceding-sibling::input'
-    MAIL_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Mail"]/preceding-sibling::input'
+    MAIL_AT_USER_DETAILS_SUB_WIZARD = '//*[@formcontrolname="userEmail"]'
     EXTENSION_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Extension"]/preceding-sibling::input'
     MOBILE_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Mobile"]/preceding-sibling::input'
     COUNTRY_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="Country"]/preceding-sibling::input'
