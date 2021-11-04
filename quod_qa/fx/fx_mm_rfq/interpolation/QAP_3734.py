@@ -120,7 +120,6 @@ def execute(report_id, session_id):
     cp_service = Stubs.win_act_cp_service
     try:
         rfq = send_rfq_and_reject_broken(case_id, qty_1)
-        # send_rfq_and_filled_order_broken(case_id, qty_1)
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, venue_quodfx)
         check_quote_request_b(case_base_request, ar_service, case_id, qty_1, venue_citir)
         rfq.send_quote_cancel()
