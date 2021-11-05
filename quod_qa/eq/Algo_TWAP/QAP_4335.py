@@ -3,9 +3,8 @@ import logging
 import time
 import math
 from datetime import datetime, timedelta
-from types import CellType
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, NoMDEntries
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
