@@ -4,7 +4,7 @@ import time
 from copy import deepcopy
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 from custom.basic_custom_actions import convert_to_request, message_to_grpc
