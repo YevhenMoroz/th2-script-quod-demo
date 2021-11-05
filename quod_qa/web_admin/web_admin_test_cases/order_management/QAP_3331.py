@@ -27,7 +27,7 @@ class QAP_3331(CommonTestCase):
         self.dark_parameter_1 = "LISPhase"
         self.dark_parameter_2 = "LISResidentTime"
         self.dark_parameter_3 = "LISPools"
-        self.venue = "BAML FA"
+        self.venue = "ADX"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,6 +41,8 @@ class QAP_3331(CommonTestCase):
         time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
         time.sleep(1)
+        strategies_wizard.set_user(self.user)
+        time.sleep(1)
         strategies_wizard.set_name(self.name)
         time.sleep(1)
         strategies_wizard.click_on_dark_block()
@@ -53,9 +55,15 @@ class QAP_3331(CommonTestCase):
         time.sleep(1)
         dark_sub_wizard.click_on_checkmark_button()
         time.sleep(1)
+        dark_sub_wizard.click_on_plus_button()
+        time.sleep(1)
         dark_sub_wizard.set_parameter(self.dark_parameter_2)
         time.sleep(1)
         dark_sub_wizard.set_value("11")
+        time.sleep(1)
+        dark_sub_wizard.click_on_checkmark_button()
+        time.sleep(1)
+        dark_sub_wizard.click_on_plus_button()
         time.sleep(1)
         dark_sub_wizard.set_parameter(self.dark_parameter_3)
         time.sleep(1)
@@ -84,7 +92,7 @@ class QAP_3331(CommonTestCase):
             time.sleep(2)
             strategies_page.click_on_edit_at_more_actions()
             time.sleep(2)
-            expected_parameter_and_value_at_dark_block = ["LISPhase: ", "true"]
+            expected_parameter_and_value_at_dark_block = ["LISPhase: ", "Y"]
             actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
                                                         strategies_wizard.get_parameter_value_at_dark_block()]
             self.verify("After saved at Dark block", expected_parameter_and_value_at_dark_block,

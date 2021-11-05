@@ -9,8 +9,7 @@ class WashBookPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-
-    #region click on
+    # region click on
     def click_on_new_button(self):
         self.find_by_xpath(WashBookConstants.NEW_BUTTON_XPATH).click()
 
@@ -40,6 +39,7 @@ class WashBookPage(CommonPage):
 
     def click_on_ok(self):
         self.find_by_xpath(WashBookConstants.OK_BUTTON_XPATH).click()
+
     # endregion
 
     # region Setters for filter and getters for values
@@ -86,8 +86,10 @@ class WashBookPage(CommonPage):
     def get_counterpart_at_main_page(self):
         return self.find_by_xpath(WashBookConstants.COUNTERPART_AT_MAIN_PAGE_XPATH).text
 
-    def set_enabled_filter(self,value):
-        self.select_value_from_dropdown_list(WashBookConstants.ENABLED_FILTER_AT_MAIN_PAGE_XPATH, value)
+    def set_enabled_filter(self, value):
+        self.find_by_xpath(WashBookConstants.ENABLED_FILTER_AT_MAIN_PAGE_XPATH).click()
+        time.sleep(1)
+        self.select_value_from_dropdown_list(WashBookConstants.ENABLED_FILTER_LIST_AT_MAIN_PAGE_XPATH.format(value))
 
     def get_enabled_at_main_page(self):
         return self.is_checkbox_selected(WashBookConstants.ENABLED_AT_MAIN_PAGE_XPATH)

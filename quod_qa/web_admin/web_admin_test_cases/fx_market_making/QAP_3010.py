@@ -31,7 +31,7 @@ class QAP_3010(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/BRL"
-        self.venue_at_spot_venues_tab = "JPM RFQ"
+        self.venue_at_spot_venues_tab = "BATS"
         self.default_weight_at_spot_venues_tab = 55
 
     def precondition(self):

@@ -38,7 +38,7 @@ class QAP_3275(CommonTestCase):
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/USD"
         self.rfq_response_stream_ttl = 120
-        self.venue_at_forward_venue_tab = "BAML RFQ"
+        self.venue_at_forward_venue_tab = "BATS"
         self.client_at_external_clients_tab = "CLIENT1"
         self.tenor = "1W"
 

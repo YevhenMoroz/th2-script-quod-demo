@@ -12,6 +12,7 @@ from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_1592 import QAP
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_1593 import QAP_1593
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2430 import QAP_2430
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2431 import QAP_2431
+from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2799 import QAP_2799
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2800 import QAP_2800
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2858 import QAP_2858
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2959 import QAP_2959
@@ -25,6 +26,7 @@ from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2968 import QAP
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2969 import QAP_2969
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_2970 import QAP_2970
 from custom import basic_custom_actions as bca
+from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_3331 import QAP_3331
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_3363 import QAP_3363
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4158 import QAP_4158
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4238 import QAP_4238
@@ -53,43 +55,45 @@ class RunOrderManagement:
     def execute(self):
         try:
             start_time = time.monotonic()
-            # QAP_948(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_950(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_952(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_958(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_960(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1010(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1411(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_1412(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1567(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1582(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1592(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1593(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2430(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2431(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2800(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2858(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2959(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2960(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2961(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2962(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2963(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2964(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2967(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2968(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2969(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2970(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3363(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4158(self.web_driver_container, self.second_lvl_id).run()
+            QAP_948(self.web_driver_container, self.second_lvl_id).run()
+            QAP_950(self.web_driver_container, self.second_lvl_id).run()
+            QAP_952(self.web_driver_container, self.second_lvl_id).run()
+            QAP_958(self.web_driver_container, self.second_lvl_id).run()
+            QAP_960(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1010(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1411(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1412(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1567(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1582(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1592(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1593(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2430(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2431(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2799(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2800(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2858(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2959(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2960(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2961(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2962(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2963(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2964(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2967(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2968(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2969(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2970(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3331(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3363(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4158(self.web_driver_container, self.second_lvl_id).run()
             QAP_4238(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4261(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4262(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4264(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4265(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4272(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4854(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4856(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5207(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4261(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4262(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4264(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4265(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4272(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4854(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4856(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5207(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Order Management ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

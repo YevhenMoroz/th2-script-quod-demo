@@ -26,7 +26,7 @@ class QAP_4238(CommonTestCase):
         self.login = "adm03"
         self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "BAML FA"
+        self.venue = "COINBASE"
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
