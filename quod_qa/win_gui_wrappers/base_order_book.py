@@ -7,8 +7,8 @@ from win_gui_modules.wrappers import direct_moc_request_correct
 
 class BaseOrderBook(BaseWindow):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.order_info = None
         self.order_details = None

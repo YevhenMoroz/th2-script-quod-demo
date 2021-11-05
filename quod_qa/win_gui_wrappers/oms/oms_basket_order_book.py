@@ -9,8 +9,8 @@ from win_gui_modules.common_wrappers import SimpleRequest
 
 class OMSBasketOrderBook(BaseBasketOrderBook):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         self.imported_file_mapping_field_details = ImportedFileMappingField
         self.templates_details = TemplatesDetails()
         self.row_details = RowDetails()

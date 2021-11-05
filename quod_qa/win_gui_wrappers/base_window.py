@@ -1,19 +1,20 @@
 import re
-from inspect import signature
 from functools import wraps
+from inspect import signature
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
-from win_gui_modules.utils import prepare_fe, get_opened_fe
+from win_gui_modules.utils import prepare_fe, get_opened_fe, get_base_request
 from win_gui_modules.wrappers import set_base
 
 
 class BaseWindow:
-    def __init__(self, case_id, base_request):
+    def __init__(self, case_id, session_id):
         self.case_id = case_id
-        self.base_request = base_request
+        self.base_request = get_base_request(session_id, case_id)
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
 
@@ -50,6 +51,7 @@ class BaseWindow:
         search_fe_req.set_parent_event_id(self.case_id)
         Stubs.win_act.moveToActiveFE(search_fe_req.build())
         set_base(session_id, self.case_id)
+
     @staticmethod
     def split_2lvl_values(split_values: dict):
         print(split_values)
