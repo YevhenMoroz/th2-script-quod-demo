@@ -10,7 +10,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_default_TWAP(self) -> None:
+    def set_default_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             "HandlInst": "0",
@@ -34,8 +34,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             }
         }
         super().change_parameters(base_parameters)
+        return self
 
-    def set_default_POV(self) -> None:
+    def set_default_POV(self) -> FixMessageNewOrderSingle:
         instrument = dict(
             Symbol='FR0010436584',
             SecurityID='FR0010436584',
@@ -61,3 +62,4 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             }
         }
         super().change_parameters(base_parameters)
+        return self
