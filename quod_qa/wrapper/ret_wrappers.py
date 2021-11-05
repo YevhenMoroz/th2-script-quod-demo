@@ -4,13 +4,13 @@ import random
 from datetime import datetime
 from functools import wraps
 from urllib import request
-
+import dis
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod import act_ui_win_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import TransferOrderDetails, NotifyDfdDetails, ExtractManualCrossValuesRequest
 from copy import deepcopy
-
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ApplicationDetails, LoginDetails, CloseApplicationRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 
 from custom import basic_custom_actions
@@ -24,7 +24,7 @@ from rule_management import RuleManager
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from win_gui_modules.application_wrappers import FEDetailsRequest, CloseApplicationRequest
+from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest, \
     ExtractOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
@@ -52,8 +52,8 @@ def close_fe(main_event, session):
     stub = Stubs.win_act
     disposing_event = create_event("Disposing", main_event)
     try:
-        stub.closeApplication(CloseApplicationRequest())
-
+        stub.closeApplication(CloseApplicationRequest(
+            base=EmptyRequest(sessionID=session, parentEventId=disposing_event)))
     except Exception as e:
         logging.error("Error disposing application", exc_info=True)
     stub.unregister(session)
@@ -395,7 +395,7 @@ def extract_child_lvl2_order_details(base_request, column_name, order_book_servi
     return request[column_name]
 
 
-def check_order_algo_parameters_book(base_request, order_id, act, row_number):
+def check_order_algo_parameters_book(base_request, order_id, act):
     ob = OrdersDetails()
     execution_id = bca.client_orderid(4)
     ob.set_filter(["Order ID", order_id])
@@ -408,7 +408,6 @@ def check_order_algo_parameters_book(base_request, order_id, act, row_number):
     lvl1_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[
         sub_order_ob_par_name,
         sub_order_ob_par_value]))
-    lvl1_info.set_number(row_number)
     lvl1_details = OrdersDetails.create(info=lvl1_info)
 
     ob.add_single_order_info(
@@ -416,54 +415,34 @@ def check_order_algo_parameters_book(base_request, order_id, act, row_number):
             action=ExtractionAction.create_extraction_action(extraction_details=[ob_exec_sts]),
             sub_order_details=lvl1_details))
     response = call(act.getAlgoParametersTabDetails, ob.request())
-    return response["ParametersValue"]
+    return response
 
 
-def activate_gating_rule_for_dma(case_id, gating_rule_id, gating_rule_name):
+def enable_gating_rule(case_id, gating_rule_id):
+    """
+        For this case, the main thing is to set the gating_rule_id which you want to activate
+    """
     api = Stubs.api_service
 
     enable_params = {
-
-        "accountGroupID": "HAKKIM",
-        "gatingRuleDescription": "to manage DMA orders",
-        "gatingRuleName": gating_rule_name,
         "gatingRuleID": gating_rule_id,
-        "alive": 'false',
-        "gatingRuleCondition": [
-            {
-                "gatingRuleCondExp": "AND(ExecutionPolicy=DMA,OrdQty<1000)",
-                "gatingRuleCondName": "DMATinyQty",
-                "holdOrder": 'true',
-                "qtyPrecision": 100,
-                "alive": 'false',
-                "gatingRuleCondIndice": 1,
-                "gatingRuleResult": [
-                    {
-                        "alive": 'false',
-                        "gatingRuleResultIndice": 1,
-                        "splitRatio": 1,
-                        "gatingRuleExecPolicyResult": "DMA"
-                    }
-                ]
-            },
-            {
-                "gatingRuleCondName": "DMADefResult",
-                "alive": 'false',
-                "gatingRuleCondIndice": 2,
-                "gatingRuleResult": [
-                    {
-                        "alive": 'false',
-                        "gatingRuleResultIndice": 1,
-                        "splitRatio": 1,
-                        "gatingRuleExecPolicyResult": "DMA"
-                    }
-                ]
-            }
-        ]
     }
 
     api.sendMessage(request=SubmitMessageRequest(message=bca.wrap_message(content=enable_params,
                                                                           message_type='EnableGatingRule',
+                                                                          session_alias='rest_wa315luna'),
+                                                 parent_event_id=case_id))
+
+
+def disable_gating_rule(case_id, gating_rule_id):
+    api = Stubs.api_service
+
+    disable_params = {
+        "gatingRuleID": gating_rule_id,
+    }
+
+    api.sendMessage(request=SubmitMessageRequest(message=bca.wrap_message(content=disable_params,
+                                                                          message_type='DisableGatingRule',
                                                                           session_alias='rest_wa315luna'),
                                                  parent_event_id=case_id))
 
@@ -477,17 +456,27 @@ def verifier(case_id, event_name, expected_value, actual_value):
 
 
 def decorator_try_except(test_id):
-    def _safe(f):
-        @wraps(f)
-        def safe_f(*args, **kwargs):
+    def get_function(decorated_function):
+        @wraps(decorated_function)
+        def improved_function(*args, **kwargs):
             try:
-                return f(*args, **kwargs)
+                return decorated_function(*args, **kwargs)
             except:
+                # print("Tuple object - \n", args)
+                # print("Object TestCase - \n", args[0])
+                # print("Object attributes - \n", args[0].__dict__)
+                # print("case_id - ", args[0].__dict__['case_id'])
+                #
+                # bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
+                #                  status='FAILED',
+                #                  parent_id=args[0].__dict__['case_id'])
                 print(f"Test {test_id} was failed")
             finally:
                 pass
-        return safe_f
-    return _safe
+
+        return improved_function
+
+    return get_function
 
 
 def close_order_book(base_request, act_order_book):

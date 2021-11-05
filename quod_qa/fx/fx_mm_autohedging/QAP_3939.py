@@ -5,6 +5,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from custom.tenor_settlement_date import spo, wk1
 from custom.verifier import Verifier
+from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
@@ -28,9 +29,8 @@ currency = "USD"
 settle_currency = "ZAR"
 side = "1"
 
-
 expected_pos_client = qty
-expected_pos_quod= '676'
+expected_pos_quod = '676'
 expected_pos_client_intern = '-1257000'
 
 expected_pos_client_2 = "2512648"
@@ -46,6 +46,7 @@ def send_rfq_order_spot(params_spot):
     rfq.send_new_order_single(price=price). \
         verify_order_pending(). \
         verify_order_filled()
+
 
 def send_rfq_order_fwd(params_fwd):
     rfq = FixClientSellRfq(params_fwd)
@@ -138,6 +139,11 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     case_base_request = get_base_request(session_id, case_id)
     try:
+        # Precondition
+        initial_pos_cl = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_qv = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        initial_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                   account_client_intern)
         # Step 4
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
@@ -145,26 +151,64 @@ def execute(report_id, session_id):
                                         currency=currency, side=side,
                                         account=account_client)
         send_rfq_order_spot(params_spot)
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod, actual_pos_quod)
-        actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client_intern)
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern, actual_pos_client_intern)
+        actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        expected_pos_client = str(int(qty) + int(initial_pos_cl))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client_)
+
+        actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        expected_pos_quod = 676 + int(initial_pos_qv)
+        if expected_pos_quod > 1000:
+            expected_pos_quod = expected_pos_quod - 1000
+        compare_position('Checking positions Quod QUOD4_1', case_id, str(expected_pos_quod), actual_pos_quod_)
+
+        actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                  account_client_intern)
+        ah_qty = FXOrderBook(case_id, case_base_request).set_filter(
+            ["Order ID", "MO", "Orig", "AutoHedger", "Lookup", "USD/ZAR-SPO.SPO", "Client ID", "QUOD4", "InstrType",
+             "FXSpot"]).extract_field("Qty").replace(",", "")
+        if initial_pos_client_intern_!=0:
+            expected_pos_client_intern = int(initial_pos_client_intern_) - int(ah_qty)
+            if abs(expected_pos_client_intern) >= 5000000:
+                expected_pos_client_intern = expected_pos_client_intern + 5000000
+
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, str(expected_pos_client_intern),
+                         actual_pos_client_intern_)
+
+        # Precondition
+        initial_pos_cl = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_pos_qv = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        initial_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                   account_client_intern)
 
         # Step 6
         params_fwd = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                        securitytype=security_type_fwd, settldate=settle_date_1w,
-                                        settltype=settle_type_w1, securityid=symbol, settlcurrency=settle_currency,
-                                        currency=currency, side=side,
-                                        account=account_client)
+                                       securitytype=security_type_fwd, settldate=settle_date_1w,
+                                       settltype=settle_type_w1, securityid=symbol, settlcurrency=settle_currency,
+                                       currency=currency, side=side,
+                                       account=account_client)
         send_rfq_order_fwd(params_fwd)
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client_2, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions Quod QUOD4_1', case_id, expected_pos_quod_2, actual_pos_quod)
-        actual_pos_client_intern = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client_intern)
-        compare_position('Checking positions Quod QUOD_INT_1', case_id, expected_pos_client_intern_2, actual_pos_client_intern)
+        actual_pos_client_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        expected_pos_client = str(int(qty) + int(initial_pos_cl))
+        compare_position('Checking positions Client AURUM1_1', case_id, expected_pos_client, actual_pos_client_)
+        actual_pos_quod_ = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        expected_pos_quod = 676 + int(initial_pos_qv)
+        if expected_pos_quod > 1000:
+            expected_pos_quod = expected_pos_quod - 1000
+        compare_position('Checking positions Quod QUOD4_1', case_id, str(expected_pos_quod), actual_pos_quod_)
+        ah_qty = get_dealing_positions_details(pos_service, case_base_request, symbol,
+                                                                  account_client_intern)
+
+        ah_qty = FXOrderBook(case_id, case_base_request).set_filter(
+            ["Order ID", "MO", "Orig", "AutoHedger", "Lookup", "USD/ZAR-SPO.SPO", "Client ID", "QUOD4", "InstrType",
+             "FXSpot"]).extract_field("Qty").replace(",", "")
+        if initial_pos_client_intern_!=0:
+            expected_pos_client_intern = int(initial_pos_client_intern_) - int(ah_qty)
+            if abs(expected_pos_client_intern) >= 5000000:
+                expected_pos_client_intern = expected_pos_client_intern + 5000000
+
+        compare_position('Checking positions Quod QUOD_INT_1', case_id, str(expected_pos_client_intern),
+                         actual_pos_client_intern_)
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)

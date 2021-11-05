@@ -105,3 +105,17 @@ class ListingsValuesSubWizard(CommonPage):
 
     def get_instr_settl_date(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_SETTL_DATE_XPATH)
+
+    def is_tenor_field_required(self):
+        return "ng-invalid" in self.find_by_xpath(ListingsConstants.VALUES_TAB_TENOR_XPATH).get_attribute("class")
+
+    def is_maturity_month_year_field_required(self):
+        return "ng-invalid" in self.find_by_xpath(ListingsConstants.VALUES_TAB_MATURITY_MONTH_YEAR_XPATH).get_attribute("class")
+
+    def is_strike_price_field_required(self):
+        return "ng-invalid" in self.find_by_xpath(ListingsConstants.VALUES_TAB_STRIKE_PRICE_XPATH).get_attribute(
+            "class")
+
+    def is_call_put_field_required(self):
+        return "ng-invalid" in self.find_by_xpath(ListingsConstants.VALUES_TAB_CALL_PUT_XPATH).get_attribute(
+            "class")

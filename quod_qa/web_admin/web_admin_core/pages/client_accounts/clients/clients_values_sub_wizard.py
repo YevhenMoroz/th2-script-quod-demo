@@ -124,7 +124,8 @@ class ClientsValuesSubWizard(CommonPage):
     def click_on_dummy_checkbox(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_DUMMY_CHECKBOX_XPATH).click()
 
-
+    def clear_disclose_exec_field(self):
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).clear()
 
 
 

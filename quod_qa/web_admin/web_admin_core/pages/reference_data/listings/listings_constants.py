@@ -1,11 +1,11 @@
 class ListingsConstants:
     LISTINGS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Listings ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
-    DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
+    DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
@@ -17,6 +17,7 @@ class ListingsConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
 
     # Main page
     MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH = '//*[text()="Listing"]/preceding-sibling::input'

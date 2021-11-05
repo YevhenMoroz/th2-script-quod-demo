@@ -12,3 +12,9 @@ class ZonesAssignmentsSubWizard(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_INSTITUTION_XPATH)
+
+    def click_on_locations(self, desk_name):
+        self.find_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_LOCATIONS_LINK_XPATH.format(desk_name)).click()
+
+    def click_on_user(self, user_name):
+        self.find_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_USERS_LINK_XPATH.format(user_name)).click()

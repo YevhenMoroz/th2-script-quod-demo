@@ -18,6 +18,11 @@ class LocationsPage(CommonPage):
     def click_on_clone(self):
         self.find_by_xpath(LocationsConstants.CLONE_XPATH).click()
 
+    def click_on_enable_disable_button(self):
+        self.find_by_xpath(LocationsConstants.ENABLE_DISABLE_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(LocationsConstants.OK_BUTTON_XPATH).click()
+
     def click_on_delete(self, confirmation):
         self.find_by_xpath(LocationsConstants.DELETE_XPATH).click()
         if confirmation:
@@ -47,7 +52,7 @@ class LocationsPage(CommonPage):
     def set_name(self, value):
         self.set_text_by_xpath(LocationsConstants.MAIN_PAGE_NAME_FILTER_XPATH, value)
 
-    def set_institution(self, value):
+    def set_zone(self, value):
         self.set_text_by_xpath(LocationsConstants.MAIN_PAGE_ZONE_FILTER_XPATH, value)
 
     def set_enabled(self, value):

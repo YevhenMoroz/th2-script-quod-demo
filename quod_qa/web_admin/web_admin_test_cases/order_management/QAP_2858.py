@@ -17,7 +17,6 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_2858(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.strategy_type = "Quod LitDark"
         self.parameter_at_passive_lit_block = "PostMode"
 
@@ -47,6 +46,6 @@ class QAP_2858(CommonTestCase):
             self.verify("Is PostMode values exist", True,
                         passive_at_lit_block.is_post_mode_values_exist(values_at_post_mode_parameter))
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

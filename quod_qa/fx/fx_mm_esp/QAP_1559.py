@@ -75,7 +75,7 @@ def execute(report_id):
             params_1.prepare_md_for_verification(bands, priced=False)
             md1 = FixClientSellEsp(params_1).send_md_request().verify_md_pending()
             price1 = md1.extract_filed('Price')
-            text = 'empty book'
+            text = 'not active'
             md1.send_new_order_single(price1). \
                 verify_order_pending(). \
                 verify_order_rejected(text). \

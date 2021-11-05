@@ -5,7 +5,7 @@ from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule,
     TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
     TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject, \
     TemplateMarketNewOrdSingleFOK, TemplateQuodDefMDRRule, TemplateNewOrdSingleIOCMarketData, \
-    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule
+    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule, TemplateMDAnswerRule
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -204,6 +204,11 @@ class RuleManager:
                                                                               ConnectionID(session_alias=session)))
 
     @staticmethod
+    def add_QuodMDAnswerRule(session: str):
+        return Stubs.simulator.createQuodMDAnswerRule(request=
+                                                      TemplateMDAnswerRule(connection_id=
+                                                                               ConnectionID(session_alias=session)))
+    @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
         return Stubs.simulator.createQuodSingleExecRule(
             request=TemplateQuodSingleExecRule(
@@ -327,7 +332,15 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_rule_by_id()
-    # rule_manager.remove_rules_by_id_range()
+    #rule_manager.remove_rule_by_id()
+    # rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard","CLIENT_YMOROZ"+ "_PARIS",
+    #                                                                     "XPAR",True)
+    #rule_manager.remove_rules_by_id_range()
+    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
+    #                                                           "CLIENT_YMOROZ" + "_PARIS",
+    #                                                                      "XPAR", 10)
+    # rule_manager.add_NewOrdSingleExecutionReportTrade("fix-buy-317ganymede-standard",
+    #                                                            "CLIENT_YMOROZ" + "_PARIS",
+    #                                                                      "XPAR", 10,900,1)
     rule_manager.print_active_rules()
-    # rule_manager.remove_all_rules()
+    #rule_manager.remove_all_rules()

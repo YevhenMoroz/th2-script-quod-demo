@@ -19,6 +19,8 @@ class InstitutionsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
+    ENABLE_DISABLE_TOGGLE_INPUT_XPATH = "//*[contains(@role, 'switch')]"
+    SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
 
 
     # Main page
@@ -41,3 +43,7 @@ class InstitutionsConstants:
     VALUES_TAB_CTM_BIC_NAME = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_COUNTERPART_NAME = '//*[@id="counterpart"]'
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
+
+    # Assignments tab
+    ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'
+    ASSIGNMENTS_TAB_USERS_LINK_XPATH = '//a[text()=" {} "]'

@@ -16,7 +16,6 @@ class QAP_918(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.desks = ["DESK A", "Quod Desk"]
@@ -56,6 +55,6 @@ class QAP_918(CommonTestCase):
                 self.verify("Download button is deactivated", True, False)
 
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

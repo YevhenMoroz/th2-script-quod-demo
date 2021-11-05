@@ -138,8 +138,8 @@ def execute(report_id, session_id):
     case_to_currency = "USD"
     case_near_date = 5
     case_far_date = 10
-    case_venue = ["HSBC"]
-    case_filter_venue = "HSBC"
+    case_venue = ["CITI"]
+    case_filter_venue = "CITI"
     case_qty = 10000000
     quote_sts_new = 'New'
     quote_quote_sts_accepted = "Accepted"

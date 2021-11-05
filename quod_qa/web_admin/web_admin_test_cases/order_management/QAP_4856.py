@@ -16,7 +16,6 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_4856(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm03"
         self.password = "adm03"
 
@@ -85,6 +84,6 @@ class QAP_4856(CommonTestCase):
             conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
             self.verify("After edited, Conditions have another values", "DMA", conditions_sub_wizard.get_exec_policy())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

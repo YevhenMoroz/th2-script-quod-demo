@@ -1,12 +1,11 @@
 import logging
+import time
 from datetime import datetime, timedelta
 
 import quod_qa.wrapper.eq_fix_wrappers
-from quod_qa.wrapper import eq_wrappers
+from custom.basic_custom_actions import create_event
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
-from win_gui_modules.utils import set_session_id
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
@@ -33,12 +32,14 @@ def execute(report_id, session_id):
         fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 6)
         response = fix_message.pop('response')
     finally:
+        time.sleep(1)
         rule_manager.remove_rule(nos_rule)
 
     # endregion
 
     # region Check values in OrderBook
     params = {
+        'Account':client,
         'OrderQty': qty,
         'ExecType': '4',
         'OrdStatus': '4',

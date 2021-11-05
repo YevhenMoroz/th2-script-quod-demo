@@ -1,5 +1,7 @@
 import time
 
+from selenium.webdriver import ActionChains
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 
@@ -64,10 +66,33 @@ class CommissionsPage(CommonPage):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VENUE_FILTER_XPATH, value)
 
     def set_side(self, value):
-        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH, value)
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_SIDE_FILTER_XPATH, value)
 
     def set_execution_policy(self, value):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH, value)
 
     def set_virtual_account(self, value):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VIRTUAL_POLICY_FILTER_XPATH, value)
+
+    def set_client(self, value):
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_FILTER_XPATH, value)
+
+    def set_client_group(self, value):
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH, value)
+
+    def set_client_list(self, value):
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_LIST_FILTER_XPATH, value)
+
+    def set_commission_amount_type(self, value):
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH, value)
+
+    def set_commission_profile(self, value):
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH, value)
+
+    def click_on_re_calculate_for_allocations(self):
+        self.find_by_xpath(CommissionsConstants.MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH).click()
+
+    def offset_horizontal_slide(self):
+        slider = self.find_by_xpath(CommissionsConstants.HORIZONTAL_SCROLL)
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.drag_and_drop_by_offset(slider, 400, 0).perform()

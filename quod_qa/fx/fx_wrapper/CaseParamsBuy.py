@@ -6,19 +6,19 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
 
 class CaseParamsBuy():
-    connectivity = 'fix-fh-314-luna'
-    simulator = Stubs.test_sim
+    simulator = Stubs.simulator
     # simulator = Stubs.simulator
     market_d_params_spot = None
     market_d_params_fwd = None
 
     def __init__(self, case_id, defaultmdsymbol='EUR/USD:SPO:REG:HSBC', symbol='EUR/USD'
-                 , securityType='FXSPOT', settldate=tsd.spo()):
+                 , securityType='FXSPOT', settldate=tsd.spo(), connectivity ='fix-fh-314-luna'):
         self.case_id = case_id
         self.defaultmdsymbol = defaultmdsymbol
         self.symbol = symbol
         self.securityType = securityType
         self.settldate = settldate
+        self.connectivity=connectivity
 
         self.set_market_data_spot()
         self.set_market_data_fwd()
@@ -66,22 +66,22 @@ class CaseParamsBuy():
                     'SettlDate': self.settldate,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19591,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settldate,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settldate,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
+                # {
+                #     "MDEntryType": "0",
+                #     "MDEntryPx": 1.19591,
+                #     "MDEntrySize": 12000000,
+                #     "MDEntryPositionNo": 3,
+                #     'SettlDate': self.settldate,
+                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                # },
+                # {
+                #     "MDEntryType": "1",
+                #     "MDEntryPx": 1.19615,
+                #     "MDEntrySize": 12000000,
+                #     "MDEntryPositionNo": 3,
+                #     'SettlDate': self.settldate,
+                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                # },
             ]
         }
 

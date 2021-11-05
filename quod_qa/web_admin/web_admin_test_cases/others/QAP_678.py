@@ -19,7 +19,6 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_678(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm02"
         self.password = "adm02"
         self.first_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -82,6 +81,6 @@ class QAP_678(CommonTestCase):
                 self.verify("Delete success ", True, e.__class__.__name__)
 
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

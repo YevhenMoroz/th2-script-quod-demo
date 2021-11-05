@@ -14,7 +14,6 @@ class QAP_1640(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.disabled_massage = "User adm_desk Disabled"
-        self.console_error_lvl_id = second_lvl_id
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,6 +37,6 @@ class QAP_1640(CommonTestCase):
             time.sleep(1)
             users_page.click_on_enable_disable_button()
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

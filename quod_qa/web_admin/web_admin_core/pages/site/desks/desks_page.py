@@ -32,8 +32,7 @@ class DesksPage(CommonPage):
     def click_on_new(self):
         self.find_by_xpath(DesksConstants.NEW_BUTTON_XPATH).click()
 
-
-    def set_name_filter(self , value):
+    def set_name_filter(self, value):
         self.set_text_by_xpath(DesksConstants.NAME_FILTER_AT_MAIN_PAGE_XPATH, value)
 
     def set_mode_filter(self, value):
@@ -41,20 +40,3 @@ class DesksPage(CommonPage):
 
     def set_location_filter(self, value):
         self.set_text_by_xpath(DesksConstants.LOCATION_FILTER_AT_MAIN_PAGE_XPATH, value)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

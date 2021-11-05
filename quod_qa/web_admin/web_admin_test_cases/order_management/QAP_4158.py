@@ -17,7 +17,6 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_4158(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.console_error_lvl_id = second_lvl_id
         self.login = "adm03"
         self.password = "adm03"
 
@@ -37,6 +36,8 @@ class QAP_4158(CommonTestCase):
         page.set_third_criteria("InstrumentType")
         time.sleep(1)
         page.click_on_change_criteria_for_saving(True)
+        time.sleep(1)
+        side_menu.open_order_management_rules_page()
         time.sleep(2)
         page.click_on_new_button()
         time.sleep(2)
@@ -55,6 +56,6 @@ class QAP_4158(CommonTestCase):
                 self.verify("Criteria don't changed !!! Error!!!", True, e.__class__.__name__)
 
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.console_error_lvl_id,
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)

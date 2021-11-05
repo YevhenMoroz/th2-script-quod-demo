@@ -32,3 +32,15 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(UsersConstants.INSTITUTION)
+
+    def is_desks_field_enabled(self):
+        return self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).is_enabled()
+
+    def is_location_field_enabled(self):
+        return self.find_by_xpath(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD).is_enabled()
+
+    def is_zone_field_enabled(self):
+        return self.find_by_xpath(UsersConstants.ZONE_AT_ASSIGNMENTS_SUB_WIZARD).is_enabled()
+
+    def is_institution_field_enabled(self):
+        return self.find_by_xpath(UsersConstants.INSTITUTION).is_enabled()

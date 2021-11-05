@@ -46,7 +46,7 @@ def cancel_rfq(base_request, service):
 def check_quote_request_b(ex_id, base_request, service, act):
     qrb = QuoteDetailsRequest(base=base_request)
     qrb.set_extraction_id(ex_id)
-    qrb.set_filter(["Venue", "HSBC"])
+    qrb.set_filter(["Venue", "CITI"])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
@@ -61,7 +61,7 @@ def check_quote_request_b(ex_id, base_request, service, act):
 def check_quote_book(ex_id, base_request, service, act, owner):
     qb = QuoteDetailsRequest(base=base_request)
     qb.set_extraction_id(ex_id)
-    qb.set_filter(["Venue", "HSBC"])
+    qb.set_filter(["Venue", "CITI"])
     qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
     qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
     qb_id = ExtractionDetail("quoteBook.id", "Id")
@@ -101,7 +101,7 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user']
     case_instr_type = "Spot"
-    case_venue = "HSBC"
+    case_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "Spot"
     case_from_currency = "EUR"

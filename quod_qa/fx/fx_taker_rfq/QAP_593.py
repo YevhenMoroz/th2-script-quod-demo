@@ -104,7 +104,7 @@ def execute(report_id, session_id):
 
     case_name = Path(__file__).name[:-3]
     quote_owner = Stubs.custom_config['qf_trading_fe_user']
-    case_venue = "HSBC"
+    case_venue = "CITI"
     case_qty = 1000000
     case_near_tenor = "1W"
 
@@ -112,7 +112,7 @@ def execute(report_id, session_id):
     case_to_currency = "USD"
     case_client = "ASPECT_CITI"
     quote_sts_new = 'New'
-    case_venues = ["HSBC"]
+    case_venues = ["CITI"]
     quote_quote_sts_accepted = "Accepted"
 
     # Create sub-report for case

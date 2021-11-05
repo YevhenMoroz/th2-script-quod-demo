@@ -53,3 +53,11 @@ class ZonesPage(CommonPage):
 
     def set_enabled(self, value):
         self.select_value_from_dropdown_list(ZonesConstants.MAIN_PAGE_ENABLED_FILTER_XPATH, value)
+
+    def click_on_enable_disable_button(self):
+        self.find_by_xpath(ZonesConstants.ENABLE_DISABLE_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(ZonesConstants.OK_BUTTON_XPATH).click()
+
+    def click_on_download_csv(self):
+        self.find_by_xpath(ZonesConstants.MAIN_PAGE_DOWNLOAD_CSV_XPATH).click()

@@ -122,6 +122,10 @@ def execute(report_id, session_id):
     case_base_request = get_base_request(session_id, case_id)
     ob_act = Stubs.win_act_order_book
     try:
+        #Precondition
+        initial_position_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
+        initial_position_quod = abs(get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod))
+
         # Step 1
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty_1, symbol=symbol,
                                         securitytype=security_type_spo, settldate=settle_date_spo,
@@ -130,12 +134,14 @@ def execute(report_id, session_id):
                                         account=account_client)
         send_rfq_order_spot(params_spot)
         # Step 2
+        expected_pos_client = str(int(initial_position_client)+int(expected_pos_client_1))
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions', case_id, expected_pos_client_1, actual_pos_client)
+        compare_position('Checking positions', case_id, expected_pos_client, actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
         # Step 3
-        check_order_book_1('Checking placed order', case_id, case_base_request, ob_act, "4000000", "Terminated",
+        qty = str(4000000+int(initial_position_quod))
+        check_order_book_1('Checking placed order', case_id, case_base_request, ob_act, qty, "Terminated",
                            client_quod)
         # Step 4
         params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty_2, symbol=symbol,
@@ -145,8 +151,9 @@ def execute(report_id, session_id):
                                         account=account_client)
         send_rfq_order_spot(params_spot)
         # Step 5
+        expected_pos_client = str(int(initial_position_client) + int(expected_pos_client_2))
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions', case_id, expected_pos_client_2, actual_pos_client)
+        compare_position('Checking positions', case_id, expected_pos_client, actual_pos_client)
         actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
         compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
         compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
