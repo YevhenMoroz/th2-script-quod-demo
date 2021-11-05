@@ -25,7 +25,7 @@ def execute(report_id):
             'ClOrdID': 'TWAP_NAV_05_01' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 500000,
+            'OrderQty': 333334,
             'TimeInForce': 0,
             'Price': 115,
             'OrdType': 2,
@@ -41,19 +41,19 @@ def execute(report_id):
                 'NavigatorPercentage': '100',
                 # 'NavigatorMaxTotalShares': '500000',
                 'NavigatorExecution': '1',
-                # 'NavigatorInitialSweepTime': '5',
+                #'NavigatorInitialSweepTime': '5',
                 'NavGuard': '0',
-                #'NavigatorLimitPrice': '108',
-                 'NavigatorLimitPriceReference': 'LTP',
+                'NavigatorLimitPrice': '110',
+                #'NavigatorLimitPriceReference': 'LTP',
                 # 'NavigatorLimitPriceOffset': '100',
                 # 'NavigatorMaxSliceSize': '10000',
                 # 'NavigatorMinBookReloadSeconds': '10',
-                'NavigatorRebalanceTime': '10',
+                #'NavigatorRebalanceTime': '10',
                 'AllowedVenues': 'XLON',
                 #'StartDate2': '20211027-09:50:00.000',
-                #'EndDate2': '20211026-10:20:00.000',
-                #'Waves': '4',
-                'TriggerPriceRed': '112.42'
+                #'EndDate2': '20211103-13:30:00.000',
+                'Waves': '3',
+                #'TriggerPriceRed': '112.42'
             }
         }
 
