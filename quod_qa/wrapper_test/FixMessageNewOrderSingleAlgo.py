@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from custom import basic_custom_actions
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from quod_qa.wrapper_test.Instrument import Instrument
 
@@ -13,6 +14,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def set_default_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "0",
             "Side": "1",
             "OrderQty": "1000",
@@ -23,7 +25,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010436584,
+            "Instrument": Instrument.FR0010436584.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
