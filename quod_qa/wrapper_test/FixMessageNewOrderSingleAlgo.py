@@ -36,6 +36,30 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_TWAP_Nav(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            "HandlInst": "0",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "110",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.FR0000062788,
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+                'NavigatorExecution': '1',
+                'NavGuard': '0',
+                'NavigatorLimitPrice': '100',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_default_POV(self) -> FixMessageNewOrderSingle:
         instrument = dict(
             Symbol='FR0010436584',
