@@ -4,11 +4,11 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_autohedging import QAP_2292, QAP_2291, QAP_2265, QAP_3902, QAP_2470, QAP_2113, QAP_2250, QAP_2252, \
     QAP_2251, QAP_3819, AH_Precondition, QAP_3147, QAP_2322, QAP_3039, QAP_3082, import_AH_layout, QAP_2293, QAP_4149
 from quod_qa.fx.fx_mm_rfq import QAP_4748, QAP_4223, QAP_2103, QAP_2382, QAP_2296, QAP_2101, QAP_2091, QAP_5345, \
-    QAP_2055, QAP_2958, QAP_4777, QAP_4509
+    QAP_2055, QAP_2958, QAP_4777, QAP_4509, QAP_5814
 from quod_qa.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2750, QAP_4094, QAP_2844, QAP_3394, QAP_1511, QAP_1589, \
     QAP_2035, QAP_2556, QAP_4794, QAP_1599, QAP_3563
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3739, QAP_3689, QAP_3747
-from MyFiles import MyTest, SendMD, Test, StringThing, send_rfq
+from MyFiles import SendMD
 from quod_qa.fx.fx_taker_esp import QAP_2373, QAP_2761, QAP_2812, QAP_4768, QAP_1591, QAP_105, QAP_3742, QAP_4673, \
     QAP_4677
 from quod_qa.fx.fx_taker_rfq import QAP_2836
@@ -52,7 +52,7 @@ def test_run():
     # rules = rule_creation()
     start = datetime.now()
     print(f'start time = {start}')
-    rule_check()
+    # rule_check()
     try:
         # pass
         # if not Stubs.frontend_is_open:
@@ -65,6 +65,7 @@ def test_run():
         # QAP_2296.execute(report_id, session_id)
         # QAP_2293.execute(report_id, session_id)
         # QAP_4149.execute(report_id, session_id)
+        QAP_5814.execute(report_id)
 
         # region my test files
         SendMD.execute(report_id)

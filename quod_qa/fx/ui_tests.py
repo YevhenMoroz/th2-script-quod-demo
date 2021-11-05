@@ -551,7 +551,6 @@ def extract_di_panel(base_request, dealer_intervention_service):
     # extraction_request.extract_is_ask_price_large_enabled(f'{dmi_rfq}.is_ask_price_large_enabled')
     # extraction_request.extract_case_state_value_label_control(f'{dmi_rfq}.case_state_value_label_control')
     # extraction_request.extract_quot_estate_value_label_control(f'{dmi_rfq}.quot_estate_value_label_control')
-
     result = call(dealer_intervention_service.getRFQDetails, extraction_request.build())
     for R in result:
         print(f'{R} = {result[R]}')
@@ -957,9 +956,9 @@ def execute(report_id, session_id):
         # endregion
 
         # region Dealer Intervention
-        # extract_di_panel(base_request, dealer_interventions_service)
+        extract_di_panel(base_request, dealer_interventions_service)
         set_value_di_panel(base_request, dealer_interventions_service)
-        # close_dmi_window(base_request, dealer_interventions_service)
+        close_dmi_window(base_request, dealer_interventions_service)
         # endregion
 
         # region example of Drab&Drop
