@@ -57,7 +57,7 @@ def execute(report_id):
     logger.info(f"Start rules with id's: \n {OCRR, OCR, trade_rule}")
 
     seconds, nanos = bca.timestamps()  # Store case start time
-    now = datetime.today() - timedelta(hours=3)
+    now = datetime.today() - timedelta(hours=2)
     # Create sub-report for case
     case_params = {
         'TraderConnectivity': 'gtwquod3',

@@ -115,7 +115,7 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
 
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         n_waves = waves
 
         # Send_MarkerData
@@ -158,6 +158,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4760_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,

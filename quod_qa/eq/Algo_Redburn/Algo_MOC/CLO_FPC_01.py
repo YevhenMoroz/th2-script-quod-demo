@@ -36,6 +36,7 @@ def execute(report_id):
             'PricePoint1Participation': '12',
             'PricePoint2Price': '115',
             'PricePoint2Participation': '14',
+            'AllowedVenues': 'XLON'
         }
     }
 

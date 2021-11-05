@@ -116,7 +116,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         waves = 3
 
         rule_list = rule_creation()
@@ -137,7 +137,7 @@ def execute(report_id):
             {
                 'MDEntryType': '1',
                 'MDEntryPx': price_2,
-                'MDEntrySize': trade_qty,
+                'MDEntrySize': would_price_qty,
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -155,10 +155,13 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
 
+        time.sleep(2)
+
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4893_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
