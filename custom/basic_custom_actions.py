@@ -10,7 +10,7 @@ from th2_grpc_check1.check1_pb2 import CheckRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckSequenceRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckpointRequest
 
-from th2_grpc_act_quod.act_fix_pb2 import PlaceMessageRequest
+from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
 
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
