@@ -46,6 +46,7 @@ class QAP_2158(CommonTestCase):
         values_sub_wizard.set_name(self.name)
         time.sleep(2)
         values_sub_wizard.set_position_book(self.position_book)
+        time.sleep(2)
         instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
         instruments_sub_wizard.click_on_plus_button()
         time.sleep(2)

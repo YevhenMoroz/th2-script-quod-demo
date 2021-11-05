@@ -46,7 +46,6 @@ class QAP_2183(CommonTestCase):
         accounts_wizard.set_client(self.client)
         time.sleep(2)
 
-
     def test_context(self):
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_main_page = AccountsPage(self.web_driver_container)
@@ -54,14 +53,16 @@ class QAP_2183(CommonTestCase):
             self.precondition()
             try:
                 accounts_wizard.click_save_button()
-                self.verify("Account edit correctly", True, True)
+                self.verify("Account saved correctly", True, True)
                 time.sleep(2)
-                expected_saved_data = [self.client, self.clearing_type]
+                accounts_main_page.set_id(self.id)
+                time.sleep(2)
+                expected_saved_data = [self.client, "Institutional"]
                 actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
                 self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
             except Exception as e:
-                self.verify("Problem in Save Changes", True, e.__class__.__name__)
-
+                self.verify("Problem in or after Save Changes", True, e.__class__.__name__)
+                time.sleep(5)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

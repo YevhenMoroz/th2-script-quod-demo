@@ -62,7 +62,7 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
             OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH).click()
         time.sleep(1)
 
-    def set_conditional_logic(self,value):
+    def set_conditional_logic(self, value):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH).click()
         time.sleep(2)
         path = OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH.format(
@@ -75,7 +75,7 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         path = OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH.format(
             entity)
         self.select_value_from_dropdown_list(
-            path, entity)
+            path)
 
     def set_right_side_at_conditional_logic(self, value):
         self.set_combobox_value(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH, value)
@@ -89,7 +89,6 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         self.select_value_from_dropdown_list(
             path)
         time.sleep(2)
-
 
     def click_on_left_side(self):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH).click()

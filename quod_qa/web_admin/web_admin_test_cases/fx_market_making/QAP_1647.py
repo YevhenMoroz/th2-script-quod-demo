@@ -36,12 +36,12 @@ class QAP_1647(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm03"
         self.password = "adm03"
-        self.name =''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/CAD"
         self.rfq_response_stream_ttl = 2
-        self.venue_at_spot_venues_tab = "MS RFQ"
-        self.venue_at_forward_venues_tab = "BTMU FA"
+        self.venue_at_spot_venues_tab = "ADX"
+        self.venue_at_forward_venues_tab = "BATS"
         self.client_at_external_clients_tab = "CLIENT1"
         self.client_at_internal_clients_tab = "HouseFill"
         self.quantity = 1000000

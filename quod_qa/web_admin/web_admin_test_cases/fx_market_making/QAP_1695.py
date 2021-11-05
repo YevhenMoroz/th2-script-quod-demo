@@ -42,8 +42,8 @@ class QAP_1695(CommonTestCase):
         self.core_spot_price_strategy = "Direct"
         self.symbol = "AUD/CAD"
         self.rfq_response_stream_ttl = 2
-        self.venue_at_spot_venues_tab = "MS RFQ"
-        self.venue_at_forward_venues_tab = "BTMU FA"
+        self.venue_at_spot_venues_tab = "ADX"
+        self.venue_at_forward_venues_tab = "BATS"
         self.client_at_external_clients_tab = "CLIENT1"
         self.client_at_internal_clients_tab = "HouseFill"
         self.quantity = 1000000

@@ -1,5 +1,6 @@
 class AutoHedgerConstants:
-    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Auto Hedger ']"
+
+    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Auto Hedgers ']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -26,7 +27,7 @@ class AutoHedgerConstants:
 
     # Values tab
     VALUES_TAB_NAME_FIELD_XPATH = '//*[text()= "Name *"]/preceding-sibling::input'
-    VALUES_TAB_POSITION_BOOK_FIELD_XPATH = '//*[text()= "Position Book"]/preceding-sibling::input'
+    VALUES_TAB_POSITION_BOOK_FIELD_XPATH = '//*[text()= "Position Book *"]/preceding-sibling::input'
 
     # Schedules tab
 
@@ -78,12 +79,12 @@ class AutoHedgerConstants:
 
     # Instruments tab
 
-    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-plus ng2-main-add-btn"]'
-    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-close ng2-main-cancel-btn"]'
-    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-trash"]'
-    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="nb-edit ng2-main-edit-btn"]'
-    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
+    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-plus ng2-main-add-btn"]'
+    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
+    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-close ng2-main-cancel-btn"]'
+    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-trash"]'
+    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-edit ng2-main-edit-btn"]'
+    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
     INSTRUMENTS_TAB_SYMBOL_FIELD_XPATH = '//*[@placeholder="Symbol *"]'
     INSTRUMENTS_TAB_HEDGING_STRATEGY_FIELD_XPATH = '//*[text()="Hedging Strategy *"]/preceding-sibling::input'
     INSTRUMENTS_TAB_LONG_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Long Threshold Qty (EUR)"]/preceding-sibling::input'
