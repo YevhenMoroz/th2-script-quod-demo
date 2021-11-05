@@ -25,7 +25,7 @@ from quod_qa.eq.Test import TraidingSession_test, SendMarketData
 from quod_qa.eq.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
     TWAP_NAV_02, TWAP_NAV_01, QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_MAXShares, QA_TWAP_NAV_WW_01_sell, \
     QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_01_buy, QA_TWAP_NAV_WW_02_buy, QA_TWAP_NAV_WW_03_buy, \
-    QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell
+    QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, QAP_5766, QAP_5770
 from quod_qa.eq.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
     VWAP_NAV_02, VWAP_WW_01
 from quod_qa.eq.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, \
@@ -45,6 +45,8 @@ from quod_qa.eq.Algo_Redburn.Test.Start import TWAP_FULL, VWAP_FULL, POV_FULL
 from quod_qa.eq.Algo_Redburn.Test.PDAT_516 import TWAP_AUC_516_1, TWAP_AUC_516_2, POV_AUC_516_1, POV_AUC_516_2, \
     VWAP_AUC_516_1, VWAP_AUC_516_2
 from quod_qa.eq.Algo_Redburn.Test.PDAT_728 import TWAP_NAV_REF, VWAP_NAV_REF, POV_NAV_REF
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from rule_management import RuleManager
 from quod_qa.eq.Algo_Redburn.Test import TWAP_NAV_316
 from stubs import Stubs
@@ -226,8 +228,13 @@ def test_run():
         # VWAP_FULL.execute(report_id)
         # TWAP_NAV_REF.execute(report_id)
         # VWAP_NAV_REF.execute(report_id)
-        # POV_NAV_REF.execute(report_id)
-        # TWAP_NAV_316.execute(report_id)
+        #POV_NAV_REF.execute(report_id)
+        #TWAP_NAV_316.execute(report_id)
+
+        #316
+        #TWAP Navigator
+        #QAP_5766.execute(report_id)
+        #QAP_5770.execute(report_id)
 
         # TWAP_AUC_516_1.execute(report_id)
         # TWAP_AUC_516_2.execute(report_id)
@@ -265,13 +272,13 @@ def test_run():
 
         # region RB
         # TWAP
-        # QAP_4612.execute(report_id)
+        QAP_4612.execute(report_id)
         # QAP_4274.execute(report_id)
         # QAP_4582.execute(report_id)
         # QAP_4583.execute(report_id)
         # QAP_4584.execute(report_id)
-        QAP_4893.execute(report_id)
-        #2 QAP_4951.execute(report_id)
+        # QAP_4893.execute(report_id)
+        # QAP_4951.execute(report_id)
         # QAP_4333.execute(report_id)
         # QAP_4335.execute(report_id)
         # QAP_4336.execute(report_id)
