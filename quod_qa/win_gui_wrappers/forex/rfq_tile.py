@@ -56,7 +56,7 @@ class RFQTile(AggregatesRatesTile):
     def send_rfq(self):
         call(self.ar_service.sendRFQOrder, self.base_details.build())
 
-    def place_order(self, side: str = None, venue: str = None):
+    def place_order(self, side: str, venue: str = None):
         if venue is not None:
             self.place_order_request.set_venue(venue)
         if side == self.sell_side:
