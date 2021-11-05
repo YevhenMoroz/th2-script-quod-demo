@@ -344,7 +344,7 @@ def execute(report_id):
 
         time.sleep(2)
     
-#region Cancel Algo Order
+        #region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Cancel Order
         cancel_parms = {

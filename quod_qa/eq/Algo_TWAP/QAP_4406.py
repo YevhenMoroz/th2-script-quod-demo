@@ -139,7 +139,7 @@ def execute(report_id):
             {
                 'MDEntryType': '1',
                 'MDEntryPx': price_2,
-                'MDEntrySize': trade_qty,
+                'MDEntrySize': would_price_qty,
                 'MDEntryPositionNo': '1'
             }
         ]
@@ -500,7 +500,7 @@ def execute(report_id):
             {
                 'MDEntryType': '1',
                 'MDEntryPx': price_2,
-                'MDEntrySize': qty_2,
+                'MDEntrySize': would_price_qty_2,
                 'MDEntryPositionNo': '1'
             }
         ]
