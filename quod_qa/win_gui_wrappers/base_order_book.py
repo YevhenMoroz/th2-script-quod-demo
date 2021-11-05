@@ -1,6 +1,8 @@
-from quod_qa.win_gui_wrappers.base_window import BaseWindow, split_2lvl_values
+from quod_qa.win_gui_wrappers.base_window import BaseWindow
+from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import call
+from win_gui_modules.wrappers import direct_moc_request_correct
 
 
 class BaseOrderBook(BaseWindow):
@@ -25,10 +27,12 @@ class BaseOrderBook(BaseWindow):
         self.reassign_order_details = None
         self.manual_executing_details = None
         self.second_level_tab_details = None
+        self.extraction_panel_details = None
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
+        self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
         self.is_menu_item_present_call = None
@@ -48,6 +52,7 @@ class BaseOrderBook(BaseWindow):
         self.cancel_order_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
+        self.direct_moc_request_correct_call = None
 
     # endregion
     # region Common func
@@ -140,7 +145,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details.set_tabs_details([self.second_level_tab_details.build()])
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
-        return split_2lvl_values(result)
+        return BaseWindow.split_2lvl_values(result)
 
     # endregion
     # region Check
@@ -286,18 +291,20 @@ class BaseOrderBook(BaseWindow):
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
                          last_capacity=None, settl_date: int = None):
+        execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
-            self.manual_executing_details.add_executions_details().set_quantity(qty)
+            execution_details.set_quantity(qty)
         if price is not None:
-            self.manual_executing_details.add_executions_details().set_price(price)
+            execution_details.set_price(price)
         if execution_firm is not None:
-            self.manual_executing_details.add_executions_details().set_executing_firm(execution_firm)
+            execution_details.set_executing_firm(execution_firm)
         if contra_firm is not None:
-            self.manual_executing_details.add_executions_details().set_contra_firm(contra_firm)
+            execution_details.set_contra_firm(contra_firm)
         if settl_date is not None:
-            self.manual_executing_details.add_executions_details().set_settlement_date_offset(settl_date)
+            execution_details.set_settlement_date_offset(settl_date)
         if last_capacity is not None:
-            self.manual_executing_details.add_executions_details().set_last_capacity(last_capacity)
+            execution_details.set_last_capacity(last_capacity)
+
         call(self.manual_execution_order_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
 
@@ -310,4 +317,21 @@ class BaseOrderBook(BaseWindow):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
         call(self.mass_unbook_call, self.rows_numbers_for_grid.build())
         self.clear_details([self.rows_numbers_for_grid])
+
     # endregion
+
+    '''
+    Method extracting values from Booking Ticket
+    '''
+
+    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
+                                                               filter_dict,
+                                                               panel_of_extraction
+                                                               )
+        result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
+        self.clear_details([self.extraction_panel_details])
+        return result
+
+    def direct_moc_order(self, qty, route):
+        call(self.direct_mor_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))

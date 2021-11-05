@@ -34,7 +34,7 @@ class OMSOrderTicket(BaseOrderTicket):
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
-                          capacity=None, desk=None, partial_desk=False, disclose_flag: DiscloseFlagEnum = None):
+                          capacity=None, desk=None, partial_desk=False,  disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
                                                   order_type=order_type, tif=tif, account=account,
                                                   display_qty=display_qty, is_sell_side=is_sell_side)

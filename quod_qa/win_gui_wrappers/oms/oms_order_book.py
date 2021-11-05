@@ -3,6 +3,7 @@ from win_gui_modules.common_wrappers import GridScrollingDetails
 from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from stubs import Stubs
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, SecondLevelExtractionDetails
@@ -53,6 +54,6 @@ class OMSOrderBook(BaseOrderBook):
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
         self.mass_unbook_call = None
-        self.mass_book_call = None
+        self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
+        self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
     # endregion
-
