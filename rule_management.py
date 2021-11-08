@@ -107,7 +107,7 @@ class RuleManager:
         Stubs.core.removeRule(rule)
 
     @staticmethod
-    def rule_destroyer(list_rules):
+    def remove_rules(list_rules):
         rule_manager = RuleManager()
         for rule in list_rules:
             rule_manager.remove_rule(rule)

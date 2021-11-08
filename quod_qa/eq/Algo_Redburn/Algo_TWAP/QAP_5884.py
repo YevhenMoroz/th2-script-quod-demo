@@ -56,4 +56,4 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.rule_destroyer(rule_list)
+        RuleManager.remove_rules(rule_list)
