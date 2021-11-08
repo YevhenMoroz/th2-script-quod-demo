@@ -14,8 +14,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def set_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
-            'ClOrdID': basic_custom_actions.client_orderid(9),
-            "HandlInst": "1",
+            "HandlInst": "2",
             "Side": "1",
             "OrderQty": "1000",
             "TimeInForce": "0",
@@ -41,14 +40,14 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def set_TWAP_Navigator(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
-            "HandlInst": "0",
+            "HandlInst": "2",
             "Side": "1",
             "OrderQty": "500000",
             "TimeInForce": "0",
             "OrdType": "2",
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
-            "Price": "110",
+            "Price": "30",
             "Currency": "EUR",
             "ExDestination": "XPAR",
             "Instrument": Instrument.FR0000062788.value,
@@ -88,7 +87,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def set_TWAP_Navigator_Guard(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': "CLIENT1",
-            'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 10000000,
