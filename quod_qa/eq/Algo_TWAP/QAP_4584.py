@@ -144,7 +144,7 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
