@@ -22,7 +22,7 @@ def execute(report_id):
             'ClOrdID': 'VWAP_WW_01 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
             'Price': 117,
             'OrdType': 2,
@@ -34,7 +34,7 @@ def execute(report_id):
             'ExDestination': 'XLON',
             'Text': 'VWAP-WW_01',
             'QuodFlatParameters': {
-                'TriggerPriceRed': '99',
+                'TriggerPriceRed': '111',
                 'AllowedVenues': 'XLON'
             }
         }

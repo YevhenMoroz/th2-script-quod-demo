@@ -110,7 +110,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         waves = 4
 
         rule_list = rule_creation()
@@ -149,12 +149,13 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4735_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -197,7 +198,6 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)
@@ -333,47 +333,47 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 IOC Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
-        time.sleep(2)
+        time.sleep(3)
     
         #region Cancel Algo Order
         case_id_5 = bca.create_event("Fill Algo Order", case_id)
         # Check ss (on FIXQUODSELL5 sent 35=8 on cancel)
         er_12 = {
-        'Account': '*',
-        'ExecID': '*',
-        'OrderQty': qty,
-        'NoStrategyParameters': '*',
-        'LastQty': qty,
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-        'TransactTime': '*',
-        'Side': side,
-        'AvgPx': '*',
-        "OrdStatus": "2",
-        'SettlDate': '*',
-        'LastExecutionPolicy': '*',
-        'Currency': currency,
-        'TimeInForce': tif_day,
-        'TradeDate': '*',
-        'ExecType': 'F',
-        'HandlInst': new_order_single_params['HandlInst'],
-        'LeavesQty': '0',
-        'NoParty': '*',
-        'CumQty': qty,
-        'LastPx': price,
-        'OrdType': order_type,
-        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-        'SecondaryOrderID': '*',
-        'LastMkt': ex_destination_1,
-        'Text': text_f,
-        'OrderCapacity': new_order_single_params['OrderCapacity'],
-        'QtyType': '0',
-        'SettlType': '*',
-        'Price': price,
-        'TargetStrategy': new_order_single_params['TargetStrategy'],
-        'Instrument': '*',
-        'SecondaryExecID': '*',
-        'ExDestination': ex_destination_1,
-        'GrossTradeAmt': '*'
+            'Account': '*',
+            'ExecID': '*',
+            'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': qty,
+            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '*',
+            "OrdStatus": "2",
+            'SettlDate': '*',
+            'LastExecutionPolicy': '*',
+            'Currency': currency,
+            'TimeInForce': tif_day,
+            'TradeDate': '*',
+            'ExecType': 'F',
+            'HandlInst': new_order_single_params['HandlInst'],
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': qty,
+            'LastPx': price,
+            'OrdType': order_type,
+            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'SecondaryOrderID': '*',
+            'LastMkt': ex_destination_1,
+            'Text': text_f,
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'QtyType': '0',
+            'SettlType': '*',
+            'Price': price,
+            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'Instrument': '*',
+            'SecondaryExecID': '*',
+            'ExDestination': ex_destination_1,
+            'GrossTradeAmt': '*'
         }
 
         fix_verifier_ss.CheckExecutionReport(er_12, responce_new_order_single, case=case_id_5, message_name='SS FIXSELLQUOD5 sent 35=8 Fill', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])

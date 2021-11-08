@@ -107,7 +107,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         waves = 4
 
         rule_list = rule_creation()
@@ -146,12 +146,13 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4606_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -189,7 +190,6 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)

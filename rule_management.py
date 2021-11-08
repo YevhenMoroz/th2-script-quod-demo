@@ -1,4 +1,4 @@
-from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+from th2_grpc_sim_fix_quod.sim_pb2 import TemplateTestNewLib, TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, \
     TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, \
     TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
@@ -105,6 +105,12 @@ class RuleManager:
     @staticmethod
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
+
+    @staticmethod
+    def remove_rules(list_rules):
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
 
     # ------------------------
 

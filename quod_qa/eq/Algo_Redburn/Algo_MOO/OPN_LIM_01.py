@@ -34,7 +34,8 @@ def execute(report_id):
             'MaxParticipation': '10',
             'LimitPriceReference': 'LTP',
             'LimitPriceOffset': '2',
-            'ExcludePricePoint2': '1'
+            'ExcludePricePoint2': '1',
+            'AllowedVenues': 'XLON'
         }
     }
 
