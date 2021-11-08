@@ -3,7 +3,7 @@ import logging
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -42,7 +42,7 @@ s_par = '555'
 #connectivity
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-ganymede-rb"
+connectivity_sell_side = "fix-sell-side-316-gnmd-rb"
 connectivity_fh = 'fix-feed-handler-316-ganymede'
 
 instrument = {
@@ -159,7 +159,7 @@ def execute(report_id):
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
         fix_message_new_order_single.add_random_ClOrdID()
-        responce_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+        response_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)
 
@@ -168,7 +168,7 @@ def execute(report_id):
             TransactTime='*',
             ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
+        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
 
         #region NavSlice with NavigatorInitialSweepTime
         #Check that FIXQUODSELL5 sent 35=8 pending new
@@ -179,7 +179,7 @@ def execute(report_id):
             'OrderQty': qty,
             'NoStrategyParameters': '*',
             'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'OrderID': response_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'Side': side,
             'AvgPx': '0',
@@ -201,7 +201,7 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_2,   message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2,   message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(
@@ -213,7 +213,7 @@ def execute(report_id):
             ExecRestatementReason='*',
         )
         er_2.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_2, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         er_3 = {
             'Account': account,
@@ -239,7 +239,7 @@ def execute(report_id):
             'ExDestination': ex_destination_1,
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Partical Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Partical Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
         time.sleep(15)
 
@@ -251,7 +251,7 @@ def execute(report_id):
             'OrderQty': qty_twap_1,
             'NoStrategyParameters': '*',
             'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'OrderID': response_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'Side': side,
             'AvgPx': '0',
@@ -273,7 +273,7 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_4, responce_new_order_single, case=case_id_3,   message_name='FIXQUODSELL7 sent 35=8 TWAP slice Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_4, response_new_order_single, case=case_id_3,   message_name='FIXQUODSELL7 sent 35=8 TWAP slice Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_5 = dict(
@@ -285,7 +285,7 @@ def execute(report_id):
             ExecRestatementReason='*',
         )
         er_5.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_5, responce_new_order_single, case=case_id_3, message_name='FIXQUODSELL7 sent 35=8 TWAP slice New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_5, response_new_order_single, case=case_id_3, message_name='FIXQUODSELL7 sent 35=8 TWAP slice New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         er_6 = {
             'Account': client,
@@ -293,7 +293,7 @@ def execute(report_id):
             'OrderQty': qty_nav,
             'NoStrategyParameters': '*',
             'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'OrderID': response_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'Side': side,
             'AvgPx': '0',
@@ -315,7 +315,7 @@ def execute(report_id):
             'Instrument': instrument
 
         }
-        fix_verifier_ss.CheckExecutionReport(er_6, responce_new_order_single, case=case_id_3,   message_name='FIXQUODSELL7 sent 35=8 Nav slice Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_6, response_new_order_single, case=case_id_3,   message_name='FIXQUODSELL7 sent 35=8 Nav slice Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_7 = dict(
@@ -327,7 +327,7 @@ def execute(report_id):
             ExecRestatementReason='*',
         )
         er_7.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_7, responce_new_order_single, case=case_id_3, message_name='FIXQUODSELL7 sent 35=8 Nav slice New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_7, response_new_order_single, case=case_id_3, message_name='FIXQUODSELL7 sent 35=8 Nav slice New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
@@ -365,7 +365,7 @@ def execute(report_id):
             'OrderQty': qty,
             'NoStrategyParameters': '*',
             'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'OrderID': response_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
             'TransactTime': '*',
             'Side': side,
             'AvgPx': '*',
