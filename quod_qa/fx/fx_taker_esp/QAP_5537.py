@@ -8,7 +8,7 @@ from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from quod_qa.win_gui_wrappers.forex.fx_child_book import FXChildBook
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from quod_qa.wrapper_test.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 
 from win_gui_modules.utils import get_base_request
 

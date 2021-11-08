@@ -5,7 +5,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from th2_grpc_common.common_pb2 import ConnectionID, Message
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import convert_to_request, message_to_grpc

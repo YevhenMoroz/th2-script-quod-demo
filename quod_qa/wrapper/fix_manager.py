@@ -1,7 +1,6 @@
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 
