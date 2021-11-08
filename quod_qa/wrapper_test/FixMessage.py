@@ -38,3 +38,11 @@ class FixMessage:
     def print_parameters(self) -> None:
         #TODO
         pass
+
+    def add_fields_to_component(self, component: str, fields: dict):
+        #TODO
+        pass
+
+    def remove_fields_from_component(self, component: str, fields: dict):
+        #TODO
+        pass
