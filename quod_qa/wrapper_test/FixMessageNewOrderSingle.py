@@ -7,7 +7,7 @@ from quod_qa.wrapper_test.Instrument import Instrument
 class FixMessageNewOrderSingle(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type="D")
+        super().__init__(message_type="NewOrderSingle")
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
