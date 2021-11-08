@@ -11,7 +11,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_default_TWAP(self) -> FixMessageNewOrderSingle:
+    def set_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -51,7 +51,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "110",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0000062788,
+            "Instrument": Instrument.FR0000062788.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
                 'NavigatorExecution': '1',
@@ -62,13 +62,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_default_POV(self) -> FixMessageNewOrderSingle:
-        instrument = dict(
-            Symbol='FR0010436584',
-            SecurityID='FR0010436584',
-            SecurityIDSource='4',
-            SecurityExchange='XPAR'
-        )
+    def set_POV(self) -> FixMessageNewOrderSingle:
+
         base_parameters = {
             "Account": "CLIENT1",
             "HandlInst": "0",
@@ -81,7 +76,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": instrument,
+            "Instrument": Instrument.FR0010436584.value,
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10'
