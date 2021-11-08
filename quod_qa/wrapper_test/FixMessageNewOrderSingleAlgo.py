@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from custom import basic_custom_actions
+from quod_qa.wrapper_test.DataSet import Instrument
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.Instrument import Instrument
 
 
 class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
