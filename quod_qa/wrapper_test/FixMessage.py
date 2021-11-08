@@ -32,7 +32,7 @@ class FixMessage:
         self.__parameters.pop(parameter_name)
 
     def add_ClordId(self, ClOrdID):
-        self.change_parameter("ClOrdId", ClOrdID + " " + basic_custom_actions.client_orderid(9))
+        self.change_parameter("ClOrdID", ClOrdID + " " + basic_custom_actions.client_orderid(9))
         return self
 
     def print_parameters(self) -> None:
