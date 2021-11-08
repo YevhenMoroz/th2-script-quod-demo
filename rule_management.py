@@ -5,12 +5,12 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
     TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject, \
     TemplateMarketNewOrdSingleFOK, TemplateQuodDefMDRRule, TemplateNewOrdSingleIOCMarketData, \
-    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule, TemplateMDAnswerRule, \
-    TemplateNewOrdSingleExecutionReportPendingAndNewFIXStandard, \
-    TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
-    TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
-    TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard
+    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule, TemplateMDAnswerRule#, \
+    # TemplateNewOrdSingleExecutionReportPendingAndNewFIXStandard, \
+    # TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
+    # TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
+    # TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
+    # TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -128,18 +128,18 @@ class RuleManager:
                                                              tradedQty=traded_qty,
                                                              delay=delay))
 
-    @staticmethod
-    def add_NewOrdSingleExecutionReportTradeFIXStandard(session: str, account: str, venue: str, price: float,
-                                                        traded_qty: int,
-                                                        delay: int):
-        return Stubs.simulator.createNewOrdSingleExecutionReportTradeFIXStandard(
-            request=TemplateNewOrdSingleExecutionReportTradeFIXStandard(
-                connection_id=ConnectionID(session_alias=session),
-                account=account,
-                exdestination=venue,
-                price=price,
-                tradedQty=traded_qty,
-                delay=delay))
+    # @staticmethod
+    # def add_NewOrdSingleExecutionReportTradeFIXStandard(session: str, account: str, venue: str, price: float,
+    #                                                     traded_qty: int,
+    #                                                     delay: int):
+    #     return Stubs.simulator.createNewOrdSingleExecutionReportTradeFIXStandard(
+    #         request=TemplateNewOrdSingleExecutionReportTradeFIXStandard(
+    #             connection_id=ConnectionID(session_alias=session),
+    #             account=account,
+    #             exdestination=venue,
+    #             price=price,
+    #             tradedQty=traded_qty,
+    #             delay=delay))
 
     @staticmethod
     def add_NewOrdSingleExecutionReportTradeByOrdQty(session: str, account: str, exdestination: str, price: float,
@@ -154,21 +154,21 @@ class RuleManager:
                                                                      traded_qty=traded_qty,
                                                                      delay=delay))
 
-    @staticmethod
-    def add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(session: str, account: str, exdestination: str,
-                                                                 price: float,
-                                                                 traded_price: float, qty: int, traded_qty: int,
-                                                                 delay: int):
-        return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
-            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
-                connection_id=ConnectionID(session_alias=session),
-                account=account,
-                exdestination=exdestination,
-                price=price,
-                traded_price=traded_price,
-                qty=qty,
-                traded_qty=traded_qty,
-                delay=delay))
+    # @staticmethod
+    # def add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(session: str, account: str, exdestination: str,
+    #                                                              price: float,
+    #                                                              traded_price: float, qty: int, traded_qty: int,
+    #                                                              delay: int):
+    #     return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
+    #         request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
+    #             connection_id=ConnectionID(session_alias=session),
+    #             account=account,
+    #             exdestination=exdestination,
+    #             price=price,
+    #             traded_price=traded_price,
+    #             qty=qty,
+    #             traded_qty=traded_qty,
+    #             delay=delay))
 
     @staticmethod
     def add_NewOrdSingleExecutionReportPendingAndNew(session: str, account: str, venue: str, price: float):
@@ -195,13 +195,13 @@ class RuleManager:
                                                venue=venue,
                                                cancel=cancel))
 
-    @staticmethod
-    def add_OrderCancelRequest_FIXStandard(session: str, account: str, venue: str, cancel: bool):
-        return Stubs.simulator.createOrderCancelRequestFIXStandard(
-            request=TemplateOrderCancelRequestFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                          account=account,
-                                                          exdestination=venue,
-                                                          cancel=cancel))
+    # @staticmethod
+    # def add_OrderCancelRequest_FIXStandard(session: str, account: str, venue: str, cancel: bool):
+    #     return Stubs.simulator.createOrderCancelRequestFIXStandard(
+    #         request=TemplateOrderCancelRequestFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                       account=account,
+    #                                                       exdestination=venue,
+    #                                                       cancel=cancel))
 
     @staticmethod
     def add_NOS(session: str, account: str = 'KEPLER'):
@@ -281,14 +281,14 @@ class RuleManager:
                                             trade=trade,
                                             price=price))
 
-    @staticmethod
-    def add_NewOrdSingle_FOK_FIXStandard(session: str, account: str, venue: str, trade: bool, price: float):
-        return Stubs.simulator.createNewOrdSingleFOKFIXStandard(
-            request=TemplateNewOrdSingleFOKFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                       account=account,
-                                                       exdestination=venue,
-                                                       trade=trade,
-                                                       price=price))
+    # @staticmethod
+    # def add_NewOrdSingle_FOK_FIXStandard(session: str, account: str, venue: str, trade: bool, price: float):
+    #     return Stubs.simulator.createNewOrdSingleFOKFIXStandard(
+    #         request=TemplateNewOrdSingleFOKFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                    account=account,
+    #                                                    exdestination=venue,
+    #                                                    trade=trade,
+    #                                                    price=price))
 
     @staticmethod
     def add_NewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float):
@@ -301,17 +301,17 @@ class RuleManager:
                                             price=price
                                             ))
 
-    @staticmethod
-    def add_NewOrdSingle_IOC_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
-                                         price: float):
-        return Stubs.simulator.createNewOrdSingleIOCFIXStandard(
-            request=TemplateNewOrdSingleIOCFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                       account=account,
-                                                       exdestination=venue,
-                                                       trade=trade,
-                                                       tradedQty=tradedQty,
-                                                       price=price
-                                                       ))
+    # @staticmethod
+    # def add_NewOrdSingle_IOC_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
+    #                                      price: float):
+    #     return Stubs.simulator.createNewOrdSingleIOCFIXStandard(
+    #         request=TemplateNewOrdSingleIOCFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                    account=account,
+    #                                                    exdestination=venue,
+    #                                                    trade=trade,
+    #                                                    tradedQty=tradedQty,
+    #                                                    price=price
+    #                                                    ))
 
     @staticmethod
     def add_MarketNewOrdSingle_IOC(session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float):
@@ -324,17 +324,17 @@ class RuleManager:
                                                   price=price
                                                   ))
 
-    @staticmethod
-    def add_MarketNewOrdSingle_IOC_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
-                                               price: float):
-        return Stubs.simulator.createMarketNewOrdSingleIOCFIXStandard(
-            request=TemplateMarketNewOrdSingleIOCFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                             account=account,
-                                                             exdestination=venue,
-                                                             trade=trade,
-                                                             tradedQty=tradedQty,
-                                                             price=price
-                                                             ))
+    # @staticmethod
+    # def add_MarketNewOrdSingle_IOC_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
+    #                                            price: float):
+    #     return Stubs.simulator.createMarketNewOrdSingleIOCFIXStandard(
+    #         request=TemplateMarketNewOrdSingleIOCFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                          account=account,
+    #                                                          exdestination=venue,
+    #                                                          trade=trade,
+    #                                                          tradedQty=tradedQty,
+    #                                                          price=price
+    #                                                          ))
 
     @staticmethod
     def add_NewOrdSingle_Market(session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float):
@@ -347,17 +347,17 @@ class RuleManager:
                                                avgPrice=avgPrice
                                                ))
 
-    @staticmethod
-    def add_NewOrdSingle_Market_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
-                                            avgPrice: float):
-        return Stubs.simulator.createNewOrdSingleMarketFIXStandard(
-            request=TemplateNewOrdSingleMarketFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                          account=account,
-                                                          exdestination=venue,
-                                                          trade=trade,
-                                                          tradedQty=tradedQty,
-                                                          avgPrice=avgPrice
-                                                          ))
+    # @staticmethod
+    # def add_NewOrdSingle_Market_FIXStandard(session: str, account: str, venue: str, trade: bool, tradedQty: int,
+    #                                         avgPrice: float):
+    #     return Stubs.simulator.createNewOrdSingleMarketFIXStandard(
+    #         request=TemplateNewOrdSingleMarketFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                       account=account,
+    #                                                       exdestination=venue,
+    #                                                       trade=trade,
+    #                                                       tradedQty=tradedQty,
+    #                                                       avgPrice=avgPrice
+    #                                                       ))
 
     @staticmethod
     def add_OrderCancelReplaceRequest_ExecutionReport(session: str, trade: bool):
@@ -375,14 +375,14 @@ class RuleManager:
                                                       modify=modify
                                                       ))
 
-    @staticmethod
-    def add_OrderCancelReplaceRequest_FIXStandard(session: str, account: str, exdestination: str, modify=True):
-        return Stubs.simulator.createOrderCancelReplaceRequestFIXStandard(
-            request=TemplateOrderCancelReplaceRequestFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                                 account=account,
-                                                                 exdestination=exdestination,
-                                                                 modify=modify
-                                                                 ))
+    # @staticmethod
+    # def add_OrderCancelReplaceRequest_FIXStandard(session: str, account: str, exdestination: str, modify=True):
+    #     return Stubs.simulator.createOrderCancelReplaceRequestFIXStandard(
+    #         request=TemplateOrderCancelReplaceRequestFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                              account=account,
+    #                                                              exdestination=exdestination,
+    #                                                              modify=modify
+    #                                                              ))
 
     @staticmethod
     def add_NewOrderSingle_ExecutionReport_Reject(session: str, account: str, ex_destination: str, price: float):
@@ -413,15 +413,15 @@ class RuleManager:
                                                   price=price
                                                   ))
 
-    @staticmethod
-    def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
-        return Stubs.simulator.createMarketNewOrdSingleFOKFIXStandard(
-            request=TemplateMarketNewOrdSingleFOKFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                             account=account,
-                                                             exdestination=venue,
-                                                             trade=trade,
-                                                             price=price
-                                                             ))
+    # @staticmethod
+    # def add_MarketNewOrdSingle_FOK(session: str, account: str, venue: str, price: float, trade: bool):
+    #     return Stubs.simulator.createMarketNewOrdSingleFOKFIXStandard(
+    #         request=TemplateMarketNewOrdSingleFOKFIXStandard(connection_id=ConnectionID(session_alias=session),
+    #                                                          account=account,
+    #                                                          exdestination=venue,
+    #                                                          trade=trade,
+    #                                                          price=price
+    #                                                          ))
 
     @staticmethod
     def add_NewOrdSingle_IOC_MarketData(session: str, account: str, exdestination: str, price: float, tradedQty: int,
