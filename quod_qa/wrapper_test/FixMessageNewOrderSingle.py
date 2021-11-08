@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from quod_qa.wrapper_test.FixMessage import FixMessage
-from quod_qa.wrapper_test.Instrument import Instrument
+from quod_qa.wrapper_test.DataSet import Instrument
 
 
 class FixMessageNewOrderSingle(FixMessage):
