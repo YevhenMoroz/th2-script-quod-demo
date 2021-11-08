@@ -12,7 +12,7 @@ class FixVerifier:
         self.__verifier = Stubs.verifier
         self.__session_alias = session_alias
         self.__case_id = case_id
-        self.__checkpoint = Stubs.verifier.createCheckpoint(basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
+        self.__checkpoint = self.__verifier.createCheckpoint(basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
 
     def get_case_id(self):
         return self.__case_id
