@@ -65,3 +65,30 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_TWAP_Navigator_Guard(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': 2,
+            'Side': 1,
+            'OrderQty': 10000000,
+            'TimeInForce': 0,
+            'Price': 117,
+            'OrdType': 2,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': Instrument.FR0000062788.value,
+            'OrderCapacity': 'A',
+            'Currency': "GBX",
+            'TargetStrategy': 1005,
+            'ExDestination': 'XPAR',
+            'QuodFlatParameters': {
+                'NavigatorPercentage': '100',
+                'NavigatorExecution': '1',
+                'NavigatorInitialSweepTime': '5',
+                'NavGuard': '0',
+                'AllowedVenues': 'XLON'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
