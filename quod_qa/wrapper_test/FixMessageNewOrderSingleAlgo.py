@@ -15,7 +15,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
-            "HandlInst": "0",
+            "HandlInst": "1",
             "Side": "1",
             "OrderQty": "1000",
             "TimeInForce": "0",
