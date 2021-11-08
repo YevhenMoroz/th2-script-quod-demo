@@ -93,20 +93,20 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Side': 1,
             'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 117,
+            'Price': 30,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': Instrument.FR0000062788.value,
             'OrderCapacity': 'A',
-            'Currency': "GBX",
+            'Currency': "EUR",
             'TargetStrategy': 1005,
             'ExDestination': 'XPAR',
             'QuodFlatParameters': {
-                'NavigatorPercentage': '100',
+                'NavigatorLimitPrice': '30',
+                'NavGuard': '1',
                 'NavigatorExecution': '1',
-                'NavigatorInitialSweepTime': '5',
-                'NavGuard': '0',
-                'AllowedVenues': 'XLON'
+                'AllowedVenues': 'XPAR',
+                'Waves': '5'
             }
         }
         super().change_parameters(base_parameters)
