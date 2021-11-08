@@ -4,8 +4,8 @@ from win_gui_modules.utils import call
 
 class BaseMiddleOfficeBook(BaseWindow):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.extraction_detail = None
         self.modify_ticket_details = None

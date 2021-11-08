@@ -6,14 +6,14 @@ from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDe
 
 class OMSTradesBook(BaseTradesBook):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.order_info = OrderInfo()
         self.order_details = OrdersDetails()
         self.set_order_details()
         self.match_details = MatchDetails()
-        self.modify_trades_details = ModifyTradesDetails()
+        self.modify_trades_details = ModifyTradesDetails(self.match_details)
         self.cancel_manual_execution_details = CancelManualExecutionDetails()
         self.manual_match_call = Stubs.win_act_trades.manualMatch
         self.cancel_manual_execution_call = Stubs.win_act_trades.cancelManualExecution

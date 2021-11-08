@@ -7,8 +7,8 @@ from win_gui_modules.wrappers import accept_order_request, reject_order_request,
 class OMSClientInbox(BaseClientInbox):
 
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         self.accept_order_request = accept_order_request
         self.reject_order_request = reject_order_request
         self.direct_order_request = direct_order_request
