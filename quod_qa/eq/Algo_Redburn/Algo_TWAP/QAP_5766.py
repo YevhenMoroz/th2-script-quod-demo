@@ -5,10 +5,10 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
+from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.FixManager import FixManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -22,10 +22,10 @@ text_n = 'New status'
 text_f = 'Fill'
 
 #order param
-qty = 300000
+qty = 100000
 side = 1
-price = 110
-price_nav = 100
+price = 30
+price_nav = 20
 tif_day = 0
 order_type = 2
 
@@ -54,13 +54,6 @@ def rule_creation():
     nos_trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price_nav, price_nav, qty, qty, 0)
 
     return [nos_trade_rule1]
-
-
-def rule_destroyer(list_rules):
-    if list_rules is not None:
-        rule_manager = RuleManager()
-        for rule in list_rules:
-            rule_manager.remove_rule(rule)
 
 
 def send_market_data(symbol: str, case_id: str, market_data):
@@ -104,7 +97,7 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
-        fix_manager_316 = FixManager(connectivity_sell_side, case_id)
+        #fix_manager_316 = fix_manager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
@@ -112,55 +105,37 @@ def execute(report_id):
         market_data1 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '100',
+                'MDEntryPx': '30',
                 'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '105',
+                'MDEntryPx': '40',
                 'MDEntrySize': '100000',
                 'MDEntryPositionNo': '1'
             }
         ]
         send_market_data(s_par, case_id_0, market_data1)
 
+        time.sleep(3)
+
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
-        new_order_single_params = {
-            'Account': client,
-            'ClOrdID': 'TWAP_NAV_05_01' + bca.client_orderid(9),
-            'HandlInst': 2,
-            'Side': side,
-            'OrderQty': qty,
-            'TimeInForce': tif_day,
-            'Price': price,
-            'OrdType': order_type,
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': instrument,
-            'OrderCapacity': 'A',
-            'Currency': currency,
-            'TargetStrategy': 1005,
-            'ExDestination': ex_destination_1,
-            'QuodFlatParameters': {
-                'NavigatorPercentage': '100',
-                'NavigatorExecution': '1',
-                'NavigatorInitialSweepTime': '10',
-                'NavGuard': '0',
-                'NavigatorLimitPrice': '100',
-            }
-        }
 
-        fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
-        response_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message.add_ClordId('QAP_5766')
+        fix_message.change_parameters(dict(Account= client,  OrderQty = qty, QuodFlatParameters= dict(NavigatorExecution= 1, NavigatorInitialSweepTime= 10, NavigatorLimitPrice= price_nav)))
+        
+        fix_manager = FixManager(connectivity_sell_side, case_id)
+        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message)
 
         time.sleep(1)
 
         nos_1 = dict(
-            fix_message_new_order_single.get_parameters(),
+            fix_message.get_parameters(),
             TransactTime='*',
-            ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
+            ClOrdID=fix_message.get_parameter('ClOrdID'))
 
         fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL7 receive 35=D')
 
@@ -181,20 +156,21 @@ def execute(report_id):
             'Currency': currency,
             'TimeInForce': tif_day,
             'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
+            'HandlInst': fix_message.get_parameter('HandlInst'),
             'LeavesQty': qty,
             'NoParty': '*',
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
-            'Price': price_nav,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'Price': price,
+            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
             'Instrument': instrument
 
         }
+        er_1.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2,   message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL7 sent 35=8 new
@@ -205,8 +181,8 @@ def execute(report_id):
             SettlDate='*',
             SettlType='*',
             ExecRestatementReason='*',
+            Account= client
         )
-        er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         er_3 = {
@@ -219,7 +195,7 @@ def execute(report_id):
             'ClOrdID': '*',
             'LastQty': qty,
             'Text': text_f,
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
@@ -239,4 +215,4 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        rule_destroyer(rule_list)
+        RuleManager.rule_destroyer(rule_list)
