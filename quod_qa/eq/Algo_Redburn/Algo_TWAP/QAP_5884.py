@@ -1,8 +1,11 @@
 import logging
+import os
 from datetime import datetime
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from rule_management import RuleManager
 from stubs import Stubs
 
@@ -34,51 +37,21 @@ def rule_creation():
     trade2 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1,
                                                                       29.995, 29.985, 20000, 1000, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
-    return [ ocr_rule]
+    return [nos_rule, nos_rule2, trade, trade2, ocr_rule]
 
-
-def rule_destroyer(list_rules):
-    rule_manager = RuleManager()
-    for rule in list_rules:
-        rule_manager.remove_rule(rule)
 
 
 def execute(report_id):
     try:
-        rule_creation()
-        # new_order_single_params = {
-        #     # 'header': {
-        #     #     'OnBehalfOfCompID': 'kames_ul_DCOI'
-        #     # },
-        #     'Account': "CLIENT1",
-        #     'ClOrdID': bca.client_orderid(9),
-        #     'HandlInst': 2,
-        #     'Side': 1,
-        #     'OrderQty': 10000000,
-        #     'TimeInForce': 0,
-        #     'Price': 117,
-        #     'OrdType': 2,
-        #     'TransactTime': datetime.utcnow().isoformat(),
-        #     'Instrument': instrument,
-        #     'OrderCapacity': 'A',
-        #     'Currency': "GBX",
-        #     'TargetStrategy': 1005,
-        #     'ExDestination': 'XPAR',
-        #     # 'QuodFlatParameters': {
-        #     #     'NavigatorPercentage': '100',
-        #     #     'NavigatorExecution': '1',
-        #     #     'NavigatorInitialSweepTime': '5',
-        #     #     'NavGuard': '0',
-        #     #     'AllowedVenues': 'XLON'
-        #     # }
-        # }
-        #
-        # Stubs.fix_act.sendMessage(request=convert_to_request(
-        #     'Send NewOrderSingle',
-        #     "fix-sell-side-316-ganymede",
-        #     report_id,
-        #     message_to_grpc('NewOrderSingle', new_order_single_params,
-        #                     "fix-sell-side-316-ganymede")
-        # ))
+        rule_list = rule_creation()
+
+        ss = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
+        fixmanager = FixManager("fix-sell-side-316-gnmd-rb", report_id)
+
+        fixmanager.send_message_and_receive_response(ss)
+
+
     except:
         logging.error("Error execution", exc_info=True)
+    finally:
+        RuleManager.rule_destroyer(rule_list)
