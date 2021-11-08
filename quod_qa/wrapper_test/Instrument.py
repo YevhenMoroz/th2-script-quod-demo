@@ -14,4 +14,9 @@ class Instrument(Enum):
             SecurityIDSource='4',
             SecurityExchange='XPAR'
         )
-
+    FR0000062788 = dict(
+        Symbol='FR0000062788_EUR',
+        SecurityID='FR0000062788',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR'
+    )
