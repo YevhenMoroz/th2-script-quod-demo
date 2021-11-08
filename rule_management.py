@@ -106,6 +106,12 @@ class RuleManager:
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
 
+    @staticmethod
+    def rule_destroyer(list_rules):
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
+
     # ------------------------
 
     # --- ADD RULE SECTION ---
