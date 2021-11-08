@@ -36,7 +36,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_TWAP_Nav(self) -> FixMessageNewOrderSingle:
+    def set_TWAP_Navigator(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             "HandlInst": "0",
