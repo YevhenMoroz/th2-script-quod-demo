@@ -45,10 +45,12 @@ def execute(report_id):
     try:
         rule_list = rule_creation()
 
-        ss = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
+        new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
+        new_order_single.change_parameters(dict(OrderQty=100000))
+
         fixmanager = FixManager("fix-sell-side-316-gnmd-rb", report_id)
 
-        fixmanager.send_message_and_receive_response(ss)
+        fixmanager.send_message_and_receive_response(new_order_single)
 
 
     except:
