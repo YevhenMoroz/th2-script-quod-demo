@@ -10,14 +10,14 @@ from win_gui_modules.utils import call
 
 class OMSOrderTicket(BaseOrderTicket):
     # region Constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.order_details = OrderTicketDetails()
-        self.new_order_details = NewOrderDetails(base_request)
-        self.modify_order_details = ModifyOrderDetails(base_request)
-        self.extract_order_ticket_values_request = ExtractOrderTicketValuesRequest(base_request)
-        self.extract_order_ticket_errors_request = ExtractOrderTicketErrorsRequest(base_request)
+        self.new_order_details = NewOrderDetails(self.base_request)
+        self.modify_order_details = ModifyOrderDetails(self.base_request)
+        self.extract_order_ticket_values_request = ExtractOrderTicketValuesRequest(self.base_request)
+        self.extract_order_ticket_errors_request = ExtractOrderTicketErrorsRequest(self.base_request)
         self.order_ticket_extracted_value = OrderTicketExtractedValue
         self.place_order_call = Stubs.win_act_order_ticket.placeOrder
         self.amend_order_call = Stubs.win_act_order_book.amendOrder
