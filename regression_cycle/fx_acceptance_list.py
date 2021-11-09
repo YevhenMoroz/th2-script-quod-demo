@@ -1,7 +1,7 @@
-from quod_qa.fx.fx_mm_autohedging import QAP_3082, QAP_2470
+from quod_qa.fx.fx_mm_autohedging import QAP_3082, QAP_2470, QAP_3146, QAP_3147, import_AH_layout
 from quod_qa.fx.fx_mm_esp import QAP_1418, QAP_2069, QAP_1536, QAP_2796, QAP_1518, QAP_1559, QAP_1558, QAP_2825, \
     QAP_2797, QAP_2078, QAP_2075, QAP_2082
-from quod_qa.fx.fx_mm_positions import QAP_1898, import_position_layout
+from quod_qa.fx.fx_mm_positions import QAP_1898, import_position_layout, QAP_1897, QAP_1895, QAP_1896
 from quod_qa.fx.fx_mm_rfq import QAP_1746, QAP_2062, QAP_1552, QAP_3005, QAP_3003
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3805, QAP_3766
 from quod_qa.fx.fx_mm_synthetic import QAP_2646
@@ -23,6 +23,7 @@ channels = dict()
 def test_run(parent_id=None):
     report_id = bca.create_event('Acceptance list', parent_id)
     session_id = set_session_id()
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     try:
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
@@ -85,7 +86,8 @@ def test_run(parent_id=None):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        close_fe(report_id, session_id)
+        # close_fe(report_id, session_id)
+        Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':
