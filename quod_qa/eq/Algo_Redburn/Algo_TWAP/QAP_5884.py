@@ -1,11 +1,13 @@
 import logging
 import os
+import time
 from datetime import datetime
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from quod_qa.wrapper_test.DataSet import DirectionEnum, Connectivity
 from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -27,6 +29,7 @@ account = "XPAR_CLIENT1"
 ex_destination_1 = "XPAR"
 price = 30
 price2 = 29.995
+price3 = 31
 
 
 def rule_creation():
@@ -35,12 +38,12 @@ def rule_creation():
                                                                          ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
                                                                           ex_destination_1, price2)
+    nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
+                                                                          ex_destination_1, price3)
     trade = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1,
-                                                                      31, 31, 50000, 500, 0)
-    trade2 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1,
-                                                                      29.995, 29.985, 20000, 1000, 0)
+                                                                      price2, price2, 20000, 1000, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
-    return [nos_rule, nos_rule2, trade, trade2, ocr_rule]
+    return [nos_rule, nos_rule2, nos_rule3, trade, ocr_rule]
 
 
 
@@ -53,12 +56,22 @@ def execute(report_id):
 
         new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(OrderQty=100000))
+        new_order_single.change_parameters(dict(Price=31))
 
         fix_manager.send_message_and_receive_response(new_order_single)
         fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.SECOND)
 
-        execution_report = FixMessageExecutionReportAlgo(new_order_single=new_order_single)
+        execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
         fix_verifier.check_fix_message(execution_report)
+
+        execution_report2 = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single).change_from_new_to_pendingnew()
+        fix_verifier.check_fix_message(execution_report2)
+
+
+
+        time.sleep(10)
+        order_cancel = FixMessageOrderCancelRequest(new_order_single)
+        fix_manager.send_message_and_receive_response(order_cancel)
     except:
         logging.error("Error execution", exc_info=True)
     finally:
