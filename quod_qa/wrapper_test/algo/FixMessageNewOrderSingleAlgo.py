@@ -113,3 +113,57 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_MOO_Scaling(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.FR0010263202.value,
+            "TargetStrategy": "1012",
+            'QuodFlatParameters': {
+                'MaxParticipation': '10',
+                'PricePoint1Price': '28',
+                'PricePoint1Participation': '12',
+                'PricePoint2Price': '26',
+                'PricePoint2Participation': '14',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_MOC_Scaling(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.FR0010263202.value,
+            "TargetStrategy": "1015",
+            'QuodFlatParameters': {
+                'MaxParticipation': '10',
+                'PricePoint1Price': '28',
+                'PricePoint1Participation': '12',
+                'PricePoint2Price': '26',
+                'PricePoint2Participation': '14',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
