@@ -109,7 +109,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
 
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
@@ -147,12 +147,13 @@ def execute(report_id):
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
 
-        time.sleep(1)
+        time.sleep(3)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4801_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -200,7 +201,6 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)
@@ -336,17 +336,17 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 IOC Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
-        time.sleep(2)
+        time.sleep(3)
     
 #region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Cancel Order
         cancel_parms = {
-        "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
-        "Account": fix_message_new_order_single.get_parameter('Account'),
-        "Side": fix_message_new_order_single.get_parameter('Side'),
-        "TransactTime": datetime.utcnow().isoformat(),
-        "OrigClOrdID": fix_message_new_order_single.get_ClOrdID()
+            "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
+            "Account": fix_message_new_order_single.get_parameter('Account'),
+            "Side": fix_message_new_order_single.get_parameter('Side'),
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrigClOrdID": fix_message_new_order_single.get_ClOrdID()
         }
     
         fix_cancel = FixMessage(cancel_parms)
@@ -364,39 +364,39 @@ def execute(report_id):
         }
         fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=F Cancel',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
 
-        time.sleep(1)
+        time.sleep(3)
 
         # Check ss (on FIXQUODSELL5 sent 35=8 on cancel)
         er_11 = {
-        'ExecID': '*',
-        'OrderQty': qty,
-        'NoStrategyParameters': '*',
-        'LastQty': '0',
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-        'TransactTime': '*',
-        'Side': side,
-        'AvgPx': '*',
-        "OrdStatus": "4",
-        'SettlDate': '*',
-        'Currency': currency,
-        'TimeInForce': tif_day,
-        'ExecType': '4',
-        'HandlInst': new_order_single_params['HandlInst'],
-        'CxlQty': '*',
-        'LeavesQty': '0',
-        'NoParty': '*',
-        'CumQty': child_ioc_qty,
-        'LastPx': '0',
-        'OrdType': order_type,
-        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-        'OrderCapacity': new_order_single_params['OrderCapacity'],
-        'QtyType': '0',
-        'ExecRestatementReason': '*',
-        'SettlType': '*',
-        'Price': price,
-        'TargetStrategy': new_order_single_params['TargetStrategy'],
-        'Instrument': instrument,
-        'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
+            'ExecID': '*',
+            'OrderQty': qty,
+            'NoStrategyParameters': '*',
+            'LastQty': '0',
+            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '*',
+            "OrdStatus": "4",
+            'SettlDate': '*',
+            'Currency': currency,
+            'TimeInForce': tif_day,
+            'ExecType': '4',
+            'HandlInst': new_order_single_params['HandlInst'],
+            'CxlQty': '*',
+            'LeavesQty': '0',
+            'NoParty': '*',
+            'CumQty': child_ioc_qty,
+            'LastPx': '0',
+            'OrdType': order_type,
+            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'QtyType': '0',
+            'ExecRestatementReason': '*',
+            'SettlType': '*',
+            'Price': price,
+            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'Instrument': instrument,
+            'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
         }
 
         fix_verifier_ss.CheckExecutionReport(er_11, responce_cancel, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID'])

@@ -1,7 +1,8 @@
 from datetime import datetime
 
+from custom import basic_custom_actions
+from quod_qa.wrapper_test.DataSet import Instrument
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.Instrument import Instrument
 
 
 class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
@@ -10,10 +11,11 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_default_TWAP(self) -> None:
+    def set_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
-            "HandlInst": "0",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
             "Side": "1",
             "OrderQty": "1000",
             "TimeInForce": "0",
@@ -23,7 +25,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010436584,
+            "Instrument": Instrument.FR0010436584.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
@@ -34,16 +36,38 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             }
         }
         super().change_parameters(base_parameters)
+        return self
 
-    def set_default_POV(self) -> None:
-        instrument = dict(
-            Symbol='FR0010436584',
-            SecurityID='FR0010436584',
-            SecurityIDSource='4',
-            SecurityExchange='XPAR'
-        )
+    def set_TWAP_Navigator(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.FR0000062788.value,
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+                'NavigatorExecution': '1',
+                'NavGuard': '0',
+                'NavigatorLimitPrice': '100',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_POV(self) -> FixMessageNewOrderSingle:
+
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "0",
             "Side": "1",
             "OrderQty": "1000",
@@ -54,10 +78,38 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": instrument,
+            "Instrument": Instrument.FR0010436584.value,
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10'
             }
         }
         super().change_parameters(base_parameters)
+        return self
+
+    def set_TWAP_Navigator_Guard(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': 2,
+            'Side': 1,
+            'OrderQty': 10000000,
+            'TimeInForce': 0,
+            'Price': 30,
+            'OrdType': 2,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': Instrument.FR0000062788.value,
+            'OrderCapacity': 'A',
+            'Currency': "EUR",
+            'TargetStrategy': 1005,
+            'ExDestination': 'XPAR',
+            'QuodFlatParameters': {
+                'NavigatorLimitPrice': '30',
+                'NavGuard': '1',
+                'NavigatorExecution': '1',
+                'AllowedVenues': 'XPAR',
+                'Waves': '5'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self

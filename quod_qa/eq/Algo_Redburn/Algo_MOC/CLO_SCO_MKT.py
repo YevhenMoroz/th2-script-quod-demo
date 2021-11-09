@@ -21,8 +21,7 @@ def execute(report_id):
         'Side': 1,
         'OrderQty': 10000000,
         'TimeInForce': 0,
-        'Price': 117,
-        'OrdType': 2,
+        'OrdType': 1,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
         'OrderCapacity': 'A',
@@ -32,11 +31,9 @@ def execute(report_id):
         'Text': 'CLO_SCO_MKT',
         'QuodFlatParameters': {
             'MaxParticipation': '10',
-            'PricePoint1Reference': 'MKT',
-            'PricePoint1Offset': '100',
+            'PricePoint1Price': '108',
             'PricePoint1Participation': '12',
-            'PricePoint2Reference': 'MKT',
-            'PricePoint2Offset': '200',
+            'PricePoint2Price': '107',
             'PricePoint2Participation': '14',
         }
     }

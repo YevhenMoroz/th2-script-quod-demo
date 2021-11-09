@@ -18,12 +18,13 @@ class FixManager:
     def Send_NewOrderSingle_FixMessage(self, fix_message, message_name='Send NewOrderSingle', case=None):
         if case == None:
             case = self.case_id
+
         response = self.act.placeOrderFIX(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 case,
-                bca.message_to_grpc_test('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
+                bca.message_to_grpc('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
             ))
 
         return response

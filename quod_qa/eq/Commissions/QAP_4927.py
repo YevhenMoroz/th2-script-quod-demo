@@ -44,7 +44,7 @@ def execute(report_id, session_id):
     oms_order_book.manual_execution(qty=qty, price=price)
     order_id = oms_order_book.extract_field('Order ID')
     oms_order_book.complete_order()
-    filter_for_extracting = {'Order ID': 'CO1211104152541064001'}
+    filter_for_extracting = {'Order ID': order_id}
     # endregion
     # region Extract value from Booking Ticket
     result_of_extraction = oms_order_book.extracting_values_from_booking_ticket([PanelForExtraction.FEES],
