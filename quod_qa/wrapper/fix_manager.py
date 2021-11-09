@@ -24,7 +24,7 @@ class FixManager:
                 message_name,
                 self.TraderConnectivity,
                 case,
-                bca.message_to_grpc('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
+                bca.message_to_grpc_test('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
             ))
 
         return response
@@ -105,14 +105,13 @@ class FixManager:
         if case == None:
             case = self.case_id
 
-        response = self.act.placeOrderFIX(
+        response = self.act.sendMessage(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
                 case,
-                bca.message_to_grpc('NewOrderList', fix_message.get_parameters(), self.TraderConnectivity)
+                bca.message_to_grpc_test('NewOrderList', fix_message.get_parameters(), self.TraderConnectivity)
             ))
-
         return response
 
     def Send_ListCancelRequest_FixMessage(self, fix_message, message_name='Cancel order list', case=None):
