@@ -104,11 +104,11 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': 1005,
             'ExDestination': 'XPAR',
             'QuodFlatParameters': {
-                'NavigatorLimitPrice': '30',
+                'NavigatorLimitPrice': '31',
                 'NavGuard': '1',
                 'NavigatorExecution': '1',
                 'AllowedVenues': 'XPAR',
-                'Waves': '5'
+                'Waves': '5',
             }
         }
         super().change_parameters(base_parameters)
