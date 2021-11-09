@@ -1,10 +1,10 @@
 import re
-from functools import wraps
 from inspect import signature
-
+from functools import wraps
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
+from win_gui_modules.utils import get_base_request
 from stubs import Stubs
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.utils import prepare_fe, get_opened_fe, get_base_request
@@ -82,6 +82,7 @@ def decorator_try_except(test_id):
                 return f(*args, **kwargs)
             except:
                 print(f"Test {test_id} was failed")
+                bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
             finally:
                 pass
 

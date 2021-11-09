@@ -5,8 +5,8 @@ from win_gui_modules.quote_wrappers import QuoteDetailsRequest
 
 class FXQuoteRequestBook(FXQuoteBook):
 
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         self.set_quote_book_details()
         self.grpc_call = Stubs.win_act_aggregated_rates_service.getQuoteRequestBookDetails
 

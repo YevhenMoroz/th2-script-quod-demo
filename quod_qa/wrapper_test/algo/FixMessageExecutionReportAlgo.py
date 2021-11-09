@@ -1,7 +1,7 @@
 from datetime import datetime
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.Instrument import Instrument
+from quod_qa.wrapper_test.DataSet import Instrument
 
 
 class FixMessageExecutionReportAlgo(FixMessageExecutionReport):

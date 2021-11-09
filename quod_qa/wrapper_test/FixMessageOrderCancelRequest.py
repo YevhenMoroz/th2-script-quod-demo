@@ -7,7 +7,7 @@ from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessage, FixMessage
 class FixMessageOrderCancelRequest(FixMessage):
 
     def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None):
-        super().__init__(message_type="F")
+        super().__init__(message_type="OrderCancelRequest")
         if new_order_single is not None:
             self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)

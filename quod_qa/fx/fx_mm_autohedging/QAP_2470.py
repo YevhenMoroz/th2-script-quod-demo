@@ -164,7 +164,7 @@ def execute(report_id, session_id):
     base_details = BaseTileDetails(base=case_base_request)
     order_id = ''
     try:
-        Precondition
+        # Precondition
         initial_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
         initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
