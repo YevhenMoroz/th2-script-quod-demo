@@ -25,7 +25,7 @@ def execute(report_id):
             'ClOrdID': 'VWAP_NAV_02 ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000,
+            'OrderQty': 10000000,
             'TimeInForce': 0,
             'Price': 117,
             'OrdType': 2,
