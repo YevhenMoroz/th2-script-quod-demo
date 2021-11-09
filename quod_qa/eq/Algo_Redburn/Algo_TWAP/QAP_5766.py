@@ -9,6 +9,7 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test import DataSet
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -38,16 +39,12 @@ s_par = '555'
 
 #connectivity
 case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-gnmd-rb"
-connectivity_fh = 'fix-feed-handler-316-ganymede'
-
-instrument = {
-            'Symbol': 'FR0000062788_EUR',
-            'SecurityID': 'FR0000062788',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        }
+FIRST = DataSet.DirectionEnum.FIRST.value
+SECOND = DataSet.DirectionEnum.SECOND.value
+connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
+connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
+connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
+instrument = DataSet.Instrument.FR0000062788.value
 
 def rule_creation():
     rule_manager = RuleManager()
@@ -137,11 +134,11 @@ def execute(report_id):
             TransactTime='*',
             ClOrdID=fix_message.get_parameter('ClOrdID'))
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL7 receive 35=D')
+        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction= SECOND, case=case_id_1, message_name='FIXQUODSELL7 receive 35=D')
 
         #region NavSlice with NavigatorInitialSweepTime
         #Check that FIXQUODSELL7 sent 35=8 pending new
-        case_id_2 = bca.create_event("Nav child", case_id)
+        case_id_2 = bca.create_event("Navigator child", case_id)
         er_1 = {
             'Account': client,
             'ExecID': '*',
@@ -161,7 +158,7 @@ def execute(report_id):
             'NoParty': '*',
             'CumQty': '0',
             'LastPx': '0',
-            'OrdType': order_type,
+            'OrdType': fix_message.get_parameter('OrdType'),
             'ClOrdID': fix_message.get_parameter('ClOrdID'),
             'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
@@ -171,7 +168,7 @@ def execute(report_id):
 
         }
         er_1.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2,   message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
 
         # Check that FIXQUODSELL7 sent 35=8 new
         er_2 = dict(
@@ -209,7 +206,7 @@ def execute(report_id):
             'ExDestination': ex_destination_1,
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction='SECOND', case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
     except:
