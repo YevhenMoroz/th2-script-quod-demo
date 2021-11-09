@@ -32,3 +32,7 @@ class Instrument(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR'
     )
+
+
+class Connectivity(Enum):
+    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
