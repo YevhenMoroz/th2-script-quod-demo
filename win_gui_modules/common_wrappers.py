@@ -131,14 +131,17 @@ class MoveWindowDetails:
 
 
 class GridScrollingDetails:
-    def __init__(self, scrolling_operation: ScrollingOperation, number_of_scrolls: int, base: EmptyRequest = None):
+    def __init__(self, scrolling_operation: ScrollingOperation = None, number_of_scrolls: int = None,
+                 base: EmptyRequest = None):
         if base is not None:
             self._request = common_pb2.GridScrollingDetails(base=base)
         else:
             self._request = common_pb2.GridScrollingDetails()
 
-        self._request.scrollingOperation = scrolling_operation
-        self._request.numberOfScrolls = number_of_scrolls
+        if scrolling_operation is not None:
+            self._request.scrollingOperation = scrolling_operation
+        if scrolling_operation is not None:
+            self._request.numberOfScrolls = number_of_scrolls
 
     def set_scrolling_operation(self, scrolling_operation: ScrollingOperation):
         self._request.scrollingOperation = scrolling_operation

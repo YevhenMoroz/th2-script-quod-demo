@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from quod_qa.wrapper_test.FixMessage import FixMessage
-from quod_qa.wrapper_test.Instrument import Instrument
+from quod_qa.wrapper_test.DataSet import Instrument
 
 
 class FixMessageNewOrderSingle(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type="D")
+        super().__init__(message_type="NewOrderSingle")
         super().change_parameters(parameters)
 
     def set_default(self) -> None:

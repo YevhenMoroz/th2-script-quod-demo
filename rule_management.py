@@ -1,11 +1,12 @@
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
+from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRRule, TemplateQuodOCRRule, \
     TemplateQuodRFQRule, TemplateQuodRFQTRADERule, TemplateQuodSingleExecRule, TemplateNoPartyIDs, \
     TemplateNewOrdSingleExecutionReportTrade, TemplateNewOrdSingleExecutionReportPendingAndNew, TemplateNewOrdSingleIOC, \
     TemplateNewOrdSingleFOK, TemplateOrderCancelRequest, TemplateNewOrdSingleMarket, \
     TemplateOrderCancelReplaceExecutionReport, TemplateOrderCancelReplaceRequest, \
     TemplateNewOrdSingleExecutionReportTradeByOrdQty, TemplateNewOrdSingleExecutionReportReject, \
     TemplateMarketNewOrdSingleFOK, TemplateQuodDefMDRRule, TemplateNewOrdSingleIOCMarketData, \
-    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule, TemplateMDAnswerRule
+    TemplateMarketNewOrdSingleIOC, TemplateQuodESPTradeRule
+from th2_grpc_sim_fix_quod.sim_pb2 import TemplateMDAnswerRule
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -20,7 +21,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8,  9, 10, 11]
+        self.default_rules_id = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -105,6 +106,12 @@ class RuleManager:
     @staticmethod
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
+
+    @staticmethod
+    def remove_rules(list_rules):
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
 
     # ------------------------
 
@@ -207,7 +214,9 @@ class RuleManager:
     def add_QuodMDAnswerRule(session: str):
         return Stubs.simulator.createQuodMDAnswerRule(request=
                                                       TemplateMDAnswerRule(connection_id=
-                                                                               ConnectionID(session_alias=session)))
+                                                                           ConnectionID(session_alias=session), min=1,
+                                                                           max=2, interval=30))
+
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
         return Stubs.simulator.createQuodSingleExecRule(
@@ -332,15 +341,6 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    #rule_manager.remove_rule_by_id()
-    # rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard","CLIENT_YMOROZ"+ "_PARIS",
-    #                                                                     "XPAR",True)
-    #rule_manager.remove_rules_by_id_range()
-    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
-    #                                                           "CLIENT_YMOROZ" + "_PARIS",
-    #                                                                      "XPAR", 10)
-    # rule_manager.add_NewOrdSingleExecutionReportTrade("fix-buy-317ganymede-standard",
-    #                                                            "CLIENT_YMOROZ" + "_PARIS",
-    #                                                                      "XPAR", 10,900,1)
+    # nos_rule = rule_manager.add_NewOrdSingle_Market("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", True, 0, 0)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", 20)
     rule_manager.print_active_rules()
-    #rule_manager.remove_all_rules()

@@ -4,7 +4,7 @@ import time
 import math
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, NoMDEntries
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -17,6 +17,17 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+
+#algo param
+percentage = 10
+aggressivity = 1
+
+#order param
 qty = 500
 child_ioc_qty = 200
 tick = 0.005 
@@ -26,28 +37,20 @@ price_25 = 25
 price_30 = 30
 mkd = 100
 ltq = 200
-percentage = 10
-aggressivity = 1
 child_ltq_qty = 23
 child_mkd_qty = 12
 #child_ltq_qty = round (ltq * percentage / (100 - percentage))   #23
 #child_mkd_qty = round (mkd * percentage / (100 - percentage)) #12
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
 side = 1
 tif_day = 0
 tif_ioc = 3
+order_type = 2
+currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '1015'
 
 case_name = os.path.basename(__file__)
@@ -69,7 +72,7 @@ trigger = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_30, child_ioc_qty, True, connectivity_fh, s_par,  price_30, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx="20", MDEntrySize="100", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="0", MDEntrySize="0", MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_30, child_ioc_qty, True, connectivity_fh, s_par,  price_30, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx="20", MDEntrySize="100", MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx="0", MDEntrySize="0", MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
@@ -162,6 +165,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4952_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -205,33 +209,9 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
         time.sleep(1)
-        market_data4 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': price_25,
-                'MDEntrySize': child_ioc_qty,
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_0, market_data4)
-        market_data4 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': price_25,
-                'MDEntrySize': child_ioc_qty,
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_0, market_data4)
 
-        time.sleep(3)
 
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),

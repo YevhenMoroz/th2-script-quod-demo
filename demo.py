@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from quod_qa.eq.Care import QAP_1045, QAP_1067
 from quod_qa.eq.DMA import QAP_2000
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -20,7 +19,7 @@ def test_run():
 
     try:
         # example_java_api.TestCase(report_id).execute()
-        QAP_1067.execute(report_id, session_id)
+        QAP_2000.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

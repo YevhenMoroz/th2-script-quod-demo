@@ -1,6 +1,6 @@
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 
@@ -19,7 +19,6 @@ class FixManager:
         if case == None:
             case = self.case_id
 
-        print(fix_message.get_parameters())
         response = self.act.placeOrderFIX(
             request=bca.convert_to_request(
                 message_name,
