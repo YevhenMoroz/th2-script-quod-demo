@@ -36,7 +36,7 @@ def check_order_book(base_request, act_ob, case_id, qty, currency):
     verifier.compare_values("Order side", "Sell", response[ob_side.name])
     verifier.compare_values("Order type", "PreviouslyQuoted", response[ob_ord_type.name])
     verifier.compare_values("Order currency", currency, response[ob_currency.name])
-    verifier.compare_values("Order InstrType", "NonDeliverableSwap", response[ob_instr_type.name])
+    verifier.compare_values("Order InstrType", "FXNDS", response[ob_instr_type.name])
     verifier.compare_values("Order status", "Filled", response[ob_exec_status.name])
     verifier.verify()
 

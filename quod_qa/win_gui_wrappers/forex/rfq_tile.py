@@ -6,10 +6,12 @@ from win_gui_modules.utils import call
 
 
 class RFQTile(AggregatesRatesTile):
-    def __init__(self, case_id, base_request, index: int = 0):
-        super().__init__(case_id, base_request, index)
+    def __init__(self, case_id, session_id, index: int = 0):
+        super().__init__(case_id, session_id, index)
         self.modify_request = ModifyRFQTileRequest(details=self.base_details)
         self.place_order_request = PlaceRFQRequest(details=self.base_details)
+        self.create_tile_call = self.ar_service.createRFQTile
+        self.close_tile_call = self.ar_service.closeRFQTile
 
     # region Actions
     def modify_rfq_tile(self, from_cur: str = None, to_cur: str = None, near_qty: str = None, far_qty: str = None,
@@ -54,7 +56,7 @@ class RFQTile(AggregatesRatesTile):
     def send_rfq(self):
         call(self.ar_service.sendRFQOrder, self.base_details.build())
 
-    def place_order(self, side: str = None, venue: str = None):
+    def place_order(self, side: str, venue: str = None):
         if venue is not None:
             self.place_order_request.set_venue(venue)
         if side == self.sell_side:

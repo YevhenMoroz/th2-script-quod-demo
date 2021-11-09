@@ -5,8 +5,8 @@ from win_gui_modules.utils import call
 
 class BaseOrderBook(BaseWindow):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.order_info = None
         self.order_details = None
@@ -60,6 +60,7 @@ class BaseOrderBook(BaseWindow):
         return self
 
     # endregion
+
     # region Get
     def extract_field(self, column_name: str) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
@@ -91,10 +92,10 @@ class BaseOrderBook(BaseWindow):
 
     def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int) -> dict:
         """
-            Receives dict as an argument, where the key is column name what
-            we extract from GUI and return new dict where
-            key = key and value is extracted field from FE
-            """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and return new dict where
+        key = key and value is extracted field from FE
+        """
         list_of_fields = []
         for field in list_fields.items():
             key = list(field)[0]
@@ -129,14 +130,31 @@ class BaseOrderBook(BaseWindow):
         return split_2lvl_values(result)
 
     # endregion
+
     # region Check
-    def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book"):
+    def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book",
+                                row_number: int = 1):
         """
         Receives dict as an argument, where the key is column name what
-        we extract from GUI and value is expected result
+        we extract from GUI and value is expected result and row_number to check, 1 by default
         For example {"Sts": "Terminated", "Owner": "QA1", etc}
         """
-        actual_list = self.extract_fields_list(expected_fields)
+        actual_list = self.extract_fields_list(expected_fields, row_number)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+                                     row_number: int = 1):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result and row_number to check, 1 by default
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_second_lvl_fields_list(expected_fields, row_number)
         for items in expected_fields.items():
             key = list(items)[0]
             value = list(items)[1]
@@ -155,6 +173,7 @@ class BaseOrderBook(BaseWindow):
         return result['isMenuItemPresent']
 
     # endregion
+
     # region Actions
     def cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
                      filter_list: list = None):

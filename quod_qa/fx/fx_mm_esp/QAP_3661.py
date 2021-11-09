@@ -14,7 +14,7 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
