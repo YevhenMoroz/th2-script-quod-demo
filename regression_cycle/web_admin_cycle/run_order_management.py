@@ -38,6 +38,8 @@ from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4272 import QAP
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4854 import QAP_4854
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_4856 import QAP_4856
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_5207 import QAP_5207
+from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_5819 import QAP_5819
+from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_5820 import QAP_5820
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_948 import QAP_948
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_950 import QAP_950
 from quod_qa.web_admin.web_admin_test_cases.order_management.QAP_952 import QAP_952
@@ -94,6 +96,8 @@ class RunOrderManagement:
             QAP_4854(self.web_driver_container, self.second_lvl_id).run()
             QAP_4856(self.web_driver_container, self.second_lvl_id).run()
             QAP_5207(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5819(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5820(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Order Management ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

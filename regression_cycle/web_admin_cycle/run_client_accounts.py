@@ -20,6 +20,7 @@ from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2474 import QAP_
 from custom import basic_custom_actions as bca
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_3007 import QAP_3007
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_3104 import QAP_3104
+from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_4381 import QAP_4381
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_4864 import QAP_4864
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_5443 import QAP_5443
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_5601 import QAP_5601
@@ -51,6 +52,7 @@ class RunClientsAccounts:
             QAP_2474(self.web_driver_container, self.second_lvl_id).run()
             QAP_3007(self.web_driver_container, self.second_lvl_id).run()
             QAP_3104(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4381(self.web_driver_container, self.second_lvl_id).run()
             QAP_4864(self.web_driver_container, self.second_lvl_id).run()
             QAP_5443(self.web_driver_container, self.second_lvl_id).run()
             QAP_5601(self.web_driver_container, self.second_lvl_id).run()

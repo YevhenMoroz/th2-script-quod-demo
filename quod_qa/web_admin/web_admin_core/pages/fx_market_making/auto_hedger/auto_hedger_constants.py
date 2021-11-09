@@ -18,6 +18,8 @@ class AutoHedgerConstants:
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    POSITION_BOOK_ALREADY_ASSIGNED_TO_MESSAGE = '//*[contains(text(),"Position Book already assigned to")]'
+
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[1]//input'

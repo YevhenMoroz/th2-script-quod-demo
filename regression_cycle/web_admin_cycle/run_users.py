@@ -17,6 +17,7 @@ from quod_qa.web_admin.web_admin_test_cases.users.QAP_3100 import QAP_3100
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_3145 import QAP_3145
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_4239 import QAP_4239
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_4855 import QAP_4855
+from quod_qa.web_admin.web_admin_test_cases.users.QAP_5842 import QAP_5842
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_918 import QAP_918
 from quod_qa.web_admin.web_admin_test_cases.users.QAP_919 import QAP_919
 
@@ -46,6 +47,7 @@ class RunUsers:
             QAP_3145(self.web_driver_container, self.second_lvl_id).run()
             QAP_4239(self.web_driver_container, self.second_lvl_id).run()
             QAP_4855(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5842(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Users ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

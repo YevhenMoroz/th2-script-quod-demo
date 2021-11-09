@@ -22,6 +22,7 @@ from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2056 import QAP
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2158 import QAP_2158
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2247 import QAP_2247
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2289 import QAP_2289
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2324 import QAP_2324
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2379 import QAP_2379
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2442 import QAP_2442
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2557 import QAP_2557
@@ -32,9 +33,11 @@ from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_2772 import QAP
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3008 import QAP_3008
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3009 import QAP_3009
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3010 import QAP_3010
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3053 import QAP_3053
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3274 import QAP_3274
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_3275 import QAP_3275
 from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_4439 import QAP_4439
+from quod_qa.web_admin.web_admin_test_cases.fx_market_making.QAP_5707 import QAP_5707
 
 
 class RunFxMarketMaking:
@@ -67,6 +70,7 @@ class RunFxMarketMaking:
             QAP_2247(self.web_driver_container, self.second_lvl_id).run()
             QAP_2557(self.web_driver_container, self.second_lvl_id).run()
             QAP_2289(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2324(self.web_driver_container, self.second_lvl_id).run()
             QAP_2379(self.web_driver_container, self.second_lvl_id).run()
             QAP_2442(self.web_driver_container, self.second_lvl_id).run()
             QAP_2626(self.web_driver_container, self.second_lvl_id).run()
@@ -76,9 +80,11 @@ class RunFxMarketMaking:
             QAP_3008(self.web_driver_container, self.second_lvl_id).run()
             QAP_3009(self.web_driver_container, self.second_lvl_id).run()
             QAP_3010(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3053(self.web_driver_container, self.second_lvl_id).run()
             QAP_3274(self.web_driver_container, self.second_lvl_id).run()
             QAP_3275(self.web_driver_container, self.second_lvl_id).run()
             QAP_4439(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5707(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run FXMM ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

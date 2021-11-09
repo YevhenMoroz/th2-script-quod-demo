@@ -16,7 +16,7 @@ class ClientTierInstrumentValuesSubWizard(CommonPage):
 
     def set_rfq_response_stream_ttl(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH,
-                               str(value))
+                               value)
 
     def get_rfq_response_stream_ttl(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH)

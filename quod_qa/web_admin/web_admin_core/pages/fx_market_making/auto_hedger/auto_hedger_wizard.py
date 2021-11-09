@@ -25,3 +25,7 @@ class AutoHedgerWizard(CommonPage):
         self.find_by_xpath(AutoHedgerConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_position_book_assigned_to_message_displayed(self):
+        return "Position Book already assigned to" in self.find_by_xpath(
+            AutoHedgerConstants.POSITION_BOOK_ALREADY_ASSIGNED_TO_MESSAGE).text
