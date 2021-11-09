@@ -205,11 +205,11 @@ class RuleManager:
                                                                               ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_QuodMDAnswerRule(session: str):
+    def add_QuodMDAnswerRule(session: str, interval:int):
         return Stubs.simulator.createQuodMDAnswerRule(request=
                                                       TemplateMDAnswerRule(connection_id=
                                                                            ConnectionID(session_alias=session), min=1,
-                                                                           max=2, interval=30))
+                                                                           max=2, interval=interval))
 
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
