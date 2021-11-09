@@ -3,13 +3,14 @@ from inspect import signature
 from functools import wraps
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
+from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
 
 class BaseWindow:
-    def __init__(self, case_id, base_request):
+    def __init__(self, case_id, session_id):
         self.case_id = case_id
-        self.base_request = base_request
+        self.base_request = get_base_request(session_id, case_id)
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
 

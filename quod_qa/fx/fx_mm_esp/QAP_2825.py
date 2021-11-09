@@ -8,7 +8,7 @@ from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
