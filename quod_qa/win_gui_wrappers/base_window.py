@@ -50,23 +50,22 @@ def split_2lvl_values(split_values):
 
 
 def decorator_try_except(test_id):
-    def _safe(f):
-        @wraps(f)
-        def safe_f(*args, **kwargs):
+    def get_function(decorated_function):
+        @wraps(decorated_function)
+        def improved_function(*args, **kwargs):
             try:
-                case_id = bca.create_event(test_id, args[0])
-
-                set_base(args[1], case_id)
-                # for a in args:
-                #     print(str(a))
-
-                return f(*args, **kwargs)
+                return decorated_function(*args, **kwargs)
             except:
+                print("Tuple object - \n", args)
+                print("Object TestCase - \n", args[0])
+                print("Object attributes - \n", args[0].__dict__)
+                print("case_id - ", args[0].__dict__['case_id'])
+
+                bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
+                                 status='FAILED',
+                                 parent_id=args[0].__dict__['case_id'])
                 print(f"Test {test_id} was failed")
-                bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
             finally:
                 pass
 
-        return safe_f
-
-        return _safe
+        return improved_function
