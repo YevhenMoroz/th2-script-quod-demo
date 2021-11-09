@@ -4,8 +4,8 @@ from win_gui_modules.utils import call
 
 
 class AggregatesRatesTile(BaseTile):
-    def __init__(self, case_id, base_request, index: int = 0):
-        super().__init__(case_id, base_request, index)
+    def __init__(self, case_id, session_id, index: int = 0):
+        super().__init__(case_id, session_id, index)
         self.ar_service = Stubs.win_act_aggregated_rates_service
         self.create_tile_call = None
         self.close_tile_call = None

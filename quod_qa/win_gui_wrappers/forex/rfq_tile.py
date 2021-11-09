@@ -6,8 +6,8 @@ from win_gui_modules.utils import call
 
 
 class RFQTile(AggregatesRatesTile):
-    def __init__(self, case_id, base_request, index: int = 0):
-        super().__init__(case_id, base_request, index)
+    def __init__(self, case_id, session_id, index: int = 0):
+        super().__init__(case_id, session_id, index)
         self.modify_request = ModifyRFQTileRequest(details=self.base_details)
         self.place_order_request = PlaceRFQRequest(details=self.base_details)
         self.create_tile_call = self.ar_service.createRFQTile

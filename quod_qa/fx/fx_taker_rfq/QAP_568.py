@@ -48,12 +48,12 @@ def execute(report_id, session_id):
         # Step 1-3
         set_order_ticket_options(option_service, case_base_request, case_client)
         # Step 4
-        rfq_tile = RFQTile(case_id, case_base_request)
+        rfq_tile = RFQTile(case_id, session_id)
         rfq_tile.crete_tile().modify_rfq_tile(from_cur=case_from_currency, to_cur=case_to_currency,
                                               near_qty=case_qty, near_tenor=case_near_tenor,
                                               client=case_client, single_venue=case_venue)
         rfq_tile.send_rfq()
-        quote_request_book = FXQuoteRequestBook(case_id, case_base_request)
+        quote_request_book = FXQuoteRequestBook(case_id, session_id)
         quote_request_book.set_filter(["Qty", case_qty])
         quote_request_book.check_quote_book_fields_list({"Venue": case_venue,
                                                          "Status": quote_sts_new,
@@ -61,12 +61,12 @@ def execute(report_id, session_id):
         # Step 5
         rfq_tile.place_order(sell_side)
 
-        quote_id = FXOrderBook(case_id, case_base_request).set_filter(["Qty", "2368459"]).extract_field("QuoteID")
+        quote_id = FXOrderBook(case_id, session_id).set_filter(["Qty", "2368459"]).extract_field("QuoteID")
 
-        order_book = FXOrderBook(case_id, case_base_request)
+        order_book = FXOrderBook(case_id, session_id)
         order_book.check_order_fields_list({"ExecSts": "Filled", "Client ID": case_client})
 
-        quote_book = FXQuoteBook(case_id, case_base_request)
+        quote_book = FXQuoteBook(case_id, session_id)
         quote_book.set_filter(["Id", quote_id]).check_quote_book_fields_list(
             {"QuoteStatus": "Terminated", "Owner": quote_owner})
 

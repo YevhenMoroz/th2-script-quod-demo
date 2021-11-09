@@ -1,5 +1,4 @@
-from custom import basic_custom_actions as bca
-
+from custom import basic_custom_actions
 
 
 class FixMessage:
@@ -32,6 +31,18 @@ class FixMessage:
     def remove_parameter(self, parameter_name: str) -> None:
         self.__parameters.pop(parameter_name)
 
+    def add_ClordId(self, ClOrdID):
+        self.change_parameter("ClOrdID", ClOrdID + " " + basic_custom_actions.client_orderid(9))
+        return self
+
     def print_parameters(self) -> None:
+        #TODO
+        pass
+
+    def add_fields_to_component(self, component: str, fields: dict):
+        #TODO
+        pass
+
+    def remove_fields_from_component(self, component: str, fields: dict):
         #TODO
         pass

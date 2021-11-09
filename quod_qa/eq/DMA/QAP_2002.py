@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
+from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 
 import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier

@@ -63,12 +63,14 @@ def open_fe2(session_id, report_id, folder, user, password):
 def create_order(base_request, qty, client, lookup, order_type, tif="Day", is_care=False, recipient=None,
                  price=None, washbook=None, account=None,
                  is_sell=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE, expire_date=None, recipient_user=False,
-                 capacity=None
+                 capacity=None, instrument=None
                  ):
     order_ticket = OrderTicketDetails()
     order_ticket.set_quantity(qty)
     order_ticket.set_client(client)
     order_ticket.set_order_type(order_type)
+    if instrument:
+        order_ticket.set_instrument(instrument)
     if is_care:
         order_ticket.set_care_order(recipient, recipient_user, disclose_flag)
     order_ticket.set_tif(tif)

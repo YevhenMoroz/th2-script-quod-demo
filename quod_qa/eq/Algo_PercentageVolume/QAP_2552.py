@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timedelta
 from copy import deepcopy
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -42,7 +42,7 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
 
-now = datetime.today() - timedelta(hours=3)
+now = datetime.today() - timedelta(hours=2)
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-bs-310-columbia"

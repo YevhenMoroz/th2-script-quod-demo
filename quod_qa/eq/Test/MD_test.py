@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
@@ -16,7 +16,7 @@ def execute(report_id):
     simulator = Stubs.simulator
 
     MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol="2391",
+        symbol="2475",
         connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
     )).MDRefID
     mdir_params_bid = {
@@ -24,20 +24,33 @@ def execute(report_id):
         'NoMDEntries': [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '19',
+                'MDEntryPx': '18',
                 'MDEntrySize': '1000',
                 'MDEntryPositionNo': '1',
-                'TradingSessionSubID': '2',
-                'SecurityTradingStatus': '3'
+                'TradingSessionSubID': '6',
+                'SecurityTradingStatus': '6'
             },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '19.99',
-                'MDEntrySize': '1000',
-                'MDEntryPositionNo': '1',
-                'TradingSessionSubID': '2',
-                'SecurityTradingStatus': '3'
-            }
+            # {
+            #     'MDEntryType': '1',
+            #     'MDEntryPx': '19',
+            #     'MDEntrySize': '1000',
+            #     'MDEntryPositionNo': '1',
+            #     # 'TradingSessionSubID': '2',
+            #     # 'SecurityTradingStatus': '3'
+            # },
+            # {
+            #     'MDEntryType': 'B',
+            #     'MDEntrySize': '3500',
+            # },
+            # {
+            #     'MDEntryType': 'Q',
+            #     'MDEntrySize': '15000',
+            #     'MDEntryPx': '19.5',
+            # },
+            # {
+            #     'MDEntryType': 'e',
+            #     'MDEntryPx': '19',
+            # },
         ]
     }
 
