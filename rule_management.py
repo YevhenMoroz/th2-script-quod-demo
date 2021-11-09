@@ -107,6 +107,12 @@ class RuleManager:
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
 
+    @staticmethod
+    def remove_rules(list_rules):
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
+
     # ------------------------
 
     # --- ADD RULE SECTION ---
@@ -335,10 +341,10 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_rule_by_id()
+    #rule_manager.remove_rule_by_id()
     # rule_manager.add_OrderCancelReplaceRequest("fix-buy-317ganymede-standard","CLIENT_YMOROZ"+ "_PARIS",
     #                                                                     "XPAR",True)
-    # rule_manager.remove_rules_by_id_range()
+    #rule_manager.remove_rules_by_id_range()
     # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317ganymede-standard",
     #                                                           "CLIENT_YMOROZ" + "_PARIS",
     #                                                                      "XPAR", 10)
@@ -346,4 +352,4 @@ if __name__ == '__main__':
     #                                                            "CLIENT_YMOROZ" + "_PARIS",
     #                                                                      "XPAR", 10,900,1)
     rule_manager.print_active_rules()
-    # rule_manager.remove_all_rules()
+    #rule_manager.remove_all_rules()

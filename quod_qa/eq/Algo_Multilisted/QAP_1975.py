@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from copy import deepcopy
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -17,20 +17,24 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
-qty = 1300
-inc_qty = 1400
+#text
 text_pn='Pending New status'
 text_n='New status'
 text_ocrr='OCRRRule'
 text_c='order canceled'
+
+#order param
+qty = 1300
+inc_qty = 1400
 price = 20
 side = 1
+order_type = 2
+currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = "Limit"
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '734'
 s_trqx = '3416'
 

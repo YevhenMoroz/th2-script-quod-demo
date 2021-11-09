@@ -5,7 +5,7 @@ import math
 from datetime import datetime, timedelta
 from copy import deepcopy
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -18,31 +18,34 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-tick = 0.005
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+text_r = 'order replaced'
+
+#algo param
 waves = 4
+aggressivity = 1
+
+#order param
 qty = 40
+tick = 0.005
 price = 20
 wld_price = price - tick
 child_day_qty = round(qty / waves)
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
 side = 1
 tif_day = 0
 tif_ioc = 3
+order_type = 2
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '704'
-percentage = 10
-aggressivity = 1
 
 case_name = os.path.basename(__file__)
 connectivity_buy_side = "fix-buy-side-316-ganymede"
@@ -107,7 +110,7 @@ def send_market_dataT(symbol: str, case_id :str, market_data ):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today() - timedelta(hours=2)
         waves = 4
 
         rule_list = rule_creation()
@@ -152,6 +155,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4734_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -194,7 +198,6 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
 
         time.sleep(1)

@@ -4,7 +4,7 @@ import time
 import math
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID, NoMDEntries
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
 from quod_qa.wrapper.fix_message import FixMessage
@@ -17,6 +17,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+#text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+text_r = 'order replaced'
+
+#algo param
+percentage = 10
+aggressivity = 1
+
+#order param
 qty = 500
 max_would_shares_qty = 490
 child_ioc_qty = 465
@@ -29,25 +41,18 @@ price_20 = 20
 price = 19.995
 price_23 = 23      
 price_25 = 25
-price_30 = 30    
-percentage = 10
-aggressivity = 1
+price_30 = 30   
 child_ltq_qty = 23                  #round (ltq * percentage / (100 - percentage))   
 child_mkd_qty = 12                  #round (mkd * percentage / (100 - percentage))   
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
 side = 1
 tif_day = 0
 tif_ioc = 3
+order_type = 2
+currency = 'EUR'
+
+#venue param
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
-order_type = 2
 account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '1015'
@@ -71,9 +76,9 @@ trigger = {
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, price_23, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, price_23, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
 
-    nos_ioc_md_rule_1 = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, price_23, last_would_child, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='40', MDEntrySize='1000', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_ioc_md_rule_1 = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, price_23, last_would_child, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")], [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate= datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
 
 
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
@@ -168,6 +173,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         new_order_single_params = {
             'Account': client,
+            'ClOrdID': 'QAP_4890_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': side,
             'OrderQty': qty,
@@ -211,7 +217,6 @@ def execute(report_id):
         }
 
         fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
         responce_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
         
         time.sleep(1)
@@ -266,37 +271,6 @@ def execute(report_id):
         )
         er_2.pop('Account')
         fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-
-        #Send Market Data
-        case_id_2 = bca.create_event("Send Market Data", case_id)
-
-        market_data3 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': price_20,
-                'MDEntrySize': mkd + child_mkd_qty,
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': price_30,
-                'MDEntrySize': mkd,
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_2, market_data3) 
-
-        market_data4 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': price_25,
-                'MDEntrySize': ltq,
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_2, market_data4)
 
         time.sleep(2)
 
@@ -407,38 +381,7 @@ def execute(report_id):
         fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='FIXQUODSELL5 sent 35=8 New MKD', key_parameters=['Price', 'OrderQty', 'ExecType', 'OrdStatus'])
         #endregion
 
-        #Send Market Data
-        case_id_4 = bca.create_event("Send Market Data", case_id)
-
-        market_data5 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': price_20,
-                'MDEntrySize': mkd + child_mkd_qty,
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': price_23,
-                'MDEntrySize': qty,
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_4, market_data5) 
-
-        market_data6 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': price_25,
-                'MDEntrySize': ltq,
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_4, market_data6)
-
-        time.sleep(1)
+        time.sleep(3)
 
         #region WouldPrice childs and MKD
         case_id_5 = bca.create_event("Check WouldPrice childs and MKD", case_id)

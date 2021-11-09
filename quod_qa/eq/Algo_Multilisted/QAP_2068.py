@@ -3,7 +3,7 @@ import os
 import time
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 
 from custom.basic_custom_actions import convert_to_request, message_to_grpc
@@ -13,20 +13,21 @@ from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 
-
+#order param
 qty = 1000
-qty_xpar = 300
-qty_trqx = 700
-account = "CLIENT1"
 time_in_force = 0
 price = 35
 side = 1
-connectivity_buy_side = "fix-bs-310-columbia"
-connectivity_feed_handler = "fix-fh-310-columbia"
-connectivity_sell_side = "fix-ss-310-columbia-standart"
+ord_type = 2
+
+#venue param
+qty_xpar = 300
+qty_trqx = 700
+account = "CLIENT1"
 symbol_paris = "734"
 symbol_trqx = "3416"
-ord_type = 2
+
+
 instrument = {
             'Symbol': 'FR0000121121_EUR',
             'SecurityID': 'FR0000121121',
@@ -34,6 +35,9 @@ instrument = {
             'SecurityExchange': 'XPAR'
         }
 
+connectivity_buy_side = "fix-bs-310-columbia"
+connectivity_feed_handler = "fix-fh-310-columbia"
+connectivity_sell_side = "fix-ss-310-columbia-standart"
 
 def rule_creation():
     rule_manager = RuleManager()

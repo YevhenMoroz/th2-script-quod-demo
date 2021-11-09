@@ -1,6 +1,6 @@
-from functools import wraps
+import re
 from inspect import signature
-
+from functools import wraps
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
 from win_gui_modules.utils import get_base_request
@@ -31,6 +31,22 @@ class BaseWindow:
         except KeyError:
             print("Element: " + k + " not found")
         self.verifier.verify()
+        self.verifier = Verifier(self.case_id)
+
+
+def split_2lvl_values(split_values):
+    for split_key, split_value in split_values.items():
+        normal_split_values_arr = list()
+        split_sentence = split_value.split('\n')
+        split_sentence.pop(0)
+        split_sentence.pop(len(split_sentence) - 1)
+        for split_values1 in split_sentence:
+            split_values1 = re.findall('(\w+=\w+)', split_values1)
+            split_values1 = split_values1.__str__()
+            split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '')
+            split_normal_dictionarry = dict(item.split("=") for item in split_values1.split(', '))
+            normal_split_values_arr.append(split_normal_dictionarry)
+    return normal_split_values_arr
 
 
 def decorator_try_except(test_id):
