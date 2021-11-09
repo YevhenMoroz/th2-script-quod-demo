@@ -151,7 +151,7 @@ def execute(report_id):
             'AvgPx': '0',
             'OrdStatus': 'A',
             'Currency': currency,
-            'TimeInForce': tif_day,
+            'TimeInForce': fix_message.get_parameter('TimeInForce'),
             'ExecType': "A",
             'HandlInst': fix_message.get_parameter('HandlInst'),
             'LeavesQty': qty,
