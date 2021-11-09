@@ -14,6 +14,7 @@ class FixMessageExecutionReport(FixMessage):
     def update_fix_message(self, parameters: dict) -> None:
         temp = dict(
             Account=parameters["Account"],
+            ClOrdID=parameters["ClOrdID"],
             Currency=parameters["Currency"],
             HandlInst=parameters["HandlInst"],
             Instrument=parameters["Instrument"],
