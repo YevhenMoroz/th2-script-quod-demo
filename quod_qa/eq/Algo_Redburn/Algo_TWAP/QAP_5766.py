@@ -7,7 +7,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
@@ -215,4 +215,4 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.rule_destroyer(rule_list)
+        RuleManager.remove_rules(rule_list)
