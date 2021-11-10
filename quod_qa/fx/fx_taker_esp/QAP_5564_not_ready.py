@@ -80,10 +80,10 @@ def execute(report_id):
         new_order_sor.add_fields_into_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'LonePassive', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'}])
 
-        fix_manager.send_message_and_receive_response(new_order_sor)
-
+        responce = fix_manager.send_message_and_receive_response(new_order_sor)
         execution_report = FixMessageExecutionReportAlgoFX(new_order_single=new_order_sor)
-        fix_verifier.check_fix_message(execution_report)
+        execution_report.update_to_pending_new(new_order_sor)
+        fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FIRST)
 
 
 

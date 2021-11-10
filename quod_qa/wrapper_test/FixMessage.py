@@ -42,7 +42,7 @@ class FixMessage:
         new_component = self.get_parameter(component)
         new_component.update(fields)
 
-        self.change_parameters(dict(component= new_component))
+        self.change_parameters({component: new_component})
         return self
 
     def remove_fields_from_component(self, component: str, fields: list):
@@ -53,7 +53,7 @@ class FixMessage:
             else:
                 new_component.pop(key)
 
-        self.change_parameters(dict(component= new_component))
+        self.change_parameters({component: new_component})
         return self
 
     def add_fields_into_repeating_group(self, r_group: str, fields: list):
@@ -61,7 +61,7 @@ class FixMessage:
         for i in fields:
             new_component.append(i)
 
-        self.change_parameters(dict(component= new_component))
+        self.change_parameters({r_group: new_component})
         return self
 
     def remove_fields_repeating_group(self, r_group: str, fields: list):
@@ -72,5 +72,5 @@ class FixMessage:
                 if new_component[i]==j:
                     new_component.pop(i)
 
-        self.change_parameters(dict(component=new_component))
+        self.change_parameters({r_group: new_component})
         return self
