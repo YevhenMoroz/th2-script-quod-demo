@@ -47,6 +47,7 @@ instrument = DataSet.Instrument.FR0000062788.value
 
 def rule_creation():
     rule_manager = RuleManager()
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
     nos_trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price_nav, price_nav, qty, qty, 0)
 
     return [nos_trade_rule1]
@@ -239,7 +240,7 @@ def execute(report_id):
             'ExecType': "F",
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
+        fix_verifier_bs.CheckExecutionReport(er_5, response_new_order_single, direction=SECOND, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
         #endregion
 
     except:
