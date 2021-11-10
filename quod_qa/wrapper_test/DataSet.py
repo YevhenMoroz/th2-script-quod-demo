@@ -11,6 +11,9 @@ class MessageType(Enum):
     ExecutionReport = "ExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
+    MarketDataRequest = "MarketDataRequest"
+    MarketDataIncrementalRefresh = "MarketDataIncrementalRefresh"
+    MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
 
 
 class Instrument(Enum):

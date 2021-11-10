@@ -52,6 +52,33 @@ class FixManager:
                     basic_custom_actions.message_to_grpc(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataSnapshotFullRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataSnapshotFullRefresh.value, fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.MarketDataIncrementalRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataIncrementalRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataIncrementalRefresh.value, fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
+            response = self.act.placeMarketDataRequestFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataRequest.value, fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
