@@ -70,8 +70,10 @@ class BaseOrderBook(BaseWindow):
         return self
 
     def scroll_order_book(self, count: int = 1):
-        scrolling_details = self.scrolling_details(self.scrolling_operation.UP, count, self.base_request)
-        call(self.order_book_grid_scrolling_call, scrolling_details.build())
+        self.scrolling_details.__class__.__init__(self=self.scrolling_details,
+                                      scrolling_operation=self.scrolling_operation.UP,
+                                      number_of_scrolls=count, base=self.base_request)
+        call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
 
