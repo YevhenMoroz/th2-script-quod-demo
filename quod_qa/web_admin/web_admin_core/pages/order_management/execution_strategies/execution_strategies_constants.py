@@ -23,6 +23,7 @@ class ExecutionStrategiesConstants:
     EXT_ID_CLIENT_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     EXT_ID_VENUE_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     ENABLED_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//select'
+    ENABLED_FILTER_LIST_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//select//*[text()={}]'
     USER_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     CLIENT_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="ag-header-container"]/div[2]/div[8]//input'
     GLOBAL_FILTER_AT_MAIN_MENU_XPATH = '//*[@class="lookup-input size-small status-basic shape-rectangle nb-transition"]'

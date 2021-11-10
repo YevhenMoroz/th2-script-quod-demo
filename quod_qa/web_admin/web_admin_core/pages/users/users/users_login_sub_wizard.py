@@ -77,7 +77,8 @@ class UsersLoginSubWizard(CommonPage):
         self.find_by_xpath(UsersConstants.FIRST_TIME_LOGIN_CHECKBOX_AT_LOGIN_SUB_WIZARD).click()
 
     def is_first_time_login_checkbox_selected(self):
-        return self.is_checkbox_selected(UsersConstants.FIRST_TIME_LOGIN_CHECKBOX_AT_LOGIN_SUB_WIZARD)
+        return "checked" in self.find_by_xpath(
+            UsersConstants.FIRST_TIME_LOGIN_CHECKBOX_AT_LOGIN_SUB_WIZARD).get_attribute("class")
 
     def set_ping_required_checkbox(self):
         self.find_by_xpath(UsersConstants.PING_REQUIRED_CHECKBOX_AT_LOGIN_SUB_WIZARD).click()

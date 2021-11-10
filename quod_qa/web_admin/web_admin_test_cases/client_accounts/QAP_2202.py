@@ -25,7 +25,7 @@ class QAP_2202(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
-        self.venue = "JSE"
+        self.venue = "AMEX"
         self.venue_client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_client_account_group_name = "48934"
 

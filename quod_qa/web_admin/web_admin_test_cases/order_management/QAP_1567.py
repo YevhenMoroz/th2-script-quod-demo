@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -19,13 +21,13 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_1567(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.first_parameter = "AllowedAggressiveVenues"
         self.first_venue = "EURONEXT AMSTERDAM"
 
-        self.new_name = "TestSuperStrategy1"
+        self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_user = "QA2"
         self.new_strategy_type = "External CUSTOM1"
         self.new_parameter = "Custom"
@@ -58,6 +60,7 @@ class QAP_1567(CommonTestCase):
         aggressive_lit_block.click_on_checkmark_button()
         aggressive_lit_block.click_on_go_back_button()
         strategies_wizard.click_on_save_changes()
+        time.sleep(2)
         main_menu.set_enabled_at_filter_field("true")
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)
@@ -91,14 +94,13 @@ class QAP_1567(CommonTestCase):
             self.verify("Data on summary tab after edited", expected_summary_tab_values, actual_summary_tab_values)
             strategies_wizard.click_on_save_changes()
             main_menu = ExecutionStrategiesPage(self.web_driver_container)
-            main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.new_name)
             expected_pdf_content = [
-                                self.new_name,
-                                self.new_user,
-                                self.new_strategy_type,
-                                self.new_parameter,
-                                self.new_value]
+                self.new_name,
+                self.new_user,
+                self.new_strategy_type,
+                self.new_parameter,
+                self.new_value]
             time.sleep(2)
             main_menu.click_on_more_actions()
             self.verify("Data in pdf after edited", True,

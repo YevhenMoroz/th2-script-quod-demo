@@ -19,7 +19,7 @@ class QAP_2257(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
         self.password = "adm02"
-        self.venue = "KSE"
+        self.venue = "AMEX"
         self.new_venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):

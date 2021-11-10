@@ -65,3 +65,12 @@ class OrderManagementRulesWizard(CommonPage):
             return True
         else:
             return False
+
+    def is_gating_rule_already_has_the_same_criteria_message_displayed(self):
+        if self.find_by_xpath(
+                OrderManagementRulesConstants.IS_GATING_RULE_ALREADY_HAS_THE_SAME_CRITERIA_MESSAGE_DISPLAYED).text == "Total percentage is greater than 100":
+            return True
+        else:
+            return False
+
+

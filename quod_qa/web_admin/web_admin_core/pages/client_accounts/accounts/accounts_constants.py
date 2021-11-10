@@ -2,8 +2,8 @@ class AccountsConstants:
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Accounts ']"
     NEW_BUTTON_XPATH = "//button[text()='New']"
-    MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@class="ag-center-cols-container"]//*[@class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"]//*[@col-id="clearingAccountType"]//span//span[4]'
-    MAIN_PAGE_CLIENT ='//*[@class="ag-center-cols-container"]//*[@class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"]//*[@col-id="accountGroup.accountGroupName"]//span//span[4]'
+    MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@col-id="clearingAccountType"]//*[@class="ag-group-value"]'
+    MAIN_PAGE_CLIENT ='//*[@col-id="accountGroup.accountGroupName"]//*[@class="ag-group-value"]'
 
     WIZARD_ID_INPUT_XPATH = "//input[@id='accountID']"
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"

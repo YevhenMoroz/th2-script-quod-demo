@@ -49,6 +49,7 @@ class QAP_2165(CommonTestCase):
         wash_book_wizard.click_on_save_changes()
         time.sleep(1)
         wash_book_main_menu.set_id_filter(self.id)
+        time.sleep(1)
         wash_book_main_menu.set_enabled_filter("true")
         time.sleep(2)
         wash_book_main_menu.click_on_more_actions()
