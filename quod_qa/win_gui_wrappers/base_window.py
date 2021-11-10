@@ -69,3 +69,4 @@ def decorator_try_except(test_id):
                 pass
 
         return improved_function
+    return get_function
