@@ -164,11 +164,13 @@ def execute(report_id):
             'QtyType': '0',
             'Price': price,
             'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
-            'Instrument': instrument
+            'Instrument': instrument,
+            'SecAltIDGrp': '*',
+            'SettlDate': '*'
 
         }
         er_1.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
         # Check that FIXQUODSELL7 sent 35=8 new
         er_2 = dict(
@@ -176,11 +178,11 @@ def execute(report_id):
             ExecType="0",
             OrdStatus='0',
             SettlDate='*',
-            SettlType='*',
             ExecRestatementReason='*',
-            Account= client
+            Account= client,
+            SecAltIDGrp = '*'
         )
-        fix_verifier_ss.CheckExecutionReport(er_2, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        fix_verifier_ss.CheckExecutionReport(er_2, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
         er_3 = {
             'Account': account,
@@ -203,10 +205,9 @@ def execute(report_id):
             'TimeInForce': tif_day,
             'Instrument': '*',
             'ExecType': "F",
-            'ExDestination': ex_destination_1,
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
+        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=8 Nav Fill',key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
         #endregion
 
     except:
