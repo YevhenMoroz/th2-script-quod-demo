@@ -105,7 +105,7 @@ class FixManager:
         if case == None:
             case = self.case_id
 
-        response = self.act.sendMessage(
+        response = self.act.placeOrderListFIX(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
@@ -118,7 +118,7 @@ class FixManager:
         if case == None:
             case = self.case_id
 
-        response = self.act.sendMessage(
+        response = self.act.placeListCancelRequestFIX(
             request=bca.convert_to_request(
                 message_name,
                 self.TraderConnectivity,
