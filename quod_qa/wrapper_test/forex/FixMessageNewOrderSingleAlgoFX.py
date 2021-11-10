@@ -2,7 +2,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.Instrument import Instrument
+
 
 
 class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):

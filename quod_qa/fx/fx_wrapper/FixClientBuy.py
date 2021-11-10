@@ -15,7 +15,7 @@ class FixClientBuy():
         even_name = 'Send Market Data SPOT  '
         if even_name_custom!='':
             even_name=even_name_custom
-        print(even_name ,self.case_params_buy.market_d_params_spot)
+        print(even_name, self.case_params_buy.market_d_params_spot)
         self.fix_act.sendMessage(
             bca.convert_to_request(
                 even_name,

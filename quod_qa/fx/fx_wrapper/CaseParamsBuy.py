@@ -7,7 +7,6 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
 class CaseParamsBuy():
     simulator = Stubs.simulator
-    # simulator = Stubs.simulator
     market_d_params_spot = None
     market_d_params_fwd = None
 
