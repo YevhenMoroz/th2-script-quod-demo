@@ -1,13 +1,14 @@
-from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails
-from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
+from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
+
+from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from stubs import Stubs
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, SecondLevelExtractionDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
+from win_gui_modules.utils import call
 
 
 class OMSOrderBook(BaseOrderBook):
@@ -57,3 +58,9 @@ class OMSOrderBook(BaseOrderBook):
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
     # endregion
+
+    def scroll_order_book(self, count: int = 1):
+        GridScrollingDetails.__init__(self=self.scrolling_details,
+                                      scrolling_operation=self.scrolling_operation.UP,
+                                      number_of_scrolls=count, base=self.base_request)
+        call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
