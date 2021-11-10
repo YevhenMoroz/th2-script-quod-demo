@@ -88,4 +88,4 @@ def decorator_try_except(test_id):
 
         return safe_f
 
-        return _safe
+    return _safe
