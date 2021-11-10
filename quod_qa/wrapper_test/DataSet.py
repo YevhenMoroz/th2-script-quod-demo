@@ -36,3 +36,5 @@ class Instrument(Enum):
 
 class Connectivity(Enum):
     Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
+    Ganymede_317_sell = 'fix-sell-317-standard-test'
+    Ganymede_317_buy = 'fix-buy-317-standard-test'
