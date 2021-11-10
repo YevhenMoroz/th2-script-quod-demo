@@ -42,16 +42,16 @@ class FixMessage:
         new_component = self.get_parameter(component)
         new_component.update(fields)
 
-        self.change_parameters(dict(component= new_component))
+        self.change_parameters({component: new_component})
         return self
 
     def remove_fields_from_component(self, component: str, fields: list):
         new_component = self.get_parameter(component)
         for key in fields:
             if key not in new_component:
-                raise Exception('Unknown argument for removing from component', key)
+                raise Exception(f'Unknown argument for removing from component', key)
             else:
                 new_component.pop(key)
 
-        self.change_parameters(dict(component= new_component))
+        self.change_parameters({component: new_component})
         return self
