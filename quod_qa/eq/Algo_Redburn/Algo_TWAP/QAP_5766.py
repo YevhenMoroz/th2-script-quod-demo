@@ -1,7 +1,6 @@
 import os
 import logging
 import time
-from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -122,7 +121,8 @@ def execute(report_id):
 
         fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
         fix_message.add_ClordId('QAP_5766')
-        fix_message.change_parameters(dict(Account= client,  OrderQty = qty, QuodFlatParameters= dict(NavigatorExecution= 1, NavigatorInitialSweepTime= 10, NavigatorLimitPrice= price_nav)))
+        fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
+        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= 1, NavigatorInitialSweepTime= 10, NavigatorLimitPrice= price_nav))
 
         fix_manager = FixManager(connectivity_sell_side, case_id)
         response_new_order_single = fix_manager.send_message_and_receive_response(fix_message)

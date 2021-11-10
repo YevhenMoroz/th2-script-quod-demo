@@ -5,10 +5,12 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
+from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from quod_qa.wrapper_test import DataSet
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -28,7 +30,7 @@ qty_nav = 50000
 qty_twap_1 = 5000
 side = 1
 price = 110
-price_nav = 100
+price_nav = 30
 tif_day = 0
 order_type = 2
 
@@ -41,32 +43,21 @@ s_par = '555'
 
 #connectivity
 case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-gnmd-rb"
-connectivity_fh = 'fix-feed-handler-316-ganymede'
-
-instrument = {
-            'Symbol': 'FR0000062788_EUR',
-            'SecurityID': 'FR0000062788',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        }
+FIRST = DataSet.DirectionEnum.FIRST.value
+SECOND = DataSet.DirectionEnum.SECOND.value
+connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
+connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
+connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
+instrument = DataSet.Instrument.FR0000062788.value
 
 def rule_creation():
     rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, 110)
-    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, 100)
+    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
+    nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
     nos_trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price_nav, price_nav, qty, qty_nav_trade, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
 
     return [nos_rule, nos_rule1, nos_trade_rule1, ocr_rule]
-
-
-def rule_destroyer(list_rules):
-    if list_rules is not None:
-        rule_manager = RuleManager()
-        for rule in list_rules:
-            rule_manager.remove_rule(rule)
 
 
 def send_market_data(symbol: str, case_id: str, market_data):
@@ -133,42 +124,23 @@ def execute(report_id):
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
-        new_order_single_params = {
-            'Account': account,
-            'ClOrdID': 'TWAP_NAV_05_01' + bca.client_orderid(9),
-            'HandlInst': 2,
-            'Side': side,
-            'OrderQty': qty,
-            'TimeInForce': tif_day,
-            'Price': price,
-            'OrdType': order_type,
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': instrument,
-            'OrderCapacity': 'A',
-            'Currency': currency,
-            'TargetStrategy': 1005,
-            'ExDestination': ex_destination_1,
-            'QuodFlatParameters': {
-                'NavigatorPercentage': '100',
-                'NavigatorExecution': '1',
-                'NavigatorInitialSweepTime': '10',
-                'NavGuard': '0',
-                'NavigatorLimitPrice': '100',
-            }
-        }
 
-        fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
-        response_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message.add_ClordId('QAP_5766')
+        fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
+        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= 1, NavigatorLimitPrice= price_nav, Waves = 3))
+
+        fix_manager = FixManager(connectivity_sell_side, case_id)
+        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message)
 
         time.sleep(1)
 
         nos_1 = dict(
-            fix_message_new_order_single.get_parameters(),
+            fix_message.get_parameters(),
             TransactTime='*',
-            ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
+            ClOrdID=fix_message.get_parameter('ClOrdID'))
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
+        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL7 receive 35=D')
 
         #region NavSlice with NavigatorInitialSweepTime
         #Check that FIXQUODSELL5 sent 35=8 pending new
@@ -187,17 +159,17 @@ def execute(report_id):
             'Currency': currency,
             'TimeInForce': tif_day,
             'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
+            'HandlInst': fix_message.get_parameter('HandlInst'),
             'LeavesQty': qty,
             'NoParty': '*',
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
             'Price': price_nav,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
             'Instrument': instrument
 
         }
@@ -225,7 +197,7 @@ def execute(report_id):
             'ClOrdID': '*',
             'LastQty': qty,
             'Text': text_pf,
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'OrderID': '*',
             'TransactTime': '*',
             'Side': side,
@@ -259,17 +231,17 @@ def execute(report_id):
             'Currency': currency,
             'TimeInForce': tif_day,
             'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
+            'HandlInst': fix_message.get_parameter('HandlInst'),
             'LeavesQty': qty_twap_1,
             'NoParty': '*',
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
             'Price': price,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
             'Instrument': instrument
 
         }
@@ -301,17 +273,17 @@ def execute(report_id):
             'Currency': currency,
             'TimeInForce': tif_day,
             'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
+            'HandlInst': fix_message.get_parameter('HandlInst'),
             'LeavesQty': qty_nav,
             'NoParty': '*',
             'CumQty': '0',
             'LastPx': '0',
             'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
             'Price': price_nav,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
             'Instrument': instrument
 
         }
@@ -333,15 +305,15 @@ def execute(report_id):
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Cancel Order
         cancel_parms = {
-            "ClOrdID": fix_message_new_order_single.get_ClOrdID(),
-            "Account": fix_message_new_order_single.get_parameter('Account'),
-            "Side": fix_message_new_order_single.get_parameter('Side'),
+            "ClOrdID": fix_message.get_parameter('ClOrdID'),
+            "Account": fix_message.get_parameter('Account'),
+            "Side": fix_message.get_parameter('Side'),
             "TransactTime": datetime.utcnow().isoformat(),
-            "OrigClOrdID": fix_message_new_order_single.get_ClOrdID()
+            "OrigClOrdID": fix_message.get_parameter('ClOrdID')
         }
 
-        fix_cancel = FixMessage(cancel_parms)
-        responce_cancel = fix_manager_316.Send_OrderCancelRequest_FixMessage(fix_cancel, case=case_id_4)
+        fix_cancel = FixMessageOrderCancelRequest(parameters= cancel_parms)
+        responce_cancel = fix_manager_316.send_message_and_receive_response(fix_cancel)
 
         time.sleep(1)
 
@@ -349,9 +321,9 @@ def execute(report_id):
         cancel_ss_param = {
             'Side': side,
             'Account': client,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
             'TransactTime': '*',
-            'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
+            'OrigClOrdID': fix_message.get_parameter('ClOrdID')
         }
         fix_verifier_ss.CheckOrderCancelRequest(cancel_ss_param, responce_cancel, direction='SECOND', case=case_id_4,
                                                 message_name='SS FIXSELLQUOD7 sent 35=F Cancel',
@@ -374,22 +346,22 @@ def execute(report_id):
             'Currency': currency,
             'TimeInForce': tif_day,
             'ExecType': '4',
-            'HandlInst': new_order_single_params['HandlInst'],
+            'HandlInst': fix_message.get_parameter('HandlInst'),
             'CxlQty': '*',
             'LeavesQty': '0',
             'NoParty': '*',
             'CumQty': qty_nav_trade,
             'LastPx': '0',
             'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
+            'ClOrdID': fix_message.get_parameter('ClOrdID'),
+            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
             'QtyType': '0',
             'ExecRestatementReason': '*',
             'SettlType': '*',
             'Price': price,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
+            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
             'Instrument': instrument,
-            'OrigClOrdID': fix_message_new_order_single.get_ClOrdID()
+            'OrigClOrdID': fix_message.get_parameter('ClOrdID')
         }
 
         fix_verifier_ss.CheckExecutionReport(er_11, responce_cancel, case=case_id_4,
@@ -400,4 +372,4 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        rule_destroyer(rule_list)
+        RuleManager.remove_rules(rule_list)
