@@ -216,7 +216,6 @@ def execute(report_id):
         )
         fix_verifier_bs.CheckExecutionReport(er_4, response_new_order_single, direction=SECOND, case=case_id_2, message_name='FIXBUYTH2 sent 35=8 Nav slice New', key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
-
         er_5 = {
             'Account': account,
             'CumQty': qty,
