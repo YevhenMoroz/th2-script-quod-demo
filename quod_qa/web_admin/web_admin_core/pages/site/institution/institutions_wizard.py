@@ -34,3 +34,11 @@ class InstitutionsWizard(CommonPage):
         else:
             return False
 
+    def click_on_ok_button(self):
+        self.find_by_xpath(InstitutionsConstants.OK_BUTTON_XPATH).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(InstitutionsConstants.NO_BUTTON_XPATH).click()
+
+    def click_on_cancel(self):
+        self.find_by_xpath(InstitutionsConstants.CANCEL_BUTTON_XPATH).click()

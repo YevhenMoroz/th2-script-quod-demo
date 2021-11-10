@@ -26,7 +26,7 @@ class QAP_948(CommonTestCase):
         self.login = "adm03"
         self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "CITI FA"
+        self.venue = "Equiduct"
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -44,8 +44,6 @@ class QAP_948(CommonTestCase):
         values_sub_wizard.set_name(self.name)
         time.sleep(2)
         values_sub_wizard.set_venue(self.venue)
-        # time.sleep(1)
-        # values_sub_wizard.set_listing_group("Banking_KSE") this field removed
         time.sleep(1)
         conditions_sub_wizard.click_on_plus()
         time.sleep(1)
@@ -54,7 +52,7 @@ class QAP_948(CommonTestCase):
         conditions_sub_wizard.set_qty_precision("100")
         conditions_sub_wizard.click_on_add_condition()
         time.sleep(2)
-        conditions_sub_wizard.set_client("CLIENT1")
+        conditions_sub_wizard.set_right_side_at_conditional_logic("CLIENT1")
         conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
         conditions_sub_wizard.set_exec_policy("DMA")
         time.sleep(1)
@@ -63,7 +61,6 @@ class QAP_948(CommonTestCase):
         time.sleep(1)
         conditions_sub_wizard.click_on_checkmark()
         default_result_sub_wizard.set_default_result_name("test")
-        # default_result_sub_wizard.set_qty_precision("100")
         default_result_sub_wizard.click_on_plus()
         time.sleep(1)
         default_result_sub_wizard.set_exec_policy("Care")
@@ -80,9 +77,7 @@ class QAP_948(CommonTestCase):
             try:
                 page.set_name_filter(self.name)
                 time.sleep(2)
-                page.click_on_enable_disable_button()
-                time.sleep(2)
-                page.click_on_ok_button()
+                page.click_on_enabled_disable(True)
                 time.sleep(1)
                 self.verify("Entity created correctly", True, True)
             except Exception as e:

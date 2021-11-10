@@ -48,10 +48,10 @@ class RootConstants:
     SETTLEMENT_MODEL_ITEM_XPATH = "//span[text()='Settlement Model']"
     FIX_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='FIX Matching Profile']"
 
-    FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='FX Market Making']"
+    FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='Market Making']"
     QUOTING_SESSIONS_ITEM_XPATH = "//span[text()='Quoting Sessions']"
-    CLIENT_TIER_ITEM_XPATH = "//span[text()='Client Tier']"
-    AUTO_HEDGER_ITEM_XPATH = "//span[text()='Auto Hedger']"
+    CLIENT_TIER_ITEM_XPATH = "//span[text()='Client Tiers']"
+    AUTO_HEDGER_ITEM_XPATH = "//span[text()='Auto Hedgers']"
 
     PRICE_CLEANSING_TOGGLE_CSS_SELECTOR = "a[title='Price Cleansing']"
     CROSSED_VENUE_RATES_ITEM_XPATH = "//span[text()='Crossed Venue Rates']"

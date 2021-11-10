@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('DMA', parent_id)
+    report_id = bca.create_event('Iceberg regression', parent_id)
     try:
         QAP_5120.execute(session_id, report_id)
         QAP_5122.execute(session_id, report_id)

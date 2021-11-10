@@ -46,7 +46,7 @@ class QAP_3222(CommonTestCase):
         self.new_client_group = "Kepler"
         self.new_account = "DEMO_MO2"
         self.new_client = "CLIENT2"
-        self.new_venue = "BLOOMBERG"
+        self.new_venue = "BATS"
         self.new_instrument = "EUR"
         self.new_instrument_group = "TC Instr Grp"
 
@@ -74,7 +74,7 @@ class QAP_3222(CommonTestCase):
         dimensions_sub_wizard.set_account(self.account)
         dimensions_sub_wizard.set_client(self.client)
         dimensions_sub_wizard.set_venue(self.venue)
-        #dimensions_sub_wizard.set_instrument(self.instrument)
+        # dimensions_sub_wizard.set_instrument(self.instrument)
         dimensions_sub_wizard.set_instrument_group(self.instrument_group)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -94,7 +94,6 @@ class QAP_3222(CommonTestCase):
         dimensions_sub_wizard.set_account(self.new_account)
         dimensions_sub_wizard.set_client(self.new_client)
         dimensions_sub_wizard.set_venue(self.new_venue)
-        #dimensions_sub_wizard.set_instrument(self.new_instrument)
         dimensions_sub_wizard.set_instrument_group(self.new_instrument_group)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -118,7 +117,6 @@ class QAP_3222(CommonTestCase):
                                    self.new_account,
                                    self.new_client,
                                    self.new_venue,
-                                   #self.new_instrument,
                                    self.new_instrument_group
 
                                    ]

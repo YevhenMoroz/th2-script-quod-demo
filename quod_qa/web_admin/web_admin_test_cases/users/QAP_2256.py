@@ -16,7 +16,7 @@ class QAP_2256(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
-        self.venue = "JSE"
+        self.venue = "AMEX"
         self.venue_trader_name = "AW9RSTOWN03_03426"
 
 

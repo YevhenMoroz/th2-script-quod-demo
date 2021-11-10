@@ -30,7 +30,8 @@ class WashBookConstants:
     CLIENT_ID_SOURCE_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']/div[2]/div[5]//input"
     CLEARING_ACCOUNT_TYPE_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']/div[2]/div[6]//input"
     COUNTERPART_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']/div[2]/div[7]//input"
-    ENABLED_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='boolean-filter ng-untouched ng-pristine ng-valid']"
+    ENABLED_FILTER_AT_MAIN_PAGE_XPATH = "//select[@class='boolean-filter ng-untouched ng-pristine ng-valid']"
+    ENABLED_FILTER_LIST_AT_MAIN_PAGE_XPATH = "//*[text()='{}']"
 
     # ~~~EDIT SUB WIZARD~~~
     SINCE_INCEPTION_PL = '//*[text()="Since Inception PL"]/preceding-sibling::input'
