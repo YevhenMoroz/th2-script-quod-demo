@@ -125,7 +125,7 @@ def execute(report_id):
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= 1, NavigatorInitialSweepTime= 10, NavigatorLimitPrice= price_nav))
 
         fix_manager = FixManager(connectivity_sell_side, case_id)
-        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message)
+        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message, case_id_1)
 
         time.sleep(1)
 
@@ -185,6 +185,38 @@ def execute(report_id):
         fix_verifier_ss.CheckExecutionReport(er_2, response_new_order_single, case=case_id_2, message_name='FIXQUODSELL7 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
         er_3 = {
+            'Account': account,
+            'ExecID': '*',
+            'OrderQty': qty,
+            'OrderID': '*',
+            'TransactTime': '*',
+            'Side': side,
+            'AvgPx': '0',
+            'OrdStatus': 'A',
+            'TimeInForce': tif_day,
+            'ExecType': "A",
+            'LeavesQty': qty,
+            'CumQty': '0',
+            'OrdType': order_type,
+            'ClOrdID': '*',
+            'Text': text_pn,
+            'Price': price_nav,
+            'ExDestination': ex_destination_1
+
+        }
+        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2,   message_name='FIXBUYTH2 sent 35=8 Nav slice Pending New', key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+
+        # Check that FIXQUODSELL5 sent 35=8 new
+        er_4 = dict(
+            er_3,
+            ExecType="0",
+            OrdStatus='0',
+            Text= text_n
+        )
+        fix_verifier_bs.CheckExecutionReport(er_4, response_new_order_single, direction=SECOND, case=case_id_2, message_name='FIXBUYTH2 sent 35=8 Nav slice New', key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+
+
+        er_5 = {
             'Account': account,
             'CumQty': qty,
             'LastPx': price_nav,
