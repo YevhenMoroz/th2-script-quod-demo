@@ -50,7 +50,7 @@ def rule_creation():
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
     nos_trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price_nav, price_nav, qty, qty, 0)
 
-    return [nos_trade_rule1]
+    return [nos_rule, nos_trade_rule1]
 
 
 def send_market_data(symbol: str, case_id: str, market_data):
