@@ -84,9 +84,44 @@ class FixManager:
         else:
             response = None
 
-        # TODO add check which act method user should use
-        # TODO return not PlaceMessageRequest but FixMessage
-        return response
+        return self.parse_response(response)
+
+    def parse_response(self, response: PlaceMessageRequest) -> list:
+        response_messages = list()
+        for message in response.response_messages_list:
+            fields = dict()
+            for field in message.fields:
+                #Field
+                if message.fields[field].simple_value != "":
+                    fields.update({field: message.fields[field].simple_value})
+                else:
+                    component_fields = dict()
+                    # Component
+                    for component_field in message.fields[field].message_value.fields:
+                        if message.fields[field].message_value.fields[component_field].simple_value != "":
+                            print(message.fields[field].message_value.fields[component_field].simple_value)
+                            component_fields.update({component_field: message.fields[field].message_value.fields[component_field].simple_value})
+                            fields.update({field: component_fields})
+                        else:
+                            # Repeating Group
+                            repeating_group_list = list()
+                            for repeating_group in message.fields[field].message_value.fields[component_field].list_value.values:
+                                repeating_group_list_field = dict()
+                                for repeating_group_field in repeating_group.message_value.fields:
+                                    repeating_group_list_field.update({repeating_group_field: repeating_group.message_value.fields[repeating_group_field].simple_value})
+                                repeating_group_list.append(repeating_group_list_field)
+                            fields.update({field: repeating_group_list})
+            message_type = message.metadata.message_type
+            responce_fix_message = None
+            if message_type == MessageType.NewOrderSingle.value:
+                responce_fix_message = FixMessageNewOrderSingle()
+            elif message_type == MessageType.ExecutionReport.value:
+                responce_fix_message = FixMessageExecutionReport()
+
+            responce_fix_message.change_parameters(fields)
+
+        response_messages.append(responce_fix_message)
+        return response_messages
 
     def get_case_id(self):
         return self.__case_id
