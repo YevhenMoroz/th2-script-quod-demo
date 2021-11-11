@@ -4,9 +4,11 @@ import time
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper.fix_verifier import FixVerifier
+from quod_qa.wrapper.fix_verifier import FixVerifier as FV
+from quod_qa.wrapper_test import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test import DataSet
 from stubs import Stubs
@@ -96,9 +98,10 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
-        #fix_manager_316 = fix_manager(connectivity_sell_side, case_id)
-        fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+        fix_ver = FixVerifier.FixVerifier(connectivity_sell_side, case_id)
+        fix_manager = FixManager(connectivity_sell_side, case_id)
+        fix_verifier_ss = FV(connectivity_sell_side, case_id)
+        fix_verifier_bs = FV(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
         market_data1 = [
@@ -126,9 +129,15 @@ def execute(report_id):
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorInitialSweepTime= nav_init_sweep, NavigatorLimitPrice= price_nav))
-
-        fix_manager = FixManager(connectivity_sell_side, case_id)
         response_new_order_single = fix_manager.send_message_and_receive_response(fix_message, case_id_1)
+        time.sleep(3)
+        fix_ver.check_fix_message(fix_message, direction=SECOND)
+
+        exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
+        fix_ver.check_fix_message(exec_report)
+
+        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_new_to_pendingnew()
+        fix_ver.check_fix_message(exec_report_2)
 
         time.sleep(1)
 
