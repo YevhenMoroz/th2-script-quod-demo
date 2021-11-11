@@ -103,12 +103,11 @@ no_md_entries_spo_ebs = [
 alias_fh = "fix-fh-q-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
 
+
 def execute(report_id, session_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
     try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
-
-
 
         # Send market data to the EBS-CITI venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_EBS, symbol, securitytype,
@@ -121,7 +120,10 @@ def execute(report_id, session_id):
             no_md_entries_spo_db)). \
             send_market_data_spot(even_name_custom='Send Market Data SPOT DB')
 
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters({'OrderQty': '2000000'})
+        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+            {'OrderQty': '2000000'}).add_fields_into_repeating_group('NoStrategyParameters', [
+            {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
+             'StrategyParameterValue': 'EBS-CITI/DB'}])
         FixManager(alias_gtw, case_id).send_message(fix_message=new_order_sor)
 
         FXOrderBook(case_id, session_id).set_filter(
@@ -142,6 +144,6 @@ def execute(report_id, session_id):
 
     except Exception as e:
         logging.error('Error execution', exc_info=True)
-
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
     finally:
         pass

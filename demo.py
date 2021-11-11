@@ -41,10 +41,10 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
         #
@@ -60,7 +60,7 @@ def test_run():
 
         # QAP_2326.execute(report_id, session_id)
         # QAP_568.execute(report_id, session_id)
-        QAP_5564_not_ready.execute(report_id)
+        QAP_5564_not_ready.execute(report_id,session_id)
         # QAP_5537.execute(report_id,session_id)
         # java_api.TestCase(report_id).execute()
 

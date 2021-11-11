@@ -23,7 +23,7 @@ class FixMessageExecutionReport(FixMessage):
             Price=parameters["Price"],
             Side=parameters["Side"],
             TimeInForce=parameters["TimeInForce"],
-            TransactTime=datetime.utcnow().isoformat(),
+            TransactTime="*",
         )
         super().change_parameters(temp)
 

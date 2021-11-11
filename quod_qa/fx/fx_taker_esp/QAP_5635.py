@@ -10,7 +10,6 @@ from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 
-
 alias_fh = "fix-fh-q-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
 symbol = 'EUR/USD'
@@ -104,7 +103,6 @@ def execute(report_id, session_id):
         case_name = Path(__file__).name[:-3]
         case_id = bca.create_event(case_name, report_id)
 
-
         # Send market data to the EBS-CITI venue EUR/USD spot
         FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_EBS, symbol, securitytype,
                                    connectivity=alias_fh).prepare_custom_md_spot(
@@ -116,7 +114,10 @@ def execute(report_id, session_id):
             no_md_entries_spo_db)). \
             send_market_data_spot(even_name_custom='Send Market Data SPOT DB')
 
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters({'OrderQty': '2000000'})
+        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+            {'OrderQty': '2000000'}).add_fields_into_repeating_group('NoStrategyParameters', [
+            {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
+             'StrategyParameterValue': 'EBS-CITI/DB'}])
         FixManager(alias_gtw, case_id).send_message(fix_message=new_order_sor)
 
         FXOrderBook(case_id, session_id).set_filter(
