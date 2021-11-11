@@ -20,7 +20,7 @@ class FixVerifier:
     def set_case_id(self, case_id):
         self.__case_id = case_id
 
-    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST):
+    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST.value):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -32,7 +32,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction.value)
+                    Direction.Value(direction)
                 )
             )
         elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
@@ -45,7 +45,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction.value)
+                    Direction.Value(direction)
                 )
             )
         else:
