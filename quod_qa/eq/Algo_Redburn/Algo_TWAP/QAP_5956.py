@@ -55,7 +55,9 @@ def execute(report_id):
         new_order_single.change_parameters(dict(OrderQty=100000))
         new_order_single.change_parameters(dict(Price=30))
 
-        fix_manager.send_message_and_receive_response(new_order_single)
+        responce = fix_manager.send_message_and_receive_response(new_order_single)
+
+
         fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.SECOND)
 
         execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
@@ -66,7 +68,7 @@ def execute(report_id):
 
 
 
-        time.sleep(10)
+        # time.sleep(10)
         order_cancel = FixMessageOrderCancelRequest(new_order_single)
         fix_manager.send_message_and_receive_response(order_cancel)
     except:
