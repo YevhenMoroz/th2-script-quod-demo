@@ -319,27 +319,6 @@ def execute(report_id):
 
         time.sleep(10)
 
-        # Cancel First TWAP child order
-        er_6 = {
-            'ExecID': '*',
-            'OrderQty': qty_nav_second,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': "4",
-            'LeavesQty': '0',
-            'CumQty': '0',
-            'ClOrdID': '*',
-            'Text': text_c,
-            'OrigClOrdID': '*'
-        }
-        fix_verifier_bs.CheckExecutionReport(er_6, response_new_order_single, direction=SECOND, case=case_id_3,
-                                             message_name='FIXBUYTH2 sent 35=8 TWAP slice Cancelled',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Text'])
-        # endregion
-
         # region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
         # Cancel Order
