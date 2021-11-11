@@ -20,9 +20,12 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.unallocate_block_call = None
         self.extract_view_orders_table_data_call = None
         self.extract_middle_office_blotter_values_call = None
+        self.extract_allocation_details = None
+        self.extract_allocations_table_data = None
 
     # endregion
     # region Common func
+
     def set_filter(self, filter_list: list):
         self.extract_middle_office_blotter_values_request.set_filter(filter_list)
 
