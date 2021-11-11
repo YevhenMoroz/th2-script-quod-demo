@@ -69,9 +69,38 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def execution_report_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter("Account"),
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='*',
+            Price=new_order_single.get_parameter("Price"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="A",
+            OrdStatus="A",
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            TransactTime='*',
+            AvgPx='*',
+            ExDestination='XPAR'
+
+        )
+        super().change_parameters(temp)
+        return self
+
 
     def change_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
         super().change_from_new_to_pendingnew()
         self.remove_parameter("ExecRestatementReason")
         self.remove_parameter("Account")
+        return self
+
+    def change_buy_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
+        super().change_from_new_to_pendingnew()
+        self.change_parameters(dict(OrdStatus= 0, ExecType= 0))
         return self
