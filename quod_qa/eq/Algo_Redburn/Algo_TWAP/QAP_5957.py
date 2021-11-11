@@ -315,6 +315,8 @@ def execute(report_id):
                                              message_name='FIXQUODSELL7 sent 35=8 Navigator slice New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
+        #endregion
+
         time.sleep(10)
 
         # Cancel First TWAP child order
