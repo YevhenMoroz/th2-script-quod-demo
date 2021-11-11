@@ -32,6 +32,7 @@ price = 29.995
 price_nav = 30
 tif_day = 0
 order_type = 2
+waves = 10
 
 #venue param
 ex_destination_1 = "XPAR"
@@ -126,7 +127,7 @@ def execute(report_id):
         fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
         fix_message.add_ClordId('QAP_5766')
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
-        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= 1, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= 10, Waves = 10, NavigatorPercentage = 50))
+        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= 1, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= 10, Waves = waves, NavigatorPercentage = 50))
 
         fix_manager = FixManager(connectivity_sell_side, case_id)
         response_new_order_single = fix_manager.send_message_and_receive_response(fix_message, case_id_1)
