@@ -11,7 +11,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_default_DMA(self, instr = None):
+    def set_default_DMA(self, instr:Instrument = None):
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -20,7 +20,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
             'OrderQtyData': {'OrderQty': '100'},
             "TimeInForce": "0",
             "OrdType": "2",
-            "Instrument": Instrument.instr.value if instr is not None else Instrument.FR0010436584.value,
+            "Instrument": instr.value if instr is not None else Instrument.FR0010436584.value,
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
