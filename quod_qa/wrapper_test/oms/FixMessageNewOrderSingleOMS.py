@@ -11,14 +11,6 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
-    # default instrument
-    default_instrument = dict(
-        Symbol='FR0010436584',
-        SecurityID='FR0010436584',
-        SecurityIDSource='4',
-        SecurityExchange='XPAR'
-    )
-
     def set_default_DMA(self, instr = None):
         base_parameters = {
             "Account": "CLIENT1",
