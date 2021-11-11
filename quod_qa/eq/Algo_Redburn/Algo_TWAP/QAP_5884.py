@@ -4,8 +4,11 @@ from datetime import datetime
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from quod_qa.wrapper_test.DataSet import DirectionEnum, Connectivity
 from quod_qa.wrapper_test.FixManager import FixManager
-from quod_qa.wrapper_test.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
+from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from rule_management import RuleManager
 from stubs import Stubs
 
@@ -45,14 +48,17 @@ def execute(report_id):
     try:
         rule_list = rule_creation()
 
+        fix_manager = FixManager(Connectivity.Ganymede_316_Redburn.value, report_id)
+        fix_verifier = FixVerifier(Connectivity.Ganymede_316_Redburn.value, report_id)
+
         new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(OrderQty=100000))
 
-        fixmanager = FixManager("fix-sell-side-316-gnmd-rb", report_id)
+        fix_manager.send_message_and_receive_response(new_order_single)
+        fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.SECOND)
 
-        fixmanager.send_message_and_receive_response(new_order_single)
-
-
+        execution_report = FixMessageExecutionReportAlgo(new_order_single=new_order_single)
+        fix_verifier.check_fix_message(execution_report)
     except:
         logging.error("Error execution", exc_info=True)
     finally:
