@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from custom import basic_custom_actions
 from quod_qa.wrapper_test.DataSet import Instrument
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
@@ -21,6 +22,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
     def set_default_DMA(self, instr = None):
         base_parameters = {
             "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
             'OrderQtyData': {'OrderQty': '100'},
