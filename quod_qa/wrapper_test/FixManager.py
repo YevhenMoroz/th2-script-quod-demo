@@ -3,6 +3,8 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from custom import basic_custom_actions
 from quod_qa.wrapper_test.DataSet import MessageType
 from quod_qa.wrapper_test.FixMessage import FixMessage
+from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from stubs import Stubs
 
 
