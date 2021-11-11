@@ -54,17 +54,31 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.clear_details([self.extract_middle_office_blotter_values_request])
         return response
 
+    def extract_allocate_value(self, column_name, account=None):
+        if account is not None:
+            self.extract_allocation_details.set_allocations_filter({"Account ID": account})
+        extraction_detail = self.extraction_detail(column_name, column_name)
+        order_details = self.extract_allocation_details.add_order_details()
+        order_details.add_extraction_details([extraction_detail])
+        response = call(self.extract_allocations_table_data, self.extract_allocation_details.build())
+        self.clear_details([self.extract_allocation_details])
+        return response
+
     # endregion
     # region Set
-    def set_modify_ticket_details(self, client=None, trade_date=None, agreed_price=None, net_gross_ind=None,
-                                  give_up_broker=None, selected_row_count=None, comm_basis=None, comm_rate=None,
-                                  remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None, fee_category=None,
-                                  remove_fee=False, settl_type=None, settl_date=None, settl_amount=None, bo_notes=None,
-                                  settl_currency=None, misc_trade_date=None, bo_fields: list = None, extract_data=None):
+    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
+                                  net_gross_ind=None, give_up_broker=None, selected_row_count=None, comm_basis=None,
+                                  comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
+                                  fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
+                                  settl_amount=None, bo_notes=None, settl_currency=None, misc_trade_date=None,
+                                  bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
-        ticket_details = self.modify_ticket_details.add_ticket_details()
+        if is_alloc_amend:
+            ticket_details = self.modify_ticket_details.add_amend_allocations_details()
+        else:
+            ticket_details = self.modify_ticket_details.add_ticket_details()
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -77,8 +91,7 @@ class BaseMiddleOfficeBook(BaseWindow):
             ticket_details.set_give_up_broker(give_up_broker)
         commission_details = self.modify_ticket_details.add_commissions_details()
         if comm_basis or comm_rate is not None:
-            response = self.check_booking_toggle_manual()
-            if response['book.manualCheckboxState'] == 'unchecked':
+            if toggle_manual:
                 commission_details.toggle_manual()
             commission_details.add_commission(comm_basis, comm_rate)
         if remove_comm:
@@ -108,18 +121,23 @@ class BaseMiddleOfficeBook(BaseWindow):
                     getattr(misc_details, "set_bo_field_" + str(i))(field)
             if bo_notes is not None:
                 misc_details.set_bo_notes_value(bo_notes)
-        extraction_details = self.modify_ticket_details.add_extraction_details()
-        extraction_details.set_extraction_id("BookExtractionId")
-        extraction_details.extract_net_price(extract_data + ".totalAllocQty")
-        extraction_details.extract_net_price(extract_data + ".netPrice")
-        extraction_details.extract_net_amount(extract_data + ".netAmount")
-        extraction_details.extract_total_comm(extract_data + ".totalComm")
-        extraction_details.extract_gross_amount(extract_data + ".grossAmount")
-        extraction_details.extract_total_fees(extract_data + ".totalFees")
-        extraction_details.extract_agreed_price(extract_data + ".agreedPrice")
-        extraction_details.extract_pset_bic(extract_data + ".psetBic")
-        extraction_details.extract_exchange_rate(extract_data + ".settlementType")
-        extraction_details.extract_settlement_type(extract_data + ".exchangeRate")
+        if extract_book or extract_alloc:
+            if extract_book:
+                extract_data = "book"
+            else:
+                extract_data = "alloc"
+            extraction_details = self.modify_ticket_details.add_extraction_details()
+            extraction_details.set_extraction_id("BookExtractionId")
+            extraction_details.extract_net_price(extract_data + ".totalAllocQty")
+            extraction_details.extract_net_price(extract_data + ".netPrice")
+            extraction_details.extract_net_amount(extract_data + ".netAmount")
+            extraction_details.extract_total_comm(extract_data + ".totalComm")
+            extraction_details.extract_gross_amount(extract_data + ".grossAmount")
+            extraction_details.extract_total_fees(extract_data + ".totalFees")
+            extraction_details.extract_agreed_price(extract_data + ".agreedPrice")
+            extraction_details.extract_pset_bic(extract_data + ".psetBic")
+            extraction_details.extract_exchange_rate(extract_data + ".settlementType")
+            extraction_details.extract_settlement_type(extract_data + ".exchangeRate")
         return self.modify_ticket_details
 
     # endregion
