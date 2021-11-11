@@ -128,7 +128,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
 
         fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
-        fix_message.add_ClordId('QAP_5766')
+        fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves = waves, NavigatorPercentage = nav_percent))
 
