@@ -87,10 +87,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             TransactTime='*',
             AvgPx='*',
-            ExDestination='XPAR',
-            NoParty='*',
-            NoStrategyParameters='*',
-            SecAltIDGrp='*'
+            ExDestination='XPAR'
         )
         super().change_parameters(temp)
         return self
