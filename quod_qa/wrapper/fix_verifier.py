@@ -92,15 +92,15 @@ class FixVerifier:
             )
         )
 
-    def CheckListStatusRequest(self, parameters, response, key_parameters=['ListID', 'ListOrderStatus'],
-                               direction='FIRST', message_name='Check ListStatusRequest', case=None):
+    def CheckListStatus(self, parameters, response, key_parameters=['ListID', 'ListOrderStatus'],
+                               direction='FIRST', message_name='Check ListStatus', case=None):
         if case == None:
             case = self.case_id
 
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc("ListStatusRequest", parameters, key_parameters),
+                bca.filter_to_grpc("ListStatus", parameters, key_parameters),#Request
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,

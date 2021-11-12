@@ -9,7 +9,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
 # from demo import logger
-from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity
+from quod_qa.wrapper.eq_fix_wrappers import buy_connectivity, logger
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
@@ -29,8 +29,8 @@ from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketE
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.trades_blotter_wrappers import MatchDetails, ModifyTradesDetails
 from win_gui_modules.utils import prepare_fe, get_opened_fe, call
-from win_gui_modules.wrappers import direct_order_request, reject_order_request, direct_child_care_сorrect, \
-    direct_loc_request_correct, direct_moc_request_correct
+from win_gui_modules.wrappers import direct_order_request, reject_order_request, \
+    direct_loc_request_correct, direct_moc_request_correct, direct_child_care
 from win_gui_modules.wrappers import set_base, accept_order_request
 
 
@@ -216,7 +216,7 @@ def direct_moc_order(qty, route):
 def direct_child_care_order(qty, route, recipient, count):
     try:
         call(Stubs.win_act_order_book.orderBookDirectChildCare,
-             direct_child_care_сorrect('UnmatchedQty', qty, recipient, route, count))
+             direct_child_care('UnmatchedQty', qty, recipient, route, count))
     except Exception:
         basic_custom_actions.create_event('Fail direct_child_care_order', status="FAIL")
         logger.error("Error execution", exc_info=True)
