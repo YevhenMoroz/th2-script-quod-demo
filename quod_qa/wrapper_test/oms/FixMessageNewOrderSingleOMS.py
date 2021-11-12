@@ -23,9 +23,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
             "Instrument": instr.value if instr is not None else Instrument.FR0010436584.value,
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
-            "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR"
+            "Price": "20"
         }
         super().change_parameters(base_parameters)
         return self
