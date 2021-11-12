@@ -4,7 +4,7 @@ import time
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper_test import FixVerifier
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -16,11 +16,6 @@ from custom.basic_custom_actions import message_to_grpc, convert_to_request
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-
-#text
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_f = 'Fill'
 
 #order param
 qty = 100000
@@ -97,8 +92,8 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
-        fix_verifier_ss = FixVerifier.FixVerifier(connectivity_sell_side, case_id)
-        fix_verifier_bs = FixVerifier.FixVerifier(connectivity_buy_side, case_id)
+        fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
+        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
         fix_manager = FixManager(connectivity_sell_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
@@ -149,7 +144,7 @@ def execute(report_id):
         fix_verifier_bs.set_case_id(case_id_2)
 
         navigator_child = FixMessageNewOrderSingleAlgo().set_DMA()
-        navigator_child.change_parameter('OrderQty', '100000')
+        navigator_child.change_parameter('OrderQty', qty)
         fix_verifier_bs.check_fix_message(navigator_child, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D')
 
         exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child)
