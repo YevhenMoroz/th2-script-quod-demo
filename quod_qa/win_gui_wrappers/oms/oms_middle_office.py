@@ -1,7 +1,8 @@
 from quod_qa.win_gui_wrappers.base_middle_office_book import BaseMiddleOfficeBook
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
-    ExtractMiddleOfficeBlotterValuesRequest
+    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
 class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
@@ -9,7 +10,7 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
         # Need to override
-        self.extraction_detail = None
+        self.extraction_detail = ExtractionDetail
         self.modify_ticket_details = ModifyTicketDetails(self.base_request)
         self.view_order_extraction_details = ViewOrderExtractionDetails(self.base_request)
         self.extract_middle_office_blotter_values_request = ExtractMiddleOfficeBlotterValuesRequest(self.base_request)
@@ -22,4 +23,6 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
         self.unallocate_block_call = Stubs.win_act_middle_office_service.unAllocateMiddleOfficeTicket
         self.extract_view_orders_table_data_call = Stubs.win_act_middle_office_service.extractViewOrdersTableData
         self.extract_middle_office_blotter_values_call = Stubs.win_act_middle_office_service.extractMiddleOfficeBlotterValues
+        self.extract_allocation_details = AllocationsExtractionDetails(self.base_request)
+        self.extract_allocations_table_data = Stubs.win_act_middle_office_service.extractAllocationsTableData
         # endregion
