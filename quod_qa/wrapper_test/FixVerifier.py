@@ -63,6 +63,7 @@ class FixVerifier:
             if message_name is None:
                 message_name = "Check OrderCancelReplaceRequest"
 
+            fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
@@ -80,6 +81,7 @@ class FixVerifier:
             if message_name is None:
                 message_name = "Check OrderCancelRequest"
 
+            fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
