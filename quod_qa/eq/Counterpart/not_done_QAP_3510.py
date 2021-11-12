@@ -45,7 +45,7 @@ def execute(report_id, session_id):
                                                                                   traded_qty=int(qty["OrderQty"]),
                                                                                   delay=0)
         fix_message = FixMessageNewOrderSingleOMS()
-        fix_message.set_default_DMA(Instrument.ISI1)
+        fix_message.set_default_dma_limit(Instrument.ISI1)
         fix_message.add_ClordId('QAP_3510')
         fix_message.change_parameters(dict(Account=client, OrderQtyData=qty, Price=price, PreAllocGrp=no_allocs))
 

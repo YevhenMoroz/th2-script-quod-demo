@@ -32,10 +32,10 @@ def execute(report_id, session_id):
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(Connectivity.Ganymede_317_buy.value,
                                                                              client + '_PARIS', "XPAR", float(price))
         fix_manager = FixManager(Connectivity.Ganymede_317_ss.value, report_id)
-        new_order_single1 = FixMessageNewOrderSingleOMS().set_default_DMA().add_ClordId(
+        new_order_single1 = FixMessageNewOrderSingleOMS().set_default_dma_limit().add_ClordId(
             (os.path.basename(__file__)[:-3])).change_parameters(
             {'OrderQtyData': {'OrderQty': qty}, "Price": price, "Account": client, 'PreAllocGrp': no_allocs})
-        new_order_single2 = FixMessageNewOrderSingleOMS().set_default_DMA().add_ClordId(
+        new_order_single2 = FixMessageNewOrderSingleOMS().set_default_dma_limit().add_ClordId(
             (os.path.basename(__file__)[:-3])).change_parameters(
             {'OrderQtyData': {'OrderQty': qty}, "Price": price, "Account": client, 'PreAllocGrp': no_allocs,
              "Side": "2"})
