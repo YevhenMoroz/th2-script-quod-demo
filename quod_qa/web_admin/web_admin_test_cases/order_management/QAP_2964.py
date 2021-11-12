@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -17,7 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_2964(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.parameter_at_lit_general_block = "BrokerStrategy"
@@ -47,7 +49,6 @@ class QAP_2964(CommonTestCase):
         lit_general.click_on_checkmark_button()
         lit_general.click_on_go_back_button()
         strategies_wizard.click_on_save_changes()
-        main_menu.set_enabled_at_filter_field("true")
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)
         main_menu.click_on_more_actions()
@@ -66,7 +67,6 @@ class QAP_2964(CommonTestCase):
                         actual_parameter_and_value_at_lit_general_block)
             time.sleep(2)
             strategies_wizard.click_on_save_changes()
-            main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             main_menu.click_on_enable_disable_button()

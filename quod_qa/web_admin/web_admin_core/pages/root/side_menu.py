@@ -16,11 +16,11 @@ from quod_qa.web_admin.web_admin_core.pages.positions.wash_books.wash_books_cons
 from quod_qa.web_admin.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_constants import \
     WashBookRulesConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
-from quod_qa.web_admin.web_admin_core.pages.fx_market_making.auto_hedger.auto_hedger_constants import \
+from quod_qa.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_constants import \
     AutoHedgerConstants
-from quod_qa.web_admin.web_admin_core.pages.fx_market_making.client_tier.client_tier_constants import \
+from quod_qa.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_constants import \
     ClientTierConstants
-from quod_qa.web_admin.web_admin_core.pages.fx_market_making.quoting_sessions.quoting_sessions_constants import \
+from quod_qa.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_constants import \
     QuotingSessionsConstants
 from quod_qa.web_admin.web_admin_core.pages.general.admin_command.admin_command_constants import AdminCommandConstants
 from quod_qa.web_admin.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \

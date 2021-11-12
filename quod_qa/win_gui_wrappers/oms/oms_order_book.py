@@ -1,9 +1,9 @@
-from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
-from win_gui_modules.common_wrappers import GridScrollingDetails
-from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
+from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
+
+from quod_qa.win_gui_wrappers.base_order_book import BaseOrderBook
 from stubs import Stubs
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, SecondLevelExtractionDetails

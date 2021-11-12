@@ -6,6 +6,7 @@ from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -17,7 +18,7 @@ class QAP_2578(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.user_id = "adm01"
         self.password_expiration = "8/8/2026"
-
+        self.email = "test"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,6 +39,10 @@ class QAP_2578(CommonTestCase):
         users_login_wizard = UsersLoginSubWizard(self.web_driver_container)
         time.sleep(2)
         users_login_wizard.set_password_expiration("")
+        time.sleep(1)
+        user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
+        user_details_sub_wizard.set_mail(self.email)
+        time.sleep(1)
         users_wizard = UsersWizard(self.web_driver_container)
         users_wizard.click_on_save_changes()
         time.sleep(2)

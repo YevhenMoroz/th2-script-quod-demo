@@ -1,5 +1,7 @@
 import time
 
+from selenium.webdriver.common.keys import Keys
+
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.login.login_constants import LoginConstants
 from quod_qa.web_admin.web_admin_core.pages.root.root_constants import RootConstants
@@ -12,10 +14,14 @@ class LoginPage(CommonPage):
 
     def set_login(self, login: str):
         login_input = self.find_by_css_selector(LoginConstants.LOGIN_INPUT_CSS_SELECTOR)
+        login_input.send_keys(Keys.CONTROL + "a")
+        login_input.send_keys(Keys.DELETE)
         login_input.send_keys(login)
 
     def set_password(self, password: str):
         password_input = self.find_by_css_selector(LoginConstants.PASSWORD_INPUT_CSS_SELECTOR)
+        password_input.send_keys(Keys.CONTROL + "a")
+        password_input.send_keys(Keys.DELETE)
         password_input.send_keys(password)
 
     def click_login_button(self):

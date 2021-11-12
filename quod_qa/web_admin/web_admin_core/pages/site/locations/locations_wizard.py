@@ -3,7 +3,6 @@ import time
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.pages.site.locations.locations_constants import LocationsConstants
 
-
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
@@ -35,3 +34,6 @@ class LocationsWizard(CommonPage):
             return True
         else:
             return False
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(LocationsConstants.OK_BUTTON_XPATH).click()

@@ -7,6 +7,8 @@ from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
+from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+    ListingsCurrencySubWizard
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
@@ -26,6 +28,7 @@ class QAP_1736(CommonTestCase):
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
         self.venue = "AMSTERDAM"
+        self.currency = "AFN"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,6 +44,8 @@ class QAP_1736(CommonTestCase):
         values_sub_wizard.set_symbol(self.symbol)
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
+        currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
+        currency_sub_wizard.set_currency(self.currency)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         time.sleep(2)

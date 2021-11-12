@@ -4,7 +4,17 @@ from datetime import timedelta
 
 from custom import basic_custom_actions as bca
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from regression_cycle.web_admin_cycle.run_client_accounts import RunClientsAccounts
+from regression_cycle.web_admin_cycle.run_market_making import RunMarketMaking
+from regression_cycle.web_admin_cycle.run_general import RunGeneral
+from regression_cycle.web_admin_cycle.run_middle_office import RunMiddleOffice
+from regression_cycle.web_admin_cycle.run_order_management import RunOrderManagement
+from regression_cycle.web_admin_cycle.run_other import RunOthers
+from regression_cycle.web_admin_cycle.run_positions import RunPositions
+from regression_cycle.web_admin_cycle.run_reference_data import ReferenceData
+from regression_cycle.web_admin_cycle.run_risk_limits import RunRiskLimits
 from regression_cycle.web_admin_cycle.run_site import RunSite
+from regression_cycle.web_admin_cycle.run_users import RunUsers
 from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -26,13 +36,13 @@ def test_run(parent_id=None):
         # content
         web_driver_container = WebDriverContainer()
         # RunGeneral(web_driver_container, parent_id).execute()
-        RunSite(web_driver_container, parent_id).execute()
-        # RunUsers(web_driver_container, parent_id).execute()
+        # RunSite(web_driver_container, parent_id).execute()
+        RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()
         # RunClientsAccounts(web_driver_container, parent_id).execute()
         # RunOrderManagement(web_driver_container, parent_id).execute()
         # RunMiddleOffice(web_driver_container, parent_id).execute()
-        # RunFxMarketMaking(web_driver_container, parent_id).execute()
+        #RunMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
         # RunPositions(web_driver_container, parent_id).execute()
         # RunOthers(web_driver_container, parent_id).execute()
