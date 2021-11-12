@@ -10,7 +10,8 @@ from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNew
 from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test import DataSet
-from quod_qa.wrapper_test.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from stubs import Stubs
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -54,6 +55,43 @@ def rule_creation():
 
     return [nos_rule, nos_trade_rule1]
 
+
+def send_market_data(symbol: str, case_id: str, market_data):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol=symbol,
+        connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntries': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataSnapshotFullRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
+    ))
+
+
+def send_market_dataT(symbol: str, case_id: str, market_data):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol=symbol,
+            connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntriesIR': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
+    ))
+
+
 def execute(report_id):
     try:
         rule_list = rule_creation()
@@ -64,7 +102,21 @@ def execute(report_id):
         fix_manager = FixManager(connectivity_sell_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()
+        market_data1 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': '30',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': '40',
+                'MDEntrySize': '100000',
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data1)
 
         time.sleep(3)
 
