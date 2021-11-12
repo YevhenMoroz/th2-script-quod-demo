@@ -57,11 +57,12 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.clear_details([self.extract_middle_office_blotter_values_request])
         return response
 
-    def extract_allocate_value(self, column_name, account=None):
+    def extract_allocate_value(self, column_name, account=None, order_number=1):
         if account is not None:
             self.extract_allocation_details.set_allocations_filter({"Account ID": account})
         extraction_detail = self.extraction_detail(column_name, column_name)
         order_details = self.extract_allocation_details.add_order_details()
+        order_details.set_order_number(order_number)
         order_details.add_extraction_details([extraction_detail])
         response = call(self.extract_allocations_table_data, self.extract_allocation_details.build())
         self.clear_details([self.extract_allocation_details])
