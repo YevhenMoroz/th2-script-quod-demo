@@ -261,8 +261,6 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
         elif isinstance(content[tag], dict):
             content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
-            print(type(content[tag]))
-            print(content[tag])
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
