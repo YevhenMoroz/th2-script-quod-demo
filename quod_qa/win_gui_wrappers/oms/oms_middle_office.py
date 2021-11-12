@@ -23,6 +23,6 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
         self.unallocate_block_call = Stubs.win_act_middle_office_service.unAllocateMiddleOfficeTicket
         self.extract_view_orders_table_data_call = Stubs.win_act_middle_office_service.extractViewOrdersTableData
         self.extract_middle_office_blotter_values_call = Stubs.win_act_middle_office_service.extractMiddleOfficeBlotterValues
-        self.extract_allocation_details = AllocationsExtractionDetails(base=self.base_request)
+        self.extract_allocation_details = AllocationsExtractionDetails(self.base_request)
         self.extract_allocations_table_data = Stubs.win_act_middle_office_service.extractAllocationsTableData
         # endregion
