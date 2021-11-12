@@ -11,7 +11,7 @@ class FixMessageExecutionReport(FixMessage):
             self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)
 
-    def update_fix_message(self, parameters: dict) -> None:
+    def update_fix_message(self, parameters: dict) -> FixMessage:
         temp = dict(
             Account=parameters["Account"],
             ClOrdID=parameters["ClOrdID"],
@@ -28,11 +28,13 @@ class FixMessageExecutionReport(FixMessage):
             TransactTime=datetime.utcnow().isoformat(),
         )
         super().change_parameters(temp)
+        return self
 
-    def change_from_new_to_pendingnew(self):
+    def change_from_new_to_pendingnew(self) -> FixMessage:
         super().change_parameters(
             dict(
                 ExecType="A",
                 OrdStatus="A",
             )
         )
+        return self
