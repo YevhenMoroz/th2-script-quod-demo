@@ -20,14 +20,18 @@ class FixVerifier:
     def set_case_id(self, case_id):
         self.__case_id = case_id
 
-    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST.value):
+    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST.value, message_name: str = None):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
+
+            if message_name is None:
+                message_name = "Check NewOrderSingle"
+
             fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
-                    "Check NewOrderSingle",
+                    message_name,
                     basic_custom_actions.filter_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -38,9 +42,13 @@ class FixVerifier:
         elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
+
+            if message_name is None:
+                message_name = "Check ExecutionReport"
+
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
-                    "Check ExecutionReport",
+                    message_name,
                     basic_custom_actions.filter_to_grpc(MessageType.ExecutionReport.value, fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,

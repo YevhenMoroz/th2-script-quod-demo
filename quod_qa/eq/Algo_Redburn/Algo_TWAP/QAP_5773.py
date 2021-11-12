@@ -51,7 +51,7 @@ SECOND = DataSet.DirectionEnum.SECOND.value
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
-instrument = DataSet.Instrument.FR0000062788.value
+instrument = DataSet.Instrument.BUI.value
 
 def rule_creation():
     rule_manager = RuleManager()

@@ -11,6 +11,27 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
 
+    def set_DMA(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': Instrument.BUI.value,
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'SettlDate': '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'NoParty': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
@@ -52,7 +73,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "30",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0000062788.value,
+            "Instrument": Instrument.BUI.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
                 'NavigatorExecution': '1',
@@ -98,7 +119,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Price': 30,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': Instrument.FR0000062788.value,
+            'Instrument': Instrument.BUI.value,
             'OrderCapacity': 'A',
             'Currency': "EUR",
             'TargetStrategy': 1005,
