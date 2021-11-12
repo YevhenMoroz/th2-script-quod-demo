@@ -122,6 +122,60 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def execution_report_cancel(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx=0,
+            ClOrdID='*',
+            CumQty=0,
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Price=new_order_single.get_parameter('Price'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=0,
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            TargetStrategy=1005,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            QtyType='*',
+            NoParty='*',
+            NoStrategyParameters='*',
+            SecAltIDGrp='*',
+        )
+        super().change_parameters(temp)
+        return self
+
+    def execution_report_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrigClOrdID='*',
+            Side=new_order_single.get_parameter('Side'),
+            Text='order canceled',
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0
+        )
+        super().change_parameters(temp)
+        return self
+
     def change_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
         super().change_from_new_to_pendingnew()
         self.remove_parameter("ExecRestatementReason")
