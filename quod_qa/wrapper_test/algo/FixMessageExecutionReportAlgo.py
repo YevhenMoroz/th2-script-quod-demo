@@ -64,7 +64,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecRestatementReason='4',
             OrderID='*',
             SettlDate='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty")
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            NoParty='*',
+            NoStrategyParameters='*',
+            SecAltIDGrp='*'
         )
         super().change_parameters(temp)
         return self
