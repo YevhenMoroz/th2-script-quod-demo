@@ -16,11 +16,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-#text
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_pf = 'Partial fill'
-
 #order param
 qty = 300000
 qty_nav_trade = 200000
@@ -71,6 +66,7 @@ def execute(report_id):
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
+        #send Market Data
         case_id_0 = bca.create_event("Send Market Data", case_id)
         market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         fix_manager_md.set_case_id(case_id_0)
@@ -93,10 +89,10 @@ def execute(report_id):
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
         exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['OrderQty', 'Price'], message_name='Sell side Pending new')
+        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
-        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['OrderQty', 'Price'], message_name='Sell side New')
+        exec_report_2 = FixMessageExecutionReportAlgo().execution_report_new(fix_message)
+        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side New')
         # endregion
 
         # region Check Buy side
