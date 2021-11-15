@@ -127,7 +127,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def execution_report_fill (self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_fill_sell (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',

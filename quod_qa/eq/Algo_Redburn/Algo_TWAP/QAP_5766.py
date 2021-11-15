@@ -111,7 +111,7 @@ def execute(report_id):
         case_id_3 = bca.create_event("Check parent order Fill", case_id)
         fix_verifier_ss.set_case_id(case_id_3)
 
-        exec_report_6 = FixMessageExecutionReportAlgo().execution_report_fill(fix_message)
+        exec_report_6 = FixMessageExecutionReportAlgo().set_fill_sell(fix_message)
         fix_verifier_ss.check_fix_message(exec_report_6, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Parent Fill')
         #endregion
     except:
