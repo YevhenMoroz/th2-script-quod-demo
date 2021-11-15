@@ -32,7 +32,6 @@ class ClientsConstants:
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@col-id="clearingAccountType"]//span//span[4]'
 
-
     # values tab
     VALUES_TAB_ID_XPATH = '//*[@formcontrolname="accountGroupID"]'
     VALUES_NAME_XPATH = '//*[@formcontrolname="accountGroupName"]'
@@ -88,6 +87,7 @@ class ClientsConstants:
     POLICIES_TAB_DEFAULT_ALGO_TYPE_XPATH = '//*[@id="defaultAlgoType"]'
     POLICIES_TAB_CUSTOM_VALIDATION_RULES_XPATH = '//*[@id="validParamGroup"]'
     POLICIES_TAB_MANAGE_CUSTOM_VALIDATION_RULES_XPATH = '//*[@class="col-sm"]'
+    POLICIES_TAB_LIST_OF_DEFAULT_STRATEGIES_XPATH = "//*[@class='empty-option font-italic nb-transition ng-star-inserted']//*[text()='Default']"
     # MANAGE sub wizard
     VALID_PARAM_GROUPS_TAB_PLUS_BUTTON_XPATH = '//*[@class="account-group-valid-param-group-settings"]//*[@class="nb-plus ng2-add-btn"]'
     VALID_PARAM_GROUPS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="account-group-valid-param-group-settings"]//*[@class="nb-checkmark"]'

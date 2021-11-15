@@ -169,3 +169,6 @@ class ExecutionStrategiesWizard(CommonPage):
 
     def get_error_type_after_empty_saved(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.INCORRECT_OR_MISSING_VALUES_ERROR).text
+
+    def click_on_go_back_button(self):
+        self.find_by_xpath(ExecutionStrategiesConstants.GO_BACK_BUTTON_AT_SUB_WIZARD).click()

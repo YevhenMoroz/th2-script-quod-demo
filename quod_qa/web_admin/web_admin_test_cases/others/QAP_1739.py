@@ -36,7 +36,6 @@ class QAP_1739(CommonTestCase):
         time.sleep(2)
         routes_wizard.set_name_at_values_tab(self.name)
         time.sleep(2)
-        # routes_wizard.click_on_save_changes()
         venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
         # create two new venues
 

@@ -24,6 +24,7 @@ class FixVerifier:
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
+            fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check NewOrderSingle",

@@ -161,26 +161,6 @@ def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str):
     return request
 
 
-def direct_child_care_сorrect(qty_type: str, qty_percentage: str, recipient: str, route: str, count: int):
-    request = act_ui_win_pb2.DirectChildCareDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    for i in range(1, count + 1):
-        request.selectedRows.append(i)
-    request.qtyType = qty_type
-    request.qtyPercentage = qty_percentage
-    request.recipient = recipient
-    request.route = route
-    return request
-
-
-def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str):
-    request = act_ui_win_pb2.DirectMocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.qtyType = qty_type
-    request.qtyPercentage = qty_percentage
-    request.route = route
-
-    return request
-
-
 def accept_order_request(instr: str, qty: str, limit: str):
     request = act_ui_win_pb2.NewCareOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.instrLookupSymbol = instr
@@ -204,4 +184,14 @@ def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
     request.orderDetails.quantity = qty
     request.qtyPercentage = qty_percent
 
+    return request
+
+
+def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percentage, route):
+    request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+    request.qtyType = qty_type
+    request.qtyPercentage = qty_percentage
+    request.route = route
+    request.percentage = percentage
+    request.reference_price = reference_price
     return request

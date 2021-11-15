@@ -7,6 +7,8 @@ from custom import basic_custom_actions
 from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
+from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+    ListingsCurrencySubWizard
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
@@ -23,12 +25,13 @@ class QAP_1737(CommonTestCase):
         self.login = "adm02"
         self.password = "adm02"
         self.symbol = "EUR/USD"
-        self.lookup_symbol = "EUR/USD"+''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_lookup_symbol = "EUR/USD"+''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
         self.venue = "CHIX"
-        self.preferred_venue = "BAMLF"
+        self.preferred_venue = "AMEX"
         self.new_preferred_venue = "ADX"
+        self.currency = "AFN"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,6 +50,8 @@ class QAP_1737(CommonTestCase):
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         attachment_sub_wizard.set_preferred_venue(self.preferred_venue)
+        currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
+        currency_sub_wizard.set_currency(self.currency)
         time.sleep(2)
         wizard = ListingsWizard(self.web_driver_container)
         wizard.click_on_save_changes()

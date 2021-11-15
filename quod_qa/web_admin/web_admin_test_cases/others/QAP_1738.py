@@ -39,6 +39,7 @@ class QAP_1738(CommonTestCase):
                         routes_wizard.get_actual_error_after_click_on_next_in_empty_page())
             routes_wizard.set_name_at_values_tab(self.name)
             routes_wizard.click_on_save_changes()
+            time.sleep(2)
             routes_main_menu = RoutesPage(self.web_driver_container)
             routes_main_menu.set_name_at_filter(self.name)
             time.sleep(2)
