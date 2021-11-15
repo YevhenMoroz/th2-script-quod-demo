@@ -38,7 +38,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp["TargetStrategy"] = parameters["TargetStrategy"]
         super().change_parameters(temp)
 
-    def execution_report (self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_pending_new_sell (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -253,7 +253,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         return self
 
     def change_buy_from_pending_new_to_new(self) -> FixMessageExecutionReport:
-        super().change_from_pending_new_to_new()
+        super().change_buy_from_pending_new_to_new()
         self.change_parameters(dict(OrdStatus= 0, ExecType= 0))
         return self
 

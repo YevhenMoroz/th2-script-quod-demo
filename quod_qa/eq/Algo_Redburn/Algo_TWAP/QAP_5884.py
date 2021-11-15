@@ -61,10 +61,10 @@ def execute(report_id):
         fix_manager.send_message_and_receive_response(new_order_single)
         fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.ToQuod)
 
-        execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
+        execution_report = FixMessageExecutionReportAlgo().set_pending_new_sell(new_order_single=new_order_single)
         fix_verifier.check_fix_message(execution_report)
 
-        execution_report2 = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single).change_from_pending_new_to_new()
+        execution_report2 = FixMessageExecutionReportAlgo().set_pending_new_sell(new_order_single=new_order_single).change_from_pending_new_to_new()
         fix_verifier.check_fix_message(execution_report2)
 
 

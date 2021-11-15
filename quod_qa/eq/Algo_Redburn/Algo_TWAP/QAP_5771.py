@@ -85,10 +85,10 @@ def execute(report_id):
         # region Check Sell side
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
-        exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
+        exec_report = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message)
         fix_verifier_ss.check_fix_message(exec_report, message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
+        exec_report_2 = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message).change_from_pending_new_to_new()
         fix_verifier_ss.check_fix_message(exec_report_2, message_name='Sell side New')
         # endregion
 

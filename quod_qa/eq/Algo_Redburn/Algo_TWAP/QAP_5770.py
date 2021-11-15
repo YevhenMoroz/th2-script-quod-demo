@@ -87,7 +87,7 @@ def execute(report_id):
         # region Check Sell side
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
-        exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
+        exec_report = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message)
         fix_verifier_ss.check_fix_message(exec_report, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
 
         exec_report_2 = FixMessageExecutionReportAlgo().execution_report_new(fix_message)
