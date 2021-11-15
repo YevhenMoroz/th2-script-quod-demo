@@ -1,4 +1,5 @@
 import logging
+import time
 
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_fix_wrappers
@@ -40,12 +41,12 @@ def execute(report_id, session_id):
             'AvgPx': '0',
             'CumQty': '0',
             'ClOrdID': no_order[0]['ClOrdID'],
-            'LeavesQty': '900',
+            'LeavesQty': qty,
         }, {
             'AvgPx': '0',
             'CumQty': '0',
             'ClOrdID': no_order[1]['ClOrdID'],
-            'LeavesQty': '900',
+            'LeavesQty': qty,
         }
         ]}
     }
