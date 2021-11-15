@@ -42,8 +42,8 @@ s_par = '555'
 
 #connectivity
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FIRST.value
-SECOND = DataSet.DirectionEnum.SECOND.value
+FIRST = DataSet.DirectionEnum.FromQuod.value
+SECOND = DataSet.DirectionEnum.ToQuod.value
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value

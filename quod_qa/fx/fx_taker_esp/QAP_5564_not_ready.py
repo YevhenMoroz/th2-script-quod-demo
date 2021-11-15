@@ -88,7 +88,7 @@ def execute(report_id, session_id):
             new_order_sor).remove_parameter('LastMkt').add_fields_into_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'AvailableVenues', 'StrategyParameterType': '13',
              'StrategyParameterValue': 'Y'}]).add_party_role()
-        fix_verifier.check_fix_message(execution_report_filled, direction=DirectionEnum.FIRST)
+        fix_verifier.check_fix_message(execution_report_filled, direction=DirectionEnum.FromQuod)
 
         FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "AO", "Qty", "1000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",
@@ -110,7 +110,7 @@ def execute(report_id, session_id):
             new_order_sor_2).remove_parameter('LastMkt').add_fields_into_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'AvailableVenues', 'StrategyParameterType': '13',
              'StrategyParameterValue': 'Y'}]).add_party_role()
-        fix_verifier.check_fix_message(execution_report_filled_2, direction=DirectionEnum.FIRST)
+        fix_verifier.check_fix_message(execution_report_filled_2, direction=DirectionEnum.FromQuod)
 
         FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "AO", "Qty", "5000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",

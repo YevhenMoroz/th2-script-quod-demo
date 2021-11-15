@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class DirectionEnum(Enum):
-    FIRST = "FIRST"
-    SECOND = "SECOND"
+    FromQuod = "FIRST"
+    ToQuod = "SECOND"
 
 
 class MessageType(Enum):

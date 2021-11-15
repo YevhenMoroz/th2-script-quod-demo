@@ -59,7 +59,7 @@ def execute(report_id):
         new_order_single.change_parameters(dict(Price=31))
 
         fix_manager.send_message_and_receive_response(new_order_single)
-        fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.SECOND)
+        fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.ToQuod)
 
         execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
         fix_verifier.check_fix_message(execution_report)

@@ -40,8 +40,8 @@ s_par = '555'
 
 #connectivi
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FIRST.value
-SECOND = DataSet.DirectionEnum.SECOND.value
+FIRST = DataSet.DirectionEnum.FromQuod.value   #From_Quod
+SECOND = DataSet.DirectionEnum.ToQuod.value #To_Quod
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
@@ -61,15 +61,15 @@ def execute(report_id):
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         fix_manager = FixManager(connectivity_sell_side, case_id)
-        fix_manager_md = FixManager(connectivity_fh, case_id)
+        fix_manager_fh = FixManager(connectivity_fh, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         # Send_MarkerData
         case_id_0 = bca.create_event("Send Market Data", case_id)
         market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        fix_manager_md.set_case_id(case_id_0)
-        fix_manager_md.send_message(market_data)
+        fix_manager_fh.set_case_id(case_id_0)
+        fix_manager_fh.send_message(market_data)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
@@ -78,7 +78,7 @@ def execute(report_id):
         fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
-        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves = waves))
+        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves = waves))
         fix_manager.send_message_and_receive_response(fix_message, case_id_1)
         # endregion
 
