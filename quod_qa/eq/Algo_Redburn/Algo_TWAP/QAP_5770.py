@@ -11,6 +11,7 @@ from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCan
 from quod_qa.wrapper_test import DataSet
 from quod_qa.wrapper_test.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -42,7 +43,7 @@ account = 'XPAR_CLIENT2'
 currency = 'EUR'
 s_par = '555'
 
-#connectivity
+#connectivi
 case_name = os.path.basename(__file__)
 FIRST = DataSet.DirectionEnum.FIRST.value
 SECOND = DataSet.DirectionEnum.SECOND.value
@@ -66,11 +67,14 @@ def execute(report_id):
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
         fix_manager = FixManager(connectivity_sell_side, case_id)
+        fix_manager_md = FixManager(connectivity_fh, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()
+        market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
+        fix_manager_md.set_case_id(case_id_0)
+        fix_manager_md.send_message(market_data)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
