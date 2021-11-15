@@ -14,8 +14,8 @@ timeouts = True
 def execute(report_id, session_id):
     case_name = "QAP-4649"
     # region Declarations
-    client = "CLIENT_YMOROZ"
-    account = "CLIENT_YMOROZ_SA1"
+    client = "CLIENT_FIX_CARE"
+    account = "CLIENT_FIX_CARE_SA1"
     qty = "900"
     price = "10"
     case_id = create_event(case_name, report_id)
