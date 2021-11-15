@@ -64,14 +64,76 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecRestatementReason='4',
             OrderID='*',
             SettlDate='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty")
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            NoParty='*',
+            NoStrategyParameters='*',
+            SecAltIDGrp='*'
         )
         super().change_parameters(temp)
         return self
 
+    def execution_report_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter("Account"),
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='*',
+            Price=new_order_single.get_parameter("Price"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="A",
+            OrdStatus="A",
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            TransactTime='*',
+            AvgPx='*',
+            ExDestination='XPAR'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def execution_report_fill_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            LastPx=new_order_single.get_parameter('Price'),
+            ExecID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdType=new_order_single.get_parameter('OrdType'),
+            ClOrdID='*',
+            LastQty=new_order_single.get_parameter('OrderQty'),
+            Text='Fill',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            OrderID='*',
+            TransactTime='*',
+            Side=new_order_single.get_parameter('Side'),
+            AvgPx='*',
+            OrdStatus=2,
+            Price=new_order_single.get_parameter('Price'),
+            Currency=new_order_single.get_parameter('Currency'),
+            TimeInForce=0,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            ExecType='F',
+            LeavesQty=0
+        )
+        super().change_parameters(temp)
+        return self
 
     def change_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
         super().change_from_new_to_pendingnew()
         self.remove_parameter("ExecRestatementReason")
         self.remove_parameter("Account")
+        return self
+
+    def change_buy_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
+        super().change_from_new_to_pendingnew()
+        self.change_parameters(dict(OrdStatus= 0, ExecType= 0))
+        return self
+
+    def change_buy_from_fill_to_partial_fill(self) -> FixMessageExecutionReport:
+        super().change_from_new_to_pendingnew()
+        self.change_parameter('OrdStatus', '1')
         return self
