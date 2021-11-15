@@ -45,6 +45,12 @@ class Instrument(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    ISI1 = dict(
+        Symbol='ISI1',
+        SecurityID='ISI1',
+        SecurityIDSource='4',
+        SecurityExchange='XEUR'
+    )
 
 
 class Connectivity(Enum):
@@ -52,3 +58,6 @@ class Connectivity(Enum):
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
     Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
+    Ganymede_317_ss = 'fix-sell-317-standard-test'
+    Ganymede_317_bs = 'fix-buy-317-standard-test'
+    Ganymede_317_bo = 'fix-sell-317-backoffice'

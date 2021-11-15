@@ -1,17 +1,19 @@
 from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
-
-from .order_ticket import OrderTicketDetails, FXOrderDetails
+from th2_grpc_act_gui_quod import basket_book_pb2
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2, care_orders_pb2
-from .order_ticket import OrderTicketDetails, FXOrderDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
 
 
+
 class ModifyOrderDetails:
-    def __init__(self):
+    def __init__(self, base_request=None):
         self.modify_order_details = order_book_pb2.ModifyOrderDetails()
+        if base_request is not None:
+            self.modify_order_details.base.CopyFrom(base_request)
 
     def set_order_details(self, order_details: OrderTicketDetails):
         self.modify_order_details.orderDetails.CopyFrom(order_details.build())
@@ -91,8 +93,10 @@ class ModifyFXOrderDetails:
 
 
 class CancelOrderDetails:
-    def __init__(self):
+    def __init__(self, base_request):
         self.cancel_order_details = order_book_pb2.CancelOrderDetails()
+        if base_request is not None:
+            self.cancel_order_details.base.CopyFrom(base_request)
 
     def set_filter(self, filter_list: list):
         length = len(filter_list)
@@ -891,8 +895,10 @@ class AddToBasketDetails:
 class CreateBasketDetails:
     def __init__(self, base_request=None, row_numbers: list = None, name: str = None, row_details: list = None):
         self._request = order_book_pb2.CreateBasketDetails()
-        self._request.base.CopyFrom(base_request)
-        self._request.name = name
+        if base_request is not None:
+            self._request.base.CopyFrom(base_request)
+        if name is not None:
+            self._request.name = name
 
         if row_numbers is not None:
             for number in row_numbers:
@@ -932,6 +938,98 @@ class CancelChildOrdersDetails:
 
     def set_filter(self, filter: dict):
         self._request.filter.update(filter)
+
+    def build(self):
+        return self._request
+
+
+class SecondLevelExtractionDetails:
+    def __init__(self, base=None, filter: dict = None, tabs_details: list = None):
+        if base is not None:
+            self.request = order_book_pb2.SecondLevelExtractionDetails(base=base)
+        else:
+            self.request = order_book_pb2.SecondLevelExtractionDetails()
+
+        if filter is not None:
+            self.request.filter.update(filter)
+
+        if tabs_details is not None:
+            for details in tabs_details:
+                self.request.tabsDetails.append(details)
+
+    def set_default_params(self, base_request):
+        self.request.base.CopyFrom(base_request)
+
+    def set_filter(self, filter: dict):
+        self.request.filter.update(filter)
+
+    def set_tabs_details(self, tabs_details: list):
+        for detail in tabs_details:
+            self.request.tabsDetails.append(detail)
+
+    def build(self):
+        return self.request
+
+
+class SecondLevelTabDetails:
+    def __init__(self, tab_name: str = None, columns_names: list = None, rows_numbers: list = None):
+        self.request = order_book_pb2.SecondLevelTabDetails()
+
+        if tab_name is not None:
+            self.request.tabName = tab_name
+
+        if columns_names is not None:
+            for name in columns_names:
+                self.request.columnsNames.append(name)
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self.request.rowsNumbers.append(number)
+
+    def set_tab_name(self, tab_name: str):
+        self.request.tabName = tab_name
+
+    def set_columns_names(self, columns_names: list):
+        for name in columns_names:
+            self.request.columnsNames.append(name)
+
+    def set_rows_numbers(self, rows_numbers: list):
+        for number in rows_numbers:
+            self.request.rowsNumbers.append(number)
+
+    def build(self):
+        return self.request
+
+
+class ExtractOrderDataDetails:
+    def __init__(self):
+        self._request = basket_book_pb2.ExtractOrderDataDetails()
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+    def set_column_names(self, column_names: list):
+        for name in column_names:
+            self._request.columnNames.append(name)
+
+    def build(self):
+        return self._request
+
+
+class ExtractChildOrderDataDetails:
+    def __init__(self, extract_order_data: ExtractOrderDataDetails = None, rows_number: int = None):
+        self._request = basket_book_pb2.ExtractChildOrderDataDetails()
+        self._request.extractDetails.CopyFrom(extract_order_data)
+        self._request.rowsNumber = rows_number
+
+    def set_extract_order_data(self, extract_order_data: ExtractOrderDataDetails):
+        self._request.extractDetails.CopyFrom(extract_order_data)
+
+    def set_rows_number(self, rows_number: int):
+        self._request.rowsNumber = rows_number
 
     def build(self):
         return self._request

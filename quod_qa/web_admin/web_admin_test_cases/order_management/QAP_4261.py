@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -17,7 +19,7 @@ class QAP_4261(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm03"
         self.password = "adm03"
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod TWAP"
 

@@ -55,8 +55,8 @@ def execute(report_id):
         price= md.extract_filed('Price')
 
         new_price = round(float(price)-0.1,5)
-        # text='order price ({0}) lower than offer ({1})'.format(new_price, price)
-        text='not enough quantity in book'
+        text='order price ({0}) lower than offer ({1})'.format(new_price, price)
+        # text='not enough quantity in book'
         md.send_new_order_single(new_price).\
             verify_order_pending(new_price).\
             verify_order_rejected(text, new_price)

@@ -1,3 +1,5 @@
+import random
+import string
 import time
 import traceback
 
@@ -17,7 +19,7 @@ from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCa
 class QAP_2968(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
         self.parameter = "Visibility"

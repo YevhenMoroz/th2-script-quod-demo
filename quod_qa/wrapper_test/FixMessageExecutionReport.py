@@ -13,28 +13,26 @@ class FixMessageExecutionReport(FixMessage):
 
     def update_fix_message(self, parameters: dict) -> FixMessage:
         temp = dict(
-            Account=parameters["Account"],
+            ExecID="*",
+            OrderID="*",
             ClOrdID=parameters["ClOrdID"],
             Currency=parameters["Currency"],
-            HandlInst=parameters["HandlInst"],
             Instrument=parameters["Instrument"],
             OrderQty=parameters["OrderQty"],
             OrdType=parameters["OrdType"],
             Price=parameters["Price"],
             Side=parameters["Side"],
             TimeInForce=parameters["TimeInForce"],
-            ExecType="0",
-            OrdStatus="0",
-            TransactTime=datetime.utcnow().isoformat(),
+            TransactTime="*",
         )
         super().change_parameters(temp)
         return self
 
-    def change_from_pending_new_to_new(self) -> FixMessage:
+    def change_from_new_to_pendingnew(self) -> FixMessage:
         super().change_parameters(
             dict(
-                ExecType="0",
-                OrdStatus="0",
+                ExecType="A",
+                OrdStatus="A",
             )
         )
         return self

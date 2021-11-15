@@ -23,7 +23,7 @@ def execute(report_id, session_id):
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, "XPAR_" + client, "XPAR", True, 0, 0)
+        nos_rule = rule_manager.add_NewOrdSingle_Market_FIXStandard(buy_connectivity, "XPAR_" + client, "XPAR", True, 0, 0)
         fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 2, client, 1, qty, 0)
         response = fix_message.pop('response')
     except Exception:
@@ -35,8 +35,8 @@ def execute(report_id, session_id):
     # region Check values in OrderBook
     params = {
         'Account': client,
-        # 'OrderQtyData': {'OrderQty': qty},
-        'OrderQty': qty,
+        'OrderQtyData': {'OrderQty': qty},
+        #'OrderQty': qty,
         'ExecType': '4',
         'OrdStatus': '4',
         'Side': 2,
@@ -59,7 +59,7 @@ def execute(report_id, session_id):
         'OrderCapacity': '*',
         'QtyType': '*',
         'SecondaryOrderID': '*',
-        'NoParty': '*',
+        'Parties': '*',
         'Instrument': '*',
         'CxlQty': qty,
         'SettlType': '0'

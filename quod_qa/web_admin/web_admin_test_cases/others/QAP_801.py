@@ -62,7 +62,7 @@ class QAP_801(CommonTestCase):
         party_roles_wizard.set_party_role_at_party_roles_tab("Exchange")
         party_roles_wizard.set_ext_id_client_at_party_roles_tab("7")
         party_roles_wizard.set_party_role_qualifier_at_party_roles_tab("Bank")
-        party_roles_wizard.set_venue_at_party_roles_tab("BAMLF")
+        party_roles_wizard.set_venue_at_party_roles_tab("BATS")
         counterparts_wizard.click_on_check_mark()
         time.sleep(2)
         counterparts_wizard.click_on_save_changes()

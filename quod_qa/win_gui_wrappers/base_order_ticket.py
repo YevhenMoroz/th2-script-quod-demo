@@ -4,8 +4,8 @@ from win_gui_modules.utils import call
 
 class BaseOrderTicket(BaseWindow):
     # region Base constructor
-    def __init__(self, case_id, base_request):
-        super().__init__(case_id, base_request)
+    def __init__(self, case_id, session_id):
+        super().__init__(case_id, session_id)
         # Need to override
         self.order_details = None
         self.new_order_details = None

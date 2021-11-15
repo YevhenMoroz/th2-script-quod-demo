@@ -23,6 +23,10 @@ class RestApiMessages:
         }
         self.parameters = modify_params
 
+    def create_institution(self, params):
+        self.message_type = "CreateInstitution"
+        self.parameters = params
+
     def modify_institution(self, params):
         self.message_type = "ModifyInstitution"
         self.parameters = params

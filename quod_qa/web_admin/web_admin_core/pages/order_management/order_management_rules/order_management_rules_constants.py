@@ -22,6 +22,7 @@ class OrderManagementRulesConstants:
     SUCH_RECORD_ALREADY_EXISTS = "//*[text()='Such a record already exists']"
     CAN_NOT_CONTAIN_MORE_THAN_10_CONDITIONS = "//*[text()='Can not contain more than 10 conditions']"
     TOTAL_PERCENTAGE_IS_GREATER_THAN_100 = "//*[text()='Total percentage is greater than 100']"
+    IS_GATING_RULE_ALREADY_HAS_THE_SAME_CRITERIA_MESSAGE_DISPLAYED = "//*[text()='A gating rule already has the same criteria']"
 
     # criteria
     SAVE_CHANGE_CRITERIA_AT_MAIN_MENU_XPATH = "//*[text()='Change criteria']"
@@ -31,6 +32,7 @@ class OrderManagementRulesConstants:
     THIRD_CRITERIA_FIELD_AT_CHANGE_CRITERIA_TAB_XPATH = '//*[@id="gatingRuleCriterion3"]'
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_ENABLED_FILTER_LIST_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//select//option[text()="{}"]'
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//select'
     MAIN_PAGE_LISTING_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
 
@@ -64,8 +66,14 @@ class OrderManagementRulesConstants:
     # Conditional logic
     CONDITIONS_TAB_AND_RADIO_BUTTON = '//*[text()="AND"]/preceding-sibling::span'
     CONDITIONS_TAB_OR_RADIO_BUTTON = '//*[text()="OR"]/preceding-sibling::span'
-    CONDITIONS_TAB_ADD_CONDITION_BUTTON = '//*[@class="sub-form-accordion"]//*[@data-name="plus"]'
-    CONDITIONS_TAB_CLIENT = '//*[text()="Client *"]/preceding-sibling::input'
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH = '//*[@class="sub-form-accordion"]//*[@data-name="plus"]'
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH = '//*[@class = "field-wrapper ng-star-inserted"]//button'
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH = '//*[@name="autocomplete"]'
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH = "//*[@class='operator-wrapper ng-star-inserted']"
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
+
+
 
     # Results sub wizard
     RESULTS_SUB_WIZARD_PLUS_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-plus result-table ng2-main-add-btn"]'
@@ -100,9 +108,9 @@ class OrderManagementRulesConstants:
     DEFAULT_RESULT_TAB_EXEC_POLICY_XPATH = '//*[@placeholder="Exec Policy *"]'
     DEFAULT_RESULT_TAB_PERCENTAGE_XPATH = '//*[@placeholder="Percentage *"]'
 
-    DEFAULT_RESULT_TAB_PRICE_ORIGIN_XPATH = '//*[@id="priceOriginresult-table"]'
-    DEFAULT_RESULT_TAB_EXECUTION_STRATEGY_XPATH = '//*[@id="algoPolicyresult-table"]'
-    DEFAULT_RESULT_TAB_STRATEGY_TYPE_XPATH = '//*[@id="scenarioresult-table"]'
-    DEFAULT_RESULT_TAB_SOR_EXECUTION_STRATEGY_XPATH = '//*[@id="SORAlgoPolicyresult-table"]'
-    DEFAULT_RESULT_TAB_VENUE_XPATH = '//*[@id="resultVenueresult-table"]'
-    DEFAULT_RESULT_TAB_ROUTE_XPATH = '//*[@id="routeresult-table"]'
+    DEFAULT_RESULT_TAB_PRICE_ORIGIN_XPATH = '//*[@id="priceOrigin"]'
+    DEFAULT_RESULT_TAB_EXECUTION_STRATEGY_XPATH = '//*[@id="algoPolicy"]'
+    DEFAULT_RESULT_TAB_STRATEGY_TYPE_XPATH = '//*[@id="scenario"]'
+    DEFAULT_RESULT_TAB_SOR_EXECUTION_STRATEGY_XPATH = '//*[@id="SORAlgoPolicy"]'
+    DEFAULT_RESULT_TAB_VENUE_XPATH = '//*[@id="resultVenue"]'
+    DEFAULT_RESULT_TAB_ROUTE_XPATH = '//*[@id="route"]'

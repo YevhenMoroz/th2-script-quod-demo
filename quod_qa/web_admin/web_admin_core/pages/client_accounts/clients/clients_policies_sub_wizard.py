@@ -1,3 +1,5 @@
+import time
+
 from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
 from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -36,3 +38,12 @@ class ClientsPoliciesSubWizard(CommonPage):
 
     def click_on_manage_custom_validation_rules(self):
         self.find_by_xpath(ClientsConstants.POLICIES_TAB_MANAGE_CUSTOM_VALIDATION_RULES_XPATH).click()
+
+    def is_default_execution_strategy_has_italic_font(self):
+        self.set_text_by_xpath(ClientsConstants.POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH, "de")
+        time.sleep(2)
+        try:
+            self.find_by_xpath(ClientsConstants.POLICIES_TAB_LIST_OF_DEFAULT_STRATEGIES_XPATH).click()
+            return True
+        except Exception:
+            return False

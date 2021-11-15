@@ -6,8 +6,10 @@ from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
 class NewOrderDetails:
 
-    def __init__(self):
+    def __init__(self, base_request=None):
         self.new_order_details = _NewOrderDetails()
+        if base_request is not None:
+            self.new_order_details.base.CopyFrom(base_request)
 
     def set_order_details(self, order_details: OrderTicketDetails):
         self.new_order_details.orderDetails.CopyFrom(order_details.build())
