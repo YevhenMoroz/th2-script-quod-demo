@@ -79,8 +79,8 @@ def execute(report_id):
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves = waves))
-        # endregion
         fix_manager.send_message_and_receive_response(fix_message, case_id_1)
+        # endregion
 
         time.sleep(3)
 
