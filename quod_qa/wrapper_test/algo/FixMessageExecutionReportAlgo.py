@@ -70,6 +70,40 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def execution_report_new (self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst=new_order_single.get_parameter("HandlInst"),
+            Instrument=new_order_single.get_parameter("Instrument"),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Price=new_order_single.get_parameter("Price"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
+            ExecType="0",
+            OrdStatus="0",
+            TransactTime='*',
+            AvgPx='0',
+            CumQty='0',
+            ExecID='*',
+            LastPx='0',
+            LastQty='0',
+            OrderCapacity='A',
+            QtyType='0',
+            OrderID='*',
+            SettlDate='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            ExecRestatementReason=4,
+            NoParty='*',
+            NoStrategyParameters='*',
+            SecAltIDGrp='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def execution_report_buy (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter("Account"),
@@ -176,6 +210,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def change_from_pending_new_to_new(self) -> FixMessageExecutionReport:
         super().change_from_pending_new_to_new()
+        self.remove_parameter('Account')
+        self.remove_parameter('ExecRestatementReason')
         return self
 
     def change_buy_from_pending_new_to_new(self) -> FixMessageExecutionReport:
