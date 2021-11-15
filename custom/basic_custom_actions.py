@@ -127,6 +127,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         fields=content
     )
 
+
 def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
     content = dict(deepcopy(content))
     for tag in dict(content):
@@ -163,7 +164,6 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
         ),
         fields=content
     )
-
 
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
@@ -298,6 +298,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                         }
                     )
                 )
+            else:
+                content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
@@ -396,7 +398,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": ""}') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status='SUCCESS', body='{"text": ""}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -505,6 +507,7 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
+
 
 def wrap_filter(content, message_type=None, key_fields=None):
     if key_fields is None:
