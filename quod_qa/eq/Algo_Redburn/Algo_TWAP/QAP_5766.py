@@ -55,13 +55,13 @@ def execute(report_id):
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
         fix_manager = FixManager(connectivity_sell_side, case_id)
-        fix_manager_md = FixManager(connectivity_fh, case_id)
+        fix_manager_fh = FixManager(connectivity_fh, case_id)
 
         # Send_MarkerData
         case_id_0 = bca.create_event("Send Market Data", case_id)
         market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        fix_manager_md.set_case_id(case_id_0)
-        fix_manager_md.send_message(market_data)
+        fix_manager_fh.set_case_id(case_id_0)
+        fix_manager_fh.send_message(market_data)
 
         time.sleep(3)
 
