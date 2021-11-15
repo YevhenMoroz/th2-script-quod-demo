@@ -103,10 +103,10 @@ def execute(report_id):
         navigator_child_1.change_parameters(dict(OrderQty=qty, Price=price_nav))
         fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First Navigator')
 
-        exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1)
+        exec_report_3 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1)
         fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1).change_buy_from_pending_new_to_new()
+        exec_report_4 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_4, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
         time.sleep(15)
@@ -119,10 +119,10 @@ def execute(report_id):
         twap_child.change_parameters(dict(OrderQty=qty_twap_1, Price=price_nav))
         fix_verifier_bs.check_fix_message(twap_child, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First TWAP')
 
-        exec_report_5 = FixMessageExecutionReportAlgo().execution_report_buy(twap_child)
+        exec_report_5 = FixMessageExecutionReportAlgo().set_pending_new_buy(twap_child)
         fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_6 = FixMessageExecutionReportAlgo().execution_report_buy(twap_child).change_buy_from_pending_new_to_new()
+        exec_report_6 = FixMessageExecutionReportAlgo().set_pending_new_buy(twap_child).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_6, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
         #Check Second Navigator child
@@ -130,10 +130,10 @@ def execute(report_id):
         navigator_child_2.change_parameters(dict(OrderQty=qty_nav, Price=price_nav))
         fix_verifier_bs.check_fix_message(navigator_child_2, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D Second Navigator')
 
-        exec_report_7 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_2)
+        exec_report_7 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_2)
         fix_verifier_bs.check_fix_message(exec_report_7, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_8 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_2).change_buy_from_pending_new_to_new()
+        exec_report_8 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_2).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_8, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
         exec_report_9 = FixMessageExecutionReportAlgo().execution_report_cancel_buy(twap_child)

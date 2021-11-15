@@ -101,10 +101,10 @@ def execute(report_id):
         navigator_child_1.change_parameters(dict(OrderQty=qty, Price=price_nav))
         fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First Navigator')
 
-        exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1)
+        exec_report_3 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1)
         fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1).change_buy_from_pending_new_to_new()
+        exec_report_4 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_4,key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
 

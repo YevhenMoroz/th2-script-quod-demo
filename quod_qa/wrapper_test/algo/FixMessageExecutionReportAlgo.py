@@ -104,7 +104,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def execution_report_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_pending_new_buy (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
