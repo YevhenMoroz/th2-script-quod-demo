@@ -61,7 +61,7 @@ def execute(report_id):
         # execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
         # fix_verifier.check_fix_message(execution_report)
         #
-        # execution_report2 = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single).change_from_new_to_pendingnew()
+        # execution_report2 = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single).change_from_pending_new_to_new()
         # fix_verifier.check_fix_message(execution_report2)
         #
         #

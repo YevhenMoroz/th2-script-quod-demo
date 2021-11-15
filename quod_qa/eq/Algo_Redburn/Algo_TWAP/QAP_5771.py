@@ -1,18 +1,15 @@
 import os
 import logging
 import time
-from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from quod_qa.wrapper_test import DataSet
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from quod_qa.wrapper_test.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -60,124 +57,56 @@ def rule_creation():
 
     return [nos_rule, nos_rule1, ocr_rule]
 
-
-def send_market_data(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
-
-
-def send_market_dataT(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
-            connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntriesIR': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
-    ))
-
-
 def execute(report_id):
     try:
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
-        fix_manager_316 = FixManager(connectivity_sell_side, case_id)
+        fix_manager = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1)
+        FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
+        fix_verifier_ss.set_case_id(case_id_1)
 
         fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
 
-        fix_manager = FixManager(connectivity_sell_side, case_id)
-        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message, case_id_1)
+        fix_manager.send_message_and_receive_response(fix_message, case_id_1)
 
-        time.sleep(1)
+        time.sleep(3)
 
-        nos_1 = dict(
-            fix_message.get_parameters(),
-            TransactTime='*',
-            ClOrdID=fix_message.get_parameter('ClOrdID'))
+        # region Check Sell side
+        fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL7 receive 35=D')
+        exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
+        fix_verifier_ss.check_fix_message(exec_report, message_name='Sell side Pending new')
 
-        #region NavSlice with NavigatorInitialSweepTime
-        #Check that FIXQUODSELL5 sent 35=8 pending new
-        case_id_2 = bca.create_event("Navigator child", case_id)
-        er_1 = {
-            'Account': client,
-            'ExecID': '*',
-            'OrderQty': qty,
-            'NoStrategyParameters': '*',
-            'LastQty': '0',
-            'OrderID': response_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'HandlInst': fix_message.get_parameter('HandlInst'),
-            'LeavesQty': qty,
-            'NoParty': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'OrdType': order_type,
-            'ClOrdID': fix_message.get_parameter('ClOrdID'),
-            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
-            'QtyType': '0',
-            'Price': price_nav,
-            'TargetStrategy': fix_message.get_parameter('TargetStrategy'),
-            'Instrument': instrument,
-            'SettlDate': '*',
-            'SecAltIDGrp': '*'
+        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
+        fix_verifier_ss.check_fix_message(exec_report_2, message_name='Sell side New')
+        # endregion
 
-        }
-        er_1.pop('Account')
-        fix_verifier_ss.CheckExecutionReport(er_1, response_new_order_single, case=case_id_2,   message_name='FIXQUODSELL7 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        # region Check Buy side
+        case_id_2 = bca.create_event("First Navigator child", case_id)
+        fix_verifier_bs.set_case_id(case_id_2)
+
+        #NavSlice with NavigatorInitialSweepTime
+        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA()
+        navigator_child_1.change_parameters(dict(OrderQty=qty, Price=price_nav))
+        fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First Navigator')
+
+        exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1)
+        fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
+
+        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1).change_buy_from_pending_new_to_new()
+        fix_verifier_bs.check_fix_message(exec_report_4,key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
+
 
         # Check that FIXQUODSELL5 sent 35=8 new
         er_2 = dict(

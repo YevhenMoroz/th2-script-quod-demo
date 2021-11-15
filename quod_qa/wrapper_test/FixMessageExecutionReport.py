@@ -30,11 +30,11 @@ class FixMessageExecutionReport(FixMessage):
         super().change_parameters(temp)
         return self
 
-    def change_from_new_to_pendingnew(self) -> FixMessage:
+    def change_from_pending_new_to_new(self) -> FixMessage:
         super().change_parameters(
             dict(
-                ExecType="A",
-                OrdStatus="A",
+                ExecType="0",
+                OrdStatus="0",
             )
         )
         return self
