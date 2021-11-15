@@ -126,4 +126,4 @@ class RFQTile(AggregatesRatesTile):
             self.verifier.compare_values("Far date", far_date, extract_date)
         self.verifier.verify()
 
-        # endregion
+    # endregion
