@@ -70,7 +70,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def execution_report_new (self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_new_sell (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
