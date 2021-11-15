@@ -51,8 +51,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
-            ExecType="0",
-            OrdStatus="0",
+            ExecType="A",
+            OrdStatus="A",
             TransactTime='*',
             AvgPx='0',
             CumQty='0',
@@ -176,18 +176,18 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def change_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
-        super().change_from_new_to_pendingnew()
+    def change_from_pending_new_to_new(self) -> FixMessageExecutionReport:
+        super().change_from_pending_new_to_new()
         self.remove_parameter("ExecRestatementReason")
         self.remove_parameter("Account")
         return self
 
-    def change_buy_from_new_to_pendingnew(self) -> FixMessageExecutionReport:
-        super().change_from_new_to_pendingnew()
+    def change_buy_from_pending_new_to_new(self) -> FixMessageExecutionReport:
+        super().change_from_pending_new_to_new()
         self.change_parameters(dict(OrdStatus= 0, ExecType= 0))
         return self
 
     def change_buy_from_fill_to_partial_fill(self) -> FixMessageExecutionReport:
-        super().change_from_new_to_pendingnew()
+        super().change_from_pending_new_to_new()
         self.change_parameter('OrdStatus', '1')
         return self
