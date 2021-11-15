@@ -60,13 +60,12 @@ def execute(report_id):
     try:
         rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        # Send_MarkerData
         fix_manager = FixManager(connectivity_sell_side, case_id)
         fix_manager_md = FixManager(connectivity_fh, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
-        #send Market Data
+        # Send_MarkerData
         case_id_0 = bca.create_event("Send Market Data", case_id)
         market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         fix_manager_md.set_case_id(case_id_0)
