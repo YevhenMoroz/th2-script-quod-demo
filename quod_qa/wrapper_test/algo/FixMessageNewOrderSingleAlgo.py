@@ -10,7 +10,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def __init__(self, parameters: dict = None):
         super().__init__()
         super().change_parameters(parameters)
-
+    #set_DMA_params
     def set_DMA(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
