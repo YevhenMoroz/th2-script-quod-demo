@@ -2,16 +2,13 @@ import os
 import logging
 import time
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test import DataSet
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from quod_qa.wrapper_test.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -50,43 +47,6 @@ def rule_creation():
 
     return [nos_rule, nos_trade_rule1]
 
-
-def send_market_data(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
-
-
-def send_market_dataT(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
-            connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntriesIR': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
-    ))
-
-
 def execute(report_id):
     try:
         rule_list = rule_creation()
@@ -95,23 +55,13 @@ def execute(report_id):
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
         fix_manager = FixManager(connectivity_sell_side, case_id)
+        fix_manager_md = FixManager(connectivity_fh, case_id)
 
+        # Send_MarkerData
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1)
+        market_data = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
+        fix_manager_md.set_case_id(case_id_0)
+        fix_manager_md.send_message(market_data)
 
         time.sleep(3)
 
@@ -133,10 +83,10 @@ def execute(report_id):
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
         exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
+        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
-        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side New')
+        exec_report_2 = FixMessageExecutionReportAlgo().execution_report_new(fix_message)
+        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side New')
         #endregion
 
         #region Check Buy side
@@ -155,6 +105,14 @@ def execute(report_id):
 
         exec_report_5 = FixMessageExecutionReportAlgo().execution_report_fill_buy(navigator_child)
         fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Navigator Fill')
+        #endregion
+
+        #region Check Parent order fill
+        case_id_3 = bca.create_event("Check parent order Fill", case_id)
+        fix_verifier_ss.set_case_id(case_id_3)
+
+        exec_report_6 = FixMessageExecutionReportAlgo().execution_report_fill(fix_message)
+        fix_verifier_ss.check_fix_message(exec_report_6, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Parent Fill')
         #endregion
     except:
         logging.error("Error execution", exc_info=True)

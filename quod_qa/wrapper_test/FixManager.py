@@ -26,16 +26,16 @@ class FixManager:
                 basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
             ))
 
-    def send_message_and_receive_response(self, fix_message: FixMessage, case= None) -> PlaceMessageRequest:
-        if case == None:
-            case = self.__case_id
+    def send_message_and_receive_response(self, fix_message: FixMessage, case_id= None) -> PlaceMessageRequest:
+        if case_id == None:
+            case_id = self.__case_id
 
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
                     self.__session_alias,
-                    case,
+                    case_id,
                     basic_custom_actions.message_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
@@ -44,7 +44,7 @@ class FixManager:
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
-                    case,
+                    case_id,
                     basic_custom_actions.message_to_grpc(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
@@ -53,7 +53,7 @@ class FixManager:
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelRequest",
                     self.__session_alias,
-                    case,
+                    case_id,
                     basic_custom_actions.message_to_grpc(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))

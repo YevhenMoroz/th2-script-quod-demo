@@ -127,6 +127,44 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def execution_report_fill (self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastMkt=new_order_single.get_parameter('ExDestination'),
+            LastPx='*',
+            LastQty=new_order_single.get_parameter('OrderQty'),
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=2,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Price=new_order_single.get_parameter('Price'),
+            Side=new_order_single.get_parameter('Side'),
+            Text='Fill',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            TradeDate='*',
+            ExecType='F',
+            LeavesQty=0,
+            SecondaryOrderID='*',
+            GrossTradeAmt='*',
+            NoParty='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            SecAltIDGrp='*',
+            QtyType=0,
+            SecondaryClOrdID='*',
+            Instrument=new_order_single.get_parameter('Instrument'),
+            SecondaryExecID='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def execution_report_fill_buy (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
