@@ -145,7 +145,7 @@ def execute(report_id):
         exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
         fix_verifier_ss.check_fix_message(exec_report, message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_new_to_pendingnew()
+        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
         fix_verifier_ss.check_fix_message(exec_report_2, message_name='Sell side New')
         # endregion
 
