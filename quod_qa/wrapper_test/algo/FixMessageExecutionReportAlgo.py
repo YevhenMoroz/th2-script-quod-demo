@@ -40,7 +40,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def execution_report (self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
-            Account=new_order_single.get_parameter("Account"),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
             HandlInst=new_order_single.get_parameter("HandlInst"),
@@ -61,7 +60,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LastQty='0',
             OrderCapacity='A',
             QtyType='0',
-            ExecRestatementReason='4',
             OrderID='*',
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
