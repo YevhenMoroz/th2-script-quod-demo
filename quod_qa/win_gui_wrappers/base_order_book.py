@@ -169,7 +169,7 @@ class BaseOrderBook(BaseWindow):
             self.verifier.compare_values(key, value, actual_list[key])
         self.verifier.verify()
 
-    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
                                      row_number: int = 1):
         """
         Receives dict as an argument, where the key is column name what

@@ -111,6 +111,12 @@ class RuleManager:
     def remove_rule(rule):
         Stubs.core.removeRule(rule)
 
+    @staticmethod
+    def remove_rules(list_rules):
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
+
     # ------------------------
 
     # --- ADD RULE SECTION ---
@@ -255,10 +261,11 @@ class RuleManager:
                                                                               ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_QuodMDAnswerRule(session: str):
+    def add_QuodMDAnswerRule(session: str, interval:int):
         return Stubs.simulator.createQuodMDAnswerRule(request=
                                                       TemplateMDAnswerRule(connection_id=
-                                                                           ConnectionID(session_alias=session)))
+                                                                           ConnectionID(session_alias=session), min=1,
+                                                                           max=2, interval=30))
 
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):
@@ -448,11 +455,6 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_rule_by_id(12)
-    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard("fix-buy-317-standard-test", "CLIENT_COMM_1_PARIS",
-    #                                                                       "XPAR", 10.0)
-
-    # rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard("fix-buy-317-standard-test",
-    #                                                           "CLIENT_COMM_1_PARIS", "XPAR", 10.0, 10.0, 100, 100, 0)
-    #rule_manager.remove_rules_by_id_range(1400, 1700)
+    # nos_rule = rule_manager.add_NewOrdSingle_Market("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", True, 0, 0)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", 20)
     rule_manager.print_active_rules()

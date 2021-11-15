@@ -109,7 +109,7 @@ def execute(report_id, session_id):
     instrument_spot = "USD/CAD-SPOT"
     instrument_1w = "USD/CAD-1W"
     instrument_2w = "USD/CAD-2W"
-    client = "Argentum1"
+    client = "Silver1"
     symbol = instrument_spot[:7]
     slippage = "2"
     qty_2m = "2000000"
