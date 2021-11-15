@@ -10,8 +10,8 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-bs-310-columbia"  # fix-buy-317ganymede-standard fix-bs-310-columbia
-sell_connectivity = "fix-ss-310-columbia-standart"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
+buy_connectivity = "fix-buy-317-standard-test"  # fix-buy-317ganymede-standard fix-bs-310-columbia fix-buy-317-standard-test
+sell_connectivity = "fix-sell-317-standard-test"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
 # fix-sell-317-standard-test  fix-sell-310-newdict
 bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
 
@@ -28,20 +28,22 @@ def get_bo_connectivity():
 
 
 def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=None, stop_price=None, no_allocs=None,
-                         instrument=None,currency='EUR'):
+                         instrument=None,currency='EUR',ListSeqNo=None):
     fix_params = {
         'Account': client,
-        #'OrderQtyData': {'OrderQty': qty},
-        'OrderQty': qty,
+        'OrderQtyData': {'OrderQty': qty},
+        # 'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
         'OrdType': ord_type,
         'Side': side,
         'Price': price,
         'StopPx': stop_price,
-        'NoAllocs': no_allocs,
+        'ListSeqNo': ListSeqNo,
+        'PreAllocGroup': {'NoAllocs': no_allocs},
         'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
         'TransactTime': datetime.utcnow().isoformat(),
+
         'Instrument': {
             'Symbol': 'FR0004186856_EUR',
             'SecurityID': 'FR0004186856',
@@ -55,7 +57,9 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
     if stop_price is None:
         fix_params.pop('StopPx')
     if no_allocs is None:
-        fix_params.pop('NoAllocs')
+        fix_params.pop('PreAllocGrp')
+    if ListSeqNo is None:
+        fix_params.pop('ListSeqNo')
     if instrument is not None:
         fix_params.update(Instrument=instrument)
     fix_message = FixMessage(fix_params)
@@ -64,7 +68,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
 
 
 def create_order_via_fix(case_id, handl_inst, side, client, ord_type, qty, tif, price=None,stop_price=None, no_allocs=None,
-                         instrument=None, currency=None):
+                         instrument=None, currency="EUR"):
     try:
         fix_manager = FixManager(sell_connectivity, case_id)
         fix_params = set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price,stop_price, no_allocs,
@@ -114,8 +118,9 @@ def create_order_list_via_fix(case_id, no_orders: []):
         fix_params = {
             'BidType': "1",
             'TotNoOrders': len(no_orders),
-            'NoOrders': no_orders,
+            'ListOrdGrp': {"NoOrders": no_orders},
         }
+
         fix_message = FixMessage(fix_params)
         fix_message.add_tag({'ListID': bca.client_orderid(10)})
         response = fix_manager.Send_NewOrderList_FixMessage(fix_message)

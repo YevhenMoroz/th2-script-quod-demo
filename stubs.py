@@ -18,7 +18,7 @@ from th2_grpc_act_fix_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
 from th2_grpc_sim.sim_service import SimService
 from th2_grpc_act_gui_quod.cp_operations_service import ClientPricingOperationsService
-from th2_grpc_sim_http.sim_template_service import SimTemplateService
+from th2_grpc_sim_http_quod.sim_template_service import SimTemplateService
 from th2_grpc_act_rest_quod.rest_act_service import RestActService
 from th2_grpc_act_java_api_quod.act_service import ActService
 

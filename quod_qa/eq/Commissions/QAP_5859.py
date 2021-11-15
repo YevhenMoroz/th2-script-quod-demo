@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-5881"
+    case_name = "QAP-5859"
     qty = "100"
     price = "10"
     client = "CLIENT_COMM_1"
@@ -25,10 +25,8 @@ def execute(report_id, session_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     middle_office = OMSMiddleOfficeBook(case_id, session_id)
     middle_office.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    no_allocs: dict = {"NoAllocs": [{
-        'AllocAccount': "CLIENT_COMM_1_SA4",
-        'AllocQty': qty
-    }]}
+    no_allocs: dict = {"NoAllocs": [{'AllocAccount': "CLIENT_COMM_1_SA4", 'AllocQty': str(int(qty) / 2)},
+                                    {'AllocAccount': "CLIENT_COMM_1_SA5", 'AllocQty': str(int(qty) / 2)}]}
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(Connectivity.Ganymede_317_bs.value,
@@ -50,10 +48,9 @@ def execute(report_id, session_id):
     middle_office.book_order()
     middle_office.approve_block()
     middle_office.allocate_block()
-    middle_office.set_modify_ticket_details(is_alloc_amend=True, comm_rate="1.555", toggle_manual=True,
-                                            remove_comm=True,
-                                            comm_basis="Absolute")
-    middle_office.amend_allocate()
-    expected_value = middle_office.extract_allocate_value("Client Comm")
-    middle_office.compare_values({"Client Comm": "1.555"}, expected_value,
+    expected_value1 = middle_office.extract_allocate_value("Client Comm", account="CLIENT_COMM_1_SA5")
+    middle_office.compare_values({"Client Comm": "100"}, expected_value1,
+                                 event_name='Compare commissions')
+    expected_value2 = middle_office.extract_allocate_value("Client Comm", account="CLIENT_COMM_1_SA4")
+    middle_office.compare_values({"Client Comm": "1.123"}, expected_value2,
                                  event_name='Compare commissions')
