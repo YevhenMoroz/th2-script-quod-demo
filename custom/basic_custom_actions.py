@@ -258,6 +258,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
             content[tag] = ValueFilter(
                 simple_filter=content[tag], key=(True if tag in keys else False)
             )
+        elif isinstance(content[tag], dict):
+            content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
@@ -279,25 +281,6 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                     }
                 )
             )
-        elif isinstance(content[tag], dict):
-            # level 1 component
-            name = next(iter(content[tag].items()))[0]
-            if isinstance(next(iter(content[tag].items()))[1], list):
-                # level 2 repeating group
-                for group in content[tag][name]:
-                    content[tag][name][content[tag][name].index(group)] = ValueFilter(
-                        message_filter=filter_to_grpc(name, group))
-                content[tag] = ValueFilter(
-                    message_filter=MessageFilter(
-                        fields={
-                            name: ValueFilter(
-                                list_filter=ListValueFilter(
-                                    values=content[tag][name]
-                                )
-                            )
-                        }
-                    )
-                )
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
