@@ -176,8 +176,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def change_from_pending_new_to_new(self) -> FixMessageExecutionReport:
         super().change_from_pending_new_to_new()
-        self.remove_parameter("ExecRestatementReason")
-        self.remove_parameter("Account")
         return self
 
     def change_buy_from_pending_new_to_new(self) -> FixMessageExecutionReport:

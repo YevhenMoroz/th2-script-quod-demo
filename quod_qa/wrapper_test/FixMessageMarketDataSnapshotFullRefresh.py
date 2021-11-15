@@ -29,3 +29,4 @@ class FixMessageMarketDataSnapshotFullRefresh(FixMessage):
         if md_req_id is None:
             raise Exception(f'No MDReqID at TH2 simulator for symbol {symbol} at {session_alias}')
         self.change_parameter("MDReqID", md_req_id)
+        return self

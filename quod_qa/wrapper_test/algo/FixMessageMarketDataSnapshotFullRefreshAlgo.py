@@ -18,13 +18,13 @@ class FixMessageMarketDataSnapshotFullRefreshAlgo(FixMessageMarketDataSnapshotFu
                 {
                     'MDEntryType': '0',
                     'MDEntryPx': '30',
-                    'MDEntrySize': '1000000',
+                    'MDEntrySize': '500000',
                     'MDEntryPositionNo': '1',
                 },
                 {
                     'MDEntryType': '1',
                     'MDEntryPx': '40',
-                    'MDEntrySize': '1000000',
+                    'MDEntrySize': '500000',
                     'MDEntryPositionNo': '1',
                 }
             ]
