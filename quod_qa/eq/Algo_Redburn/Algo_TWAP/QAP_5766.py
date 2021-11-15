@@ -133,10 +133,10 @@ def execute(report_id):
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
         exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report, message_name='Sell side Pending new')
+        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
 
         exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
-        fix_verifier_ss.check_fix_message(exec_report_2, message_name='Sell side New')
+        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side New')
         #endregion
 
         #region Check Buy side
@@ -148,13 +148,13 @@ def execute(report_id):
         fix_verifier_bs.check_fix_message(navigator_child, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D')
 
         exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child)
-        fix_verifier_bs.check_fix_message(exec_report_3, direction=SECOND, message_name='Buy side Pending new')
+        fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child).change_buy_from_new_to_pendingnew()
-        fix_verifier_bs.check_fix_message(exec_report_4, direction=SECOND, message_name='Buy side New')
+        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child).change_buy_from_pending_new_to_new()
+        fix_verifier_bs.check_fix_message(exec_report_4, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
         exec_report_5 = FixMessageExecutionReportAlgo().execution_report_fill_buy(navigator_child)
-        fix_verifier_bs.check_fix_message(exec_report_5, direction=SECOND, message_name='Buy side Navigator Fill')
+        fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Navigator Fill')
         #endregion
     except:
         logging.error("Error execution", exc_info=True)
