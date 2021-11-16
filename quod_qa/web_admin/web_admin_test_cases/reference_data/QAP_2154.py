@@ -15,7 +15,7 @@ class QAP_2154(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
         self.password = "adm02"
-        self.listing = "EUR/USD"
+        self.listing = "a"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -42,7 +42,7 @@ class QAP_2154(CommonTestCase):
                 time.sleep(2)
                 self.verify("Listing disable/enable correctly", True, True)
             except Exception:
-                self.verify("Listing not disable/enable correctly", True, False)
+                self.verify("Listing not disable/enable incorrectly", True, False)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

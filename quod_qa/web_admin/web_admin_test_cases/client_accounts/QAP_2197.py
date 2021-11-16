@@ -60,7 +60,7 @@ class QAP_2197(CommonTestCase):
             self.precondition()
 
             new_venue_account = "TestVenueAccount2"
-            new_venue = "PARIS"
+            new_venue = "ADX"
             new_account_id_source = "Other"
             new_default_route = "Credit Suisse"
             expected_pdf_content = [new_venue_account, new_venue, new_account_id_source, new_default_route]

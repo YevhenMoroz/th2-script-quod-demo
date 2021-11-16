@@ -74,13 +74,12 @@ class CommonPage:
         option = self.find_by_xpath(option_xpath)
         option.click()
 
-    def select_value_from_dropdown_list(self, xpath: str, value: str):
+    def select_value_from_dropdown_list(self, xpath: str):
         """
         Method was created for select value from dropdown list
         if if there is no input field
         """
-        select = Select(self.find_by_xpath(xpath))
-        select.select_by_value(value)
+        self.find_by_xpath(xpath).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         checkbox_state_span = self.get_checkbox_state_span(checkbox_xpath)

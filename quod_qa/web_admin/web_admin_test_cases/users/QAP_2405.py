@@ -9,6 +9,7 @@ from quod_qa.web_admin.web_admin_core.pages.users.users.users_assignments_sub_wi
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_page import UsersPage
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from quod_qa.web_admin.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from quod_qa.web_admin.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -27,6 +28,7 @@ class QAP_2405(CommonTestCase):
         self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
         self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
         self.pin_code = "333"
+        self.email = "test"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -51,6 +53,9 @@ class QAP_2405(CommonTestCase):
         assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
         assignments_sub_wizard.click_on_desks()
         time.sleep(2)
+        user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
+        user_details_sub_wizard.set_mail(self.email)
+        time.sleep(1)
         assignments_sub_wizard.set_desks(self.desks)
         time.sleep(1)
         users_wizard = UsersWizard(self.web_driver_container)

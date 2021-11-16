@@ -11,7 +11,7 @@ channels = dict()
 
 
 def test_run(session_id, parent_id=None):
-    report_id = bca.create_event('DMA', parent_id)
+    report_id = bca.create_event('DMA regression', parent_id)
     try:
         RIN_1188.execute(session_id, report_id)
         RIN_1189.execute(session_id, report_id)

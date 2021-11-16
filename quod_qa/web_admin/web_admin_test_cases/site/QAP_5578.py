@@ -9,6 +9,7 @@ from quod_qa.web_admin.web_admin_core.pages.site.institution.institution_assignm
 from quod_qa.web_admin.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
 from quod_qa.web_admin.web_admin_core.pages.site.locations.locations_assignments_sub_wizard import \
     LocationsAssignmentsSubWizard
+from quod_qa.web_admin.web_admin_core.pages.site.locations.locations_wizard import LocationsWizard
 from quod_qa.web_admin.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -39,6 +40,7 @@ class QAP_5578(CommonTestCase):
             try:
                 institution_page = InstitutionsPage(self.web_driver_container)
                 institution_page.set_institution_name(self.institution_name)
+                location_wizard = LocationsWizard(self.web_driver_container)
                 time.sleep(2)
                 institution_page.click_on_more_actions()
                 time.sleep(2)
@@ -46,11 +48,14 @@ class QAP_5578(CommonTestCase):
                 location_assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
                 location_assignments_sub_wizard.click_on_zones(self.zone)
                 time.sleep(2)
+                location_wizard.click_on_ok_button()
+                time.sleep(2)
                 zone_assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
                 zone_assignments_sub_wizard.click_on_locations(self.location)
                 time.sleep(2)
                 locations_assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
                 locations_assignments_sub_wizard.click_on_desks(self.desk)
+                self.verify("All links works correctly", True, True)
             except Exception as e:
                 self.verify("Some link not active", True, e.__class__.__name__)
 
