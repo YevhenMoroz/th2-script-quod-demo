@@ -36,7 +36,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
@@ -53,7 +53,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
@@ -71,7 +71,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
@@ -89,7 +89,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         else:
