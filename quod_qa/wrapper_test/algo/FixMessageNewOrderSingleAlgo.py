@@ -10,7 +10,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def __init__(self, parameters: dict = None):
         super().__init__()
         super().change_parameters(parameters)
-    #set_DMA_params
+
+    # set_DMA_params
     def set_DMA_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
@@ -85,7 +86,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         return self
 
     def set_POV_params(self) -> FixMessageNewOrderSingle:
-
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
