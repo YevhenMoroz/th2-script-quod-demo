@@ -20,7 +20,6 @@ price = 30
 price_nav = 20
 tif_day = 0
 order_type = 2
-nav_exec = 1
 nav_init_sweep = 10
 
 #Key parameters
@@ -84,7 +83,7 @@ def execute(report_id):
         new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         new_order_single.add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(Account= client, OrderQty = qty))
-        new_order_single.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorInitialSweepTime= nav_init_sweep, NavigatorLimitPrice= price_nav))
+        new_order_single.update_fields_in_component('QuodFlatParameters', dict(NavigatorInitialSweepTime= nav_init_sweep, NavigatorLimitPrice= price_nav))
 
         fix_manager.send_message_and_receive_response(new_order_single, case_id_1)
         #endregion

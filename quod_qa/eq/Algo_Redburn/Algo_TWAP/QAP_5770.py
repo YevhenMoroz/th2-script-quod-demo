@@ -17,8 +17,8 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 #order param
-avt = 10000
-ast = avt * 5
+avt = 10000     # average volume traded per minute
+ast = avt * 5   # 5 average traded
 qty = 300000
 qty_nav_trade = 200000
 last_nav_qty = qty - qty_nav_trade
@@ -29,7 +29,6 @@ reserve = max(first_reserve, int(qty_twap_1))
 qty_nav = reserve
 price = 29.995
 price_nav = 30
-nav_exec = 1
 nav_init_sweep = 10
 
 #Key parameters

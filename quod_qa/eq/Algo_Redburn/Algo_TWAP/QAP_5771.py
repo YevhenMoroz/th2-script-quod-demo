@@ -16,13 +16,16 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 #order param
+avt = 10000     # average volume traded per minute
+ast = avt * 5   # 5 average traded
 qty = 300000
-qty_nav = 250000
 waves = 10
 qty_twap_1 = int(qty / waves)
+first_reserve = max(ast, int(qty * (1 - 1)))
+reserve = max(first_reserve, int(qty_twap_1))
+qty_nav = reserve
 price = 29.995
 price_nav = 30
-nav_exec = 1
 nav_init_sweep = 10
 
 #Key parameters
@@ -87,7 +90,7 @@ def execute(report_id):
         new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         new_order_single.add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(Account= client, OrderQty = qty))
-        new_order_single.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
+        new_order_single.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
 
         fix_manager.send_message_and_receive_response(new_order_single, case_id_1)
 
