@@ -5,7 +5,7 @@ from datetime import datetime
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
-from quod_qa.wrapper_test.DataSet import DirectionEnum, Connectivity
+from quod_qa.wrapper_test.DataSet import DirectionEnum, Connectivity, Side, Status
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from quod_qa.wrapper_test.FixVerifier import FixVerifier
@@ -61,7 +61,7 @@ def execute(report_id):
         fix_manager.send_message_and_receive_response(new_order_single)
         fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.ToQuod)
 
-        execution_report = FixMessageExecutionReportAlgo().__set_pending_new_sell(new_order_single=new_order_single)
+        execution_report = FixMessageExecutionReportAlgo().set_params_from_new_order_single(Side.Sell, Status.Pending, new_order_single)
         fix_verifier.check_fix_message(execution_report)
 
         execution_report2 = FixMessageExecutionReportAlgo().__set_pending_new_sell(new_order_single=new_order_single).change_from_pending_new_to_new()
