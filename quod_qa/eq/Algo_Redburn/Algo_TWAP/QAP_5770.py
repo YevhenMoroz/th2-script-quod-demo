@@ -174,6 +174,7 @@ def execute(report_id):
         set_cancel_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(new_order_single, gateway_side_sell, status_cancel)
         set_cancel_parent_params.change_parameters(dict(CumQty=qty_nav_trade, AvgPx=price_nav))
         fix_verifier_ss.check_fix_message(set_cancel_parent_params, key_parameters=key_params, message_name='Sell side Cancel')
+        #endregion
 
     except:
         logging.error("Error execution", exc_info=True)
