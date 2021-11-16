@@ -10,7 +10,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_params_from_new_order_single(self, side: Side, status: Status, new_order_single: FixMessageNewOrderSingle):
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: Side, status: Status):
         if side == Side.Buy.value:
             if status == Status.Pending.value:
                 self.__set_pending_new_buy(new_order_single)
