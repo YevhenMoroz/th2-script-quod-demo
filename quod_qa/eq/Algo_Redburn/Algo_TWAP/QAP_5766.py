@@ -103,7 +103,7 @@ def execute(report_id):
         exec_report_4 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_4, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
-        exec_report_5 = FixMessageExecutionReportAlgo().execution_report_fill_buy(navigator_child)
+        exec_report_5 = FixMessageExecutionReportAlgo().set_fill_buy(navigator_child)
         fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Navigator Fill')
         #endregion
 

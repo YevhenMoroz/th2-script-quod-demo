@@ -136,10 +136,10 @@ def execute(report_id):
         exec_report_8 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_2).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_8, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
-        exec_report_9 = FixMessageExecutionReportAlgo().execution_report_cancel_buy(twap_child)
+        exec_report_9 = FixMessageExecutionReportAlgo().set_cancel_buy(twap_child)
         fix_verifier_bs.check_fix_message(exec_report_9, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side TWAP Cancel')
 
-        exec_report_10 = FixMessageExecutionReportAlgo().execution_report_cancel_buy(navigator_child_2)
+        exec_report_10 = FixMessageExecutionReportAlgo().set_cancel_buy(navigator_child_2)
         fix_verifier_bs.check_fix_message(exec_report_10, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Second Navigator Cancel')
         # endregion
 
@@ -151,7 +151,7 @@ def execute(report_id):
         fix_manager.send_message_and_receive_response(fix_cancel, case_id_4)
         fix_verifier_ss.check_fix_message(fix_cancel, direction=SECOND, message_name='Sell side 35=F')
 
-        exec_report_11 = FixMessageExecutionReportAlgo().execution_report_cancel(fix_message)
+        exec_report_11 = FixMessageExecutionReportAlgo().set_cancel_sell(fix_message)
         exec_report_11.change_parameters(dict(CumQty=qty_nav_trade, AvgPx=price_nav))
         fix_verifier_ss.check_fix_message(exec_report_11, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Cancel')
 
