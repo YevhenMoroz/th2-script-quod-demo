@@ -20,7 +20,7 @@ class OMSClientInbox(BaseClientInbox):
         self.accept_and_cancel_children_call = Stubs.win_act.acceptAndCancelChildren
         self.reject_order_call = Stubs.win_act.rejectOrder
         self.client_inbox_direct_call = Stubs.win_act.clientInboxDirectOrder
-        self.client_inbox_direct_moc_call = Stubs.win_act_order_book.clientInboxDirectMoc
-        self.client_inbox_direct_loc_call = Stubs.win_act_order_book.clientInboxDirectLoc
-        self.client_inbox_direct_poc_call = Stubs.win_act_order_book.clientInboxDirectPoc
+        self.client_inbox_direct_moc_call = Stubs.win_act.clientInboxDirectMoc
+        self.client_inbox_direct_loc_call = Stubs.win_act.clientInboxDirectLoc
+        self.client_inbox_direct_poc_call = Stubs.win_act.clientInboxDirectPoc
     # endregion

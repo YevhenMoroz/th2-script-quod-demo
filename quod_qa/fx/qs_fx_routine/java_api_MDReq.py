@@ -21,7 +21,7 @@ class TestCase:
         checkpoint_id2 = None
 
 
-    def send_nos(self):
+    def send_nos_SUB(self):
         # checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         # self.checkpoint_id2 = checkpoint1.checkpoint
         nos_params = {
@@ -47,6 +47,7 @@ class TestCase:
                             'MDSymbol': '506404433.2000011',
                             'ClientTierID': '2000011',
                             'FeedType': 'D',
+
                             # 'MDEntrySizeList': '',
                             'SubscriptionRequestType': 'SUB',
                             # 'UseDefaultMargins': ''
@@ -65,6 +66,51 @@ class TestCase:
         # print(f'*********** response sendMessage = {response}************')
         # print(f'*********** response sendMessage = {response}************')
 
+    def send_nos_UNS(self):
+        # checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        # self.checkpoint_id2 = checkpoint1.checkpoint
+        nos_params = {
+            'SEND_SUBJECT': 'MDA.QUOD.PRICING.2.SUB',
+            'REPLY_SUBJECT': 'MDA.506404433.2000011.D.PRICING.2',
+            'MarketDataRequestBlock': {
+                # 'MarketDepth': '',
+                # 'ExternalEntitlementKey': '',
+                # 'SubscriptionRequestType': 'Units',
+                # 'ClientAccountGroupID': 'Limit',
+                # 'MDQuoteType': 'Day',
+                # 'MDUpdateType': 'Open',
+                # 'IPAddress': 'EUR',
+                # 'MDReqList': 'Agency',
+                'MDReqID': random_qty(1, 2, len=10),
+                # 'MDSource': '',
+                # 'BookType': 1,
+                # 'ClientClientTierID': 'No',
+                'MDSymbolList': {
+                    'MDSymbolBlock': [
+                        {
+                            'ListingID': '506404433',
+                            'MDSymbol': '506404433.2000011',
+                            'ClientTierID': '2000011',
+                            'FeedType': 'D',
+
+                            # 'MDEntrySizeList': '',
+                            'SubscriptionRequestType': 'UNS',
+                            # 'UseDefaultMargins': ''
+                        }
+                    ]
+                },
+            }
+        }
+
+        # print(ActJavaSubmitMessageRequest(
+        #     message=bca.message_to_grpc('Market_MarketDataRequest', nos_params, 'java-api-luna314')))
+
+        response = self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
+            message=bca.message_to_grpc('Market_MarketDataRequest', nos_params, self.connectivity)))
+
+        # print(f'*********** response sendMessage = {response}************')
+        # print(f'*********** response sendMessage = {response}************')
+
 
     # Main method
     def execute(self, report_id):
@@ -73,7 +119,7 @@ class TestCase:
         checkpoint1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_id1 = checkpoint1.checkpoint
         time.sleep(5)
-        self.send_nos()
+        self.send_nos_SUB()
         # def_order_exec_report = {
         #     'ActiveClientTier':'*',
         #     'AutomatedMargin':'*',
@@ -256,7 +302,7 @@ class TestCase:
 
         )
         print(def_order_exec_report)
-
+        # self.send_nos_UNS()
 
 if __name__ == '__main__':
     pass
