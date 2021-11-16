@@ -1,7 +1,7 @@
 from datetime import datetime
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.DataSet import Instrument
+from quod_qa.wrapper_test.DataSet import Instrument, Side, Status
 
 
 class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
@@ -261,3 +261,33 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_from_pending_new_to_new()
         self.change_parameter('OrdStatus', '1')
         return self
+
+    def set_params_from_new_order_single(self, side: Side, status: Status):
+        if side == Side.Buy.value:
+            if Status == Status.Pending.value:
+                pass
+            elif Status == Status.New.value:
+                pass
+            elif Status == Status.Fill.value:
+                pass
+            elif Status == Status.PartialFill.value:
+                pass
+            elif Status == Status.Cancel.value:
+                pass
+            else:
+                raise Exception(f'Incorrect Status')
+        elif side == Side.Sell.value:
+            if Status == Status.Pending.value:
+                pass
+            elif Status == Status.New.value:
+                pass
+            elif Status == Status.Fill.value:
+                pass
+            elif Status == Status.PartialFill.value:
+                pass
+            elif Status == Status.Cancel.value:
+                pass
+            else:
+                raise Exception(f'Incorrect Status')
+        else:
+            raise Exception(f'Incorrect Side')
