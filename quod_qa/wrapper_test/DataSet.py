@@ -63,7 +63,7 @@ class Connectivity(Enum):
     Ganymede_317_bo = 'fix-sell-317-backoffice'
 
 
-class Side(Enum):
+class GatewaySide(Enum):
     Sell = "Sell"
     Buy = "Buy"
 
