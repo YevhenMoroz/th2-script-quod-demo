@@ -132,7 +132,7 @@ def execute(report_id):
         # region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account=client, OrderQty=qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution = nav_exec, NavigatorLimitPrice = price_nav, Waves = waves, NavigatorRebalanceTime = nav_rebalance))

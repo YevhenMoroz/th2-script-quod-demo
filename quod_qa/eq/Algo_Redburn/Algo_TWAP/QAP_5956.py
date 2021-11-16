@@ -51,7 +51,7 @@ def execute(report_id):
         fix_manager = FixManager(Connectivity.Ganymede_316_Redburn.value, report_id)
         fix_verifier = FixVerifier(Connectivity.Ganymede_316_Redburn.value, report_id)
 
-        new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
+        new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard_params().add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(OrderQty=100000))
         new_order_single.change_parameters(dict(Price=30))
 

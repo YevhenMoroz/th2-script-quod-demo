@@ -73,7 +73,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         fix_verifier_ss.set_case_id(case_id_1)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
@@ -97,7 +97,7 @@ def execute(report_id):
         fix_verifier_bs.set_case_id(case_id_2)
 
         #NavSlice with NavigatorInitialSweepTime
-        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA()
+        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         navigator_child_1.change_parameters(dict(OrderQty=qty, Price=price_nav))
         fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First Navigator')
 

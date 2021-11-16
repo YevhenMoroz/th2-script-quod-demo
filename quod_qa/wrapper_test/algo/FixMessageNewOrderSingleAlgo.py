@@ -11,7 +11,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().__init__()
         super().change_parameters(parameters)
     #set_DMA_params
-    def set_DMA(self) -> FixMessageNewOrderSingle:
+    def set_DMA_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
             'ClOrdID': '*',
@@ -32,7 +32,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_TWAP(self) -> FixMessageNewOrderSingle:
+    def set_TWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -59,7 +59,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_TWAP_Navigator(self) -> FixMessageNewOrderSingle:
+    def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -84,7 +84,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_POV(self) -> FixMessageNewOrderSingle:
+    def set_POV_params(self) -> FixMessageNewOrderSingle:
 
         base_parameters = {
             "Account": "CLIENT1",
@@ -108,7 +108,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_TWAP_Navigator_Guard(self) -> FixMessageNewOrderSingle:
+    def set_TWAP_Navigator_Guard_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -135,7 +135,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_MOO_Scaling(self) -> FixMessageNewOrderSingle:
+    def set_MOO_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -162,7 +162,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_MOC_Scaling(self) -> FixMessageNewOrderSingle:
+    def set_MOC_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -189,7 +189,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_POV_Scaling(self) -> FixMessageNewOrderSingle:
+    def set_POV_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
