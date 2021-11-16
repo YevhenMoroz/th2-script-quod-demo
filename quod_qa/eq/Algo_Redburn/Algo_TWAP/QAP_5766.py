@@ -16,13 +16,23 @@ timeouts = True
 
 #order param
 qty = 100000
-side = 1
 price = 30
 price_nav = 20
 tif_day = 0
 order_type = 2
 nav_exec = 1
 nav_init_sweep = 10
+key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
+key_params=['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+
+#Side
+gateway_side_buy = DataSet.GatewaySide.Buy
+gateway_side_sell = DataSet.GatewaySide.Sell
+
+#Status
+status_pending = DataSet.Status.Pending
+status_new = DataSet.Status.New
+status_fill = DataSet.Status.Fill
 
 #venue param
 ex_destination_1 = "XPAR"
@@ -33,12 +43,12 @@ s_par = '555'
 
 #connectivity
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FromQuod.value
-SECOND = DataSet.DirectionEnum.ToQuod.value
+FromQuod = DataSet.DirectionEnum.FromQuod
+ToQuod = DataSet.DirectionEnum.ToQuod
+instrument = DataSet.Instrument.BUI
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
-instrument = DataSet.Instrument.BUI.value
 
 def rule_creation():
     rule_manager = RuleManager()
@@ -80,13 +90,13 @@ def execute(report_id):
         time.sleep(3)
 
         #region Check Sell side
-        fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
+        fix_verifier_ss.check_fix_message(fix_message, direction=ToQuod, message_name='Sell side 35=D')
 
-        exec_report = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Pending new')
+        exec_report = FixMessageExecutionReportAlgo().set_params_from_new_order_single(fix_message, gateway_side_sell, status_pending)
+        fix_verifier_ss.check_fix_message(exec_report, key_parameters=key_params_cl, message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().set_new_sell(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side New')
+        exec_report_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(fix_message, gateway_side_sell, status_new)
+        fix_verifier_ss.check_fix_message(exec_report_2, key_parameters=key_params_cl, message_name='Sell side New')
         #endregion
 
         #region Check Buy side
@@ -95,24 +105,24 @@ def execute(report_id):
 
         navigator_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
         navigator_child.change_parameter('OrderQty', qty)
-        fix_verifier_bs.check_fix_message(navigator_child, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D')
+        fix_verifier_bs.check_fix_message(navigator_child, key_parameters=key_params, message_name='Buy side 35=D')
 
-        exec_report_3 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child)
-        fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
+        exec_report_3 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=key_params, direction=ToQuod, message_name='Buy side Pending new')
 
-        exec_report_4 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child).change_buy_from_pending_new_to_new()
-        fix_verifier_bs.check_fix_message(exec_report_4, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
+        exec_report_4 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(exec_report_4, key_parameters=key_params, direction=ToQuod, message_name='Buy side New')
 
-        exec_report_5 = FixMessageExecutionReportAlgo().set_fill_buy(navigator_child)
-        fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Navigator Fill')
+        exec_report_5 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_fill)
+        fix_verifier_bs.check_fix_message(exec_report_5, key_parameters=key_params, direction=ToQuod, message_name='Buy side Navigator Fill')
         #endregion
 
         #region Check Parent order fill
         case_id_3 = bca.create_event("Check parent order Fill", case_id)
         fix_verifier_ss.set_case_id(case_id_3)
 
-        exec_report_6 = FixMessageExecutionReportAlgo().set_fill_sell(fix_message)
-        fix_verifier_ss.check_fix_message(exec_report_6, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Sell side Parent Fill')
+        exec_report_6 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(fix_message, gateway_side_sell, status_fill)
+        fix_verifier_ss.check_fix_message(exec_report_6, key_parameters=key_params, message_name='Sell side Parent Fill')
         #endregion
     except:
         logging.error("Error execution", exc_info=True)
