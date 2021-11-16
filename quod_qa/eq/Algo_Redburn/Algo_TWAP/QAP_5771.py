@@ -42,8 +42,8 @@ s_par = '555'
 
 #connectivity
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FIRST.value
-SECOND = DataSet.DirectionEnum.SECOND.value
+FIRST = DataSet.DirectionEnum.FromQuod.value
+SECOND = DataSet.DirectionEnum.ToQuod.value
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
@@ -73,7 +73,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         fix_verifier_ss.set_case_id(case_id_1)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account= client,  OrderQty = qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution= nav_exec, NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
@@ -85,10 +85,10 @@ def execute(report_id):
         # region Check Sell side
         fix_verifier_ss.check_fix_message(fix_message, direction=SECOND, message_name='Sell side 35=D')
 
-        exec_report = FixMessageExecutionReportAlgo().execution_report(fix_message)
+        exec_report = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message)
         fix_verifier_ss.check_fix_message(exec_report, message_name='Sell side Pending new')
 
-        exec_report_2 = FixMessageExecutionReportAlgo().execution_report(fix_message).change_from_pending_new_to_new()
+        exec_report_2 = FixMessageExecutionReportAlgo().set_pending_new_sell(fix_message).change_from_pending_new_to_new()
         fix_verifier_ss.check_fix_message(exec_report_2, message_name='Sell side New')
         # endregion
 
@@ -97,14 +97,14 @@ def execute(report_id):
         fix_verifier_bs.set_case_id(case_id_2)
 
         #NavSlice with NavigatorInitialSweepTime
-        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA()
+        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         navigator_child_1.change_parameters(dict(OrderQty=qty, Price=price_nav))
         fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], message_name='Buy side 35=D First Navigator')
 
-        exec_report_3 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1)
+        exec_report_3 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1)
         fix_verifier_bs.check_fix_message(exec_report_3, key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side Pending new')
 
-        exec_report_4 = FixMessageExecutionReportAlgo().execution_report_buy(navigator_child_1).change_buy_from_pending_new_to_new()
+        exec_report_4 = FixMessageExecutionReportAlgo().set_pending_new_buy(navigator_child_1).change_buy_from_pending_new_to_new()
         fix_verifier_bs.check_fix_message(exec_report_4,key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'], direction=SECOND, message_name='Buy side New')
 
 

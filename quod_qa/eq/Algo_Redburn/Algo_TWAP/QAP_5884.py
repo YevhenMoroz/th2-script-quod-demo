@@ -54,17 +54,17 @@ def execute(report_id):
         fix_manager = FixManager(Connectivity.Ganymede_316_Redburn.value, report_id)
         fix_verifier = FixVerifier(Connectivity.Ganymede_316_Redburn.value, report_id)
 
-        new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard().add_ClordId((os.path.basename(__file__)[:-3]))
+        new_order_single = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_Guard_params().add_ClordId((os.path.basename(__file__)[:-3]))
         new_order_single.change_parameters(dict(OrderQty=100000))
         new_order_single.change_parameters(dict(Price=31))
 
         fix_manager.send_message_and_receive_response(new_order_single)
-        fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.SECOND)
+        fix_verifier.check_fix_message(new_order_single, direction=DirectionEnum.ToQuod)
 
-        execution_report = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single)
+        execution_report = FixMessageExecutionReportAlgo().set_pending_new_sell(new_order_single=new_order_single)
         fix_verifier.check_fix_message(execution_report)
 
-        execution_report2 = FixMessageExecutionReportAlgo().execution_report(new_order_single=new_order_single).change_from_pending_new_to_new()
+        execution_report2 = FixMessageExecutionReportAlgo().set_pending_new_sell(new_order_single=new_order_single).change_from_pending_new_to_new()
         fix_verifier.check_fix_message(execution_report2)
 
 

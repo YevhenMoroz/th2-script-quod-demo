@@ -47,8 +47,8 @@ s_par = '555'
 
 # connectivity
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FIRST.value
-SECOND = DataSet.DirectionEnum.SECOND.value
+FromQuod = DataSet.DirectionEnum.FromQuod.value
+ToQuod = DataSet.DirectionEnum.ToQuod.value
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
@@ -132,7 +132,7 @@ def execute(report_id):
         # region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account=client, OrderQty=qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution = nav_exec, NavigatorLimitPrice = price_nav, Waves = waves, NavigatorRebalanceTime = nav_rebalance))
@@ -172,7 +172,7 @@ def execute(report_id):
             'ExDestination': ex_destination_1
 
         }
-        fix_verifier_bs.CheckExecutionReport(er_1, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_1, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='FIXBUYTH2 sent 35=8 TWAP slice Pending New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -183,7 +183,7 @@ def execute(report_id):
             OrdStatus='0',
             Text=text_n
         )
-        fix_verifier_bs.CheckExecutionReport(er_2, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_2, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='FIXQUODSELL7 sent 35=8 TWAP slice New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -207,7 +207,7 @@ def execute(report_id):
             'ExDestination': ex_destination_1
 
         }
-        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='FIXQUODSELL7 sent 35=8 Navigator slice Pending New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -218,7 +218,7 @@ def execute(report_id):
             OrdStatus='0',
             Text=text_n
         )
-        fix_verifier_bs.CheckExecutionReport(er_4, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_4, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='FIXQUODSELL7 sent 35=8 Navigator slice New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -248,7 +248,7 @@ def execute(report_id):
             'ExecType': "F",
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_5, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_5, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='BS FIXBUYTH2 sent 35=8 Navigator Fill',
                                              key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
 
@@ -268,7 +268,7 @@ def execute(report_id):
             'Text': text_c,
             'OrigClOrdID': '*'
         }
-        fix_verifier_bs.CheckExecutionReport(er_6, response_new_order_single, direction=SECOND, case=case_id_2,
+        fix_verifier_bs.CheckExecutionReport(er_6, response_new_order_single, direction=ToQuod, case=case_id_2,
                                              message_name='FIXBUYTH2 sent 35=8 TWAP slice Cancelled',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Text'])
         # endregion
@@ -297,7 +297,7 @@ def execute(report_id):
             'ExDestination': ex_destination_1
 
         }
-        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=SECOND, case=case_id_3,
+        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=ToQuod, case=case_id_3,
                                              message_name='FIXQUODSELL7 sent 35=8 Navigator slice Pending New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -308,7 +308,7 @@ def execute(report_id):
             OrdStatus='0',
             Text=text_n
         )
-        fix_verifier_bs.CheckExecutionReport(er_8, response_new_order_single, direction=SECOND, case=case_id_3,
+        fix_verifier_bs.CheckExecutionReport(er_8, response_new_order_single, direction=ToQuod, case=case_id_3,
                                              message_name='FIXQUODSELL7 sent 35=8 Navigator slice New',
                                              key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
 
@@ -338,7 +338,7 @@ def execute(report_id):
             'ExecType': "F",
             'LeavesQty': '0'
         }
-        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=SECOND, case=case_id_3,
+        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=ToQuod, case=case_id_3,
                                              message_name='BS FIXBUYTH2 sent 35=8 Second Navigator Fill',
                                              key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
 

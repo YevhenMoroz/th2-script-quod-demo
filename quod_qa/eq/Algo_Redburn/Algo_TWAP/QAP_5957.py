@@ -47,8 +47,8 @@ s_par = '555'
 
 # connectivity
 case_name = os.path.basename(__file__)
-FIRST = DataSet.DirectionEnum.FIRST.value
-SECOND = DataSet.DirectionEnum.SECOND.value
+FIRST = DataSet.DirectionEnum.FromQuod.value
+SECOND = DataSet.DirectionEnum.ToQuod.value
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
@@ -135,7 +135,7 @@ def execute(report_id):
         # region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator()
+        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
         fix_message.change_parameters(dict(Account=client, OrderQty=qty))
         fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution = nav_exec, NavigatorLimitPrice = price_nav, Waves = waves, NavigatorRebalanceTime = nav_rebalance))
