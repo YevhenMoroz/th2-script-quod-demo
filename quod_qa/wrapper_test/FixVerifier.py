@@ -20,7 +20,7 @@ class FixVerifier:
     def set_case_id(self, case_id):
         self.__case_id = case_id
 
-    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FromQuod.value, message_name: str = None):
+    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -36,7 +36,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
@@ -53,7 +53,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
@@ -71,7 +71,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
@@ -89,7 +89,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         else:
