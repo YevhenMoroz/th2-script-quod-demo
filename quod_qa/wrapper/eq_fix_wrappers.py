@@ -57,7 +57,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
     if stop_price is None:
         fix_params.pop('StopPx')
     if no_allocs is None:
-        fix_params.pop('PreAllocGroup')
+        fix_params.pop('PreAllocGrp')
     if ListSeqNo is None:
         fix_params.pop('ListSeqNo')
     if instrument is not None:
