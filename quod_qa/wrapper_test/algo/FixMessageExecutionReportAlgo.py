@@ -11,35 +11,33 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: Side, status: Status):
-        if side == Side.Buy.value:
-            if status == Status.Pending.value:
+        if side is Side.Buy:
+            if status is Status.Pending:
                 self.__set_pending_new_buy(new_order_single)
-            elif status == Status.New.value:
+            elif status is Status.New:
                 self.__set_new_buy(new_order_single)
-            elif status == Status.Fill.value:
+            elif status is Status.Fill:
                 self.__set_fill_buy(new_order_single)
-            elif status == Status.PartialFill.value:
+            elif status is Status.PartialFill:
                 self.__set_partial_fill_buy(new_order_single)
-            elif status == Status.Cancel.value:
+            elif status is Status.Cancel:
                 self.__set_cancel_buy(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
-        elif side == Side.Sell.value:
-            if status == Status.Pending.value:
+        elif side is Side.Sell:
+            if status is Status.Pending:
                 self.__set_pending_new_sell(new_order_single)
-            elif status == Status.New.value:
+            elif status is Status.New:
                 self.__set_new_sell(new_order_single)
-            elif status == Status.Fill.value:
+            elif status is Status.Fill:
                 self.__set_fill_sell(new_order_single)
-            elif status == Status.PartialFill.value:
+            elif status is Status.PartialFill:
                 self.__set_partial_fill_sell(new_order_single)
-            elif status == Status.Cancel.value:
+            elif status is Status.Cancel:
                 self.__set_cancel_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
-        else:
-            raise Exception(f'Incorrect Side')
-
+        return self
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
