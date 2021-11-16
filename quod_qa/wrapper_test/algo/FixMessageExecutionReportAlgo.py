@@ -6,10 +6,8 @@ from quod_qa.wrapper_test.DataSet import Instrument
 
 class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
-    def __init__(self, parameters: dict = None, new_order_single: FixMessageNewOrderSingle = None ):
+    def __init__(self, parameters: dict = None):
         super().__init__()
-        if new_order_single is not None:
-            self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)
 
     def set_pending_new_sell (self, new_order_single: FixMessageNewOrderSingle = None):
