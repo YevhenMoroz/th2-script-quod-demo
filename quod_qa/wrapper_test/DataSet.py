@@ -61,3 +61,16 @@ class Connectivity(Enum):
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_bo = 'fix-sell-317-backoffice'
+
+
+class Side(Enum):
+    Sell = "Sell"
+    Buy = "Buy"
+
+
+class Status(Enum):
+    Pending = "Pending"
+    New = "New"
+    Fill = "Fill"
+    PartialFill = "PartialFill"
+    Cancel = "Cancel"

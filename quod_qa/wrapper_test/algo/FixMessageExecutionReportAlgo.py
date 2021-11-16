@@ -1,18 +1,46 @@
 from datetime import datetime
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.DataSet import Instrument
+from quod_qa.wrapper_test.DataSet import Instrument, Side, Status
 
 
 class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
-    def __init__(self, parameters: dict = None, new_order_single: FixMessageNewOrderSingle = None ):
+    def __init__(self, parameters: dict = None):
         super().__init__()
-        if new_order_single is not None:
-            self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)
 
-    def set_pending_new_sell (self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_params_from_new_order_single(self, side: Side, status: Status, new_order_single: FixMessageNewOrderSingle):
+        if side == Side.Buy.value:
+            if status == Status.Pending.value:
+                self.__set_pending_new_buy(new_order_single)
+            elif status == Status.New.value:
+                self.__set_new_buy(new_order_single)
+            elif status == Status.Fill.value:
+                self.__set_fill_buy(new_order_single)
+            elif status == Status.PartialFill.value:
+                self.__set_partial_fill_buy(new_order_single)
+            elif status == Status.Cancel.value:
+                self.__set_cancel_buy(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
+        elif side == Side.Sell.value:
+            if status == Status.Pending.value:
+                self.__set_pending_new_sell(new_order_single)
+            elif status == Status.New.value:
+                self.__set_new_sell(new_order_single)
+            elif status == Status.Fill.value:
+                self.__set_fill_sell(new_order_single)
+            elif status == Status.PartialFill.value:
+                self.__set_partial_fill_sell(new_order_single)
+            elif status == Status.Cancel.value:
+                self.__set_cancel_sell(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
+        else:
+            raise Exception(f'Incorrect Side')
+
+    def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -44,7 +72,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_new_sell (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -78,7 +106,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_pending_new_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_pending_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
@@ -101,7 +129,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_new_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
@@ -124,7 +152,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_fill_sell (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -162,7 +190,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_partial_fill_sell (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_partial_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -200,7 +228,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_fill_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             CumQty=new_order_single.get_parameter('OrderQty'),
@@ -227,7 +255,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_partial_fill_buy (self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_partial_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             CumQty=new_order_single.get_parameter('OrderQty'),
@@ -254,7 +282,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             Account=new_order_single.get_parameter('Account'),
             AvgPx=0,
@@ -289,7 +317,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             AvgPx='*',
             ClOrdID='*',
