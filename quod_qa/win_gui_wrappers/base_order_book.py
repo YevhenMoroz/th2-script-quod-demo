@@ -82,7 +82,6 @@ class BaseOrderBook(BaseWindow):
         if order_filter_list is not None:
             self.order_details.set_filter(order_filter_list)
         field = ExtractionDetail("orderBook." + column_name, column_name)
-        self.set_order_details()
         self.order_details.add_single_order_info(
             self.order_info.create(
                 action=ExtractionAction.create_extraction_action(extraction_details=[field])
@@ -90,6 +89,7 @@ class BaseOrderBook(BaseWindow):
         )
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details, self.order_info])
+        self.set_order_details()
         return response[field.name]
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
