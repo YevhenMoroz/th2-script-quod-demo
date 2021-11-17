@@ -78,7 +78,7 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, order_filter_list) -> str:
+    def extract_field(self, column_name: str, order_filter_list=None) -> str:
         if order_filter_list is not None:
             self.order_details.set_filter(order_filter_list)
         field = ExtractionDetail("orderBook." + column_name, column_name)
