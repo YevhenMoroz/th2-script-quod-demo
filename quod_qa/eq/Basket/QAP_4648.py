@@ -17,14 +17,13 @@ from win_gui_modules.application_wrappers import LoginDetailsRequest, OpenApplic
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
 class Test(TestCase):
-    def __init__(self,  report_id, session_id, file_name):
+    def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
         self.file_name = file_name
@@ -34,20 +33,15 @@ class Test(TestCase):
 
         fix_manager = FixManager(Connectivity.Ganymede_317_ss.value, self.report_id)
         fix_verifier = FixVerifier(Connectivity.Ganymede_317_bs.value, self.report_id)
-
         new_order_list = FixMessageNewOrderList()
-        new_order_list.change_parameters()
-
-        responce = fix_manager.send_message_and_receive_response(new_order_list)
+        #new_order_list.change_parameters()
+        fix_manager.send_message_and_receive_response_fix_standard(new_order_list)
         fix_verifier.check_fix_message(new_order_list, direction=DirectionEnum.SECOND)
-
-        execution_report = FixMessageListStatus(responce)
-        fix_verifier.check_fix_message(execution_report)
+        list_status = FixMessageListStatus(new_order_list)
+        fix_verifier.check_fix_message(list_status)
 
         # endregion
 
-
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    #@decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_4648()
-
