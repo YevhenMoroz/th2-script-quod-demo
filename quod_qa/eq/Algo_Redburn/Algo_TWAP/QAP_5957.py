@@ -87,9 +87,8 @@ def execute(report_id):
         fix_manager_fh = FixManager(connectivity_fh, case_id)
 
         # Send_MarkerData
-        case_id_0 = bca.create_event("Send Market Data", case_id)
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data", case_id))
         market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        fix_manager_fh.set_case_id(case_id_0)
         fix_manager_fh.send_message(market_data_snapshot)
 
         time.sleep(3)
@@ -119,8 +118,7 @@ def execute(report_id):
 
         # region Check Buy side
         # Check First TWAP child
-        case_id_2 = bca.create_event("First TWAP slise", case_id)
-        fix_verifier_bs.set_case_id(case_id_2)
+        fix_verifier_bs.set_case_id(bca.create_event("First TWAP slise", case_id))
 
         twap_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         twap_child_1.change_parameters(dict(OrderQty=qty_twap_1, Price=price))
@@ -155,8 +153,7 @@ def execute(report_id):
         time.sleep(3)
 
         #region Rebalance
-        case_id_3 = bca.create_event("Rebalance", case_id)
-        fix_verifier_bs.set_case_id(case_id_3)
+        fix_verifier_bs.set_case_id(bca.create_event("Rebalance", case_id))
 
         # Check Second Navigator child
         navigator_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
@@ -171,8 +168,7 @@ def execute(report_id):
         #endregion
         time.sleep(1)
         #region Check Second TWAP child order
-        case_id_3 = bca.create_event("Second TWAP child order", case_id)
-        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id_3)
+        fix_verifier_bs = FixVerifier(connectivity_buy_side, bca.create_event("Second TWAP child order", case_id))
 
         time.sleep(9)
 
