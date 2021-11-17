@@ -119,8 +119,8 @@ def execute(report_id):
         #region Check Parent order fill
         fix_verifier_ss.set_case_id(bca.create_event("Check parent order Fill", case_id))
 
-        fill_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_fill)
-        fix_verifier_ss.check_fix_message(fill_parent_params, key_parameters=key_params, message_name='Sell side ExecReport Fill')
+        fill_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_fill)
+        fix_verifier_ss.check_fix_message(fill_twap_nav_order_params, key_parameters=key_params, message_name='Sell side ExecReport Fill')
         #endregion
     except:
         logging.error("Error execution", exc_info=True)
