@@ -52,6 +52,36 @@ class FixVerifier:
             pass
         # TODO add exeption into else
 
-
+    def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST):
+        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID', 'OrdStatus']
+            fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check NewOrderSingle",
+                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.NewOrderSingle.value, fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID', 'OrdStatus']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check ExecutionReport",
+                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.ExecutionReport.value, fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        else:
+            pass
+        # TODO add exeption into else
 
 

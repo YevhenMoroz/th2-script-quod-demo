@@ -8,6 +8,7 @@ from quod_qa.win_gui_wrappers.TestCase import TestCase
 from quod_qa.wrapper_test.DataSet import Connectivity, DirectionEnum
 from quod_qa.wrapper_test.FixManager import FixManager
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
+from quod_qa.wrapper_test.FixMessageListStatus import FixMessageListStatus
 from quod_qa.wrapper_test.FixMessageNewOrderList import FixMessageNewOrderList
 from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from quod_qa.wrapper_test.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -30,22 +31,19 @@ class Test(TestCase):
 
     def qap_4648(self):
         # region create OrderList
-        try:
-            fix_manager = FixManager(Connectivity.Ganymede_317_ss.value, self.report_id)
-            fix_verifier = FixVerifier(Connectivity.Ganymede_317_bs.value, self.report_id)
 
-            new_order_list = FixMessageNewOrderList()
-            new_order_list.change_parameters(dict(OrderQty=100000))
+        fix_manager = FixManager(Connectivity.Ganymede_317_ss.value, self.report_id)
+        fix_verifier = FixVerifier(Connectivity.Ganymede_317_bs.value, self.report_id)
 
-            fix_manager.send_message_and_receive_response(new_order_list)
-            fix_verifier.check_fix_message(new_order_list, direction=DirectionEnum.SECOND)
+        new_order_list = FixMessageNewOrderList()
+        new_order_list.change_parameters()
 
-            execution_report = FixMessageExecutionReportOMS(new_order_list)
-            fix_verifier.check_fix_message(execution_report)
-        except:
-            logging.error("Error execution", exc_info=True)
-        finally:
-            RuleManager.remove_rules(rule_list)
+        responce = fix_manager.send_message_and_receive_response(new_order_list)
+        fix_verifier.check_fix_message(new_order_list, direction=DirectionEnum.SECOND)
+
+        execution_report = FixMessageListStatus(responce)
+        fix_verifier.check_fix_message(execution_report)
+
         # endregion
 
 
