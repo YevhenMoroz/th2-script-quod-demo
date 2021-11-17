@@ -66,7 +66,7 @@ connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
 
 
-def rule_creation():
+def rules_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
@@ -78,7 +78,7 @@ def rule_creation():
 
 def execute(report_id):
     try:
-        rule_list = rule_creation()
+        rules_list = rules_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
         fix_manager = FixManager(connectivity_sell_side, case_id)
@@ -202,4 +202,4 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.remove_rules(rule_list)
+        RuleManager.remove_rules(rules_list)
