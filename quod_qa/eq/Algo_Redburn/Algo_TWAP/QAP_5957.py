@@ -147,7 +147,7 @@ def execute(report_id):
         set_cancel_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child_1, gateway_side_buy, status_cancel)
         fix_verifier_bs.check_fix_message(set_cancel_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side Cancel First TWAP child')
 
-        set_fill_nav_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_cancel)
+        set_fill_nav_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_fill)
         fix_verifier_bs.check_fix_message(set_fill_nav_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side Fill First Navigator')
         # endregion
 
