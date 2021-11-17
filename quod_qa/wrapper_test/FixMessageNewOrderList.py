@@ -15,7 +15,7 @@ class FixMessageNewOrderList(FixMessage):
         base_parameters = {
             'BidType': "1",
             'TotNoOrders': '2',
-            'NoOrders': [{
+            'ListOrdGrp': {'NoOrders': [{
                 "Account": "CLIENT1",
                 "HandlInst": "0",
                 "Side": "1",
@@ -42,6 +42,6 @@ class FixMessageNewOrderList(FixMessage):
                 "Currency": "EUR",
                 "ExDestination": "XPAR",
             }
-            ]
+            ]}
         }
         super().change_parameters(base_parameters)

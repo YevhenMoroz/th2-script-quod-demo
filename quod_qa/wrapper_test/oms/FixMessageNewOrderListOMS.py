@@ -9,14 +9,14 @@ class FixMessageNewOrderListOMS(FixMessageNewOrderList):
 
     def __init__(self, parameters: dict = None):
         super().__init__()
-        if not None:
-            self.change_parameters(parameters)
+        self.change_parameters(parameters)
+
 
     base_parameters = {
         'BidType': "1",
         'TotNoOrders': '2',
         'ListID': basic_custom_actions.client_orderid(10),
-        'NoOrders': [{
+        'ListOrdGrp': {'NoOrders': [{
             "Account": "CLIENT_FIX_CARE",
             "HandlInst": "0",
             "Side": "1",
@@ -49,7 +49,7 @@ class FixMessageNewOrderListOMS(FixMessageNewOrderList):
             "Currency": "EUR",
             "ExDestination": "XPAR",
         }
-        ]
+        ]}
     }
 
     def set_default_order_list(self):
