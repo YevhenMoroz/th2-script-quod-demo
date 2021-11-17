@@ -38,6 +38,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             else:
                 raise Exception(f'Incorrect Status')
         return self
+
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
