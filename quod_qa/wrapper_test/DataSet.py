@@ -46,4 +46,4 @@ class Connectivity(Enum):
     Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
-    Ganymede_317_bo = 'fix-sell-317-backoffice'
+    Ganymede_317_dc = 'fix-sell-317-backoffice'
