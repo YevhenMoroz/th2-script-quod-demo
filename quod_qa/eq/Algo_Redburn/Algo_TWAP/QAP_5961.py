@@ -170,7 +170,7 @@ def execute(report_id):
         time.sleep(10)
 
         fill_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_2, gateway_side_buy, status_fill)
-        fix_verifier_bs.check_fix_message(fill_nav_child_2_params, key_parameters=key_params, direction=FromQuod, message_name='Buy side ExecReport Fill Second Navigator')
+        fix_verifier_bs.check_fix_message(fill_nav_child_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill Second Navigator')
         #endregion
 
         #region Check Parent order fill
