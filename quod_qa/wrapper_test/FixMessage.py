@@ -1,6 +1,5 @@
 from custom import basic_custom_actions
 
-
 class FixMessage:
 
     def __init__(self, message_type: str):
@@ -16,7 +15,7 @@ class FixMessage:
     def get_parameters(self) -> dict:
         return self.__parameters
 
-    def change_parameter(self, parameter_name: str, new_parameter_value: str) -> None:
+    def change_parameter(self, parameter_name: str, new_parameter_value) -> None:
         self.__parameters[parameter_name] = new_parameter_value
 
     def change_parameters(self, parameter_list: dict):
@@ -52,7 +51,7 @@ class FixMessage:
         new_component = self.get_parameter(component)
         for key in fields:
             if key not in new_component:
-                raise Exception('Unknown argument for removing from component', key)
+                raise Exception(f'Unknown argument for removing from component', key)
             else:
                 new_component.pop(key)
 
