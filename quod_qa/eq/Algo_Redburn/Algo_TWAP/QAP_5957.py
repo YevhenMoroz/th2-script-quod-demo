@@ -131,23 +131,23 @@ def execute(report_id):
         fix_verifier_bs.check_fix_message(new_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New TWAP child')
 
         # Check First Navigator child
-        navigator_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        navigator_child_1.change_parameters(dict(OrderQty=qty_nav_first, Price=price_nav))
-        fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle First Navigator')
+        nav_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_child_1.change_parameters(dict(OrderQty=qty_nav_first, Price=price_nav))
+        fix_verifier_bs.check_fix_message(nav_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle First Navigator')
 
-        pending_nav_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_pending)
-        fix_verifier_bs.check_fix_message(pending_nav_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew First Navigator')
+        pending_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew First Navigator')
 
-        new_nav_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_new)
-        fix_verifier_bs.check_fix_message(new_nav_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side New ExecReport First Navigator')
+        new_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side New ExecReport First Navigator')
 
         time.sleep(1)
 
         cancel_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child_1, gateway_side_buy, status_cancel)
         fix_verifier_bs.check_fix_message(cancel_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel First TWAP child')
 
-        fill_nav_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_fill)
-        fix_verifier_bs.check_fix_message(fill_nav_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill First Navigator')
+        fill_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_fill)
+        fix_verifier_bs.check_fix_message(fill_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill First Navigator')
         # endregion
 
         time.sleep(3)
@@ -156,15 +156,15 @@ def execute(report_id):
         fix_verifier_bs.set_case_id(bca.create_event("Rebalance", case_id))
 
         # Check Second Navigator child
-        navigator_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        navigator_child_2.change_parameters(dict(OrderQty=qty_nav_second, Price=price_nav))
-        fix_verifier_bs.check_fix_message(navigator_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle Second Navigator')
+        nav_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_child_2.change_parameters(dict(OrderQty=qty_nav_second, Price=price_nav))
+        fix_verifier_bs.check_fix_message(nav_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle Second Navigator')
 
-        pending_nav_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_pending)
-        fix_verifier_bs.check_fix_message(pending_nav_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Second Navigator')
+        pending_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_child_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Second Navigator')
 
-        new_nav_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child_1, gateway_side_buy, status_new)
-        fix_verifier_bs.check_fix_message(new_nav_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Second Navigator')
+        new_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_child_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Second Navigator')
         #endregion
         time.sleep(1)
         #region Check Second TWAP child order
