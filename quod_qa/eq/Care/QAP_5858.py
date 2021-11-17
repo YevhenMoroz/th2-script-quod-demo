@@ -1,13 +1,10 @@
 import logging
-import os
-
-from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
-from quod_qa.win_gui_wrappers import OMSClientInbox
-from quod_qa.win_gui_wrappers import OMSOrderBook
-from quod_qa.win_gui_wrappers import OMSOrderTicket
-from quod_qa.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
+from quod_qa.win_gui_wrappers.base_window import BaseWindow
+from quod_qa.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from quod_qa.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from quod_qa.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)
