@@ -90,13 +90,13 @@ def execute(report_id):
         time.sleep(3)
 
         #region Check Sell side
-        fix_verifier_ss.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle Parent')
+        fix_verifier_ss.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_pending)
-        fix_verifier_ss.check_fix_message(pending_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side PendingNew Parent')
+        fix_verifier_ss.check_fix_message(pending_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_new)
-        fix_verifier_ss.check_fix_message(new_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side New Parent')
+        fix_verifier_ss.check_fix_message(new_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport New')
         #endregion
 
         #region Check Buy side
@@ -107,20 +107,20 @@ def execute(report_id):
         fix_verifier_bs.check_fix_message(navigator_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Navigator')
 
         pending_nav_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_pending)
-        fix_verifier_bs.check_fix_message(pending_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side PendingNew Navigator')
+        fix_verifier_bs.check_fix_message(pending_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Navigator')
 
         new_nav_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_new)
-        fix_verifier_bs.check_fix_message(new_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side New Navigator')
+        fix_verifier_bs.check_fix_message(new_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Navigator')
 
         fill_nav_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(navigator_child, gateway_side_buy, status_fill)
-        fix_verifier_bs.check_fix_message(fill_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side Fill Navigator')
+        fix_verifier_bs.check_fix_message(fill_nav_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill Navigator')
         #endregion
 
         #region Check Parent order fill
         fix_verifier_ss.set_case_id(bca.create_event("Check parent order Fill", case_id))
 
         fill_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_fill)
-        fix_verifier_ss.check_fix_message(fill_parent_params, key_parameters=key_params, message_name='Sell side Parent Fill')
+        fix_verifier_ss.check_fix_message(fill_parent_params, key_parameters=key_params, message_name='Sell side ExecReport Fill')
         #endregion
     except:
         logging.error("Error execution", exc_info=True)
