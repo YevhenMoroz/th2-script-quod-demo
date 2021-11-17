@@ -128,7 +128,7 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
     )
 
 
-def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
+def message_to_grpc_fix_standard(message_type: str, content: dict, session_alias: str) -> Message:
     content = dict(deepcopy(content))
     for tag in dict(content):
         # field
@@ -141,7 +141,7 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
                 # level 2 repeating group
                 for group in content[tag][name]:
                     content[tag][name][content[tag][name].index(group)] = Value(
-                        message_value=(message_to_grpc_test(name, group, session_alias)))
+                        message_value=(message_to_grpc_fix_standard(name, group, session_alias)))
                 content[tag] = Value(
                     message_value=Message(
                         metadata=MessageMetadata(message_type=tag),
@@ -156,7 +156,7 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
                 )
             else:
                 # level 2 field
-                content[tag] = Value(message_value=(message_to_grpc_test(tag, content[tag], session_alias)))
+                content[tag] = Value(message_value=(message_to_grpc_fix_standard(tag, content[tag], session_alias)))
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
@@ -303,7 +303,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
-def filter_to_grpc_test(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+def filter_to_grpc_fix_standard(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
     """ Creates grpc wrapper for filter
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)

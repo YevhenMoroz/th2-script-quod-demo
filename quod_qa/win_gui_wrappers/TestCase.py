@@ -11,5 +11,7 @@ class TestCase:
         self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         set_base(self.session_id, self.test_id)
         self.base_request = get_base_request(session_id, self.test_id)
-
+        self.ss_connectivity = None
+        self.bs_connectivity = None
+        self.dc_connectivity = None
 

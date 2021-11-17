@@ -52,7 +52,7 @@ def execute(report_id, session_id):
     }
 
     fix_verifier_ss = FixVerifier(eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckListStatus(params, response)
+    fix_verifier_ss.CheckListStatusFIXStandard(params, response)
     # endregion
     # region Cancel order
     eq_fix_wrappers.cancel_order_via_fix(case_id, no_order[0]['ClOrdID'], no_order[0]['ClOrdID'], client, 1)
@@ -117,5 +117,5 @@ def execute(report_id, session_id):
         }
         ]}
     }
-    fix_verifier_ss.CheckListStatus(params, response)
+    fix_verifier_ss.CheckListStatusFIXStandard(params, response)
     # endregion

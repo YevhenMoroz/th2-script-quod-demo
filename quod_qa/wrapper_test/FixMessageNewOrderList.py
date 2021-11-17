@@ -8,7 +8,7 @@ from quod_qa.wrapper_test.FixMessage import FixMessage
 class FixMessageNewOrderList(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type="E")
+        super().__init__(message_type="NewOrderList")
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
