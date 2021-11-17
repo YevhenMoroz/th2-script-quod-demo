@@ -52,7 +52,7 @@ def test_run():
         #
         # QAP_5635.execute(report_id, session_id)
         # wrapper_test.execute(report_id,session_id)
-        QAP_3734.execute(report_id,session_id)
+        QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
         # for_Daria.execute(report_id,session_id)
         # SendMD.execute(report_id)
         # QAP_2872.execute(report_id)

@@ -26,6 +26,7 @@ class FixManager:
 
     def send_message_and_receive_response(self, fix_message: FixMessage) -> PlaceMessageRequest:
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+            print(fix_message.get_parameters())
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
