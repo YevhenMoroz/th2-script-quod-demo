@@ -11,6 +11,8 @@ class MessageType(Enum):
     ExecutionReport = "ExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
+    NewOrderList = "NewOrderList"
+    ListStatus = "ListStatus"
 
 
 class Instrument(Enum):
