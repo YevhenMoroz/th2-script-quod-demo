@@ -1,18 +1,15 @@
 import os
 import logging
 import time
-from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from quod_qa.wrapper_test.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from quod_qa.wrapper_test.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from quod_qa.wrapper_test import DataSet
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
+from quod_qa.wrapper_test.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,18 +22,35 @@ text_f = 'Fill'
 text_c = 'order canceled'
 
 # order param
+avt = 10000     # average volume traded per minute
+ast = avt * 5   # 5 average traded
 qty = 300000
 qty_nav_trade = 250000
-qty_nav_second = qty - qty_nav_trade
 qty_twap = 30000
-side = 1
+last_nav_qty = qty - qty_nav_trade
+waves = 10
+qty_twap_1 = int(qty / waves)
+first_reserve = max(ast, int(last_nav_qty * (1 - 1)))
+reserve = max(first_reserve, int(qty_twap_1))
+qty_nav_first = qty - reserve
+qty_nav_second = qty - qty_nav_trade
 price = 29.995  # Primary - 1 tick
 price_nav = 30
-tif_day = 0
-order_type = 2
-waves = 10
-nav_exec = 1
 nav_rebalance = 10
+
+#Key parameters
+key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
+key_params=['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+
+#Gateway Side
+gateway_side_buy = DataSet.GatewaySide.Buy
+gateway_side_sell = DataSet.GatewaySide.Sell
+
+#Status
+status_pending = DataSet.Status.Pending
+status_new = DataSet.Status.New
+status_fill = DataSet.Status.Fill
+status_cancel = DataSet.Status.Cancel
 
 # venue param
 ex_destination_1 = "XPAR"
@@ -47,15 +61,15 @@ s_par = '555'
 
 # connectivity
 case_name = os.path.basename(__file__)
-FromQuod = DataSet.DirectionEnum.FromQuod.value
-ToQuod = DataSet.DirectionEnum.ToQuod.value
+instrument = DataSet.Instrument.BUI
+FromQuod = DataSet.DirectionEnum.FromQuod
+ToQuod = DataSet.DirectionEnum.ToQuod
 connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
 connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
-instrument = DataSet.Instrument.BUI.value
 
 
-def rule_creation():
+def rules_creation():
     rule_manager = RuleManager()
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
@@ -66,323 +80,108 @@ def rule_creation():
 
     return [nos_rule, nos_rule1, nos_ioc, nos_trade_rule1, nos_trade_rule2, ocr_rule]
 
-
-def send_market_data(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
-
-
-def send_market_dataT(symbol: str, case_id: str, market_data):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntriesIR': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
-    ))
-
-
 def execute(report_id):
     try:
-        rule_list = rule_creation()
+        rules_list = rules_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        # Send_MarkerData
-        fix_manager_316 = FixManager(connectivity_sell_side, case_id)
+        fix_manager = FixManager(connectivity_sell_side, case_id)
+        fix_manager_fh = FixManager(connectivity_fh, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
-        case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1)
+        # Send_MarkerData
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data", case_id))
+        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
+        fix_manager_fh.send_message(market_data_snapshot)
 
-        # region Send NewOrderSingle (35=D)
+        #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
+        fix_verifier_ss.set_case_id(case_id_1)
 
-        fix_message = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
-        fix_message.add_ClordId((os.path.basename(__file__)[:-3]))
-        fix_message.change_parameters(dict(Account=client, OrderQty=qty))
-        fix_message.update_fields_in_component('QuodFlatParameters', dict(NavigatorExecution = nav_exec, NavigatorLimitPrice = price_nav, Waves = waves, NavigatorRebalanceTime = nav_rebalance))
-
-        fix_manager = FixManager(connectivity_sell_side, case_id)
-        response_new_order_single = fix_manager.send_message_and_receive_response(fix_message, case_id_1)
+        twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
+        twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice = price_nav, Waves = waves, NavigatorRebalanceTime = nav_rebalance))
+        fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
+        # endregion
 
         time.sleep(1)
 
-        nos_1 = dict(
-            fix_message.get_parameters(),
-            TransactTime='*',
-            ClOrdID=fix_message.get_parameter('ClOrdID'))
+        # region Check Sell side
+        fix_verifier_ss.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, response_new_order_single, direction='SECOND', case=case_id_1,
-                                            message_name='FIXQUODSELL7 receive 35=D')
+        pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_pending)
+        fix_verifier_ss.check_fix_message(pending_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        # region 1st TWAP slice + Navigator
-        case_id_2 = bca.create_event("First slise", case_id)
-        er_1 = {
-            'Account': account,
-            'ExecID': '*',
-            'OrderQty': qty_twap,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'LeavesQty': qty_twap,
-            'CumQty': '0',
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_pn,
-            'Price': price,
-            'ExDestination': ex_destination_1
+        new_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_new)
+        fix_verifier_ss.check_fix_message(new_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport New')
+        # endregion
 
-        }
-        fix_verifier_bs.CheckExecutionReport(er_1, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='FIXBUYTH2 sent 35=8 TWAP slice Pending New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        # region Check Buy side
+        # Check First TWAP child
+        fix_verifier_bs.set_case_id(bca.create_event("First TWAP slise", case_id))
 
-        # Check that FIXQUODSELL5 sent 35=8 new
-        er_2 = dict(
-            er_1,
-            ExecType="0",
-            OrdStatus='0',
-            Text=text_n
-        )
-        fix_verifier_bs.CheckExecutionReport(er_2, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='FIXQUODSELL7 sent 35=8 TWAP slice New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        twap_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        twap_child_1.change_parameters(dict(OrderQty=qty_twap_1, Price=price))
+        fix_verifier_bs.check_fix_message(twap_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle TWAP child')
 
-        er_3 = {
-            'Account': account,
-            'ExecID': '*',
-            'OrderQty': qty_nav_trade,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'LeavesQty': qty_nav_trade,
-            'CumQty': '0',
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_pn,
-            'Price': price_nav,
-            'ExDestination': ex_destination_1
+        pending_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child_1, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
 
-        }
-        fix_verifier_bs.CheckExecutionReport(er_3, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='FIXQUODSELL7 sent 35=8 Navigator slice Pending New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        new_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child_1, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New TWAP child')
 
-        # Check that FIXQUODSELL5 sent 35=8 new
-        er_4 = dict(
-            er_3,
-            ExecType="0",
-            OrdStatus='0',
-            Text=text_n
-        )
-        fix_verifier_bs.CheckExecutionReport(er_4, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='FIXQUODSELL7 sent 35=8 Navigator slice New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        # Check First Navigator child
+        nav_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_child_1.change_parameters(dict(OrderQty=qty_nav_second, Price=price_nav))
+        fix_verifier_bs.check_fix_message(nav_child_1, key_parameters=key_params, message_name='Buy side NewOrderSingle First Navigator')
 
-        time.sleep(2)
+        pending_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew First Navigator')
 
-        # Fill First Navigator child order
-        er_5 = {
-            'Account': account,
-            'CumQty': qty_nav_trade,
-            'LastPx': price_nav,
-            'ExecID': '*',
-            'OrderQty': qty_nav_trade,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'LastQty': qty_nav_trade,
-            'Text': text_f,
-            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '*',
-            'OrdStatus': '2',
-            'Price': price_nav,
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'Instrument': '*',
-            'ExecType': "F",
-            'LeavesQty': '0'
-        }
-        fix_verifier_bs.CheckExecutionReport(er_5, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='BS FIXBUYTH2 sent 35=8 Navigator Fill',
-                                             key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
+        new_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side New ExecReport First Navigator')
 
-        # Cancel First TWAP child order
-        er_6 = {
-            'ExecID': '*',
-            'OrderQty': qty_twap,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'ExecType': "4",
-            'LeavesQty': '0',
-            'CumQty': '0',
-            'ClOrdID': '*',
-            'Text': text_c,
-            'OrigClOrdID': '*'
-        }
-        fix_verifier_bs.CheckExecutionReport(er_6, response_new_order_single, direction=ToQuod, case=case_id_2,
-                                             message_name='FIXBUYTH2 sent 35=8 TWAP slice Cancelled',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Text'])
+        time.sleep(1)
+
+        cancel_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child_1, gateway_side_buy, status_cancel)
+        fix_verifier_bs.check_fix_message(cancel_twap_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel First TWAP child')
+
+        fill_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, gateway_side_buy, status_fill)
+        fix_verifier_bs.check_fix_message(fill_nav_child_1_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill First Navigator')
         # endregion
 
         time.sleep(3)
 
-        case_id_3 = bca.create_event("Rebalance", case_id)
-        # region Rebalance
-        er_7 = {
-            'Account': account,
-            'ExecID': '*',
-            'OrderQty': qty_nav_second,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'LeavesQty': qty_nav_second,
-            'CumQty': '0',
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_pn,
-            'Price': price_nav,
-            'ExDestination': ex_destination_1
+        #region Rebalance
+        fix_verifier_bs.set_case_id(bca.create_event("Rebalance", case_id))
 
-        }
-        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=ToQuod, case=case_id_3,
-                                             message_name='FIXQUODSELL7 sent 35=8 Navigator slice Pending New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        # Check Second Navigator child
+        nav_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_child_2.change_parameters(dict(OrderQty=qty_nav_second, Price=price_nav))
+        fix_verifier_bs.check_fix_message(nav_child_2, key_parameters=key_params, message_name='Buy side NewOrderSingle Second Navigator')
 
-        # Check that FIXQUODSELL5 sent 35=8 new
-        er_8 = dict(
-            er_7,
-            ExecType="0",
-            OrdStatus='0',
-            Text=text_n
-        )
-        fix_verifier_bs.CheckExecutionReport(er_8, response_new_order_single, direction=ToQuod, case=case_id_3,
-                                             message_name='FIXQUODSELL7 sent 35=8 Navigator slice New',
-                                             key_parameters=['OrdStatus', 'ExecType', 'OrderQty', 'Price'])
+        pending_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_2, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_child_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Second Navigator')
+
+        new_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_2, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_child_2_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Second Navigator')
 
         time.sleep(10)
 
-        # Fill First Navigator child order
-        er_7 = {
-            'Account': account,
-            'CumQty': qty_nav_second,
-            'LastPx': price_nav,
-            'ExecID': '*',
-            'OrderQty': qty_nav_second,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'LastQty': qty_nav_second,
-            'Text': text_f,
-            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '*',
-            'OrdStatus': '2',
-            'Price': price_nav,
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'Instrument': '*',
-            'ExecType': "F",
-            'LeavesQty': '0'
-        }
-        fix_verifier_bs.CheckExecutionReport(er_7, response_new_order_single, direction=ToQuod, case=case_id_3,
-                                             message_name='BS FIXBUYTH2 sent 35=8 Second Navigator Fill',
-                                             key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
-
-        #Fii Parent Order
-        er_8 = {
-            'Account': client,
-            'ExecID': '*',
-            'OrderQty': qty,
-            'LastQty': qty_nav_second,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '*',
-            'OrdStatus': '2',
-            'SettlDate': '*',
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'TradeDate': '*',
-            'ExecType': "F",
-            'HandlInst': fix_message.get_parameter('HandlInst'),
-            'LeavesQty': '0',
-            'NoParty': '*',
-            'CumQty': qty,
-            'LastPx': price_nav,
-            'OrdType': fix_message.get_parameter('OrdType'),
-            'ClOrdID': fix_message.get_parameter('ClOrdID'),
-            'SecAltIDGrp': '*',
-            'SecondaryOrderID': '*',
-            'LastMkt': ex_destination_1,
-            'Text': text_f,
-            'OrderCapacity': fix_message.get_parameter('OrderCapacity'),
-            'QtyType': '*',
-            'SecondaryClOrdID': '*',
-            'Price': price_nav,
-            'Instrument': '*',
-            'SecondaryExecID': '*',
-            'GrossTradeAmt': '*'
-        }
-        fix_verifier_ss.CheckExecutionReport(er_8, response_new_order_single, case=case_id_3,
-                                             message_name='BS FIXBUYTH2 sent 35=8 Second Navigator Fill',
-                                             key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'Text', 'Price'])
-
+        fill_nav_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_2, gateway_side_buy, status_fill)
+        fix_verifier_bs.check_fix_message(fill_nav_child_2_params, key_parameters=key_params, direction=FromQuod, message_name='Buy side ExecReport Fill Second Navigator')
         #endregion
+
+        #region Check Parent order fill
+        fix_verifier_ss.set_case_id(bca.create_event("Check parent order Fill", case_id))
+
+        fill_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_fill)
+        fill_twap_nav_order_params.change_parameter('LastQty', qty_nav_second)
+        fix_verifier_ss.check_fix_message(fill_twap_nav_order_params, key_parameters=key_params, message_name='Sell side ExecReport Fill')
+        #endregion
+
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.remove_rules(rule_list)
+        RuleManager.remove_rules(rules_list)
