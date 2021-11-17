@@ -36,7 +36,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('srublyov tests')
+    report_id = bca.create_event('Redburn morning tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
 
