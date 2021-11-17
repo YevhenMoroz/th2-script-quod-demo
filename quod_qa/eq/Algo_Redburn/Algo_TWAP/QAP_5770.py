@@ -49,7 +49,6 @@ status_cancel = DataSet.Status.Cancel
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '555'
 
 #connectivi
@@ -80,10 +79,9 @@ def execute(report_id):
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
 
         # Send_MarkerData
-        case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        fix_manager_fh.set_case_id(case_id_0)
-        fix_manager_fh.send_message(market_data_snap_shot)
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data", case_id))
+        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
+        fix_manager_fh.send_message(market_data_snapshot)
 
         #region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
@@ -99,13 +97,13 @@ def execute(report_id):
         time.sleep(3)
 
         #region Check Sell side
-        fix_verifier_ss.check_fix_message(new_order_single, direction=ToQuod, message_name='Sell side NewOrderSingle Parent')
+        fix_verifier_ss.check_fix_message(new_order_single, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
         set_pending_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(new_order_single, gateway_side_sell, status_pending)
-        fix_verifier_ss.check_fix_message(set_pending_parent_params, key_parameters=key_params_cl, message_name='Sell side PendingNew Parent')
+        fix_verifier_ss.check_fix_message(set_pending_parent_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         set_new_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(new_order_single, gateway_side_sell, status_new)
-        fix_verifier_ss.check_fix_message(set_new_parent_params, key_parameters=key_params_cl, message_name='Sell side New Parent')
+        fix_verifier_ss.check_fix_message(set_new_parent_params, key_parameters=key_params_cl, message_name='Sell side ExecReport New')
         #endregion
 
         # region Check Buy side
@@ -168,11 +166,11 @@ def execute(report_id):
         # Cancel Order
         fix_cancel = FixMessageOrderCancelRequest(new_order_single)
         fix_manager.send_message_and_receive_response(fix_cancel, case_id_4)
-        fix_verifier_ss.check_fix_message(fix_cancel, direction=ToQuod, message_name='Sell side Cancel Parent')
+        fix_verifier_ss.check_fix_message(fix_cancel, direction=ToQuod, message_name='Sell side Cancel Request')
 
         set_cancel_parent_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(new_order_single, gateway_side_sell, status_cancel)
         set_cancel_parent_params.change_parameters(dict(CumQty=qty_nav_trade, AvgPx=price_nav))
-        fix_verifier_ss.check_fix_message(set_cancel_parent_params, key_parameters=key_params, message_name='Sell side Cancel')
+        fix_verifier_ss.check_fix_message(set_cancel_parent_params, key_parameters=key_params, message_name='Sell side ExecReport Cancel')
         #endregion
 
     except:
