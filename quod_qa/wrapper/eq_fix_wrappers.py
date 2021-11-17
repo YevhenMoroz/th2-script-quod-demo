@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-buy_connectivity = "fix-buy-317-standard-test"  # fix-buy-317ganymede-standard fix-bs-310-columbia
+buy_connectivity = "fix-buy-317-standard-test"  # fix-buy-317ganymede-standard fix-bs-310-columbia fix-buy-317-standard-test
 sell_connectivity = "fix-sell-317-standard-test"  # fix-sell-317ganymede-standard fix-ss-310-columbia-standart
 # fix-sell-317-standard-test  fix-sell-310-newdict
 bo_connectivity = "fix-sell-310-backoffice"  # fix-sell-310-backoffice  fix-sell-317-backoffice
@@ -32,7 +32,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
     fix_params = {
         'Account': client,
         'OrderQtyData': {'OrderQty': qty},
-        #'OrderQty': qty,
+        # 'OrderQty': qty,
         'HandlInst': handl_inst,
         'TimeInForce': tif,
         'OrdType': ord_type,

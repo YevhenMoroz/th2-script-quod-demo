@@ -2,7 +2,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.Instrument import Instrument
+
 
 
 class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
@@ -30,14 +30,14 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
             "Instrument": instrument,
             "TargetStrategy": "1008",                            #847
             "SettlDate": spo(),                                  #64
-            "SettlType": '0',                                    #63
-            "NoStrategyParameters":[                             #957
-                {
-                    'StrategyParameterName': 'AllowedVenues',    #958
-                    'StrategyParameterType': '14',               #959
-                    'StrategyParameterValue': 'EBS-CITI/DB'      #960
-                }
-            ]
+            "SettlType": '0'                                     #63
+            # "NoStrategyParameters":[                             #957
+            #     {
+            #         'StrategyParameterName': 'AllowedVenues',    #958
+            #         'StrategyParameterType': '14',               #959
+            #         'StrategyParameterValue': 'EBS-CITI/DB'      #960
+            #     }
+            # ]
         }
         super().change_parameters(base_parameters)
         return self

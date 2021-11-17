@@ -71,14 +71,16 @@ class BaseOrderBook(BaseWindow):
 
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
-                                      scrolling_operation=self.scrolling_operation.UP,
-                                      number_of_scrolls=count, base=self.base_request)
+                                                  scrolling_operation=self.scrolling_operation.UP,
+                                                  number_of_scrolls=count, base=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str) -> str:
+    def extract_field(self, column_name: str, order_filter_list=None) -> str:
+        if order_filter_list is not None:
+            self.order_details.set_filter(order_filter_list)
         field = ExtractionDetail("orderBook." + column_name, column_name)
         self.set_order_details()
         self.order_details.add_single_order_info(
@@ -171,7 +173,7 @@ class BaseOrderBook(BaseWindow):
             self.verifier.compare_values(key, value, actual_list[key])
         self.verifier.verify()
 
-    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
                                      row_number: int = 1):
         """
         Receives dict as an argument, where the key is column name what
@@ -314,7 +316,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None):
+                         last_capacity=None, settl_date: int = None, error_expected=False):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -328,9 +330,11 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_settlement_date_offset(settl_date)
         if last_capacity is not None:
             execution_details.set_last_capacity(last_capacity)
-
-        call(self.manual_execution_order_call, self.manual_executing_details.build())
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        result = call(self.manual_execution_order_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
+        return result
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
@@ -357,5 +361,5 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_panel_details])
         return result
 
-    def direct_moc_order(self, qty, route):
-        call(self.direct_mor_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
+    def direct_moc_order_correct(self, qty, route):
+        call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))

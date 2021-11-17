@@ -76,7 +76,7 @@ def check_order_book(base_request, act_ob, case_id, owner, stop_price, price):
     ob.set_filter(["Owner", owner])
     ob_order_type = ExtractionDetail("orderBook.orderType", "OrdType")
     ob_exec_policy = ExtractionDetail("orderBook.execPolicy", "ExecPcy")
-    ob_stop_price = ExtractionDetail("orderBook.stopPrice", "StpPx")
+    ob_stop_price = ExtractionDetail("orderBook.stopPrice", "Stop Price")
     ob_free_notes = ExtractionDetail("orderBook.freeNotes", "FreeNotes")
     ob.add_single_order_info(
         OrderInfo.create(

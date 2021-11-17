@@ -14,6 +14,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.book_order_call = None
         self.amend_block_call = None
         self.unbook_order_call = None
+        self.mass_unbook_order_call = None
         self.approve_block_call = None
         self.amend_allocate_call = None
         self.allocate_block_call = None
@@ -22,8 +23,11 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.extract_middle_office_blotter_values_call = None
         self.extract_allocation_details = None
         self.extract_allocations_table_data = None
+        self.rows_numbers_for_grid = None
+        self.mass_book_order_call = None
 
-    # endregion
+        # endregion
+
     # region Common func
 
     def set_filter(self, filter_list: list):
@@ -57,11 +61,12 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.clear_details([self.extract_middle_office_blotter_values_request])
         return response
 
-    def extract_allocate_value(self, column_name, account=None):
+    def extract_allocate_value(self, column_name, account=None, order_number=1):
         if account is not None:
             self.extract_allocation_details.set_allocations_filter({"Account ID": account})
         extraction_detail = self.extraction_detail(column_name, column_name)
         order_details = self.extract_allocation_details.add_order_details()
+        order_details.set_order_number(order_number)
         order_details.add_extraction_details([extraction_detail])
         response = call(self.extract_allocations_table_data, self.extract_allocation_details.build())
         self.clear_details([self.extract_allocation_details])
@@ -159,6 +164,14 @@ class BaseMiddleOfficeBook(BaseWindow):
     def un_book_order(self):
         call(self.unbook_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
+
+    def mass_un_book(self, row_list: []):
+        rows_numbers_for_grid = self.rows_numbers_for_grid(self.base_request, row_list)
+        call(self.mass_unbook_order_call, rows_numbers_for_grid.build())
+
+    def mass_book(self, row_list: []):
+        rows_numbers_for_grid = self.rows_numbers_for_grid(self.base_request, row_list)
+        call(self.mass_book_order_call, rows_numbers_for_grid.build())
 
     def allocate_block(self):
         response = call(self.allocate_block_call, self.modify_ticket_details.build())
