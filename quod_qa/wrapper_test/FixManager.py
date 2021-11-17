@@ -23,7 +23,7 @@ class FixManager:
                 "Send " + fix_message.get_message_type() + " to connectivity " + self.get_session_alias(),
                 self.get_session_alias(),
                 self.get_case_id(),
-                basic_custom_actions.message_to_grpc_test(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
+                basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
             ))
 
     def send_message_and_receive_response(self, fix_message: FixMessage) -> PlaceMessageRequest:
@@ -33,7 +33,7 @@ class FixManager:
                     "Send NewOrderSingle",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
@@ -42,7 +42,7 @@ class FixManager:
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
@@ -51,7 +51,7 @@ class FixManager:
                     "Send OrderCancelRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:

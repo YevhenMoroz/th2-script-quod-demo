@@ -20,7 +20,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("ExecutionReport", parameters, key_parameters),
+                bca.filter_to_grpc("ExecutionReport", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
@@ -36,7 +36,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("AllocationInstruction", parameters, key_parameters),
+                bca.filter_to_grpc("AllocationInstruction", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
@@ -52,7 +52,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("Confirmation", parameters, key_parameters),
+                bca.filter_to_grpc("Confirmation", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
@@ -68,7 +68,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("BusinessMessageReject", parameters, key_parameters),
+                bca.filter_to_grpc("BusinessMessageReject", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
@@ -84,7 +84,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("OrderCancelRequest", parameters, key_parameters),
+                bca.filter_to_grpc("OrderCancelRequest", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
@@ -100,7 +100,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_test("ListStatus", parameters, key_parameters),
+                bca.filter_to_grpc("ListStatus", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,
