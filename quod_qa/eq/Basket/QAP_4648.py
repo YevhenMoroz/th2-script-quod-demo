@@ -1,26 +1,40 @@
 import logging
+import os
 
-from custom.basic_custom_actions import create_event
-from quod_qa.wrapper import eq_fix_wrappers
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from quod_qa.win_gui_wrappers.TestCase import TestCase
+from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
+from quod_qa.wrapper_test.SessionAlias import SessionAliasOMS
+from quod_qa.wrapper_test.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
+from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4648"
-    # region Declarations
-    client = "CLIENT_YMOROZ"
-    account = "CLIENT_YMOROZ_SA1"
-    account2 = "CLIENT_YMOROZ_SA2"
-    qty = "1800"
-    price = "10"
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
+class QAP4648(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    no_order=[eq_fix_wrappers.set_fix_order_detail("3", "2", client, 2, qty, 0, price),
-              eq_fix_wrappers.set_fix_order_detail("3", "2", client, 2, qty, 0, price)]
+    def qap_4648(self):
+        fix_manager = FixManager(self.ss_connectivity, self.report_id)
+        fix_verifier = FixVerifier(self.bs_connectivity, self.report_id)
+        # region create OrderList
+        new_order_list = FixMessageNewOrderListOMS().set_default_order_list()
+        fix_manager.send_message_and_receive_response_fix_standard(new_order_list)
+        # fix_verifier.check_fix_message_fix_standard(new_order_list, direction=DirectionEnum.SECOND)
+        # list_status = FixMessageListStatus(new_order_list)
+        # fix_verifier.check_fix_message_fix_standard(list_status)
 
-    print(no_order)
+        # endregion
+
+    #@decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_4648()

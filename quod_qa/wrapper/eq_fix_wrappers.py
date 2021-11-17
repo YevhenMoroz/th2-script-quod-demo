@@ -40,7 +40,7 @@ def set_fix_order_detail(handl_inst, side, client, ord_type, qty, tif, price=Non
         'Price': price,
         'StopPx': stop_price,
         'ListSeqNo': ListSeqNo,
-        'PreAllocGroup': {'NoAllocs': no_allocs},
+        'PreAllocGrp': {'NoAllocs': no_allocs},
         'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d"),
         'TransactTime': datetime.utcnow().isoformat(),
 

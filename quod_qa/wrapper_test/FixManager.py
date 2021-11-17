@@ -3,6 +3,8 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from custom import basic_custom_actions
 from quod_qa.wrapper_test.DataSet import MessageType
 from quod_qa.wrapper_test.FixMessage import FixMessage
+from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from stubs import Stubs
 
 
@@ -21,7 +23,17 @@ class FixManager:
                 "Send " + fix_message.get_message_type() + " to connectivity " + self.get_session_alias(),
                 self.get_session_alias(),
                 self.get_case_id(),
-                basic_custom_actions.message_to_grpc_test(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
+                basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
+            ))
+
+    def send_message_fix_standard(self, fix_message: FixMessage) -> None:
+        # TODO add validation(valid MsgType)
+        self.act.sendMessage(
+            request=basic_custom_actions.convert_to_request(
+                "Send " + fix_message.get_message_type() + " to connectivity " + self.get_session_alias(),
+                self.get_session_alias(),
+                self.get_case_id(),
+                basic_custom_actions.message_to_grpc_fix_standard(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
             ))
 
     def send_message_and_receive_response(self, fix_message: FixMessage) -> PlaceMessageRequest:
@@ -31,8 +43,8 @@ class FixManager:
                     "Send NewOrderSingle",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
-                                                         self.__session_alias)
+                    basic_custom_actions.message_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                                                                      self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
             response = self.act.placeOrderReplaceFIX(
@@ -40,8 +52,8 @@ class FixManager:
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
-                                                         self.__session_alias)
+                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                                                                      self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
             response = self.act.placeOrderCancelFIX(
@@ -49,15 +61,161 @@ class FixManager:
                     "Send OrderCancelRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_test(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
+                                                                      self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataSnapshotFullRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataSnapshotFullRefresh.value, fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.MarketDataIncrementalRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataIncrementalRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataIncrementalRefresh.value, fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
+            response = self.act.placeMarketDataRequestFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         else:
             response = None
 
-        # TODO add check which act method user should use
-        # TODO return not PlaceMessageRequest but FixMessage
-        return response
+        return self.parse_response(response)
+
+    def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> PlaceMessageRequest:
+        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+            response = self.act.placeOrderFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send NewOrderSingle",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.NewOrderSingle.value,
+                                                                      fix_message.get_parameters(),
+                                                                      self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
+            response = self.act.placeOrderReplaceFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send OrderCancelReplaceRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.OrderCancelReplaceRequest.value,
+                                                                      fix_message.get_parameters(),
+                                                                      self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
+            response = self.act.placeOrderCancelFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send OrderCancelRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.OrderCancelRequest.value,
+                                                                      fix_message.get_parameters(),
+                                                                      self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == MessageType.NewOrderList.value:
+            response = self.act.placeOrderListFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send NewOrderList",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.NewOrderList.value,
+                                                                      fix_message.get_parameters(),
+                                                                      self.__session_alias)
+                ))
+        else:
+            response = None
+
+        return self.parse_response_fix_standard(response)
+
+    def parse_response(self, response: PlaceMessageRequest) -> list:
+        response_messages = list()
+        for message in response.response_messages_list:
+            fields = dict()
+            for field in message.fields:
+                #Field
+                if message.fields[field].simple_value != "":
+                    fields.update({field: message.fields[field].simple_value})
+                else:
+                    component_fields = dict()
+                    # Component
+                    for component_field in message.fields[field].message_value.fields:
+                        if message.fields[field].message_value.fields[component_field].simple_value != "":
+                            print(message.fields[field].message_value.fields[component_field].simple_value)
+                            component_fields.update({component_field: message.fields[field].message_value.fields[component_field].simple_value})
+                            fields.update({field: component_fields})
+                        else:
+                            # Repeating Group
+                            repeating_group_list = list()
+                            for repeating_group in message.fields[field].message_value.fields[component_field].list_value.values:
+                                repeating_group_list_field = dict()
+                                for repeating_group_field in repeating_group.message_value.fields:
+                                    repeating_group_list_field.update({repeating_group_field: repeating_group.message_value.fields[repeating_group_field].simple_value})
+                                repeating_group_list.append(repeating_group_list_field)
+                            fields.update({field: repeating_group_list})
+            message_type = message.metadata.message_type
+            responce_fix_message = None
+            if message_type == MessageType.NewOrderSingle.value:
+                responce_fix_message = FixMessageNewOrderSingle()
+            elif message_type == MessageType.ExecutionReport.value:
+                responce_fix_message = FixMessageExecutionReport()
+
+            responce_fix_message.change_parameters(fields)
+
+        response_messages.append(responce_fix_message)
+        return response_messages
+
+    def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
+        response_messages = list()
+        for message in response.response_messages_list:
+            fields = dict()
+            for field in message.fields:
+                #Field
+                if message.fields[field].simple_value != "":
+                    print(message.fields[field].simple_value)
+                    fields.update({field: message.fields[field].simple_value})
+                else:
+                    component_fields = dict()
+                    # Component
+                    for component_field in message.fields[field].message_value.fields:
+                        if message.fields[field].message_value.fields[component_field].simple_value != "":
+                            print(message.fields[field].message_value.fields[component_field].simple_value)
+                            component_fields.update({component_field: message.fields[field].message_value.fields[component_field].simple_value})
+                            fields.update({field: component_fields})
+                        else:
+                            # Repeating Group
+                            repeating_group_list = list()
+                            for repeating_group in message.fields[field].message_value.fields[component_field].list_value.values:
+                                repeating_group_list_field = dict()
+                                for repeating_group_field in repeating_group.message_value.fields:
+                                    repeating_group_list_field.update({repeating_group_field: repeating_group.message_value.fields[repeating_group_field].simple_value})
+                                repeating_group_list.append(repeating_group_list_field)
+                            fields.update({field: repeating_group_list})
+            message_type = message.metadata.message_type
+            responce_fix_message = None
+            if message_type == MessageType.NewOrderSingle.value:
+                responce_fix_message = FixMessageNewOrderSingle()
+            elif message_type == MessageType.ExecutionReport.value:
+                responce_fix_message = FixMessageExecutionReport()
+
+            responce_fix_message.change_parameters(fields)
+
+        response_messages.append(responce_fix_message)
+        return response_messages
 
     def get_case_id(self):
         return self.__case_id

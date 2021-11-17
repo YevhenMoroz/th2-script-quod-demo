@@ -128,7 +128,8 @@ def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Mes
         fields=content
     )
 
-def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -> Message:
+
+def message_to_grpc_fix_standard(message_type: str, content: dict, session_alias: str) -> Message:
     content = dict(deepcopy(content))
     for tag in dict(content):
         # field
@@ -141,7 +142,7 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
                 # level 2 repeating group
                 for group in content[tag][name]:
                     content[tag][name][content[tag][name].index(group)] = Value(
-                        message_value=(message_to_grpc(name, group, session_alias)))
+                        message_value=(message_to_grpc_fix_standard(name, group, session_alias)))
                 content[tag] = Value(
                     message_value=Message(
                         metadata=MessageMetadata(message_type=tag),
@@ -156,7 +157,7 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
                 )
             else:
                 # level 2 field
-                content[tag] = Value(message_value=(message_to_grpc(tag, content[tag], session_alias)))
+                content[tag] = Value(message_value=(message_to_grpc_fix_standard(tag, content[tag], session_alias)))
     return Message(
         metadata=MessageMetadata(
             message_type=message_type,
@@ -164,7 +165,6 @@ def message_to_grpc_test(message_type: str, content: dict, session_alias: str) -
         ),
         fields=content
     )
-
 
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
@@ -299,6 +299,86 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                         }
                     )
                 )
+            else:
+                content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
+    return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
+
+
+def filter_to_grpc_fix_standard(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+    """ Creates grpc wrapper for filter
+        Parameters:
+            message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
+            content (dict): Fields and values, represented in Python dictionary format ({'Price': 10,
+                'OrderQty': 100}).
+            keys (list): Optional parameter. A list of fields, that must be used as key fields during the message
+                verification. Default value is None.
+            ignored_fields (list): Optional parameter.
+        Returns:
+            filter_to_grpc (MessageFilter): grpc wrapper for filter
+    """
+    if keys is None:
+        keys = []
+    if ignored_fields is None:
+        ignored_fields = []
+    ignored_fields += ['header', 'trailer']
+    settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
+    content = deepcopy(content)
+    for tag in content:
+        if isinstance(content[tag], (str, int, float)):
+            if content[tag] == '*':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
+            elif content[tag] == '#':
+                content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            else:
+                content[tag] = ValueFilter(
+                    simple_filter=str(content[tag]), key=(True if tag in keys else False)
+                )
+        elif isinstance(content[tag], bytes):
+            content[tag] = ValueFilter(
+                simple_filter=content[tag], key=(True if tag in keys else False)
+            )
+        elif isinstance(content[tag], tuple):
+            value, operation = content[tag].__iter__()
+            content[tag] = ValueFilter(
+                simple_filter=str(value), operation=FilterOperation.Value(operation)
+            )
+        elif isinstance(content[tag], list):
+            for group in content[tag]:
+                content[tag][content[tag].index(group)] = ValueFilter(
+                    message_filter=filter_to_grpc(tag, group)
+                )
+            content[tag] = ValueFilter(
+                message_filter=MessageFilter(
+                    fields={
+                        tag: ValueFilter(
+                            list_filter=ListValueFilter(
+                                values=content[tag]
+                            )
+                        )
+                    }
+                )
+            )
+        elif isinstance(content[tag], dict):
+            # level 1 component
+            name = next(iter(content[tag].items()))[0]
+            if isinstance(next(iter(content[tag].items()))[1], list):
+                # level 2 repeating group
+                for group in content[tag][name]:
+                    content[tag][name][content[tag][name].index(group)] = ValueFilter(
+                        message_filter=filter_to_grpc(name, group))
+                content[tag] = ValueFilter(
+                    message_filter=MessageFilter(
+                        fields={
+                            name: ValueFilter(
+                                list_filter=ListValueFilter(
+                                    values=content[tag][name]
+                                )
+                            )
+                        }
+                    )
+                )
+            else:
+                content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
@@ -420,7 +500,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None, status= 'SUCCESS', body='{"text": ""}') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status='SUCCESS', body='{"text": ""}') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.
@@ -529,6 +609,7 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
+
 
 def wrap_filter(content, message_type=None, key_fields=None):
     if key_fields is None:

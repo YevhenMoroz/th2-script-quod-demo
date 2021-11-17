@@ -124,7 +124,7 @@ def execute(report_id, session_id):
     from_curr = "GBP"
     to_curr = "USD"
     tenor = "Spot"
-    venue = "HSBC"
+    venue = "HSB"
 
     try:
         # Step 1

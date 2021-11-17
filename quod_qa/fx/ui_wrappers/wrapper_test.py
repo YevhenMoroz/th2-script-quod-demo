@@ -1,10 +1,12 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.tenor_settlement_date import m1_front_end, spo_front_end
 from quod_qa.win_gui_wrappers.data_set import OrderBookColumns
 from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from quod_qa.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from quod_qa.win_gui_wrappers.forex.rfq_tile import RFQTile
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
@@ -14,20 +16,21 @@ def execute(report_id, session_id):
     case_id = bca.create_event(case_name, report_id)
 
     set_base(session_id, case_id)
+    near_qty = "2000000"
+    far_qty = "3000000"
+    near_date = spo_front_end()
+    far_date = m1_front_end()
     case_base_request = get_base_request(session_id, case_id)
 
     try:
 
-        order_book = FXOrderBook(case_id, case_base_request)
-        order_book.set_filter([OrderBookColumns.qty.value, "5000000"]).check_order_fields_list(
-            {"Sts": "Terminated", "ExecSts": "2"}, row_number=1)
+        rfq_tile = RFQTile(case_id, session_id)
+        rfq_tile.crete_tile().modify_rfq_tile(near_qty=near_qty, far_qty=far_qty, far_tenor="1M")
+        rfq_tile.check_qty(near_qty=near_qty, far_qty=far_qty)
+        rfq_tile.check_tenor(near_tenor="Spot", far_tenor="1M")
+        rfq_tile.modify_rfq_tile(near_qty="1000000")
+        rfq_tile.check_date(near_date=near_date, far_date=far_date)
 
-        quote_book = FXQuoteBook(case_id, case_base_request)
-        quote_book.set_filter(["BidSize", "2000000"]).check_quote_book_fields_list({"BidPx": "1.181161"})
-
-        quote_request_book = FXQuoteRequestBook(case_id, case_base_request)
-        quote_request_book.set_filter(["Qty", "2000000"]).check_quote_book_fields_list(
-            {"User": "ostronov", "Status": "Terminated"})
 
     except Exception:
         logging.error("Error execution", exc_info=True)

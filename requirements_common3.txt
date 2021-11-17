@@ -1,5 +1,5 @@
 --extra-index-url https://quod-repos.exactpro.com/repository/quod-pypi/simple/
-th2-common==3.3.5
+th2-common==3.3.6
 th2-grpc-common==3.2.0
 th2_grpc_check1==3.2.0
 th2-grpc-act-fix-quod==3.1.6

@@ -1,5 +1,4 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.common_wrappers import GridScrollingDetails
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.utils import call
@@ -72,14 +71,16 @@ class BaseOrderBook(BaseWindow):
 
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
-                                      scrolling_operation=self.scrolling_operation.UP,
-                                      number_of_scrolls=count, base=self.base_request)
+                                                  scrolling_operation=self.scrolling_operation.UP,
+                                                  number_of_scrolls=count, base=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str) -> str:
+    def extract_field(self, column_name: str, order_filter_list=None) -> str:
+        if order_filter_list is not None:
+            self.order_details.set_filter(order_filter_list)
         field = ExtractionDetail("orderBook." + column_name, column_name)
         self.order_details.add_single_order_info(
             self.order_info.create(
@@ -87,7 +88,8 @@ class BaseOrderBook(BaseWindow):
             )
         )
         response = call(self.get_orders_details_call, self.order_details.request())
-        self.clear_details([self.order_details])
+        self.clear_details([self.order_details, self.order_info])
+        self.set_order_details()
         return response[field.name]
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
@@ -108,6 +110,7 @@ class BaseOrderBook(BaseWindow):
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
+        self.set_order_details()
         return response
 
     def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
@@ -134,6 +137,7 @@ class BaseOrderBook(BaseWindow):
         )
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
+        self.set_order_details()
         return response
 
     def extract_2lvl_fields(self, tab: str, column_names: [str], rows: [int], filter_dict: dict = None):
@@ -169,7 +173,7 @@ class BaseOrderBook(BaseWindow):
             self.verifier.compare_values(key, value, actual_list[key])
         self.verifier.verify()
 
-    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check Child in Order Book",
+    def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
                                      row_number: int = 1):
         """
         Receives dict as an argument, where the key is column name what
@@ -347,6 +351,7 @@ class BaseOrderBook(BaseWindow):
     '''
     Method extracting values from Booking Ticket
     '''
+
     def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
@@ -358,5 +363,3 @@ class BaseOrderBook(BaseWindow):
 
     def direct_moc_order_correct(self, qty, route):
         call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
-
-
