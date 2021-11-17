@@ -96,6 +96,7 @@ def execute(report_id):
 
         # region Send NewOrderSingle (35=D)
         case_id_1 = bca.create_event("Create Algo Order", case_id)
+        fix_verifier_ss.set_case_id(case_id_1)
 
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
