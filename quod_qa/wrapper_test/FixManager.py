@@ -6,6 +6,7 @@ from quod_qa.wrapper_test.FixMessage import FixMessage
 from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageListStatus import FixMessageListStatus
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from quod_qa.wrapper_test.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 from stubs import Stubs
 
 
@@ -206,12 +207,15 @@ class FixManager:
                             fields.update({field:{component_field: repeating_group_list}})
             message_type = message.metadata.message_type
             responce_fix_message = None
+
             if message_type == MessageType.NewOrderSingle.value:
                 responce_fix_message = FixMessageNewOrderSingle()
             elif message_type == MessageType.ExecutionReport.value:
                 responce_fix_message = FixMessageExecutionReport()
             elif message_type == MessageType.ListStatus.value:
                 responce_fix_message = FixMessageListStatus()
+            elif message_type == MessageType.OrderCancelReplaceRequest.value:
+                responce_fix_message = FixMessageOrderCancelReplaceRequest()
             responce_fix_message.change_parameters(fields)
         response_messages.append(responce_fix_message)
         return response_messages
