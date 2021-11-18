@@ -129,7 +129,6 @@ class RestApiMessages:
             'clCommissionName': "Commission_for_MOClient",
             'commissionAmountType': "BRK",
             'commissionProfileID': 6,
-            'instrType': "EQU",
             'recomputeInConfirmation': 'false',
             'venueID': "EUREX"
         }
