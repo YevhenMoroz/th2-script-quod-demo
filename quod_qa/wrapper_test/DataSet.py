@@ -55,3 +55,4 @@ class Connectivity(Enum):
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
+    Ganymede_317_wa_rest = "rest_wa317ganymede"
