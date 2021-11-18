@@ -4,6 +4,7 @@ from custom import basic_custom_actions as bca
 from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
     QAP_5551, QAP_3354, QAP_3067, QAP_2326
 from quod_qa.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
+from quod_qa.fx.fx_mm_rfq import for_test_77679
 from quod_qa.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3739, QAP_3734
 from quod_qa.fx.fx_mm_rfq.rejection import QAP_3735, QAP_3740
 
@@ -52,7 +53,10 @@ def test_run():
         #
         # QAP_5635.execute(report_id, session_id)
         # wrapper_test.execute(report_id,session_id)
-        QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
+
+
+        # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
+        for_test_77679.execute(report_id,session_id)
         # for_Daria.execute(report_id,session_id)
         # SendMD.execute(report_id)
         # QAP_2872.execute(report_id)
