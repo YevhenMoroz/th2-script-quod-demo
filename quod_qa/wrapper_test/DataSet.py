@@ -22,6 +22,12 @@ class Instrument(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR'
     )
+    FR0004186856 = dict(
+        Symbol='FR0004186856_EUR',
+        SecurityID='FR0004186856',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR'
+    )
     test = dict(
         Symbol='FR0010436000',
         SecurityID='FR0010436000',
