@@ -106,9 +106,18 @@ class RestApiMessages:
             'execCommissionProfileID': 200013,
             'miscFeeType': 'EXC',
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-            'venueID': "EUREX"
         }
         self.parameters = params if params is not None else default_parameters
+        return self
+
+    def clear_fees_request(self, commission_id):
+        self.message_type = 'ModifyCommission'
+        default_parameters = {
+            'commDescription': "FeeCleared",
+            'commissionID': commission_id,
+            'miscFeeType': 'EXC'
+        }
+        self.parameters = default_parameters
         return self
 
     def change_params(self, param_modify: dict):
@@ -116,16 +125,20 @@ class RestApiMessages:
             self.parameters[key] = value
         return self
 
-    def modify_client_commission_request(self, params=None):
+    def modify_client_commission_request(self, params=None, client=None, account=None, recalculate=False):
         self.message_type = 'ModifyClCommission'
         default_parameters = {
-            'accountGroupID': "CLIENT_COMM_1",
+            'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
             'clCommissionDescription': "Commission of Testing MOClient",
             'clCommissionID': 1000008,
-            'clCommissionName': "Commission_for_MOClient",
+            'clCommissionName': "Commission_for_MOClient", 
             'commissionAmountType': "BRK",
             'commissionProfileID': 6,
-            'recomputeInConfirmation': 'false',
+            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
             'venueID': "EUREX"
         }
+        if account is not None and client is None:
+            default_parameters.pop("accountGroupID")
+            default_parameters["accountID"] = account.value
         self.parameters = params if params is not None else default_parameters
+        return self
