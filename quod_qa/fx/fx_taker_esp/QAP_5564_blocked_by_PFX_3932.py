@@ -58,7 +58,7 @@ no_md_entries_spo_citi = [
 ]
 
 
-def execute(report_id,session_id):
+def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     fix_manager = FixManager(alias_gtw, case_id)
@@ -84,7 +84,7 @@ def execute(report_id,session_id):
              'StrategyParameterValue': 'CITI/BARX'}])
         fix_manager.send_message_and_receive_response(new_order_sor)
 
-        execution_report_filled = FixMessageExecutionReportAlgoFX(new_order_single=new_order_sor).update_to_filled_sor(
+        execution_report_filled = FixMessageExecutionReportAlgoFX().update_to_filled_sor(
             new_order_sor).add_party_role()
         fix_verifier.check_fix_message(execution_report_filled, direction=DirectionEnum.FIRST.value)
 
@@ -103,8 +103,7 @@ def execute(report_id,session_id):
              'StrategyParameterValue': 'CITI/BARX'}])
         fix_manager.send_message_and_receive_response(new_order_sor_2)
 
-        execution_report_filled_2 = FixMessageExecutionReportAlgoFX(
-            new_order_single=new_order_sor_2).update_to_filled_sor(
+        execution_report_filled_2 = FixMessageExecutionReportAlgoFX().update_to_filled_sor(
             new_order_sor_2).add_party_role()
         fix_verifier.check_fix_message(execution_report_filled_2, direction=DirectionEnum.FIRST.value)
 
