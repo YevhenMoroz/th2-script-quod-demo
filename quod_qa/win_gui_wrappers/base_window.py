@@ -14,6 +14,7 @@ from win_gui_modules.wrappers import set_base
 class BaseWindow:
     def __init__(self, case_id, session_id):
         self.case_id = case_id
+        self.session_id =session_id
         self.base_request = get_base_request(session_id, case_id)
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
@@ -37,13 +38,13 @@ class BaseWindow:
         self.verifier.verify()
         self.verifier = Verifier(self.case_id)
 
-    def open_fe(self, session_id, report_id, folder, user, password, is_open=True):
+    def open_fe(self, report_id, folder, user, password, is_open=True):
         init_event = create_event("Initialization", parent_id=report_id)
-        set_base(session_id, self.case_id)
+        set_base(self.session_id, self.case_id)
         if not is_open:
-            prepare_fe(init_event, session_id, folder, user, password)
+            prepare_fe(init_event, self.session_id, folder, user, password)
         else:
-            get_opened_fe(self.case_id, session_id)
+            get_opened_fe(self.case_id, self.session_id)
 
     def switch_user(self, session_id):
         search_fe_req = FEDetailsRequest()
