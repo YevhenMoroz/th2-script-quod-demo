@@ -11,6 +11,7 @@ from quod_qa.wrapper_test.SessionAlias import SessionAliasOMS
 from quod_qa.wrapper_test.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from quod_qa.wrapper_test.oms.FixMessageListStatusOMS import FixMessageListStatusOMS
 from quod_qa.wrapper_test.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,9 +30,17 @@ class QAP4648(TestCase):
         # region Declaration
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.report_id)
-        cl_inbox = OMSClientInbox(self.case_id,self.session_id)
+        cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        lokup = "VETO"
+        qty = "100"
+        price = "20"
         # endregion
-        cl_inbox.open_fe(self.session_id)
+        # region Open FE
+        # cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
         fix_manager.send_message_and_receive_response_fix_standard(nol)
@@ -47,18 +56,38 @@ class QAP4648(TestCase):
         # region Check ListStatus
         fix_verifier.check_fix_message_fix_standard(list_status)
         # endregion
+        # region Accept orders
+        # cl_inbox.accept_order(lokup,qty,price)
+        # cl_inbox.accept_order(lokup, qty, price)
+        # endregion
         # region Set-up parameters for ExecutionReports
-        exec_reprt1 = FixMessageExecutionReportOMS().change_parameters({'Account': "CLIENT_FIX_CARE", "OrderQty": "100",
-                                                                        "Instrument":DataSet.Instrument.FR0004186856,
-                                                                        'ClOrdID':cl_ord_id1})
-        exec_reprt2 = FixMessageExecutionReportOMS().change_parameters({'Account': "CLIENT_FIX_CARE", "OrderQty": "100",
-                                                                        "Instrument": DataSet.Instrument.FR0004186856,
-                                                                        'ClOrdID': cl_ord_id2})
+        change_parameters = {
+            'Account': "CLIENT_FIX_CARE",
+            'OrderQtyData': {'OrderQty': qty},
+            'ExecID': '*',
+            'ExpireDate': '*',
+            'LastQty': '0',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'Parties': '*',
+            'SettlDate': '*',
+            'HandlInst': '3',
+            'LeavesQty': qty,
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
+        }
+        exec_report1 = FixMessageExecutionReportOMS().set_default().change_parameters(change_parameters). \
+            change_parameters({'ClOrdID': cl_ord_id1})
+        exec_report2 = FixMessageExecutionReportOMS().set_default().change_parameters(change_parameters). \
+            change_parameters({'ClOrdID': cl_ord_id2, 'Side': "2"})
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_reprt1)
-        fix_verifier.check_fix_message_fix_standard(exec_reprt2)
+        fix_verifier.check_fix_message_fix_standard(exec_report1)
+        fix_verifier.check_fix_message_fix_standard(exec_report2)
         # endregion
+        #
 
     # @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
