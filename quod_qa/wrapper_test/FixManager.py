@@ -26,7 +26,7 @@ class FixManager:
                 basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(), self.__session_alias)
             ))
 
-    def send_message_and_receive_response(self, fix_message: FixMessage, case_id= None) -> PlaceMessageRequest:
+    def send_message_and_receive_response(self, fix_message: FixMessage, case_id= None) -> list:
         if case_id == None:
             case_id = self.__case_id
 
