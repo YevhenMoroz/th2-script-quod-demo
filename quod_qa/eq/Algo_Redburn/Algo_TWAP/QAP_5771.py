@@ -26,6 +26,7 @@ reserve = max(first_reserve, int(qty_twap_1))
 qty_nav = qty - reserve
 price = 29.995
 price_nav = 30
+nav_limit_ref_price = 'MKT'
 nav_init_sweep = 10
 
 #Key parameters
@@ -89,7 +90,7 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice= price_nav, NavigatorInitialSweepTime= nav_init_sweep, Waves= waves))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(NavigatorInitialSweepTime= nav_init_sweep, Waves= waves, NavigatorLimitPriceReference=nav_limit_ref_price))
 
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 
