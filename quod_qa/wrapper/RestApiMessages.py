@@ -119,3 +119,18 @@ class RestApiMessages:
         for key, value in param_modify.items():
             if key in self.parameters.keys():
                 self.parameters[key] = value
+
+    def modify_client_commission_request(self, params=None):
+        self.message_type = 'ModifyClCommission'
+        default_parameters = {
+            'accountGroupID': "CLIENT_COMM_1",
+            'clCommissionDescription': "Commission of Testing MOClient",
+            'clCommissionID': 1000008,
+            'clCommissionName': "Commission_for_MOClient",
+            'commissionAmountType': "BRK",
+            'commissionProfileID': 6,
+            'instrType': "EQU",
+            'recomputeInConfirmation': 'false',
+            'venueID': "EUREX"
+        }
+        self.parameters = params if params is not None else default_parameters
