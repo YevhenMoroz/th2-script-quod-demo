@@ -97,25 +97,21 @@ class RestApiMessages:
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
 
-    def modify_fees_request(self, params=None):
+    def modify_fees_request(self, params=None, recalculate=False):
         self.message_type = 'ModifyCommission'
         default_parameters = {
             'commDescription': "FeeDescription",
             'commExecScope': "ALL",
             'commissionID': 1,
             'execCommissionProfileID': 200013,
-            'miscFeeType': 'AGE',
-            'recomputeInConfirmation': 'false',
+            'miscFeeType': 'EXC',
+            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
             'venueID': "EUREX"
         }
         self.parameters = params if params is not None else default_parameters
+        return self
 
-    def add_params_at_fees_modify_request(self, param):
-        self.parameters = dict(self.parameters)
-        self.parameters.update(param)
-
-    def change_params_for_fees_modify_request(self, param_modify: dict):
-        self.parameters = dict(self.parameters)
+    def change_params(self, param_modify: dict):
         for key, value in param_modify.items():
-            if key in self.parameters.keys():
-                self.parameters[key] = value
+            self.parameters[key] = value
+        return self
