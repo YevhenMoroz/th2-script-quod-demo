@@ -20,10 +20,10 @@ class LayoutLoader:
         set_base(self.session_id, self.case_id)
 
     @decorator_try_except(test_id=os.path.basename(__file__))
-    def import_layout(self, file_name):
+    def import_layout(self, file_name, dir_name):
         modification_request = WorkspaceModificationRequest()
         modification_request.set_default_params(base_request=self.base_request)
         modification_request.set_filename(file_name)
-        modification_request.set_path(str(os.path.dirname(__file__)))
+        modification_request.set_path(str(os.path.dirname(__file__))+f"/{dir_name}")
         modification_request.do_import()
         call(Stubs.win_act_options.modifyWorkspace, modification_request.build())
