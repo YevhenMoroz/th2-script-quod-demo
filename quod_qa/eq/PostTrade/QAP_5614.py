@@ -47,8 +47,13 @@ class QAP5614(TestCase):
         oms_order_book = OMSOrderBook(self.case_id, self.session_id)
         oms_middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
         fix_manager = FixManager('fix-sell-317-standard-test', self.case_id)
-        fix_message_new_order_single = FixMessageNewOrderSingleOMS()
-        fix_message_new_order_single.set_default_dma_limit(Instrument.FR0000062788)
+        expected_result_before_booking = {'DoneForDay': 'Yes', 'PostTradeStatus': 'ReadyToBook'}
+        fix_message_new_order_single_first = FixMessageNewOrderSingleOMS()
+        fix_message_new_order_single_second = FixMessageNewOrderSingleOMS()
+        fix_message_new_order_single_third = FixMessageNewOrderSingleOMS()
+        fix_message_new_order_single_first.set_default_dma_limit(Instrument.FR0000062788)
+        fix_message_new_order_single_second.set_default_dma_limit(Instrument.FR0000062788)
+        fix_message_new_order_single_third.set_default_dma_limit(Instrument.FR0000062788)
         try:
             rule_manager = RuleManager()
             nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
@@ -89,17 +94,25 @@ class QAP5614(TestCase):
                 float(price_third_order),
                 int(qty_order),
                 int(qty_order), delay=0)
-            fix_message_new_order_single.change_parameters({"Account": client,
-                                                            "Price": price_first_order})
-            fix_manager.send_message(fix_message_new_order_single)
+
+            fix_message_new_order_single_first.change_parameters({"Account": client,
+                                                                  "Price": price_first_order,
+                                                                  }
+                                                                 )
+            fix_message_new_order_single_first.add_ClordId(os.path.basename(__file__)[:-3])
+            fix_manager.send_message(fix_message_new_order_single_first)
             oms_order_book.scroll_order_book(1)
-            fix_message_new_order_single.change_parameters({"Account": client,
-                                                            "Price": price_second_order})
-            fix_manager.send_message(fix_message_new_order_single)
+            fix_message_new_order_single_second.change_parameters({"Account": client,
+                                                                   "Price": price_second_order,
+                                                                   })
+            fix_message_new_order_single_second.add_ClordId(os.path.basename(__file__)[:-3])
+            fix_manager.send_message(fix_message_new_order_single_second)
             oms_order_book.scroll_order_book(1)
-            fix_message_new_order_single.change_parameters({"Account": client
-                                                               , "Price": price_third_order})
-            fix_manager.send_message(fix_message_new_order_single)
+            fix_message_new_order_single_third.change_parameters({"Account": client,
+                                                                  "Price": price_third_order,
+                                                                  })
+            fix_message_new_order_single_third.add_ClordId(os.path.basename(__file__)[:-3])
+            fix_manager.send_message(fix_message_new_order_single_third)
             oms_order_book.scroll_order_book(1)
         finally:
             time.sleep(3)
@@ -112,9 +125,13 @@ class QAP5614(TestCase):
         # endregion
 
         # region book 1st and 2nd order
+        oms_order_book.set_filter(['ClOrdID', os.path.basename(__file__)[:-3]])
         oms_middle_office.set_modify_ticket_details(selected_row_count=2, extract_book=True)
         response = oms_middle_office.book_order()
-        print(response)
+        expected_result_after_booking = {'DoneForDay': 'Yes', 'PostTradeStatus': 'Booked'}
+        oms_order_book.check_order_fields_list(expected_result_after_booking, 'Check order after massbook', 1)
+        oms_order_book.check_order_fields_list(expected_result_after_booking, 'Check order after massbook', 2)
+        oms_order_book.check_order_fields_list(expected_result_before_booking, 'Check order after massbook', 3)
         response = dict(response)
         # region verify some values
         expected_values = {'book.agreedPrice': '18.94'}
@@ -126,6 +143,8 @@ class QAP5614(TestCase):
 
         # region mass unbook
         oms_middle_office.mass_un_book([1])
+        oms_order_book.check_order_fields_list(expected_result_before_booking, 'Check order after massbook', 1)
+        oms_order_book.check_order_fields_list(expected_result_before_booking, 'Check order after massbook', 2)
         # endregion
 
         # region verify Agreed Price
@@ -138,6 +157,6 @@ class QAP5614(TestCase):
                                    event_name='Check Agreed Price')
 
         # endregion
-
+    @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_5614()
