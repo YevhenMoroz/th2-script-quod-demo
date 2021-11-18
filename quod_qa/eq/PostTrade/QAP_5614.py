@@ -49,66 +49,66 @@ class QAP5614(TestCase):
         fix_manager = FixManager('fix-sell-317-standard-test', self.case_id)
         fix_message_new_order_single = FixMessageNewOrderSingleOMS()
         fix_message_new_order_single.set_default_dma_limit(Instrument.FR0000062788)
-        # try:
-        #     rule_manager = RuleManager()
-        #     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS', 'XPAR',
-        #         float(price_first_order))
-        #     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS', 'XPAR',
-        #         float(price_second_order))
-        #     nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS', 'XPAR',
-        #         float(price_third_order))
-        #     trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS',
-        #         'XPAR',
-        #         float(price_second_order),
-        #         float(price_second_order),
-        #         int(qty_order),
-        #         int(qty_order), delay=0)
-        #
-        #     trade_rule2 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS',
-        #         'XPAR',
-        #         float(price_first_order),
-        #         float(price_first_order),
-        #         int(qty_order),
-        #         int(qty_order), delay=0)
-        #
-        #     trade_rule3 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
-        #         'fix-buy-317-standard-test',
-        #         'MOClient_PARIS',
-        #         'XPAR',
-        #         float(price_third_order),
-        #         float(price_third_order),
-        #         int(qty_order),
-        #         int(qty_order), delay=0)
-        #     fix_message_new_order_single.change_parameters({"Account": client,
-        #                                                     "Price": price_first_order})
-        #     fix_manager.send_message(fix_message_new_order_single)
-        #     oms_order_book.scroll_order_book(1)
-        #     fix_message_new_order_single.change_parameters({"Account": client,
-        #                                                     "Price": price_second_order})
-        #     fix_manager.send_message(fix_message_new_order_single)
-        #     oms_order_book.scroll_order_book(1)
-        #     fix_message_new_order_single.change_parameters({"Account": client
-        #                                                        , "Price": price_third_order})
-        #     fix_manager.send_message(fix_message_new_order_single)
-        #     oms_order_book.scroll_order_book(1)
-        # finally:
-        #     time.sleep(3)
-        #     rule_manager.remove_rule(nos_rule1)
-        #     rule_manager.remove_rule(nos_rule2)
-        #     rule_manager.remove_rule(nos_rule3)
-        #     rule_manager.remove_rule(trade_rule1)
-        #     rule_manager.remove_rule(trade_rule2)
-        #     rule_manager.remove_rule(trade_rule3)
+        try:
+            rule_manager = RuleManager()
+            nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS', 'XPAR',
+                float(price_first_order))
+            nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS', 'XPAR',
+                float(price_second_order))
+            nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS', 'XPAR',
+                float(price_third_order))
+            trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS',
+                'XPAR',
+                float(price_second_order),
+                float(price_second_order),
+                int(qty_order),
+                int(qty_order), delay=0)
+
+            trade_rule2 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS',
+                'XPAR',
+                float(price_first_order),
+                float(price_first_order),
+                int(qty_order),
+                int(qty_order), delay=0)
+
+            trade_rule3 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+                'fix-buy-317-standard-test',
+                'MOClient_PARIS',
+                'XPAR',
+                float(price_third_order),
+                float(price_third_order),
+                int(qty_order),
+                int(qty_order), delay=0)
+            fix_message_new_order_single.change_parameters({"Account": client,
+                                                            "Price": price_first_order})
+            fix_manager.send_message(fix_message_new_order_single)
+            oms_order_book.scroll_order_book(1)
+            fix_message_new_order_single.change_parameters({"Account": client,
+                                                            "Price": price_second_order})
+            fix_manager.send_message(fix_message_new_order_single)
+            oms_order_book.scroll_order_book(1)
+            fix_message_new_order_single.change_parameters({"Account": client
+                                                               , "Price": price_third_order})
+            fix_manager.send_message(fix_message_new_order_single)
+            oms_order_book.scroll_order_book(1)
+        finally:
+            time.sleep(3)
+            rule_manager.remove_rule(nos_rule1)
+            rule_manager.remove_rule(nos_rule2)
+            rule_manager.remove_rule(nos_rule3)
+            rule_manager.remove_rule(trade_rule1)
+            rule_manager.remove_rule(trade_rule2)
+            rule_manager.remove_rule(trade_rule3)
         # endregion
 
         # region book 1st and 2nd order
