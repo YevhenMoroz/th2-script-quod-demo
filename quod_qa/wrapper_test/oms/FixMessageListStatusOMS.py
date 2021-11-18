@@ -17,12 +17,12 @@ class FixMessageListStatusOMS(FixMessageListStatus):
             'AvgPx': '0',
             'CumQty': '0',
             'ClOrdID': '*',
-            'LeavesQty': '100',
+            'LeavesQty': '900',
         }, {
             'AvgPx': '0',
             'CumQty': '0',
             'ClOrdID': '*',
-            'LeavesQty': '100',
+            'LeavesQty': '900',
         }
         ]}
     }
