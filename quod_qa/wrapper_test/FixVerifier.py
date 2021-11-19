@@ -88,6 +88,21 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == MessageType.NewOrderList.value:
             if key_parameters is None:
+                key_parameters = ['ListID']
+
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check ListStatus",
+                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.NewOrderList.value,
+                                                                     fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        elif fix_message.get_message_type() == MessageType.ListStatus.value:
+            if key_parameters is None:
                 key_parameters = ['ListID', 'ListOrderStatus']
 
             self.__verifier.submitCheckRule(

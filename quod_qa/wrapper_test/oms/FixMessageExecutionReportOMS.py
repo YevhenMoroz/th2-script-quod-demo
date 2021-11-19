@@ -6,22 +6,62 @@ from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSing
 
 
 class FixMessageExecutionReportOMS(FixMessageExecutionReport):
+    def __init__(self, parameters: dict = None):
+        super().__init__()
+        self.change_parameters(parameters)
 
-    def set_default_DMA(self):
-        base_parameters = {
-            "Account": "CLIENT1",
-            "HandlInst": "0",
-            "Side": "1",
-            "OrderQty": "1000",
-            "TimeInForce": "0",
-            "OrdType": "2",
-            "TransactTime": datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
-            "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": DataSet.FR0010436584,
+    base_parameters = {
+        "Account": "CLIENT1",
+        "HandlInst": "0",
+        "Side": "1",
+        "OrderQtyData": {'OrderQty': '100'},
+        "TimeInForce": "0",
+        "OrdType": "2",
+        "TransactTime": datetime.utcnow().isoformat(),
+        "OrderCapacity": "A",
+        "Price": "20",
+        "Currency": "EUR",
+        "Instrument": DataSet.Instrument.FR0004186856.value,
+    }
+
+    def set_default_new(self):
+        self.change_parameters(self.base_parameters)
+        change_parameters = {
+            'ExecID': '*',
+            'ExpireDate': '*',
+            'LastQty': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'Parties': '*',
+            'SettlDate': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
             "ExecType": "0",
             "OrdStatus": "0",
         }
-        super().change_parameters(base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_replaced(self):
+        self.change_parameters(self.base_parameters)
+        change_parameters = {
+            'ExecID': '*',
+            'LastQty': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'Parties': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
+            "ExecType": "5",
+            "OrdStatus": "0",
+        }
+        self.change_parameters(change_parameters)
+        return self

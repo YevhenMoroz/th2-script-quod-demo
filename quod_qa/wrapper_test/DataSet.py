@@ -22,6 +22,13 @@ class Instrument(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR'
     )
+    FR0004186856 = dict(
+        SecurityType='CS',
+        Symbol='FR0004186856_EUR',
+        SecurityID='FR0004186856',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR'
+    )
     test = dict(
         Symbol='FR0010436000',
         SecurityID='FR0010436000',
@@ -55,3 +62,4 @@ class Connectivity(Enum):
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
+    Ganymede_317_wa_rest = "rest_wa317ganymede"
