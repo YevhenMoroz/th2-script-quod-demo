@@ -22,10 +22,46 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         "Price": "20",
         "Currency": "EUR",
         "Instrument": DataSet.Instrument.FR0004186856.value,
-        "ExecType": "0",
-        "OrdStatus": "0",
     }
 
-    def set_default(self):
+    def set_default_new(self):
         self.change_parameters(self.base_parameters)
+        change_parameters = {
+            'ExecID': '*',
+            'ExpireDate': '*',
+            'LastQty': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'Parties': '*',
+            'SettlDate': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
+            "ExecType": "0",
+            "OrdStatus": "0",
+        }
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_replaced(self):
+        self.change_parameters(self.base_parameters)
+        change_parameters = {
+            'ExecID': '*',
+            'LastQty': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'Parties': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
+            "ExecType": "5",
+            "OrdStatus": "0",
+        }
+        self.change_parameters(change_parameters)
         return self

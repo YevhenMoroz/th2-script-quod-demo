@@ -42,7 +42,7 @@ class QAP4648(TestCase):
         new_price = "1"
         # endregion
         # region Open FE
-        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        #cl_inbox.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
@@ -60,30 +60,17 @@ class QAP4648(TestCase):
         fix_verifier.check_fix_message_fix_standard(list_status)
         # endregion
         # region Accept orders
-        cl_inbox.accept_order(lokup, qty, price)
-        cl_inbox.accept_order(lokup, qty, price)
+        #cl_inbox.accept_order(lokup, qty, price)
+        #cl_inbox.accept_order(lokup, qty, price)
         # endregion
         # region Set-up parameters for ExecutionReports
         change_parameters = {
             'Account': "CLIENT_FIX_CARE",
-            'OrderQtyData': {'OrderQty': qty},
-            'ExecID': '*',
-            'ExpireDate': '*',
-            'LastQty': '0',
-            'OrderID': '*',
-            'TransactTime': '*',
-            'AvgPx': '*',
-            'Parties': '*',
-            'SettlDate': '*',
-            'HandlInst': '3',
-            'LeavesQty': qty,
-            'CumQty': '*',
-            'LastPx': '*',
-            'QtyType': '*',
+            'HandlInst': '3'
         }
-        exec_report1 = FixMessageExecutionReportOMS().set_default().change_parameters(change_parameters). \
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new().change_parameters(change_parameters). \
             change_parameters({'ClOrdID': cl_ord_id1})
-        exec_report2 = FixMessageExecutionReportOMS().set_default().change_parameters(change_parameters). \
+        exec_report2 = FixMessageExecutionReportOMS().set_default_new().change_parameters(change_parameters). \
             change_parameters({'ClOrdID': cl_ord_id2, 'Side': "2"})
         # endregion
         # region Check ExecutionReports
@@ -93,36 +80,22 @@ class QAP4648(TestCase):
         # region Send OrderCancelReplaceRequest
         change_parameters = {
             'Account': "CLIENT_FIX_CARE",
-            'OrderQtyData': {'OrderQty': qty},
             'ClOrdID': cl_ord_id1,
             "OrigClOrdID": cl_ord_id1,
             'Price': new_price,
         }
         rep_req = FixMessageOrderCancelReplaceRequestOMS().set_default().change_parameters(change_parameters). \
             change_parameters({'ClOrdID': cl_ord_id1, 'Price': new_price})
-        fix_manager.send_message_and_receive_response_fix_standard(rep_req)
+        replace_responce = fix_manager.send_message_and_receive_response_fix_standard(rep_req)
         # endregion
         # region Set-up parameters for ExecutionReports
         change_parameters = {
             'Account': "CLIENT_FIX_CARE",
-            'OrderQtyData': {'OrderQty': qty},
-            'ExecID': '*',
-            'LastQty': '0',
-            'OrderID': '*',
-            'TransactTime': '*',
-            'AvgPx': '*',
-            'Parties': '*',
-            'HandlInst': '3',
-            'LeavesQty': qty,
-            'CumQty': '*',
-            'LastPx': '*',
-            'QtyType': '*',
             'Price': new_price,
-            'ExecType': "5",
             'OrigClOrdID': cl_ord_id1,
             'ClOrdID': cl_ord_id1
         }
-        exec_report3 = FixMessageExecutionReportOMS().set_default().change_parameters(change_parameters)
+        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced().change_parameters(change_parameters)
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
