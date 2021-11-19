@@ -24,7 +24,7 @@ class FixManager:
                 message_name,
                 self.TraderConnectivity,
                 case,
-                bca.message_to_grpc_test('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
+                bca.message_to_grpc('NewOrderSingle', fix_message.get_parameters(), self.TraderConnectivity)
             ))
 
         return response
