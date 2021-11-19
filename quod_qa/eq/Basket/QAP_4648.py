@@ -42,7 +42,7 @@ class QAP4648(TestCase):
         new_price = "1"
         # endregion
         # region Open FE
-        #cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        cl_inbox.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
@@ -60,8 +60,8 @@ class QAP4648(TestCase):
         fix_verifier.check_fix_message_fix_standard(list_status)
         # endregion
         # region Accept orders
-        #cl_inbox.accept_order(lokup, qty, price)
-        #cl_inbox.accept_order(lokup, qty, price)
+        cl_inbox.accept_order(lokup, qty, price)
+        cl_inbox.accept_order(lokup, qty, price)
         # endregion
         # region Set-up parameters for ExecutionReports
         change_parameters = {
@@ -86,7 +86,7 @@ class QAP4648(TestCase):
         }
         rep_req = FixMessageOrderCancelReplaceRequestOMS().set_default().change_parameters(change_parameters). \
             change_parameters({'ClOrdID': cl_ord_id1, 'Price': new_price})
-        replace_responce = fix_manager.send_message_and_receive_response_fix_standard(rep_req)
+        ix_manager.send_message_and_receive_response_fix_standard(rep_req)
         # endregion
         # region Set-up parameters for ExecutionReports
         change_parameters = {
