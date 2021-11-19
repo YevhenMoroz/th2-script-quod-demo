@@ -1,13 +1,13 @@
 from datetime import datetime
 
+from quod_qa.wrapper_test.DataSet import MessageType
 from quod_qa.wrapper_test.FixMessage import FixMessage
-from quod_qa.wrapper_test.Instrument import Instrument
 
 
 class FixMessageNewOrderList(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type="E")
+        super().__init__(message_type=MessageType.MarketDataSnapshotFullRefresh.value)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
