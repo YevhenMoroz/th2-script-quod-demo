@@ -26,7 +26,6 @@ reserve = max(first_reserve, int(qty_twap_1))
 qty_nav = qty - reserve
 price = 29.995
 price_nav = 30
-nav_init_sweep = 10
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
