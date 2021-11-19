@@ -65,3 +65,26 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         }
         self.change_parameters(change_parameters)
         return self
+
+    def set_default_canceled(self):
+        self.change_parameters(self.base_parameters)
+        change_parameters = {
+            'ExecID': '*',
+            'LastQty': '*',
+            'ExpireDate': '*',
+            'OrderID': '*',
+            'TransactTime': '*',
+            'AvgPx': '*',
+            'SettlDate': '*',
+            'Parties': '*',
+            'CxlQty': '*',
+            'HandlInst': '*',
+            'LeavesQty': '*',
+            'CumQty': '*',
+            'LastPx': '*',
+            'QtyType': '*',
+            "ExecType": "4",
+            "OrdStatus": "4",
+        }
+        self.change_parameters(change_parameters)
+        return self
