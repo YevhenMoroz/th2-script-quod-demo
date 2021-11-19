@@ -86,7 +86,7 @@ class QAP4648(TestCase):
         }
         rep_req = FixMessageOrderCancelReplaceRequestOMS().set_default().change_parameters(change_parameters). \
             change_parameters({'ClOrdID': cl_ord_id1, 'Price': new_price})
-        ix_manager.send_message_and_receive_response_fix_standard(rep_req)
+        fix_manager.send_message_and_receive_response_fix_standard(rep_req)
         # endregion
         # region Set-up parameters for ExecutionReports
         change_parameters = {
