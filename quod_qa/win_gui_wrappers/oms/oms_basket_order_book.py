@@ -15,7 +15,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.templates_details = TemplatesDetails()
         self.row_details = RowDetails()
         self.file_details = FileDetails()
-        self.simple_request = SimpleRequest()
+        self.simple_request = SimpleRequest
         self.basket_ticket_details = BasketTicketDetails()
         self.extract_template_details = ExtractTemplateDetails()
         self.manage_templates_call = Stubs.win_act_basket_ticket.manageTemplates
