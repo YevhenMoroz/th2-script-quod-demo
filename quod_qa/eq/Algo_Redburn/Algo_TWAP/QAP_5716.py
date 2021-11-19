@@ -119,7 +119,7 @@ def execute(report_id):
         new_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child, gateway_side_buy, status_new)
         fix_verifier_bs.check_fix_message(new_twap_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New TWAP child')
 
-        #Check Second Navigator child
+        #Check Navigator child
         nav_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
         nav_child.change_parameters(dict(OrderQty=qty_nav, Price=price_nav))
         fix_verifier_bs.check_fix_message(nav_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Navigator')
