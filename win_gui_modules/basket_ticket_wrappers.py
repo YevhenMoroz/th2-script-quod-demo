@@ -122,8 +122,10 @@ class BasketTicketDetails:
 class FileDetails:
     def __init__(self, file_type=None, path_to_file: str = None):
         self._request = basket_ticket_pb2.FileDetails()
-        self._request.fileType = file_type
-        self._request.pathToFile = path_to_file
+        if file_type is not None:
+            self._request.fileType = file_type
+        if path_to_file is not None:
+            self._request.pathToFile = path_to_file
 
     def set_file_type(self, file_type):
         self._request.fileType = file_type
@@ -140,7 +142,8 @@ class RowDetails:
         self._request = basket_ticket_pb2.RowDetails()
         if filtration_value is not None:
             self._request.filtrationValue = filtration_value
-        self._request.deleteRow = delete_row
+        if delete_row is not None:
+            self._request.deleteRow = delete_row
         if values is not None:
             self._request.values.update(values)
 
