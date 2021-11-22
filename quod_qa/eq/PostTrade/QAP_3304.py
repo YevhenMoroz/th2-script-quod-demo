@@ -8,7 +8,9 @@ from quod_qa.win_gui_wrappers.base_window import decorator_try_except
 from quod_qa.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from quod_qa.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
 from quod_qa.wrapper_test.SessionAlias import SessionAliasOMS
+from quod_qa.wrapper_test.oms.FixMessageAllocationInstructionReportOMS import FixMessageAllocationInstructionReportOMS
 from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from rule_management import RuleManager
 from stubs import Stubs
@@ -25,6 +27,7 @@ class QAP3304(TestCase):
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
+        self.dc_connectivity = SessionAliasOMS().dc_connectivity
 
     def qap_3304(self):
         # region Declaration
@@ -38,57 +41,63 @@ class QAP3304(TestCase):
         price = "20"
         # endregion
         # region Open FE
-        ord_book.open_fe(self.report_id, work_dir, username, password)
+        # ord_book.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderSingle
+        fix_verifier = FixVerifier("fix-sell-317-backoffice", self.case_id)
         nos = FixMessageNewOrderSingleOMS().set_default_dma_limit()
         client = nos.get_parameters()["Account"]
         try:
             rule_manager = RuleManager()
             nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             'XPAR_' + client, "XPAR",
+                                                                                             client + "_PARIS", "XPAR",
                                                                                              float(price))
             trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       'XPAR_' + client, 'XPAR',
+                                                                                       client + "_PARIS", 'XPAR',
                                                                                        float(price), int(qty), 1)
             fix_manager.send_message_and_receive_response_fix_standard(nos)
         except Exception:
             logger.error("Error execution", exc_info=True)
         finally:
-            time.sleep(1)
+            time.sleep(3)
             rule_manager.remove_rule(nos_rule)
             rule_manager.remove_rule(trade_rule)
+
+
+        alloc_report = FixMessageAllocationInstructionReportOMS().set_default_allocation()
+        fix_verifier.check_fix_message_fix_standard(alloc_report)
+
         # endregion
-        # region Book Order
-        middle_office.book_order()
-        # endregion
-        # region Check OrderBook
-        ord_book.scroll_order_book()
-        post_trd_sts = ord_book.extract_field("PostTradeStatus")
-        ord_book.compare_values({'PostTradeStatus': "Booked"}, {'PostTradeStatus': post_trd_sts},
-                                "Check PostTradeStatus")
-        # endregion
-        # region Check MiddleOffice
-        block_sts = middle_office.extract_block_field("Status")
-        block_match_sts = middle_office.extract_block_field("Match Status")
-        middle_office.compare_values({'Status': "ApprovalPending", 'Match Status': "Unmatched"},
-                                     {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
-                                     "Check block")
-        # endregion
-        # region UnBook
-        middle_office.un_book_order()
-        # endregion
-        # region Check OrderBook
-        post_trd_sts = ord_book.extract_field("PostTradeStatus")
-        ord_book.compare_values({'PostTradeStatus': "ReadyToBook"}, {'PostTradeStatus': post_trd_sts},
-                                "Check PostTradeStatus")
-        # endregion
-        # region Check MiddleOffice
-        block_sts = middle_office.extract_block_field("Status")
-        block_match_sts = middle_office.extract_block_field("Match Status")
-        middle_office.compare_values({'Status': "Canceled", 'Match Status': "Unmatched"},
-                                     {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
-                                     "Check block")
+        # # region Book Order
+        # middle_office.book_order()
+        # # endregion
+        # # region Check OrderBook
+        # ord_book.scroll_order_book()
+        # post_trd_sts = ord_book.extract_field("PostTradeStatus")
+        # ord_book.compare_values({'PostTradeStatus': "Booked"}, {'PostTradeStatus': post_trd_sts},
+        #                         "Check PostTradeStatus")
+        # # endregion
+        # # region Check MiddleOffice
+        # block_sts = middle_office.extract_block_field("Status")
+        # block_match_sts = middle_office.extract_block_field("Match Status")
+        # middle_office.compare_values({'Status': "ApprovalPending", 'Match Status': "Unmatched"},
+        #                              {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
+        #                              "Check block")
+        # # endregion
+        # # region UnBook
+        # middle_office.un_book_order()
+        # # endregion
+        # # region Check OrderBook
+        # post_trd_sts = ord_book.extract_field("PostTradeStatus")
+        # ord_book.compare_values({'PostTradeStatus': "ReadyToBook"}, {'PostTradeStatus': post_trd_sts},
+        #                         "Check PostTradeStatus")
+        # # endregion
+        # # region Check MiddleOffice
+        # block_sts = middle_office.extract_block_field("Status")
+        # block_match_sts = middle_office.extract_block_field("Match Status")
+        # middle_office.compare_values({'Status': "Canceled", 'Match Status': "Unmatched"},
+        #                              {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
+        #                              "Check block")
         # endregion
 
     @decorator_try_except(test_id=os.path.basename(__file__))
