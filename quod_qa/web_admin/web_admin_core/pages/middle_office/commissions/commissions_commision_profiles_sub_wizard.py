@@ -87,3 +87,6 @@ class CommissionsCommissionProfilesSubWizard(CommonPage):
 
     def get_rounding_modulus(self):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_ROUNDING_PRECISION_XPATH)
+
+    def set_commission_profile_name_filter(self, value):
+        self.set_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH, value)

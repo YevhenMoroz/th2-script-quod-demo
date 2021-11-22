@@ -69,12 +69,12 @@ class TestCase:
             message=bca.message_to_grpc('Order_OrderSubmit', nos_params, self.connectivity),
             parent_event_id=self.case_id))
 
-    # Main method
-    def execute(self):
-        self.send_nos()
-        Stubs.factory.close()
-
-
-if __name__ == '__main__':
-    TestCase(rep_id).execute()
-    pass
+        #Main method
+#     def execute(self):
+#         self.send_nos()
+#         Stubs.factory.close()
+#
+#
+# if __name__ == '__main__':
+#     TestCase(rep_id).execute()
+#     pass
