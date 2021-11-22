@@ -2,7 +2,7 @@ import logging
 import time
 
 from custom.basic_custom_actions import create_event
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
@@ -26,7 +26,7 @@ def execute(report_id, session_id):
     settlement_currency = "USD"
     exchange_rate = "2"
     exchange_rate_calc = "M"
-    buy_connectivity = test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity()
+    buy_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity()
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
@@ -44,7 +44,7 @@ def execute(report_id, session_id):
                                                             account=client + "_PARIS", venue=venue, price=float(price))
         trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(session=buy_connectivity,account=client + "_PARIS", venue=venue,
                                                                        price=float(price), traded_qty=int(qty), delay=0)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id=case_id, handl_inst=handl_inst, side=side, client=client, ord_type=ord_type, qty=qty, tif=tif, price=price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id=case_id, handl_inst=handl_inst, side=side, client=client, ord_type=ord_type, qty=qty, tif=tif, price=price)
     except Exception:
         logger.error("Error during order creation", exc_info=True)
     finally:

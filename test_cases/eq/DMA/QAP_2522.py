@@ -3,7 +3,7 @@ from datetime import datetime
 
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_fix_wrappers
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs

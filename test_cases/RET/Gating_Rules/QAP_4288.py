@@ -15,7 +15,7 @@ from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
-from test_cases.wrapper.ret_wrappers import extract_parent_order_details, verifier
+from test_framework.old_wrappers.ret_wrappers import extract_parent_order_details, verifier
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

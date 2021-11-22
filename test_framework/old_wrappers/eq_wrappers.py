@@ -9,7 +9,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
 # from demo import logger
-from test_cases.wrapper.eq_fix_wrappers import buy_connectivity, logger
+from test_framework.old_wrappers.eq_fix_wrappers import buy_connectivity, logger
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers

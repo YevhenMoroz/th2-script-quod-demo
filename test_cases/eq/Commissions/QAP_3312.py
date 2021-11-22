@@ -2,7 +2,7 @@ import time
 
 from custom.verifier import Verifier, VerificationMethod
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import create_event

@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
 from win_gui_modules.utils import set_session_id
@@ -33,7 +33,7 @@ def execute(report_id, session_id):
     set_base(session_id, case_id)
     # endregion
     # region Create order via FIX
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price, instrument=instrument)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price, instrument=instrument)
     # endregion
     eq_wrappers.accept_order(lookup, qty, price)
     eq_wrappers.split_order()

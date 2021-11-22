@@ -2,12 +2,12 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 
 logger = logging.getLogger(__name__)
@@ -26,9 +26,9 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', "XPAR", float(price))
-        fix_manager = FixManager(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+        fix_manager = FixManager(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
         fix_params = {
             'Account': client,
             'HandlInst': 2,
@@ -113,7 +113,7 @@ def execute(report_id, session_id):
             'OrderQty': qty
         }
     }
-    fix_verifier_bo = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=None)
     # endregion

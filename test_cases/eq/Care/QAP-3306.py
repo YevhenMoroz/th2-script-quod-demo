@@ -2,11 +2,11 @@ import logging
 
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from win_gui_modules import trades_blotter_wrappers
 from win_gui_modules.common_wrappers import GridScrollingDetails
@@ -42,16 +42,16 @@ def execute(report_id, session_id):
     # endregion
 
     # region Create CO orders
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty_first_order, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty_first_order, 0, price)
     scrolling_details = GridScrollingDetails(ScrollingOperation.UP, 3, base_request)
     order_book_service = Stubs.win_act_order_book
     call(order_book_service.orderBookGridScrolling, scrolling_details.build())
     eq_wrappers.accept_order(lookup, qty_first_order, price)
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty_second_order, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty_second_order, 0, price)
     order_book_service = Stubs.win_act_order_book
     call(order_book_service.orderBookGridScrolling, scrolling_details.build())
     eq_wrappers.accept_order(lookup, qty_second_order, price)
-    fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty_third, 0, price)
+    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty_third, 0, price)
     order_book_service = Stubs.win_act_order_book
     call(order_book_service.orderBookGridScrolling, scrolling_details.build())
     eq_wrappers.accept_order(lookup, qty_third, price)
@@ -96,7 +96,7 @@ def execute(report_id, session_id):
         'ExDestination': '*',
         'GrossTradeAmt': '*'
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
     params['OrdStatus'] = '2'
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

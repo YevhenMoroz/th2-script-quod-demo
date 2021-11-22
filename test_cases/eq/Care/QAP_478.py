@@ -1,7 +1,7 @@
 import logging
 import time
 from datetime import datetime
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
 from rule_management import RuleManager
@@ -30,7 +30,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create CO
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
     # endregions
     # region AcceptOrder
     eq_wrappers.accept_order(lookup, qty, "")

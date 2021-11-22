@@ -1,6 +1,6 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from test_cases.wrapper import eq_wrappers
 from rule_management import RuleManager
@@ -37,10 +37,10 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client +"_PARIS", "XPAR", 3)
 
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 3, client, 2, qty, 6, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 3, client, 2, qty, 6, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -72,7 +72,7 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client +"_PARIS", "XPAR", 3)
         eq_wrappers.direct_order(lookup, qty, price, 100)
     except Exception:

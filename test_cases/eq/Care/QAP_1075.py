@@ -1,9 +1,9 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 
 from win_gui_modules.utils import get_base_request
@@ -33,14 +33,14 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create CO
-    fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order(lookup, qty, price)
     # region ManualExecute
     eq_wrappers.manual_execution(base_request, qty, price)
     response = fix_message.pop('response')
     # Amend fix order
     param_list = {'Price': new_price}
-    test_cases.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
+    test_framework.old_wrappers.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
     # endregion
     # region accept amend
     eq_wrappers.reject_order(lookup, qty, price)
@@ -55,5 +55,5 @@ def execute(report_id, session_id):
         'OrigClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
         'CxlRejResponseTo': 2
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckCancelReject(params, response)

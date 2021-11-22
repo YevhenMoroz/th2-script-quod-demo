@@ -1,6 +1,6 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 
 from test_cases.wrapper import eq_wrappers
@@ -41,7 +41,7 @@ def execute(report_id, session_id):
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.buy_connectivity,
                                                                              client + '_PARIS', 'XPAR', 40)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
 
     finally:
         rule_manager.remove_rule(nos_rule)

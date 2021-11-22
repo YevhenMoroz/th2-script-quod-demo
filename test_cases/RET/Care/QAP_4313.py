@@ -3,7 +3,7 @@ import os
 from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper.ret_wrappers import decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import decorator_try_except
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum

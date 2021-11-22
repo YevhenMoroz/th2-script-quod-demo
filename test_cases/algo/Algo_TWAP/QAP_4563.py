@@ -8,9 +8,9 @@ from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, T
 from th2_grpc_common.common_pb2 import ConnectionID, Direction
 
 from test_cases.eq import MD_test
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request

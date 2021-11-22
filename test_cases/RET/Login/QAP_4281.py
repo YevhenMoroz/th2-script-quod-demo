@@ -3,7 +3,7 @@ import os
 
 from datetime import datetime
 from custom.verifier import Verifier
-from test_cases.wrapper.ret_wrappers import decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import decorator_try_except
 from win_gui_modules.application_wrappers import LoginDetailsRequest, OpenApplicationRequest
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs

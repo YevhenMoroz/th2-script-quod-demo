@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from test_cases.wrapper import eq_wrappers
 from rule_management import RuleManager
@@ -45,9 +45,9 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + "_PARIS", "XPAR", 20)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
         fix_message.pop("response")
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -60,7 +60,7 @@ def execute(report_id, session_id):
     # endregion
     # region Send OrderCancelReplaceRequest
     params = {'Price': newPrice, 'OrderQty': newQty}
-    test_cases.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params)
+    test_framework.old_wrappers.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, params)
     # endregion
     # region Accept CO
     eq_wrappers.accept_modify(lookup, qty, price)
@@ -72,7 +72,7 @@ def execute(report_id, session_id):
     # endregion
     # region Cancelling order
     cl_order_id = eq_wrappers.get_cl_order_id(base_request)
-    test_cases.wrapper.eq_fix_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
+    test_framework.old_wrappers.eq_fix_wrappers.cancel_order_via_fix(case_id, cl_order_id, cl_order_id, client, 1)
     eq_wrappers.accept_cancel(lookup, qty, price)
     # endregion
     # region Check values after Cancel

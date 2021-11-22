@@ -3,10 +3,10 @@ import time
 from datetime import datetime
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
 from custom import basic_custom_actions as bca
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.wrappers import set_base
@@ -32,7 +32,7 @@ def execute(report_id, session_id):
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_fix_wrappers.get_buy_connectivity(),
                                                                              'XPAR_' + client, 'XPAR', float(price))
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -117,6 +117,6 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'SettlType': '0'
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, ['OrigClOrdID', 'ExecType'])
     # endregion

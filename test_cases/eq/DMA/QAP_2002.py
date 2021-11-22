@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 
-import test_cases.wrapper.eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+import test_framework.old_wrappers.eq_fix_wrappers
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 
 from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
@@ -32,9 +32,9 @@ def execute(report_id, session_id):
 
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_MarketNewOrdSingle_FOK(test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
+        nos_rule = rule_manager.add_MarketNewOrdSingle_FOK(test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
                                                            float(1), True)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 4)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 4)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -80,7 +80,7 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*'
     }
 
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'OrdStatus','TimeInForce'])
 

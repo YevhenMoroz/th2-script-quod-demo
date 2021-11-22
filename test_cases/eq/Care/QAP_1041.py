@@ -7,7 +7,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetail
 
 from custom.basic_custom_actions import create_event, timestamps
 
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs

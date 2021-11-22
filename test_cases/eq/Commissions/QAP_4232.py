@@ -1,8 +1,8 @@
 import time
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
@@ -38,7 +38,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region Create Orders
-    fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price, no_allocs)
+    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price, no_allocs)
     response = fix_message.pop('response')
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
@@ -77,7 +77,7 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'header': '*',
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
                                          key_parameters=['ClOrdID'])
     params = {
@@ -109,7 +109,7 @@ def execute(report_id, session_id):
         'ReportedPx': '*',
         'AllocInstructionMiscBlock1': '*',
     }
-    fix_verifier_bo = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders'])
     params = {
         'TradeDate': '*',

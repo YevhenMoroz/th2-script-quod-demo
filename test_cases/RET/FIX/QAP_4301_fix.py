@@ -9,9 +9,9 @@ from custom.basic_custom_actions import timestamps
 from win_gui_modules.utils import set_session_id
 from win_gui_modules.wrappers import set_base
 
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

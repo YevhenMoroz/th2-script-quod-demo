@@ -1,6 +1,6 @@
 import logging
 import time
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers

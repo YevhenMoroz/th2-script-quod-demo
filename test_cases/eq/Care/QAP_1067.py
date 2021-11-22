@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from test_cases.wrapper import eq_wrappers
 from stubs import Stubs
@@ -37,7 +37,7 @@ def execute(report_id, session_id):
         get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Sent', False)

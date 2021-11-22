@@ -3,8 +3,8 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 from th2_grpc_common.common_pb2 import ConnectionID
-from test_cases.wrapper.fix_manager import FixManager
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_manager import FixManager
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 

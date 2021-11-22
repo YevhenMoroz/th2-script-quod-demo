@@ -1,8 +1,8 @@
 import time
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
@@ -35,14 +35,14 @@ def execute(report_id, session_id):
     rule_manager = RuleManager()
     try:
         rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + "_PARIS",
                                                                          "XPAR", float(price))
         trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + "_PARIS", "XPAR", float(price)
             , int(qty), 0)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         response = fix_message.pop('response')
         time.sleep(1)
     finally:
@@ -83,7 +83,7 @@ def execute(report_id, session_id):
         'RootOrClientCommissionCurrency': '*',
 
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders'])
     # endregion
     # region Approve
@@ -125,7 +125,7 @@ def execute(report_id, session_id):
         'NoMiscFees': '*',
         'ConfirmID': '*'
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckConfirmation(params, response, ['AllocAccount', 'NoOrders'])
 
     params = {
@@ -169,6 +169,6 @@ def execute(report_id, session_id):
             }
         ],
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
     # endregion

@@ -5,7 +5,7 @@ from custom import basic_custom_actions as bca
 from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
-from test_cases.wrapper.ret_wrappers import close_order_book, decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import close_order_book, decorator_try_except
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketErrorsRequest

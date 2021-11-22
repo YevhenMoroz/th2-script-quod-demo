@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
 from rule_management import RuleManager
 from win_gui_modules.utils import set_session_id
@@ -30,7 +30,7 @@ def execute(report_id, session_id):
     }
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
-    buy_connectivity = test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity()
+    buy_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity()
     # endregion
     # region Create order via FIX
     if current_datetime.month < 10:
@@ -40,9 +40,9 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
                                                                              'EUREX_' + client, 'XEUR', float(price))
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 6, price, insrument=instrument)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 6, price, insrument=instrument)
         response = fix_message.pop('response')
     except Exception:
         logger.error("Error execution", exc_info=True)
@@ -84,6 +84,6 @@ def execute(report_id, session_id):
         'SettlType': '0',
         'SettlDate': str(current_datetime.year) + curent_month + str(current_datetime.day + 4)
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])

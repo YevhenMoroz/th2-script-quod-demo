@@ -3,7 +3,7 @@ import time
 
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers

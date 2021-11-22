@@ -11,7 +11,7 @@ from stubs import Stubs
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-from test_cases.wrapper.ret_wrappers import extract_parent_order_details, verifier, amend_negative_ex, get_order_id,\
+from test_framework.old_wrappers.ret_wrappers import extract_parent_order_details, verifier, amend_negative_ex, get_order_id,\
     extract_error_message_order_ticket
 
 logger = logging.getLogger(__name__)

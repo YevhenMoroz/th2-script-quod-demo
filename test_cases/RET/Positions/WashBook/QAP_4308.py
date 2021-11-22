@@ -10,7 +10,7 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.order_ticket import OrderTicketDetails
-from test_cases.wrapper.ret_wrappers import get_order_id, verifier, accept_order, extract_parent_order_details, \
+from test_framework.old_wrappers.ret_wrappers import get_order_id, verifier, accept_order, extract_parent_order_details, \
     get_wash_book_positions_details, split_limit_order, complete_order, decorator_try_except
 
 logger = logging.getLogger(__name__)

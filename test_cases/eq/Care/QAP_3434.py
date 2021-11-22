@@ -1,6 +1,6 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers
 from stubs import Stubs
@@ -34,13 +34,13 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create order via fix
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     order_id2 = eq_wrappers.get_order_id(base_request)
     # endregion
     # region accept 1 order
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     # region accept 2 order
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion

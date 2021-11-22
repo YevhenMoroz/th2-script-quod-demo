@@ -10,7 +10,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from custom import basic_custom_actions as bca
-from test_cases.wrapper.ret_wrappers import verifier, extract_parent_order_details, extract_error_message_order_ticket
+from test_framework.old_wrappers.ret_wrappers import verifier, extract_parent_order_details, extract_error_message_order_ticket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails, ManualExecutingDetails, ModifyOrderDetails
 
@@ -46,7 +46,7 @@ def execute(report_id, session_id):
         get_opened_fe(case_id, session_id)
     # endregion
     # region Create CO
-    fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     fix_message.pop("response")
     # endregion
     # region Accept CO
@@ -91,7 +91,7 @@ def execute(report_id, session_id):
     # region Amend order
     fix_message = FixMessage(fix_message)
     param_list = {'OrderQty': qty2}
-    test_cases.wrapper.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list, client + "_PARIS")
+    test_framework.old_wrappers.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list, client + "_PARIS")
     eq_wrappers.accept_modify(lookup, qty, price)
     # endregion
     # region Check order after Amending

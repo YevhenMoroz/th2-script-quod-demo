@@ -15,8 +15,8 @@ from win_gui_modules.wrappers import set_base
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ExtractRatesTileTableValuesRequest
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from win_gui_modules.utils import get_base_request, call, close_fe, prepare_fe
-from test_cases.wrapper.ret_wrappers import enable_gating_rule, disable_gating_rule
-from test_cases.wrapper.web_rest_wrappers import WebAdminRestMessage
+from test_framework.old_wrappers.ret_wrappers import enable_gating_rule, disable_gating_rule
+from test_framework.old_wrappers.web_rest_wrappers import WebAdminRestMessage
 
 
 def modify_gating_rule(case_id, gating_rule_id):

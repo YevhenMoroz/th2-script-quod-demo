@@ -2,7 +2,7 @@ from th2_grpc_act_gui_quod import middle_office_service
 
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
 from win_gui_modules import middle_office_wrappers

@@ -11,7 +11,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails, ExtractOrderTicketE
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, verify_ent, verification
 from custom import basic_custom_actions as bca
-from test_cases.wrapper.ret_wrappers import verifier, extract_error_message_order_ticket, extract_parent_order_details
+from test_framework.old_wrappers.ret_wrappers import verifier, extract_error_message_order_ticket, extract_parent_order_details
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

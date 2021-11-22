@@ -16,7 +16,7 @@ from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 
-from test_cases.wrapper.ret_wrappers import get_order_id, verifier, extract_parent_order_details, \
+from test_framework.old_wrappers.ret_wrappers import get_order_id, verifier, extract_parent_order_details, \
     check_order_algo_parameters_book, cancel_order
 
 logger = logging.getLogger(__name__)

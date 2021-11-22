@@ -1,7 +1,7 @@
 import logging
 import time
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from test_framework.fix_wrappers.DataSet import Connectivity, Instrument
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS

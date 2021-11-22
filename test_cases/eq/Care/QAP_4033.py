@@ -1,9 +1,9 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 import time
@@ -38,7 +38,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region Create CO
-    fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client_for_first_order, 2, qty, 0,
+    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client_for_first_order, 2, qty, 0,
                                                                           price)
     response = fix_message.pop('response')
     eq_wrappers.accept_order(lookup, qty, price)
@@ -66,7 +66,7 @@ def execute(report_id, session_id):
     # endregion for first order
 
     # region action with second order
-    fix_message_second_order = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2,
+    fix_message_second_order = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2,
                                                                                        client_for_second_order, 2, qty, 0,
                                                                                        price)
     eq_wrappers.scroll_order_book(base_request, count=3)
@@ -132,7 +132,7 @@ def execute(report_id, session_id):
         'GrossTradeAmt': '*'
     }
 
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'], direction='FIRST')
 
     params['Account'] = client_for_second_order

@@ -15,7 +15,7 @@ from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, check_value, \
     create_order_analysis_events_request, create_verification_request
-from test_cases.wrapper.ret_wrappers import close_order_book, decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import close_order_book, decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

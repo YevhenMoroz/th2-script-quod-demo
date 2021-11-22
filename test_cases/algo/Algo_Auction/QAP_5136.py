@@ -3,9 +3,9 @@ import logging
 import time
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 
 logger = logging.getLogger(__name__)

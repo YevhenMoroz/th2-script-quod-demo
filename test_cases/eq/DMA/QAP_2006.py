@@ -1,9 +1,9 @@
 import logging
 import time
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from win_gui_modules.wrappers import set_base
 
@@ -29,9 +29,9 @@ def execute(report_id, session_id):
     # region Create order via FIX
     try:
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_IOC(test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(), client +
+        nos_rule = rule_manager.add_NewOrdSingle_IOC(test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(), client +
                                                      '_PARIS', 'XPAR', False, 800, 40)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 3, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 3, price)
     finally:
         time.sleep(1)
         rule_manager.remove_rule(nos_rule)
@@ -71,7 +71,7 @@ def execute(report_id, session_id):
         'CxlQty': qty
     }
 
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'OrdStatus'])
     # endregion

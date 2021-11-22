@@ -1,7 +1,7 @@
 import logging
 import time
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers
@@ -39,13 +39,13 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', "XPAR", float(price))
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', 'XPAR',
             float(price), int(qty), 1)
-        test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
+        test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:
@@ -56,7 +56,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region create CO
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
     eq_wrappers.accept_order(lookup, qty, price)
     co_order = eq_wrappers.get_order_id(base_request)
     eq_wrappers.suspend_order(base_request, False)

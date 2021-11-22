@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request

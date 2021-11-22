@@ -4,7 +4,7 @@ from th2_grpc_hand import rhbatch_pb2
 
 from custom.basic_custom_actions import timestamps
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.eq_wrappers import *
+from test_framework.old_wrappers.eq_wrappers import *
 from stubs import Stubs
 from win_gui_modules.utils import call, get_base_request
 

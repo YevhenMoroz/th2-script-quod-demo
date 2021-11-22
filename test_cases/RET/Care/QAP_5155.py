@@ -12,7 +12,7 @@ from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
-from test_cases.wrapper.ret_wrappers import create_order, direct_loc_order_via_inbox, verify_order_value, get_order_id, \
+from test_framework.old_wrappers.ret_wrappers import create_order, direct_loc_order_via_inbox, verify_order_value, get_order_id, \
     force_cancel_order
 
 logger = logging.getLogger(__name__)

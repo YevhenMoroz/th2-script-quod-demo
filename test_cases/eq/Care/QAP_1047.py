@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from th2_grpc_hand import rhbatch_pb2
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
@@ -43,7 +43,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region create CO
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, handl_ins, side, client, order_type, qty, tif, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, handl_ins, side, client, order_type, qty, tif, price)
     # endregion
     # region Check values in OrderBook
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
@@ -53,7 +53,7 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', "XPAR", float(price))
 
         eq_wrappers.direct_order(lookup, price, qty, qty_percent)

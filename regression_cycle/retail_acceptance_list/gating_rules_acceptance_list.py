@@ -3,7 +3,7 @@ import os
 from th2_grpc_hand import rhbatch_pb2
 
 from test_cases.RET.Gating_Rules import QAP_4280, QAP_4282, QAP_4288, QAP_4307
-from test_cases.wrapper.ret_wrappers import enable_gating_rule, disable_gating_rule
+from test_framework.old_wrappers.ret_wrappers import enable_gating_rule, disable_gating_rule
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

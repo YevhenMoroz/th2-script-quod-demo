@@ -1,7 +1,7 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+import test_framework.old_wrappers.eq_fix_wrappers
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from custom.basic_custom_actions import create_event, timestamps
 import time
 from rule_management import RuleManager
@@ -39,13 +39,13 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', 'XPAR', float(price))
         nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', 'XPAR', float(price),
             traded_qty=int(int(qty) / 2), delay=0)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 1, price)
         eq_wrappers.complete_order(base_request)
         eq_wrappers.notify_dfd(base_request)
         response = fix_message.pop('response')
@@ -83,7 +83,7 @@ def execute(report_id, session_id):
         'Instrument': '*',
         'header': '*',
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
                                          key_parameters=['ExecType', 'OrdStatus'], direction='FIRST')
     params1 = {
@@ -119,6 +119,6 @@ def execute(report_id, session_id):
         'header': '*',
     }
 
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params1, response, message_name='Check params2',
                                          key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])

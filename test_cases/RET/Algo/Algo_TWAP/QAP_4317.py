@@ -4,7 +4,7 @@ import time
 
 from datetime import datetime
 
-from test_cases.wrapper.ret_wrappers import decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import decorator_try_except
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom.basic_custom_actions import create_event, timestamps

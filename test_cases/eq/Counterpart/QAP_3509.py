@@ -1,9 +1,9 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from test_cases.wrapper import eq_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
@@ -26,7 +26,7 @@ def execute(report_id, session_id):
     account = "CLIENT_COUNTERPART_SA1"
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
-    bo_connectivity = test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity()
+    bo_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity()
     no_allocs = [
         {
             'AllocAccount': account,
@@ -45,13 +45,13 @@ def execute(report_id, session_id):
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', 'XPAR', float(price))
         nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
             client + '_PARIS', 'XPAR', float(price),
             traded_qty=int(qty), delay=0)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, no_allocs)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, no_allocs)
     except Exception:
         logger.error("Error execution", exc_info=True)
     finally:

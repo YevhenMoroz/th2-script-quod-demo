@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import datetime, timedelta
 from custom import basic_custom_actions
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from custom import basic_custom_actions as bca
 import logging

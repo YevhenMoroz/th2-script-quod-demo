@@ -2,9 +2,9 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from win_gui_modules.wrappers import set_base
 
@@ -21,15 +21,15 @@ def execute(report_id, session_id):
     client = "CLIENT1"
     case_id = create_event(case_name, report_id)
     set_base(session_id, case_id)
-    buy_connectivity = test_cases.wrapper.eq_fix_wrappers.get_buy_connectivity()
-    sell_connectivity = test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity()
+    buy_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity()
+    sell_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity()
     # endregion
 
     # region Create and execute order via FIX
     try:
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, "XPAR_" + client, "XPAR", True, 0, 0)
-        fix_message = test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 6)
+        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 6)
         response = fix_message.pop('response')
     finally:
         time.sleep(1)
@@ -69,7 +69,7 @@ def execute(report_id, session_id):
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_ss = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
+    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
     fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
                                          key_parameters=['ClOrdID', 'ExecType'])
 

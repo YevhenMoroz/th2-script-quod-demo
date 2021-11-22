@@ -5,7 +5,7 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum, ExtractOrde
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base

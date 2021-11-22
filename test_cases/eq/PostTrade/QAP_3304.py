@@ -1,6 +1,6 @@
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
 from win_gui_modules.utils import set_session_id, get_base_request

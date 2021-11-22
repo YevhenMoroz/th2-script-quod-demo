@@ -4,7 +4,7 @@ from custom.basic_custom_actions import create_event
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_cases.wrapper import eq_fix_wrappers
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from win_gui_modules.wrappers import set_base
 

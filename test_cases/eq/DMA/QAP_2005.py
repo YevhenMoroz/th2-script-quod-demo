@@ -2,12 +2,12 @@ import logging
 import time
 from copy import deepcopy
 from datetime import date, timedelta
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request
@@ -96,7 +96,7 @@ def execute(report_id, session_id):
         'NoParty': '*',
         'Instrument': '*',
     }
-    fix_verifier_bo = FixVerifier(test_cases.wrapper.eq_fix_wrappers.get_bo_connectivity(), case_id)
+    fix_verifier_bo = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
     fix_verifier_bo.CheckExecutionReport(params, response, ['ClOrdID', 'ExecType'])
     # region Cancelling order
 

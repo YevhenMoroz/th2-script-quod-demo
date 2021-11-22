@@ -10,9 +10,9 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, message_to_grpc, convert_to_request
 from win_gui_modules.utils import get_base_request, call
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
-from test_cases.wrapper.fix_verifier import FixVerifier
+from test_framework.old_wrappers.fix_verifier import FixVerifier
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager
 

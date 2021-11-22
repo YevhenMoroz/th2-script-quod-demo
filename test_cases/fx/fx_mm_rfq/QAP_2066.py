@@ -7,8 +7,8 @@ from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom.tenor_settlement_date import get_expire_time
 from custom.verifier import Verifier as Ver, Verifier, VerificationMethod
 from test_cases.fx.default_params_fx import text_messages
-from test_cases.wrapper.common_win import prepare_fe
-from test_cases.wrapper.fx_mm_rfq import send_swap_rfq
+from test_framework.old_wrappers.common_win import prepare_fe
+from test_framework.old_wrappers.fx_mm_rfq import send_swap_rfq
 from stubs import Stubs
 from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
                                                           ExtractionDetailsRequest, RFQExtractionDetailsRequest)

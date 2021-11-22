@@ -3,13 +3,13 @@ from datetime import datetime
 
 from th2_grpc_act_gui_quod import order_book_pb2
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from custom.verifier import Verifier
 from test_cases.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails, ManualCrossDetails, ManualCrossExtractedValue, \
     ExtractManualCrossValuesRequest
 from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs

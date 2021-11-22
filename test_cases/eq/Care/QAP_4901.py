@@ -1,6 +1,6 @@
 import logging
 
-import test_cases.wrapper.eq_fix_wrappers
+import test_framework.old_wrappers.eq_fix_wrappers
 from test_cases.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -32,7 +32,7 @@ def execute(report_id, session_id):
     eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
     # endregion
     # region create order via fix
-    test_cases.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
     # eq_wrappers.accept_order(lookup, qty, price) Add this row, where we will be have norm version and realise
     eq_wrappers.manual_execution(base_request, str(int(qty)/2), price)
     eq_wrappers.verify_order_value(base_request, case_id, 'DayCumAmt', 500)

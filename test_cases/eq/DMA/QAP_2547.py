@@ -7,7 +7,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from test_cases.wrapper.fix_manager import FixManager
+from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
