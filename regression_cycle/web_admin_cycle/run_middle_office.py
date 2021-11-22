@@ -2,26 +2,26 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_2564 import QAP_2564
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3148 import QAP_3148
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3152 import QAP_3152
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3219 import QAP_3219
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3222 import QAP_3222
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3223 import QAP_3223
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3225 import QAP_3225
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3236 import QAP_3236
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3237 import QAP_3237
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3238 import QAP_3238
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3240 import QAP_3240
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3603 import QAP_3603
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3605 import QAP_3605
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_4152 import QAP_4152
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_4858 import QAP_4858
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5448 import QAP_5448
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5665 import QAP_5665
-from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5666 import QAP_5666
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_2564 import QAP_2564
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3148 import QAP_3148
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3152 import QAP_3152
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3219 import QAP_3219
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3222 import QAP_3222
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3223 import QAP_3223
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3225 import QAP_3225
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3236 import QAP_3236
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3237 import QAP_3237
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3238 import QAP_3238
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3240 import QAP_3240
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3603 import QAP_3603
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3605 import QAP_3605
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_4152 import QAP_4152
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_4858 import QAP_4858
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_5448 import QAP_5448
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_5665 import QAP_5665
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_5666 import QAP_5666
 
 
 class RunMiddleOffice:

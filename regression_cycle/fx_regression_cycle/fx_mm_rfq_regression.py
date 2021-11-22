@@ -1,4 +1,4 @@
-from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_1545, QAP_1547, QAP_1548, QAP_1550, \
+from test_cases.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_1545, QAP_1547, QAP_1548, QAP_1550, \
     QAP_1551, QAP_1562, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1971, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
     QAP_2066, QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2104, QAP_2105, QAP_2143, \
@@ -6,11 +6,11 @@ from quod_qa.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_154
     QAP_2992, QAP_3003, QAP_3005, QAP_3106, QAP_3107, QAP_3108, \
     QAP_3109, QAP_3110, QAP_3111, QAP_3112, QAP_3113, QAP_3234, QAP_3250, QAP_3409, QAP_3494, QAP_4085, \
     QAP_4228, QAP_4509, QAP_4510, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_5345
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, QAP_4234, \
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, QAP_4234, \
     QAP_3807, QAP_3850, QAP_3811, QAP_3851, QAP_3806
-from quod_qa.fx.fx_mm_rfq.manual_intervention import QAP_3721
-from quod_qa.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
-from quod_qa.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
+from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
+from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
+from test_cases.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
 
 from stubs import Stubs
 import logging

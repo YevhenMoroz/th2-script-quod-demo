@@ -1,9 +1,8 @@
-from quod_qa.eq.Algo_PercentageVolume.QAP_4646 import execute
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from quod_qa.eq.Algo_PercentageVolume import QAP_4751, QAP_4952, QAP_4624, QAP_4605, QAP_4606, QAP_4607, QAP_4608, QAP_4752, QAP_4761, QAP_4644, QAP_4929, QAP_4933, QAP_4890, QAP_4930, QAP_4934, QAP_4889, QAP_4868, QAP_4784
+from test_cases.algo.Algo_PercentageVolume import QAP_4952, QAP_4868, QAP_4761, QAP_4930, QAP_4751, QAP_4933, QAP_4889, QAP_4784, QAP_4624, QAP_4605, QAP_4929, QAP_4890, QAP_4607, QAP_4606, QAP_4608, \
+    QAP_4752, QAP_4644, QAP_4934
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

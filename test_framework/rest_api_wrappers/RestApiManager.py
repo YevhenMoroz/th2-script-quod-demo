@@ -1,5 +1,5 @@
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from quod_qa.wrapper.RestApiMessages import RestApiMessages
+from test_cases.wrapper.RestApiMessages import RestApiMessages
 from custom.basic_custom_actions import convert_to_get_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca

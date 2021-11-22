@@ -1,8 +1,8 @@
-from quod_qa.fx.fx_mm_positions.prepare_position import prepare_position
+from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_positions import QAP_2505, QAP_2378, QAP_2491, QAP_2492, QAP_2494, QAP_2496, QAP_2497, \
+from test_cases.fx.fx_mm_positions import QAP_2505, QAP_2378, QAP_2491, QAP_2492, QAP_2494, QAP_2496, QAP_2497, \
     QAP_1897, QAP_1898, QAP_2506, QAP_2508, QAP_2500, QAP_2779, QAP_3484, import_position_layout, preconditions_for_pos, \
     QAP_1895, QAP_1896
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe, prepare_fe

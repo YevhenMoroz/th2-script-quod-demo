@@ -1,14 +1,14 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
+from test_cases.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
     QAP_5551, QAP_3354, QAP_3067, QAP_2326
-from quod_qa.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
-from quod_qa.fx.fx_mm_rfq import for_test_77679
+from test_cases.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
+from test_cases.fx.fx_mm_rfq import for_test_77679
 
-from quod_qa.fx.fx_taker_rfq import QAP_568
-from quod_qa.fx.my_methods import send_rfq
-from quod_qa.fx.ui_wrappers import wrapper_test
+from test_cases.fx.fx_taker_rfq import QAP_568
+from test_cases.fx.my_methods import send_rfq
+from test_cases.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe

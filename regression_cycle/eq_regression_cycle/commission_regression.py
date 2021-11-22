@@ -1,5 +1,5 @@
 from custom.basic_custom_actions import timestamps
-from quod_qa.eq.Commissions import QAP_2998, QAP_3285, QAP_4373, QAP_4489, QAP_4231, QAP_3351
+from test_cases.eq.Commissions import QAP_2998, QAP_3285, QAP_4373, QAP_4489, QAP_4231, QAP_3351
 
 from stubs import Stubs
 import logging

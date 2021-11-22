@@ -1,10 +1,8 @@
-from quod_qa.eq.algo_acceptance_list import QAP_2842, QAP_2839, QAP_2994, QAP_2996, QAP_2995, QAP_2997
-from quod_qa.eq.Algo_Multilisted import QAP_2837
+from test_cases.algo.algo_acceptance_list import QAP_2995, QAP_2994, QAP_2839, QAP_2996, QAP_2842, QAP_2997
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
+from win_gui_modules.utils import set_session_id, prepare_fe, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

@@ -2,9 +2,9 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.retail_web_admin_test_cases.risk_limits.QAP_4279 import QAP_4279
-from quod_qa.web_admin.retail_web_admin_test_cases.risk_limits.QAP_4319 import QAP_4319
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.retail_web_admin_test_cases.risk_limits.QAP_4279 import QAP_4279
+from test_cases.web_admin.retail_web_admin_test_cases.risk_limits.QAP_4319 import QAP_4319
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
 

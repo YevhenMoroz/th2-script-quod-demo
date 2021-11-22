@@ -5,7 +5,7 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from custom.tenor_settlement_date import get_expire_time
-from quod_qa.fx.default_params_fx import text_messages
+from test_cases.fx.default_params_fx import text_messages
 from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_quod.sim_pb2 import RequestMDRefID
