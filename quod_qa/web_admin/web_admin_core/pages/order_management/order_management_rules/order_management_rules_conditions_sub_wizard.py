@@ -82,7 +82,7 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         time.sleep(1)
 
     def set_right_side_list_at_conditional_logic(self, value):
-        self.find_by_xpath("//*[@class='input-wrapper ng-star-inserted']").click()
+        self.find_by_xpath("//*[@class='input-old_wrappers ng-star-inserted']").click()
         time.sleep(2)
         path = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']".format(
             value)

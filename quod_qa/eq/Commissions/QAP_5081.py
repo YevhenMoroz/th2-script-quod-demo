@@ -1,5 +1,4 @@
 import logging
-import os
 
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
@@ -7,11 +6,10 @@ from custom.basic_custom_actions import create_event
 from quod_qa.win_gui_wrappers import OMSClientInbox
 from quod_qa.win_gui_wrappers import OMSOrderBook
 from quod_qa.win_gui_wrappers import OMSOrderTicket
-from quod_qa.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
-from quod_qa.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.base_window import BaseWindow
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from stubs import Stubs
-from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

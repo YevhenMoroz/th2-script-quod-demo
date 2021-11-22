@@ -1,9 +1,8 @@
 import logging
-import time
 
 from custom.basic_custom_actions import create_event
-from quod_qa.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from quod_qa.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from quod_qa.wrapper import eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from stubs import Stubs

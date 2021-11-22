@@ -6,7 +6,7 @@ from custom import basic_custom_actions as bca, verifier
 from custom.basic_custom_actions import timestamps
 
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from stubs import Stubs
 

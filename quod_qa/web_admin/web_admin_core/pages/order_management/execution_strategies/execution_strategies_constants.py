@@ -93,13 +93,13 @@ class ExecutionStrategiesConstants:
 
     # JUST FOR ACTIONS SUB WIZARD
     PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-plus piloted-table-action']"
-    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-checkmark']"
-    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-close']"
+    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='nb-checkmark']"
+    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='nb-close']"
     DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-trash piloted-table-action']"
     VALUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@placeholder='Value *']"
     VALUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='ng2-smart-th secondValue ng-star-inserted']//input"
     VENUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-form-control-container']//*[@placeholder='Venue']"
-    VENUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='form-control ng-untouched ng-pristine ng-valid'] "
+    VENUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='form-control ng-untouched ng-pristine ng-valid'] "
     STRATEGY_AT_SUB_WIZARD = "//*[@class='nb-form-control-container']//*[@placeholder='Strategy']"
 
     #Venue priority sub wizard

@@ -6,13 +6,11 @@ from copy import deepcopy
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 
-from stubs import Stubs
-
-from win_gui_modules.utils import set_session_id, prepare_fe, get_opened_fe
+from win_gui_modules.utils import set_session_id
 from win_gui_modules.wrappers import set_base
 
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 
 logger = logging.getLogger(__name__)

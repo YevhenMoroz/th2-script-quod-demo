@@ -5,10 +5,10 @@ from pathlib import Path
 
 from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
 from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.win_gui_wrappers.forex.fx_child_book import FXChildBook
-from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from quod_qa.wrapper_test.FixManager import FixManager
-from quod_qa.wrapper_test.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.win_gui_wrappers.forex.fx_child_book import FXChildBook
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 
 alias_fh = "fix-fh-q-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"

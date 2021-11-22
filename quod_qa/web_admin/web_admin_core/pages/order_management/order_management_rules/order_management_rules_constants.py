@@ -67,10 +67,10 @@ class OrderManagementRulesConstants:
     CONDITIONS_TAB_AND_RADIO_BUTTON = '//*[text()="AND"]/preceding-sibling::span'
     CONDITIONS_TAB_OR_RADIO_BUTTON = '//*[text()="OR"]/preceding-sibling::span'
     CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH = '//*[@class="sub-form-accordion"]//*[@data-name="plus"]'
-    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH = '//*[@class = "field-wrapper ng-star-inserted"]//button'
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH = '//*[@class = "field-old_wrappers ng-star-inserted"]//button'
     CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
     CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH = '//*[@name="autocomplete"]'
-    CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH = "//*[@class='operator-wrapper ng-star-inserted']"
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH = "//*[@class='operator-old_wrappers ng-star-inserted']"
     CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
 
 

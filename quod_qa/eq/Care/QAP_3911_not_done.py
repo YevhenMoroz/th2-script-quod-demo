@@ -38,13 +38,13 @@ def execute(report_id, session_id):
     # try:
     #     rule_manager = RuleManager()
     #     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-    #         quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+    #         quod_qa.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
     #         client + '_PARIS', "XPAR", float(price))
     #     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-    #         quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(),
+    #         quod_qa.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
     #         client + '_PARIS', 'XPAR',
     #         float(price), int(qty), 1)
-    #     quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
+    #     quod_qa.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
     # except Exception:
     #     logger.error("Error execution", exc_info=True)
     # finally:
@@ -54,7 +54,7 @@ def execute(report_id, session_id):
     # exec_id = eq_wrappers.get_2nd_lvl_order_detail(base_request, "ExecID")
     # # endregion
     # # region create CO
-    # quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
+    # quod_qa.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
     # eq_wrappers.accept_order(lookup, qty, price)
     # co_order = eq_wrappers.get_order_id(base_request)
     # # endregion

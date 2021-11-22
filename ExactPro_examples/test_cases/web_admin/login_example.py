@@ -9,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 
 from webdriver_manager.chrome import ChromeDriverManager
 
-from web_admin_modules.web_wrapper import call
+from ExactPro_examples.web_admin_modules.web_wrapper import call
 
 
 class TestCase:

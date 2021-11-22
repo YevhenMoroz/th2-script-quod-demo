@@ -3,14 +3,13 @@ from pathlib import Path
 import time
 from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from custom.tenor_settlement_date import spo, wk1
+from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier, VerificationMethod
-from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
 from win_gui_modules.utils import get_base_request, call
 
 client = "AURUM1"

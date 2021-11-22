@@ -1,15 +1,10 @@
 import logging
-from datetime import datetime
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from custom import basic_custom_actions as bca
 from pathlib import Path
 
 from custom.tenor_settlement_date import broken_w1w2
-from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from quod_qa.win_gui_wrappers.forex.fx_child_book import FXChildBook
-from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from quod_qa.wrapper_test.FixManager import FixManager
-from quod_qa.wrapper_test.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 
 alias_gtw = "fix-sell-esp-t-314-stand"
 

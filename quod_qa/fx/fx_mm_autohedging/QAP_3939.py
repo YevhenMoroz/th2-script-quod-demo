@@ -5,7 +5,7 @@ from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from custom.tenor_settlement_date import spo, wk1
 from custom.verifier import Verifier
-from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \

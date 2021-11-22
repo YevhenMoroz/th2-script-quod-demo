@@ -3,10 +3,10 @@ import os
 import time
 
 from custom.basic_custom_actions import create_event
-from quod_qa.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
-from quod_qa.wrapper_test.DataSet import Connectivity
-from quod_qa.wrapper_test.FixManager import FixManager
-from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.fix_wrappers.DataSet import Connectivity
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from rule_management import RuleManager
 from stubs import Stubs
 

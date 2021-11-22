@@ -1,7 +1,7 @@
 import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from custom.verifier import Verifier
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper import eq_wrappers
 from stubs import Stubs
 from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest

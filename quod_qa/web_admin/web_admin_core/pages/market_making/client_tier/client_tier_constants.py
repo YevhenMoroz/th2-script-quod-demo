@@ -185,27 +185,27 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH = '//*[@placeholder ="Offer Margin"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[5]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[6]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
-    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class= "ng2-smart-th upperQty ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class= "ng2-smart-th upperQty ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_FILTER_XPATH = '//*[@class= "defaultBidMargin ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class= "defaultOfferMargin ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_MARGIN_FILTER_XPATH = '//*[@class= "MDQuoteType ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_FILTER_XPATH = '//*[@class= "activeQuote ng2-smart-th ng-star-inserted"]//input'
 
     # position levels sub tab
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_PLUS_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-plus piloted-table-action"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-checkmark"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CLOSE_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-close"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_EDIT_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-edit piloted-table-action"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_DELETE_BUTTON_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-trash piloted-table-action"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_PLUS_BUTTON_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-plus piloted-table-action"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-checkmark"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CLOSE_BUTTON_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-close"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_EDIT_BUTTON_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-edit piloted-table-action"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_DELETE_BUTTON_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-trash piloted-table-action"]'
 
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_XPATH = '//*[@placeholder ="Position (EUR) *"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="ng2-smart-th sysCurrPositQty ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_FILTER_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="ng2-smart-th sysCurrPositQty ng-star-inserted"]//input'
 
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_BID_MARGIN_XPATH = '//*[@placeholder ="Bid Margin"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_BID_MARGIN_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="bidMargin ng2-smart-th ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_BID_MARGIN_FILTER_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="bidMargin ng2-smart-th ng-star-inserted"]//input'
 
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_OFFER_MARGIN_XPATH = '//*[@placeholder ="Offer Margin"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="ng2-smart-th offerMargin ng-star-inserted"]//input'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="ng2-smart-th offerMargin ng-star-inserted"]//input'
     # endregion
 
     # endregion

@@ -1,12 +1,12 @@
 class RoutesConstants:
     ROUTES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Routes ']"
     #   -----Main page-----
-    NAME_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[1]//*[@class="ag-input-wrapper"]//input'
-    DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[2]//*[@class="ag-input-wrapper"]//input'
-    ES_INSTANCE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[3]//*[@class="ag-input-wrapper"]//input'
-    CLIENT_ID_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[4]//*[@class="ag-input-wrapper"]//input'
-    DEFAULT_STRATEGY_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[5]//*[@class="ag-input-wrapper"]//input'
-    COUNTERPART_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[6]//*[@class="ag-input-wrapper"]//input'
+    NAME_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[1]//*[@class="ag-input-old_wrappers"]//input'
+    DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[2]//*[@class="ag-input-old_wrappers"]//input'
+    ES_INSTANCE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[3]//*[@class="ag-input-old_wrappers"]//input'
+    CLIENT_ID_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[4]//*[@class="ag-input-old_wrappers"]//input'
+    DEFAULT_STRATEGY_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[5]//*[@class="ag-input-old_wrappers"]//input'
+    COUNTERPART_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[6]//*[@class="ag-input-old_wrappers"]//input'
     SUPPORT_CONTRA_FIRM_COMMISSION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[7]//select'
 
     NAME_VALUE_XPATH = '//*[@class="ag-center-cols-container"]//*[@row-index="0"]//*[@col-id="routeName"]//*[@ref="eValue"]'
@@ -96,10 +96,10 @@ class RoutesConstants:
     TRADING_PHASE_FILTER_AT_VENUE_SUB_WIZARD_XPATH = '//*[@class="ng2-smart-th tradingPhase ng-star-inserted"]//input'
     ORD_TYPE_FILTER_AT_VENUE_SUB_WIZARD_XPATH = '//*[@class="ng2-smart-th ordType ng-star-inserted"]//input'
     OUTPUT_ORD_TYPE_FILTER_AT_VENUE_SUB_WIZARD_XPATH = '//*[@class="ng2-smart-th outputOrdType ng-star-inserted"]//input'
-    CHECK_MARK_BUTTON_AT_VENUE_SUB_WIZARD_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="nb-checkmark"]'
-    CLOSE_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-wrapper"]//*[@class="nb-close piloted-table-action"]'
-    EDIT_BUTTON_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-wrapper"]//*[@class="nb-edit piloted-table-action"]'
-    DELETE_BUTTON_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-wrapper"]//*[@class="nb-trash piloted-table-action"]'
+    CHECK_MARK_BUTTON_AT_VENUE_SUB_WIZARD_XPATH = '//*[@class="tenors-table-old_wrappers"]//*[@class="nb-checkmark"]'
+    CLOSE_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-old_wrappers"]//*[@class="nb-close piloted-table-action"]'
+    EDIT_BUTTON_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-old_wrappers"]//*[@class="nb-edit piloted-table-action"]'
+    DELETE_BUTTON_AT_VENUE_SUB_WIZARD_XPATH ='//*[@class="tenors-table-old_wrappers"]//*[@class="nb-trash piloted-table-action"]'
 
     MANAGE_TYPE_TIF_BUTTON_AT_VENUE_SUB_WIZARD_XPATH ='//*[text()=" Manage Type TIF "]/parent::button-custom-editor[@class="ng-star-inserted"]'
     #Manage type tif wizard

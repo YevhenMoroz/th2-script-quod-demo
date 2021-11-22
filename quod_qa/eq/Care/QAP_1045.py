@@ -1,7 +1,7 @@
 import logging
 
 from custom.basic_custom_actions import create_event, timestamps
-# from quod_qa.wrapper import eq_fix_wrappers, eq_wrappers
+# from quod_qa.old_wrappers import eq_fix_wrappers, eq_wrappers
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails

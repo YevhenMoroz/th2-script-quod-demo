@@ -2,11 +2,7 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import m1_front_end, spo_front_end
-from quod_qa.win_gui_wrappers.data_set import OrderBookColumns
-from quod_qa.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from quod_qa.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
-from quod_qa.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
-from quod_qa.win_gui_wrappers.forex.rfq_tile import RFQTile
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 

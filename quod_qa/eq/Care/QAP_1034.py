@@ -1,11 +1,9 @@
 import logging
-import time
 from datetime import datetime
 
 import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe

@@ -2,9 +2,9 @@ from custom import basic_custom_actions as bca
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
-import web_admin_modules.locator_xpath as get_xpath
-import web_admin_modules.locator_constants as LC
+from ExactPro_examples.web_admin_modules.web_wrapper import call, filter_grid_by_field, verify_row_count
+import ExactPro_examples.web_admin_modules.locator_xpath as get_xpath
+import ExactPro_examples.web_admin_modules.locator_constants as LC
 
 
 class TestCase:

@@ -6,7 +6,7 @@ import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 

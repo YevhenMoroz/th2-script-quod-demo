@@ -10,7 +10,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import convert_to_request, message_to_grpc
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs

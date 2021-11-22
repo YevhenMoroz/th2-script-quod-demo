@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from quod_qa.win_gui_wrappers.data_set import Side
-from quod_qa.win_gui_wrappers.forex.rfq_tile import RFQTile
+from test_framework.win_gui_wrappers.data_set import Side
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 from stubs import Stubs
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     PositionsInfo, ExtractionPositionsAction

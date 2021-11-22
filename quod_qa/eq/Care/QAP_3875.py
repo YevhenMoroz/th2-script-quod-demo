@@ -9,7 +9,7 @@ from quod_qa.wrapper import eq_wrappers
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, ModifyOrderDetails

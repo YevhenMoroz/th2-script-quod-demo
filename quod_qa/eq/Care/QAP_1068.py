@@ -39,7 +39,7 @@ def execute(report_id, session_id):
     # endregion
     '''
     # region Create CO
-    quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
+    quod_qa.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
 
     # region AcceptOrder
     eq_wrappers.accept_order(lookup, qty, price)

@@ -1,13 +1,9 @@
 import logging
-import time
-from copy import deepcopy
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
 
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 
 logger = logging.getLogger(__name__)

@@ -13,7 +13,7 @@ from custom.basic_custom_actions import timestamps, create_event, message_to_grp
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from th2_grpc_common.common_pb2 import ConnectionID
 from rule_management import RuleManager

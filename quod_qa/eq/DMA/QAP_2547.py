@@ -8,7 +8,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event, timestamps
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from stubs import Stubs
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_ticket import OrderTicketDetails

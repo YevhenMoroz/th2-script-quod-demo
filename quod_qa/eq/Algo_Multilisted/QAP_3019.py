@@ -2,16 +2,13 @@ import os
 import logging
 import time
 from datetime import datetime, timedelta
-from copy import deepcopy
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_common.common_pb2 import ConnectionID
 from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from test_framework.old_wrappers.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 

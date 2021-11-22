@@ -1,15 +1,12 @@
 import logging
-import os
-
-from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
-from quod_qa.win_gui_wrappers.base_window import BaseWindow
-from quod_qa.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from quod_qa.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from quod_qa.wrapper_test.DataSet import Instrument
-from quod_qa.wrapper_test.FixManager import FixManager
-from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.base_window import BaseWindow
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from stubs import Stubs
 
 logger = logging.getLogger(__name__)

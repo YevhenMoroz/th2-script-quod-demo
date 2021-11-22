@@ -1,5 +1,5 @@
 from custom import basic_custom_actions as bca
-from web_admin_modules.web_wrapper import call
+from ExactPro_examples.web_admin_modules.web_wrapper import call
 
 
 class TestCase:

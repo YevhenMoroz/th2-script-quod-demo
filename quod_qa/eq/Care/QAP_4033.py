@@ -3,14 +3,12 @@ import logging
 import quod_qa.wrapper.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
 from quod_qa.wrapper import eq_wrappers, eq_fix_wrappers
-from quod_qa.wrapper.fix_message import FixMessage
 from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 import time
-from win_gui_modules.order_book_wrappers import OrdersDetails
 
-from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
