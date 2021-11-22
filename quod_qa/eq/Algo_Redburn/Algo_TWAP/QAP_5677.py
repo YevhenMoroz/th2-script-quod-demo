@@ -19,16 +19,15 @@ timeouts = True
 avt = 10000     # average volume traded per minute
 ast = avt * 5   # 5 average traded
 qty = 300000
-nav_shares = qty
 waves = 10
 qty_twap_1 = int(qty / waves)
-first_reserve = max(ast, int(qty - nav_shares))
+first_reserve = max(ast, int(qty * (1 - 1)))
 reserve = max(first_reserve, int(qty_twap_1))
 qty_nav = qty - reserve
 price = 29.995
 price_nav = 30
 price_nav_off = 100
-price_nav_with_off = price_nav + (price / 10000) * price_nav_off
+price_nav_with_off = price_nav + (price_nav / 10000) * (price_nav_off * (-1))
 
 
 #Key parameters
@@ -92,7 +91,7 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav, NavigatorMaxTotalShares=nav_shares))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav, NavigatorLimitPriceOffset=price_nav_off))
 
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 
