@@ -33,3 +33,6 @@ class CommissionsWizard(CommonPage):
             return True
         else:
             return False
+
+    def click_on_ok(self):
+        self.find_by_xpath(CommissionsConstants.OK_BUTTON_XPATH).click()
