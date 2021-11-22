@@ -33,7 +33,7 @@ def     execute(report_id):
         'QuodFlatParameters': {
             'MaxParticipation': '10',
             'WouldInAuction': '1',
-            'TriggerPriceRed': '116.5',
+            'TriggerPriceRed': '110.5',
             'ExcludePricePoint2': '1'
         }
     }
