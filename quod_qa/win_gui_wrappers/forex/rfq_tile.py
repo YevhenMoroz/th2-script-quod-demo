@@ -126,4 +126,74 @@ class RFQTile(AggregatesRatesTile):
             self.verifier.compare_values("Far date", far_date, extract_date)
         self.verifier.verify()
 
-    # endregion
+    def check_client_beneficiary(self, client: str = None, beneficiary: str = None):
+        self.verifier.set_event_name("Check Client and Beneficiary")
+        if client is not None:
+            self.extraction_request.extract_client(client)
+            response = call(self.extract_call, self.extraction_request.build())
+            extracted_client = response[client]
+            self.verifier.verify("Client", client, extracted_client)
+        if beneficiary is not None:
+            self.extraction_request.extract_beneficiary(beneficiary)
+            response = call(self.extract_call, self.extraction_request.build())
+            extracted_beneficiary = response[beneficiary]
+            self.verifier.verify("Client", beneficiary, extracted_beneficiary)
+        self.verifier.verify()
+
+    def extract_price(self, bid_large: str = None, bid_small: str = None, ask_large: str = None, ask_small: str = None,
+                      best_bid: str = None, best_ask: str = None):
+        if bid_large is not None:
+            self.extraction_request.extract_best_bid_large(bid_large)
+        if bid_small is not None:
+            self.extraction_request.extract_best_bid_small(bid_small)
+        if ask_large is not None:
+            self.extraction_request.extract_best_ask_large(ask_large)
+        if ask_small is not None:
+            self.extraction_request.extract_best_ask_small(ask_small)
+        if best_bid is not None:
+            self.extraction_request.extract_best_bid_large(best_bid)
+        if best_ask is not None:
+            self.extraction_request.extract_best_ask(best_ask)
+        response = call(self.extract_call, self.extraction_request.build())
+        return response
+
+    def check_checkboxes(self, left_checkbox: str = None, right_checkbox: str = None):
+        if left_checkbox is not None:
+            self.extraction_request.extract_left_checkbox(left_checkbox)
+            response = call(self.extract_call, self.extraction_request.build())
+            lef_check = response[left_checkbox]
+            self.verifier.compare_values("Left Checkbox", left_checkbox, lef_check)
+        if right_checkbox is not None:
+            self.extraction_request.extract_right_checkbox(right_checkbox)
+            response = call(self.extract_call, self.extraction_request.build())
+            right_check = response[right_checkbox]
+            self.verifier.compare_values("Right Checkbox", right_checkbox, right_check)
+        self.verifier.verify()
+
+    def check_labels(self, left_label: str = None, right_label: str = None):
+        if left_label is not None:
+            self.extraction_request.extract_cur_label_left(left_label)
+            response = call(self.extract_call, self.extraction_request.build())
+            left = response[left_label]
+            self.verifier.compare_values("Left label", left_label, left)
+        if right_label is not None:
+            self.extraction_request.extract_cur_label_right(right_label)
+            response = call(self.extract_call, self.extraction_request.build())
+            right = response[right_label]
+            self.verifier.compare_values("Right label", right_label, right)
+        self.verifier.verify()
+
+    def check_buttons(self, buy_button: str = None, sell_button: str = None):
+        if buy_button is not None:
+            self.extraction_request.extract_is_buy_button_enabled(buy_button)
+            response = call(self.extract_call, self.extraction_request.build())
+            buy = response[buy_button]
+            self.verifier.compare_values("Buy button", buy_button, buy)
+        if sell_button is not None:
+            self.extraction_request.extract_is_sell_button_enabled(sell_button)
+            response = call(self.extract_call, self.extraction_request.build())
+            sell = response[sell_button]
+            self.verifier.compare_values("Sell button", sell_button, sell)
+        self.verifier.verify()
+
+        # endregion

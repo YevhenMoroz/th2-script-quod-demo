@@ -205,15 +205,15 @@ def execute(report_id, session_id):
     ar_service = Stubs.win_act_aggregated_rates_service
     try:
         # Preconditions
+        create_or_get_pricing_tile(details_tile_spot, cp_service)
+        create_or_get_pricing_tile(details_tile_forward, cp_service)
+        modify_rates_tile(details_tile_spot, cp_service, instrument_spot, tier)
+        modify_rates_tile(details_tile_forward, cp_service, instrument_forward, tier)
         FixClientBuy(CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type)). \
             send_market_data_spot('Custom Market Data from BUY SIDE USD/JPY')
 
         FixClientBuy(CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type).
                      prepare_custom_md_spot(no_md_entries_eur_jpy_citi)).send_market_data_spot()
-        create_or_get_pricing_tile(details_tile_spot, cp_service)
-        create_or_get_pricing_tile(details_tile_forward, cp_service)
-        modify_rates_tile(details_tile_spot, cp_service, instrument_spot, tier)
-        modify_rates_tile(details_tile_forward, cp_service, instrument_forward, tier)
         select_rows(details_tile_spot, [4], cp_service)
         press_executable(details_tile_spot, cp_service)
         select_rows(details_tile_forward, [1, 2, 3], cp_service)

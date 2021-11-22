@@ -35,10 +35,40 @@ class FixClientSellRfq():
             ))
         return self
 
+
+    def send_request_for_dmi(self, expire_time=''):
+        self.case_params_sell_rfq.prepare_rfq_params()
+        if expire_time != '':
+            self.case_params_sell_rfq.rfq_params['NoRelatedSymbols'][0]['ExpireTime'] = expire_time
+        print('RFQ', self.case_params_sell_rfq.rfq_params)
+        self.quote = self.fix_act.sendQuoteViaWindow(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        print(next(self.quote))
+
+
     def send_request_for_quote_no_reply(self):
         self.case_params_sell_rfq.prepare_rfq_params()
         print('RFQ', self.case_params_sell_rfq.rfq_params)
         self.fix_act.sendMessage(
+            bca.convert_to_request(
+                'Send Request For Quote',
+                self.case_params_sell_rfq.connectivityRFQ,
+                self.case_params_sell_rfq.case_id,
+                bca.message_to_grpc('QuoteRequest', self.case_params_sell_rfq.rfq_params,
+                                    self.case_params_sell_rfq.connectivityRFQ)
+            ))
+        return self
+
+    def send_request_for_quote_to_manual_d_i(self):
+        self.case_params_sell_rfq.prepare_rfq_params()
+        print('RFQ', self.case_params_sell_rfq.rfq_params)
+        self.fix_act.sendQuoteViaWindow(
             bca.convert_to_request(
                 'Send Request For Quote',
                 self.case_params_sell_rfq.connectivityRFQ,
