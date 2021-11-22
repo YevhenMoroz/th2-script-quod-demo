@@ -26,8 +26,8 @@ def test_run():
     report_id = bca.create_event("ostronov" + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     logging.getLogger().setLevel(logging.WARN)
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 309"
     session_id = set_session_id()
     try:
         if not Stubs.frontend_is_open:
@@ -36,7 +36,7 @@ def test_run():
             get_opened_fe(report_id, session_id)
 
         # QAP_5635.execute(report_id, session_id)
-        wrapper_test.execute(report_id,session_id)
+        wrapper_test.execute(report_id, session_id)
         # QAP_5537_not_ready.execute(report_id)
         # for_Daria.execute(report_id,session_id)
         # SendMD.execute(report_id)
