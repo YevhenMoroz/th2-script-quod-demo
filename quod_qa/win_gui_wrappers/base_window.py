@@ -26,7 +26,7 @@ class BaseWindow:
             else:
                 detail.__init__()
 
-    def compare_values(self, expected_values: dict, actual_values: dict, event_name,
+    def compare_values(self, expected_values: dict, actual_values: dict, event_name: str,
                        verification_method: VerificationMethod = VerificationMethod.EQUALS):
         self.verifier.set_event_name(event_name)
         try:

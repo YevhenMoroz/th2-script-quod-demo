@@ -1,50 +1,96 @@
-from custom.verifier import Verifier
-from quod_qa.wrapper import eq_wrappers, eq_fix_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from win_gui_modules.utils import set_session_id, get_base_request
 import logging
+import os
+import time
+
+from custom import basic_custom_actions as bca
+from quod_qa.win_gui_wrappers.TestCase import TestCase
+from quod_qa.win_gui_wrappers.base_window import decorator_try_except
+from quod_qa.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from quod_qa.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.SessionAlias import SessionAliasOMS
+from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from rule_management import RuleManager
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+timeouts = True
 
 
-def execute(report_id):
-    case_name = "QAP-3304"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "800"
-    price = "40"
-    client = "CLIENT_VSKULINEC"
+class QAP3304(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # endregion
-    # region Create CO
-    fix_message = eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)
-    response = fix_message.pop('response')
-    # endregion
-    eq_wrappers.accept_order("VETO", qty, price)
-    eq_wrappers.manual_execution(base_request, qty, price)
-    eq_wrappers.complete_order(base_request)
-    # region Book
-    eq_wrappers.book_order(base_request, client, price)
-    # region verify
-    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'Booked')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'Approval Pending')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Unmatched')
-    eq_wrappers.verify_order_value(base_request, case_id, 'Summary Status', '')
+    def qap_3304(self):
+        # region Declaration
+        fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        ord_book = OMSOrderBook(self.case_id, self.session_id)
+        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        qty = "100"
+        price = "20"
+        # endregion
+        # region Open FE
+        ord_book.open_fe(self.report_id, work_dir, username, password)
+        # endregion
+        # region Send NewOrderSingle
+        nos = FixMessageNewOrderSingleOMS().set_default_dma_limit()
+        client = nos.get_parameters()["Account"]
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                             'XPAR_' + client, "XPAR",
+                                                                                             float(price))
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                       'XPAR_' + client, 'XPAR',
+                                                                                       float(price), int(qty), 1)
+            fix_manager.send_message_and_receive_response_fix_standard(nos)
+        except Exception:
+            logger.error("Error execution", exc_info=True)
+        finally:
+            time.sleep(1)
+            rule_manager.remove_rule(nos_rule)
+            rule_manager.remove_rule(trade_rule)
+        # endregion
+        # region Book Order
+        middle_office.book_order()
+        # endregion
+        # region Check OrderBook
+        ord_book.scroll_order_book()
+        post_trd_sts = ord_book.extract_field("PostTradeStatus")
+        ord_book.compare_values({'PostTradeStatus': "Booked"}, {'PostTradeStatus': post_trd_sts},
+                                "Check PostTradeStatus")
+        # endregion
+        # region Check MiddleOffice
+        block_sts = middle_office.extract_block_field("Status")
+        block_match_sts = middle_office.extract_block_field("Match Status")
+        middle_office.compare_values({'Status': "ApprovalPending", 'Match Status': "Unmatched"},
+                                     {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
+                                     "Check block")
+        # endregion
+        # region UnBook
+        middle_office.un_book_order()
+        # endregion
+        # region Check OrderBook
+        post_trd_sts = ord_book.extract_field("PostTradeStatus")
+        ord_book.compare_values({'PostTradeStatus': "ReadyToBook"}, {'PostTradeStatus': post_trd_sts},
+                                "Check PostTradeStatus")
+        # endregion
+        # region Check MiddleOffice
+        block_sts = middle_office.extract_block_field("Status")
+        block_match_sts = middle_office.extract_block_field("Match Status")
+        middle_office.compare_values({'Status': "Canceled", 'Match Status': "Unmatched"},
+                                     {'Status': block_sts['Status'], 'Match Status': block_match_sts['Match Status']},
+                                     "Check block")
+        # endregion
 
-    eq_wrappers.unbook_order(base_request)
-    eq_wrappers.verify_block_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'Canceled')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Unmatched')
-    eq_wrappers.verify_order_value(base_request, case_id, 'Summary Status', '')
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_3304()
