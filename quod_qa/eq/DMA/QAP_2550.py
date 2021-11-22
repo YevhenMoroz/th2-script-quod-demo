@@ -59,6 +59,6 @@ class QAP2550(TestCase):
         oms_order_book.set_filter(["Order ID", order_id])
         oms_order_book.check_order_fields_list({'Account ID': account, 'Wash Book': 'CareWB'}, 'Check in Order Book', 1)
 
-    # @decorator_try_except(test_id=os.path.basename(__file__))
+    @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_2550()
