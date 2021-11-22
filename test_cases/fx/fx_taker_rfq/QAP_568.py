@@ -60,7 +60,7 @@ def execute(report_id, session_id):
         # Step 5
         rfq_tile.place_order(sell_side)
 
-        quote_id = FXOrderBook(case_id, session_id).set_filter(["Qty", "2368459"]).extract_field("QuoteID")
+        quote_id = FXOrderBook(case_id, session_id).set_filter(["Qty", case_qty]).extract_field("QuoteID")
 
         order_book = FXOrderBook(case_id, session_id)
         order_book.check_order_fields_list({"ExecSts": "Filled", "Client ID": case_client})
