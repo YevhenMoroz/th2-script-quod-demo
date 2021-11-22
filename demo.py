@@ -7,7 +7,6 @@ from test_cases.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
 from test_cases.fx.fx_mm_rfq import for_test_77679
 
 from test_cases.fx.fx_taker_rfq import QAP_568
-from test_cases.fx.my_methods import send_rfq
 from test_cases.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
