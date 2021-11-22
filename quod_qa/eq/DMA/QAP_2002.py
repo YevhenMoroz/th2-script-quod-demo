@@ -1,24 +1,13 @@
 import logging
-import os
 from datetime import datetime
-
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
 
 import quod_qa.wrapper.eq_fix_wrappers
 from quod_qa.wrapper.fix_verifier import FixVerifier
-from test_cases.QAP_2864 import simulator
-from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
 from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

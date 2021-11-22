@@ -1,9 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from examples import read_log_SATS_qty, fix_analyzer_probe, example_java_api
+from ExactPro_examples.examples import fix_analyzer_probe
 from stubs import Stubs
-from test_cases import QAP_2715, QAP_2740, QAP_2769, QAP_2540, QAP_2702, QAP_2684_reader
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
