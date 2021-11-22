@@ -31,6 +31,7 @@ class FixManager:
             case_id = self.__case_id
 
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+            print(fix_message.get_parameters())
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
