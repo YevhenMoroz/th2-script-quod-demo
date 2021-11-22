@@ -16,6 +16,8 @@ class MessageType(Enum):
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
     ListStatus = "ListStatus"
+    Confirmation = "Confirmation"
+    AllocationInstruction = "AllocationInstruction"
 
 
 class Instrument(Enum):
