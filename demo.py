@@ -6,8 +6,6 @@ from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322,
 from quod_qa.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
 from quod_qa.fx.fx_mm_rfq import for_test_77679
 
-from quod_qa.fx.fx_taker_esp import QAP_5537, QAP_5635, QAP_5600_not_ready, QAP_5589_not_ready, \
-    QAP_5369_not_ready, QAP_5564_not_ready
 from quod_qa.fx.fx_taker_rfq import QAP_568
 from quod_qa.fx.my_methods import send_rfq
 from quod_qa.fx.ui_wrappers import wrapper_test
