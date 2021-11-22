@@ -30,8 +30,8 @@ class QAP4648(TestCase):
 
     def qap_4648(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.report_id)
-        fix_verifier = FixVerifier(self.ss_connectivity, self.report_id)
+        fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         cl_inbox = OMSClientInbox(self.case_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
