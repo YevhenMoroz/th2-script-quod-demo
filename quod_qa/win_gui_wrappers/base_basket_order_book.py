@@ -1,4 +1,5 @@
 from quod_qa.win_gui_wrappers.base_window import BaseWindow
+from stubs import Stubs
 from win_gui_modules.utils import call
 
 
@@ -13,6 +14,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.remove_from_basket_details = None
         self.simple_request = None
         self.basket_ticket_details = None
+        self.extract_order_data_details = None
         self.imported_file_mapping_field = None
         self.extract_template_details = None
         self.manage_templates_call = None
@@ -24,6 +26,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.book_basket_call = None
         self.cancel_basket_call = None
         self.remove_from_basket_call = None
+        self.extract_basket_data_call = None
 
     # endregion
     # region Common func
@@ -34,11 +37,20 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def get_basket_template_details(self, templ_name, column_names: []):
+    def extract_basket_template_details(self, templ_name, column_names: []):
         self.extract_template_details(self.base_request, {'Name': templ_name}, column_names)
         result = call(self.extract_template_data_call, self.extract_template_details.build())
         self.clear_details([self.extract_template_details])
         return result
+
+    def extract_field(self, column_name: str, basket_book_filter: dict = None):
+
+        self.extract_order_data_details.set_default_params(self.base_request)
+        self.extract_order_data_details.set_column_names([column_name])
+        if basket_book_filter is not None:
+            self.extract_order_data_details.set_filter(basket_book_filter)
+        result = call(self.extract_basket_data_call, self.extract_order_data_details.build())
+        return result[column_name]
 
     # endregion
 
@@ -157,7 +169,6 @@ class BaseBasketOrderBook(BaseWindow):
         self.clear_details([self.simple_request])
 
     def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
-        self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
-        call(self.remove_from_basket_call, self.remove_from_basket_details.build())
-        self.clear_details([self.remove_from_basket_details])
+        remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
+        call(self.remove_from_basket_call, remove_from_basket_details.build())
     # endregion
