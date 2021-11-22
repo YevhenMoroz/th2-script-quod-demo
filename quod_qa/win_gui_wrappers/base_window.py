@@ -24,7 +24,7 @@ class BaseWindow:
             if str(signature(detail.__init__)).find("base_request") != -1:
                 detail.__init__(self.base_request)
             else:
-                detail.__init__(self)
+                detail.__init__()
 
     def compare_values(self, expected_values: dict, actual_values: dict, event_name,
                        verification_method: VerificationMethod = VerificationMethod.EQUALS):
