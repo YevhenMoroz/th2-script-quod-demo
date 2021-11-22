@@ -18,7 +18,6 @@ symbol = 'EUR/USD'
 securitytype = 'FXSPOT'
 defaultmdsymbol_spo_barx = 'EUR/USD:SPO:REG:BARX'
 defaultmdsymbol_spo_citi = 'EUR/USD:SPO:REG:CITI'
-defaultmdsymbol_spo_hsbc = 'EUR/USD:SPO:REG:HSBC'
 no_md_entries_spo_barx = [
     {
         "MDEntryType": "0",
@@ -57,26 +56,6 @@ no_md_entries_spo_citi = [
         "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
     },
 ]
-no_md_entries_spo_hsbc = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.18079,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.1814,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
 
 
 def execute(report_id, session_id):
@@ -97,13 +76,42 @@ def execute(report_id, session_id):
             no_md_entries_spo_citi)). \
             send_market_data_spot(even_name_custom='Send Market Data SPOT CITI')
 
-        # Send market data to the HSBC venue EUR/USD spot
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo_hsbc, symbol, securitytype,
-                                   connectivity=alias_fh).prepare_custom_md_spot(
-            no_md_entries_spo_hsbc)). \
-            send_market_data_spot(even_name_custom='Send Market Data SPOT HSBC')
+        # STEP 1
+        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters({'TimeInForce': '3'})
+        new_order_sor.add_fields_into_repeating_group('NoStrategyParameters', [
+            {'StrategyParameterName': 'LonePassive', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'},
+            {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
+             'StrategyParameterValue': 'CITI/BARX'}])
+        fix_manager.send_message_and_receive_response(new_order_sor)
 
+        execution_report_filled = FixMessageExecutionReportAlgoFX().update_to_filled_sor(
+            new_order_sor).add_party_role()
+        fix_verifier.check_fix_message(execution_report_filled, direction=DirectionEnum.FIRST.value)
 
+        FXOrderBook(case_id, session_id).set_filter(
+            ["Order ID", "AO", "Qty", "1000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",
+             "TIF", "ImmediateOrCancel"]).check_order_fields_list({"ExecSts": "Filled"})
+        FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
+            {"ExecSts": "Filled", "Venue": "CITI", "Limit Price": "1.18141", "Qty": "1,000,000"})
+
+        # STEP 2
+        new_order_sor_2 = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+            {'TimeInForce': '3', 'OrderQty': '5000000'})
+        new_order_sor_2.add_fields_into_repeating_group('NoStrategyParameters', [
+            {'StrategyParameterName': 'LonePassive', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'},
+            {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
+             'StrategyParameterValue': 'CITI/BARX'}])
+        fix_manager.send_message_and_receive_response(new_order_sor_2)
+
+        execution_report_filled_2 = FixMessageExecutionReportAlgoFX().update_to_filled_sor(
+            new_order_sor_2).add_party_role()
+        fix_verifier.check_fix_message(execution_report_filled_2, direction=DirectionEnum.FIRST.value)
+
+        FXOrderBook(case_id, session_id).set_filter(
+            ["Order ID", "AO", "Qty", "5000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",
+             "TIF", "ImmediateOrCancel"]).check_order_fields_list({"ExecSts": "Filled"})
+        FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
+            {"ExecSts": "Filled", "Venue": "BARX", "Limit Price": "1.18146", "Qty": "5,000,000"})
 
     except Exception:
         logging.error('Error execution', exc_info=True)

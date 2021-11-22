@@ -1,4 +1,3 @@
-
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
 
@@ -12,7 +11,8 @@ class FixVerifier:
         self.__verifier = Stubs.verifier
         self.__session_alias = session_alias
         self.__case_id = case_id
-        self.__checkpoint = self.__verifier.createCheckpoint(basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
+        self.__checkpoint = self.__verifier.createCheckpoint(
+            basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
 
     def get_case_id(self):
         return self.__case_id
@@ -20,7 +20,8 @@ class FixVerifier:
     def set_case_id(self, case_id):
         self.__case_id = case_id
 
-    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FIRST.value, message_name: str = None):
+    def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
+                          direction: DirectionEnum = DirectionEnum.FIRST.value, message_name: str = None):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -32,7 +33,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(), key_parameters),
+                    basic_custom_actions.filter_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                                                        key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -49,7 +51,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(MessageType.ExecutionReport.value, fix_message.get_parameters(), key_parameters),
+                    basic_custom_actions.filter_to_grpc(MessageType.ExecutionReport.value, fix_message.get_parameters(),
+                                                        key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -67,7 +70,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc("OrderCancelReplaceRequest", fix_message.get_parameters(), key_parameters),
+                    basic_custom_actions.filter_to_grpc("OrderCancelReplaceRequest", fix_message.get_parameters(),
+                                                        key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -85,7 +89,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc("OrderCancelRequest", fix_message.get_parameters(), key_parameters),
+                    basic_custom_actions.filter_to_grpc("OrderCancelRequest", fix_message.get_parameters(),
+                                                        key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -95,7 +100,3 @@ class FixVerifier:
         else:
             pass
         # TODO add exeption into else
-
-
-
-
