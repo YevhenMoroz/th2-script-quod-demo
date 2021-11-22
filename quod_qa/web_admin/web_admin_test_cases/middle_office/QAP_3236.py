@@ -33,12 +33,12 @@ class QAP_3236(CommonTestCase):
         self.venue = "BINANCE"
         self.side = "Buy"
         self.execution_policy = "DMA"
-        self.virtual_account = "TEST"
-        self.client = "ASCBank"
-        self.client_group = "DEMO"
+        # self.virtual_account = "TEST"
+        # self.client = "ASCBank"
+        # self.client_group = "DEMO"
         self.client_list = "WEILRG"
         self.commission_amount_type = "Broker"
-        self.commission_profile = "UK stamp"
+        # self.commission_profile = "UK stamp"
 
         # Values tab
         self.commission_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -62,11 +62,11 @@ class QAP_3236(CommonTestCase):
         time.sleep(1)
         dimensions_tab.set_execution_policy(self.execution_policy)
         time.sleep(1)
-        dimensions_tab.set_virtual_account(self.virtual_account)
-        time.sleep(1)
-        dimensions_tab.set_client(self.client)
-        time.sleep(1)
-        dimensions_tab.set_client_group(self.client_group)
+        # dimensions_tab.set_virtual_account(self.virtual_account)
+        # time.sleep(1)
+        # dimensions_tab.set_client(self.client)
+        # time.sleep(1)
+        # dimensions_tab.set_client_group(self.client_group)
         time.sleep(1)
         dimensions_tab.set_client_list(self.client_list)
         time.sleep(1)
@@ -96,12 +96,12 @@ class QAP_3236(CommonTestCase):
                             self.venue,
                             self.side,
                             self.execution_policy,
-                            self.virtual_account,
-                            self.client,
-                            self.client_group,
+                            # self.virtual_account,
+                            # self.client,
+                            # self.client_group,
                             self.client_list,
                             self.commission_amount_type,
-                            self.commission_profile,
+                            # self.commission_profile,
                             self.commission_name,
                             self.description
 
