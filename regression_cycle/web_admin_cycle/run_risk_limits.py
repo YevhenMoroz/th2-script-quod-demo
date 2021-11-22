@@ -8,6 +8,8 @@ from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
 from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
 from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_5599 import QAP_5599
 from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_5606 import QAP_5606
+from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_780 import QAP_780
+from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_783 import QAP_783
 
 
 class RunRiskLimits:
@@ -20,10 +22,12 @@ class RunRiskLimits:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_2455(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4851(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5599(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5606(self.web_driver_container, self.second_lvl_id).run()
+            QAP_780(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_783(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2455(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4851(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5599(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5606(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Risk Limits ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

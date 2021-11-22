@@ -11,6 +11,7 @@ from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3219 import QAP_32
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3222 import QAP_3222
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3223 import QAP_3223
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3225 import QAP_3225
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3235 import QAP_3235
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3236 import QAP_3236
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3237 import QAP_3237
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3238 import QAP_3238
@@ -41,7 +42,8 @@ class RunMiddleOffice:
             # QAP_3222(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3223(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3225(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3236(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3235(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3236(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3237(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3238(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3240(self.web_driver_container, self.second_lvl_id).run()

@@ -7,6 +7,8 @@ from quod_qa.web_admin.web_admin_test_cases.others.QAP_1738 import QAP_1738
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1739 import QAP_1739
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1741 import QAP_1741
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_3228 import QAP_3228
+from quod_qa.web_admin.web_admin_test_cases.others.QAP_3229 import QAP_3229
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_5816 import QAP_5816
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_676 import QAP_676
 from quod_qa.web_admin.web_admin_test_cases.others.QAP_677 import QAP_677
@@ -34,21 +36,23 @@ class RunOthers:
         try:
             start_time = time.monotonic()
 
-            QAP_676(self.web_driver_container, self.second_lvl_id).run()
-            QAP_677(self.web_driver_container, self.second_lvl_id).run()
-            QAP_678(self.web_driver_container, self.second_lvl_id).run()
-            QAP_679(self.web_driver_container, self.second_lvl_id).run()
-            QAP_800(self.web_driver_container, self.second_lvl_id).run()
-            QAP_801(self.web_driver_container, self.second_lvl_id).run()
-            QAP_802(self.web_driver_container, self.second_lvl_id).run()
-            QAP_803(self.web_driver_container, self.second_lvl_id).run()
-            QAP_834(self.web_driver_container, self.second_lvl_id).run()
-            QAP_835(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1738(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1739(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1741(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1831(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5816(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_676(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_677(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_678(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_679(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_800(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_801(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_802(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_803(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_834(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_835(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1738(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1739(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1741(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1831(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3228(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3229(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5816(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Others ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
