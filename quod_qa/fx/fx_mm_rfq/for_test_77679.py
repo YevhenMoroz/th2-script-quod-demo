@@ -14,6 +14,9 @@ from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, E
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
+from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
+from th2_grpc_common.common_pb2 import Message, ConnectionID, MessageMetadata, MessageID, Value
+from datetime import datetime
 
 
 def check_dealer_intervention(base_request, service, case_id, qty):
@@ -69,18 +72,62 @@ def execute(report_id, session_id):
 
     try:
         # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                   securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_no_reply()
-        check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
-        assign_firs_request(case_base_request, dealer_service)
-        estimate_first_request(case_base_request, dealer_service)
-        # Step 2
-        time.sleep(5)
-        press_send(case_base_request, dealer_service)
+        # params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
+        #                            securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
+        #                            currency=currency,
+        #                            account=client_tier)
+        # rfq = FixClientSellRfq(params)
+        # rfq.send_request_for_quote_no_reply()
+        # check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
+        # assign_firs_request(case_base_request, dealer_service)
+        # estimate_first_request(case_base_request, dealer_service)
+        # # Step 2
+        # time.sleep(5)
+        # press_send(case_base_request, dealer_service)
+        params = {
+            'QuoteReqID': "123key",
+            'NoRelatedSymbols': [{
+                'Account': "Iridium1",
+                'Instrument': {
+                    'Symbol': "EUR/USD",
+                    'SecurityType': "FXSPOT"
+                },
+                'SettlDate': spo(),
+                'SettlType': 0,
+                'Currency': "EUR",
+                'QuoteType': '1',
+                'OrderQty': "25000000",
+                'OrdType': 'D'
+                # 'ExpireTime': (datetime.now() + timedelta(seconds=self.ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
+                # 'TransactTime': (datetime.utcnow().isoformat())
+            }
+            ]
+        }
+        act = Stubs.fix_act
+        print("REQUEST TO SEND QUOTE: " + str(datetime.now()))
+        # response = act.sendQuoteViaWindow(PlaceMessageRequest(
+        #     description="123key",
+        #     connection_id=ConnectionID(session_alias="fix-ss-rfq-314-luna-standard"),
+        #     message=Message(fields={"QuoteReqID": Value(simple_value="123key")},
+        #                     metadata=MessageMetadata(
+        #                         message_type="QuoteRequest",
+        #                         id=MessageID(connection_id=ConnectionID(session_alias="fix-ss-rfq-314-luna-standard"))))
+        # ))
+        response = act.sendQuoteViaWindow(
+            request=bca.convert_to_request(
+                "SendQuoteRequest",
+                "fix-ss-rfq-314-luna-standard",
+                case_id,
+                bca.message_to_grpc("QuoteRequest", params, "fix-ss-rfq-314-luna-standard")
+            )
+        )
+        print("ACT RETURN ITERATOR TO SCRIPT: " + str(datetime.now()))
+        print("STUB FOR REQUEST TO ANOTHER ACT")
+        print(type(response))
+        # next(response)
+        print(next(response))
+        print(response)
+        print("ITERATOR RETURNS RESPONSE: " + str(datetime.now()))
 
 
 
@@ -88,9 +135,9 @@ def execute(report_id, session_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            close_dmi_window(case_base_request, dealer_service)
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    # finally:
+    #     try:
+    #         # Close tile
+    #         close_dmi_window(case_base_request, dealer_service)
+    #     except Exception:
+    #         logging.error("Error execution", exc_info=True)
