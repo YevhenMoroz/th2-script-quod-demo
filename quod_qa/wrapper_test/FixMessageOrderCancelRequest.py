@@ -14,8 +14,8 @@ class FixMessageOrderCancelRequest(FixMessage):
 
     def update_fix_message(self, parameters: dict) -> None:
         temp = dict(
-            OrigClOrdID=basic_custom_actions.client_orderid(9),
-            ClOrdID=parameters["ClOrdID"],
+            OrigClOrdID=parameters["ClOrdID"],
+            ClOrdID=basic_custom_actions.client_orderid(9),
             Account=parameters["Account"],
             Side=parameters["Side"],
             TransactTime=datetime.utcnow().isoformat(),
