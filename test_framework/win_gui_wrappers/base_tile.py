@@ -1,5 +1,7 @@
 from inspect import signature
 
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.data_set import Side
@@ -13,6 +15,7 @@ class BaseTile:
         self.base_request = get_base_request(session_id, case_id)
         self.extraction_id = bca.client_orderid(4)
         self.base_details = BaseTileDetails(base=self.base_request, window_index=index)
+        self.base_data = BaseTileData(base=self.base_request)
         self.sell_side = Side.sell.value
         self.buy_side = Side.buy.value
         self.verifier = Verifier(self.case_id)
