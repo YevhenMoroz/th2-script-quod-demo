@@ -1,4 +1,4 @@
-from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessage, FixMessageNewOrderSingle
+from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessage
 
 
 class FixMessageConfirmationReport(FixMessage):

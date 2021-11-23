@@ -1,10 +1,5 @@
-from datetime import datetime
-
-from quod_qa.wrapper_test import DataSet
-from quod_qa.wrapper_test.DataSet import Instrument
-from quod_qa.wrapper_test.FixMessageExecutionReport import FixMessageExecutionReport
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.oms.FixMessageAllocationInstructionReport import FixMessageAllocationInstructionReport
+from quod_qa.wrapper_test.FixMessageAllocationInstructionReport import FixMessageAllocationInstructionReport
 
 
 class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionReport):
@@ -13,66 +8,116 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
         self.change_parameters(parameters)
 
     base_parameters = {
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Parties': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'QtyType': '*',
-        "ExecType": "F",
-        "OrdStatus": "2",
-        'SettlDate': '*',
-        'ReplyReceivedTime': '*',
-        'LastExecutionPolicy': '*',
-        'TimeInForce': '*',
-        'TradeDate': '*',
-        'TradeReportingIndicator': '*',
-        'OrdType': '1',
-        'SecondaryOrderID': '*',
-        'LastMkt': '*',
-        'AllocType': '2',
-        'Text': '*',
-        'SettlType': '0',
-        'SecondaryExecID': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
+        'Account': "MOClient",
+        'AllocType': '5',
+        'BookingType': '0',
+        'AllocTransType': '0',
+        'Quantity': '100',
+        'Side': '1',
+        'AvgPx': '20'
     }
 
-    def set_default_allocation(self):
-        self.change_parameters(self.base_parameters)
+    def set_default_ready_to_book(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
-            'ExecID': '*',
-            'LastQty': '*',
-            'OrderID': '*',
+            'Account': new_order_single.get_parameter('Account'),
+            'NoParty': '*',
+            'AllocInstructionMiscBlock1': '*',
+            'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
+            'LastMkt': new_order_single.get_parameter('ExDestination'),
             'TransactTime': '*',
-            'AvgPx': '*',
-            'Parties': '*',
-            'HandlInst': '*',
-            'LeavesQty': '*',
-            'CumQty': '*',
-            'LastPx': '*',
-            'QtyType': '*',
-            "ExecType": "F",
-            "OrdStatus": "2",
+            'ReportedPx': '*',
+            'Side': new_order_single.get_parameter("Side"),
+            'AvgPx': new_order_single.get_parameter("Price"),
+            'QuodTradeQualifier': '*',
+            'BookID': '*',
+            'NoOrders': [{
+                'ClOrdID': new_order_single.get_parameter('ClOrdID'),
+                'OrderID': '*'
+            }],
             'SettlDate': '*',
-            'ReplyReceivedTime': '*',
-            'LastExecutionPolicy': '*',
-            'TimeInForce': '*',
+            'AllocID': '*',
+            'Currency': new_order_single.get_parameter('Currency'),
+            'NetMoney': '*',
+            'Instrument': '*',
             'TradeDate': '*',
-            'TradeReportingIndicator': '*',
-            'OrdType': '1',
-            'SecondaryOrderID': '*',
-            'LastMkt': '*',
-            'AllocType': '2',
-            'Text': '*',
-            'SettlType': '0',
-            'SecondaryExecID': '*',
-            'ExDestination': '*',
             'GrossTradeAmt': '*'
-
         }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_preliminary(self, new_order_single: FixMessageNewOrderSingle):
+        no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
+        for no_alloc in no_allocs:
+            no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
+            no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
+
+        change_parameters = {
+            'Account': new_order_single.get_parameter('Account'),
+            'AllocType': '2',
+            'NoAllocs': no_allocs,
+            'BookingType': '0',
+            'NoParty': '*',
+            'AllocInstructionMiscBlock1': '*',
+            'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
+            'LastMkt': new_order_single.get_parameter('ExDestination'),
+            'TransactTime': '*',
+            'AllocTransType': '0',
+            'ReportedPx': '*',
+            'Side': new_order_single.get_parameter("Side"),
+            'AvgPx': new_order_single.get_parameter("Price"),
+            'QuodTradeQualifier': '*',
+            'BookID': '*',
+            'NoOrders': [{
+                'ClOrdID': new_order_single.get_parameter('ClOrdID'),
+                'OrderID': '*'
+            }],
+            'SettlDate': '*',
+            'AllocID': '*',
+            'Currency': new_order_single.get_parameter('Currency'),
+            'NetMoney': '*',
+            'Instrument': '*',
+            'TradeDate': '*',
+            'GrossTradeAmt': '*'
+        }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_calculated (self, new_order_single: FixMessageNewOrderSingle):
+        no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
+        for no_alloc in no_allocs:
+            no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
+            no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
+
+        change_parameters = {
+            'Account': new_order_single.get_parameter('Account'),
+            'AllocType': '1',
+            'NoAllocs': no_allocs,
+            'BookingType': '0',
+            'NoParty': '*',
+            'AllocInstructionMiscBlock1': '*',
+            'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
+            'LastMkt': new_order_single.get_parameter('ExDestination'),
+            'TransactTime': '*',
+            'AllocTransType': '0',
+            'ReportedPx': '*',
+            'Side': new_order_single.get_parameter("Side"),
+            'AvgPx': new_order_single.get_parameter("Price"),
+            'QuodTradeQualifier': '*',
+            'BookID': '*',
+            'NoOrders': [{
+                'ClOrdID': new_order_single.get_parameter('ClOrdID'),
+                'OrderID': '*'
+            }],
+            'SettlDate': '*',
+            'AllocID': '*',
+            'Currency': new_order_single.get_parameter('Currency'),
+            'NetMoney': '*',
+            'Instrument': '*',
+            'TradeDate': '*',
+            'GrossTradeAmt': '*'
+        }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
