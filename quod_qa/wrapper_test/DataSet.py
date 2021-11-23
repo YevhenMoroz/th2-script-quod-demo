@@ -114,4 +114,9 @@ class FeesAndCommissions(Enum):
 
 
 class CommissionProfiles(Enum):
-    pass
+    Abs_Amt = 1
+    PerU_Qty = 2
+    Perc_Qty = 3
+    Perc_Amt = 4
+    Bas_Amt = 5
+    Bas_Qty = 6
