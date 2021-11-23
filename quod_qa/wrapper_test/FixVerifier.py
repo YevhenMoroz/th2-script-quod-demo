@@ -183,7 +183,7 @@ class FixVerifier:
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
-                    "Check Allocation Instruction",
+                    "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(MessageType.AllocationInstruction.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
