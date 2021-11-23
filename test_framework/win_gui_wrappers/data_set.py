@@ -135,3 +135,14 @@ class ExecSts(Enum):
 class Side(Enum):
     sell = "Sell"
     buy = "Buy"
+
+
+class ClientPrisingTileAction(Enum):
+    widen_spread = "Widen Spread"
+    narrow_spread = "Narrow Spread"
+    increase_ask = "Increase Ask"
+    decrease_ask = "Decrease Ask"
+    increase_bid = "Increase Bid"
+    decrease_bid = "Decrease Bid"
+    skew_towards_bid = "Skew Towards Bid"
+    skew_towards_ask = "Skew Towards ask"
