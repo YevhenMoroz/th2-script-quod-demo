@@ -11,6 +11,10 @@ from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3219 import QAP_32
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3222 import QAP_3222
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3223 import QAP_3223
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3225 import QAP_3225
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3240 import QAP_3240
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3603 import QAP_3603
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_3605 import QAP_3605
+from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_4152 import QAP_4152
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_4858 import QAP_4858
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5448 import QAP_5448
 from quod_qa.web_admin.web_admin_test_cases.middle_office.QAP_5665 import QAP_5665
@@ -27,17 +31,21 @@ class RunMiddleOffice:
     def execute(self):
         try:
             start_time = time.monotonic()
-            QAP_2564(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3148(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3152(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3219(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3222(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3223(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3225(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4858(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5448(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5665(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5666(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2564(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3148(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3152(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3219(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3222(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3223(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3225(self.web_driver_container, self.second_lvl_id).run()
+            QAP_3240(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3603(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3605(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4152(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4858(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5448(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5665(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5666(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Middle Office ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

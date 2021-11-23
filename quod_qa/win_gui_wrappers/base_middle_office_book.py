@@ -50,12 +50,14 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     # endregion
     # region Get
-    def extract_block_field(self, column_name, filter_list: list, row_number: int):
+    def extract_block_field(self, column_name, filter_list: list = None, row_number: int = None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
         extraction_detail = self.extraction_detail(column_name, column_name)
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
-        self.extract_middle_office_blotter_values_request.set_filter(filter_list)
-        self.extract_middle_office_blotter_values_request.set_row_number(row_number)
+        if filter_list is not None:
+            self.extract_middle_office_blotter_values_request.set_filter(filter_list)
+        if row_number is not None:
+            self.extract_middle_office_blotter_values_request.set_row_number(row_number)
         response = call(self.extract_middle_office_blotter_values_call,
                         self.extract_middle_office_blotter_values_request.build())
         self.clear_details([self.extract_middle_office_blotter_values_request])

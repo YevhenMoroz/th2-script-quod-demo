@@ -4,6 +4,7 @@ from copy import deepcopy
 from uuid import uuid1
 from datetime import datetime, timedelta, date
 from google.protobuf.timestamp_pb2 import Timestamp
+from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitGetMessageRequest
 
 from th2_grpc_check1.check1_pb2 import PreFilter
 from th2_grpc_check1.check1_pb2 import CheckRuleRequest
@@ -403,6 +404,29 @@ def convert_to_request(description: str, connectivity: str, event_id: EventID, m
         parent_event_id=event_id,
         description=description,
         key_fields=key_fields
+    )
+
+def convert_to_get_request(description: str, connectivity: str, event_id: EventID, message: Message,
+                       request_type: str, response_type: str) -> SubmitGetMessageRequest:
+    """ Creates grpc request for sending message to the system.
+        Parameters:
+            description (str): Text for displaying in report.
+            connectivity (str): Name of connectivity box (fix-bs-eq-trqx, fix-fh-eq-paris, gtwquod3).
+            event_id (str): ID of the parent event.
+            message (Message): Message, which must be sent to the system.
+            request_type (str): requestType
+            response_type (str): responseType
+        Returns:
+            convert_to_request (SubmitGetMessageRequest): request to act box
+    """
+    connectivity = ConnectionID(session_alias=connectivity)
+    return SubmitGetMessageRequest(
+        message=message,
+        connection_id=connectivity,
+        parent_event_id=event_id,
+        description=description,
+        requestType=request_type,
+        responseType=response_type
     )
 
 

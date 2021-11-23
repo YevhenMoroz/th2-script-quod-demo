@@ -1,98 +1,68 @@
 import logging
 import os
-from datetime import datetime
+import time
 
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodSingleExecRule, TemplateNoPartyIDs
-
-import quod_qa.wrapper.eq_fix_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
-from test_cases.QAP_2864 import simulator
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
-from custom.basic_custom_actions import create_event, timestamps
-from quod_qa.wrapper import eq_wrappers
-from quod_qa.wrapper.fix_manager import FixManager
-from quod_qa.wrapper.fix_message import FixMessage
+from custom import basic_custom_actions as bca, basic_custom_actions
+from quod_qa.win_gui_wrappers.TestCase import TestCase
+from quod_qa.win_gui_wrappers.base_window import decorator_try_except
+from quod_qa.wrapper_test.DataSet import Instrument
+from quod_qa.wrapper_test.FixManager import FixManager
+from quod_qa.wrapper_test.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from quod_qa.wrapper_test.FixVerifier import FixVerifier
+from quod_qa.wrapper_test.SessionAlias import SessionAliasOMS
+from datetime import datetime, timedelta
+from quod_qa.wrapper_test.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from quod_qa.wrapper_test.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from quod_qa.wrapper_test.oms.FixMessageOrderCancelReplaceRequestOMS import FixMessageOrderCancelReplaceRequestOMS
 from rule_management import RuleManager
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-2002"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declaration
-    seconds, nanos = timestamps()  # Store case start time
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = 900
-    client = "CLIENT1"
-    # endregion
+class QAP2002(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    # endregion
-
-    try:
+    def qap_2002(self):
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_MarketNewOrdSingle_FOK(quod_qa.wrapper.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
-                                                           float(1), True)
-        fix_message = quod_qa.wrapper.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 4)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
-
+        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
+        fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        # region Declarations
+        client = "CLIENT1"
+        price = '20'
+        fix_message = FixMessageNewOrderSingleOMS()
+        fix_message.set_default_dma_market(Instrument.FR0004186856)
+        fix_message.change_parameters({'Account': client, 'TimeInForce': '4'})
+        fix_message.add_ClordId(os.path.basename(__file__)[:-3])
+        # endregion
+        # region Create order via FIX
+        try:
+            nos_rule = rule_manager.add_MarketNewOrdSingle_FOK_FIXStandard(self.bs_connectivity,
+                                                                           'XPAR_' + client, 'XPAR',
+                                                                           float(price), True)
+            fix_manager.send_message_and_receive_response_fix_standard(fix_message)
+        except Exception:
+            logger.error("Error execution", exc_info=True)
+        finally:
+            time.sleep(1)
+            rule_manager.remove_rule(nos_rule)
         # endregion
 
-        # region Check values in OrderBook
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'OrdStatus': '2',
-        'Account': 'CLIENT1',
-        'Side': 2,
-        'Text': '*',
-        'TimeInForce': 4,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'LastExecutionPolicy': '*',
-        'TradeDate': '*',
-        'AvgPx': '*',
-        'ExpireDate': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'SettlType': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SecondaryOrderID': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'SecondaryExecID': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
-    }
+        # region checkCancel
+        execution_status_trade = FixMessageExecutionReportOMS()
+        execution_status_trade.set_default_filled()
+        execution_status_trade.remove_parameter('Price')
+        execution_status_trade.change_parameters(
+            {'ClOrdID': fix_message.get_parameter('ClOrdID')})
+        fix_verifier.check_fix_message_fix_standard(execution_status_trade, ['ClOrdID', 'OrdStatus', 'ExecType'])
+        # endregion
 
-    fix_verifier_ss = FixVerifier(quod_qa.wrapper.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'OrdStatus','TimeInForce'])
-
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_2002()
