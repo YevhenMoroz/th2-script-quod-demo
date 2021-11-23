@@ -75,3 +75,46 @@ class Status(Enum):
     Fill = "Fill"
     PartialFill = "PartialFill"
     Cancel = "Cancel"
+
+class CommissionClientsAccounts(Enum):
+    CLIENT_COMM_1 = "CLIENT_COMM_1"
+    CLIENT_COMM_2 = "CLIENT_COMM_2"
+    CLIENT_COMM_1_SA1 = "CLIENT_COMM_1_SA1"
+    CLIENT_COMM_1_SA2 = "CLIENT_COMM_1_SA2"
+    CLIENT_COMM_1_SA3 = "CLIENT_COMM_1_SA3"
+    CLIENT_COMM_2_SA1 = "CLIENT_COMM_2_SA1"
+    CLIENT_COMM_2_SA2 = "CLIENT_COMM_2_SA2"
+    CLIENT_COMM_2_SA3 = "CLIENT_COMM_2_SA3"
+
+class FeeTypes(Enum):
+    Agent = "AGE"
+    ExchFees = "EXC"
+    Levy = "LEV"
+    ConsumptionTax = "CTX"
+    Conversion = "CON"
+    Extra = "EXT"
+    LocalComm = "LOC"
+    Markup = "MAR"
+    Other = "OTH"
+    PerTransac = "TRA"
+    Regulatory = "REG"
+    Route = "ROU"
+    Stamp = "STA"
+    Tax = "TAX"
+    ValueAddedTax = "VAT"
+
+class FeesAndCommissions(Enum):
+    Fee1 = 1
+    Fee2 = 2
+    Fee3 = 3
+    Commission1 = 1
+    Commission2 = 2
+    Commission3 = 3
+
+class CommissionProfiles(Enum):
+    Abs_Amt = 1
+    PerU_Qty = 2
+    Perc_Qty = 3
+    Perc_Amt = 4
+    Bas_Amt = 5
+    Bas_Qty = 6
