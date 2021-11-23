@@ -8,7 +8,13 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
         self.change_parameters(parameters)
 
     base_parameters = {
-
+        'Account': "MOClient",
+        'AllocType': '5',
+        'BookingType': '0',
+        'AllocTransType': '0',
+        'Quantity': '100',
+        'Side': '1',
+        'AvgPx': '20'
     }
 
     def set_default_ready_to_book(self, new_order_single: FixMessageNewOrderSingle = None):
