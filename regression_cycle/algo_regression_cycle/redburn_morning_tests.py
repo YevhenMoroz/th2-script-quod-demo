@@ -12,7 +12,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_SCA_01, QA_OPN_AuctionWoul
 from test_cases.algo.Algo_Redburn.Algo_MOC import QA_CLO_InitialSlice_01, CLO_WW_01, QA_CLO_WouldAtLast, CLO_VO_01, QA_CLO_Perc_for_Close90, QA_CLO_Market, CLO_SCO_MKT, QA_CLO_WouldPercentage, \
     CLO_FPC_01, QA_CLO_WouldAtLast2, QA_CLO_WouldShares, QA_CLO_AuctionWouldCap100, CLO_SCO_PRM, QA_CLO_WouldRef_Unavaliable, CLO_LIM_01, QA_CLO_WouldRef, QA_CLO_AuctionWouldCapMaxWouldShares, \
     QA_CLO_AuctionWouldCap, QA_CLO_AuctionWouldCapMaxWouldPerc, CLO_SCO_MID, QA_CLO_InitialSlice_02, QA_CLO_AuctionWouldCap0, QA_CLO_Perc_for_Close100, QA_CLO_AtLast, CLO_SCO_01, \
-    QA_CLO_InitialSlice_03
+    QA_CLO_InitialSlice_03, QA_CLO_WouldShares0
 from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -85,6 +85,7 @@ def test_run():
         QA_CLO_WouldAtLast2.execute(report_id)
         QA_CLO_AtLast.execute(report_id)
         QA_CLO_Market.execute(report_id)
+        QA_CLO_WouldShares0.execute(report_id)
         # endregion
 
         # region Expiry Client requirement
