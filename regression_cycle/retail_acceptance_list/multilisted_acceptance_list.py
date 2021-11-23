@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_Multilisted import QAP_4298
+from test_cases.RET.Algo.Algo_Multilisted import QAP_4298
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

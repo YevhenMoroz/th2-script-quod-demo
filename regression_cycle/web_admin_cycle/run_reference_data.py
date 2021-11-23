@@ -2,35 +2,35 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1727 import QAP_1727
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1729 import QAP_1729
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1731 import QAP_1731
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1732 import QAP_1732
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1733 import QAP_1733
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1736 import QAP_1736
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_1737 import QAP_1737
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2154 import QAP_2154
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2302 import QAP_2302
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2504 import QAP_2504
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2904 import QAP_2904
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2905 import QAP_2905
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2940 import QAP_2940
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_2971 import QAP_2971
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_3136 import QAP_3136
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_3399 import QAP_3399
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_4709 import QAP_4709
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_4861 import QAP_4861
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QAP_4862
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_755 import QAP_755
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_756
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_759 import QAP_759
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP_760
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
-from quod_qa.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1727 import QAP_1727
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1729 import QAP_1729
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1731 import QAP_1731
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1732 import QAP_1732
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1733 import QAP_1733
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1736 import QAP_1736
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_1737 import QAP_1737
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2154 import QAP_2154
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2302 import QAP_2302
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2504 import QAP_2504
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2904 import QAP_2904
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2905 import QAP_2905
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2940 import QAP_2940
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2971 import QAP_2971
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3136 import QAP_3136
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3399 import QAP_3399
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4709 import QAP_4709
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4861 import QAP_4861
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QAP_4862
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_755 import QAP_755
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_756
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_759 import QAP_759
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP_760
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
 
 
 class ReferenceData:

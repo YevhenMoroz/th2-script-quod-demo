@@ -3,7 +3,7 @@ import time
 from datetime import timedelta
 
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from regression_cycle.web_admin_cycle.run_client_accounts import RunClientsAccounts
 from regression_cycle.web_admin_cycle.run_market_making import RunMarketMaking
 from regression_cycle.web_admin_cycle.run_general import RunGeneral

@@ -1,10 +1,7 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from quod_qa.eq.Algo_PercentageVolume import  QAP_1324, QAP_1750, QAP_1510, QAP_1515, QAP_1516, QAP_3070, QAP_2479, QAP_3116, QAP_3065, QAP_3063, QAP_3127, QAP_1633, QAP_2980, QAP_3061, QAP_3062, QAP_2838, QAP_2552, QAP_2553,QAP_1634, QAP_2583, QAP_3062, QAP_3530
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
-
+from test_cases.algo.Algo_PercentageVolume import QAP_3065, QAP_3070, QAP_3063, QAP_3062, QAP_2980, QAP_3127, QAP_1634, QAP_1633, QAP_3116, QAP_2479, QAP_3061, QAP_3530
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

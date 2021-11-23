@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_TWAP import QAP_4295, QAP_4317
+from test_cases.RET.Algo.Algo_TWAP import QAP_4295, QAP_4317
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

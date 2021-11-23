@@ -63,13 +63,13 @@ def client_orderid(length: int) -> str:
 
 
 def message_to_grpc(message_type: str, content: dict, session_alias: str) -> Message:
-    """ Creates grpc wrapper for message
+    """ Creates grpc old_wrappers for message
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
             content (dict): Fields and values, represented in Python dictionary format ({'Price': 10, 'OrderQty': 100}).
             session_alias (str): Name of connectivity box (fix-bs-eq-trqx, fix-fh-eq-paris, gtwquod3).
         Returns:
-            message_to_grpc (Message): grpc wrapper for message
+            message_to_grpc (Message): grpc old_wrappers for message
     """
     content = deepcopy(content)
     for tag in content:
@@ -168,7 +168,7 @@ def message_to_grpc_fix_standard(message_type: str, content: dict, session_alias
 
 
 def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
-    """ Creates grpc wrapper for filter without fail unexpected
+    """ Creates grpc old_wrappers for filter without fail unexpected
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
             content (dict): Fields and values, represented in Python dictionary format ({'Price': 10,
@@ -177,7 +177,7 @@ def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fiel
                 verification. Default value is None.
             ignored_fields (list): Optional parameter.
         Returns:
-            filter_to_grpc (MessageFilter): grpc wrapper for filter
+            filter_to_grpc (MessageFilter): grpc old_wrappers for filter
     """
     if keys is None:
         keys = []
@@ -227,7 +227,7 @@ def filter_to_grpc_nfu(message_type: str, content: dict, keys=None, ignored_fiel
 
 
 def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
-    """ Creates grpc wrapper for filter
+    """ Creates grpc old_wrappers for filter
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
             content (dict): Fields and values, represented in Python dictionary format ({'Price': 10,
@@ -236,7 +236,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                 verification. Default value is None.
             ignored_fields (list): Optional parameter.
         Returns:
-            filter_to_grpc (MessageFilter): grpc wrapper for filter
+            filter_to_grpc (MessageFilter): grpc old_wrappers for filter
     """
     if keys is None:
         keys = []
@@ -259,7 +259,11 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
             content[tag] = ValueFilter(
                 simple_filter=content[tag], key=(True if tag in keys else False)
             )
+        elif isinstance(content[tag], dict):
+            content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
+            print(type(content[tag]))
+            print(content[tag])
             value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
                 simple_filter=str(value), operation=FilterOperation.Value(operation)
@@ -435,7 +439,7 @@ def create_check_rule(description: str, message_filter: MessageFilter, checkpoin
     """ Creates grpc request for verification only one message
         Parameters:
             description (str): Text for displaying in report.
-            message_filter (MessageFilter): Expected values in grpc wrapper.
+            message_filter (MessageFilter): Expected values in grpc old_wrappers.
             checkpoint (Checkpoint): Checkpoint, which is used as start point during message verification.
             connectivity (str): Name of connectivity box (fix-bs-eq-trqx, fix-fh-eq-paris, gtwquod3).
             event_id: ID of the parent event.
@@ -464,7 +468,7 @@ def create_check_sequence_rule(description: str, prefilter: PreFilter, msg_filte
     """ Creates grpc request for verification several messages and an order of their receiving
         Parameters:
             description (str): Text for displaying in report.
-            prefilter (PreFilter): grpc wrapper for preliminary filtration of messages
+            prefilter (PreFilter): grpc old_wrappers for preliminary filtration of messages
             msg_filters (list): A list of filters (a sets of expected values) in grpc wrappers.
             checkpoint (str): Checkpoint id, which is used as start point during message verification.
             connectivity (str): Name of connectivity box (fix-bs-eq-trqx, fix-fh-eq-paris, gtwquod3).
@@ -526,13 +530,13 @@ def create_event(event_name: str, parent_id: EventID = None, status='SUCCESS', b
 
 
 def prefilter_to_grpc(content: dict, _nesting_level=0) -> PreFilter:
-    """ Creates a grpc wrapper for specified fields and their values to preliminary filtration of messages
+    """ Creates a grpc old_wrappers for specified fields and their values to preliminary filtration of messages
         in the stream.
         Parameters:
             content (dict): Fields and their values, which are used to filter.
             _nesting_level (int): For internal purpose.
         Returns:
-            prefilter_to_grpc (PreFilter): fields and their values in the grpc wrapper.
+            prefilter_to_grpc (PreFilter): fields and their values in the grpc old_wrappers.
     """
     content = deepcopy(content)
     for tag in content:
@@ -609,7 +613,6 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
-
 
 def wrap_filter(content, message_type=None, key_fields=None):
     if key_fields is None:

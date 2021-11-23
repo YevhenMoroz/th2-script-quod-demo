@@ -1,10 +1,7 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from quod_qa.eq.Algo_Iceberg import QAP_3056, QAP_3029, QAP_3054, QAP_3055
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
-
+from test_cases.algo.Algo_Iceberg import QAP_3055, QAP_3054, QAP_3029, QAP_3056
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

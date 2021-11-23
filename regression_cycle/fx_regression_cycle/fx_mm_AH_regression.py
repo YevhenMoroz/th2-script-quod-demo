@@ -1,11 +1,11 @@
-from quod_qa.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2159, QAP_2255, \
+from test_cases.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2159, QAP_2255, \
     QAP_3939, QAP_3039, QAP_3354, QAP_3067, QAP_1762, QAP_2326, QAP_5551, QAP_2322, QAP_2291, QAP_2292, QAP_3147, \
     QAP_3146, QAP_2265, QAP_3082, QAP_3819, QAP_4122, QAP_2293
-from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2255, \
+from test_cases.fx.fx_mm_autohedging import QAP_2159, QAP_2255, \
     QAP_3939, QAP_3039, QAP_2470, QAP_3354, QAP_3067, QAP_1762, QAP_2326, import_AH_layout, AH_Precondition
-from quod_qa.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2291, QAP_2292, \
+from test_cases.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2291, QAP_2292, \
     QAP_3902
-from quod_qa.fx.fx_mm_positions.prepare_position import prepare_position
+from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
