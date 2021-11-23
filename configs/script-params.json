@@ -1,25 +1,25 @@
 {
-  "target_server_win": "quod_10q",
+  "target_server_win": "quod_XXq",
   "target_server_web": "web",
 
   "web_admin_url": "",
   "web_admin_login": "",
   "web_admin_password": "",
 
-  "qf_trading_fe_folder": "C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits",
-  "qf_trading_fe_user": "ymoroz",
-  "qf_trading_fe_password": "ymoroz",
+  "qf_trading_fe_folder": "",
+  "qf_trading_fe_user": "",
+  "qf_trading_fe_password": "",
 
-  "qf_trading_fe_folder_1": "C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits",
-  "qf_trading_fe_user_1": "ymoroz",
-  "qf_trading_fe_password_1": "ymoroz",
+  "qf_trading_fe_folder_1": "",
+  "qf_trading_fe_user_1": "",
+  "qf_trading_fe_password_1": "",
 
-  "qf_trading_fe_folder_2": "C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits",
-  "qf_trading_fe_user_2": "HD3",
-  "qf_trading_fe_password_2": "HD3",
+  "qf_trading_fe_folder_2": "",
+  "qf_trading_fe_user_2": "",
+  "qf_trading_fe_password_2": "",
 
   "qf_trading_fe_exec": "QuodFrontEnd.exe",
   "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - 317 GANYMEDE",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (317 GANYMEDE) "
+  "qf_trading_fe_main_win_name": "Quod Financial - Quod site",
+  "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "
 }
