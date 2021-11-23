@@ -1,4 +1,4 @@
-from quod_qa.wrapper_test.DataSet import Connectivity
+from test_framework.fix_wrappers.DataSet import Connectivity
 
 
 class SessionAliasOMS:

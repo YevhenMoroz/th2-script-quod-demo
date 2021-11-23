@@ -1,8 +1,6 @@
 from datetime import datetime
-
-from custom import basic_custom_actions
-from quod_qa.wrapper_test.DataSet import Instrument
-from quod_qa.wrapper_test.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 
 
 class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest):

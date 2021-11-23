@@ -1,6 +1,5 @@
-from datetime import datetime
-
-from quod_qa.wrapper_test.FixMessageNewOrderList import FixMessage, FixMessageNewOrderList
+from test_framework.fix_wrappers.FixMessage import FixMessage
+from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
 
 
 class FixMessageListStatus(FixMessage):

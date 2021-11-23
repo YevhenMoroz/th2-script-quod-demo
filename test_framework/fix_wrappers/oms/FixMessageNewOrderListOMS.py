@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
-
 from custom import basic_custom_actions
-from quod_qa.wrapper_test.DataSet import Instrument
-from quod_qa.wrapper_test.FixMessageNewOrderList import FixMessageNewOrderList
+from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
+from test_framework.fix_wrappers.DataSet import Instrument
 
 
 class FixMessageNewOrderListOMS(FixMessageNewOrderList):

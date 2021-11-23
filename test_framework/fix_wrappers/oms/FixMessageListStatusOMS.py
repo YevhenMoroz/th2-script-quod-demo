@@ -1,4 +1,4 @@
-from quod_qa.wrapper_test.FixMessageListStatus import FixMessageListStatus
+from test_framework.fix_wrappers.FixMessageListStatus import FixMessageListStatus
 
 
 class FixMessageListStatusOMS(FixMessageListStatus):
