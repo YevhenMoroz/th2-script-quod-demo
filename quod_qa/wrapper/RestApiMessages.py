@@ -1,3 +1,6 @@
+from quod_qa.wrapper_test.DataSet import FeesAndCommissions
+
+
 class RestApiMessages:
 
     def __init__(self):
@@ -97,12 +100,12 @@ class RestApiMessages:
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
 
-    def modify_fees_request(self, params=None, recalculate=False):
+    def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
         self.message_type = 'ModifyCommission'
         default_parameters = {
-            'commDescription': "FeeDescription",
+            'commDescription': "Fee1" if fee is None else fee.name,
             'commExecScope': "ALL",
-            'commissionID': 1,
+            'commissionID': 1 if fee is None else fee.value,
             'execCommissionProfileID': 200013,
             'miscFeeType': 'EXC',
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
@@ -131,7 +134,7 @@ class RestApiMessages:
             'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
             'clCommissionDescription': "Commission of Testing MOClient",
             'clCommissionID': 1000008,
-            'clCommissionName': "Commission_for_MOClient", 
+            'clCommissionName': "Commission_for_MOClient",
             'commissionAmountType': "BRK",
             'commissionProfileID': 6,
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',

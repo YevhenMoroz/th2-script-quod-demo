@@ -56,3 +56,45 @@ class Connectivity(Enum):
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa_rest = "rest_wa317ganymede"
+
+
+class CommissionClientsAccounts(Enum):
+    CLIENT_COMM_1 = "CLIENT_COMM_1"
+    CLIENT_COMM_2 = "CLIENT_COMM_2"
+    CLIENT_COMM_1_SA1 = "CLIENT_COMM_1_SA1"
+    CLIENT_COMM_1_SA2 = "CLIENT_COMM_1_SA2"
+    CLIENT_COMM_1_SA3 = "CLIENT_COMM_1_SA3"
+    CLIENT_COMM_2_SA1 = "CLIENT_COMM_2_SA1"
+    CLIENT_COMM_2_SA2 = "CLIENT_COMM_2_SA2"
+    CLIENT_COMM_2_SA3 = "CLIENT_COMM_2_SA3"
+
+
+class FeeTypes(Enum):
+    Agent = "AGE"
+    ExchFees = "EXC"
+    Levy = "LEV"
+    ConsumptionTax = "CTX"
+    Conversion = "CON"
+    Extra = "EXT"
+    LocalComm = "LOC"
+    Markup = "MAR"
+    Other = "OTH"
+    PerTransac = "TRA"
+    Regulatory = "REG"
+    Route = "ROU"
+    Stamp = "STA"
+    Tax = "TAX"
+    ValueAddedTax = "VAT"
+
+
+class FeesAndCommissions(Enum):
+    Fee1 = 1
+    Fee2 = 2
+    Fee3 = 3
+    Commission1 = 1
+    Commission2 = 2
+    Commission3 = 3
+
+
+class CommissionProfiles(Enum):
+    pass
