@@ -164,7 +164,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == MessageType.Confirmation.value:
             if key_parameters is None:
-                key_parameters = ['AllocID']
+               key_parameters = ['ConfirmTransType', 'NoOrders']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
@@ -179,7 +179,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == MessageType.AllocationInstruction.value:
             if key_parameters is None:
-                key_parameters = ['AllocType']
+                key_parameters = ['AllocType', 'NoOrders']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(

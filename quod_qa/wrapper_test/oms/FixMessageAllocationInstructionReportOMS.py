@@ -1,5 +1,5 @@
 from quod_qa.wrapper_test.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from quod_qa.wrapper_test.oms.FixMessageAllocationInstructionReport import FixMessageAllocationInstructionReport
+from quod_qa.wrapper_test.FixMessageAllocationInstructionReport import FixMessageAllocationInstructionReport
 
 
 class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionReport):
@@ -17,17 +17,14 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
         'AvgPx': '20'
     }
 
-    def set_default_ready_to_book(self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_default_ready_to_book(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
             'Account': new_order_single.get_parameter('Account'),
-            'AllocType': '5',
-            'BookingType': '0',
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
             'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
             'LastMkt': new_order_single.get_parameter('ExDestination'),
             'TransactTime': '*',
-            'AllocTransType': '0',
             'ReportedPx': '*',
             'Side': new_order_single.get_parameter("Side"),
             'AvgPx': new_order_single.get_parameter("Price"),
@@ -45,10 +42,11 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'TradeDate': '*',
             'GrossTradeAmt': '*'
         }
+        self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
 
-    def set_default_preliminary(self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_default_preliminary(self, new_order_single: FixMessageNewOrderSingle):
         no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
         for no_alloc in no_allocs:
             no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
@@ -82,5 +80,44 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'TradeDate': '*',
             'GrossTradeAmt': '*'
         }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_calculated (self, new_order_single: FixMessageNewOrderSingle):
+        no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
+        for no_alloc in no_allocs:
+            no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
+            no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
+
+        change_parameters = {
+            'Account': new_order_single.get_parameter('Account'),
+            'AllocType': '1',
+            'NoAllocs': no_allocs,
+            'BookingType': '0',
+            'NoParty': '*',
+            'AllocInstructionMiscBlock1': '*',
+            'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
+            'LastMkt': new_order_single.get_parameter('ExDestination'),
+            'TransactTime': '*',
+            'AllocTransType': '0',
+            'ReportedPx': '*',
+            'Side': new_order_single.get_parameter("Side"),
+            'AvgPx': new_order_single.get_parameter("Price"),
+            'QuodTradeQualifier': '*',
+            'BookID': '*',
+            'NoOrders': [{
+                'ClOrdID': new_order_single.get_parameter('ClOrdID'),
+                'OrderID': '*'
+            }],
+            'SettlDate': '*',
+            'AllocID': '*',
+            'Currency': new_order_single.get_parameter('Currency'),
+            'NetMoney': '*',
+            'Instrument': '*',
+            'TradeDate': '*',
+            'GrossTradeAmt': '*'
+        }
+        self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
