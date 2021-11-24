@@ -3,7 +3,7 @@ from inspect import signature
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from test_framework.win_gui_wrappers.data_set import Side
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import get_base_request
@@ -26,3 +26,9 @@ class BaseTile:
                 detail.__init__(self.base_details)
             else:
                 detail.__init__()
+
+    def compare_values(self, expected_value: str, actual_value: str, event_name: str = "Compare values",
+                       ver_method: VerificationMethod = VerificationMethod.EQUALS, value_name: str = "Value"):
+        self.verifier.set_event_name(event_name)
+        self.verifier.compare_values(value_name, expected_value, actual_value, ver_method)
+        self.verifier.verify()
