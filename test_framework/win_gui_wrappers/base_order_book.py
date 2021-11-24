@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
@@ -154,7 +155,8 @@ class BaseOrderBook(BaseWindow):
 
     # region Check
     def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book",
-                                row_number: int = 1):
+                                row_number: int = 1,
+                                verification_method: VerificationMethod = VerificationMethod.EQUALS):
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and value is expected result and row_number to check, 1 by default
@@ -165,11 +167,12 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key])
+            self.verifier.compare_values(key, value, actual_list[key], verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
-                                     row_number: int = 1):
+                                     row_number: int = 1,
+                                     verification_method: VerificationMethod = VerificationMethod.EQUALS):
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and value is expected result and row_number to check, 1 by default
@@ -180,7 +183,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key])
+            self.verifier.compare_values(key, value, actual_list[key], verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, filter_list=None):
