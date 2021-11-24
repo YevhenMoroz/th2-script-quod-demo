@@ -78,13 +78,13 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str) -> str:
+    def extract_field(self, column_name: str, row_number: int = None) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
-        self.order_details.add_single_order_info(
-            self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[field])
-            )
-        )
+        info = self.order_info.create(
+                action=ExtractionAction.create_extraction_action(extraction_details=[field]))
+        if row_number is not None:
+            info.set_number(row_number)
+        self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
         return response[field.name]
