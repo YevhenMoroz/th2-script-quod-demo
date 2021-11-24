@@ -3,7 +3,7 @@ from custom import basic_custom_actions as bca
 from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_01, EXP_WW_01, EXP_VO_01
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QA_TWAP_NAV_WW_01_sell, TWAP_MinP_01, QA_TWAP_NAV_WW_03_buy, TWAP_WW_01, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_REF_01_sell, TWAP_AUC_01, \
     QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_01_buy, TWAP_MaxP_01, TWAP_BA_01, QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_MAXShares, TWAP_NAV_01, TWAP_NAV_02, QA_TWAP_NAV_WW_REF_01_buy, \
-    QA_TWAP_NAV_WW_02_buy
+    QA_TWAP_NAV_WW_02_buy, QAP_5884, QAP_6061
 from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_MinP_01, VWAP_BA_01, VWAP_AUC_01, VWAP_WW_01, VWAP_MaxP_01, VWAP_NAV_01, VWAP_NAV_02
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_WW_01, POV_MinMax_01, POV_NAV_02, POV_SCAP_01, POV_NAV_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_SCA_01, QA_OPN_AuctionWouldCapMaxWouldPerc, QA_OPN_Market, QA_OPN_WouldRef, OPN_VO_01, QA_OPN_WouldPercentage, \
@@ -17,18 +17,14 @@ from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-timeouts = False
-work_dir = Stubs.custom_config['qf_trading_fe_folder']
-username = Stubs.custom_config['qf_trading_fe_user']
-password = Stubs.custom_config['qf_trading_fe_password']
+logging.getLogger().setLevel(logging.WARN)
 
 channels = dict()
 
 
 def test_run():
     # Generation id and time for test run
+    logging.getLogger().setLevel(logging.WARN)
     report_id = bca.create_event('Redburn morning tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
