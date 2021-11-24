@@ -1,4 +1,5 @@
 from test_framework.fix_wrappers.FixMessageConfirmationReport import FixMessageConfirmationReport
+from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
 class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):

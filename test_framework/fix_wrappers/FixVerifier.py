@@ -21,7 +21,7 @@ class FixVerifier:
         self.__case_id = case_id
 
     def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
-                          direction: DirectionEnum = DirectionEnum.FIRST.value, message_name: str = None):
+                          direction: DirectionEnum = DirectionEnum.FromQuod.value, message_name: str = None):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -102,7 +102,7 @@ class FixVerifier:
         # TODO add exeption into else
 
     def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None,
-                                       direction: DirectionEnum = DirectionEnum.FIRST):
+                                       direction: DirectionEnum = DirectionEnum.FromQuod.value):
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']

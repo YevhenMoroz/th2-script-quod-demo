@@ -85,7 +85,8 @@ class FixManager:
                     "Send MarketDataRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.MarketDataRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(MessageType.MarketDataRequest.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         else:
@@ -192,7 +193,6 @@ class FixManager:
         return self.parse_response_fix_standard(response)
 
     def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
-        response_messages = list()
         for message in response.response_messages_list:
             fields = dict()
             for field in message.fields:
@@ -232,8 +232,7 @@ class FixManager:
                 responce_fix_message = FixMessageOrderCancelReplaceRequest()
             responce_fix_message.change_parameters(fields)
 
-        response_messages.append(responce_fix_message)
-        return response_messages
+        return responce_fix_message
 
     def get_case_id(self):
         return self.__case_id
