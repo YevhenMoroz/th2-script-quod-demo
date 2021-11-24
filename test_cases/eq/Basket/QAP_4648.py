@@ -1,26 +1,105 @@
 import logging
+import os
 
-from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_fix_wrappers
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageListStatusOMS import FixMessageListStatusOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import FixMessageOrderCancelReplaceRequestOMS
+from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4648"
-    # region Declarations
-    client = "CLIENT_YMOROZ"
-    account = "CLIENT_YMOROZ_SA1"
-    account2 = "CLIENT_YMOROZ_SA2"
-    qty = "1800"
-    price = "10"
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
+class QAP4648(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    no_order=[eq_fix_wrappers.set_fix_order_detail("3", "2", client, 2, qty, 0, price),
-              eq_fix_wrappers.set_fix_order_detail("3", "2", client, 2, qty, 0, price)]
+    def qap_4648(self):
+        # region Declaration
+        fix_manager = FixManager(self.ss_connectivity, self.report_id)
+        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
+        cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        lokup = "VETO"
+        qty = "100"
+        price = "20"
+        new_price = "1"
+        # endregion
+        # region Open FE
+        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        # endregion
+        # region Send NewOrderList
+        nol = FixMessageNewOrderListOMS().set_default_order_list()
+        fix_manager.send_message_and_receive_response_fix_standard(nol)
+        # endregion
+        # region Set-up parameters for ListStatus
+        cl_ord_id1 = nol.get_parameters()['ListOrdGrp']['NoOrders'][0]['ClOrdID']
+        cl_ord_id2 = nol.get_parameters()['ListOrdGrp']['NoOrders'][1]['ClOrdID']
+        list_id = nol.get_parameters()['ListID']
+        list_status = FixMessageListStatusOMS().change_parameters({'ListID': list_id})
+        list_status.set_no_orders(0, cl_ord_id1)
+        list_status.set_no_orders(1, cl_ord_id2)
+        # endregion
+        # region Check ListStatus
+        fix_verifier.check_fix_message_fix_standard(list_status)
+        # endregion
+        # region Accept orders
+        cl_inbox.accept_order(lokup, qty, price)
+        cl_inbox.accept_order(lokup, qty, price)
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        change_parameters = {
+            'Account': "CLIENT_FIX_CARE",
+            'HandlInst': '3'
+        }
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new().change_parameters(change_parameters). \
+            change_parameters({'ClOrdID': cl_ord_id1})
+        exec_report2 = FixMessageExecutionReportOMS().set_default_new().change_parameters(change_parameters). \
+            change_parameters({'ClOrdID': cl_ord_id2, 'Side': "2"})
+        # endregion
+        # region Check ExecutionReports
+        fix_verifier.check_fix_message_fix_standard(exec_report1)
+        fix_verifier.check_fix_message_fix_standard(exec_report2)
+        # endregion
+        # region Send OrderCancelReplaceRequest
+        change_parameters = {
+            'Account': "CLIENT_FIX_CARE",
+            'ClOrdID': cl_ord_id1,
+            "OrigClOrdID": cl_ord_id1,
+            'Price': new_price,
+        }
+        rep_req = FixMessageOrderCancelReplaceRequestOMS().set_default().change_parameters(change_parameters). \
+            change_parameters({'ClOrdID': cl_ord_id1, 'Price': new_price})
+        fix_manager.send_message_and_receive_response_fix_standard(rep_req)
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        change_parameters = {
+            'Account': "CLIENT_FIX_CARE",
+            'Price': new_price,
+            'OrigClOrdID': cl_ord_id1,
+            'ClOrdID': cl_ord_id1
+        }
+        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced().change_parameters(change_parameters)
+        # endregion
+        # region Check ExecutionReports
+        fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        # endregion
 
-    print(no_order)
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_4648()
