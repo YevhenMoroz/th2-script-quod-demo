@@ -1,4 +1,7 @@
-from enum import Enum
+
+from aenum import NoAlias, Enum
+
+from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_red
 
 
 class OrderBookColumns(Enum):
@@ -146,3 +149,35 @@ class ClientPrisingTileAction(Enum):
     decrease_bid = "Decrease Bid"
     skew_towards_bid = "Skew Towards Bid"
     skew_towards_ask = "Skew Towards ask"
+
+
+class PriceNaming(Enum):
+    ask_large = "ask_large"
+    ask_pips = "ask_pips"
+    bid_large = "bid_large"
+    bid_pips = "bid_pips"
+    spread = "spread"
+
+
+class RatesColumnNames(Enum):
+    _settings_ = NoAlias
+    ask_effective = "-"
+    ask_base = "Base"
+    ask_band = "Band"
+    ask_pub = "Pub"
+    ask_pts = "Pts"
+    ask_spot = "Spot"
+    ask_px = "Px"
+    bid_effective = "-"
+    bid_base = "Base"
+    bid_band = "Band"
+    bid_pub = "Pub"
+    bid_pts = "bid_pts.Pts"
+    bid_spot = "Spot"
+    bid_px = "Px"
+
+
+class PricingButtonColor(Enum):
+    green_button = hash_green
+    yellow_button = hash_yellow
+    red_button = hash_red
