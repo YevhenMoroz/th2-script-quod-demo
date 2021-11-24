@@ -23,8 +23,7 @@ connectivity_sell_side = "fix-sell-side-310-ganymede-redburn"
 account = "XPAR_CLIENT1"
 ex_destination_1 = "XPAR"
 price = 30
-price2 = 29.995
-price3 = 31
+price2 = 31
 
 
 def rule_creation():
@@ -33,13 +32,10 @@ def rule_creation():
                                                                          ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
                                                                           ex_destination_1, price2)
-    nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
-                                                                          ex_destination_1, price3)
     trade = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1,
-                                                                      price2, price2, 20000, 1000, 0)
+                                                                      price, price, 20000, 1000, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
-    return [nos_rule, nos_rule2, nos_rule3, trade, ocr_rule]
-
+    return [nos_rule, nos_rule2, trade, ocr_rule]
 
 
 def execute(report_id):
@@ -64,7 +60,7 @@ def execute(report_id):
 
 
 
-        time.sleep(10)
+        time.sleep(15)
         order_cancel = FixMessageOrderCancelRequest(new_order_single)
         fix_manager.send_message_and_receive_response(order_cancel)
     except:
