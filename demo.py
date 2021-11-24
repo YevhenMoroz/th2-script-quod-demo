@@ -1,19 +1,8 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.fx_mm_autohedging import QAP_2159, QAP_2228, QAP_2255, QAP_2322, QAP_3939, QAP_2470, QAP_3146, QAP_3147, \
-    QAP_5551, QAP_3354, QAP_3067, QAP_2326
-from quod_qa.fx.fx_mm_esp import QAP_1554, QAP_2872, QAP_1518
-from quod_qa.fx.fx_mm_rfq import for_test_77679
-from quod_qa.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3739, QAP_3734
-from quod_qa.fx.fx_mm_rfq.rejection import QAP_3735, QAP_3740
-
-from quod_qa.fx.fx_taker_esp import QAP_5537, QAP_5635_not_ready, QAP_5600_not_ready, QAP_5589_not_ready, \
-    QAP_5369_not_ready, QAP_5564_blocked_by_PFX_3932, QAP_5591_blocked_by_PFX_3932, QAP_5598_not_ready, QAP_3253
-from quod_qa.fx.fx_taker_rfq import QAP_568
-from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot, java_api, java_api_MDReq, rfq
+from quod_qa.fx.qs_fx_routine import SendMD
 from quod_qa.fx.qs_fx_routine.java_api_MDReq import QAP_5389
-from quod_qa.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
