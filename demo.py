@@ -11,7 +11,8 @@ from quod_qa.fx.fx_mm_rfq.rejection import QAP_3735, QAP_3740
 from quod_qa.fx.fx_taker_esp import QAP_5537, QAP_5635_not_ready, QAP_5600_not_ready, QAP_5589_not_ready, \
     QAP_5369_not_ready, QAP_5564_blocked_by_PFX_3932, QAP_5591_blocked_by_PFX_3932, QAP_5598_not_ready, QAP_3253
 from quod_qa.fx.fx_taker_rfq import QAP_568
-from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot, java_api, java_api_MDReq
+from quod_qa.fx.qs_fx_routine import SendMD, rfq_spot, java_api, java_api_MDReq, rfq
+from quod_qa.fx.qs_fx_routine.java_api_MDReq import QAP_5389
 from quod_qa.fx.ui_wrappers import wrapper_test
 from rule_management import RuleManager
 from stubs import Stubs
@@ -26,7 +27,7 @@ channels = dict()
 
 def test_run():
     # Generation id and time for test run
-
+    logging.getLogger().setLevel(logging.WARN)
 
     report_id = bca.create_event('KKL    ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
@@ -44,10 +45,10 @@ def test_run():
 
     session_id=set_session_id()
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
         #
@@ -56,7 +57,7 @@ def test_run():
 
 
         # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
-        for_test_77679.execute(report_id,session_id)
+        # for_test_77679.execute(report_id,session_id)
         # for_Daria.execute(report_id,session_id)
         # SendMD.execute(report_id)
         # QAP_2872.execute(report_id)
@@ -76,8 +77,12 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        # java_api_MDReq.TestCase().execute(report_id)
+        QAP_5389().execute(report_id)
+        # SendMD.execute(report_id)
 
+
+
+        # rfq.execute(report_id)
 
 
 
