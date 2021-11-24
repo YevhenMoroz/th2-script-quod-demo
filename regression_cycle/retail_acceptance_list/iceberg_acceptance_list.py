@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_Iceberg import QAP_4289
+from test_cases.RET.Algo.Algo_Iceberg import QAP_4289
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

@@ -1,4 +1,4 @@
-from quod_qa.RET.Care import QAP_4286, QAP_4313
+from test_cases.RET.Care import QAP_4286, QAP_4313
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

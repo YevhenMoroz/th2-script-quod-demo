@@ -1,10 +1,7 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from quod_qa.eq.Algo_TWAP import QAP_2864, QAP_2865, QAP_3121, QAP_3117, QAP_3120, QAP_3119, QAP_2478, QAP_3532, QAP_2977, QAP_1318, QAP_1319, QAP_3032, QAP_2955, QAP_3123, QAP_2706, QAP_3122, QAP_3124
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
-
+from test_cases.algo.Algo_TWAP import QAP_2955, QAP_3123, QAP_3120, QAP_3119, QAP_3124, QAP_3532, QAP_2977, QAP_3117, QAP_3122, QAP_3032, QAP_2478, QAP_2706, QAP_3121
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

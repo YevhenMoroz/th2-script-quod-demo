@@ -3,7 +3,7 @@ import time
 from datetime import timedelta
 
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from regression_cycle.web_admin_cycle.run_client_accounts import RunClientsAccounts
 from regression_cycle.web_admin_cycle.run_market_making import RunMarketMaking
 from regression_cycle.web_admin_cycle.run_general import RunGeneral
@@ -37,11 +37,11 @@ def test_run(parent_id=None):
         web_driver_container = WebDriverContainer()
         # RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
-        RunUsers(web_driver_container, parent_id).execute()
+        # RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()
         # RunClientsAccounts(web_driver_container, parent_id).execute()
         # RunOrderManagement(web_driver_container, parent_id).execute()
-        # RunMiddleOffice(web_driver_container, parent_id).execute()
+        RunMiddleOffice(web_driver_container, parent_id).execute()
         #RunMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
         # RunPositions(web_driver_container, parent_id).execute()

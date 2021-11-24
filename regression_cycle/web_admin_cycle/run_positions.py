@@ -2,12 +2,12 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_2165
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2166 import QAP_2166
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2167 import QAP_2167
-from quod_qa.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_2168
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_2165
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_2166 import QAP_2166
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_2167 import QAP_2167
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_2168
 
 
 class RunPositions:

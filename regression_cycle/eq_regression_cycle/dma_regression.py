@@ -3,7 +3,7 @@ import traceback
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from quod_qa.eq.DMA import QAP_2001, QAP_2002, QAP_2003, QAP_2005, QAP_2551, QAP_4393, QAP_4375, QAP_2006, QAP_2007, \
+from test_cases.eq.DMA import QAP_2001, QAP_2002, QAP_2003, QAP_2005, QAP_2551, QAP_4393, QAP_4375, QAP_2006, QAP_2007, \
     QAP_2008, QAP_2522, QAP_3723, QAP_2000, QAP_2546, QAP_2547
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id
