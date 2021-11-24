@@ -48,12 +48,7 @@ class QAP4648(TestCase):
         fix_manager.send_message_and_receive_response_fix_standard(nol)
         # endregion
         # region Set-up parameters for ListStatus
-        cl_ord_id1 = nol.get_parameters()['ListOrdGrp']['NoOrders'][0]['ClOrdID']
-        cl_ord_id2 = nol.get_parameters()['ListOrdGrp']['NoOrders'][1]['ClOrdID']
-        list_id = nol.get_parameters()['ListID']
-        list_status = FixMessageListStatusOMS().change_parameters({'ListID': list_id})
-        list_status.set_no_orders(0, cl_ord_id1)
-        list_status.set_no_orders(1, cl_ord_id2)
+        list_status = FixMessageListStatusOMS().set_default_list_status(nol)
         # endregion
         # region Check ListStatus
         fix_verifier.check_fix_message_fix_standard(list_status)
