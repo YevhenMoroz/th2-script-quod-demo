@@ -1,6 +1,7 @@
+from enum import Enum
 
-from aenum import NoAlias, Enum
-
+from aenum import NoAlias
+from aenum import Enum as CustomEnum
 from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_red
 
 
@@ -159,7 +160,7 @@ class PriceNaming(Enum):
     spread = "spread"
 
 
-class RatesColumnNames(Enum):
+class RatesColumnNames(CustomEnum):
     _settings_ = NoAlias
     ask_effective = "-"
     ask_base = "Base"
