@@ -6,6 +6,7 @@ import string
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
