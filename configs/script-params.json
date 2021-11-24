@@ -1,6 +1,6 @@
 {
-  "target_server_win": "quod_XXq",
-  "target_server_web": "web",
+  "target_server_win": "",
+  "target_server_web": "",
 
   "web_admin_url": "",
   "web_admin_login": "",
@@ -18,8 +18,8 @@
   "qf_trading_fe_user_2": "",
   "qf_trading_fe_password_2": "",
 
-  "qf_trading_fe_exec": "QuodFrontEnd.exe",
-  "qf_trading_fe_user_desk": "Desk of SalesDealers 1 (CL)",
-  "qf_trading_fe_main_win_name": "Quod Financial - Quod site",
-  "qf_trading_fe_login_win_name": "Login to Quod Financial (Quod site) "
+  "qf_trading_fe_exec": "",
+  "qf_trading_fe_user_desk": "",
+  "qf_trading_fe_main_win_name": "",
+  "qf_trading_fe_login_win_name": ""
 }

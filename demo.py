@@ -3,8 +3,8 @@ from datetime import datetime
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.eq.DMA import QAP_2000
-from win_gui_modules.utils import set_session_id
+from test_cases.eq.Basket import QAP_3773
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,7 +19,9 @@ def test_run():
 
     try:
         # example_java_api.TestCase(report_id).execute()
-        QAP_2000.execute(report_id, session_id)
+        #QAP_4649.execute(report_id, session_id)
+        #QAP3304(report_id, session_id, None).execute()
+        QAP_3773.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
