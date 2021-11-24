@@ -28,21 +28,16 @@ class FixMessageListStatusOMS(FixMessageListStatus):
         ]}
     }
 
-    # def set_no_orders(self, num: int, cl_ord_id=None, leaves_qty=None, avg_px=None, cum_qty=None):
-    #     self.change_parameters(self.base_parameters)
-    #     if cl_ord_id is not None:
-    #         self.base_parameters['OrdListStatGrp']['NoOrders'][num]['ClOrdID'] = cl_ord_id
-    #     if leaves_qty is not None:
-    #         self.base_parameters['OrdListStatGrp']['NoOrders'][num]['LeavesQty'] = leaves_qty
-    #     if avg_px is not None:
-    #         self.base_parameters['OrdListStatGrp']['NoOrders'][num]['AvgPx'] = avg_px
-    #     if cum_qty is not None:
-    #         self.base_parameters['OrdListStatGrp']['NoOrders'][num]['CumQty'] = cum_qty
-    #     return self
-
     def set_default_list_status(self, new_order_list: FixMessageNewOrderList):
-        change_parameters = dict()
-        for ord in new_order_list.get_parameter("ListOrdGrp")["NoOrders"]:
-            self.base_parameters['OrdListStatGrp']['NoOrders'][num]['ClOrdID'] = cl_ord_id
+        no_order = []
+        order = {}
+        for i in range(len(new_order_list.get_parameter("ListOrdGrp")["NoOrders"])):
+            order.update({"AvgPx": "*"})
+            order.update({"CumQty": "*"})
+            order.update({"ClOrdID": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][i]["ClOrdID"]})
+            order.update(
+                {"LeavesQty": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][i]["OrderQtyData"]["OrderQty"]})
+            no_order.append(order.copy())
+        self.change_parameters(self.base_parameters)
+        self.change_parameters({'OrdListStatGrp': {'NoOrders': no_order}})
         return self
-
