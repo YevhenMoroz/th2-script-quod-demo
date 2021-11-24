@@ -6,8 +6,6 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.win_gui_wrappers.data_set import PriceNaming
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
 timestamp = str(datetime.now().timestamp())
