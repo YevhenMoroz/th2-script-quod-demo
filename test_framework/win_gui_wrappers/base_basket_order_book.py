@@ -1,3 +1,4 @@
+from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.utils import call
 
@@ -14,6 +15,9 @@ class BaseBasketOrderBook(BaseWindow):
         self.basket_ticket_details = None
         self.imported_file_mapping_field = None
         self.extract_template_details = None
+        self.extract_child_order_data = None
+        self.extract_child_details = None
+        self.extract_order_data_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -22,6 +26,10 @@ class BaseBasketOrderBook(BaseWindow):
         self.uncomplete_basket_call = None
         self.book_basket_call = None
         self.cancel_basket_call = None
+        self.remove_from_basket_call = None
+        self.extract_basket_data_call = None
+        self.extract_child_order_data_call = None
+
 
     # endregion
     # region Common func
@@ -152,3 +160,19 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
         self.clear_details([self.simple_request])
     # endregion
+    def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
+        remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
+        call(self.remove_from_basket_call, remove_from_basket_details.build())
+
+    # endregion
+
+    def get_basket_orders_values(self, row_count, extract_value, basket_book_filter: dict = None):
+        extract_order_details = self.extract_order_data_details()
+        extract_order_details.set_default_params(self.base_request)
+        if basket_book_filter is not None:
+            extract_order_details.set_filter(basket_book_filter)
+        extract_order_details.set_column_names([extract_value])
+        extract_child_details = self.extract_child_details(extract_order_details.build(), row_count)
+        result = call(self.ex, extract_child_details.build())
+        self.clear_details([self.basket_ticket_details])
+        return result
