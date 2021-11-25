@@ -1,12 +1,9 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.win_gui_wrappers.data_set import ClientPrisingTileAction, RatesColumnNames, \
     PricingButtonColor
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request
 from win_gui_modules.wrappers import set_base
 
 
@@ -29,7 +26,6 @@ def execute(report_id, session_id):
         # Step 2-3
         rates_tile.select_rows([1])
         px_before = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
-        print(px_before)
         # Step 4
         rates_tile.modify_spread(action.widen_spread)
         px_after = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
