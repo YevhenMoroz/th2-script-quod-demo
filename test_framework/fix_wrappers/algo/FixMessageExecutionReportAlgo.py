@@ -19,6 +19,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_fill_buy(new_order_single)
             elif status is Status.PartialFill:
                 self.__set_partial_fill_buy(new_order_single)
+            elif status is Status.CancelRequest:
+                self.__set_cancel_replace_buy(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_buy(new_order_single)
             else:
@@ -275,6 +277,28 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TimeInForce=0,
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
+            LeavesQty=0
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_replace_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrdStatus=4,
+            Price=new_order_single.get_parameter('Price'),
+            TimeInForce=3,
+            OrigClOrdID='*',
+            Side=new_order_single.get_parameter('Side'),
+            Text='order canceled',
+            TransactTime='*',
+            ExecType=4,
             LeavesQty=0
         )
         super().change_parameters(temp)
