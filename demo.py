@@ -5,6 +5,7 @@ from quod_qa.fx.qs_fx_routine import SendMD
 from quod_qa.fx.qs_fx_routine.java_api_MDReq import QAP_5389
 from rule_management import RuleManager
 from stubs import Stubs
+from test_cases.fx.fx_taker_esp import QAP_5564_blocked_by_PFX_3932
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -66,8 +67,10 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        QAP_5389().execute(report_id)
-        # SendMD.execute(report_id)
+        # QAP_5389().execute(report_id)
+        SendMD.execute(report_id)
+
+        QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
 
 
 
