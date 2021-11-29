@@ -131,7 +131,7 @@ class ExecSts(Enum):
     Eliminated = 'Eliminated'
     rejected = 'Rejected'
     open = 'Open'
-    canceled = 'Canceled'
+    cancelled = 'Cancelled'
     held = 'Held'
     partially_filled = 'PartiallyFilled'
 
