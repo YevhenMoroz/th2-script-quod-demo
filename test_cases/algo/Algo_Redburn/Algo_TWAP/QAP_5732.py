@@ -1,6 +1,7 @@
 import os
 import logging
 import time
+from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -19,13 +20,14 @@ timeouts = True
 avt = 10000     # average volume traded per minute
 ast = avt * 5   # 5 average traded
 qty = 300000
-waves = 10
+waves = 5
 qty_twap_1 = int(qty / waves)
 first_reserve = max(ast, int(qty * (1 - 1)))
 reserve = max(first_reserve, int(qty_twap_1))
 qty_nav = qty - reserve
 price = 29.995
 price_nav = 30
+slice_duration = 1
 
 
 #Key parameters
@@ -39,6 +41,7 @@ gateway_side_sell = DataSet.GatewaySide.Sell
 #Status
 status_pending = DataSet.Status.Pending
 status_new = DataSet.Status.New
+status_fill = DataSet.Status.Fill
 status_cancel = DataSet.Status.Cancel
 
 #venue param
@@ -71,6 +74,7 @@ def execute(report_id):
     try:
         rules_list = rules_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
+        now = datetime.today() - timedelta(hours=2)
         # Send_MarkerData
         fix_manager = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
@@ -91,7 +95,7 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav, SliceDuration=slice_duration, EndDate2=(now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")))
 
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 
@@ -110,33 +114,35 @@ def execute(report_id):
         #Check First TWAP child
         fix_verifier_bs.set_case_id(bca.create_event("First TWAP slice", case_id))
 
-        twap_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        twap_child.change_parameters(dict(OrderQty=qty_twap_1, Price=price))
-        fix_verifier_bs.check_fix_message(twap_child, key_parameters=key_params, message_name='Buy side NewOrderSingle TWAP child')
+        twap_1_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        twap_1_child.change_parameters(dict(OrderQty=qty_twap_1, Price=price))
+        fix_verifier_bs.check_fix_message(twap_1_child, key_parameters=key_params, message_name='Buy side NewOrderSingle TWAP child')
 
-        pending_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child, gateway_side_buy, status_pending)
-        fix_verifier_bs.check_fix_message(pending_twap_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
+        pending_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_twap_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
 
-        new_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child, gateway_side_buy, status_new)
-        fix_verifier_bs.check_fix_message(new_twap_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New TWAP child')
+        new_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_twap_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New TWAP child')
 
         #Check Navigator child
-        nav_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        nav_child.change_parameters(dict(OrderQty=qty_nav, Price=price_nav))
-        fix_verifier_bs.check_fix_message(nav_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Navigator')
+        nav_1_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_1_child.change_parameters(dict(OrderQty=qty_nav, Price=price_nav))
+        fix_verifier_bs.check_fix_message(nav_1_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Navigator')
 
-        pending_nav_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child, gateway_side_buy, status_pending)
-        fix_verifier_bs.check_fix_message(pending_nav_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Navigator')
+        pending_nav_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_1_child, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Navigator')
 
-        new_nav_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child, gateway_side_buy, status_new)
-        fix_verifier_bs.check_fix_message(new_nav_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Navigator')
+        new_nav_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_1_child, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Navigator')
 
-        cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child, gateway_side_buy, status_cancel)
-        fix_verifier_bs.check_fix_message(cancel_twap_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel TWAP child')
+        fill_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, gateway_side_buy, status_fill)
+        fix_verifier_bs.check_fix_message(fill_twap_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Fill TWAP child')
 
-        cancel_nav_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child, gateway_side_buy, status_cancel)
-        fix_verifier_bs.check_fix_message(cancel_nav_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Navigator')
+        cancel_nav_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_1_child, gateway_side_buy, status_cancel)
+        fix_verifier_bs.check_fix_message(cancel_nav_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Navigator')
         # endregion
+
+        time.sleep(60)
 
         # region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel Algo Order", case_id)
