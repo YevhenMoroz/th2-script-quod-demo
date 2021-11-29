@@ -15,6 +15,7 @@ class MessageType(Enum):
     MarketDataIncrementalRefresh = "MarketDataIncrementalRefresh"
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
+    ListStatus = "ListStatus"
 
 
 class Instrument(Enum):
@@ -61,7 +62,7 @@ class Connectivity(Enum):
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
-    Ganymede_317_bo = 'fix-sell-317-backoffice'
+    Ganymede_317_dc = 'fix-sell-317-backoffice'
 
 
 class GatewaySide(Enum):
