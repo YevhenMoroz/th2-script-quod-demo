@@ -24,6 +24,7 @@ account = "XPAR_CLIENT1"
 ex_destination_1 = "XPAR"
 price = 30
 price2 = 31
+price3 = 29.995
 
 
 def rule_creation():
@@ -32,10 +33,12 @@ def rule_creation():
                                                                          ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
                                                                           ex_destination_1, price2)
+    nos_rule3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account,
+                                                                          ex_destination_1, price3)
     trade = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1,
-                                                                      price, price, 20000, 1000, 0)
+                                                                      price3, price3, 20000, 1000, 0)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
-    return [nos_rule, nos_rule2, trade, ocr_rule]
+    return [nos_rule, nos_rule2, nos_rule3, trade, ocr_rule]
 
 
 def execute(report_id):
