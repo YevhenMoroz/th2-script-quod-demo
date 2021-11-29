@@ -5,15 +5,15 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_internal_client_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_internal_client_sub_wizard import \
     AutoHedgerInternalClientsSubWizard
-from quod_qa.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_page import AutoHedgerPage
-from quod_qa.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_values_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_page import AutoHedgerPage
+from test_cases.web_admin.web_admin_core.pages.market_making.auto_hedger.auto_hedger_values_sub_wizard import \
     AutoHedgerValuesSubWizard
-from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_4118(CommonTestCase):

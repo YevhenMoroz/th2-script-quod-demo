@@ -5,18 +5,18 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_trade_confirm_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_trade_confirm_sub_wizard import \
     ClientsTradeConfirmSubWizard
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
-from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
+from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_4864(CommonTestCase):

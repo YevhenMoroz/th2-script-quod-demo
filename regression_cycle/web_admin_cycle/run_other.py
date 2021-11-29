@@ -2,26 +2,26 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_1738 import QAP_1738
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_1739 import QAP_1739
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_1741 import QAP_1741
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_3228 import QAP_3228
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_3229 import QAP_3229
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_5816 import QAP_5816
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_676 import QAP_676
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_677 import QAP_677
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_678 import QAP_678
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_679 import QAP_679
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.others.QAP_1738 import QAP_1738
+from test_cases.web_admin.web_admin_test_cases.others.QAP_1739 import QAP_1739
+from test_cases.web_admin.web_admin_test_cases.others.QAP_1741 import QAP_1741
+from test_cases.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
+from test_cases.web_admin.web_admin_test_cases.others.QAP_3228 import QAP_3228
+from test_cases.web_admin.web_admin_test_cases.others.QAP_3229 import QAP_3229
+from test_cases.web_admin.web_admin_test_cases.others.QAP_5816 import QAP_5816
+from test_cases.web_admin.web_admin_test_cases.others.QAP_676 import QAP_676
+from test_cases.web_admin.web_admin_test_cases.others.QAP_677 import QAP_677
+from test_cases.web_admin.web_admin_test_cases.others.QAP_678 import QAP_678
+from test_cases.web_admin.web_admin_test_cases.others.QAP_679 import QAP_679
 
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_800 import QAP_800
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_801 import QAP_801
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_802 import QAP_802
+from test_cases.web_admin.web_admin_test_cases.others.QAP_800 import QAP_800
+from test_cases.web_admin.web_admin_test_cases.others.QAP_801 import QAP_801
+from test_cases.web_admin.web_admin_test_cases.others.QAP_802 import QAP_802
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_803 import QAP_803
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_834 import QAP_834
-from quod_qa.web_admin.web_admin_test_cases.others.QAP_835 import QAP_835
+from test_cases.web_admin.web_admin_test_cases.others.QAP_803 import QAP_803
+from test_cases.web_admin.web_admin_test_cases.others.QAP_834 import QAP_834
+from test_cases.web_admin.web_admin_test_cases.others.QAP_835 import QAP_835
 
 
 class RunOthers:

@@ -5,18 +5,18 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
     CommissionsCommissionProfilesSubWizard
-from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
     CommissionsCommissionProfilePointsSubWizard
-from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
     CommissionsDimensionsSubWizard
-from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
-from quod_qa.web_admin.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
-from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
+from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
+from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_3240(CommonTestCase):

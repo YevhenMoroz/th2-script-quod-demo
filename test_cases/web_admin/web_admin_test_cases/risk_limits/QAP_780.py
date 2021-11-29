@@ -5,17 +5,17 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from quod_qa.web_admin.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_wizard import \
+from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_cases.web_admin.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_wizard import \
     CumTradingLimitsWizard
-from quod_qa.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_dimensions_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_dimensions_sub_wizard import \
     TradingLimitsDimensionsSubWizardPage
-from quod_qa.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_page import TradingLimitsPage
-from quod_qa.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_values_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_page import TradingLimitsPage
+from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_values_sub_wizard import \
     TradingLimitsValuesSubWizardPage
-from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_780(CommonTestCase):

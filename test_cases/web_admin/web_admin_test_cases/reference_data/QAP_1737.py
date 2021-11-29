@@ -5,20 +5,20 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from quod_qa.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
     ListingsCurrencySubWizard
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard import \
     ListingsMarketIdentifiersSubWizard
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
-from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
-from quod_qa.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from quod_qa.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
+from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_1737(CommonTestCase):

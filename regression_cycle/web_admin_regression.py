@@ -36,7 +36,7 @@ def test_run(parent_id=None):
 
         # content
         web_driver_container = WebDriverContainer()
-        # RunGeneral(web_driver_container, parent_id).execute()
+        RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
         RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()

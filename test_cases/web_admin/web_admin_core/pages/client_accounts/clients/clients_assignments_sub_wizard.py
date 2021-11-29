@@ -1,6 +1,6 @@
-from quod_qa.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
-from quod_qa.web_admin.web_admin_core.pages.common_page import CommonPage
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
+from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
 class ClientsAssignmentsSubWizard(CommonPage):

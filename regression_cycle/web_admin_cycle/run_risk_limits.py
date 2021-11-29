@@ -2,14 +2,14 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_5599 import QAP_5599
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_5606 import QAP_5606
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_780 import QAP_780
-from quod_qa.web_admin.web_admin_test_cases.risk_limits.QAP_783 import QAP_783
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5599 import QAP_5599
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5606 import QAP_5606
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_780 import QAP_780
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_783 import QAP_783
 
 
 class RunRiskLimits:
