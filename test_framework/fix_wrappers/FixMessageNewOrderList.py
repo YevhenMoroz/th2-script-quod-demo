@@ -1,20 +1,19 @@
 from datetime import datetime
-
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.fix_wrappers.DataSet import Instrument
 from test_framework.fix_wrappers.FixMessage import FixMessage
 
 
 class FixMessageNewOrderList(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=MessageType.MarketDataSnapshotFullRefresh.value)
+        super().__init__(message_type="NewOrderList")
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
         base_parameters = {
             'BidType': "1",
             'TotNoOrders': '2',
-            'NoOrders': [{
+            'ListOrdGrp': {'NoOrders': [{
                 "Account": "CLIENT1",
                 "HandlInst": "0",
                 "Side": "1",
@@ -41,6 +40,6 @@ class FixMessageNewOrderList(FixMessage):
                 "Currency": "EUR",
                 "ExDestination": "XPAR",
             }
-            ]
+            ]}
         }
         super().change_parameters(base_parameters)
