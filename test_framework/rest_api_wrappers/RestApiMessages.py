@@ -1,4 +1,5 @@
-from test_framework.fix_wrappers.DataSet import FeesAndCommissions
+from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionAccounts, \
+    CommissionClients
 
 
 class RestApiMessages:
@@ -106,7 +107,7 @@ class RestApiMessages:
             'commDescription': "Fee1" if fee is None else fee.name,
             'commExecScope': "ALL",
             'commissionID': 1 if fee is None else fee.value,
-            'execCommissionProfileID': 200013,
+            'execCommissionProfileID': 1,
             'miscFeeType': 'EXC',
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
         }
@@ -128,15 +129,17 @@ class RestApiMessages:
             self.parameters[key] = value
         return self
 
-    def modify_client_commission_request(self, params=None, client=None, account=None, recalculate=False):
+    def modify_client_commission_request(self, params=None, client: CommissionClients = None,
+                                         account: CommissionAccounts = None, recalculate=False,
+                                         commission: FeesAndCommissions = None):
         self.message_type = 'ModifyClCommission'
         default_parameters = {
             'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
             'clCommissionDescription': "Commission of Testing MOClient",
-            'clCommissionID': 1000008,
-            'clCommissionName': "Commission_for_MOClient",
+            'clCommissionID': 1 if commission is None else commission.value,
+            'clCommissionName': "Commission1" if commission is None else commission.name,
             'commissionAmountType': "BRK",
-            'commissionProfileID': 6,
+            'commissionProfileID': 1,
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
             'venueID': "EUREX"
         }
