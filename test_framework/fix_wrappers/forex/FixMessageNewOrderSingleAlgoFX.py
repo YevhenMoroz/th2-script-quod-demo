@@ -30,14 +30,14 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
             "Instrument": instrument,
             "TargetStrategy": "1008",                            #847
             "SettlDate": spo(),                                  #64
-            "SettlType": '0'                                     #63
-            # "NoStrategyParameters":[                             #957
-            #     {
-            #         'StrategyParameterName': 'AllowedVenues',    #958
-            #         'StrategyParameterType': '14',               #959
-            #         'StrategyParameterValue': 'EBS-CITI/DB'      #960
-            #     }
-            # ]
+            "SettlType": '0',                                   #63
+            "NoStrategyParameters":[                             #957
+                {
+                    'StrategyParameterName': 'AllowedVenues',    #958
+                    'StrategyParameterType': '14',               #959
+                    'StrategyParameterValue': 'MS/CITI'      #960
+                }
+            ]
         }
         super().change_parameters(base_parameters)
         return self
