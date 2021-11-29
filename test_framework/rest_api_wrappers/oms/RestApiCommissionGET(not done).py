@@ -1,8 +1,5 @@
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitGetMessageRequest
-from custom import basic_custom_actions as bca
 from stubs import Stubs
-from custom.basic_custom_actions import create_event, wrap_message, convert_to_request, create_check_rule, wrap_filter, \
-    convert_to_get_request
+from custom.basic_custom_actions import create_event, wrap_message, convert_to_get_request
 
 
 def execute(report_id):

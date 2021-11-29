@@ -58,6 +58,11 @@ class FixMessage:
         self.change_parameters({component: new_component})
         return self
 
+    def update_repeating_group(self, r_group: str, fields: list):
+        self.remove_parameter(r_group)
+        self.add_fields_into_repeating_group(r_group,fields)
+        return self
+
     def add_fields_into_repeating_group(self, r_group: str, fields: list):
         if r_group in self.get_parameters():
             new_component = self.get_parameter(r_group)

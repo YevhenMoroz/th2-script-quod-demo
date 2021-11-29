@@ -944,9 +944,9 @@ class CancelChildOrdersDetails:
 
 
 class SecondLevelExtractionDetails:
-    def __init__(self, base=None, filter: dict = None, tabs_details: list = None):
-        if base is not None:
-            self.request = order_book_pb2.SecondLevelExtractionDetails(base=base)
+    def __init__(self, base_request=None, filter: dict = None, tabs_details: list = None):
+        if base_request is not None:
+            self.request = order_book_pb2.SecondLevelExtractionDetails(base=base_request)
         else:
             self.request = order_book_pb2.SecondLevelExtractionDetails()
 
