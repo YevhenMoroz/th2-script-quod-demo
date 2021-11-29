@@ -11,9 +11,13 @@ import logging
 from custom import basic_custom_actions as bca
 from datetime import datetime, timedelta
 
-logging.basicConfig(format='%(asctime)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+# logging.basicConfig(format='%(asctime)s - %(message)s')
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+
+logging.getLogger().setLevel(logging.WARN)
+timeouts = False
+channels = dict()
 timeouts = False
 channels = dict()
 
@@ -30,10 +34,10 @@ def test_run(parent_id=None):
         # content
         web_driver_container = WebDriverContainer()
 
-        #RunClientsAccounts(web_driver_container, parent_id).execute()
-        #RunUsers(web_driver_container, parent_id).execute()
-        #RunRiskLimits(web_driver_container, parent_id).execute()
-        RunSite(web_driver_container, parent_id).execute()
+        # RunClientsAccounts(web_driver_container, parent_id).execute()
+        # RunUsers(web_driver_container, parent_id).execute()
+        RunRiskLimits(web_driver_container, parent_id).execute()
+        # RunSite(web_driver_container, parent_id).execute()
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

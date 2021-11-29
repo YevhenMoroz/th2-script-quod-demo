@@ -10,6 +10,8 @@ from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_att
     ListingsAttachmentSubWizard
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
     ListingsCurrencySubWizard
+from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard import \
+    ListingsMarketIdentifiersSubWizard
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
 from quod_qa.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
@@ -29,10 +31,12 @@ class QAP_1737(CommonTestCase):
         self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
-        self.venue = "CHIX"
+        self.venue = "AMSTERDAM"
         self.preferred_venue = "AMEX"
         self.new_preferred_venue = "ADX"
-        self.currency = "AFN"
+        self.currency = "AED"
+        self.security_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.instr_type = "Bond"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -48,11 +52,14 @@ class QAP_1737(CommonTestCase):
         values_sub_wizard.set_symbol(self.symbol)
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
+        values_sub_wizard.set_instr_type(self.instr_type)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         attachment_sub_wizard.set_preferred_venue(self.preferred_venue)
         currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
         currency_sub_wizard.set_currency(self.currency)
+        # market_identifies_sub_wizard = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
+        # market_identifies_sub_wizard.set_security_id(self.security_id)
         time.sleep(2)
         wizard = ListingsWizard(self.web_driver_container)
         wizard.click_on_save_changes()

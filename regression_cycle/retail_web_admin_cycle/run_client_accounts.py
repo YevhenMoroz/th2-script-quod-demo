@@ -4,6 +4,9 @@ from datetime import timedelta
 
 from quod_qa.web_admin.retail_web_admin_test_cases.client_accounts.QAP_4277 import QAP_4277
 from quod_qa.web_admin.retail_web_admin_test_cases.client_accounts.QAP_4285 import QAP_4285
+from quod_qa.web_admin.retail_web_admin_test_cases.client_accounts.QAP_4294 import QAP_4294
+from quod_qa.web_admin.retail_web_admin_test_cases.client_accounts.QAP_4315 import QAP_4315
+from quod_qa.web_admin.retail_web_admin_test_cases.client_accounts.QAP_4324 import QAP_4324
 from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_1740 import QAP_1740
 from quod_qa.web_admin.web_admin_test_cases.client_accounts.QAP_2181 import QAP_2181
@@ -38,8 +41,11 @@ class RunClientsAccounts:
         try:
 
             start_time = time.monotonic()
-            QAP_4277(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4285(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4277(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4315(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4324(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4285(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4294(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts Retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
