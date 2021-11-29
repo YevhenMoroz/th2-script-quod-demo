@@ -5,6 +5,7 @@ from test_framework.fix_wrappers.DataSet import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 
 
@@ -82,6 +83,7 @@ class FixManager:
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
+            print(fix_message.get_parameters())
             response = self.act.placeMarketDataRequestFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataRequest",
@@ -125,6 +127,9 @@ class FixManager:
                 responce_fix_message = FixMessageNewOrderSingle()
             elif message_type == MessageType.ExecutionReport.value:
                 responce_fix_message = FixMessageExecutionReport()
+            elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
+                responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+
 
             responce_fix_message.change_parameters(fields)
 
