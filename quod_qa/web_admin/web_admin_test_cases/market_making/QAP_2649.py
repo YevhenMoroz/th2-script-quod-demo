@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -81,7 +82,7 @@ class QAP_2649(CommonTestCase):
             client_tier_instrument_tenors_sub_wizard.click_on_plus()
             client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor)
             client_tier_instrument_tenors_sub_wizard.click_on_edit_at_base_margins_tab()
-            client_tier_instrument_tenors_sub_wizard.set_bid_margin_filter_at_base_margins_tab(self.bid_margin)
+            client_tier_instrument_tenors_sub_wizard.set_bid_margin_at_base_margins_tab(self.bid_margin)
             client_tier_instrument_tenors_sub_wizard.set_offer_margin_at_base_margins_tab(self.offer_margin)
             client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
             client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
@@ -94,6 +95,7 @@ class QAP_2649(CommonTestCase):
             time.sleep(2)
             try:
                 client_tier_instrument_tenors_sub_wizard.click_on_edit_at_base_margins_tab()
+                time.sleep(2)
                 self.verify("Erorr, quantity does not deleted !!!", True, False)
 
             except TimeoutException as e:
@@ -102,4 +104,6 @@ class QAP_2649(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

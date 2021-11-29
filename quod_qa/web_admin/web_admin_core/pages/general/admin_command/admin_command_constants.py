@@ -4,11 +4,11 @@ class AdminCommandConstants:
     ADMIN_COMMAND_XPATH = '//*[@id="adminCommand"]'
     COMPONENT_ID_XPATH = '//*[@formcontrolname="componentID"]'
 
-    PLUS_BUTTON_XPATH = '//*[@class="nb-plus"]'
-    CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
-    CLOSE_BUTTON_XPATH = '//*[@class="nb-close"]'
-    EDIT_BUTTON_XPATH = '//*[@class="nb-edit"]'
-    DELETE_BUTTON_XPATH = '//*[@class="nb-trash"]'
+    PLUS_BUTTON_XPATH = '//*[@data-name="plus"]'
+    CHECKMARK_BUTTON_XPATH = '//*[@data-name="checkmark"]'
+    CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
+    EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
+    DELETE_BUTTON_XPATH = '//*[@data-name="trash-2"]'
 
     NAME_FILTER_XPATH = '//*[@class="adminCommandParamName ng2-smart-th ng-star-inserted"]//input'
     NAME_XPATH = '//*[@placeholder="Name *"]'

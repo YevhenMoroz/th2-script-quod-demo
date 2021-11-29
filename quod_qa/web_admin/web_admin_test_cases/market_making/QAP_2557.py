@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 
@@ -21,7 +22,7 @@ class QAP_2557(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm03"
         self.password = "adm03"
-        self.name = "Bronze"
+        self.name = "Silver"
         self.symbol = "EUR/USD"
         self.tenor_filter = "Spot"
         self.position = "1"
@@ -46,7 +47,7 @@ class QAP_2557(CommonTestCase):
         client_tiers_instruments_page.click_on_edit()
         time.sleep(2)
         tenor_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-        tenor_sub_wizard.set_tenor_filter(self.tenor_filter)
+        # tenor_sub_wizard.set_tenor_filter(self.tenor_filter)
         time.sleep(2)
         tenor_sub_wizard.click_on_edit()
         time.sleep(2)
@@ -104,9 +105,9 @@ class QAP_2557(CommonTestCase):
             client_tiers_instruments_page.set_symbol(self.symbol)
             time.sleep(2)
             client_tiers_instruments_page.click_on_more_actions()
-            time.sleep(2)
+            time.sleep(3)
             client_tiers_instruments_page.click_on_edit()
-            time.sleep(2)
+            time.sleep(3)
             tenor_sub_wizard.click_on_edit()
             time.sleep(2)
             tenor_sub_wizard.click_on_automated_margin_strategies_enabled_checkbox()
@@ -116,4 +117,6 @@ class QAP_2557(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

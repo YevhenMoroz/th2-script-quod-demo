@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -30,7 +31,7 @@ class QAP_2564(CommonTestCase):
         self.execution_policy = 'Care'
         self.client = 'CLIENT1'
         self.commission_amount_type = 'Broker'
-        self.commission_profile = '1bps'
+        self.commission_profile = 'UK Levy'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -84,4 +85,6 @@ class QAP_2564(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

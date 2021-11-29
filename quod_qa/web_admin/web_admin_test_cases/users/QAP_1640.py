@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 
@@ -31,12 +32,14 @@ class QAP_1640(CommonTestCase):
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
             users_page.set_user_id("adm_desk")
-            time.sleep(2)
+            time.sleep(3)
             users_page.click_on_enable_disable_button()
             self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())
-            time.sleep(1)
+            time.sleep(2)
             users_page.click_on_enable_disable_button()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

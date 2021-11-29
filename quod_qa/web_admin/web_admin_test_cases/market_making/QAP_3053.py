@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -96,24 +97,26 @@ class QAP_3053(CommonTestCase):
             time.sleep(1)
             client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
             time.sleep(2)
-
-            expected_result = [self.position_book, self.position_eur, self.tenor]
-
             self.verify("Is Tenor contains correctly values in PDF", True,
-                        client_tier_instrument_wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))
+                        client_tier_instrument_wizard.click_download_pdf_entity_button_and_check_pdf(self.tenor))
             time.sleep(2)
             client_tier_instrument_wizard.click_on_save_changes()
+            time.sleep(2)
+            client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
             time.sleep(2)
             client_tier_instrument_main_page.click_on_more_actions()
             time.sleep(2)
+
             self.verify("Is Tenor saved correctly", True,
                         client_tier_instrument_main_page.click_download_pdf_entity_button_and_check_pdf(
-                            expected_result))
+                            self.tenor))
 
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

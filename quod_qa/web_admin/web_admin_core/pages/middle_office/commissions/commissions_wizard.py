@@ -23,7 +23,7 @@ class CommissionsWizard(CommonPage):
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(CommissionsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(CommissionsConstants.DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 

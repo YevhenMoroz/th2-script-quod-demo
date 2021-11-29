@@ -1,3 +1,4 @@
+import sys
 import time
 
 import traceback
@@ -54,4 +55,6 @@ class QAP_1593(CommonTestCase):
             basic_custom_actions.create_event("TEST FAILED before or after verifier without name",
                                               self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

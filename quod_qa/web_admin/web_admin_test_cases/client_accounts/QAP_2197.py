@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 from uuid import uuid1
@@ -81,6 +82,7 @@ class QAP_2197(CommonTestCase):
                                                             default_route=self.default_route)
 
             accounts_dimensions_subwizard.click_on_plus()
+            time.sleep(1)
             accounts_dimensions_subwizard.set_venue_account(new_venue_account)
             time.sleep(1)
             accounts_dimensions_subwizard.set_venue(new_venue)
@@ -120,4 +122,6 @@ class QAP_2197(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

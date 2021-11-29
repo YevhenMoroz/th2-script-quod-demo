@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -79,10 +80,12 @@ class QAP_2289(CommonTestCase):
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
             time.sleep(2)
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity_filter(5000000)
-            time.sleep(2)
+            time.sleep(3)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_edit()
+            time.sleep(2)
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(4000000)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
+            time.sleep(3)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_plus()
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(4000000)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_published_checkbox()
@@ -94,4 +97,6 @@ class QAP_2289(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

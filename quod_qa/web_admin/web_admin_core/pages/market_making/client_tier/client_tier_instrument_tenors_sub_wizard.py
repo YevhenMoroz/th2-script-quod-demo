@@ -147,6 +147,9 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH,
                                str(value))
 
+    def set_bid_margin_at_base_margins_tab(self, value):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_XPATH,value)
+
     def get_bid_margin_at_base_margins_tab(self):
         return self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_XPATH).text
@@ -156,7 +159,8 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
                                value)
 
     def set_offer_margin_at_base_margins_tab(self, value):
-        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH, value)
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH,
+                               value)
 
     def get_offer_margin_at_base_margins_tab(self):
         return self.find_by_xpath(
