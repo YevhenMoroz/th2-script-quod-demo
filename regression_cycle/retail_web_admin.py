@@ -1,6 +1,6 @@
 import time
 
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from regression_cycle.retail_web_admin_cycle.run_client_accounts import RunClientsAccounts
 from regression_cycle.retail_web_admin_cycle.run_risk_limits import RunRiskLimits
 from regression_cycle.retail_web_admin_cycle.run_site import RunSite

@@ -1,4 +1,4 @@
-from quod_qa.RET.Benchmark import QAP_4303
+from test_cases.RET.Benchmark import QAP_4303
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

@@ -1,8 +1,8 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-from quod_qa.eq.Algo_TWAP import QAP_4750, QAP_4760, QAP_4335, QAP_4405, QAP_4338, QAP_4612, QAP_4274, QAP_4582, QAP_4583, QAP_4584, QAP_4893, QAP_4876, QAP_4951, QAP_4333, QAP_4336, QAP_4340, QAP_4395, QAP_4402, QAP_4403, QAP_4404, QAP_4406, QAP_4407, QAP_4413
+from test_cases.algo.Algo_TWAP import QAP_4582, QAP_4407, QAP_4413, QAP_4404, QAP_4876, QAP_4335, QAP_4274, QAP_4584, QAP_4340, QAP_4402, QAP_4406, QAP_4750, QAP_4338, QAP_4405, QAP_4760, QAP_4893, \
+    QAP_4583, QAP_4395, QAP_4403, QAP_4333, QAP_4336, QAP_4612, QAP_4951
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

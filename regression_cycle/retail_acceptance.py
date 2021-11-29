@@ -5,7 +5,7 @@ from regression_cycle.retail_acceptance_list import care_acceptance_list, dma_ac
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from quod_qa.wrapper.ret_wrappers import close_fe
+from test_framework.old_wrappers.ret_wrappers import close_fe
 from win_gui_modules.utils import prepare_fe, set_session_id
 
 

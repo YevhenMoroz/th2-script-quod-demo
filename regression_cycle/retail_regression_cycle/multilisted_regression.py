@@ -1,4 +1,4 @@
-from quod_qa.RET.Algo.Algo_Multilisted import QAP_1801, QAP_1803, QAP_1804, QAP_1808, QAP_1809, QAP_1989, QAP_1991, \
+from test_cases.RET.Algo.Algo_Multilisted import QAP_1801, QAP_1803, QAP_1804, QAP_1808, QAP_1809, QAP_1989, QAP_1991, \
     QAP_1993, QAP_1994
 from stubs import Stubs
 import logging

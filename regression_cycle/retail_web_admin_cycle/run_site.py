@@ -2,22 +2,22 @@ import time
 import traceback
 from datetime import timedelta
 
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4662 import QAP_4662
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4663 import QAP_4663
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4666 import QAP_4666
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4668 import QAP_4668
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4702 import QAP_4702
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4712 import QAP_4712
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4713 import QAP_4713
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4715 import QAP_4715
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4719 import QAP_4719
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_4724 import QAP_4724
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5304 import QAP_5304
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5315 import QAP_5315
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5681 import QAP_5681
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5682 import QAP_5682
-from quod_qa.web_admin.retail_web_admin_test_cases.site.QAP_5695 import QAP_5695
-from quod_qa.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4662 import QAP_4662
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4663 import QAP_4663
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4666 import QAP_4666
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4668 import QAP_4668
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4702 import QAP_4702
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4712 import QAP_4712
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4713 import QAP_4713
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4715 import QAP_4715
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4719 import QAP_4719
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_4724 import QAP_4724
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5304 import QAP_5304
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5315 import QAP_5315
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5681 import QAP_5681
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5682 import QAP_5682
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5695 import QAP_5695
+from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
 
