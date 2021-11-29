@@ -28,6 +28,7 @@ class CaseParamsSellRfq:
     order_rejected = None
     order_algo_rejected = None
     drop_filter_params = None
+    quotes_sequence_params=None
 
     def __init__(self, client, case_id, side: str = '', leg1_side: str = '', leg2_side: str = '', orderqty=1,
                  leg1_ordqty='', leg2_ordqty='',
@@ -84,6 +85,7 @@ class CaseParamsSellRfq:
         self.set_quote_params()
         self.set_quote_params_swap()
         self.set_drop_pre_filter_params()
+        self.set_quote_sequence_params()
 
     def set_rfq_params(self):
         self.rfq_params = {
@@ -112,6 +114,15 @@ class CaseParamsSellRfq:
             'header': {
                 'MsgType': ('0', "NOT_EQUAL"),
                 'TargetCompID': 'QUOD8',
+                'SenderCompID': 'QUODFX_UAT'
+            },
+        }
+
+    def set_quote_sequence_params(self):
+        self.quotes_sequence_params ={
+            'header': {
+                'MsgType': ('0', "NOT_EQUAL"),
+                'TargetCompID': 'QUOD9',
                 'SenderCompID': 'QUODFX_UAT'
             },
         }
