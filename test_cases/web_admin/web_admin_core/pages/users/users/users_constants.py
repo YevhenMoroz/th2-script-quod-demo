@@ -102,22 +102,22 @@ class UsersConstants:
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
 
     # Client
-    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
-    CHECKMARK_AT_CLIENT_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
-    EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
-    DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
+    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
+    CHECKMARK_AT_CLIENT_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="close"]'
+    EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
+    DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
     CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
     TYPE_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Type *"]'
     CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
     TYPE_FILTER_AT_CLIENT_SUB_WIZARD = "//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
 
     # Venue trader
-    PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
-    CHECKMARK_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CANCEL_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
-    EDIT_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
-    DELETE_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
+    PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
+    CHECKMARK_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CANCEL_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="close"]'
+    EDIT_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
+    DELETE_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
     GO_BACK_BUTTON = '//*[text()="Go Back"]'
     VENUE_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue *"]'
     VENUE_TRADER_NAME_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue Trader Name *"]'

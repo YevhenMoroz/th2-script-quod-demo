@@ -1,3 +1,4 @@
+import sys
 import time
 
 import traceback
@@ -85,14 +86,14 @@ class QAP_5820(CommonTestCase):
             default_result_sub_wizard.click_on_plus()
             default_result_sub_wizard.set_exec_policy("ExternalAlgo")
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type("Navigator")
+            default_result_sub_wizard.set_strategy_type("External AMBUSH")
             time.sleep(1)
             default_result_sub_wizard.click_on_checkmark()
             time.sleep(1)
             default_result_sub_wizard.click_on_plus()
             default_result_sub_wizard.set_exec_policy("ExternalAlgo")
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type("Navigator")
+            default_result_sub_wizard.set_strategy_type("External AMBUSH")
             self.verify("ExternalAlgo created correctly", True, True)
             time.sleep(1)
             default_result_sub_wizard.click_on_checkmark()
@@ -103,4 +104,6 @@ class QAP_5820(CommonTestCase):
             basic_custom_actions.create_event("TEST FAILED before or after verifier without name",
                                               self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

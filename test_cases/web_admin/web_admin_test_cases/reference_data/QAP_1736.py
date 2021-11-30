@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -29,6 +30,7 @@ class QAP_1736(CommonTestCase):
         self.instr_symbol = "EUR/USD"
         self.venue = "AMSTERDAM"
         self.currency = "AFN"
+        self.instr_type = "Bond"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,6 +46,7 @@ class QAP_1736(CommonTestCase):
         values_sub_wizard.set_symbol(self.symbol)
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
+        values_sub_wizard.set_instr_type(self.instr_type)
         currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
         currency_sub_wizard.set_currency(self.currency)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
@@ -71,4 +74,6 @@ class QAP_1736(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

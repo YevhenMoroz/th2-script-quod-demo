@@ -29,11 +29,11 @@ class ClientListConstants:
 
     WIZARD_CLIENT_LIST_NAME_XPATH = '//*[@formcontrolname="clientListName"]'
     WIZARD_CLIENT_LIST_DESCRIPTION_XPATH = '//*[@formcontrolname="clientListDescription"]'
-    WIZARD_PLUS_BUTTON_XPATH = '//*[@class="nb-plus"]'
-    WIZARD_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
-    WIZARD_CLOSE_BUTTON_XPATH = '//*[@class="nb-close"]'
-    WIZARD_EDIT_BUTTON_XPATH = '//*[@class="nb-edit"]'
-    WIZARD_DELETE_BUTTON_XPATH = '//*[@class="nb-trash"]'
+    WIZARD_PLUS_BUTTON_XPATH = '//*[@data-name="plus"]'
+    WIZARD_CHECKMARK_BUTTON_XPATH = '//*[@data-name="checkmark"]'
+    WIZARD_CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
+    WIZARD_EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
+    WIZARD_DELETE_BUTTON_XPATH = '//*[@data-name="trash-2"]'
     WIZARD_CLIENT_FILTER_XPATH = '//*[@class="accountGroup ng2-smart-th ng-star-inserted"]//input'
     WIZARD_CLIENT_XPATH = '//*[@placeholder="Client *"]'
 

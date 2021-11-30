@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -9,6 +10,8 @@ from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_
     ListingsAttachmentSubWizard
 from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
     ListingsCurrencySubWizard
+from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard import \
+    ListingsMarketIdentifiersSubWizard
 from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
 from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
@@ -28,10 +31,12 @@ class QAP_1737(CommonTestCase):
         self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
-        self.venue = "CHIX"
+        self.venue = "AMSTERDAM"
         self.preferred_venue = "AMEX"
         self.new_preferred_venue = "ADX"
-        self.currency = "AFN"
+        self.currency = "AED"
+        self.security_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.instr_type = "Bond"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,11 +52,14 @@ class QAP_1737(CommonTestCase):
         values_sub_wizard.set_symbol(self.symbol)
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
+        values_sub_wizard.set_instr_type(self.instr_type)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         attachment_sub_wizard.set_preferred_venue(self.preferred_venue)
         currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
         currency_sub_wizard.set_currency(self.currency)
+        # market_identifies_sub_wizard = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
+        # market_identifies_sub_wizard.set_security_id(self.security_id)
         time.sleep(2)
         wizard = ListingsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
@@ -107,4 +115,6 @@ class QAP_1737(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)
