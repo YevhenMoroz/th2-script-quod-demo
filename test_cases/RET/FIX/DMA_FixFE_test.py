@@ -7,10 +7,9 @@ from datetime import datetime
 from custom.basic_custom_actions import create_event, timestamps
 
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 
 from win_gui_modules.utils import set_session_id, get_base_request
-
-from test_cases.wrapper import eq_wrappers
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +34,7 @@ def execute(report_id):
     # endregion
 
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
 
     # region Create DMA order

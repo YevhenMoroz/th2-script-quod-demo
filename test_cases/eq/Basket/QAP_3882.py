@@ -3,6 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
@@ -41,7 +42,7 @@ class QAP3882(TestCase):
         price = "20"
         # endregion
         # region Open FE
-        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()

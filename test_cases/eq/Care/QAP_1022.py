@@ -3,17 +3,12 @@ from datetime import datetime
 
 from th2_grpc_hand import rhbatch_pb2
 
-from test_cases.wrapper import eq_wrappers
-from win_gui_modules.application_wrappers import FEDetailsRequest
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 from custom.basic_custom_actions import create_event, timestamps
-from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_ticket import OrderTicketDetails
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe, close_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.win_gui_wrappers.base_main_window import switch_user
+from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe, close_fe
+from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -55,7 +50,7 @@ def execute(report_id, session_id):
     prepare_fe(init_event, session_id2, work_dir, username2, password2)
     # endregion
     # region Switch to user1
-    eq_wrappers.switch_user(session_id,case_id)
+    switch_user(session_id,case_id)
     # endregion
     # region Create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True, recipient=username, price=price)
@@ -72,7 +67,7 @@ def execute(report_id, session_id):
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
     # endregion
     # region Switch to user2
-    eq_wrappers.switch_user(session_id2, case_id)
+    switch_user(session_id,case_id)
     # endregion
     # region Amend order
     eq_wrappers.amend_order(base_request2, qty=new_qty, price=new_price)

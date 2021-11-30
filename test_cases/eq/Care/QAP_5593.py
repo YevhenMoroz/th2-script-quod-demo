@@ -1,6 +1,7 @@
 import logging
 
 from custom.basic_custom_actions import create_event
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -24,7 +25,7 @@ def execute(report_id, session_id):
     base_window = BaseWindow(case_id, session_id)
     oms_order_book = OMSOrderBook(case_id, session_id)
     oms_order_inbox = OMSClientInbox(case_id, session_id)
-    base_window.open_fe(session_id, report_id, work_dir, username, password)
+    open_fe(session_id, report_id, work_dir, username, password)
     # # endregion
     fix_manager = FixManager('fix-sell-317-standard-test', case_id)
     fix_message_new_order_single = FixMessageNewOrderSingleOMS()

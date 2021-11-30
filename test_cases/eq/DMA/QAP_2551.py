@@ -2,10 +2,10 @@ import logging
 
 import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
-
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, get_opened_fe
 from win_gui_modules.wrappers import set_base, verification, verify_ent, accept_order_request
 
@@ -34,7 +34,7 @@ def execute(report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
 
     # verification amd send order
     try:

@@ -1,15 +1,10 @@
 import logging
 
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
-from th2_grpc_hand import rhbatch_pb2
 from custom.basic_custom_actions import timestamps
 from test_framework.old_wrappers.eq_wrappers import *
-from stubs import Stubs
-from win_gui_modules.common_wrappers import GridScrollingDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import call, get_base_request, close_fe
-from test_cases.wrapper import eq_wrappers
-from win_gui_modules.wrappers import verify_ent, verification
+from test_framework.win_gui_wrappers.base_main_window import open_fe
+from win_gui_modules.utils import get_base_request
+
 ''' NOT DONE'''
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -34,7 +29,7 @@ def execute(report_id, session_id):
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     #  endregion
     # endregion
     # region create CO

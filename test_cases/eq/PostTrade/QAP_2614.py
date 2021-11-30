@@ -1,8 +1,9 @@
 import test_framework.old_wrappers.eq_fix_wrappers
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from win_gui_modules.utils import  get_base_request
 import logging
 import time
@@ -25,7 +26,7 @@ def execute(report_id, session_id):
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # # endregion
     # region Create CO
     fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 1, price)

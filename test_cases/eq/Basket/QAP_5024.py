@@ -3,8 +3,9 @@ import random
 import string
 
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ def execute(report_id, session_id):
 
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region Create Basket via import
     eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_xlsx, client)

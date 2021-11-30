@@ -2,10 +2,11 @@ import time
 
 import test_framework.old_wrappers.eq_fix_wrappers
 from custom.verifier import Verifier
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
 from win_gui_modules.utils import get_base_request, call
 import logging
@@ -34,7 +35,7 @@ def execute(report_id, session_id):
             }
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region Create Order
     try:

@@ -1,11 +1,12 @@
 import logging
 from th2_grpc_hand import rhbatch_pb2
 from custom.basic_custom_actions import timestamps
+from test_framework.old_wrappers import eq_wrappers
 from test_framework.old_wrappers.eq_wrappers import *
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_main_window import open_fe, switch_user
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import call, get_base_request, close_fe
-from test_cases.wrapper import eq_wrappers
 from win_gui_modules.wrappers import verify_ent, verification
 
 logger = logging.getLogger(__name__)
@@ -36,11 +37,11 @@ def execute(report_id,session_id):
     base_request = get_base_request(session_id, case_id)
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
     #  endregion
     # region switch to user1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user()
     # endregion
     # region create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username, price=price)
@@ -72,13 +73,13 @@ def execute(report_id,session_id):
 
     # endregion
     # region switch to user2
-    eq_wrappers.switch_user(session_id2, case_id)
+    switch_user(session_id2, case_id)
     # endregion
     # region accept CO
     eq_wrappers.accept_order(lookup, qty, price)
     # endregion
     # region switch to user1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user(session_id2, case_id)
     # endregion
     # region manual execution
     eq_wrappers.manual_execution(base_request, qty, price)

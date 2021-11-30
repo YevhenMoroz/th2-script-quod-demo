@@ -1,9 +1,9 @@
 import logging
-from datetime import datetime
-from test_cases.wrapper import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
+
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.win_gui_wrappers.base_main_window import open_fe
 from win_gui_modules.utils import set_session_id, get_base_request
 from win_gui_modules.wrappers import set_base
 
@@ -27,7 +27,7 @@ def execute(report_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     eq_wrappers.create_order(base_request, qty, client, 'XPAR', 'Limit', 'Day', False, 'CLIENTYMOROZ', '50', False,
                              True, False)
     # endregion
