@@ -20,9 +20,7 @@ def test_run():
 
     try:
         # example_java_api.TestCase(report_id).execute()
-        # QAP_4649.execute(report_id, session_id)
         QAP4648(report_id, session_id, None).execute()
-        # QAP_3773.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
