@@ -3,7 +3,7 @@ from datetime import datetime
 
 import test_framework.old_wrappers.eq_fix_wrappers
 from custom.verifier import Verifier
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from custom.basic_custom_actions import create_event, timestamps

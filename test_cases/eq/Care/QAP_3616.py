@@ -5,7 +5,7 @@ from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
 import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import ManualCrossDetails
 from win_gui_modules.utils import get_base_request, call
 

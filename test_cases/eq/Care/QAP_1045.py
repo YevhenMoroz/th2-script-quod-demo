@@ -4,7 +4,7 @@ from custom.basic_custom_actions import create_event, timestamps
 # from test_cases.old_wrappers import eq_fix_wrappers, eq_wrappers
 from stubs import Stubs
 from test_framework.old_wrappers import eq_fix_wrappers, eq_wrappers
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from win_gui_modules.utils import get_base_request, call

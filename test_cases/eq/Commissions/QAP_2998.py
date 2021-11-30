@@ -6,7 +6,7 @@ from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier
 from rule_management import RuleManager
 from stubs import Stubs
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
 from win_gui_modules.utils import get_base_request, call
 

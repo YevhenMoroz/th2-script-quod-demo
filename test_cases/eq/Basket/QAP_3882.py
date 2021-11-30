@@ -3,7 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox

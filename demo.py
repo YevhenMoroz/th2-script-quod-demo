@@ -3,7 +3,6 @@ from datetime import datetime
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-#from test_cases.eq.Basket.QAP_3882 import QAP3882
 from test_cases.eq.Basket.QAP_4648 import QAP4648
 from win_gui_modules.utils import set_session_id
 

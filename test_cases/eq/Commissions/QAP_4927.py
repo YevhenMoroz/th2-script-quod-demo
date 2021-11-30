@@ -4,7 +4,7 @@ import os
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook

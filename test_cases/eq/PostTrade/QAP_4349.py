@@ -3,7 +3,7 @@ import test_framework.old_wrappers.eq_fix_wrappers
 from stubs import Stubs
 from custom.basic_custom_actions import create_event
 from test_framework.old_wrappers import eq_wrappers
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import set_session_id, get_base_request
 import logging
 import time

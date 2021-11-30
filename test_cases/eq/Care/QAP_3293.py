@@ -8,7 +8,7 @@ from test_framework.old_wrappers import eq_wrappers
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 

@@ -4,7 +4,7 @@ from custom.verifier import Verifier
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers import eq_wrappers
 from stubs import Stubs
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
 
 from win_gui_modules.utils import set_session_id, get_base_request, call

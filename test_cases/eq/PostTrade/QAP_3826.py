@@ -2,7 +2,7 @@ import logging
 
 from custom.basic_custom_actions import timestamps
 from test_framework.old_wrappers.eq_wrappers import *
-from test_framework.win_gui_wrappers.base_main_window import open_fe
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import get_base_request
 
 ''' NOT DONE'''

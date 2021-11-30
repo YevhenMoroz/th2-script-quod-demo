@@ -1,4 +1,3 @@
-from numpy.testing._private.decorators import deprecated
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
@@ -33,20 +32,3 @@ class BaseMainWindow(BaseWindow):
         set_base(self.session_id, self.case_id)
 
 
-@deprecated
-def open_fe(session_id, report_id, case_id, folder, user, password, is_open=True):
-    init_event = create_event("Initialization", parent_id=report_id)
-    set_base(session_id, case_id)
-    if not is_open:
-        prepare_fe(init_event, session_id, folder, user, password)
-    else:
-        get_opened_fe(case_id, session_id)
-
-
-@deprecated
-def switch_user(session_id, case_id):
-    search_fe_req = FEDetailsRequest()
-    search_fe_req.set_session_id(session_id)
-    search_fe_req.set_parent_event_id(case_id)
-    Stubs.win_act.moveToActiveFE(search_fe_req.build())
-    set_base(session_id, case_id)
