@@ -1,12 +1,11 @@
 import logging
 from datetime import datetime
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
-from custom.verifier import Verifier
-from test_cases.wrapper import eq_wrappers
+
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
-from win_gui_modules.utils import set_session_id, get_base_request, call
-from win_gui_modules.wrappers import set_base, direct_child_care
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.old_wrappers.eq_wrappers import open_fe
+from win_gui_modules.utils import set_session_id, get_base_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -39,7 +38,7 @@ def execute(report_id):
     # endregion
 
     # region open FE
-    eq_wrappers.open_fe(session_id,report_id,case_id,work_dir,username,password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region Create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True, recipient=recipient, price=price)

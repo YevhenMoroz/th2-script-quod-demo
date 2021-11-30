@@ -1,8 +1,9 @@
 import logging
 from th2_grpc_hand import rhbatch_pb2
-from test_cases.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
 from win_gui_modules.utils import get_base_request
 
 
@@ -32,25 +33,25 @@ def execute(report_id, session_id):
 
     # endregion
     # region open FE
-    eq_wrappers.open_fe(session_id,report_id,case_id,work_dir,username,password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     eq_wrappers.open_fe2(session_id2,report_id,work_dir,username2,password2)
     # endregion
     # region switch user 1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user()
     # endregion
     # region Create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True, recipient=username2, price=price)
     # endregion
     eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
     # region switch user 2
-    eq_wrappers.switch_user(session_id2, case_id)
+    switch_user()
     # endregion
     # region Reassign order
     eq_wrappers.reassign_order(base_request2, desk)
     # endregion
     eq_wrappers.verify_order_value(base_request2, case_id, "Sts", "Sent")
     # region switch user 1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user()
     # endregion
     # region Reject order
     eq_wrappers.reject_order(lookup, qty, price)

@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 
@@ -19,6 +20,7 @@ class QAP_5207(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.name = "Default"
         self.verification_name = "test"
+        self.description = "Quod VWAP Default"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -31,6 +33,8 @@ class QAP_5207(CommonTestCase):
         time.sleep(2)
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.set_name_at_filter_field(self.name)
+        time.sleep(1)
+        main_menu.set_description_at_filter_field(self.description)
         time.sleep(1)
         main_menu.click_on_more_actions()
         time.sleep(2)
@@ -55,4 +59,6 @@ class QAP_5207(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

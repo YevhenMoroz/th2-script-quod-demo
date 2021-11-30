@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
-from test_cases.wrapper import eq_wrappers
+
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import OrdersDetails
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
@@ -33,7 +35,7 @@ def execute(report_id, session_id):
     desk = Stubs.custom_config['qf_trading_fe_user_desk']
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region Create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username, price=price)

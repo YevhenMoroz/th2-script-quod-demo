@@ -23,8 +23,19 @@ class FixMessageMarketDataSnapshotFullRefresh(FixMessage):
                 return field.MDRefID
         return None
 
-    def update_MDReqID(self, symbol: str, session_alias: str):
-        md_req_id = self.check_MDReqID(symbol, session_alias)
+    def check_MDReqIDFX(self, symbol: str, session_alias: str):
+        md_ref_id = Stubs.simulator.getMDRefIDForConnection314(request=RequestMDRefID(
+            symbol=symbol,
+            connection_id=ConnectionID(session_alias=session_alias)
+        )).MDRefID
+        return md_ref_id
+
+
+    def update_MDReqID(self, symbol: str, session_alias: str, type=None):
+        if type == 'FX':
+            md_req_id = self.check_MDReqIDFX(symbol, session_alias)
+        else:
+            md_req_id = self.check_MDReqID(symbol, session_alias)
         if md_req_id is None:
             raise Exception(f'No MDReqID at TH2 simulator for symbol {symbol} at {session_alias}')
         self.change_parameter("MDReqID", md_req_id)

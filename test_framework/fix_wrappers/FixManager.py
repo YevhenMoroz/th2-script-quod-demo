@@ -6,6 +6,7 @@ from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageListStatus import FixMessageListStatus
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 
@@ -18,11 +19,16 @@ class FixManager:
         self.__session_alias = session_alias
         self.__case_id = case_id
 
-    def send_message(self, fix_message: FixMessage) -> None:
+    def send_message(self, fix_message: FixMessage, custom_message =None ) -> None:
         # TODO add validation(valid MsgType)
+        print(fix_message.get_parameters())
+        if custom_message==None:
+            message="Send "
+        else:
+            message = custom_message
         self.act.sendMessage(
             request=basic_custom_actions.convert_to_request(
-                "Send " + fix_message.get_message_type() + " to connectivity " + self.get_session_alias(),
+                message + fix_message.get_message_type() + " to connectivity " + self.get_session_alias(),
                 self.get_session_alias(),
                 self.get_case_id(),
                 basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(),
@@ -34,7 +40,6 @@ class FixManager:
             case_id = self.__case_id
 
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
-            print(fix_message.get_parameters())
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
@@ -80,6 +85,7 @@ class FixManager:
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
+            print(fix_message.get_parameters())
             response = self.act.placeMarketDataRequestFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataRequest",
@@ -129,6 +135,9 @@ class FixManager:
                 responce_fix_message = FixMessageNewOrderSingle()
             elif message_type == MessageType.ExecutionReport.value:
                 responce_fix_message = FixMessageExecutionReport()
+            elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
+                responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+
 
             responce_fix_message.change_parameters(fields)
 

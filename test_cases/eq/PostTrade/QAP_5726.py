@@ -1,8 +1,9 @@
 import logging
 
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ def execute(report_id, session_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     # Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # Create CO
     eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client1, 2, qty, 0, price)
     eq_wrappers.accept_order('VETO', qty, price)

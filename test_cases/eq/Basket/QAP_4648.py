@@ -3,6 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -32,6 +33,7 @@ class QAP4648(TestCase):
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        main_window = BaseMainWindow(self.case_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
@@ -41,19 +43,14 @@ class QAP4648(TestCase):
         new_price = "1"
         # endregion
         # region Open FE
-        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        main_window.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
         fix_manager.send_message_and_receive_response_fix_standard(nol)
         # endregion
         # region Set-up parameters for ListStatus
-        cl_ord_id1 = nol.get_parameters()['ListOrdGrp']['NoOrders'][0]['ClOrdID']
-        cl_ord_id2 = nol.get_parameters()['ListOrdGrp']['NoOrders'][1]['ClOrdID']
-        list_id = nol.get_parameters()['ListID']
-        list_status = FixMessageListStatusOMS().change_parameters({'ListID': list_id})
-        list_status.set_no_orders(0, cl_ord_id1)
-        list_status.set_no_orders(1, cl_ord_id2)
+        list_status = FixMessageListStatusOMS().set_default_list_status(nol)
         # endregion
         # region Check ListStatus
         fix_verifier.check_fix_message_fix_standard(list_status)
