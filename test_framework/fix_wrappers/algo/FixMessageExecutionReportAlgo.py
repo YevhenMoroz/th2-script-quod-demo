@@ -247,10 +247,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             Price=new_order_single.get_parameter('Price'),
             Currency=new_order_single.get_parameter('Currency'),
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
-            LeavesQty=0
+            LeavesQty=0,
+            ExDestination='XPAR'
         )
         super().change_parameters(temp)
         return self
