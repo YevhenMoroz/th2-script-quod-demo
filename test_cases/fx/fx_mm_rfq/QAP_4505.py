@@ -57,7 +57,7 @@ def send_md(case_id, bid_price, ask_price):
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
                 "MDQuoteType": 1,
-                'SettlDate': tsd.spo(),
+                'SettlDate': spo(),
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             },
             {
@@ -66,7 +66,7 @@ def send_md(case_id, bid_price, ask_price):
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
                 "MDQuoteType": 1,
-                'SettlDate': tsd.spo(),
+                'SettlDate': spo(),
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             },
         ]
