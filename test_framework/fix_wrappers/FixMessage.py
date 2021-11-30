@@ -73,7 +73,6 @@ class FixMessage:
             self.add_tag({r_group: fields})
         return self
 
-
     def remove_fields_repeating_group(self, r_group: str, fields: list):
         new_component = self.get_parameter(r_group)
         ln = len(new_component)
@@ -83,4 +82,9 @@ class FixMessage:
                     new_component.pop(i)
 
         self.change_parameters({r_group: new_component})
+        return self
+
+    def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
+        new_component = self.get_parameter(component)
+        new_component[index].update(kwargs)
         return self
