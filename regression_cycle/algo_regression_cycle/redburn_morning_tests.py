@@ -4,7 +4,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_WW_02, EXP_FPC_01, EXP_SCO
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QA_TWAP_NAV_WW_01_sell, TWAP_MinP_01, QA_TWAP_NAV_WW_03_buy, TWAP_WW_01, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_REF_01_sell, TWAP_AUC_01, \
     QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_01_buy, TWAP_MaxP_01, TWAP_BA_01, QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_MAXShares, TWAP_NAV_01, TWAP_NAV_02, QA_TWAP_NAV_WW_REF_01_buy, \
     QA_TWAP_NAV_WW_02_buy, QAP_5884, QAP_6061
-from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_MinP_01, VWAP_BA_01, VWAP_AUC_01, VWAP_WW_01, VWAP_MaxP_01, VWAP_NAV_01, VWAP_NAV_02
+from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_MinP_01, VWAP_BA_01, VWAP_AUC_01, VWAP_WW_01, VWAP_MaxP_01, VWAP_NAV_01, VWAP_NAV_02, PDAT_675
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_WW_01, POV_MinMax_01, POV_NAV_02, POV_SCAP_01, POV_NAV_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_SCA_01, QA_OPN_AuctionWouldCapMaxWouldPerc, QA_OPN_Market, QA_OPN_WouldRef, OPN_VO_01, QA_OPN_WouldPercentage, \
     QA_OPN_AuctionWouldCapMaxWouldShares, QA_OPN_InitialSlice_01, QA_OPN_AuctionWouldCap100, OPN_FPC_01, QA_OPN_LIM_PRM, QA_OPN_AuctionWouldCap, QA_OPN_LIM_MKT, OPN_LIM_01, OPN_WW_01, \
@@ -28,7 +28,7 @@ def test_run():
     report_id = bca.create_event('Redburn morning tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-
+        PDAT_675.execute(report_id)
         # region TWAP NAV WW
         QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
         QA_TWAP_NAV_WW_MAXShares.execute(report_id)
