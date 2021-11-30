@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
@@ -78,13 +79,13 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str) -> str:
+    def extract_field(self, column_name: str, row_number: int = None) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
-        self.order_details.add_single_order_info(
-            self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[field])
-            )
-        )
+        info = self.order_info.create(
+                action=ExtractionAction.create_extraction_action(extraction_details=[field]))
+        if row_number is not None:
+            info.set_number(row_number)
+        self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
         self.set_order_details()
@@ -157,7 +158,8 @@ class BaseOrderBook(BaseWindow):
 
     # region Check
     def check_order_fields_list(self, expected_fields: dict, event_name="Check Order Book",
-                                row_number: int = 1):
+                                row_number: int = 1,
+                                verification_method: VerificationMethod = VerificationMethod.EQUALS):
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and value is expected result and row_number to check, 1 by default
@@ -168,11 +170,12 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key])
+            self.verifier.compare_values(key, value, actual_list[key], verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
-                                     row_number: int = 1):
+                                     row_number: int = 1,
+                                     verification_method: VerificationMethod = VerificationMethod.EQUALS):
         """
         Receives dict as an argument, where the key is column name what
         we extract from GUI and value is expected result and row_number to check, 1 by default
@@ -183,7 +186,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key])
+            self.verifier.compare_values(key, value, actual_list[key], verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, filter_list=None):

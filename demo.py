@@ -14,15 +14,13 @@ logger.setLevel(logging.INFO)
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('Yevhen ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('test ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     session_id = set_session_id()
 
     try:
         # example_java_api.TestCase(report_id).execute()
-        # QAP_4649.execute(report_id, session_id)
         QAP4648(report_id, session_id, None).execute()
-        # QAP_3773.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

@@ -1,9 +1,12 @@
 import random
 import string
+import sys
 import time
 import traceback
 
 from custom import basic_custom_actions
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+    ClientsAssignmentsSubWizard
 from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
 from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -29,6 +32,7 @@ class QAP_2224(CommonTestCase):
         self.new_venue = "ADX"
         self.venue_client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_client_account_group_name = "48934"
+        self.desk = "Quod Desk"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -46,6 +50,9 @@ class QAP_2224(CommonTestCase):
         values_sub_wizard.set_id(self.id)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        time.sleep(1)
+        assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assignments_sub_wizard.set_desk(self.desk)
         time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -99,4 +106,6 @@ class QAP_2224(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

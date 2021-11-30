@@ -20,19 +20,19 @@ class MessageType(Enum):
 
 class Instrument(Enum):
     FR0010436584 = dict(
-            Symbol='FR0010436584',
-            SecurityID='FR0010436584',
-            SecurityIDSource='4',
-            SecurityExchange='XPAR',
-            SecurityType='CS'
-        )
+        Symbol='FR0010436584',
+        SecurityID='FR0010436584',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
     test = dict(
-            Symbol='FR0010436000',
-            SecurityID='FR0010436000',
-            SecurityIDSource='4',
-            SecurityExchange='XPAR',
-            SecurityType='CS'
-        )
+        Symbol='FR0010436000',
+        SecurityID='FR0010436000',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
     BUI = dict(
         Symbol='BUI',
         SecurityID='FR0000062788',
@@ -75,17 +75,23 @@ class Status(Enum):
     New = "New"
     Fill = "Fill"
     PartialFill = "PartialFill"
+    CancelRequest = "CancelReplace"
     Cancel = "Cancel"
 
-class CommissionClientsAccounts(Enum):
+
+class CommissionClients(Enum):
     CLIENT_COMM_1 = "CLIENT_COMM_1"
     CLIENT_COMM_2 = "CLIENT_COMM_2"
+
+
+class CommissionAccounts(Enum):
     CLIENT_COMM_1_SA1 = "CLIENT_COMM_1_SA1"
     CLIENT_COMM_1_SA2 = "CLIENT_COMM_1_SA2"
     CLIENT_COMM_1_SA3 = "CLIENT_COMM_1_SA3"
     CLIENT_COMM_2_SA1 = "CLIENT_COMM_2_SA1"
     CLIENT_COMM_2_SA2 = "CLIENT_COMM_2_SA2"
     CLIENT_COMM_2_SA3 = "CLIENT_COMM_2_SA3"
+
 
 class FeeTypes(Enum):
     Agent = "AGE"
@@ -104,6 +110,7 @@ class FeeTypes(Enum):
     Tax = "TAX"
     ValueAddedTax = "VAT"
 
+
 class FeesAndCommissions(Enum):
     Fee1 = 1
     Fee2 = 2
@@ -111,6 +118,7 @@ class FeesAndCommissions(Enum):
     Commission1 = 1
     Commission2 = 2
     Commission3 = 3
+
 
 class CommissionProfiles(Enum):
     Abs_Amt = 1

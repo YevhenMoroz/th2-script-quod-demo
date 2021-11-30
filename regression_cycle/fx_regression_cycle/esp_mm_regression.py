@@ -8,6 +8,7 @@ from test_cases.fx.fx_mm_synthetic import QAP_2646
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_esp import QAP_3140, QAP_3141
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -59,6 +60,7 @@ def test_run(parent_id=None):
         QAP_1589.execute(report_id, session_id)
         QAP_4016.execute(report_id, session_id)
         QAP_3661.execute(report_id, session_id)
+        QAP_3140.execute(report_id, session_id)
         QAP_1518.execute(report_id)
         QAP_1554.execute(report_id)
         QAP_1558.execute(report_id)
@@ -82,6 +84,7 @@ def test_run(parent_id=None):
         QAP_2880.execute(report_id)
         QAP_2966.execute(report_id)
         QAP_2990.execute(report_id)
+        QAP_3141.execute(report_id)
         QAP_3390.execute(report_id)
         QAP_3841.execute(report_id)
         QAP_3848.execute(report_id)
