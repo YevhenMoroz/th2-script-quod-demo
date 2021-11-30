@@ -19,7 +19,6 @@ class FixManager:
 
     def send_message(self, fix_message: FixMessage, custom_message =None ) -> None:
         # TODO add validation(valid MsgType)
-        print(fix_message.get_parameters())
         if custom_message==None:
             message="Send "
         else:
