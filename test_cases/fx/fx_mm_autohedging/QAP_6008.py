@@ -58,7 +58,7 @@ def set_send_hedge_order(case_id, ttl, position_book):
         "autoHedgerInstrSymbol": [
             {
                 "instrSymbol": "EUR/USD",
-                "longUpperQty": 3000000,
+                "longUpperQty": 2000000,
                 "longLowerQty": 0,
                 "maintainHedgePositions": 'true',
                 "crossCurrPairHedgingPolicy": "DIR",
