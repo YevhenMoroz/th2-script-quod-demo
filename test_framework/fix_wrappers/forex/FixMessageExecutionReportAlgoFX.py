@@ -218,7 +218,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             TradeReportingIndicator='0',
             GrossTradeAmt='*',
             NoParty='*',
-            TargetStrategy='*',
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
             SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
             LastExecutionPolicy='*',
             ExDestination='*',
