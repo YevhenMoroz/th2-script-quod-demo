@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import BaseWindow
+from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 
@@ -53,6 +53,6 @@ class QAP4466(TestCase):
         base_window.compare_values(expected, result, 'Check Qty')
         # endregion
 
-    # @decorator_try_except(test_id=os.path.basename(__file__))
+    @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_4466()

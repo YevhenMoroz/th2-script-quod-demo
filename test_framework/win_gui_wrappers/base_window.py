@@ -42,12 +42,13 @@ class BaseWindow:
             split_sentence.pop(0)
             split_sentence.pop(len(split_sentence) - 1)
             for split_values1 in split_sentence:
-                split_values1 = re.findall('(\w+=\w+)', split_values1)
+                split_values1 = re.findall('(\w+=[^,}]+)', split_values1)
                 split_values1 = split_values1.__str__()
                 split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '')
                 split_normal_dictionarry = dict(item.split("=") for item in split_values1.split(', '))
                 normal_split_values_arr.append(split_normal_dictionarry)
         return normal_split_values_arr
+
 
 
 def decorator_try_except(test_id):
