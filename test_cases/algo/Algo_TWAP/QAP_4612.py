@@ -10,6 +10,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,15 +18,14 @@ timeouts = True
 
 #order param
 tick = 0.005
-waves = 4
 qty = 2000
-price_parent = 21
-price_ask = 20
+price_parent = 22
+price_ask = 21
 price_bid = 19.98
-price_trigger = price_ask + tick
-qty_child = round(qty / waves)
+price_trigger = price_ask + tick #20 + 0.005
 would_price_reference = 'MAN'
 would_price_offset = 1
+price_would = AlgoFormulasManager.calc_ticks_offset_minus(price_trigger, would_price_offset, tick)
 tif_ioc = 3
 
 #Key parameters
@@ -45,7 +45,6 @@ status_fill = DataSet.Status.Fill
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
-currency = 'EUR'
 s_par = '1015'
 
 #connectivity
@@ -92,7 +91,7 @@ def execute(report_id):
         twap_would_order = FixMessageNewOrderSingleAlgo().set_TWAP_params()
         twap_would_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_would_order.change_parameters(dict(Account= client, OrderQty = qty, Price=price_parent))
-        twap_would_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, StartDate2=now.strftime("%Y%m%d-%H:%M:%S"), EndDate2=(now + timedelta(minutes=4)).strftime("%Y%m%d-%H:%M:%S"), WouldPriceReference=would_price_reference, WouldPriceOffset=would_price_offset, TriggerPriceRed=price_trigger))
+        twap_would_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=now.strftime("%Y%m%d-%H:%M:%S"), EndDate2=(now + timedelta(minutes=4)).strftime("%Y%m%d-%H:%M:%S"), WouldPriceReference=would_price_reference, WouldPriceOffset=would_price_offset, TriggerPriceRed=price_trigger))
 
         fix_manager.send_message_and_receive_response(twap_would_order, case_id_1)
 
@@ -112,7 +111,7 @@ def execute(report_id):
         fix_verifier_bs.set_case_id(bca.create_event("First TWAP slice", case_id))
 
         twap_1_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        twap_1_child.change_parameters(dict(OrderQty=qty, Price=price_ask, TimeInForce=tif_ioc, Instrument=instrument))
+        twap_1_child.change_parameters(dict(OrderQty=qty, Price=price_would, TimeInForce=tif_ioc, Instrument=instrument))
         fix_verifier_bs.check_fix_message(twap_1_child, key_parameters=key_params, message_name='Buy side NewOrderSingle TWAP child')
 
         pending_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, gateway_side_buy, status_pending)
