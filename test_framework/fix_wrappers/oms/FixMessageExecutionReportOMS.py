@@ -47,8 +47,11 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_single.get_parameter("Side"),
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
-            "ExpireDate": "*",
+            "Instrument": new_order_single.get_parameter("Instrument"),
             "SettlDate": "*",
+            "ReplyReceivedTime": "*",
+            "SecondaryOrderID": "*",
+            "Text": "*"
 
         }
         self.change_parameters(self.base_parameters)
@@ -65,8 +68,12 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Side"],
             "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
             "TimeInForce": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["TimeInForce"],
-            "ExpireDate": "*",
+            "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
             "SettlDate": "*",
+            "ReplyReceivedTime": "*",
+            "SecondaryOrderID": "*",
+            "Text": "*"
+
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -84,8 +91,18 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_single.get_parameter("Side"),
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
-            "ExpireDate": "*",
+            "Instrument": new_order_single.get_parameter("Instrument"),
             "SettlDate": "*",
+            "ReplyReceivedTime": "*",
+            "SecondaryOrderID": "*",
+            "Text": "*",
+            "LastExecutionPolicy": "*",
+            "TradeDate": "*",
+            "TradeReportingIndicator": "*",
+            "SecondaryExecID": "*",
+            "ExDestination": "*",
+            "GrossTradeAmt": "*",
+            'MiscFeesGrp': "*",
 
         }
         self.change_parameters(self.base_parameters)
@@ -104,6 +121,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "HandlInst": new_order_single.get_parameter("HandlInst"),
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -121,6 +139,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Side"],
             "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
             "TimeInForce": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["TimeInForce"],
+            "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
 
         }
         self.change_parameters(self.base_parameters)
@@ -139,6 +158,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "HandlInst": new_order_single.get_parameter("HandlInst"),
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -157,6 +177,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Side"],
             "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
             "TimeInForce": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["TimeInForce"],
+            "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
 
         }
         self.change_parameters(self.base_parameters)

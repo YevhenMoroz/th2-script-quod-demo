@@ -30,20 +30,14 @@ class QAP3510(TestCase):
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
+        self.dc_connectivity = SessionAliasOMS().dc_connectivity
 
     def qap_3510(self):
         # region Declaration
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        main_window = BaseMainWindow(self.case_id, self.session_id)
-        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
+        fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
         client = "CLIENT_COUNTERPART"
-        # endregion
-        # region Open FE
-        # main_window.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region DMA order
         change_params = {'Account': client,
@@ -69,29 +63,35 @@ class QAP3510(TestCase):
             rule_manager.remove_rule(trade_rele)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_filled(nos)
+        parties = {
+            'NoPartyIDs': [
+                {'PartyRole': "28",
+                 'PartyID': "CustodianUser",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "67",
+                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
+                 'PartyIDSource': "C"}
+            ]
+        }
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos).change_parameters({"Parties": parties})
+        exec_report2 = FixMessageExecutionReportOMS().set_default_filled(nos).change_parameters({"Parties": parties})
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)
         fix_verifier.check_fix_message_fix_standard(exec_report2)
         # endregion
-        # # region Book order
-        # middle_office.book_order()
-        # # endregion
-        # # region Allocate order
-        # middle_office.approve_block()
-        # middle_office.allocate_block()
-        # # endregion
-        # region Set-up parameters for Allocation & Confirmation reports
-        book_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(nos)
-        alloc_report = FixMessageAllocationInstructionReportOMS().set_default_preliminary(nos)
-        conf_report = FixMessageConfirmationReportOMS().set_default_confirmation_new(nos)
+        # region Set-up parameters Confirmation report
+        no_party = {
+            'NoParty': parties['NoPartyIDs']
+        }
+        conf_report = FixMessageConfirmationReportOMS().set_default_confirmation_new(nos).change_parameters(
+            {"NoParty": no_party})
         # endregion
         # region Check Book & Allocation
-        #fix_verifier.check_fix_message_fix_standard(book_report)
-        #fix_verifier.check_fix_message_fix_standard(alloc_report)
-        fix_verifier.check_fix_message_fix_standard(conf_report)
+        fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
     # @decorator_try_except(test_id=os.path.basename(__file__))

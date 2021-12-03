@@ -16,6 +16,8 @@ class MessageType(Enum):
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
     ListStatus = "ListStatus"
+    Confirmation = "Confirmation"
+    AllocationInstruction = "AllocationInstruction"
 
 
 class Instrument(Enum):
@@ -51,7 +53,8 @@ class Instrument(Enum):
         Symbol='ISI1',
         SecurityID='ISI1',
         SecurityIDSource='4',
-        SecurityExchange='XEUR'
+        SecurityExchange='XEUR',
+        SecurityType='CS'
     )
 
 
