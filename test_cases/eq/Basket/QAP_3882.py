@@ -62,8 +62,8 @@ class QAP3882(TestCase):
         basket_book.cancel_basket()
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_canceled(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_canceled(nol,1)
+        exec_report1 = FixMessageExecutionReportOMS().set_default_canceled_list(nol)
+        exec_report2 = FixMessageExecutionReportOMS().set_default_canceled_list(nol, 1)
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)

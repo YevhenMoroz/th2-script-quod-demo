@@ -77,7 +77,8 @@ class BaseMiddleOfficeBook(BaseWindow):
                                   net_gross_ind=None, give_up_broker=None, selected_row_count=None, comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
-                                  settl_amount=None, bo_notes=None, settl_currency=None, misc_trade_date=None,
+                                  settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
+                                  exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
@@ -117,6 +118,13 @@ class BaseMiddleOfficeBook(BaseWindow):
             settlement_details.set_settlement_amount(settl_amount)
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
+        if exchange_rate is not None:
+            settlement_details.set_settlement_amount(exchange_rate)
+        if exchange_rate_calc is not None:
+            settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+        if toggle_recompute:
+            settlement_details.toggle_recompute()
+
         if misc_trade_date or bo_fields or bo_notes is not None:
             misc_details = self.modify_ticket_details.add_misc_details()
             if misc_trade_date is not None:

@@ -60,8 +60,8 @@ class QAP4648(TestCase):
         cl_inbox.accept_order(lokup, qty, price)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_new(nol,1)
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new_list(nol)
+        exec_report2 = FixMessageExecutionReportOMS().set_default_new_list(nol, 1)
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)
@@ -73,7 +73,7 @@ class QAP4648(TestCase):
         fix_manager.send_message_and_receive_response_fix_standard(rep_req)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced(nol).change_parameters({'Price': new_price})
+        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced_list(nol).change_parameters({'Price': new_price})
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])

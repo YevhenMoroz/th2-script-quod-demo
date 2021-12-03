@@ -13,13 +13,12 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
         'ConfirmType': '2',
         'Side': '1',
         'AvgPx': '20',
-        'QuodTradeQualifier':'AL',
-        'Currency':'EUR',
-        'NetMoney':'2000',
-        'MatchStatus':'0',
+        'QuodTradeQualifier': 'AL',
+        'Currency': 'EUR',
+        'NetMoney': '2000',
+        'MatchStatus': '0',
         'ConfirmStatus': '1',
-        'LastMkt': 'XPAR',
-        'GrossTradeAmt':'2000',
+        'GrossTradeAmt': '2000',
     }
 
     def set_default_confirmation_new(self, new_order_single: FixMessageNewOrderSingle):
@@ -38,17 +37,18 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             }],
             'SettlDate': '*',
             'AllocID': '*',
-            'Currency':new_order_single.get_parameter('Currency'),
+            'Currency': new_order_single.get_parameter('Currency'),
             'NetMoney': '*',
             'TradeDate': '*',
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
-            'LastMkt':new_order_single.get_parameter('ExDestination'),
             'CpctyConfGrp': '*',
-            'ReportedPx': new_order_single.get_parameter("Price"),
+            'ReportedPx': '*',
             'Instrument': '*',
             'GrossTradeAmt': '*',
-            'ConfirmID': '*'
+            'ConfirmID': '*',
+            'NoMiscFees': '*',
+
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -75,12 +75,12 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'TradeDate': '*',
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
-            'LastMkt': new_order_single.get_parameter('ExDestination'),
             'CpctyConfGrp': '*',
-            'ReportedPx': new_order_single.get_parameter("Price"),
+            'ReportedPx': '*',
             'Instrument': '*',
             'GrossTradeAmt': '*',
-            'ConfirmID': '*'
+            'ConfirmID': '*',
+            'NoMiscFees': '*',
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -107,12 +107,12 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'TradeDate': '*',
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
-            'LastMkt': new_order_single.get_parameter('ExDestination'),
             'CpctyConfGrp': '*',
-            'ReportedPx': new_order_single.get_parameter("Price"),
+            'ReportedPx':'*',
             'Instrument': '*',
             'GrossTradeAmt': '*',
-            'ConfirmID': '*'
+            'ConfirmID': '*',
+            'NoMiscFees': '*',
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
