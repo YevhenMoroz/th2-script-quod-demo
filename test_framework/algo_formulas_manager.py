@@ -5,19 +5,35 @@ class AlgoFormulasManager:
     # region offset calculation
     @staticmethod
     def calc_ticks_offset_minus(price: float, offset_qty: int, tick: float) -> float:
-        return price - tick * offset_qty
+        result = price - tick * offset_qty
+        if result % 1 == 0:
+            return int(result)
+        else:
+            return result
 
     @staticmethod
     def calc_ticks_offset_plus(price: float, offset: int, tick: float) -> float:
-        return price + tick * offset
+        result = price + tick * offset
+        if result % 1 == 0:
+            return int(result)
+        else:
+            return result
 
     @staticmethod
     def calc_bps_offset_minus(price: float, offset_qty: int) -> float:
-        return price - price / 10000 * offset_qty
+        result = price - price / 10000 * offset_qty
+        if result % 1 == 0:
+            return int(result)
+        else:
+            return result
 
     @staticmethod
     def calc_bps_offset_plus(price: float, offset_qty: int) -> float:
-        return price + price / 10000 * offset_qty
+        result = price + price / 10000 * offset_qty
+        if result % 1 == 0:
+            return int(result)
+        else:
+            return result
     # endregion
 
     @staticmethod
