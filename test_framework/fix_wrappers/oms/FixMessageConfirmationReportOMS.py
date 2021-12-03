@@ -47,8 +47,7 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'Instrument': '*',
             'GrossTradeAmt': '*',
             'ConfirmID': '*',
-            'NoMiscFees': '*',
-            'CommissionData': '*',
+            'LastMkt': '*',
 
         }
         self.change_parameters(self.base_parameters)
@@ -81,7 +80,6 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'Instrument': '*',
             'GrossTradeAmt': '*',
             'ConfirmID': '*',
-            'NoMiscFees': '*',
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -113,7 +111,6 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'Instrument': '*',
             'GrossTradeAmt': '*',
             'ConfirmID': '*',
-            'NoMiscFees': '*',
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)

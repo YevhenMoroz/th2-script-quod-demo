@@ -51,8 +51,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "SettlDate": "*",
             "ReplyReceivedTime": "*",
             "SecondaryOrderID": "*",
-            "Text": "*"
-
+            "Text": "*",
+            "LastMkt": "*"
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -72,7 +72,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "SettlDate": "*",
             "ReplyReceivedTime": "*",
             "SecondaryOrderID": "*",
-            "Text": "*"
+            "Text": "*",
+            "LastMkt": "*"
 
         }
         self.change_parameters(self.base_parameters)
@@ -102,9 +103,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "SecondaryExecID": "*",
             "ExDestination": "*",
             "GrossTradeAmt": "*",
-            'MiscFeesGrp': "*",
-            'CommissionData': '*',
-
+            "LastMkt": "*"
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
