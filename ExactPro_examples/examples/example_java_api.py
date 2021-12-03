@@ -17,6 +17,7 @@ rep_id = bca.create_event('java_api_example ' + datetime.now().strftime('%Y%m%d-
 class ORSMessages(Enum):
     order_list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
     order_submit = 'Order_OrderSubmit'
+    trade_request = 'Order_TradeEntryRequest'
 
 
 class TestCase:
@@ -60,10 +61,9 @@ class TestCase:
         }
 
         trade_params = {
-
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'TradeEntryRequestBlock': {
-                'OrdID': "CO1211006080150386001",
+                'OrdID': "CO1211203153756175001",
                 'ExecPrice': "5.000000000",
                 'ExecQty': "900.000000000",
                 'TradeEntryTransType': 'NEW',
@@ -74,15 +74,16 @@ class TestCase:
                     '%Y-%m-%dT%H:%M:%S')
             }
         }
+        # 'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
+        #                         'RoleID': 'Trader',
+        #                         'SessionKey': 62000000481},
         order_list_wave_creation_request = {
-            'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
-                                    'RoleID': 'Trader',
-                                    'SessionKey': 61800000464},
+
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'OrderListWaveCreationRequestBlock': {
-                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211202111058164001'},
-                                                       {'ParentOrdID': 'CO1211202111058164002'}]},
-                'OrderListID': 'LI1211202111058164001',
+                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211203153316175001'},
+                                                       {'ParentOrdID': 'CO1211203153318175001'}]},
+                'OrderListID': 'LI1211203153316175001',
                 'PercentQtyToRelease': 1.000000000,
                 'QtyPercentageProfile': "REM"
 
@@ -90,8 +91,8 @@ class TestCase:
         }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.order_submit.value,
-                                                     nos_params, self.connectivity),
+            message=bca.message_to_grpc_fix_standard(ORSMessages.trade_request.value,
+                                                     trade_params, self.connectivity),
             parent_event_id=self.case_id))
 
         # Main method

@@ -103,6 +103,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "ExDestination": "*",
             "GrossTradeAmt": "*",
             'MiscFeesGrp': "*",
+            'CommissionData': '*',
 
         }
         self.change_parameters(self.base_parameters)

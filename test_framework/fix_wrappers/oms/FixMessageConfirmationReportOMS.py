@@ -48,6 +48,7 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'GrossTradeAmt': '*',
             'ConfirmID': '*',
             'NoMiscFees': '*',
+            'CommissionData': '*',
 
         }
         self.change_parameters(self.base_parameters)

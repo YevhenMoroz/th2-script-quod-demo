@@ -4,19 +4,15 @@ import time
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
-from stubs import Stubs
 from test_framework.fix_wrappers.DataSet import Instrument
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
-from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
-    FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,6 +34,8 @@ class QAP3510(TestCase):
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
         client = "CLIENT_COUNTERPART"
+        qty = 100
+        price = 20
         # endregion
         # region DMA order
         change_params = {'Account': client,
@@ -53,8 +51,8 @@ class QAP3510(TestCase):
                                                                                              client + "_EUREX", "XEUR",
                                                                                              20)
             trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_EUREX", "XEUR", 20,
-                                                                                       100, 2)
+                                                                                       client + "_EUREX", "XEUR", price,
+                                                                                       qty, 1)
 
             fix_manager.send_message_and_receive_response_fix_standard(nos)
         finally:
@@ -65,15 +63,16 @@ class QAP3510(TestCase):
         # region Set-up parameters for ExecutionReports
         parties = {
             'NoPartyIDs': [
-                {'PartyRole': "28",
-                 'PartyID': "CustodianUser",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-                 'PartyIDSource': "C"},
+                {'PartyRole': "*",
+                 'PartyID': "*",
+                 'PartyIDSource': "*"},
                 {'PartyRole': "66",
                  'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
+                 'PartyIDSource': "C"},
+                {'PartyRole': "*",
+                 'PartyID': "*",
+                 'PartyIDSource': "*"}
+
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos).change_parameters({"Parties": parties})
@@ -94,6 +93,6 @@ class QAP3510(TestCase):
         fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
-    # @decorator_try_except(test_id=os.path.basename(__file__))
+    @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_3510()

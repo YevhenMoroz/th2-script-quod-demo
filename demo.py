@@ -6,6 +6,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.eq.Basket.QAP_4648 import QAP4648
 from test_cases.eq.Basket.QAP_6114 import QAP6114
+from test_cases.eq.Counterpart.QAP_3509 import QAP3509
 from test_cases.eq.Counterpart.QAP_3510 import QAP3510
 from test_cases.eq.PostTrade.QAP_5386 import QAP5386
 from win_gui_modules.utils import set_session_id
@@ -24,7 +25,7 @@ def test_run():
     try:
         #example_java_api.TestCase(report_id).execute()
 
-        QAP3510(report_id, session_id, None).execute()
+        QAP3509(report_id, session_id, None).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
