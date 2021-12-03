@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from posixpath import expanduser
 from custom import basic_custom_actions as bca
@@ -19,9 +20,9 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP_Reference_DHI ' + bca.client_orderid(9),
+            'ClOrdID': (os.path.basename(__file__)[:-3]) + bca.client_orderid(9),
             'HandlInst': 2,
-            'Side': 1,
+            'Side': 2,
             'OrderQty': 10000000,
             'TimeInForce': 0,
             'Price': 117,
@@ -33,7 +34,7 @@ def execute(report_id):
             'TargetStrategy': 1005,
             'ExDestination': 'XLON',
             'QuodFlatParameters': {
-                'LimitPriceReference': 'DHI',
+                'LimitPriceReference': 'PRM',
                 'LimitPriceOffset': '-1',
                 'AllowedVenues': 'XLON'
             }
