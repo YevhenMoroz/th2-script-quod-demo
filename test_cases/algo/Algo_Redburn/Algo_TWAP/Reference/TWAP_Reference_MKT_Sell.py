@@ -19,7 +19,7 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'TWAP_Reference_MKT ' + bca.client_orderid(9),
+            'ClOrdID': 'TWAP_Reference_MKT_Sell ' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 2,
             'OrderQty': 10000000,
