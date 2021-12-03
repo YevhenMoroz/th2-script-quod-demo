@@ -31,6 +31,7 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Reference
+        #test
         MOO_Reference_CLO.execute(report_id)
         MOO_Reference_DHI.execute(report_id)
         MOO_Reference_DLO.execute(report_id)
