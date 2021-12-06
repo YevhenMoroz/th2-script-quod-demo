@@ -39,7 +39,8 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NetMoney': '*',
             'Instrument': '*',
             'TradeDate': '*',
-            'GrossTradeAmt': '*'
+            'GrossTradeAmt': '*',
+            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -76,7 +77,8 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NetMoney': '*',
             'Instrument': '*',
             'TradeDate': '*',
-            'GrossTradeAmt': '*'
+            'GrossTradeAmt': '*',
+            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
