@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
+from quod_qa.fx.qs_fx_routine import SendMD
 
 from rule_management import RuleManager
 from stubs import Stubs
@@ -62,10 +63,11 @@ def test_run():
         # QAP_2322.execute(report_id, session_id)
 
         # QAP_5389().execute(report_id)
-        # SendMD.execute(report_id)
+        SendMD.execute(report_id)
         #
         # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
-        QAP_5176.execute(report_id)
+        # QAP_5176.execute(report_id)
+        # QAP_1518.execute(report_id)
 
 
 
