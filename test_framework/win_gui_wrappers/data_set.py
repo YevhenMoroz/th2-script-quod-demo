@@ -128,12 +128,13 @@ class QuoteRequestBookColumns(Enum):
 
 class ExecSts(Enum):
     filled = 'Filled'
-    Eliminated = 'Eliminated'
+    eliminated = 'Eliminated'
     rejected = 'Rejected'
     open = 'Open'
     cancelled = 'Cancelled'
     held = 'Held'
     partially_filled = 'PartiallyFilled'
+    terminated = 'Terminated'
 
 
 class Side(Enum):
