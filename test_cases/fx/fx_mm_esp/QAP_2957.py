@@ -40,7 +40,7 @@ def execute(report_id):
     fix_manager_gtw = FixManager(alias_gtw, case_id)
     fix_verifier = FixVerifier(alias_gtw, case_id)
     try:
-        market_data_request = FixMessageMarketDataRequestFX().set_md_req_parameters(). \
+        market_data_request = FixMessageMarketDataRequestFX().set_md_req_parameters_maker(). \
             change_parameters({'SenderSubID': client}). \
             update_repeating_group('NoRelatedSymbols', no_related_symbol)
 
