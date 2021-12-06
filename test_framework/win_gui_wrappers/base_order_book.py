@@ -1,7 +1,7 @@
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrdersDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct
 
@@ -59,7 +59,7 @@ class BaseOrderBook(BaseWindow):
     # region Common func
     def set_order_details(self):
         self.order_details.set_extraction_id(self.extraction_id)
-        self.order_details.set_default_params(base_request=self.base_request)
+        self.order_details.set_default_params(self.base_request)
 
     def set_filter(self, filter_list: list):
         """
@@ -218,9 +218,9 @@ class BaseOrderBook(BaseWindow):
 
     def complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
-            self.modify_order_details.set_filter()
+            self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
-            self.modify_order_details.set_selected_row_count()
+            self.modify_order_details.set_selected_row_count(row_count)
         call(self.complete_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
