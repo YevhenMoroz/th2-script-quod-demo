@@ -57,3 +57,24 @@ class AutoHedgerPage(CommonPage):
 
     def click_on_logout(self):
         self.find_by_xpath(AutoHedgerConstants.LOGOUT_BUTTON_XPATH).click()
+
+    def click_on_enable(self):
+        self.find_by_xpath(AutoHedgerConstants.MAIN_PAGE_DISABLE_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(AutoHedgerConstants.OK_BUTTON_XPATH).click()
+        time.sleep(1)
+
+    def click_on_disabled(self):
+        self.find_by_xpath(AutoHedgerConstants.MAIN_PAGE_ENABLE_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(AutoHedgerConstants.OK_BUTTON_XPATH).click()
+        time.sleep(1)
+
+
+
+
+
+
+
+
+

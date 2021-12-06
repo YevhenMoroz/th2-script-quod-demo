@@ -39,6 +39,7 @@ from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3275 import QAP
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4118 import QAP_4118
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4439 import QAP_4439
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_5707 import QAP_5707
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_6118 import QAP_6118
 
 
 class RunMarketMaking:
@@ -84,9 +85,10 @@ class RunMarketMaking:
             # QAP_3053(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3274(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3275(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4118(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4118(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4439(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5707(self.web_driver_container, self.second_lvl_id).run()
+            QAP_6118(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run FXMM ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

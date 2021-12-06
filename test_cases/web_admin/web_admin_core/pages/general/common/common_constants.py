@@ -14,3 +14,4 @@ class CommonConstants:
     USER_NAME_XPATH = '//*[@class="logged-in-user ng-star-inserted"]'
     FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Full Screen"]'
     EXIT_FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Exit Full Screen"]'
+    DARK_THEME_XPATH = '//*[text()="Dark Theme"]'

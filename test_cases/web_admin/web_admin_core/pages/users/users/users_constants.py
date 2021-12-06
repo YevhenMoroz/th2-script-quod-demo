@@ -13,6 +13,7 @@ class UsersConstants:
     DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     DOWNLOAD_PDF_AT_WIZARD_XPATH = "//*[@data-name='download']"
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
+    UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
     OK_BUTTON_XPATH = "//*[text()='Ok']"
 
     # filters

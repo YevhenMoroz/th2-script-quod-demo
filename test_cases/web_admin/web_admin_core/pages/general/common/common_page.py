@@ -35,6 +35,9 @@ class CommonPage(CommonPage):
     def set_new_password_at_login_page(self, value):
         self.set_text_by_xpath(CommonConstants.NEW_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH, value)
 
+    def click_on_dark_theme(self):
+        self.find_by_xpath(CommonConstants.DARK_THEME_XPATH).click()
+
     def click_on_help_icon(self):
         self.find_by_xpath(CommonConstants.HELP_ICON_XPATH).click()
 

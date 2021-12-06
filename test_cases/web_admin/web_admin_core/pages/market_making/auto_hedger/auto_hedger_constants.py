@@ -7,7 +7,7 @@ class AutoHedgerConstants:
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
@@ -26,6 +26,9 @@ class AutoHedgerConstants:
     MAIN_PAGE_POSITION_BOOK_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_ENABLE_SCHEDULE_FILTER_XPATH ='//*[@class="ag-header-container"]/div[2]/div[4]//input'
+    MAIN_PAGE_ENABLE_BUTTON_XPATH = '//*[@nbtooltip="Enabled, Click to Disable"]'
+    MAIN_PAGE_DISABLE_BUTTON_XPATH = '//*[@nbtooltip="Disabled, Click to Enable"]'
+
 
     # Values tab
     VALUES_TAB_NAME_FIELD_XPATH = '//*[text()= "Name *"]/preceding-sibling::input'
