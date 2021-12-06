@@ -84,7 +84,6 @@ class FixManager:
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
-            print(fix_message.get_parameters())
             response = self.act.placeMarketDataRequestFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataRequest",
@@ -112,7 +111,6 @@ class FixManager:
                     # Component
                     for component_field in message.fields[field].message_value.fields:
                         if message.fields[field].message_value.fields[component_field].simple_value != "":
-                            print(message.fields[field].message_value.fields[component_field].simple_value)
                             component_fields.update({component_field: message.fields[field].message_value.fields[
                                 component_field].simple_value})
                             fields.update({field: component_fields})
