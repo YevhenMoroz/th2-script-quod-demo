@@ -34,53 +34,46 @@ leg1_side = "2"
 leg2_side = "1"
 
 
+
+
 def send_swap_and_filled(case_id):
     quote_req_id = bca.client_orderid(8)
     params = {
         'QuoteReqID': quote_req_id,
-        'ClOrdID': 'A20211460BPDE00',
-        'NumOfCompetitors': "1",
-        'InCompetition': "N",
         'NoRelatedSym': [{
-            'NoPartyIDs': [
-                {'PartyID': 'CLIENT1',
-                 'PartyIDSource': 'D',
-                 'PartyRole': '1'},
-                {'PartyID': 'CLIENT1',
-                 'PartyIDSource': 'D',
-                 'PartyRole': '3'},
-            ],
+            'Account': "CLIENT1",
             'Instrument': {
-                'Symbol': "USD",
+                'Symbol': "EUR/USD",
+                'SecurityType': "FXSPOT"
             },
             'SettlDate': spo(),
-            'MaturityDate': wk1(),
-            'DayCount': "30/360",
-            'Side': "2",
+            'SettlType': 0,
+            'Currency': "EUR",
+            'QuoteType': '1',
             'OrderQty': "1000000",
+            'OrdType': 'D'
         }
         ]
     }
+    # act = Stubs.fix_act
+    # response = act.placeQuoteFIX(
+    #     request=bca.convert_to_request(
+    #         "SendEarlyRedemption",
+    #         "fix-sell-esp-m-314-cnx",
+    #         case_id,
+    #         bca.message_to_grpc("QuoteRequest", params, "fix-sell-esp-m-314-cnx")
+    #     )
+    # )
+
     act = Stubs.fix_act
     response = act.placeQuoteFIX(
         request=bca.convert_to_request(
-            "QuoteRequest",
+            "SendEarlyRedemption",
             "fix-sell-esp-m-314-cnx",
             case_id,
             bca.message_to_grpc("QuoteRequest", params, "fix-sell-esp-m-314-cnx")
         )
     )
-
-    # act = Stubs.fix_act
-    # response = act.placeQuoteFIX(
-    #     request=bca.convert_to_request(
-    #         "SendEarlyRedemption",
-    #         "fix-ss-rfq-314-luna-standard",
-    #         case_id,
-    #         bca.message_to_grpc("QuoteRequest", params, "fix-ss-rfq-314-luna-standard")
-    #     )
-    # )
-
 
 def execute(report_id):
     case_name = Path(__file__).name[:-3]
@@ -90,3 +83,5 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+
+
