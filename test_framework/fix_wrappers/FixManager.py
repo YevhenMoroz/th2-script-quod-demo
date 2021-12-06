@@ -113,7 +113,6 @@ class FixManager:
                     # Component
                     for component_field in message.fields[field].message_value.fields:
                         if message.fields[field].message_value.fields[component_field].simple_value != "":
-                            print(message.fields[field].message_value.fields[component_field].simple_value)
                             component_fields.update({component_field: message.fields[field].message_value.fields[
                                 component_field].simple_value})
                             fields.update({field: component_fields})
