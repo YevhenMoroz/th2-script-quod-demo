@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from MyFiles import send_rfq, SendMD, StreamRefresh
+from MyFiles import send_rfq, SendMD, StreamRefresh, MyTest
 from stubs import Stubs
-from test_cases.fx.fx_mm_autohedging import QAP_6007, QAP_6008, QAP_6010, QAP_3017, QAP_3233, QAP_2325, QAP_6116
+from test_cases.fx.fx_mm_autohedging import QAP_6007, QAP_6008, QAP_6010, QAP_3017, QAP_3233, QAP_2325, QAP_6116, \
+    QAP_2228, QAP_2113
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -40,11 +41,13 @@ def test_run():
         # QAP_3017.execute(report_id, session_id)
         # QAP_3233.execute(report_id, session_id)
         # QAP_2325.execute(report_id, session_id)
-        QAP_6116.execute(report_id, session_id)
+        # QAP_6116.execute(report_id, session_id)
+        # QAP_2113.execute(report_id, session_id) # TODO: Amend order via new wrapper
         # rm = RuleManager()
         # SendMD.execute(report_iid)
         # send_rfq.execute(report_id)
         # StreamRefresh.execute(report_id)
+        # MyTest.execute(report_id)
 
 
     except Exception:
