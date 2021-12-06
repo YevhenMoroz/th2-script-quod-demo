@@ -2,9 +2,10 @@ import logging
 import time
 
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_fix_wrappers, eq_wrappers
+from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import get_base_request
 from win_gui_modules.wrappers import set_base
 
@@ -68,7 +69,7 @@ def open_fe(case_id, report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder_1']
     username = Stubs.custom_config['qf_trading_fe_user_1']
     password = Stubs.custom_config['qf_trading_fe_password_1']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
 
 
 def verify_bo_fields_list(values, base_request, case_id):

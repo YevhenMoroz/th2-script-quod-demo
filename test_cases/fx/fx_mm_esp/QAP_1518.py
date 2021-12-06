@@ -104,7 +104,7 @@ def execute(report_id):
                 change_parameters({'SenderSubID': client, }).\
                 update_repeating_group('NoRelatedSymbols', no_related_symbol)
             md_refresh = fix_manager_gtw.send_message_and_receive_response(market_data_request)
-            md_refresh
+
 
 
 

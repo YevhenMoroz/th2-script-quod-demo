@@ -14,4 +14,4 @@ class TestCase:
         self.ss_connectivity = None
         self.bs_connectivity = None
         self.dc_connectivity = None
-
+        self.wa_connectivity = None

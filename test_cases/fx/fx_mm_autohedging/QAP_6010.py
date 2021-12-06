@@ -106,7 +106,7 @@ def set_default_auto_hedger(case_id):
         "autoHedgerInstrSymbol": [
             {
                 "instrSymbol": "EUR/USD",
-                "longUpperQty": 3000000,
+                "longUpperQty": 2000000,
                 "longLowerQty": 0,
                 "maintainHedgePositions": 'true',
                 "crossCurrPairHedgingPolicy": "DIR",
