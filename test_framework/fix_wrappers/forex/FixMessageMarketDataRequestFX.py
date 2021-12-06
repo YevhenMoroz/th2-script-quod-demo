@@ -17,7 +17,9 @@ class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
             'MDUpdateType': '0',
             'SubscriptionRequestType': '1',
             'BookType': '0',
-            'NoMDEntryTypes': [{'MDEntryType': '0'}, {'MDEntryType': '1'}],
+            'NoMDEntryTypes': [
+                {'MDEntryType': '0'},
+                {'MDEntryType': '1'}],
             'NoRelatedSymbols': [
                 {
                     'Instrument': {

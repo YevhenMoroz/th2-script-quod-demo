@@ -71,21 +71,21 @@ class AutoHedgerConstants:
     EXTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = '//*[text()=" External Clients "]/parent::nb-accordion-item//*[@class="accountGroup ng2-smart-th ng-star-inserted"]//input'
 
     # Internal clients tab
-    INTERNAL_CLIENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="nb-plus"]'
-    INTERNAL_CLIENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    INTERNAL_CLIENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    INTERNAL_CLIENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="nb-edit"]'
-    INTERNAL_CLIENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="nb-trash"]'
+    INTERNAL_CLIENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    INTERNAL_CLIENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="close"]'
+    INTERNAL_CLIENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    INTERNAL_CLIENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    INTERNAL_CLIENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
     INTERNAL_CLIENTS_TAB_CLIENT_FIELD_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@placeholder="Client *"]'
     INTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@class="accountGroup ng2-smart-th ng-star-inserted"]//input'
 
     # Instruments tab
 
-    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-plus ng2-main-add-btn"]'
-    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-close ng2-main-cancel-btn"]'
-    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-trash"]'
-    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="nb-edit ng2-main-edit-btn"]'
+    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="cancel"]'
+    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
+    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="edit"]'
     INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
     INSTRUMENTS_TAB_SYMBOL_FIELD_XPATH = '//*[@placeholder="Symbol *"]'
     INSTRUMENTS_TAB_HEDGING_STRATEGY_FIELD_XPATH = '//*[text()="Hedging Strategy *"]/preceding-sibling::input'

@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -38,6 +39,7 @@ class QAP_1738(CommonTestCase):
             self.verify("Error after click on next button", "Incorrect or missing values",
                         routes_wizard.get_actual_error_after_click_on_next_in_empty_page())
             routes_wizard.set_name_at_values_tab(self.name)
+            time.sleep(2)
             routes_wizard.click_on_save_changes()
             time.sleep(2)
             routes_main_menu = RoutesPage(self.web_driver_container)
@@ -50,4 +52,6 @@ class QAP_1738(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

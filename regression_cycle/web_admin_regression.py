@@ -18,8 +18,9 @@ from regression_cycle.web_admin_cycle.run_users import RunUsers
 from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 timeouts = False
 channels = dict()
 
@@ -35,17 +36,18 @@ def test_run(parent_id=None):
 
         # content
         web_driver_container = WebDriverContainer()
-        # RunGeneral(web_driver_container, parent_id).execute()
+        RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
-        # RunUsers(web_driver_container, parent_id).execute()
+        RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()
         # RunClientsAccounts(web_driver_container, parent_id).execute()
         # RunOrderManagement(web_driver_container, parent_id).execute()
-        RunMiddleOffice(web_driver_container, parent_id).execute()
-        #RunMarketMaking(web_driver_container, parent_id).execute()
+        # RunMiddleOffice(web_driver_container, parent_id).execute()
+        # RunMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
-        # RunPositions(web_driver_container, parent_id).execute()
-        # RunOthers(web_driver_container, parent_id).execute()
+        RunPositions(web_driver_container, parent_id).execute()
+        RunOthers(web_driver_container, parent_id).execute()
+
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

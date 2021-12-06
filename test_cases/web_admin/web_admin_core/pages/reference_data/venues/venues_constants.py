@@ -96,11 +96,11 @@ class VenuesConstants:
     PRICE_LIMIT_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimit ng-star-inserted"]//input'
 
     # --Tick size profiles sub tab--
-    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
+    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
+    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
+    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
+    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
 
     TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_XPATH = '//*[@placeholder="External ID *"]'
     TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_FILTER_XPATH = '//*[@class="externalTickSizeProfileID ng2-smart-th ng-star-inserted"]//input'
@@ -110,11 +110,11 @@ class VenuesConstants:
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeRefPriceType ng-star-inserted"]//input'
 
     # --Tick size points sub tab--
-    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="plus"]'
+    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="checkmark"]'
+    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="close"]'
+    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="edit"]'
+    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="trash-2"]'
 
     TICK_SIZE_POINTS_TAB_TICK_XPATH = '//*[@placeholder="Tick *"]'
     TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '//*[@class="ng2-smart-th tickSize ng-star-inserted"]//input'
@@ -143,22 +143,22 @@ class VenuesConstants:
     HOLIDAYS_CALENDAR_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="holidayDescription ng2-smart-th ng-star-inserted"]//input'
 
     # --Trading phase profiles sub tab--
-    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
+    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
+    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
+    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
+    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_XPATH = '//*[@placeholder="TradingPhaseProfile Desc *"]'
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH = '//*[@class="ng2-smart-th tradPhaseProfileDesc ng-star-inserted"]//input'
 
     # --Trading phase profile sequence sub tab--
 
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="plus"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="checkmark"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="close"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="edit"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_XPATH = '//*[@class="status-basic ng-untouched ng-pristine ng-valid nb-transition"]//input'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_FILTER_XPATH = '//*[@class="ng2-smart-th submitAllowed ng-star-inserted"]//input'
