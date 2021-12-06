@@ -41,11 +41,11 @@ class QuotingSessionsConstants:
 
     # Client Tiers tab
 
-    CLIENT_TIERS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-plus"]'
-    CLIENT_TIERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-close"]'
-    CLIENT_TIERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CLIENT_TIERS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-edit"]'
-    CLIENT_TIERS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-trash"]'
+    CLIENT_TIERS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="plus"]'
+    CLIENT_TIERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="close"]'
+    CLIENT_TIERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CLIENT_TIERS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="edit"]'
+    CLIENT_TIERS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="trash-2"]'
 
     CLIENT_TIERS_TAB_BROADCAST_CLIENT_CLIENT_TIER_ID_XPATH = '//*[@placeholder="Broadcast Client Client Tier ID"]'
     CLIENT_TIERS_TAB_BROADCAST_CLIENT_CLIENT_TIER_ID_FILTER = '//*[@class = "broadcastClientClientTierID ng2-smart-th ng-star-inserted"]//input'
@@ -53,11 +53,11 @@ class QuotingSessionsConstants:
     CLIENT_TIERS_TAB_CLIENT_TIER_ID_FILTER = '//*[@class = "clientTier ng2-smart-th ng-star-inserted"]'
 
     # Client tier symbols
-    CLIENT_TIER_SYMBOLS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@class="nb-plus"]'
-    CLIENT_TIER_SYMBOLS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@class="nb-close"]'
-    CLIENT_TIER_SYMBOLS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CLIENT_TIER_SYMBOLS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@class="nb-edit"]'
-    CLIENT_TIER_SYMBOLS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@class="nb-trash"]'
+    CLIENT_TIER_SYMBOLS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="plus"]'
+    CLIENT_TIER_SYMBOLS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="close"]'
+    CLIENT_TIER_SYMBOLS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CLIENT_TIER_SYMBOLS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="edit"]'
+    CLIENT_TIER_SYMBOLS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="trash-2"]'
 
     CLIENT_TIER_SYMBOLS_TAB_SYMBOL_XPATH = '//*[@placeholder="Symbol *"]'
     CLIENT_TIER_SYMBOLS_TAB_SYMBOL_FILTER_XPATH = '//*[@class = "instrSymbol ng2-smart-th ng-star-inserted"]//input'
@@ -67,11 +67,11 @@ class QuotingSessionsConstants:
     CLIENT_TIER_SYMBOLS_TAB_BROADCAST_CLIENT_CLIENT_TIER_ID_FILTER = '//*[@class = "broadcastClientClientTierID ng2-smart-th ng-star-inserted"]//input'
 
     # Client client tiers
-    CLIENT_CLIENT_TIERS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-plus"]'
-    CLIENT_CLIENT_TIERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-close"]'
-    CLIENT_CLIENT_TIERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CLIENT_CLIENT_TIERS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-edit"]'
-    CLIENT_CLIENT_TIERS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@class="nb-trash"]'
+    CLIENT_CLIENT_TIERS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="plus"]'
+    CLIENT_CLIENT_TIERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="close"]'
+    CLIENT_CLIENT_TIERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CLIENT_CLIENT_TIERS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="edit"]'
+    CLIENT_CLIENT_TIERS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Client Tiers "]/parent::*[@class="expanded"]//*[@data-name="trash-2"]'
 
     CLIENT_CLIENT_TIERS_TAB_CLIENT_CLIENT_TIER_ID_XPATH = '//*[@placeholder="Client Client Tier ID *"]'
     CLIENT_CLIENT_TIERS_TAB_CLIENT_CLIENT_TIER_ID_FILTER_XPATH = '//*[@class = "clientClientTierID ng2-smart-th ng-star-inserted"]//input'

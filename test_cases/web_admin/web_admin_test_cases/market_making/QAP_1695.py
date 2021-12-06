@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -96,32 +97,32 @@ class QAP_1695(CommonTestCase):
             time.sleep(1)
             client_tier_instrument_spot_venues_sub_wizard = ClientTiersInstrumentSpotVenuesSubWizard(
                 self.web_driver_container)
-            client_tier_instrument_spot_venues_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_spot_venues_sub_wizard.set_venue(self.venue_at_spot_venues_tab)
-            client_tier_instrument_spot_venues_sub_wizard.click_on_checkmark()
-            time.sleep(2)
-            client_tier_instrument_forward_venues_sub_wizard = ClientTiersInstrumentForwardVenuesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_forward_venues_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_forward_venues_sub_wizard.set_venue(self.venue_at_forward_venues_tab)
-            client_tier_instrument_forward_venues_sub_wizard.click_on_checkmark()
-            time.sleep(2)
-            client_tier_instrument_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_external_clients_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_external_clients_sub_wizard.set_client(self.client_at_external_clients_tab)
-            client_tier_instrument_external_clients_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            client_tier_instrument_internal_clients_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_internal_clients_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_internal_clients_sub_wizard.set_client(self.client_at_internal_clients_tab)
-            client_tier_instrument_internal_clients_sub_wizard.click_on_checkmark()
-            time.sleep(1)
+            # client_tier_instrument_spot_venues_sub_wizard.click_on_plus()
+            # time.sleep(2)
+            # client_tier_instrument_spot_venues_sub_wizard.set_venue(self.venue_at_spot_venues_tab)
+            # client_tier_instrument_spot_venues_sub_wizard.click_on_checkmark()
+            # time.sleep(2)
+            # client_tier_instrument_forward_venues_sub_wizard = ClientTiersInstrumentForwardVenuesSubWizard(
+            #     self.web_driver_container)
+            # client_tier_instrument_forward_venues_sub_wizard.click_on_plus()
+            # time.sleep(2)
+            # client_tier_instrument_forward_venues_sub_wizard.set_venue(self.venue_at_forward_venues_tab)
+            # client_tier_instrument_forward_venues_sub_wizard.click_on_checkmark()
+            # time.sleep(2)
+            # client_tier_instrument_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
+            #     self.web_driver_container)
+            # client_tier_instrument_external_clients_sub_wizard.click_on_plus()
+            # time.sleep(2)
+            # client_tier_instrument_external_clients_sub_wizard.set_client(self.client_at_external_clients_tab)
+            # client_tier_instrument_external_clients_sub_wizard.click_on_checkmark()
+            # time.sleep(1)
+            # client_tier_instrument_internal_clients_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(
+            #     self.web_driver_container)
+            # client_tier_instrument_internal_clients_sub_wizard.click_on_plus()
+            # time.sleep(2)
+            # client_tier_instrument_internal_clients_sub_wizard.set_client(self.client_at_internal_clients_tab)
+            # client_tier_instrument_internal_clients_sub_wizard.click_on_checkmark()
+            # time.sleep(1)
             client_tier_instrument_sweepable_quantities_sub_wizard = ClientTiersInstrumentSweepableQuantitiesSubWizard(
                 self.web_driver_container)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_plus()
@@ -162,4 +163,6 @@ class QAP_1695(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

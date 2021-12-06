@@ -1,9 +1,12 @@
 import random
 import string
+import sys
 import time
 import traceback
 
 from custom import basic_custom_actions
+from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+    ClientsAssignmentsSubWizard
 from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
 from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -23,6 +26,7 @@ class QAP_5601(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
+        self.desk = "Quod Desk"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -40,6 +44,9 @@ class QAP_5601(CommonTestCase):
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
         time.sleep(1)
+        assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assignments_sub_wizard.set_desk(self.desk)
+        time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
         main_page.set_name(self.name)
@@ -55,10 +62,13 @@ class QAP_5601(CommonTestCase):
             expected_pdf_content = [self.id, self.name,
                                     self.disclose_exec,
                                     ]
+            time.sleep(2)
             self.verify("Is PDF contains correctly value", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-
+            time.sleep(2)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)
