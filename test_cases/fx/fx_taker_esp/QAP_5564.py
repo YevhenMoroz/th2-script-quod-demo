@@ -3,9 +3,10 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-
 from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.win_gui_wrappers.data_set import OrderBookColumns, TimeInForce
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -63,9 +64,12 @@ no_md_entries_spo_citi = [
     },
 ]
 no_strategy_parameters = [
-    {'StrategyParameterName': 'LonePassive', 'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'},
+    {'StrategyParameterName': 'AggressiveSingleOrderOnImmediateOrCancel', 'StrategyParameterType': '13',
+     'StrategyParameterValue': 'Y'},
     {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
      'StrategyParameterValue': 'CITI/BARX'}]
+ob_col = OrderBookColumns
+tif = TimeInForce
 
 
 def execute(report_id, session_id):
@@ -77,13 +81,13 @@ def execute(report_id, session_id):
     try:
 
         # Send market data to the BARX venue EUR/USD spot
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data()\
-            .update_repeating_group('NoMDEntries', no_md_entries_spo_barx).\
+        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
+            .update_repeating_group('NoMDEntries', no_md_entries_spo_barx). \
             update_MDReqID(defaultmdsymbol_spo_barx, alias_fh, 'FX')
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD BARX EUR/USD ")
 
         # Send market data to the CITI venue EUR/USD spot
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data()\
+        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
             .update_repeating_group('NoMDEntries', no_md_entries_spo_citi) \
             .update_MDReqID(defaultmdsymbol_spo_citi, alias_fh, 'FX')
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD CITI EUR/USD ")
@@ -93,15 +97,17 @@ def execute(report_id, session_id):
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
 
-        execution_report_filled_1 = FixMessageExecutionReportAlgoFX().\
-            set_params_from_new_order_single(new_order_sor, gateway_side_sell,status)
+        execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \
+            set_params_from_new_order_single(new_order_sor, gateway_side_sell, status)
         fix_verifier.check_fix_message(execution_report_filled_1, direction=DirectionEnum.FromQuod)
 
         FXOrderBook(case_id, session_id).set_filter(
-            ["Order ID", "AO", "Qty", "1000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",
-             "TIF", "ImmediateOrCancel"]).check_order_fields_list({"ExecSts": "Filled"})
+            [ob_col.order_id.value, "AO", ob_col.qty.value, "1000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
+             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
+             ob_col.tif.value, tif.IOC.value]).check_order_fields_list({"ExecSts": "Filled"})
         FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
-            {"ExecSts": "Filled", "Venue": "CITI", "Limit Price": "1.18141", "Qty": "1,000,000"})
+            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "CITI", ob_col.limit_price.value: "1.18141",
+             ob_col.qty.value: "1,000,000"})
 
         # STEP 2
         new_order_sor_2 = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
@@ -109,15 +115,17 @@ def execute(report_id, session_id):
         new_order_sor_2.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor_2)
 
-        execution_report_filled_2 = FixMessageExecutionReportAlgoFX().\
-            set_params_from_new_order_single(new_order_sor_2, gateway_side_sell,status)
+        execution_report_filled_2 = FixMessageExecutionReportAlgoFX(). \
+            set_params_from_new_order_single(new_order_sor_2, gateway_side_sell, status)
         fix_verifier.check_fix_message(execution_report_filled_2, direction=DirectionEnum.FromQuod)
 
         FXOrderBook(case_id, session_id).set_filter(
-            ["Order ID", "AO", "Qty", "5000000", "Orig", "FIX", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "TH2_Taker",
-             "TIF", "ImmediateOrCancel"]).check_order_fields_list({"ExecSts": "Filled"})
+            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
+             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
+             ob_col.tif.value, tif.IOC.value]).check_order_fields_list({ob_col.exec_sts.value: "Filled"})
         FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
-            {"ExecSts": "Filled", "Venue": "BARX", "Limit Price": "1.18146", "Qty": "5,000,000"})
+            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "BARX", ob_col.limit_price.value: "1.18146",
+             ob_col.qty.value: "5,000,000"})
 
     except Exception:
         logging.error('Error execution', exc_info=True)

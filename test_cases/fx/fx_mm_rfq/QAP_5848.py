@@ -12,7 +12,6 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -129,6 +128,69 @@ def execute(report_id):
         'QuoteReqID': '*',
         'QuoteType': 1,
     }
+    quote_params1 = {
+        'QuoteID': "*",
+        'QuoteMsgID': "*",
+        'BidSpotRate': first_bid,
+        'SettlType': "*",
+        'SettlDate': settle_date_spo,
+        'OfferPx': first_ask,
+        'OfferSize': qty,
+        'BidPx': first_bid,
+        'BidSize': qty,
+        'ValidUntilTime': '*',
+        'OfferSpotRate': first_ask,
+        'Currency': currency,
+        'Instrument': {
+            'Symbol': symbol,
+            'SecurityType': security_type_spo,
+            'Product': 4,
+        },
+        'QuoteReqID': '*',
+        'QuoteType': 1,
+    }
+    quote_params2 = {
+        'QuoteID': "*",
+        'QuoteMsgID': "*",
+        'BidSpotRate': second_bid,
+        'SettlType': "*",
+        'SettlDate': settle_date_spo,
+        'OfferPx': second_ask,
+        'OfferSize': qty,
+        'BidPx': second_bid,
+        'BidSize': qty,
+        'ValidUntilTime': '*',
+        'OfferSpotRate': second_ask,
+        'Currency': currency,
+        'Instrument': {
+            'Symbol': symbol,
+            'SecurityType': security_type_spo,
+            'Product': 4,
+        },
+        'QuoteReqID': '*',
+        'QuoteType': 1,
+    }
+    quote_params3 = {
+        'QuoteID': "*",
+        'QuoteMsgID': "*",
+        'BidSpotRate': third_bid,
+        'SettlType': "*",
+        'SettlDate': settle_date_spo,
+        'OfferPx': third_ask,
+        'OfferSize': qty,
+        'BidPx': third_bid,
+        'BidSize': qty,
+        'ValidUntilTime': '*',
+        'OfferSpotRate': third_ask,
+        'Currency': currency,
+        'Instrument': {
+            'Symbol': symbol,
+            'SecurityType': security_type_spo,
+            'Product': 4,
+        },
+        'QuoteReqID': '*',
+        'QuoteType': 1,
+    }
     quote_params4 = {
         'QuoteID': "*",
         'QuoteMsgID': "*",
@@ -152,7 +214,7 @@ def execute(report_id):
     }
 
     try:
-        change_update_interval(case_id, 10000)
+        change_update_interval(case_id, 0)
         send_md(case_id, base_bid, base_ask)
         time.sleep(5)
         checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
@@ -200,6 +262,9 @@ def execute(report_id):
         }
         message_filters_req = [
             bca.filter_to_grpc('Quote', quote_params_base),
+            bca.filter_to_grpc('Quote', quote_params1),
+            bca.filter_to_grpc('Quote', quote_params2),
+            bca.filter_to_grpc('Quote', quote_params3),
             bca.filter_to_grpc('Quote', quote_params4)
         ]
         pre_filter_req = bca.prefilter_to_grpc(quotes_sequence_params)
