@@ -1,4 +1,4 @@
 FROM ubuntu:latest
-RUN apk add git
-RUN apk add python3
-RUN python3 -m ensurepip --upgrade
+RUN apt update -y && apt-get install git -y && apt-get install python3 -y
+RUN python3 --version
+RUN apt-get install pip -y
