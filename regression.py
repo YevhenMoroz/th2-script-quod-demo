@@ -5,6 +5,7 @@ from custom import basic_custom_actions as bca
 from datetime import datetime
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=True):
