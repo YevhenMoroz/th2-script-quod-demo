@@ -11,7 +11,7 @@ pipeline {
                     export HOME=$WORKSPACE && \\
                     echo $HOME && \\
                     pip install -r requirements.txt --user && \\
-                    python3 regression.py
+                    python3 regression.py --user
                 '''
             }
         }
