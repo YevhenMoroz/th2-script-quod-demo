@@ -56,4 +56,5 @@ class OMSOrderBook(BaseOrderBook):
         self.mass_unbook_call = None
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
+        self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc
     # endregion

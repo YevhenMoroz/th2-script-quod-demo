@@ -3,7 +3,7 @@ from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrdersDetails
 from win_gui_modules.utils import call
-from win_gui_modules.wrappers import direct_moc_request_correct
+from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct
 
 
 class BaseOrderBook(BaseWindow):
@@ -54,6 +54,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_unbook_call = None
         self.mass_book_call = None
         self.direct_moc_request_correct_call = None
+        self.direct_loc_request_correct_call = None
 
     # endregion
     # region Common func
@@ -363,5 +364,8 @@ class BaseOrderBook(BaseWindow):
 
     def direct_moc_order_correct(self, qty, route):
         call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
+
+    def direct_loc_order_correct(self, qty,  route):
+        call(self.direct_loc_request_correct_call, direct_loc_request_correct("UnmatchedQty", qty, route))
 
 
