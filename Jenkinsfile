@@ -8,7 +8,8 @@ pipeline {
         stage('Execute') {
             steps {
                 sh '''
-                    export HOME=$WORKSPACE
+                    export HOME=$WORKSPACE && \\
+                    echo $HOME && \\
                     pip install -r requirements.txt --user && \\
                     python3 regression.py
                 '''
