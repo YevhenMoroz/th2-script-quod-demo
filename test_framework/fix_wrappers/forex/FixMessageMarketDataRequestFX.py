@@ -9,29 +9,52 @@ class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_md_req_parameters(self) -> FixMessageMarketDataRequest:
+    def set_md_req_parameters_maker(self) -> FixMessageMarketDataRequest:
         md_req_parameters = {
-            'SenderSubID': 'CLIEN1',
-            'MDReqID': bca.client_orderid(10),
-            'MarketDepth': '0',
-            'MDUpdateType': '0',
-            'SubscriptionRequestType': '1',
-            'BookType': '0',
-            'NoMDEntryTypes': [
-                {'MDEntryType': '0'},
-                {'MDEntryType': '1'}],
-            'NoRelatedSymbols': [
+            "SenderSubID": "CLIENT1",
+            "MDReqID": bca.client_orderid(10),
+            "MarketDepth": "0",
+            "MDUpdateType": "0",
+            "SubscriptionRequestType": "1",
+            "BookType": "0",
+            "NoMDEntryTypes": [
+                {"MDEntryType": "0"},
+                {"MDEntryType": "1"}],
+            "NoRelatedSymbols": [
                 {
-                    'Instrument': {
-                        'Symbol': 'EUR/USD',
-                        'SecurityType': 'FXSPOT',
-                        'Product': '4',
+                    "Instrument": {
+                        "Symbol": "EUR/USD",
+                        "SecurityType": "FXSPOT",
+                        "Product": "4",
                     },
-                    'SettlType': '0',
+                    "SettlType": "0",
                 }
             ]
         }
         super().change_parameters(md_req_parameters)
         return self
 
+    def set_md_req_parameters_taker(self) -> FixMessageMarketDataRequest:
+        md_req_parameters = {
+            "MDReqID": bca.client_orderid(10),
+            "MarketDepth": "0",
+            "MDUpdateType": "0",
+            "SubscriptionRequestType": "1",
+            "BookType": "0",
+            "NoMDEntryTypes": [
+                {"MDEntryType": "0"},
+                {"MDEntryType": "1"}],
+            "NoRelatedSymbols": [
+                {
+                    "Instrument": {
+                        "Symbol": "EUR/USD",
+                        "SecurityType": "FXSPOT",
+                        "Product": "4",
+                    },
+                    "SettlType": "0",
+                }
+            ]
+        }
+        super().change_parameters(md_req_parameters)
+        return self
 
