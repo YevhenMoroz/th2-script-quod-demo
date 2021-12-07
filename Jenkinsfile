@@ -8,7 +8,7 @@ pipeline {
         stage('Execute') {
             steps {
                 sh '''
-                    pip install -r requirements.txt --user root && \\
+                    pip install -r requirements.txt --user && \\
                     python3 regression.py
                 '''
             }
