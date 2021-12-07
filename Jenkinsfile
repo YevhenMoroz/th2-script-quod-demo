@@ -8,7 +8,7 @@ pipeline {
         stage('Execute') {
             steps {
                 sh '''
-                    export PATH=$PATH:$WORKSPACE
+                    export PATH=$PATH:$WORKSPACE/.local/bin/
                     export HOME=$WORKSPACE && \\
                     echo $HOME && \\
                     pip install -r requirements.txt --user && \\
