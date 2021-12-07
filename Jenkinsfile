@@ -2,7 +2,7 @@ pipeline {
     agent { 
         dockerfile {
             filename 'Dockerfile'
-            arg '-v /var/th2/config/log_config.conf:config.conf'
+            arg '-v /var/th2/config/log_config.conf:./config.conf'
         }
     }
     stages {
