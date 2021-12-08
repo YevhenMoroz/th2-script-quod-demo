@@ -1,3 +1,5 @@
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
+
 import os
 import logging
 import time
@@ -11,7 +13,6 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.algo_formulas_manager import AlgoFormulasManager
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -64,33 +65,88 @@ trigger = {
 }
 
 
-def rules_creation():
+def rule_creation():
     rule_manager = RuleManager()
-    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, price_23, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")],[NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_ioc_md_rule = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, child_ioc_qty, True, connectivity_fh, s_par, price_23, child_ioc_qty, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='35', MDEntryPositionNo="1")],
+                                                                   [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
 
-    nos_ioc_md_rule_1 = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, price_23, last_would_child, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")],[NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
+    nos_ioc_md_rule_1 = rule_manager.add_NewOrdSingle_IOC_MarketData(connectivity_buy_side, account, ex_destination_1, price_23, last_would_child, True, connectivity_fh, s_par, price_23, last_would_child, [NoMDEntries(MDEntryType="0", MDEntryPx='20', MDEntrySize='100', MDEntryPositionNo="1"), NoMDEntries(MDEntryType="1", MDEntryPx='23', MDEntrySize='10', MDEntryPositionNo="1")],
+                                                                     [NoMDEntries(MDUpdateAction='0', MDEntryType='2', MDEntryPx='25', MDEntrySize='200', MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))])
 
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
     return [nos_ioc_md_rule, nos_ioc_md_rule_1, nos_rule1, nos_rule2, ocr_rule]
 
+
+def rule_destroyer(list_rules):
+    if list_rules != None:
+        rule_manager = RuleManager()
+        for rule in list_rules:
+            rule_manager.remove_rule(rule)
+
+
+def send_market_data(symbol: str, case_id: str, market_data):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol=symbol,
+        connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntries': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataSnapshotFullRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
+    ))
+
+
+def send_market_dataT(symbol: str, case_id: str, market_data):
+    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+        symbol=symbol,
+        connection_id=ConnectionID(session_alias=connectivity_fh)
+    )).MDRefID
+    md_params = {
+        'MDReqID': MDRefID,
+        'NoMDEntriesIR': market_data
+    }
+
+    Stubs.fix_act.sendMessage(request=convert_to_request(
+        'Send MarketDataIncrementalRefresh',
+        connectivity_fh,
+        case_id,
+        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
+    ))
+
+
 def execute(report_id):
     try:
-        rules_list = rules_creation()
+        rule_list = rule_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
         # Send_MarkerData
-        fix_manager = FixManager(connectivity_sell_side, case_id)
+        fix_manager_316 = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
         fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
-        fix_manager_fh = FixManager(connectivity_fh, case_id)
 
         case_id_0 = bca.create_event("Send Market Data", case_id)
-        fix_manager_fh.set_case_id(bca.create_event("Send Market Data", case_id))
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_20, MDEntrySize=qty)
-        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_30, MDEntrySize=qty)
-        fix_manager_fh.send_message(market_data_snap_shot)
+        market_data1 = [
+            {
+                'MDEntryType': '0',
+                'MDEntryPx': price_20,
+                'MDEntrySize': mkd,
+                'MDEntryPositionNo': '1'
+            },
+            {
+                'MDEntryType': '1',
+                'MDEntryPx': price_30,
+                'MDEntrySize': mkd,
+                'MDEntryPositionNo': '1'
+            }
+        ]
+        send_market_data(s_par, case_id_0, market_data1)
 
         market_data2 = [
             {
@@ -669,4 +725,5 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.remove_rules(rules_list)
+        rule_destroyer(rule_list)
+
