@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP5858(TestCase):
+class Qap5858(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
