@@ -3,7 +3,7 @@ from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
 
 from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
 from stubs import Stubs
-from win_gui_modules.common_wrappers import GridScrollingDetails
+from win_gui_modules.common_wrappers import GridScrollingDetails, RowsNumbersForGrid
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, SecondLevelExtractionDetails
@@ -24,7 +24,7 @@ class OMSOrderBook(BaseOrderBook):
         self.scrolling_operation = ScrollingOperation
         self.modify_order_details = ModifyOrderDetails(self.base_request)
         self.cancel_order_details = CancelOrderDetails(self.base_request)
-        self.rows_numbers_for_grid = None
+        self.rows_numbers_for_grid = RowsNumbersForGrid(self.base_request)
         self.suspend_order_details = SuspendOrderDetails(self.base_request)
         self.disclose_flag_details = DiscloseFlagDetails(self.base_request)
         self.add_to_basket_details = AddToBasketDetails(self.base_request)
@@ -53,7 +53,8 @@ class OMSOrderBook(BaseOrderBook):
         self.add_to_basket_call = None
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
-        self.mass_unbook_call = None
+        self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
+        self.mass_book_call = Stubs.win_act_order_book.massBook
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc

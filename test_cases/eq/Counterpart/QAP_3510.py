@@ -19,7 +19,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP3509(TestCase):
+class QAP3510(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
@@ -28,12 +28,14 @@ class QAP3509(TestCase):
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
         self.dc_connectivity = SessionAliasOMS().dc_connectivity
 
-    def qap_3509(self):
+    def qap_3510(self):
         # region Declaration
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
         client = "CLIENT_COUNTERPART"
+        qty = 100
+        price = 20
         # endregion
         # region DMA order
         change_params = {'Account': client,
@@ -49,8 +51,8 @@ class QAP3509(TestCase):
                                                                                              client + "_EUREX", "XEUR",
                                                                                              20)
             trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_EUREX", "XEUR", 20,
-                                                                                       100, 2)
+                                                                                       client + "_EUREX", "XEUR", price,
+                                                                                       qty, 1)
 
             fix_manager.send_message_and_receive_response_fix_standard(nos)
         finally:
@@ -62,14 +64,15 @@ class QAP3509(TestCase):
         parties = {
             'NoPartyIDs': [
                 {'PartyRole': "*",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyID': "*",
+                 'PartyIDSource': "*"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
                  'PartyIDSource': "C"},
                 {'PartyRole': "*",
                  'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
                  'PartyIDSource': "*"}
+
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos).change_parameters({"Parties": parties})
@@ -92,4 +95,4 @@ class QAP3509(TestCase):
 
     @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
-        self.qap_3509()
+        self.qap_3510()

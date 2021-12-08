@@ -1,5 +1,5 @@
-from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
+from win_gui_modules.basket_ticket_wrappers import BasketTicketDetails
 from win_gui_modules.utils import call
 
 
@@ -13,6 +13,8 @@ class BaseBasketOrderBook(BaseWindow):
         self.file_details = None
         self.simple_request = None
         self.basket_ticket_details = None
+        self.extract_basket_data_details = None
+        self.extract_basket_order_details = None
         self.imported_file_mapping_field = None
         self.extract_template_details = None
         self.extract_child_order_data = None
@@ -43,6 +45,25 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_template_details(self.base_request, {'Name': templ_name}, column_names)
         result = call(self.extract_template_data_call, self.extract_template_details.build())
         self.clear_details([self.extract_template_details])
+        return result
+
+    def get_basket_value(self, column_name, basket_book_filter: dict = None):
+        self.extract_basket_data_details.set_default_params(self.base_request)
+        self.extract_basket_data_details.set_column_names([column_name])
+        if basket_book_filter is not None:
+            self.extract_basket_data_details.set_filter(basket_book_filter)
+        result = call(self.extract_basket_data_details_call, self.extract_basket_data_details.build())
+        return result[column_name]
+
+    def get_basket_orders_value(self, row_count: int, extract_value, basket_book_filter: dict = None):
+        self.extract_basket_data_details.set_default_params(self.base_request)
+        self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
+        self.extract_basket_data_details.set_column_names(
+            [extract_value])  # Set column for child orders which data be extracted
+        extract_child_details = self.extract_basket_order_details.ExtractChildOrderDataDetails(
+            self.extract_basket_data_details.build(),
+            row_count)  # argument #2 - row numbers
+        result = call(self.extract_basket_order_details_call, extract_child_details.build())
         return result
     # endregion
 
@@ -130,6 +151,7 @@ class BaseBasketOrderBook(BaseWindow):
     def create_basket_via_import(self, basket_name, basket_template_name, path, client, expire_date=None, tif=None,
                                  is_csv=False, amend_rows_details: [basket_row_details] = None):
         file_type = 1 if is_csv else 0
+        self.basket_ticket_details = BasketTicketDetails()
         self.basket_ticket_details.set_file_details(self.file_details(file_type, path).build())
         self.basket_ticket_details.set_default_params(self.base_request)
         self.basket_ticket_details.set_name_value(basket_name)
@@ -165,14 +187,3 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.remove_from_basket_call, remove_from_basket_details.build())
 
     # endregion
-
-    def get_basket_orders_values(self, row_count, extract_value, basket_book_filter: dict = None):
-        extract_order_details = self.extract_order_data_details()
-        extract_order_details.set_default_params(self.base_request)
-        if basket_book_filter is not None:
-            extract_order_details.set_filter(basket_book_filter)
-        extract_order_details.set_column_names([extract_value])
-        extract_child_details = self.extract_child_details(extract_order_details.build(), row_count)
-        result = call(self.ex, extract_child_details.build())
-        self.clear_details([self.basket_ticket_details])
-        return result

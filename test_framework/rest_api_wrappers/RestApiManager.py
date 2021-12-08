@@ -1,8 +1,8 @@
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from RestApiMessages import RestApiMessages
 from custom.basic_custom_actions import convert_to_get_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
 class RestApiManager:
@@ -12,7 +12,7 @@ class RestApiManager:
         self.session_alias = session_alias
         self.case_id = case_id
 
-    def send_post_request(self, api_message: RestApiMessages):
+    def send_post_request(self, api_message: RestApiMessages = None):
         self.act.sendMessage(request=SubmitMessageRequest(message=bca.wrap_message(content=api_message.get_parameters(),
                                                                                    message_type=api_message.get_message_type(),
                                                                                    session_alias=self.session_alias),

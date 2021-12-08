@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from random import randint
 
 from custom.tenor_settlement_date import spo
@@ -20,8 +21,9 @@ logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-client = 'QUOD5'
-account = 'QUOD5_1'
+client = 'Osmium1'
+account = 'Osmium1_1'
+account_quod = 'QUOD3_1'
 symbol = 'EUR/USD'
 side_b = "1"
 side_s = "2"
@@ -33,22 +35,23 @@ currency = "EUR"
 settle_currency = "USD"
 
 ord_qty = str(randint(3000000, 4000000))
-qty = '3000000'
 api = Stubs.api_service
-ttl_test = 500
-ttl_default = 120
-position_quod5 = 'QUOD5'
-position_quod3 = 'QUOD3'
 
 verification_equal = VerificationMethod.EQUALS
 verification_not_equal = VerificationMethod.NOT_EQUALS
 
+status_true = 'true'
+OsmiumAH_ID = 1400008
+OsmiumAH2_ID = 1600011
+OsmiumAH_Name = 'OsmiumAH'
+OsmiumAH2_Name = 'OsmiumAH2'
 
-def set_send_hedge_order(case_id, ttl, position_book):
+
+def set_send_hedge_order(case_id, ah_id, ah_name, schedule='false'):
     modify_params = {
-        "autoHedgerName": "OsmiumAH",
-        "hedgeAccountGroupID": position_book,
-        "autoHedgerID": 1400008,
+        "autoHedgerName": ah_name,
+        "hedgeAccountGroupID": 'QUOD3',
+        "autoHedgerID": ah_id,
         "alive": "true",
         "hedgedAccountGroup": [
             {
@@ -69,11 +72,12 @@ def set_send_hedge_order(case_id, ttl, position_book):
                 "shortUpperQty": 0,
                 "timeInForce": "DAY",
                 "sendHedgeOrders": 'true',
-                "exposureDuration": ttl,
+                "exposureDuration": 120,
                 "hedgeOrderDestination": "EXT"
             }
 
-        ]
+        ],
+        'enableSchedule': schedule
     }
     api.sendMessage(
         request=SubmitMessageRequest(message=bca.wrap_message(modify_params, 'ModifyAutoHedger', 'rest_wa314luna'),
@@ -138,36 +142,36 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     try:
         # Step 1
-        set_send_hedge_order(case_id, ttl_test, position_quod3)
+        set_send_hedge_order(case_id, OsmiumAH_ID, OsmiumAH_Name)
+        set_send_hedge_order(case_id, OsmiumAH2_ID, OsmiumAH2_Name)
 
-        initial_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
+        initial_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
         send_rfq_and_filled_order_buy(case_id, ord_qty)
 
-        order_id = FXOrderBook(case_id, session_id)
-        order_id.extract_field(ob_names.order_id.value)
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.order_id.value: '',
-            ob_names.orig.value: 'AutoHedger'},
-            event_name='Checking that AH was`n triggered',
-            verification_method=verification_not_equal)
+        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-
-        compare_position('Checking positions', case_id, ord_qty, extracted_pos_quod, account)
-
-        set_send_hedge_order(case_id, ttl_test, position_quod5)
+        compare_position('Checking positions', case_id, f'-{ord_qty}', extracted_pos_quod, account_quod)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                                  ob_names.orig.value, 'AutoHedger']). \
+                                                                  ob_names.orig.value, 'AutoHedger',
+                                                                  ob_names.qty.value, ord_qty]). \
             extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
 
-        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                     ob_names.orig.value, 'AutoHedger']). \
-            check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
-                                     ob_names.orig.value: 'AutoHedger',
-                                     ob_names.qty.value: order_info['Qty']},
-                                    event_name='Checking that AH triggered after settings changed')
+        FXOrderBook(case_id, session_id).check_order_fields_list(
+            {ob_names.order_id.value: order_info['Order ID'],
+             ob_names.orig.value: 'AutoHedger',
+             ob_names.qty.value: order_info['Qty'],
+             ob_names.sts.value: sts_names.open.value},
+            event_name='Checking that AH triggered and it is last order in order book',
+            row_number=1)
+
+        FXOrderBook(case_id, session_id).check_order_fields_list(
+            {ob_names.order_id.value: order_info['Order ID'],
+             ob_names.orig.value: 'AutoHedger'},
+            event_name='Checking only one AH order created and 2nd order in OB isn`t AH order',
+            verification_method=verification_not_equal,
+            row_number=2)
 
         send_rfq_and_filled_order_sell(case_id, ord_qty)
 
@@ -179,9 +183,11 @@ def execute(report_id, session_id):
                                      ob_names.sts.value: sts_names.cancelled.value},
                                     event_name='Checking that after cancel there is no new AH orders')
 
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
+        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
-        compare_position('Checking positions', case_id, initial_pos, extracted_pos_quod, account)
+        compare_position('Checking positions', case_id, initial_pos, extracted_pos_quod, account_quod)
+
+
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
@@ -189,6 +195,6 @@ def execute(report_id, session_id):
     finally:
         try:
             # Set default parameters
-            set_send_hedge_order(case_id, ord_qty, position_quod3)
+            set_send_hedge_order(case_id, OsmiumAH2_ID, OsmiumAH2_Name, status_true)
         except Exception:
             logging.error("Error execution", exc_info=True)

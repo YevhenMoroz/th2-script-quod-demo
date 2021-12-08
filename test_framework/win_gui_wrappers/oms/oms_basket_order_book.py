@@ -34,5 +34,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.remove_from_basket_call = Stubs.win_act_basket_order_book.removeChildOrderFromBasket
         self.extract_basket_data_call = Stubs.win_act_basket_order_book.extractOrderData
         self.extract_child_order_data_call = Stubs.win_act_basket_order_book.extractChildOrderData
+        self.extract_basket_data_details_call = Stubs.win_act_basket_order_book.extractOrderData
+        self.extract_basket_order_details_call = Stubs.win_act_basket_order_book.extractChildOrderData
 
     # endregion

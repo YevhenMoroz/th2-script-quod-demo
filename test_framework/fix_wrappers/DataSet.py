@@ -16,6 +16,8 @@ class MessageType(Enum):
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
     ListStatus = "ListStatus"
+    Confirmation = "Confirmation"
+    AllocationInstruction = "AllocationInstruction"
 
 
 class Instrument(Enum):
@@ -51,7 +53,15 @@ class Instrument(Enum):
         Symbol='ISI1',
         SecurityID='ISI1',
         SecurityIDSource='4',
-        SecurityExchange='XEUR'
+        SecurityExchange='XEUR',
+        SecurityType='CS'
+    )
+    FR0004186856 = dict(
+        Symbol='FR0004186856_EUR',
+        SecurityID='FR0004186856',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
     )
 
 
@@ -63,6 +73,7 @@ class Connectivity(Enum):
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
+    Ganymede_317_wa = "rest_wa317ganymede"
 
 
 class GatewaySide(Enum):

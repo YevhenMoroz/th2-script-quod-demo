@@ -1,3 +1,5 @@
+import time
+from datetime import datetime, timedelta
 from random import randint
 
 from custom.tenor_settlement_date import spo
@@ -20,8 +22,8 @@ logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-client = 'QUOD5'
-account = 'QUOD5_1'
+client = 'QUOD3'
+account = 'QUOD3_1'
 symbol = 'EUR/USD'
 side_b = "1"
 side_s = "2"
@@ -33,22 +35,81 @@ currency = "EUR"
 settle_currency = "USD"
 
 ord_qty = str(randint(3000000, 4000000))
-qty = '3000000'
 api = Stubs.api_service
-ttl_test = 500
-ttl_default = 120
-position_quod5 = 'QUOD5'
-position_quod3 = 'QUOD3'
 
 verification_equal = VerificationMethod.EQUALS
 verification_not_equal = VerificationMethod.NOT_EQUALS
 
 
-def set_send_hedge_order(case_id, ttl, position_book):
+timestamp = str(datetime.now().timestamp())
+timestamp = timestamp.split(".", 1)
+timestamp = timestamp[0]
+OsmiumAH_Schedule = {
+    'scheduleFromTime': str((datetime.now()-timedelta(hours=3)).timestamp()).split(".", 1)[0]+'000',
+    'scheduleToTime': str((datetime.now()+timedelta(minutes=2)).timestamp()).split(".", 1)[0]+'000',
+    'weekDay': datetime.now().strftime("%a").upper()
+}
+OsmiumAH2_Schedule = {
+    'scheduleFromTime': str((datetime.now()+timedelta(minutes=3)).timestamp()).split(".", 1)[0]+'000',
+    'scheduleToTime': str((datetime.now()+timedelta(hours=3)).timestamp()).split(".", 1)[0]+'000',
+    'weekDay': datetime.now().strftime("%a").upper()
+}
+
+status_true = 'true'
+status_false = 'false'
+OsmiumAH_ID = 1400008
+OsmiumAH2_ID = 1600011
+OsmiumAH_Name = 'OsmiumAH'
+OsmiumAH2_Name = 'OsmiumAH2'
+OsmiumAH_Qty = 5000000
+OsmiumAH2_Qty = 3000000
+
+
+def set_send_hedge_order(case_id, ah_id, ah_name, qty, schedule=None):
     modify_params = {
-        "autoHedgerName": "OsmiumAH",
-        "hedgeAccountGroupID": position_book,
-        "autoHedgerID": 1400008,
+        "autoHedgerName": ah_name,
+        "hedgeAccountGroupID": 'QUOD3',
+        "autoHedgerID": ah_id,
+        "alive": "true",
+        "hedgedAccountGroup": [
+            {
+                "accountGroupID": "Osmium1"
+            }
+        ],
+        "autoHedgerInstrSymbol": [
+            {
+                "instrSymbol": "EUR/USD",
+                "longUpperQty": qty,
+                "longLowerQty": 0,
+                "maintainHedgePositions": 'true',
+                "crossCurrPairHedgingPolicy": "DIR",
+                "useSameLongShortQty": "true",
+                "hedgingStrategy": "POS",
+                "algoPolicyID": 400018,
+                "shortLowerQty": 0,
+                "shortUpperQty": 0,
+                "timeInForce": "DAY",
+                "sendHedgeOrders": 'true',
+                "exposureDuration": 500,
+                "hedgeOrderDestination": "EXT"
+            }
+
+        ],
+        'autoHedgerSchedule': [
+            schedule
+        ],
+        'enableSchedule': 'true'
+    }
+    api.sendMessage(
+        request=SubmitMessageRequest(message=bca.wrap_message(modify_params, 'ModifyAutoHedger', 'rest_wa314luna'),
+                                     parent_event_id=case_id))
+
+
+def set_default_auto_hedger(case_id):
+    modify_params = {
+        "autoHedgerName": OsmiumAH_Name,
+        "hedgeAccountGroupID": 'QUOD3',
+        "autoHedgerID": OsmiumAH_ID,
         "alive": "true",
         "hedgedAccountGroup": [
             {
@@ -69,7 +130,7 @@ def set_send_hedge_order(case_id, ttl, position_book):
                 "shortUpperQty": 0,
                 "timeInForce": "DAY",
                 "sendHedgeOrders": 'true',
-                "exposureDuration": ttl,
+                "exposureDuration": 120,
                 "hedgeOrderDestination": "EXT"
             }
 
@@ -138,7 +199,8 @@ def execute(report_id, session_id):
     pos_service = Stubs.act_fx_dealing_positions
     try:
         # Step 1
-        set_send_hedge_order(case_id, ttl_test, position_quod3)
+        set_send_hedge_order(case_id, OsmiumAH_ID, OsmiumAH_Name, OsmiumAH_Qty, OsmiumAH_Schedule)
+        set_send_hedge_order(case_id, OsmiumAH2_ID, OsmiumAH2_Name, OsmiumAH2_Qty, OsmiumAH2_Schedule)
 
         initial_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
 
@@ -153,26 +215,25 @@ def execute(report_id, session_id):
             verification_method=verification_not_equal)
 
         extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-
         compare_position('Checking positions', case_id, ord_qty, extracted_pos_quod, account)
-
-        set_send_hedge_order(case_id, ttl_test, position_quod5)
+        time.sleep(120)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                                  ob_names.orig.value, 'AutoHedger']). \
+                                                                  ob_names.orig.value, 'AutoHedger',
+                                                                  ob_names.qty.value, ord_qty]). \
             extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
 
         FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                     ob_names.orig.value, 'AutoHedger']). \
+                                                     ob_names.orig.value, 'AutoHedger',
+                                                     ob_names.qty.value, ord_qty]). \
             check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
                                      ob_names.orig.value: 'AutoHedger',
                                      ob_names.qty.value: order_info['Qty']},
-                                    event_name='Checking that AH triggered after settings changed')
+                                    event_name='Checking that AH triggered after schedule on second AH become active')
 
         send_rfq_and_filled_order_sell(case_id, ord_qty)
 
         FXOrderBook(case_id, session_id).cancel_order(filter_list=[ob_names.order_id.value, order_info['Order ID']])
-
         FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
                                                      ob_names.orig.value, 'AutoHedger']). \
             check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
@@ -182,6 +243,7 @@ def execute(report_id, session_id):
         extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
 
         compare_position('Checking positions', case_id, initial_pos, extracted_pos_quod, account)
+
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
@@ -189,6 +251,7 @@ def execute(report_id, session_id):
     finally:
         try:
             # Set default parameters
-            set_send_hedge_order(case_id, ord_qty, position_quod3)
+            set_default_auto_hedger(case_id)
+            set_send_hedge_order(case_id, OsmiumAH2_ID, OsmiumAH2_Name, OsmiumAH2_Qty)
         except Exception:
             logging.error("Error execution", exc_info=True)

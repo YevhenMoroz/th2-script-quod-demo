@@ -1,7 +1,3 @@
-from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionAccounts, \
-    CommissionClients
-
-
 class RestApiMessages:
 
     def __init__(self):
@@ -100,51 +96,3 @@ class RestApiMessages:
 
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
-
-    def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
-        self.message_type = 'ModifyCommission'
-        default_parameters = {
-            'commDescription': "Fee1" if fee is None else fee.name,
-            'commExecScope': "ALL",
-            'commissionID': 1 if fee is None else fee.value,
-            'execCommissionProfileID': 1,
-            'miscFeeType': 'EXC',
-            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-        }
-        self.parameters = params if params is not None else default_parameters
-        return self
-
-    def clear_fees_request(self, commission_id):
-        self.message_type = 'ModifyCommission'
-        default_parameters = {
-            'commDescription': "FeeCleared",
-            'commissionID': commission_id,
-            'miscFeeType': 'EXC'
-        }
-        self.parameters = default_parameters
-        return self
-
-    def change_params(self, param_modify: dict):
-        for key, value in param_modify.items():
-            self.parameters[key] = value
-        return self
-
-    def modify_client_commission_request(self, params=None, client: CommissionClients = None,
-                                         account: CommissionAccounts = None, recalculate=False,
-                                         commission: FeesAndCommissions = None):
-        self.message_type = 'ModifyClCommission'
-        default_parameters = {
-            'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
-            'clCommissionDescription': "Commission of Testing MOClient",
-            'clCommissionID': 1 if commission is None else commission.value,
-            'clCommissionName': "Commission1" if commission is None else commission.name,
-            'commissionAmountType': "BRK",
-            'commissionProfileID': 1,
-            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-            'venueID': "EUREX"
-        }
-        if account is not None and client is None:
-            default_parameters.pop("accountGroupID")
-            default_parameters["accountID"] = account.value
-        self.parameters = params if params is not None else default_parameters
-        return self
