@@ -8,14 +8,13 @@ from custom import basic_custom_actions
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import create_event
 from custom.verifier import Verifier, VerificationMethod
-# from demo import logger
-from test_framework.old_wrappers.eq_fix_wrappers import buy_connectivity, logger
 from rule_management import RuleManager
 from stubs import Stubs
+from test_framework.old_wrappers.eq_fix_wrappers import buy_connectivity, logger
 from win_gui_modules import trades_blotter_wrappers, basket_order_book_wrappers
 from win_gui_modules.application_wrappers import FEDetailsRequest
 from win_gui_modules.basket_ticket_wrappers import ImportedFileMappingFieldDetails, ImportedFileMappingDetails, \
-    TemplatesDetails, RowDetails, FileDetails, FileType, BasketTicketDetails, ExtractTemplateDetails
+    TemplatesDetails, RowDetails, FileDetails, BasketTicketDetails, ExtractTemplateDetails
 from win_gui_modules.common_wrappers import GridScrollingDetails, SimpleRequest, RowsNumbersForGrid
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails

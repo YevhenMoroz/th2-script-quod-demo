@@ -2,6 +2,7 @@ from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 
 from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrderBook
 from stubs import Stubs
+from win_gui_modules import basket_order_book_wrappers
 from win_gui_modules.basket_ticket_wrappers import TemplatesDetails, FileDetails, RowDetails, BasketTicketDetails, \
     ExtractTemplateDetails
 from win_gui_modules.common_wrappers import SimpleRequest
@@ -14,9 +15,11 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.imported_file_mapping_field_details = ImportedFileMappingField
         self.templates_details = TemplatesDetails()
         self.row_details = RowDetails()
-        self.file_details = FileDetails()
+        self.file_details = FileDetails
         self.simple_request = SimpleRequest()
         self.basket_ticket_details = BasketTicketDetails()
+        self.extract_basket_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
+        self.extract_basket_order_details = basket_order_book_wrappers
         self.extract_template_details = ExtractTemplateDetails()
         self.manage_templates_call = Stubs.win_act_basket_ticket.manageTemplates
         self.extract_template_data_call = Stubs.win_act_basket_ticket.extractTemplateData
@@ -26,5 +29,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.uncomplete_basket_call = Stubs.win_act_basket_order_book.uncomplete
         self.book_basket_call = Stubs.win_act_basket_order_book.book
         self.cancel_basket_call = Stubs.win_act_basket_order_book.cancelBasket
+        self.extract_basket_data_details_call = Stubs.win_act_basket_order_book.extractOrderData
+        self.extract_basket_order_details_call = Stubs.win_act_basket_order_book.extractChildOrderData
 
     # endregion

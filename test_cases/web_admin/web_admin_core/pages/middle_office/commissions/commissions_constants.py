@@ -2,6 +2,7 @@ class CommissionsConstants:
     COMMISSIONS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Commissions ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
+    DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH ="//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"

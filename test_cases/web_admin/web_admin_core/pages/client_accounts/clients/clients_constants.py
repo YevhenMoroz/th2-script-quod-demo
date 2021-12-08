@@ -55,6 +55,10 @@ class ClientsConstants:
     VALUES_TAB_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
     VALUES_TAB_PRICE_PRECISION_XPATH = '//*[@formcontrolname="pxPrecision"]'
 
+    # Assignments tab
+    ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="accountMgrDesk"]'
+
     # External sources tab
     EXTERNAL_SOURCES_TAB_BIC_VENUE_ACT_GRP_NAME = '//*[@id="BIC"]'
     EXTERNAL_SOURCES_TAB_DTCC_VENUE_ACT_GRP_NAME = '//*[@id="DTCC"]'
@@ -134,11 +138,11 @@ class ClientsConstants:
     INSTR_TYPES_TAB_POS_KEEPING_MODE_FILTER_XPATH = '//*[@class="ng2-smart-th posKeepingMode ng-star-inserted"]//input'
 
     # Venues tab
-    VENUES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@class="nb-plus"]'
-    VENUES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    VENUES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    VENUES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@class="nb-edit"]'
-    VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@class="nb-trash"]'
+    VENUES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    VENUES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    VENUES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="close"]'
+    VENUES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     VENUES_TAB_VENUE_XPATH = '//*[@placeholder="Venue *"]'
     VENUES_TAB_VENUE_FILTER_XPATH = '//*[@class="ng2-smart-th venue ng-star-inserted"]//input'
@@ -161,11 +165,11 @@ class ClientsConstants:
     VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[12]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
 
     # Routes tab
-    ROUTES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@class="nb-plus ng2-add-btn"]'
-    ROUTES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    ROUTES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@class="nb-plus ng2-add-btn"]'
-    ROUTES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@class="nb-plus ng2-add-btn"]'
-    ROUTES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@class="nb-plus ng2-add-btn"]'
+    ROUTES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    ROUTES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    ROUTES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="close"]'
+    ROUTES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    ROUTES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     ROUTES_TAB_ROUTE_XPATH = '//*[@placeholder="Route *"]'
     ROUTES_TAB_ROUTE_FILTER_XPATH = '//*[@class="ng2-smart-th route ng-star-inserted"]//input'
@@ -173,16 +177,16 @@ class ClientsConstants:
     ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th routeActGrpName ng-star-inserted"]//input'
 
     # Trade confirm
-    TRADE_CONFIRM_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@class="nb-plus sub-table-action"]'
-    TRADE_CONFIRM_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    TRADE_CONFIRM_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    TRADE_CONFIRM_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@class="nb-edit sub-table-action"]'
-    TRADE_CONFIRM_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@class="nb-trash sub-table-action"]'
+    TRADE_CONFIRM_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    TRADE_CONFIRM_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    TRADE_CONFIRM_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="close"]'
+    TRADE_CONFIRM_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    TRADE_CONFIRM_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     TRADE_CONFIRM_TRADE_CONFIRM_GENERATION_XPATH = '//*[@id="tradeConfirmGeneration"]'
     TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH = '//*[@id="tradeConfirmPreference"]'
     TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH = '//*[@id="netGrossIndType"]'
     TRADE_CONFIRM_EMAIL_ADDRESS_XPATH = '//*[@placeholder="Email Address *"]'
     TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
-    TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[@placeholder="Recipient Types *"]'
+    TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[@placeholder="Recipient Types"]'
     TRADE_CONFIRM_RECIPIENT_TYPES_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
