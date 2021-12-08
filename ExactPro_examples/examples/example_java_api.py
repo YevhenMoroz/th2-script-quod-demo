@@ -18,6 +18,7 @@ class ORSMessages(Enum):
     order_list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
     order_submit = 'Order_OrderSubmit'
     trade_request = 'Order_TradeEntryRequest'
+    order_unmatch = '"Order_UnMatchRequest"'
 
 
 class TestCase:
@@ -26,8 +27,12 @@ class TestCase:
         self.act_java_api = Stubs.act_java_api
         self.connectivity = '317_java_api'
 
+   # 'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
+    #                         'RoleID': 'Trader',
+    #                         'SessionKey': 62000000481},
     def send_nos(self):
         nos_params = {
+
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'NewOrderSingleBlock': {
                 'ListingList': {
@@ -74,26 +79,37 @@ class TestCase:
                     '%Y-%m-%dT%H:%M:%S')
             }
         }
-        # 'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
-        #                         'RoleID': 'Trader',
-        #                         'SessionKey': 62000000481},
         order_list_wave_creation_request = {
 
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'OrderListWaveCreationRequestBlock': {
-                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211203153316175001'},
-                                                       {'ParentOrdID': 'CO1211203153318175001'}]},
-                'OrderListID': 'LI1211203153316175001',
+                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211206152255192001'},
+                                                       {'ParentOrdID': 'CO1211206152255192002'}]},
+                'OrderListID': 'LI1211206152255192001',
                 'PercentQtyToRelease': 1.000000000,
                 'QtyPercentageProfile': "REM"
 
             }
         }
+        order_un_match_detail = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'UnMatchRequestBlock': {
+                'UnMatchingList': {'UnMatchingBlock': [
+                    {'VirtualExecID': "EV1211206174312222007", 'UnMatchingQty': "100", 'SourceAccountID': "CareWB",
+                     'PositionType': "N"}
+                ]},
+                'DestinationAccountID': 'PROP'
+            }
+        }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.trade_request.value,
-                                                     trade_params, self.connectivity),
-            parent_event_id=self.case_id))
+            message=bca.message_to_grpc_fix_standard(ORSMessages.order_submit.value,
+                                                     nos_params, self.connectivity),
+           parent_event_id=self.case_id))
+
+
+
+
 
         # Main method
 

@@ -48,11 +48,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
             "Instrument": new_order_single.get_parameter("Instrument"),
-            "SettlDate": "*",
-            "ReplyReceivedTime": "*",
-            "SecondaryOrderID": "*",
-            "Text": "*",
-            "LastMkt": "*"
+            "SettlDate": "*"
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
