@@ -8,9 +8,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers import FreeNotes
 from test_framework.fix_wrappers import DataSet
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 
 logger = logging.getLogger(__name__)
@@ -21,7 +19,7 @@ timeouts = True
 qty = 100000
 price = 30
 limit_price_offset = 5
-text_reject_limit_price_reference = FreeNotes.FreeNotesReject.MissLimitPriceReference.value
+text_reject_limit_price_reference = DataSet.FreeNotesReject.MissLimitPriceReference.value
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
