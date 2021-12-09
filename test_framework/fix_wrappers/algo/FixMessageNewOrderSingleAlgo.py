@@ -55,6 +55,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_VWAP_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "1",
+            'QuodFlatParameters': {
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
