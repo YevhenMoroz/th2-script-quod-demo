@@ -106,7 +106,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
-            "HandlInst": "0",
+            "HandlInst": "2",
             "Side": "1",
             "OrderQty": "1000",
             "TimeInForce": "0",
@@ -116,7 +116,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010436584.value,
+            "Instrument": Instrument.PAR.value,
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10'
