@@ -50,7 +50,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Instrument": Instrument.PAR.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
-                'Waves': '5',
                 'WouldInAuction': '0'
             }
         }
