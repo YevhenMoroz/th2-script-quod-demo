@@ -1,22 +1,28 @@
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
-
 import os
 import logging
 import time
-from datetime import datetime, timedelta
+import math
+from datetime import datetime
 from custom import basic_custom_actions as bca
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, NoMDEntries
+from th2_grpc_common.common_pb2 import ConnectionID
+from quod_qa.wrapper.fix_manager import FixManager
+from quod_qa.wrapper.fix_message import FixMessage
+from quod_qa.wrapper.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
-from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
-from test_framework.algo_formulas_manager import AlgoFormulasManager
+from stubs import Stubs
+from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+# text
+text_pn = 'Pending New status'
+text_n = 'New status'
+text_c = 'order canceled'
+text_f = 'Fill'
+text_r = 'order replaced'
 
 # algo param
 percentage = 10
@@ -48,16 +54,20 @@ currency = 'EUR'
 ex_destination_1 = "XPAR"
 client = "CLIENT2"
 account = 'XPAR_CLIENT2'
+currency = 'EUR'
 s_par = '1015'
 
-# connectivity
 case_name = os.path.basename(__file__)
-instrument = DataSet.Instrument.PAR.value
-FromQuod = DataSet.DirectionEnum.FromQuod
-ToQuod = DataSet.DirectionEnum.ToQuod
-connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
-connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
-connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
+connectivity_buy_side = "fix-buy-side-316-ganymede"
+connectivity_sell_side = "fix-sell-side-316-ganymede"
+connectivity_fh = 'fix-feed-handler-316-ganymede'
+
+instrument = {
+    'Symbol': 'FR0010263202_EUR',
+    'SecurityID': 'FR0010263202',
+    'SecurityIDSource': '4',
+    'SecurityExchange': 'XPAR'
+}
 
 trigger = {
     'TriggerType': 4,
