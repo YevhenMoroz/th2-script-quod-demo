@@ -94,7 +94,7 @@ def execute(report_id):
 
         reject_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_reject)
         reject_twap_nav_order_params.change_parameter('Text', text_reject_limit_price_reference)
-        fix_verifier_ss.check_fix_message(reject_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport New')
+        fix_verifier_ss.check_fix_message(reject_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport Reject')
         #endregion
 
     except:
