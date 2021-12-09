@@ -43,6 +43,7 @@ class QAP4421(TestCase):
         ord_ticket = OMSOrderTicket(self.case_id, self.session_id)
         clt_inbox = OMSClientInbox(self.case_id, self.session_id)
         client = "CLIENT_COUNTERPART"
+        alloc_acc = "CLIENT_COUNTERPART_SA1"
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
@@ -55,7 +56,7 @@ class QAP4421(TestCase):
                          'ExDestination': 'XEUR',
                          'PreAllocGrp': {
                              'NoAllocs': [{
-                                 'AllocAccount': "CLIENT_COUNTERPART_SA1",
+                                 'AllocAccount': alloc_acc,
                                  'AllocQty': "100"}]}, }
         nos = FixMessageNewOrderSingleOMS().set_default_care_limit(Instrument.ISI1).change_parameters(change_params)
         fix_manager.send_message_and_receive_response_fix_standard(nos)
