@@ -87,7 +87,7 @@ class QAP_5860(TestCase):
 
         Stubs.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc_fix_standard("Order_ManualOrderCrossRequest",
-                                                     manual_order_cross_params, self.ss_connectivity),
+                                                     manual_order_cross_params, "317_java_api"),
             parent_event_id=self.case_id))
         # endregion
         # region Set-up parameters for ExecutionReports

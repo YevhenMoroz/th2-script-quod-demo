@@ -99,7 +99,7 @@ class QAP4421(TestCase):
 
         Stubs.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
             message=bca.message_to_grpc_fix_standard("Order_UnMatchRequest",
-                                                     order_un_match_detail, self.ss_connectivity),
+                                                     order_un_match_detail, "317_java_api"),
             parent_event_id=self.case_id))
         # endregion
         # region Set-up parameters for ExecutionReports
