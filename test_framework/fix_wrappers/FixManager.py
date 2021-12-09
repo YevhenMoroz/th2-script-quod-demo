@@ -202,6 +202,7 @@ class FixManager:
         return self.parse_response_fix_standard(response)
 
     def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
+        response_messages = list()
         for message in response.response_messages_list:
             fields = dict()
             for field in message.fields:
@@ -240,8 +241,8 @@ class FixManager:
             elif message_type == MessageType.OrderCancelReplaceRequest.value:
                 responce_fix_message = FixMessageOrderCancelReplaceRequest()
             responce_fix_message.change_parameters(fields)
-
-        return responce_fix_message
+            response_messages.append(responce_fix_message)
+        return response_messages
 
     def get_case_id(self):
         return self.__case_id

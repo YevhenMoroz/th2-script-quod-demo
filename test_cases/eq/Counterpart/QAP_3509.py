@@ -19,10 +19,10 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP3509(TestCase):
+class QAP_3509(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity

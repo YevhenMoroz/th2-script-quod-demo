@@ -47,7 +47,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "Side": new_order_single.get_parameter("Side"),
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
-            "Instrument": new_order_single.get_parameter("Instrument"),
+            "Instrument":  "*",
             "SettlDate": "*"
         }
         self.change_parameters(self.base_parameters)
