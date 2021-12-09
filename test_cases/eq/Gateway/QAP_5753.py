@@ -100,10 +100,10 @@ class Qap5753(TestCase):
 
         # region verify second allocation instruction
         fix_report_allocinstr.set_default_preliminary(fix_message).remove_parameter(
-            'NoAllocs').add_fields_into_repeating_group('NoAllocs', [
+            'NoAllocs').change_parameters({'NoAllocs', [
             {'AllocSettlCurrAmt': '*', 'AllocSettlCurrency': '*', 'SettlCurrAmt': '*', 'SettlCurrFxRate': '*',
              'SettlCurrency': '*', 'SettlCurrFxRateCalc': '*', 'AllocQty': '*',
-             'AllocNetPrice': '*', 'AllocAccount': '*', 'AllocPrice': '*'}])
+             'AllocNetPrice': '*', 'AllocAccount': '*', 'AllocPrice': '*'}]})
         fix_verifier.check_fix_message_fix_standard(fix_report_allocinstr)
         # endregion
 
