@@ -50,6 +50,12 @@ class TimeInForce(Enum):
     DAY = 'Day'
 
 
+class OrderType(Enum):
+    limit = "Limit"
+    market = "Market"
+    previously_quoted = "PreviouslyQuoted"
+
+
 # TODO: Need to compare with actual version (v156)
 class InstrType(Enum):
     spot = 'Spot'
