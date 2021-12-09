@@ -92,14 +92,15 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "SettlDate": "*",
             "ReplyReceivedTime": "*",
             "SecondaryOrderID": "*",
-            "Text": "*",
             "LastExecutionPolicy": "*",
             "TradeDate": "*",
             "TradeReportingIndicator": "*",
             "SecondaryExecID": "*",
             "ExDestination": "*",
             "GrossTradeAmt": "*",
-            "LastMkt": "*"
+            "SettlCurrency": "*",
+            "MiscFeesGrp": "*",
+            "CommissionData": "*",
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)

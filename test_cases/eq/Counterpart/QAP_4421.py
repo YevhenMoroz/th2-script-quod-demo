@@ -117,7 +117,7 @@ class QAP4421(TestCase):
 
             ]
         }
-        exec_report = FixMessageExecutionReportOMS().set_default_trade_cancel(nos).change_parameters(
+        exec_report = FixMessageExecutionReportOMS().set_default_filled(nos).change_parameters(
             {"Parties": parties})
         # endregion
         # region Check ExecutionReports

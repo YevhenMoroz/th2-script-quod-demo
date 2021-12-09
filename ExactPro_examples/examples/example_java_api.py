@@ -15,10 +15,12 @@ rep_id = bca.create_event('java_api_example ' + datetime.now().strftime('%Y%m%d-
 
 
 class ORSMessages(Enum):
-    order_list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
-    order_submit = 'Order_OrderSubmit'
+    list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
+    submit = 'Order_OrderSubmit'
     trade_request = 'Order_TradeEntryRequest'
-    order_unmatch = '"Order_UnMatchRequest"'
+    unmatch = 'Order_UnMatchRequest'
+    manual_order_cross ='Order_ManualOrderCrossRequest'
+
 
 
 class TestCase:
@@ -103,7 +105,7 @@ class TestCase:
         }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.order_submit.value,
+            message=bca.message_to_grpc_fix_standard(ORSMessages.submit.value,
                                                      nos_params, self.connectivity),
            parent_event_id=self.case_id))
 
