@@ -179,3 +179,31 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
+
+    def set_default_trade_cancel(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            "ExecType": "H",
+            "Account": new_order_single.get_parameter("Account"),
+            "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
+            "Price": new_order_single.get_parameter("Price"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "Side": new_order_single.get_parameter("Side"),
+            "HandlInst": new_order_single.get_parameter("HandlInst"),
+            "OrdType": new_order_single.get_parameter("OrdType"),
+            "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
+            "ExecRefID": '*',
+            "SettlCurrency": '*',
+            "SettlDate": '*',
+            "LastExecutionPolicy": '*',
+            'TradeDate': '*',
+            "TradeReportingIndicator": '*',
+            "SecondaryOrderID": '*',
+            "SecondaryExecID": '*',
+            "ExDestination": '*',
+            "GrossTradeAmt": '*',
+            'ReplyReceivedTime': '*',
+        }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self

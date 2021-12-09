@@ -120,7 +120,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
             if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
+                key_parameters = ['ClOrdID', 'OrdStatus', 'ExecType']
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check ExecutionReport",
