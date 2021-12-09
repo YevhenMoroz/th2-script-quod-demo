@@ -63,6 +63,13 @@ class Instrument(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    DUMMY = dict(
+        Symbol='DUMMY',
+        SecurityID='DUMMY',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class Connectivity(Enum):
