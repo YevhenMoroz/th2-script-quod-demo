@@ -59,11 +59,9 @@ def execute(report_id):
     try:
         rules_list = rules_creation()
         case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        now = datetime.today() - timedelta(hours=2)
         # Send_MarkerData
         fix_manager = FixManager(connectivity_sell_side, case_id)
         fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
         fix_manager_fh = FixManager(connectivity_fh, case_id)
 
         # Send_MarkerData
@@ -77,24 +75,24 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         fix_verifier_ss.set_case_id(case_id_1)
 
-        twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_params()
-        twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(LimitPriceOffset=limit_price_offset))
+        twap_order = FixMessageNewOrderSingleAlgo().set_TWAP_params()
+        twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        twap_order.change_parameters(dict(Account= client, OrderQty = qty))
+        twap_order.update_fields_in_component('QuodFlatParameters', dict(LimitPriceOffset=limit_price_offset))
 
-        fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
+        fix_manager.send_message_and_receive_response(twap_order, case_id_1)
 
         time.sleep(3)
 
         #region Check Sell side
-        fix_verifier_ss.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
+        fix_verifier_ss.check_fix_message(twap_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
-        pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_pending)
-        fix_verifier_ss.check_fix_message(pending_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
+        pending_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_order, gateway_side_sell, status_pending)
+        fix_verifier_ss.check_fix_message(pending_twap_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        reject_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_reject)
-        reject_twap_nav_order_params.change_parameter('Text', text_reject_limit_price_reference)
-        fix_verifier_ss.check_fix_message(reject_twap_nav_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport Reject')
+        reject_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_order, gateway_side_sell, status_reject)
+        reject_twap_order_params.change_parameter('Text', text_reject_limit_price_reference)
+        fix_verifier_ss.check_fix_message(reject_twap_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport Reject')
         #endregion
 
     except:
