@@ -139,3 +139,7 @@ class CommissionProfiles(Enum):
     Perc_Amt = 4
     Bas_Amt = 5
     Bas_Qty = 6
+
+class FreeNotesReject(Enum):
+    MissWouldPriceReference = "missing WouldPriceReference"
+    MissLimitPriceReference = "missing LimitPriceReference"
