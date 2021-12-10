@@ -115,7 +115,7 @@ def execute(report_id, session_id):
             send_market_data_spot(even_name_custom='Send Market Data SPOT DB')
 
         new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
-            {'OrderQty': '2000000'}).add_fields_into_repeating_group('NoStrategyParameters', [
+            {'OrderQty': '2000000'}).update_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
              'StrategyParameterValue': 'EBS-CITI/DB'}])
         FixManager(alias_gtw, case_id).send_message(fix_message=new_order_sor)

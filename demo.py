@@ -6,7 +6,10 @@ from quod_qa.fx.qs_fx_routine import SendMD
 from rule_management import RuleManager
 from stubs import Stubs
 from test_cases.fx.fx_mm_esp import QAP_1518
-from test_cases.fx.fx_taker_esp import QAP_5564_blocked_by_PFX_3932
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3806, QAP_3766, QAP_3805, \
+    QAP_3747, QAP_3689, QAP_3739
+from test_cases.fx.fx_mm_rfq.rejection import QAP_3735
+from test_cases.fx.fx_taker_esp import QAP_5564_blocked_by_PFX_3932, QAP_5635, QAP_5537
 from test_cases.fx.qs_fx_routine import QAP_5176
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -45,7 +48,7 @@ def test_run():
         # for_test_77679.execute(report_id,session_id)
         # for_Daria.execute(report_id,session_id)
         # SendMD.execute(report_id)
-        # QAP_2872.execute(report_id)
+        # QAP_3806.execute(report_id)
 
         # QAP_5591_blocked_by_PFX_3932.execute(report_id,session_id)
 
@@ -62,8 +65,10 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        # QAP_5389().execute(report_id)
-        SendMD.execute(report_id)
+        QAP_3766.execute(report_id)
+
+
+        # SendMD.execute(report_id)
         #
         # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
         # QAP_5176.execute(report_id)
@@ -93,15 +98,17 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        # rm = RuleManager()
-
-        # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
-        # rm.remove_rule_by_id(326)
-        # rm.add_QuodMDAnswerRule('fix-fh-314-luna',interval=5)
+        rm = RuleManager()
+        # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.print_active_rules()
 
-
         # rm.print_active_rules_sim_test()
+
+        # rm.add_TRFQ('fix-bs-rfq-314-luna-standard')
+        # rm.add_QuodMDAnswerRule('fix-fh-314-luna',interval=5)
+        # rm.remove_rule_by_id(326)
+
+
 
 
 
@@ -112,7 +119,6 @@ def test_run():
         # rm.remove_rule_by_id_test_sim(4)
         # rm.remove_rule_by_id_test_sim(3)
         # # # rm.add_RFQ('fix-bs-rfq-314-luna-standard')
-        # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-314-luna')
         # rm.add_fx_md_to_test_sim('fix-fh-q-314-luna')
         # rm.add_TRFQ_test_sim('fix-bs-rfq-314-luna-standard')
