@@ -9,7 +9,7 @@ pipeline {
         stage('Execute') {
             steps {
                 sh '''
-                    export PATH=$PATH:$WORKSPACE/.local/bin/
+                    export PATH=$PATH:$WORKSPACE/.local/bin/ && \\
                     export HOME=$WORKSPACE && \\
                     cd $WORKSPACE && \\
                     pip install psycopg2-binary --user && \\
