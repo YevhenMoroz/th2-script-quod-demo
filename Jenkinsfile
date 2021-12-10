@@ -12,6 +12,7 @@ pipeline {
                     export PATH=$PATH:$WORKSPACE/.local/bin/ && \\
                     export HOME=$WORKSPACE && \\
                     cd $WORKSPACE && \\
+                    ls /var/th2/config/ && \\
                     cat /var/th2/config/log_config.conf && \\
                     pip install psycopg2-binary --user && \\
                     pip install -r requirements.txt --user && \\
