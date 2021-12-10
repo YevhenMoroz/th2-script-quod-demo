@@ -80,7 +80,7 @@ def execute(report_id, session_id):
         #                            account=client_tier)
         # rfq = FixClientSellRfq(params)
         # rfq.send_request_for_quote_no_reply()
-
+        # region Working ↓
         # quote_req_id = bca.client_orderid(8)
         # params = {
         #     'QuoteReqID': quote_req_id,
@@ -144,6 +144,7 @@ def execute(report_id, session_id):
         #         bca.message_to_grpc('NewOrderSingle', order_params,
         #                             "fix-ss-rfq-314-luna-standard")
         #     ))
+        # endregion
         params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
                                    securitytype=security_type_spo, settldate=settle_date,
                                    settltype=settle_type, securityid=symbol,
@@ -164,9 +165,9 @@ def execute(report_id, session_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    # finally:
-    #     try:
-    #         # Close tile
-    #         close_dmi_window(case_base_request, dealer_service)
-    #     except Exception:
-    #         logging.error("Error execution", exc_info=True)
+    finally:
+        try:
+            # Close tile
+            close_dmi_window(case_base_request, dealer_service)
+        except Exception:
+            logging.error("Error execution", exc_info=True)

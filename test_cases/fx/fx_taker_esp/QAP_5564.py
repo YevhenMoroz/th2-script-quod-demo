@@ -105,7 +105,10 @@ def execute(report_id, session_id):
             [ob_col.order_id.value, "AO", ob_col.qty.value, "1000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
              "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
              ob_col.tif.value, tif.IOC.value]).check_order_fields_list({"ExecSts": "Filled"})
-        FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
+        FXOrderBook(case_id, session_id).set_filter(
+            [ob_col.order_id.value, "AO", ob_col.qty.value, "1000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
+             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
+             ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
             {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "CITI", ob_col.limit_price.value: "1.18141",
              ob_col.qty.value: "1,000,000"})
 
@@ -123,7 +126,10 @@ def execute(report_id, session_id):
             [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
              "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
              ob_col.tif.value, tif.IOC.value]).check_order_fields_list({ob_col.exec_sts.value: "Filled"})
-        FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
+        FXOrderBook(case_id, session_id).set_filter(
+            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
+             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
+             ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
             {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "BARX", ob_col.limit_price.value: "1.18146",
              ob_col.qty.value: "5,000,000"})
 

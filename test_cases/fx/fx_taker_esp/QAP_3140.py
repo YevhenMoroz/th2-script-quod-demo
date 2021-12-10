@@ -85,9 +85,9 @@ def execute(report_id, session_id):
         checkpoint_id1 = checkpoint_response1.checkpoint
 
         modify_order_ticket(case_base_request, order_ticket_service, qty)
-        FXOrderBook(case_id, case_base_request).set_filter([OrderBookColumns.qty.value, qty]).check_order_fields_list(
+        FXOrderBook(case_id, session_id).set_filter([OrderBookColumns.qty.value, qty]).check_order_fields_list(
             {OrderBookColumns.sts.value: "Open"})
-        order_book = FXOrderBook(case_id, case_base_request)
+        order_book = FXOrderBook(case_id, session_id)
         order_id = order_book.set_filter([OrderBookColumns.qty.value, qty]).extract_field(
             OrderBookColumns.order_id.value)
 
@@ -140,7 +140,7 @@ def execute(report_id, session_id):
         checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
         checkpoint_modify = checkpoint_response.checkpoint
         amend_order(ob_service, case_base_request, amend_qty, [OrderBookColumns.qty.value, qty])
-        FXOrderBook(case_id, case_base_request).set_filter(
+        FXOrderBook(case_id, session_id).set_filter(
             [OrderBookColumns.qty.value, amend_qty]).check_order_fields_list(
             {OrderBookColumns.sts.value: "Open"})
 
