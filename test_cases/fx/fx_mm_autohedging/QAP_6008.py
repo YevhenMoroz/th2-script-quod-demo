@@ -58,7 +58,7 @@ def set_send_hedge_order(case_id, ttl, position_book):
         "autoHedgerInstrSymbol": [
             {
                 "instrSymbol": "EUR/USD",
-                "longUpperQty": 3000000,
+                "longUpperQty": 2000000,
                 "longLowerQty": 0,
                 "maintainHedgePositions": 'true',
                 "crossCurrPairHedgingPolicy": "DIR",
@@ -182,9 +182,6 @@ def execute(report_id, session_id):
         extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
 
         compare_position('Checking positions', case_id, initial_pos, extracted_pos_quod, account)
-
-
-
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

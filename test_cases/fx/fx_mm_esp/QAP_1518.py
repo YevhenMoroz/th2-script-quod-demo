@@ -100,7 +100,7 @@ def execute(report_id):
     try:
         try:
             # Preconditions
-            market_data_request = FixMessageMarketDataRequestFX().set_md_req_parameters().\
+            market_data_request = FixMessageMarketDataRequestFX().set_md_req_parameters_maker().\
                 change_parameters({'SenderSubID': client, }).\
                 update_repeating_group('NoRelatedSymbols', no_related_symbol)
             md_refresh = fix_manager_gtw.send_message_and_receive_response(market_data_request)
