@@ -1,5 +1,6 @@
 from custom import basic_custom_actions
 
+
 class FixMessage:
 
     def __init__(self, message_type: str):
@@ -32,6 +33,11 @@ class FixMessage:
         self.__parameters.pop(parameter_name)
         return self
 
+    def remove_parameters(self, parameter_name_list: list):
+        for par in parameter_name_list:
+            self.__parameters.pop(par)
+        return self
+
     def add_ClordId(self, test_case_name):
         self.change_parameter("ClOrdID", test_case_name + " " + basic_custom_actions.client_orderid(9))
         return self
@@ -60,7 +66,7 @@ class FixMessage:
 
     def update_repeating_group(self, r_group: str, fields: list):
         self.remove_parameter(r_group)
-        self.add_fields_into_repeating_group(r_group,fields)
+        self.add_fields_into_repeating_group(r_group, fields)
         return self
 
     def add_fields_into_repeating_group(self, r_group: str, fields: list):

@@ -74,7 +74,7 @@ class BaseMiddleOfficeBook(BaseWindow):
     # endregion
     # region Set
     def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
-                                  net_gross_ind=None, give_up_broker=None, selected_row_count=None, comm_basis=None,
+                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
                                   settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
