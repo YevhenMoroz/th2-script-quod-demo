@@ -1,4 +1,2 @@
-FROM ubuntu:latest
-RUN apt update -y && apt-get install git -y && apt-get install python3 -y
-RUN apt-get install pip -y
+FROM python:3.8.6
 COPY ./log_config.conf /var/th2/config/
