@@ -1,8 +1,7 @@
 pipeline {
     agent { 
         dockerfile {
-            filename 'Dockerfile'
-            args '-v /release/jenkins-loki/workspace/qa-tests.pipeline/log_config.conf:/var/th2/config/'   
+            filename 'Dockerfile'  
         }
     }
     stages {
