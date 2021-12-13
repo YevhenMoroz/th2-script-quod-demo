@@ -140,3 +140,4 @@ class CommissionProfiles(Enum):
     Bas_Amt = 5
     Bas_Qty = 6
     Abs_Amt_USD = 7
+    Abs_Amt_2 = 8
