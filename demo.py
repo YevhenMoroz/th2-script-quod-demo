@@ -9,7 +9,7 @@ from test_cases.fx.fx_mm_esp import QAP_1518
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3806, QAP_3766, QAP_3805, \
     QAP_3747, QAP_3689, QAP_3739
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3735
-from test_cases.fx.fx_taker_esp import QAP_5564_blocked_by_PFX_3932, QAP_5635, QAP_5537
+from test_cases.fx.fx_taker_esp import QAP_5635, QAP_5537, QAP_5564
 from test_cases.fx.qs_fx_routine import QAP_5176
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -65,7 +65,7 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        QAP_3766.execute(report_id)
+        QAP_5176.execute(report_id)
 
 
         # SendMD.execute(report_id)
