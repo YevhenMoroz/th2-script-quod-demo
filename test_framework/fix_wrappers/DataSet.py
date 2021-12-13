@@ -149,6 +149,7 @@ class TimeInForce(Enum):
     GoodTillCrossing = 5
     GoodTillDate = 6
     AtTheClose = 7
+    ValidForAuction = 100
 
 class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
