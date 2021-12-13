@@ -77,6 +77,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_POV_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "2",
+            'QuodFlatParameters': {
+                'MaxPercentageVolume': '10'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
@@ -96,13 +119,36 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'QuodFlatParameters': {
                 'NavigatorExecution': '1',
                 'NavGuard': '0',
-                'NavigatorLimitPrice': '100',
             }
         }
         super().change_parameters(base_parameters)
         return self
 
-    def set_POV_params(self) -> FixMessageNewOrderSingle:
+    def set_VWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.BUI.value,
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+                'NavigatorExecution': '1',
+                'NavGuard': '0',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_POV_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -119,7 +165,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Instrument": Instrument.PAR.value,
             "TargetStrategy": "2",
             'QuodFlatParameters': {
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '10',
+                'NavigatorExecution': '1',
+                'NavGuard': '0'
             }
         }
         super().change_parameters(base_parameters)
