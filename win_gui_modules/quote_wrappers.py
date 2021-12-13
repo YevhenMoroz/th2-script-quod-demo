@@ -25,11 +25,6 @@ class QuoteDetailsRequest:
         var.name = detail.name
         var.colName = detail.column_name
 
-    def add_extraction_detail(self, detail: ExtractionDetail):
-        var = self._request.extractionFields.add()
-        var.name = detail.name
-        var.colName = detail.column_name
-
     def add_child_extraction_detail(self, detail: ExtractionDetail):
         var = self._request.childExtractionFields.add()
         var.name = detail.name

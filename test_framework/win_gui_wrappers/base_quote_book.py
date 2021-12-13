@@ -12,6 +12,7 @@ class BaseQuoteBook(BaseWindow):
     # region Common func
     def set_quote_book_details(self):
         self.quote_book_details.set_extraction_id(self.extraction_id)
+        self.quote_book_details.set_default_params(self.base_request)
 
     def set_filter(self, filter_list: list):
         """
