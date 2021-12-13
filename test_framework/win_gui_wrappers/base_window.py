@@ -14,7 +14,7 @@ from win_gui_modules.wrappers import set_base
 class BaseWindow:
     def __init__(self, case_id, session_id):
         self.case_id = case_id
-        self.session_id =session_id
+        self.session_id = session_id
         self.base_request = get_base_request(session_id, case_id)
         self.extraction_id = bca.client_orderid(4)
         self.verifier = Verifier(self.case_id)
@@ -36,6 +36,7 @@ class BaseWindow:
         except KeyError:
             print("Element: " + k + " not found")
         self.verifier.verify()
+        # TODO Ask Yevhen
         self.verifier = Verifier(self.case_id)
 
     def open_fe(self, report_id, folder, user, password, is_open=True):
