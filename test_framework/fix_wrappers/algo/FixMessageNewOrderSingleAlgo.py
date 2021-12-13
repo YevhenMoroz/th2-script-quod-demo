@@ -139,7 +139,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": "EUR",
             "ExDestination": "XPAR",
             "Instrument": Instrument.BUI.value,
-            "TargetStrategy": "1005",
+            "TargetStrategy": "1",
             'QuodFlatParameters': {
                 'NavigatorExecution': '1',
                 'NavGuard': '0',
