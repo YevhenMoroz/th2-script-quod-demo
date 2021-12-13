@@ -1,9 +1,11 @@
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
+
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrdersDetails
 from win_gui_modules.utils import call
-from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct
+from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request
 
 
 class BaseOrderBook(BaseWindow):
@@ -31,6 +33,8 @@ class BaseOrderBook(BaseWindow):
         self.extraction_panel_details = None
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
+        self.extraction_error_message_details = None
+        self.extract_direct_values = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
@@ -73,8 +77,8 @@ class BaseOrderBook(BaseWindow):
 
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
-                                      scrolling_operation=self.scrolling_operation.UP,
-                                      number_of_scrolls=count, base=self.base_request)
+                                                  scrolling_operation=self.scrolling_operation.UP,
+                                                  number_of_scrolls=count, base=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
@@ -83,7 +87,7 @@ class BaseOrderBook(BaseWindow):
     def extract_field(self, column_name: str, row_number: int = None) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[field]))
+            action=ExtractionAction.create_extraction_action(extraction_details=[field]))
         if row_number is not None:
             info.set_number(row_number)
         self.order_details.add_single_order_info(info)
@@ -353,6 +357,7 @@ class BaseOrderBook(BaseWindow):
     '''
     Method extracting values from Booking Ticket
     '''
+
     def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
@@ -365,7 +370,17 @@ class BaseOrderBook(BaseWindow):
     def direct_moc_order_correct(self, qty, route):
         call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
 
-    def direct_loc_order_correct(self, qty,  route):
+    def direct_loc_order_correct(self, qty, route):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct("UnmatchedQty", qty, route))
 
+    def set_error_message_details(self):
+        self.extraction_error_message_details.name = "ErrorMessage"
+        self.extraction_error_message_details.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
 
+    def direct_loc_extract_error_message(self, qty, route):
+        self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
+        self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+        response = call(self.direct_loc_request_correct_call,
+                        direct_loc_request("UnmatchedQty", qty, route, self.extract_direct_values))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return response

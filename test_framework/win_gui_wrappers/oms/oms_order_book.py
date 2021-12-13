@@ -1,3 +1,4 @@
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
 
@@ -34,6 +35,8 @@ class OMSOrderBook(BaseOrderBook):
         self.second_level_tab_details = SecondLevelTabDetails()
         self.second_level_extraction_details = SecondLevelExtractionDetails()
         self.mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(self.base_request)
+        self.extraction_error_message_details = ExtractDirectsValuesRequest.DirectsExtractedValue()
+        self.extract_direct_values = ExtractDirectsValuesRequest()
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
