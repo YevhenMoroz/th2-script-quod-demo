@@ -143,3 +143,4 @@ class CommissionProfiles(Enum):
 class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
     MissLimitPriceReference = "missing LimitPriceReference"
+    MissNavigatorLimitPriceReference = "NavigatorLimitPriceReference"
