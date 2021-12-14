@@ -164,7 +164,6 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             LeavesQty=0,
             GrossTradeAmt='*',
             ExDestination='*',
-            LastMkt='*',
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
             SecondaryExecID='*'
