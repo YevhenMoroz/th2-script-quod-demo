@@ -138,7 +138,7 @@ class FixManager:
 
             responce_fix_message.change_parameters(fields)
 
-        response_messages.append(responce_fix_message)
+            response_messages.append(responce_fix_message)
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
