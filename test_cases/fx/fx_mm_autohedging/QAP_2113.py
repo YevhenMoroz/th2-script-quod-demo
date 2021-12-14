@@ -41,7 +41,6 @@ settle_type_spo = "0"
 currency = "EUR"
 settle_currency = "USD"
 locale.setlocale(locale.LC_ALL, 'en_us')
-'en_us'
 ord_qty = randint(2000000, 4000000)
 new_qty = randint(int(ord_qty), int(ord_qty)+1000000)
 ord_qty_ob = '{0:n}'.format(Decimal(ord_qty))
@@ -134,6 +133,7 @@ def execute(report_id, session_id):
             ob_names.sts.value: sts_names.open.value},
             event_name='Checking that AH triggered')
         #TODO Add order amending
+
         amend_order(base_details, cp_service, new_qty)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',

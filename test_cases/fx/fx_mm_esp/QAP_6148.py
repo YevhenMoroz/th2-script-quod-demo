@@ -1,7 +1,9 @@
+import locale
 import logging
 import random
 import time
 from datetime import datetime
+from decimal import Decimal
 
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
@@ -40,14 +42,15 @@ instrument = f'{symbol}-{tenor_fe}'
 instrument_spot = f'{symbol}-{tenor_fe_spo}'
 client_tier = 'Palladium1'
 default_md_symbol_fwd_hsbc = f'{symbol}:{security_type}:{tenor}:{venue}'
-print(default_md_symbol_fwd_hsbc)
 md_instrument = {
     'Instrument': {
         'Symbol': 'USD/PHP',
         'SecurityType': 'FXNDF'
     }
 }
-qty = str(random.randint(1000000,2000000))
+locale.setlocale(locale.LC_ALL, 'en_us')
+qty=str(random.randint(1000000,2000000))
+qty_ob = '{0:n}'.format(Decimal(int(qty)))
 no_md_entries_fwd_hsbc = [
                 {
                     "MDEntryType": "0",
@@ -154,24 +157,24 @@ def execute(report_id, session_id):
         #
         rates_tile = ClientRatesTile(case_id, session_id)
         rates_tile.modify_client_tile(instrument=instrument, client_tier=client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, 1, BUY)
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, 2, BUY)
         place_order(base_details, cp_service)
 
         FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.qty.value: qty,
+            ob_names.qty.value: qty_ob,
             ob_names.sts.value: sts_names.rejected.value,
-            ob_names.free_notes: 'empty book'},
-            event_name='Checking that order rejected')
+            ob_names.free_notes.value: 'not tradeable'},
+            event_name=f'Checking that order rejected on {symbol}-{tenor_fe}')
 
         rates_tile = ClientRatesTile(case_id, session_id)
         rates_tile.modify_client_tile(instrument=instrument_spot, client_tier=client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, 1, BUY)
+        open_ot_by_doubleclick_row(base_tile_data, cp_service, 2, BUY)
         place_order(base_details, cp_service)
 
         FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.qty.value: qty,
+            ob_names.qty.value: qty_ob,
             ob_names.sts.value: sts_names.terminated.value},
-            event_name='Checking that order rejected')
+            event_name=f'Checking that order not rejected on {symbol}-{tenor_fe_spo}')
 
         # Changing MD to executable
         for i in no_md_entries_fwd_hsbc:
