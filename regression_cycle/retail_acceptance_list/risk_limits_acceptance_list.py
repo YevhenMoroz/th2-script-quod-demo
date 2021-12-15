@@ -1,4 +1,4 @@
-from test_cases.RET.Risk_Limits import QAP_4299, QAP_4291, QAP_4300, QAP_4306, QAP_4311, QAP_4314, QAP_4322
+from test_cases.ret.Risk_Limits import QAP_4299, QAP_4291, QAP_4300, QAP_4306, QAP_4311, QAP_4314, QAP_4322
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
