@@ -35,7 +35,6 @@ class BaseWindow:
 
     @staticmethod
     def split_2lvl_values(split_values: dict):
-        print(split_values)
         for split_key, split_value in split_values.items():
             normal_split_values_arr = list()
             split_sentence = split_value.split('\n')

@@ -130,12 +130,13 @@ class QuoteRequestBookColumns(Enum):
 
 class ExecSts(Enum):
     filled = 'Filled'
-    Eliminated = 'Eliminated'
+    eliminated = 'Eliminated'
     rejected = 'Rejected'
     open = 'Open'
     cancelled = 'Cancelled'
     held = 'Held'
     partially_filled = 'PartiallyFilled'
+    terminated = 'Terminated'
 
 
 class Side(Enum):
@@ -193,3 +194,6 @@ class MiddleOfficeColumns(Enum):
     client_comm = "Client Comm"
     fees = "Total Fees"
 
+
+class AllocationsColumns(Enum):
+    client_comm = "Client Comm"

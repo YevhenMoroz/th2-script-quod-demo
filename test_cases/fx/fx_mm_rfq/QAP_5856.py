@@ -12,7 +12,6 @@ from stubs import Stubs
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -22,7 +21,7 @@ verifier = Stubs.verifier
 api = Stubs.api_service
 
 
-def change_update_interval(case_id, interval):
+def change_update_interval(case_id, interval, quote_age):
     params = {
         "clientQuoteIDFormat": "#20d",
         "updateMDEntryID": "true",
@@ -32,7 +31,7 @@ def change_update_interval(case_id, interval):
         "supportMDRequest": "true",
         "tradingQuotingSession": "true",
         "quotingSessionID": 10,
-        "concurrentlyActiveQuoteAge": 120000,
+        "concurrentlyActiveQuoteAge": quote_age,
         "updateInterval": interval,
     }
     api.sendMessage(
@@ -152,80 +151,73 @@ def execute(report_id):
     }
 
     try:
-        change_update_interval(case_id, 10000)
+        # change_update_interval(case_id, 10000, 120000)
         send_md(case_id, base_bid, base_ask)
-        time.sleep(5)
-        checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id = checkpoint_response.checkpoint
-        quote_req_id = bca.client_orderid(8)
-        quote_request_params = {
-            'QuoteReqID': quote_req_id,
-            'NoRelatedSymbols': [{
-                'Account': client_tier,
-                'Instrument': {
-                    'Symbol': symbol,
-                    'SecurityType': security_type_spo
-                },
-                'SettlDate': settle_date_spo,
-                'SettlType': settle_type_spo,
-                'Currency': currency,
-                'QuoteType': '1',
-                'OrderQty': qty,
-                'OrdType': 'D'
-            }
-            ]
-        }
-        quote = act.placeQuoteFIX(
-            request=bca.convert_to_request(
-                "SendQuoteRequest",
-                "fix-ss-rfq-314-luna-standard",
-                case_id,
-                bca.message_to_grpc("QuoteRequest", quote_request_params, "fix-ss-rfq-314-luna-standard")
-            )
-        )
-        send_md(case_id, first_bid, first_ask)
-        time.sleep(1)
-        send_md(case_id, second_bid, second_ask)
-        time.sleep(1)
-        send_md(case_id, third_bid, third_ask)
-        time.sleep(1)
-        send_md(case_id, fourth_bid, fourth_ask)
-        time.sleep(10)
-        quotes_sequence_params = {
-            'header': {
-                'MsgType': ('0', "NOT_EQUAL"),
-                'TargetCompID': 'QUOD9',
-                'SenderCompID': 'QUODFX_UAT'
-            },
-        }
-        message_filters_req = [
-            bca.filter_to_grpc('Quote', quote_params_base),
-            bca.filter_to_grpc('Quote', quote_params4)
-        ]
-        pre_filter_req = bca.prefilter_to_grpc(quotes_sequence_params)
-        verifier.submitCheckSequenceRule(
-            bca.create_check_sequence_rule(
-                description="Check Quotes",
-                prefilter=pre_filter_req,
-                msg_filters=message_filters_req,
-                checkpoint=checkpoint_id,
-                connectivity="fix-ss-rfq-314-luna-standard",
-                event_id=case_id,
-                timeout=3000
-            )
-        )
-        quote_req_id = quote.response_messages_list[0].fields["QuoteReqID"].simple_value
-        quote_cancel_params = {
-            'QuoteReqID': quote_req_id,
-            'QuoteID': '*',
-            'QuoteCancelType': '5',
-        }
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send QuoteCancel', "fix-ss-rfq-314-luna-standard", case_id,
-                bca.message_to_grpc('QuoteCancel', quote_cancel_params,
-                                    "fix-ss-rfq-314-luna-standard")
-            ))
-        change_update_interval(case_id, 10000)
+        # time.sleep(5)
+        # checkpoint_response = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
+        # checkpoint_id = checkpoint_response.checkpoint
+        # quote_req_id = bca.client_orderid(8)
+        # quote_request_params = {
+        #     'QuoteReqID': quote_req_id,
+        #     'NoRelatedSymbols': [{
+        #         'Account': client_tier,
+        #         'Instrument': {
+        #             'Symbol': symbol,
+        #             'SecurityType': security_type_spo
+        #         },
+        #         'SettlDate': settle_date_spo,
+        #         'SettlType': settle_type_spo,
+        #         'Currency': currency,
+        #         'QuoteType': '1',
+        #         'OrderQty': qty,
+        #         'OrdType': 'D'
+        #     }
+        #     ]
+        # }
+        # quote = act.placeQuoteFIX(
+        #     request=bca.convert_to_request(
+        #         "SendQuoteRequest",
+        #         "fix-ss-rfq-314-luna-standard",
+        #         case_id,
+        #         bca.message_to_grpc("QuoteRequest", quote_request_params, "fix-ss-rfq-314-luna-standard")
+        #     )
+        # )
+        # send_md(case_id, first_bid, first_ask)
+        # time.sleep(1)
+        # send_md(case_id, second_bid, second_ask)
+        # time.sleep(1)
+        # send_md(case_id, third_bid, third_ask)
+        # time.sleep(1)
+        # send_md(case_id, fourth_bid, fourth_ask)
+        # time.sleep(10)
+        # quotes_sequence_params = {
+        #     'header': {
+        #         'MsgType': ('0', "NOT_EQUAL"),
+        #         'TargetCompID': 'QUOD9',
+        #         'SenderCompID': 'QUODFX_UAT'
+        #     },
+        # }
+        # message_filters_req = [
+        #     bca.filter_to_grpc('Quote', quote_params_base),
+        #     bca.filter_to_grpc('Quote', quote_params4)
+        # ]
+        # pre_filter_req = bca.prefilter_to_grpc(quotes_sequence_params)
+        # verifier.submitCheckSequenceRule(
+        #     bca.create_check_sequence_rule(
+        #         description="Check Quotes",
+        #         prefilter=pre_filter_req,
+        #         msg_filters=message_filters_req,
+        #         checkpoint=checkpoint_id,
+        #         connectivity="fix-ss-rfq-314-luna-standard",
+        #         event_id=case_id,
+        #         timeout=3000
+        #     )
+        # )
+        # quote_req_id = quote.response_messages_list[0].fields["QuoteReqID"].simple_value
+        # price = quote.response_messages_list[0].fields["OfferPx"].simple_value
+        # print(quote_req_id)
+        # print(price)
+        #
+        # change_update_interval(case_id, 10000, 120000)
     except Exception:
         logging.error('Error execution', exc_info=True)

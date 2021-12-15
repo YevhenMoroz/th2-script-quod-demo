@@ -1,8 +1,6 @@
-import locale
 from random import randint
-from decimal import Decimal
+from time import sleep
 
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
@@ -13,20 +11,16 @@ from test_framework.win_gui_wrappers.data_set import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
-    CancelFXOrderDetails, ModifyFXOrderDetails
-from win_gui_modules.order_ticket import FXOrderDetails
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails,\
-    ModifyRatesTileRequest, PlaceRateTileTableOrderRequest, RatesTileTableOrdSide, PlaceRatesTileOrderRequest
+from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from win_gui_modules.utils import get_base_request, call
 import logging
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 client = 'Osmium1'
 client_tier = "Osmium"
 account = 'Osmium1_1'
@@ -40,12 +34,10 @@ settle_date_spo = spo()
 settle_type_spo = "0"
 currency = "EUR"
 settle_currency = "USD"
-locale.setlocale(locale.LC_ALL, 'en_us')
-'en_us'
-ord_qty = randint(2000000, 4000000)
-new_qty = randint(int(ord_qty), int(ord_qty)+1000000)
-ord_qty_ob = '{0:n}'.format(Decimal(ord_qty))
-new_qty_ob = '{0:n}'.format(Decimal(new_qty))
+
+ord_qty = str(randint(2000000, 4000000))
+qty_1 = '4000000'
+qty_2 = '2000000'
 api = Stubs.api_service
 ttl_test = 500
 ttl_default = 120
@@ -54,6 +46,16 @@ verification_not_equal = VerificationMethod.NOT_EQUALS
 
 status_true = 'true'
 status_false = 'false'
+
+
+def set_send_hedge_order_status(case_id, status):
+    modify_params = {
+        "autoHedgerStatusID": "1",
+        "sendHedgeOrders": status,
+    }
+    api.sendMessage(
+        request=SubmitMessageRequest(message=bca.wrap_message(modify_params, 'ModifyAutoHedgerStatus', 'rest_wa314luna'),
+                                     parent_event_id=case_id))
 
 
 def send_rfq_and_filled_order_buy(case_id, qty):
@@ -94,22 +96,22 @@ def get_dealing_positions_details(del_act, base_request, symbol, account):
     dealing_positions_details.add_single_positions_info(
         PositionsInfo.create(
             action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
-
     response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
     return response["dealingpositions.position"].replace(",", "")
 
 
-def compare_position(even_name, case_id, expected_pos, actual_pos):
+def compare_position(even_name, case_id,
+                     expected_pos_acc1, actual_pos_acc1,
+                     expected_pos_acc2, actual_pos_acc2,
+                     acc1_name, acc2_name,
+                     acc1_verify_method, acc2_verify_method):
     verifier = Verifier(case_id)
     verifier.set_event_name(even_name)
-    verifier.compare_values("Quote position", str(expected_pos), str(actual_pos))
+    verifier.compare_values(f"Quote position {acc1_name}", str(expected_pos_acc1),
+                            str(actual_pos_acc1), acc1_verify_method)
+    verifier.compare_values(f"Quote position {acc2_name}", str(expected_pos_acc2),
+                            str(actual_pos_acc2), acc2_verify_method)
     verifier.verify()
-
-
-def amend_order(base_request, service, _qty):
-    place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_quantity(str(_qty))
-    call(service.placeRatesTileOrder, place_request.build())
 
 
 def execute(report_id, session_id):
@@ -118,46 +120,80 @@ def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    cp_service = Stubs.win_act_cp_service
     pos_service = Stubs.act_fx_dealing_positions
     try:
-        expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-        send_rfq_and_filled_order_sell(case_id, ord_qty)
+        # Step 1
+        set_send_hedge_order_status(case_id, status_true)
+        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        initial_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
+
+        send_rfq_and_filled_order_buy(case_id, ord_qty)
+
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
                                                                   ob_names.orig.value, 'AutoHedger']). \
             extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
+
         FXOrderBook(case_id, session_id).check_order_fields_list({
             ob_names.order_id.value: order_info[ob_names.order_id.value],
             ob_names.orig.value: 'AutoHedger',
             ob_names.qty.value: order_info[ob_names.qty.value],
             ob_names.sts.value: sts_names.open.value},
             event_name='Checking that AH triggered')
-        #TODO Add order amending
-        amend_order(base_details, cp_service, new_qty)
+
+        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
+
+        compare_position(
+            'Checking positions', case_id,
+            f'-{ord_qty}', extracted_pos_quod,
+            int(initial_pos_osmium)+int(ord_qty), extracted_pos_osmium,
+            account_quod, account,
+            verification_equal, verification_equal
+        )
+
+        set_send_hedge_order_status(case_id, status_false)
+
+        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
+                                                     ob_names.orig.value, 'AutoHedger']). \
+            check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
+                                     ob_names.orig.value: 'AutoHedger',
+                                     ob_names.qty.value: order_info['Qty'],
+                                     ob_names.sts.value: sts_names.cancelled.value},
+                                    event_name='Checking that AH order was cancelled when panic button pushed')
+
+        set_send_hedge_order_status(case_id, status_true)
+        sleep(5)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
                                                                   ob_names.orig.value, 'AutoHedger']). \
             extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.order_id.value: order_info[ob_names.order_id.value],
-            ob_names.orig.value: 'AutoHedger',
-            ob_names.qty.value: new_qty_ob,
-            ob_names.sts.value: sts_names.open.value},
-            event_name='Checking that hedged order qty changed')
-        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, order_info[ob_names.order_id.value]]).\
-            cancel_order()
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.order_id.value: order_info[ob_names.order_id.value],
-            ob_names.orig.value: 'AutoHedger',
-            ob_names.qty.value: ord_qty_ob,
-            ob_names.sts.value: sts_names.open.value},
-            event_name='Checking that new hedged order created with qty from Position Book')
-        send_rfq_and_filled_order_buy(case_id, ord_qty)
-        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, order_info[ob_names.order_id.value]]). \
-            cancel_order()
-        actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-        compare_position('Checking positions', case_id, expecting_pos, actual_pos)
+
+        send_rfq_and_filled_order_sell(case_id, ord_qty)
+
+        FXOrderBook(case_id, session_id).cancel_order(filter_list=[ob_names.order_id.value, order_info['Order ID']])
+
+        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
+                                                     ob_names.orig.value, 'AutoHedger']). \
+            check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
+                                     ob_names.sts.value: sts_names.cancelled.value},
+                                    event_name='Checking that after cancel there is no new AH orders')
+
+        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
+        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
+        compare_position(
+            'Checking positions', case_id,
+            initial_pos_quod, extracted_pos_quod,
+            initial_pos_osmium, extracted_pos_osmium,
+            account_quod, account,
+            verification_equal, verification_equal
+        )
     except Exception as e:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        send_rfq_and_filled_order_sell(case_id, ord_qty)
+    finally:
+        try:
+            # Set default parameters
+            set_send_hedge_order_status(case_id, status_true)
+        except Exception:
+            logging.error("Error execution", exc_info=True)
