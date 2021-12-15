@@ -94,7 +94,7 @@ class FixVerifier:
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
-                    Direction.Value(direction)
+                    Direction.Value(direction.value)
                 )
             )
         else:
