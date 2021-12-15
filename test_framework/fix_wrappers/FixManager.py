@@ -138,9 +138,10 @@ class FixManager:
             elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
                 responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
 
+
             responce_fix_message.change_parameters(fields)
 
-            response_messages.append(responce_fix_message)
+        response_messages.append(responce_fix_message)
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
@@ -154,7 +155,7 @@ class FixManager:
                                                                   fix_message.get_parameters(), self.__session_alias)
             ))
 
-    def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> list:
+    def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> PlaceMessageRequest:
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(

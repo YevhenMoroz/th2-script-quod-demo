@@ -20,6 +20,7 @@ class BaseOrderBook(BaseWindow):
         self.base_order_details = None
         self.scrolling_operation = None
         self.modify_order_details = None
+        self.manual_cross_details = None
         self.cancel_order_details = None
         self.rows_numbers_for_grid = None
         self.suspend_order_details = None
@@ -35,6 +36,7 @@ class BaseOrderBook(BaseWindow):
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
+        self.direct_moc_request_correct_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
         self.is_menu_item_present_call = None
@@ -52,6 +54,7 @@ class BaseOrderBook(BaseWindow):
         self.add_to_basket_call = None
         self.create_basket_call = None
         self.cancel_order_call = None
+        self.manual_cross_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
         self.direct_moc_request_correct_call = None
@@ -64,6 +67,7 @@ class BaseOrderBook(BaseWindow):
         self.split_booking_call = None
 
     # endregion
+
     # region Common func
     def set_order_details(self):
         self.order_details.set_extraction_id(self.extraction_id)
@@ -344,6 +348,16 @@ class BaseOrderBook(BaseWindow):
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
+
+    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None):
+        if qty is not None:
+            self.manual_cross_details.set_quantity(qty)
+        if price is not None:
+            self.manual_cross_details.set_price(price)
+        if last_mkt is not None:
+            self.manual_cross_details.set_last_mkt(last_mkt)
+        self.manual_cross_details.set_selected_rows(selected_rows)
+        call(self.manual_cross_call, self.manual_cross_details.build())
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)

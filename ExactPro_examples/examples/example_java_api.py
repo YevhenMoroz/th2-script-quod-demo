@@ -15,9 +15,11 @@ rep_id = bca.create_event('java_api_example ' + datetime.now().strftime('%Y%m%d-
 
 
 class ORSMessages(Enum):
-    order_list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
-    order_submit = 'Order_OrderSubmit'
+    list_wave_creation_request = 'Order_OrderListWaveCreationRequest'
+    submit = 'Order_OrderSubmit'
     trade_request = 'Order_TradeEntryRequest'
+    unmatch = 'Order_UnMatchRequest'
+    manual_order_cross = 'Order_ManualOrderCrossRequest'
 
 
 class TestCase:
@@ -26,8 +28,12 @@ class TestCase:
         self.act_java_api = Stubs.act_java_api
         self.connectivity = '317_java_api'
 
-    def send_nos(self):
+    # 'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
+    #                         'RoleID': 'Trader',
+    #                         'SessionKey': 62000000481},
+    def send_message(self):
         nos_params = {
+
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'NewOrderSingleBlock': {
                 'ListingList': {
@@ -74,31 +80,53 @@ class TestCase:
                     '%Y-%m-%dT%H:%M:%S')
             }
         }
-        # 'AuthenticationBlock': {'AuthenticationBlock': "JavaApiUser",
-        #                         'RoleID': 'Trader',
-        #                         'SessionKey': 62000000481},
-        order_list_wave_creation_request = {
+        order_list_wave_creation_params = {
 
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'OrderListWaveCreationRequestBlock': {
-                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211203153316175001'},
-                                                       {'ParentOrdID': 'CO1211203153318175001'}]},
-                'OrderListID': 'LI1211203153316175001',
+                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': 'CO1211206152255192001'},
+                                                       {'ParentOrdID': 'CO1211206152255192002'}]},
+                'OrderListID': 'LI1211206152255192001',
                 'PercentQtyToRelease': 1.000000000,
                 'QtyPercentageProfile': "REM"
 
             }
         }
+        order_un_match_params = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'UnMatchRequestBlock': {
+                'UnMatchingList': {'UnMatchingBlock': [
+                    {'VirtualExecID': "EV1211206174312222007", 'UnMatchingQty': "100", 'SourceAccountID': "CareWB",
+                     'PositionType': "N"}
+                ]},
+                'DestinationAccountID': 'PROP'
+            }
+        }
+        manual_order_cross_params = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'ManualOrderCrossRequestBlock': {
+                'ManualOrderCrossTransType': 'New',
+                'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                'TradeDate': (tm(datetime.utcnow().isoformat())).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                'ExecPrice': '5.000000000',
+                'ExecQty': '100.000000000',
+                'ListingID': '704',
+                'OrdID1': "CO1211209105228064002",
+                'OrdID2': "CO1211209105311064001",
+                'LastCapacity': 'Agency',
+                'LastMkt': 'UBSG'
+            }
+        }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.trade_request.value,
-                                                     trade_params, self.connectivity),
+            message=bca.message_to_grpc_fix_standard(ORSMessages.manual_order_cross.value,
+                                                     manual_order_cross_params, self.connectivity),
             parent_event_id=self.case_id))
 
         # Main method
 
     def execute(self):
-        self.send_nos()
+        self.send_message()
         Stubs.factory.close()
 
 
