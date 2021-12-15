@@ -165,7 +165,7 @@ def execute(report_id, session_id):
              "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
              ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
             {ob_col.exec_sts.value: exe_sts.filled.value, ob_col.venue.value: "HSBC",
-             ob_col.limit_price.value: "1.1814",
+             ob_col.limit_price.value: "1.18079",
              ob_col.qty.value: "5,000,000"})
 
     except Exception:
