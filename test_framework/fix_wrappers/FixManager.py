@@ -138,10 +138,9 @@ class FixManager:
             elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
                 responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
 
-
             responce_fix_message.change_parameters(fields)
 
-        response_messages.append(responce_fix_message)
+            response_messages.append(responce_fix_message)
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
@@ -155,7 +154,7 @@ class FixManager:
                                                                   fix_message.get_parameters(), self.__session_alias)
             ))
 
-    def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> PlaceMessageRequest:
+    def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> list:
         if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
@@ -202,6 +201,7 @@ class FixManager:
         return self.parse_response_fix_standard(response)
 
     def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
+        response_messages = list()
         for message in response.response_messages_list:
             fields = dict()
             for field in message.fields:
@@ -229,19 +229,20 @@ class FixManager:
                                 repeating_group_list.append(repeating_group_list_field)
                             fields.update({field: {component_field: repeating_group_list}})
             message_type = message.metadata.message_type
-            responce_fix_message = None
+            response_fix_message = None
 
             if message_type == MessageType.NewOrderSingle.value:
-                responce_fix_message = FixMessageNewOrderSingle()
+                response_fix_message = FixMessageNewOrderSingle()
             elif message_type == MessageType.ExecutionReport.value:
-                responce_fix_message = FixMessageExecutionReport()
+                response_fix_message = FixMessageExecutionReport()
             elif message_type == MessageType.ListStatus.value:
-                responce_fix_message = FixMessageListStatus()
+                response_fix_message = FixMessageListStatus()
             elif message_type == MessageType.OrderCancelReplaceRequest.value:
-                responce_fix_message = FixMessageOrderCancelReplaceRequest()
-            responce_fix_message.change_parameters(fields)
+                response_fix_message = FixMessageOrderCancelReplaceRequest()
+            response_fix_message.change_parameters(fields)
 
-        return responce_fix_message
+            response_messages.append(response_fix_message)
+        return response_messages
 
     def get_case_id(self):
         return self.__case_id

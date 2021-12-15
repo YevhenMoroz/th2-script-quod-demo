@@ -102,6 +102,7 @@ class CommissionAccounts(Enum):
     CLIENT_COMM_2_SA1 = "CLIENT_COMM_2_SA1"
     CLIENT_COMM_2_SA2 = "CLIENT_COMM_2_SA2"
     CLIENT_COMM_2_SA3 = "CLIENT_COMM_2_SA3"
+    CLIENT_COMM_1_EXEMPTED = "CLIENT_COMM_1_EXEMPTED"
 
 
 class FeeTypes(Enum):
@@ -138,3 +139,5 @@ class CommissionProfiles(Enum):
     Perc_Amt = 4
     Bas_Amt = 5
     Bas_Qty = 6
+    Abs_Amt_USD = 7
+    Abs_Amt_2 = 8

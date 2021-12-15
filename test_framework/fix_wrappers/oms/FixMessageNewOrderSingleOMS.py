@@ -54,7 +54,18 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
 
     def set_default_dma_limit_eurex(self, instr: Instrument = None):
         self.change_parameters(self.base_parameters)
-        self.change_parameters({"OrdType": "2", "HandlInst": "2", "Price": "20","ExDestination": "XEUR"})
+        self.change_parameters({"OrdType": "2", "HandlInst": "1", "Price": "20", "ExDestination": "XEUR"})
         if instr:
             self.change_parameters({"Instrument": instr.value})
+        else:
+            self.change_parameters({"Instrument": Instrument.ISI1.value})
+        return self
+
+    def set_default_care_limit_eurex(self, instr: Instrument = None):
+        self.change_parameters(self.base_parameters)
+        self.change_parameters({"OrdType": "2", "HandlInst": "3", "Price": "20", "ExDestination": "XEUR"})
+        if instr:
+            self.change_parameters({"Instrument": instr.value})
+        else:
+            self.change_parameters({"Instrument": Instrument.ISI1.value})
         return self
