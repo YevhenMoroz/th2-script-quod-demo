@@ -14,8 +14,6 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 timeouts = True
 
 #text

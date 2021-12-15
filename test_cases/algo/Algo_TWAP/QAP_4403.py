@@ -38,12 +38,12 @@ connectivity_sell_side = "fix-sell-side-316-ganymede"
 connectivity_fh = 'fix-feed-handler-316-ganymede'
 
 instrument = {
-    'Symbol': 'FR0000066094_EUR',
-    'SecurityID': 'FR0000066094',
-    'SecurityIDSource': '4',
-    'SecurityExchange': 'XPAR'
-}
-symbol = "1091"
+            'Symbol': 'FR0010263202_EUR',
+            'SecurityID': 'FR0010263202',
+            'SecurityIDSource': '4',
+            'SecurityExchange': 'XPAR'
+        }
+symbol = "1015"
 
 
 def rule_creation():
