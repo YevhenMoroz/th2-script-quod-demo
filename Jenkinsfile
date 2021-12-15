@@ -3,9 +3,8 @@ pipeline {
         dockerfile {
             filename 'Dockerfile'  
         }
-        triggers {
-            cron('')
-        }
+    triggers {
+        cron('')
     }
     stages {
         stage('Execute') {
