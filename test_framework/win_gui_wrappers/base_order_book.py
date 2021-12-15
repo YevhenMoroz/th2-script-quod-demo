@@ -1,7 +1,8 @@
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter, \
+    SplitBookingDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct
 
@@ -54,6 +55,13 @@ class BaseOrderBook(BaseWindow):
         self.mass_unbook_call = None
         self.mass_book_call = None
         self.direct_moc_request_correct_call = None
+        self.ticket_details = None
+        self.settlement_details = None
+        self.commissions_details = None
+        self.fees_details = None
+        self.misc_details = None
+        self.split_booking_details: SplitBookingDetails = None
+        self.split_booking_call = None
 
     # endregion
     # region Common func
@@ -72,8 +80,8 @@ class BaseOrderBook(BaseWindow):
 
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
-                                      scrolling_operation=self.scrolling_operation.UP,
-                                      number_of_scrolls=count, base=self.base_request)
+                                                  scrolling_operation=self.scrolling_operation.UP,
+                                                  number_of_scrolls=count, base=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
@@ -82,7 +90,7 @@ class BaseOrderBook(BaseWindow):
     def extract_field(self, column_name: str, row_number: int = None) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
-                action=ExtractionAction.create_extraction_action(extraction_details=[field]))
+            action=ExtractionAction.create_extraction_action(extraction_details=[field]))
         if row_number is not None:
             info.set_number(row_number)
         self.order_details.add_single_order_info(info)
@@ -352,6 +360,7 @@ class BaseOrderBook(BaseWindow):
     '''
     Method extracting values from Booking Ticket
     '''
+
     def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
@@ -364,4 +373,96 @@ class BaseOrderBook(BaseWindow):
     def direct_moc_order_correct(self, qty, route):
         call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
 
+    def create_split_booking_parameter(self, split_qty: str, client=None, trade_date: str = None, give_up_broker=None,
+                                       net_gross_ind=None, agreed_price=None, settlement_type=None,
+                                       settlement_currency=None, exchange_rate: str = None, exchange_rate_calc=None,
+                                       settlement_date: str = None, pset=None, comm_basis=None, comm_rate=None,
+                                       comm_amount=None, comm_currency=None, fee_type=None, fee_basis=None,
+                                       fee_rate=None, fee_amount=None, fee_currency=None, fee_category=None,
+                                       bo_notes=None, bo_fields=None, trade_type=None):
+        """
+        trade_date/settlement_date format: '10/19/2021'
+        bo_fields format: [field1, field2, field3, field4, field5] [field1, None, field3, None, field5] etc.
+        """
+        ticket_details = self.__set_ticket_details(split_qty, client, trade_date, give_up_broker, net_gross_ind,
+                                                   agreed_price)
+        settlement_details = self.__set_settlement_details(exchange_rate, exchange_rate_calc, pset, settlement_currency,
+                                                           settlement_date, settlement_type)
+        commissions_details = self.__set_commission_details(comm_amount, comm_basis, comm_currency, comm_rate)
+        fees_details = self.__set_fees_details(fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type)
+        misc_details = self.__set_misc_details(bo_fields, bo_notes, trade_type)
+        return SplitBookingParameter(ticket_details, settlement_details, commissions_details, fees_details,
+                                     misc_details).build()
 
+    def __set_fees_details(self, fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type):
+        if fee_type:
+            fees_details = self.fees_details
+            fees_details.add_fees(fee_type, fee_basis, fee_rate, fee_amount, fee_currency, fee_category)
+            fees_details = fees_details.build()
+        else:
+            return None
+        return fees_details
+
+    def __set_commission_details(self, comm_amount, comm_basis, comm_currency, comm_rate):
+        if comm_basis:
+            commissions_details = self.commissions_details
+            commissions_details.toggle_manual()
+            commissions_details.add_commission(comm_basis, comm_rate, comm_amount, comm_currency)
+            commissions_details = commissions_details.build()
+        else:
+            return None
+        return commissions_details
+
+    def __set_misc_details(self, bo_fields, bo_notes, trade_type):
+        if trade_type or bo_fields or bo_notes is not None:
+            misc_details = self.misc_details
+            if trade_type:
+                misc_details.set_trade_type(trade_type)
+            if bo_notes:
+                misc_details.set_bo_notes_value(bo_notes)
+            if bo_fields:
+                if bo_fields[0]:
+                    misc_details.set_bo_field_1(bo_fields[0])
+                if bo_fields[1]:
+                    misc_details.set_bo_field_2(bo_fields[1])
+                if bo_fields[2]:
+                    misc_details.set_bo_field_3(bo_fields[2])
+                if bo_fields[3]:
+                    misc_details.set_bo_field_4(bo_fields[3])
+                if bo_fields[4]:
+                    misc_details.set_bo_field_5(bo_fields[4])
+            return misc_details.build()
+        else:
+            return None
+
+    def __set_settlement_details(self, exchange_rate, exchange_rate_calc, pset, settlement_currency, settlement_date,
+                                 settlement_type):
+        settlement_details = self.settlement_details
+        settlement_details.set_settlement_type(settlement_type)
+        settlement_details.set_settlement_currency(settlement_currency)
+        settlement_details.set_exchange_rate(exchange_rate)
+        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+        settlement_details.set_settlement_date(settlement_date)
+        settlement_details.set_pset(pset)
+        return settlement_details.build()
+
+    def __set_ticket_details(self, split_qty, client, trade_date, give_up_broker, net_gross_ind, agreed_price: str):
+        ticket_details = self.ticket_details
+        ticket_details.set_split_quantity(split_qty)
+        if client:
+            ticket_details.set_client(client)
+        if trade_date:
+            ticket_details.set_trade_date(trade_date)
+        if give_up_broker:
+            ticket_details.set_give_up_broker(give_up_broker)
+        if net_gross_ind:
+            ticket_details.set_net_gross_ind(net_gross_ind)
+        if agreed_price:
+            ticket_details.set_agreed_price(agreed_price)
+        return ticket_details.build()
+
+    def split_book(self, row_numbers: list, split_booking_params: list):
+        self.split_booking_details.set_rows_numbers(row_numbers)
+        self.split_booking_details.set_split_booking_parameter(split_booking_params)
+        call(self.split_booking_call, self.split_booking_details.build())
+        self.clear_details([self.split_booking_details])

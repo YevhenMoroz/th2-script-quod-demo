@@ -46,6 +46,8 @@ class CommissionsDetails:
     def remove_commissions(self):
         self.request.removeCommissions = True
 
+    def build(self):
+        return self.request
 
 class SpreadAction(Enum):
     WIDEN_SPREAD = common_pb2.WIDEN_SPREAD

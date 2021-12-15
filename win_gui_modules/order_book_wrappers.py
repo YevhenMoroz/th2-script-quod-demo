@@ -1,12 +1,14 @@
-from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
-from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
-from th2_grpc_act_gui_quod import basket_book_pb2
-from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2, ar_operations_pb2, care_orders_pb2
-from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
-from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from dataclasses import dataclass
 
+from th2_grpc_act_gui_quod import basket_book_pb2, middle_office_pb2, common_pb2
+from th2_grpc_act_gui_quod import care_orders_pb2
+from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
+from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+
+from win_gui_modules.common_wrappers import CommissionsDetails
+from win_gui_modules.middle_office_wrappers import TicketDetails, SettlementDetails, FeesDetails, MiscDetails
+from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
 
 class ModifyOrderDetails:
@@ -477,7 +479,7 @@ class OrderInfo:
         self.order_info = order_book_pb2.OrderInfo()
 
     @staticmethod
-    def create(action=None, actions: list = None, sub_order_details: OrdersDetails = None, row_number = None):
+    def create(action=None, actions: list = None, sub_order_details: OrdersDetails = None, row_number=None):
         order_info = OrderInfo()
         if action is not None:
             order_info.add_single_order_action(action)
@@ -1034,6 +1036,77 @@ class ExtractChildOrderDataDetails:
     def build(self):
         return self._request
 
+
+class SplitBookingParameter:
+    def __init__(self, ticket_details: middle_office_pb2.TicketDetails = None,
+                 settlement_details: middle_office_pb2.SettlementDetails = None,
+                 commissions_details: common_pb2.CommissionsDetails = None,
+                 fees_details: middle_office_pb2.FeesDetails = None,
+                 misc_details: middle_office_pb2.MiscDetails = None):
+        self._request = order_book_pb2.SplitBookingParameter()
+
+        if ticket_details is not None:
+            self._request.ticketDetails.CopyFrom(ticket_details)
+
+        if settlement_details is not None:
+            self._request.settlementDetails.CopyFrom(settlement_details)
+
+        if commissions_details is not None:
+            self._request.commissionsDetails.CopyFrom(commissions_details)
+
+        if fees_details is not None:
+            self._request.feesDetails.CopyFrom(fees_details)
+
+        if misc_details is not None:
+            self._request.miscDetails.CopyFrom(misc_details)
+
+    def set_ticket_details(self, ticket_details: TicketDetails):
+        self._request.ticketDetails.CopyFrom(ticket_details)
+
+    def set_settlement_details(self, settlement_details: SettlementDetails):
+        self._request.settlementDetails.CopyFrom(settlement_details)
+
+    def set_commissions_details(self, commissions_details: CommissionsDetails):
+        self._request.commissionsDetails.CopyFrom(commissions_details)
+
+    def set_fees_details(self, fees_details: FeesDetails):
+        self._request.feesDetails.CopyFrom(fees_details)
+
+    def set_misc_details(self, misc_details: MiscDetails):
+        self._request.miscDetails.CopyFrom(misc_details)
+
+    def build(self):
+        return self._request
+
+
+class SplitBookingDetails:
+    def __init__(self, base: EmptyRequest = None, rows_numbers: list = None, split_booking_params: list = None):
+        if base is not None:
+            self._request = order_book_pb2.SplitBookingDetails(base=base)
+        else:
+            self._request = order_book_pb2.SplitBookingDetails()
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self._request.rowsNumbers.append(number)
+
+        if split_booking_params is not None:
+            for param in split_booking_params:
+                self._request.splitBookingParams.append(param)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_rows_numbers(self, rows_numbers: list):
+        for number in rows_numbers:
+            self._request.rowsNumbers.append(number)
+
+    def set_split_booking_parameter(self, split_booking_params: list):
+        for param in split_booking_params:
+            self._request.splitBookingParams.append(param)
+
+    def build(self):
+        return self._request
 
 # class QuoteRequestDetails:
 #     def __init__(self):

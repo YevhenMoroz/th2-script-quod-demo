@@ -26,6 +26,12 @@ class TicketDetails:
     def set_agreed_price(self, agreed_price: str):
         self.request.agreedPrice = agreed_price
 
+    def build(self):
+        return self.request
+
+    def set_split_quantity(self, split_quantity: str):
+        self.request.splitQuantity = split_quantity
+
 
 class ExtractionField(Enum):
     AGREED_PRICE = middle_office_pb2.ExtractionDetails.ExtractionField.AGREED_PRICE
@@ -121,6 +127,9 @@ class SettlementDetails:
 
     def toggle_recompute(self):
         self.request.toggleRecompute = True
+
+    def build(self):
+        return self.request
 
 
 class AllocationsDetails:
@@ -223,6 +232,9 @@ class FeesDetails:
         if category is not None:
             var.category = category
 
+    def build(self):
+        return self.request
+
 
 class MiscDetails:
     def __init__(self, request: middle_office_pb2.MiscDetails()):
@@ -248,6 +260,9 @@ class MiscDetails:
 
     def set_bo_notes_value(self, value: str):
         self.request.backOfficeNotesValue = value
+
+    def build(self):
+        return self.request
 
 
 class CheckContextAction:
