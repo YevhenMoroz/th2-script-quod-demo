@@ -31,7 +31,7 @@ class QAP_2564(CommonTestCase):
         self.execution_policy = 'Care'
         self.client = 'CLIENT1'
         self.commission_amount_type = 'Broker'
-        self.commission_profile = 'UK Levy'
+        self.commission_profile = 'UK stamp'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -28,7 +28,7 @@ class QAP_1736(CommonTestCase):
         self.symbol = "EUR/USD"
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
-        self.venue = "AMSTERDAM"
+        self.venue = "BRU"
         self.currency = "AFN"
         self.instr_type = "Bond"
 

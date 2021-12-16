@@ -35,7 +35,7 @@ class RunOthers:
 
         try:
             start_time = time.monotonic()
-
+            #
             # QAP_676(self.web_driver_container, self.second_lvl_id).run()
             # QAP_677(self.web_driver_container, self.second_lvl_id).run()
             # QAP_678(self.web_driver_container, self.second_lvl_id).run()
@@ -48,9 +48,9 @@ class RunOthers:
             # QAP_835(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1738(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1739(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1741(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1741(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1831(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3228(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3228(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3229(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5816(self.web_driver_container, self.second_lvl_id).run()
 

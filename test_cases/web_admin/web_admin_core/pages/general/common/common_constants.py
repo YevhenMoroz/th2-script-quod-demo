@@ -15,3 +15,6 @@ class CommonConstants:
     FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Full Screen"]'
     EXIT_FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Exit Full Screen"]'
     DARK_THEME_XPATH = '//*[text()="Dark Theme"]'
+    COPY_VERSION_BUTTON = '//*[@nbtooltip="Copy version"]'
+    ABOUT_BUTTON_XPATH = '//*[@title="About"]//span'
+    ADMIN_VERSION_XPATH = '//*[@id="admVersionInput"]'

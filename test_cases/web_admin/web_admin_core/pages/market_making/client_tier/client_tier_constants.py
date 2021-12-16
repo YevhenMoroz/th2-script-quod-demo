@@ -88,7 +88,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH = "//*[@placeholder ='Venue *']"
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_FILTER_XPATH = "//*[@class='ng2-smart-th venue ng-star-inserted']//input"
 
-    CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_CRITICAL_VENUE_CHECKBOX_XPATH = "/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[2]/nb-accordion-item-body/div/div/ng2-smart-table/table/thead/tr[3]/td[3]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]"
+    CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_CRITICAL_VENUE_CHECKBOX_XPATH = "//*[@class='ui-table-scrollable-body ng-star-inserted']//td[3]//span"
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_CRITICAL_VENUE_FILTER_XPATH = "//*[@class='criticalVenue ng2-smart-th ng-star-inserted']//input"
 
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_EXCLUDE_WHEN_UNHEALTHY_CHECKBOX_XPATH = "/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[2]/nb-accordion-item-body/div/div/ng2-smart-table/table/thead/tr[3]/td[4]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]"

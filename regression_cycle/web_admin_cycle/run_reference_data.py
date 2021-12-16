@@ -20,6 +20,7 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2940 import QA
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2971 import QAP_2971
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3136 import QAP_3136
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3399 import QAP_3399
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4153 import QAP_4153
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4709 import QAP_4709
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4861 import QAP_4861
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QAP_4862
@@ -57,7 +58,7 @@ class ReferenceData:
             # QAP_1731(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1732(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1733(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1736(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1736(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1737(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2154(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2302(self.web_driver_container, self.second_lvl_id).run()
@@ -68,10 +69,11 @@ class ReferenceData:
             # QAP_2971(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3136(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3399(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4153(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4709(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4861(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4862(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5815(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5815(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

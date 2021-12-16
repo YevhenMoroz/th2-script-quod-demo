@@ -11,6 +11,7 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_2544 import QAP_2544
 from test_cases.web_admin.web_admin_test_cases.general.QAP_2616 import QAP_2616
 from test_cases.web_admin.web_admin_test_cases.general.QAP_2624 import QAP_2624
 from test_cases.web_admin.web_admin_test_cases.general.QAP_2631 import QAP_2631
+from test_cases.web_admin.web_admin_test_cases.general.QAP_4104 import QAP_4104
 from test_cases.web_admin.web_admin_test_cases.general.QAP_4865 import QAP_4865
 from test_cases.web_admin.web_admin_test_cases.general.QAP_5840 import QAP_5840
 from test_cases.web_admin.web_admin_test_cases.general.QAP_5967 import QAP_5967
@@ -32,19 +33,19 @@ class RunGeneral:
         try:
             start_time = time.monotonic()
 
-            # QAP_680(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_796(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_797(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2450(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2454(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2509(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2516(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2544(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2616(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2624(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2631(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4865(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5840(self.web_driver_container, self.second_lvl_id).run()
+            QAP_680(self.web_driver_container, self.second_lvl_id).run()
+            QAP_796(self.web_driver_container, self.second_lvl_id).run()
+            QAP_797(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2450(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2509(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2516(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2544(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2616(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2624(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2631(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4104(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4865(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5840(self.web_driver_container, self.second_lvl_id).run()
             QAP_5967(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()

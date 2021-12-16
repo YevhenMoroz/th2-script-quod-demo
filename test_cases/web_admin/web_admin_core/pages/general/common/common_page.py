@@ -1,8 +1,9 @@
+import time
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.general.common.common_constants import CommonConstants
 
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-
+import pyperclip
 
 class CommonPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
@@ -68,3 +69,19 @@ class CommonPage(CommonPage):
 
     def click_on_exit_full_screen_button(self):
         self.find_by_xpath(CommonConstants.EXIT_FULL_SCREEN_BUTTON_XPATH).click()
+
+    def click_on_copy_version_button(self):
+        self.find_by_xpath(CommonConstants.COPY_VERSION_BUTTON).click()
+
+    def extract_version_from_copy_version(self):
+        self.click_on_copy_version_button()
+        time.sleep(1)
+        element = pyperclip.paste()
+        print(element)
+        return element
+
+    def click_on_about(self):
+        self.find_by_xpath(CommonConstants.ABOUT_BUTTON_XPATH).click()
+
+    def extract_admin_version(self):
+        return self.find_by_xpath(CommonConstants.ADMIN_VERSION_XPATH).text
