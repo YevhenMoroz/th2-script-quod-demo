@@ -1,7 +1,11 @@
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+
+from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
@@ -18,11 +22,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 client = 'Osmium1'
-client_tier = 'Osmium'
-account = 'QUOD3_1'
+account = 'Osmium1_1'
 symbol = 'EUR/USD'
+side_b = "1"
+side_s = "2"
 instrument_tier = 'EUR/USD-SPOT'
+security_type_spo = "FXSPOT"
+settle_date_spo = spo()
+settle_type_spo = "0"
+currency = "EUR"
+settle_currency = "USD"
+ord_qty='3000000'
+
 status_open = 'Open'
 row = 2
 SELL = RatesTileTableOrdSide.SELL
@@ -175,6 +188,34 @@ def place_order(base_request, service, _client):
     call(service.placeRatesTileOrder, place_request.build())
 
 
+def send_rfq_and_filled_order_buy(case_id, qty):
+    params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
+                                    securitytype=security_type_spo, settldate=settle_date_spo,
+                                    settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
+                                    currency=currency, side=side_b,
+                                    account=account)
+    rfq = FixClientSellRfq(params_spot)
+    rfq.send_request_for_quote()
+    rfq.verify_quote_pending()
+    price = rfq.extract_filed("OfferPx")
+    rfq.send_new_order_single(price)
+    rfq.verify_order_pending().verify_order_filled()
+
+
+def send_rfq_and_filled_order_sell(case_id, qty):
+    params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
+                                    securitytype=security_type_spo, settldate=settle_date_spo,
+                                    settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
+                                    currency=currency, side=side_s,
+                                    account=account)
+    rfq = FixClientSellRfq(params_spot)
+    rfq.send_request_for_quote()
+    rfq.verify_quote_pending()
+    price = rfq.extract_filed("BidPx")
+    rfq.send_new_order_single(price)
+    rfq.verify_order_pending().verify_order_filled()
+
+
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -188,19 +229,24 @@ def execute(report_id, session_id):
         # Step 1
         expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
         set_send_hedge_order(case_id, test_fake_id)
-        call(cp_service.createRatesTile, base_details.build())
-        modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
-        place_order(base_details, cp_service, client)
+
+        # call(cp_service.createRatesTile, base_details.build())
+        # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
+        # place_order(base_details, cp_service, client)
+        send_rfq_and_filled_order_sell(case_id, ord_qty)
+
         # Step 2
         ord_id = check_order_book_ao('Checking placed order', case_id, case_base_request, ob_act, test_fake_name)
         set_send_hedge_order(case_id, test_id)
         cancel_order(ob_act, case_base_request, ord_id)
         # Step 3
         ord_id = check_order_book_after_strategy_change(case_id, case_base_request, ob_act, ord_id, test_name)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
-        place_order(base_details, cp_service, client)
-        cancel_order(ob_act, case_base_request, ord_id)
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
+        # place_order(base_details, cp_service, client)
+        # cancel_order(ob_act, case_base_request, ord_id)
+        send_rfq_and_filled_order_buy(case_id, ord_qty)
+
         # Step 4
         check_order_book_no_new_order(case_id, case_base_request, ob_act, ord_id)
         actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)

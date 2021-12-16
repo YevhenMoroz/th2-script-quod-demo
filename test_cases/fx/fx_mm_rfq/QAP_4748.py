@@ -18,6 +18,8 @@ from win_gui_modules.wrappers import set_base
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+user = Stubs.custom_config['qf_trading_fe_user']
+
 
 def create_client_rfq_tile(cp_service, base_tile_data: BaseTileData):
     call(cp_service.createClientRFQTile, base_tile_data)
@@ -46,7 +48,7 @@ def send_client_rfq(cp_service, base_tile_data):
 
 def check_quote_request_b(base_request, service, case_id, qty,  status="New", venue="QUODFX", quote_status='Accepted'):
     qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_filter(["Venue", venue, "User", "QA5", 'Status', status, 'Qty', qty])
+    qrb.set_filter(["Venue", venue, "User", user, 'Status', status, 'Qty', qty])
     qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
     qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
     qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
@@ -65,7 +67,7 @@ def check_order_book(base_request, act_ob):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(['Venue', 'QUODFX', 'Owner', 'QA5'])
+    ob.set_filter(['Venue', 'QUODFX', 'Owner', user])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     ob.add_single_order_info(
         OrderInfo.create(
@@ -80,7 +82,7 @@ def check_order_book_no_new_order(case_id, base_request, act_ob, ord_id):
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(['Venue', 'QUODFX', 'Owner', 'QA5'])
+    ob.set_filter(['Venue', 'QUODFX', 'Owner', user])
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
     ob.add_single_order_info(
         OrderInfo.create(
