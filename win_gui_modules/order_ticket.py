@@ -31,6 +31,27 @@ class OrderTicketExtractedValue(Enum):
     PENDING_CHECKBOX = order_ticket_pb2.ExtractOrderTicketValuesRequest.OrderTicketExtractedType.PENDING_CHECKBOX
 
 
+class MoreTabAllocationsDetails:
+    def __init__(self, allocations_rows: list, order_qty_change_to: str = None):
+        self.request = order_ticket_pb2.MoreTabAllocationsDetails()
+
+        if order_qty_change_to is not None:
+            self.request.orderQtyChangeTo = order_qty_change_to
+
+        for row in allocations_rows:
+            self.request.allocationsRows.append(row)
+
+    def set_order_qty_change_to(self, change_to: str):
+        self.request.orderQtyChangeTo = change_to
+
+    def set_allocations_rows_details(self, allocations_rows: list):
+        for row in allocations_rows:
+            self.request.allocationsRows.append(row)
+
+    def build(self):
+        return self.request
+
+
 class OrderTicketDetails:
 
     def __init__(self):
@@ -111,6 +132,9 @@ class OrderTicketDetails:
 
     def build(self):
         return self.order
+
+    def set_allocations_details(self, allocations_details: MoreTabAllocationsDetails):
+        self.order.allocationsDetails.CopyFrom(allocations_details)
 
 
 class FXOrderDetails:
@@ -376,3 +400,25 @@ class ExtractOrderTicketErrorsRequest:
         extract_disclose_flag_request.get_disclose_flag_state()
         result = call(order_ticket_service.extractOrderTicketValues, extract_disclose_flag_request.build())
         print(result)
+
+
+class AllocationsGridRowDetails:
+    def __init__(self, account: str, qty: str, percentage: str = None):
+        self.request = order_ticket_pb2.AllocationsGridRowDetails()
+        self.request.account = account
+        self.request.qty = qty
+
+        if percentage is not None:
+            self.request.percentage = percentage
+
+    def set_account(self, account: str):
+        self.request.account = account
+
+    def set_qty(self, qty: str):
+        self.request.qty = qty
+
+    def set_percentage(self, percentage: str):
+        self.request.percentage = percentage
+
+    def build(self):
+        return self.request
