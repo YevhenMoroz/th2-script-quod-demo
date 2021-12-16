@@ -391,9 +391,10 @@ class BaseOrderBook(BaseWindow):
                                        net_gross_ind=None, agreed_price=None, settlement_type=None,
                                        settlement_currency=None, exchange_rate: str = None, exchange_rate_calc=None,
                                        settlement_date: str = None, pset=None, comm_basis=None, comm_rate=None,
-                                       comm_amount=None, comm_currency=None, fee_type=None, fee_basis=None,
-                                       fee_rate=None, fee_amount=None, fee_currency=None, fee_category=None,
-                                       bo_notes=None, bo_fields=None, trade_type=None):
+                                       comm_amount=None, comm_currency=None, remove_comm=False, fee_type=None,
+                                       fee_basis=None, fee_rate=None, fee_amount=None, fee_currency=None,
+                                       fee_category=None, remove_fees=False, bo_notes=None, bo_fields=None,
+                                       trade_type=None):
         """
         trade_date/settlement_date format: '10/19/2021'
         bo_fields format: [field1, field2, field3, field4, field5] [field1, None, field3, None, field5] etc.
@@ -402,26 +403,32 @@ class BaseOrderBook(BaseWindow):
                                                    agreed_price)
         settlement_details = self.__set_settlement_details(exchange_rate, exchange_rate_calc, pset, settlement_currency,
                                                            settlement_date, settlement_type)
-        commissions_details = self.__set_commission_details(comm_amount, comm_basis, comm_currency, comm_rate)
-        fees_details = self.__set_fees_details(fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type)
+        commissions_details = self.__set_commission_details(comm_amount, comm_basis, comm_currency, comm_rate,
+                                                            remove_comm)
+        fees_details = self.__set_fees_details(fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type,
+                                               remove_fees)
         misc_details = self.__set_misc_details(bo_fields, bo_notes, trade_type)
         return SplitBookingParameter(ticket_details, settlement_details, commissions_details, fees_details,
                                      misc_details).build()
 
-    def __set_fees_details(self, fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type):
+    def __set_fees_details(self, fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type, remove_fees):
         if fee_type:
             fees_details = self.fees_details
             fees_details.add_fees(fee_type, fee_basis, fee_rate, fee_amount, fee_currency, fee_category)
+            if remove_fees:
+                fees_details.remove_fees()
             fees_details = fees_details.build()
         else:
             return None
         return fees_details
 
-    def __set_commission_details(self, comm_amount, comm_basis, comm_currency, comm_rate):
+    def __set_commission_details(self, comm_amount, comm_basis, comm_currency, comm_rate, remove_comm):
         if comm_basis:
             commissions_details = self.commissions_details
             commissions_details.toggle_manual()
             commissions_details.add_commission(comm_basis, comm_rate, comm_amount, comm_currency)
+            if remove_comm:
+                commissions_details.remove_commissions()
             commissions_details = commissions_details.build()
         else:
             return None
@@ -451,14 +458,23 @@ class BaseOrderBook(BaseWindow):
 
     def __set_settlement_details(self, exchange_rate, exchange_rate_calc, pset, settlement_currency, settlement_date,
                                  settlement_type):
-        settlement_details = self.settlement_details
-        settlement_details.set_settlement_type(settlement_type)
-        settlement_details.set_settlement_currency(settlement_currency)
-        settlement_details.set_exchange_rate(exchange_rate)
-        settlement_details.set_exchange_rate_calc(exchange_rate_calc)
-        settlement_details.set_settlement_date(settlement_date)
-        settlement_details.set_pset(pset)
-        return settlement_details.build()
+        if exchange_rate or exchange_rate_calc or pset or settlement_currency or settlement_date or settlement_type:
+            settlement_details = self.settlement_details
+            if settlement_currency:
+                settlement_details.set_settlement_type(settlement_type)
+            if settlement_currency:
+                settlement_details.set_settlement_currency(settlement_currency)
+            if exchange_rate:
+                settlement_details.set_exchange_rate(exchange_rate)
+            if exchange_rate_calc:
+                settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+            if settlement_date:
+                settlement_details.set_settlement_date(settlement_date)
+            if pset:
+                settlement_details.set_pset(pset)
+            return settlement_details.build()
+        else:
+            return None
 
     def __set_ticket_details(self, split_qty, client, trade_date, give_up_broker, net_gross_ind, agreed_price: str):
         ticket_details = self.ticket_details
@@ -475,8 +491,9 @@ class BaseOrderBook(BaseWindow):
             ticket_details.set_agreed_price(agreed_price)
         return ticket_details.build()
 
-    def split_book(self, row_numbers: list, split_booking_params: list):
-        self.split_booking_details.set_rows_numbers(row_numbers)
+    def split_book(self, split_booking_params: list, row_numbers: list = None):
+        if row_numbers:
+            self.split_booking_details.set_rows_numbers(row_numbers)
         self.split_booking_details.set_split_booking_parameter(split_booking_params)
         call(self.split_booking_call, self.split_booking_details.build())
         self.clear_details([self.split_booking_details])

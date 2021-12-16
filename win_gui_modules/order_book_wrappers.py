@@ -7,7 +7,6 @@ from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
 from win_gui_modules.common_wrappers import CommissionsDetails
-from win_gui_modules.middle_office_wrappers import TicketDetails, SettlementDetails, FeesDetails, MiscDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
 
@@ -1060,19 +1059,19 @@ class SplitBookingParameter:
         if misc_details is not None:
             self._request.miscDetails.CopyFrom(misc_details)
 
-    def set_ticket_details(self, ticket_details: TicketDetails):
+    def set_ticket_details(self, ticket_details):
         self._request.ticketDetails.CopyFrom(ticket_details)
 
-    def set_settlement_details(self, settlement_details: SettlementDetails):
+    def set_settlement_details(self, settlement_details):
         self._request.settlementDetails.CopyFrom(settlement_details)
 
     def set_commissions_details(self, commissions_details: CommissionsDetails):
         self._request.commissionsDetails.CopyFrom(commissions_details)
 
-    def set_fees_details(self, fees_details: FeesDetails):
+    def set_fees_details(self, fees_details):
         self._request.feesDetails.CopyFrom(fees_details)
 
-    def set_misc_details(self, misc_details: MiscDetails):
+    def set_misc_details(self, misc_details):
         self._request.miscDetails.CopyFrom(misc_details)
 
     def build(self):
