@@ -1,6 +1,6 @@
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_01, EXP_WW_01, EXP_VO_01
+from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_01, EXP_WW_01, EXP_VO_01, EXP_TWAP_01, EXP_VWAP_01, EXP_POV_01
 from test_cases.algo.Algo_Redburn.Algo_MOO.Reference import MOO_Reference_PRM_Sell, MOO_Reference_PRM_Buy, MOO_Reference_OPN, MOO_Reference_MKT_Sell, MOO_Reference_MKT_Buy, MOO_Reference_MID, \
     MOO_Reference_LTP, MOO_Reference_LMT, MOO_Reference_DLO, MOO_Reference_DHI, MOO_Reference_CLO
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QA_TWAP_NAV_WW_01_sell, TWAP_MinP_01, QA_TWAP_NAV_WW_03_buy, TWAP_WW_01, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_REF_01_sell, TWAP_AUC_01, \
@@ -44,18 +44,18 @@ def test_run():
         MOO_Reference_PRM_Sell.execute(report_id)
         # end region
 
-        # region TWAP NAV WW
-        QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
-        QA_TWAP_NAV_WW_MAXShares.execute(report_id)
-        QA_TWAP_NAV_WW_01_sell.execute(report_id)
-        QA_TWAP_NAV_WW_02_sell.execute(report_id)
-        QA_TWAP_NAV_WW_03_sell.execute(report_id)
-        QA_TWAP_NAV_WW_01_buy.execute(report_id)
-        QA_TWAP_NAV_WW_02_buy.execute(report_id)
-        QA_TWAP_NAV_WW_03_buy.execute(report_id)
-        QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
-        QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
-        # endregion
+        # # region TWAP NAV WW
+        # QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
+        # QA_TWAP_NAV_WW_MAXShares.execute(report_id)
+        # QA_TWAP_NAV_WW_01_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_02_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_03_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_01_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_02_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_03_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
+        # # endregion
 
         # region OPN Additional
         QA_OPN_AuctionWouldCap.execute(report_id)
@@ -106,6 +106,9 @@ def test_run():
         EXP_WW_02.execute(report_id)
         EXP_FPC_01.execute(report_id)
         EXP_SCO_01.execute(report_id)
+        EXP_TWAP_01.execute(report_id)
+        EXP_VWAP_01.execute(report_id)
+        EXP_POV_01.execute(report_id)
         # endregion
 
         # region TWAP Client requirement
