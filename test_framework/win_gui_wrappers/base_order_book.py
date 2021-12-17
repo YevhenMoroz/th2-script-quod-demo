@@ -5,7 +5,8 @@ from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
 from win_gui_modules.utils import call
-from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request
+from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
+    direct_moc_request
 
 
 class BaseOrderBook(BaseWindow):
@@ -515,3 +516,11 @@ class BaseOrderBook(BaseWindow):
         self.split_booking_details.set_split_booking_parameter(split_booking_params)
         call(self.split_booking_call, self.split_booking_details.build())
         self.clear_details([self.split_booking_details])
+
+    def direct_moc_extract_error_message(self, qty, route):
+        self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
+        self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+        response = call(self.direct_moc_request_correct_call,
+                        direct_moc_request("UnmatchedQty", qty, route, self.extract_direct_values))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return response
