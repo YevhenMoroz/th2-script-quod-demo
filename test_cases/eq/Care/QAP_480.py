@@ -39,8 +39,6 @@ class QAP_480(TestCase):
         route = 'Route via FIXBUYTH2 - component'
         fix_manager = FixManager(self.ss_connectivity)
         fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
-        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
-        client = fix_message.get_parameter('Account')
 
         # endregion
 

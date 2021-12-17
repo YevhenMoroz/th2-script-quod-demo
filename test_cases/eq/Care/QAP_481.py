@@ -1,48 +1,66 @@
 import logging
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
-from custom.basic_custom_actions import create_event
-from custom.verifier import Verifier
+import os
+import time
+from rule_management import RuleManager
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
+
+from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.old_wrappers import eq_fix_wrappers, eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base, direct_moc_request
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-481"
-    # region Declarations
-    qty = "900"
-    lookup = "PROL"
-    client = "CLIENT_FIX_CARE"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregionA
-    # region Create CO
-    eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
-    eq_wrappers.accept_order(lookup, qty, "")
-    # endregion
-    # region DirectMOC split
-    error_message = ExtractDirectsValuesRequest.DirectsExtractedValue()
-    error_message.name = "ErrorMessage"
-    error_message.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
-    request = ExtractDirectsValuesRequest()
-    request.extractionId = "DirectErrorMessageExtractionID"
-    request.extractedValues.append(error_message)
-    response = call(Stubs.win_act_order_book.orderBookDirectMoc,
-                    direct_moc_request('UnmatchedQty', '0', 'ChiX direct access', request))
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values('Error_message', 'Error - Qty Percentage should be greater than zero (0)',
-                            response['ErrorMessage'])
-    verifier.verify()
+class QAP_481(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+
+    def qap_481(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        base_window = BaseMainWindow(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        route = 'Route via FIXBUYTH2 - component'
+        fix_manager = FixManager(self.ss_connectivity)
+        fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
+
+        # endregion
+
+        # region open FE
+        base_window.open_fe(self.report_id, work_dir, username, password, True)
+        # endregion
+
+        # region create CO order
+        fix_manager.send_message_fix_standard(fix_message)
+        order_id_first = order_book.extract_field('Order ID')
+        # endregion
+
+        # region accept CO order
+        order_inbox = OMSClientInbox(self.case_id, self.session_id)
+        order_inbox.accept_order('O', 'M', 'S')
+        # endregion
+
+        order_book.set_error_message_details()
+        result = order_book.direct_moc_extract_error_message('0', route)
+        order_book.compare_values({'ErrorMessage': 'Error - Qty Percentage should be greater than zero (0)'}, result,
+                                  'Verify Error message')
+
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_481()

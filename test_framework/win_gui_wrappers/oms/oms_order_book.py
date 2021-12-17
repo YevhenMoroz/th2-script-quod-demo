@@ -1,3 +1,4 @@
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
 
@@ -6,7 +7,8 @@ from stubs import Stubs
 from win_gui_modules.common_wrappers import GridScrollingDetails, RowsNumbersForGrid
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
-    AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, SecondLevelExtractionDetails
+    AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
+    SecondLevelExtractionDetails, ManualCrossDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
