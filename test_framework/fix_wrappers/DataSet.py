@@ -155,3 +155,15 @@ class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'
