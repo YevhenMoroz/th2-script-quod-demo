@@ -11,9 +11,6 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails
-
-AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
-SecondLevelExtractionDetails, ManualCrossDetails, SplitBookingDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -68,8 +65,6 @@ class OMSOrderBook(BaseOrderBook):
         self.manual_cross_call = Stubs.win_act_order_book.manualCross
         self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
         self.mass_book_call = Stubs.win_act_order_book.massBook
-        self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
-        self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.ticket_details = TicketDetails(middle_office_pb2.TicketDetails())
         self.settlement_details = SettlementDetails(middle_office_pb2.SettlementDetails())
         self.commissions_details = CommissionsDetails(common_pb2.CommissionsDetails())
@@ -77,8 +72,5 @@ class OMSOrderBook(BaseOrderBook):
         self.misc_details = MiscDetails(middle_office_pb2.MiscDetails())
         self.split_booking_details = SplitBookingDetails(self.base_request)
         self.split_booking_call = Stubs.win_act_order_book.splitBooking
-
-        self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
-        self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc
     # endregion
