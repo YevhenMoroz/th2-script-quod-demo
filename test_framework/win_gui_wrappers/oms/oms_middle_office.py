@@ -1,7 +1,7 @@
 from test_framework.win_gui_wrappers.base_middle_office_book import BaseMiddleOfficeBook
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
-    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails
+    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -14,6 +14,7 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
         self.modify_ticket_details = ModifyTicketDetails(self.base_request)
         self.view_order_extraction_details = ViewOrderExtractionDetails(self.base_request)
         self.extract_middle_office_blotter_values_request = ExtractMiddleOfficeBlotterValuesRequest(self.base_request)
+        self.allocation_ticket_extraction_details_call = Stubs.win_act_middle_office_service.extractAllocationBlockValues
         self.book_order_call = Stubs.win_act_middle_office_service.bookOrder
         self.amend_block_call = Stubs.win_act_middle_office_service.amendMiddleOfficeTicket
         self.unbook_order_call = Stubs.win_act_middle_office_service.unBookOrder

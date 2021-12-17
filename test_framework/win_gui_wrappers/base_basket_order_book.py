@@ -17,6 +17,9 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_basket_order_details = None
         self.imported_file_mapping_field = None
         self.extract_template_details = None
+        self.extract_child_order_data = None
+        self.extract_child_details = None
+        self.extract_order_data_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -25,8 +28,10 @@ class BaseBasketOrderBook(BaseWindow):
         self.uncomplete_basket_call = None
         self.book_basket_call = None
         self.cancel_basket_call = None
-        self.extract_basket_data_details_call = None
-        self.extract_basket_order_details_call = None
+        self.remove_from_basket_call = None
+        self.extract_basket_data_call = None
+        self.extract_child_order_data_call = None
+
 
     # endregion
     # region Common func
@@ -176,4 +181,9 @@ class BaseBasketOrderBook(BaseWindow):
     def cancel_basket(self, filter_list=None):
         call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
         self.clear_details([self.simple_request])
+    # endregion
+    def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
+        remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
+        call(self.remove_from_basket_call, remove_from_basket_details.build())
+
     # endregion

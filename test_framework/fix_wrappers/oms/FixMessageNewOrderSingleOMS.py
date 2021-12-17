@@ -21,7 +21,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
         "TransactTime": datetime.utcnow().isoformat(),
         "OrderCapacity": "A",
         "Currency": "EUR",
-        "ExDestination": "XPAR"
+        "ExDestination": Instrument.FR0010436584.value.get('SecurityExchange')
     }
 
     def set_default_dma_limit(self, instr: Instrument = None):

@@ -1,4 +1,4 @@
-from test_cases.RET.Positions.WashBook import QAP_4287, QAP_4308
+from test_cases.ret.Positions.WashBook import QAP_4287, QAP_4308
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

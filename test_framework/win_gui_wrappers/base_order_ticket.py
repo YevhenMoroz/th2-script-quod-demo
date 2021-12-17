@@ -27,7 +27,7 @@ class BaseOrderTicket(BaseWindow):
 
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, order_type=None,
-                          tif=None, account=None, display_qty=None, is_sell_side=False):
+                          tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None):
 
         if client is not None:
             self.order_details.set_client(client)

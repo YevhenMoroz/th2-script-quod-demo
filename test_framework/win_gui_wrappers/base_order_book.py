@@ -1,10 +1,11 @@
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
+
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter, \
-    SplitBookingDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
 from win_gui_modules.utils import call
-from win_gui_modules.wrappers import direct_moc_request_correct
+from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request
 
 
 class BaseOrderBook(BaseWindow):
@@ -33,10 +34,11 @@ class BaseOrderBook(BaseWindow):
         self.extraction_panel_details = None
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
+        self.extraction_error_message_details = None
+        self.extract_direct_values = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
-        self.direct_moc_request_correct_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
         self.is_menu_item_present_call = None
@@ -57,14 +59,15 @@ class BaseOrderBook(BaseWindow):
         self.manual_cross_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
-        self.direct_moc_request_correct_call = None
         self.ticket_details = None
         self.settlement_details = None
         self.commissions_details = None
         self.fees_details = None
         self.misc_details = None
-        self.split_booking_details: SplitBookingDetails = None
+        self.split_booking_details = None
         self.split_booking_call = None
+        self.direct_moc_request_correct_call = None
+        self.direct_loc_request_correct_call = None
 
     # endregion
 
@@ -230,9 +233,9 @@ class BaseOrderBook(BaseWindow):
 
     def complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
-            self.modify_order_details.set_filter()
+            self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
-            self.modify_order_details.set_selected_row_count()
+            self.modify_order_details.set_selected_row_count(row_count)
         call(self.complete_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
@@ -386,6 +389,21 @@ class BaseOrderBook(BaseWindow):
 
     def direct_moc_order_correct(self, qty, route):
         call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
+
+    def direct_loc_order_correct(self, qty, route):
+        call(self.direct_loc_request_correct_call, direct_loc_request_correct("UnmatchedQty", qty, route))
+
+    def set_error_message_details(self):
+        self.extraction_error_message_details.name = "ErrorMessage"
+        self.extraction_error_message_details.type = ExtractDirectsValuesRequest.DirectsExtractedType.ERROR_MESSAGE
+
+    def direct_loc_extract_error_message(self, qty, route):
+        self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
+        self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+        response = call(self.direct_loc_request_correct_call,
+                        direct_loc_request("UnmatchedQty", qty, route, self.extract_direct_values))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return response
 
     def create_split_booking_parameter(self, split_qty: str, client=None, trade_date: str = None, give_up_broker=None,
                                        net_gross_ind=None, agreed_price=None, settlement_type=None,
