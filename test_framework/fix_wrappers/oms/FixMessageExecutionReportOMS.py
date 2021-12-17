@@ -90,7 +90,6 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
             "Instrument": new_order_single.get_parameter("Instrument"),
             "SettlDate": "*",
-            "ReplyReceivedTime": "*",
             "SecondaryOrderID": "*",
             "LastExecutionPolicy": "*",
             "TradeDate": "*",
@@ -99,7 +98,6 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "ExDestination": "*",
             "GrossTradeAmt": "*",
             "SettlCurrency": "*",
-            "MiscFeesGrp": "*",
             "CommissionData": "*",
         }
         self.change_parameters(self.base_parameters)
