@@ -73,14 +73,15 @@ class Instrument(Enum):
 
 
 class Connectivity(Enum):
-    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
     Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
+    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
-    Ganymede_317_wa = "rest_wa317ganymede"
+    Ganymede_317_wa = 'rest_wa317ganymede'
+    Ganymede_317_ja = '317_java_api'
 
 
 class GatewaySide(Enum):
