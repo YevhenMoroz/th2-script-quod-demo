@@ -36,7 +36,7 @@ class VenuesConstants:
     MAIN_PAGE_COUNTERPART_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[8]//input'
     MAIN_PAGE_COUNTERPART_XPATH = '//*[@col-id="counterpart.counterpartName"]//span//span[4]'
 
-    # --Description tab--
+    # --Values tab--
     DESCRIPTION_TAB_NAME_XPATH = '//*[@formcontrolname="venueName"]'
     DESCRIPTION_TAB_ID_XPATH = '//*[@formcontrolname="venueID"]'
     DESCRIPTION_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]//input'
@@ -50,7 +50,7 @@ class VenuesConstants:
     DESCRIPTION_TAB_COUNTERPART_XPATH = '//*[@id="counterpart"]'
     DESCRIPTION_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
     DESCRIPTION_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
-
+    VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//div[5]//div[2]//button'
     # --Profiles tab--
     PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH = '//*[@id="priceLimitProfile"]'
     PROFILES_TAB_PRICE_LIMIT_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="priceLimitProfile"]/parent::div/following-sibling::div//button'
@@ -361,3 +361,16 @@ class VenuesConstants:
     STATUS_METRICS_TAB_WARNING_THRESHOLD_XPATH = '//*[@id="warnLast Update Elapsed Time (sec)"]'
     STATUS_METRICS_TAB_ERROR_THRESHOLD_XPATH = '//*[@id="errLast Update Elapsed Time (sec)"]'
     STATUS_METRICS_TAB_ENABLE_METRIC_CHECKBOX_XPATH = '//*[text()="Enable Metric"]/parent::label//input'
+
+    # --Exchange codes sub wizard--
+    EXCHANGE_CODES_TAB_PLUS_BUTTON_XPATH = '//*[@class="nb-plus ng2-add-btn"]'
+    EXCHANGE_CODES_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
+    EXCHANGE_CODES_TAB_CLOSE_BUTTON_XPATH = '//*[@class="nb-close ng2-cancel-btn"]'
+    EXCHANGE_CODES_TAB_EDIT_BUTTON_XPATH = '//*[@class="nb-edit ng2-edit-btn"]'
+    EXCHANGE_CODES_TAB_DELETE_BUTTON_XPATH = '//*[@class="nb-trash]'
+    EXCHANGE_CODES_TAB_VENUE_XPATH = '//*[@placeholder="Venue"]'
+    EXCHANGE_CODES_TAB_EXCHANGE_CODE_MIC_XPATH = '//*[@placeholder="Exchange Code (MIC) *"]'
+    EXCHANGE_CODES_TAB_REUTERS_EXCHANGE_CODE_XPATH = '//*[@placeholder="Reuters Exchange Code"]'
+    EXCHANGE_CODES_TAB_BLOOMBERG_EXCHANGE_CODE_XPATH = '//*[@placeholder="Bloomberg Exchange Code"]'
+    EXCHANGE_CODES_TAB_REFINITIV_COMPOSITE_EXCHANGE_CODE_XPATH = '//*[@placeholder="Refinitiv Composite Exchange Code"]'
+    EXCHANGE_CODES_TAB_BLOOMBERG_COMPOSITE_EXCHANGE_XPATH = '//*[@placeholder="Bloomberg Composite Exchange Code"]'

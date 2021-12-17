@@ -1,4 +1,5 @@
-from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionClients, CommissionAccounts
+from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionClients, CommissionAccounts, \
+    CommissionProfiles
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
@@ -14,16 +15,6 @@ class RestCommissionsSender(RestApiManager):
             self.message.parameters[key] = value
         return self
 
-    def clear_fees_request(self, fee: FeesAndCommissions):
-        self.message.message_type = 'ModifyCommission'
-        default_parameters = {
-            'commDescription': fee.name,
-            'commissionID': fee.value,
-            'miscFeeType': 'EXC'
-        }
-        self.message.parameters = default_parameters
-        return self
-
     def clear_fees(self):
         self.clear_fees_request(FeesAndCommissions.Fee1)
         self.send_post_request(self.message)
@@ -36,13 +27,24 @@ class RestCommissionsSender(RestApiManager):
     def send_default_fee(self):
         self.modify_fees_request().change_params({"venueID": "EUREX"}).send_post_request()
 
-    def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
+    def clear_fees_request(self, fee: FeesAndCommissions):
+        self.message.message_type = 'ModifyCommission'
+        default_parameters = {
+            'commDescription': fee.name,
+            'commissionID': fee.value,
+            'miscFeeType': 'EXC'
+        }
+        self.message.parameters = default_parameters
+        return self
+
+    def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None,
+                            comm_profile: CommissionProfiles = None):
         self.message.message_type = 'ModifyCommission'
         default_parameters = {
             'commDescription': "Fee1" if fee is None else fee.name,
             'commExecScope': "ALL",
             'commissionID': 1 if fee is None else fee.value,
-            'execCommissionProfileID': 1,
+            'execCommissionProfileID': 1 if comm_profile is None else comm_profile.value,
             'miscFeeType': 'EXC',
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
         }
@@ -51,17 +53,16 @@ class RestCommissionsSender(RestApiManager):
 
     def modify_client_commission_request(self, params=None, client: CommissionClients = None,
                                          account: CommissionAccounts = None, recalculate=False,
-                                         commission: FeesAndCommissions = None):
+                                         commission: FeesAndCommissions = None,
+                                         comm_profile: CommissionProfiles = None):
         self.message.message_type = 'ModifyClCommission'
         default_parameters = {
             'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
-            'clCommissionDescription': "Commission1" if commission is None else commission.name,
             'clCommissionID': 1 if commission is None else commission.value,
             'clCommissionName': "Commission1" if commission is None else commission.name,
             'commissionAmountType': "BRK",
-            'commissionProfileID': 1,
+            'commissionProfileID': 1 if comm_profile is None else comm_profile.value,
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-            'venueID': "EUREX"
         }
         if account is not None and client is None:
             default_parameters.pop("accountGroupID")

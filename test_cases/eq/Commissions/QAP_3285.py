@@ -1,87 +1,74 @@
 import logging
+import os
 import time
 
-import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
-from custom.verifier import Verifier, VerificationMethod
-from test_framework.old_wrappers import eq_wrappers
 from rule_management import RuleManager
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
-from win_gui_modules.utils import get_base_request, call
+from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommissionsSender
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.data_set import TradeBookColumns
+from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3285"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "900"
-    price = "10"
-    lookup = "VETO"
-    client = "CLIENT_COMM_1"
-    account = "CLIENT_COMM_1_SA1"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
+class QAP_3285(TestCase):
 
-    no_allocs = [
-        {
-            'AllocAccount': account,
-            'AllocQty': qty
-        }
-    ]
+    def __init__(self, report_id, session_id):
+        super().__init__(report_id, session_id)
+        session_alias = SessionAliasOMS()
+        self.ss_connectivity = session_alias.ss_connectivity
+        self.bs_connectivity = session_alias.bs_connectivity
+        self.wa_connectivity = session_alias.wa_connectivity
+        self.qty = "3285"
+        self.price = "3285"
+        self.client = CommissionClients.CLIENT_COMM_1.value
+        self.account = CommissionAccounts.CLIENT_COMM_1_SA1
 
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR',
-            float(price), int(qty), 1)
+    def execute(self):
+        case_id = create_event(self.__class__.__name__, self.report_id)
+        main_window = BaseMainWindow(case_id, self.session_id)
+        trades = OMSTradesBook(case_id, self.session_id)
 
-        test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, no_allocs)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
-    # endregion
-    eq_wrappers.accept_order(lookup, qty, price)
-    eq_wrappers.manual_execution(base_request, qty, price)
-    # region Verify
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("getOrderInfo")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[main_order_id])
-    child1_id = ExtractionDetail("lvl_1.cl_comm", "Client Commission")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child1_id])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking Client Commission")
-    print(request["lvl_1.cl_comm"])
-    verifier.compare_values("Client Commission", int(int(qty) * 0.01),request["lvl_1.cl_comm"],
-                            VerificationMethod.CONTAINS)
-    verifier.compare_values("Client Commission","9", request["lvl_1.cl_comm"],
-                            VerificationMethod.CONTAINS)
-    verifier.verify()
-    # endregion
+        RestCommissionsSender(self.wa_connectivity, case_id).modify_client_commission_request(
+            account=self.account).send_post_request()
+        self.__open_front_end(main_window, self.report_id)
+        self.__send_fix_orders(self.client, self.price, self.qty, case_id)
+        self.__verify_commissions(trades)
+
+    def __open_front_end(self, main_window, report_id):
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        main_window.open_fe(report_id, work_dir, username, password)
+
+    def __send_fix_orders(self, client, price, qty, case_id):
+        no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account.value, 'AllocQty': qty}]}
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+                self.bs_connectivity, client + '_EUREX', "XEUR", float(price), float(price), int(qty),
+                int(qty), 1)
+            fix_manager = FixManager(self.ss_connectivity, case_id)
+            new_order_single1 = FixMessageNewOrderSingleOMS().set_default_dma_limit_eurex().add_ClordId(
+                (os.path.basename(__file__)[:-3])).change_parameters(
+                {'OrderQtyData': {'OrderQty': qty}, "Price": price, "Account": client, 'PreAllocGrp': no_allocs})
+            self.response: list = fix_manager.send_message_and_receive_response_fix_standard(new_order_single1)
+        finally:
+            time.sleep(2)
+            rule_manager.remove_rule(nos_rule)
+
+    def __verify_commissions(self, trades: OMSTradesBook):
+        order_id = self.response[0].get_parameter("OrderID")
+        trades.set_filter(["Order ID", order_id])
+        commissions = {
+            TradeBookColumns.client_commission.value: trades.extract_field(TradeBookColumns.client_commission.value)}
+        trades.compare_values({TradeBookColumns.client_commission.value: "1.123"}, commissions,
+                              event_name='Check values')

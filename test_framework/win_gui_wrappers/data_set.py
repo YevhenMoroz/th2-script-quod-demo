@@ -194,3 +194,6 @@ class MiddleOfficeColumns(Enum):
     client_comm = "Client Comm"
     fees = "Total Fees"
 
+
+class AllocationsColumns(Enum):
+    client_comm = "Client Comm"

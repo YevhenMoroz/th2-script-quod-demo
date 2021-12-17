@@ -1,4 +1,3 @@
-from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
 
@@ -24,6 +23,7 @@ class OMSOrderBook(BaseOrderBook):
         self.base_order_details = BaseOrdersDetails(self.base_request)
         self.scrolling_operation = ScrollingOperation
         self.modify_order_details = ModifyOrderDetails(self.base_request)
+        self.manual_cross_details = ManualCrossDetails(self.base_request)
         self.cancel_order_details = CancelOrderDetails(self.base_request)
         self.rows_numbers_for_grid = RowsNumbersForGrid(self.base_request)
         self.suspend_order_details = SuspendOrderDetails(self.base_request)
@@ -39,6 +39,8 @@ class OMSOrderBook(BaseOrderBook):
         self.extract_direct_values = ExtractDirectsValuesRequest()
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
+        self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
+        self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
         self.manual_execution_order_call = Stubs.win_act_order_book.manualExecution
         self.is_menu_item_present_call = Stubs.win_act_order_book.isMenuItemPresent
@@ -53,9 +55,10 @@ class OMSOrderBook(BaseOrderBook):
         self.suspend_order_call = Stubs.win_act_order_book.suspendOrder
         self.release_order_call = Stubs.win_act_order_book.releaseOrder
         self.disclose_flag_call = Stubs.win_act_order_book.discloseFlag
-        self.add_to_basket_call = None
+        self.add_to_basket_call = Stubs.win_act_order_book.addToBasket
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
+        self.manual_cross_call = Stubs.win_act_order_book.manualCross
         self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
         self.mass_book_call = Stubs.win_act_order_book.massBook
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues

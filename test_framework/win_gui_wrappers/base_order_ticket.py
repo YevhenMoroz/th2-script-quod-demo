@@ -22,7 +22,6 @@ class BaseOrderTicket(BaseWindow):
         self.re_order_call = None
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
-        self.extract_order_ticket_errors_call = None
 
     # endregion
 

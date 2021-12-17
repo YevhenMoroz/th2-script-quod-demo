@@ -47,14 +47,11 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010436584.value,
+            "Instrument": Instrument.PAR.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
-                'ParticipateInOpeningAuctions': 'Y',
-                'ParticipateInClosingAuctions': 'Y',
-                'MaxParticipationOpen': '10',
-                'MaxParticipationClose': '10',
-                'SaveForClosePercentage': '80'
+                'Waves': '5',
+                'WouldInAuction': '0'
             }
         }
         super().change_parameters(base_parameters)
