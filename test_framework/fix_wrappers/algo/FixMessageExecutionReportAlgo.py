@@ -43,14 +43,16 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         return self
 
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') == 2:
+            temp.update(Price = new_order_single.get_parameter("Price"))
+        temp.update(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
             HandlInst=new_order_single.get_parameter("HandlInst"),
             Instrument=new_order_single.get_parameter("Instrument"),
             OrderQty=new_order_single.get_parameter("OrderQty"),
             OrdType=new_order_single.get_parameter("OrdType"),
-            Price=new_order_single.get_parameter("Price"),
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
@@ -286,7 +288,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         return self
 
     def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') == 2:
+            temp.update(Price = new_order_single.get_parameter("Price"))
+        temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx=0,
             ClOrdID='*',
@@ -300,7 +305,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=8,
             OrdType=new_order_single.get_parameter('OrdType'),
-            Price=new_order_single.get_parameter('Price'),
             Side=new_order_single.get_parameter('Side'),
             TimeInForce=0,
             TransactTime='*',
