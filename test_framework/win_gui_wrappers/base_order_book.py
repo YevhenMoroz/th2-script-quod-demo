@@ -1,3 +1,5 @@
+from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
+
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
@@ -37,7 +39,6 @@ class BaseOrderBook(BaseWindow):
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
-        self.direct_moc_request_correct_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
         self.is_menu_item_present_call = None
