@@ -1,11 +1,11 @@
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
-from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
+
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, OrderTicketExtractedValue, ExtractOrderTicketValuesRequest, \
     ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import call
 
 
 class OMSOrderTicket(BaseOrderTicket):
@@ -34,7 +34,8 @@ class OMSOrderTicket(BaseOrderTicket):
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
-                          capacity=None, desk=None, partial_desk=False, disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
+                          capacity=None, recipient=None, partial_desk=False,
+                          disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
                           alloc_details: dict = None):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
                                                        order_type=order_type, tif=tif, account=account,
@@ -47,8 +48,8 @@ class OMSOrderTicket(BaseOrderTicket):
             self.order_details.set_washbook(washbook)
         if capacity is not None:
             self.order_details.set_capacity(capacity)
-        if desk is not None:
-            self.order_details.set_care_order(desk, partial_desk, disclose_flag)
+        if recipient is not None:
+            self.order_details.set_care_order(recipient, partial_desk, disclose_flag)
         if alloc_details:
             allocation_row_details = list()
             for account_name, qty in alloc_details.items():
