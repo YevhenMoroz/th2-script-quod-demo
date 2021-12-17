@@ -155,6 +155,7 @@ class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+    MissNavigatorLimitPrice = "missing Limit price for Navigator"
 
 class Reference(Enum):
     LastTradePrice = 'LTP'
