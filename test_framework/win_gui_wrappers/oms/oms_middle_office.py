@@ -15,6 +15,7 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
         self.view_order_extraction_details = ViewOrderExtractionDetails(self.base_request)
         self.extract_middle_office_blotter_values_request = ExtractMiddleOfficeBlotterValuesRequest(self.base_request)
         self.allocation_ticket_extraction_details_call = Stubs.win_act_middle_office_service.extractAllocationBlockValues
+        self.amend_ticket_book_extraction_details_call = Stubs.win_act_middle_office_service.extractAmendBlockValues
         self.book_order_call = Stubs.win_act_middle_office_service.bookOrder
         self.amend_block_call = Stubs.win_act_middle_office_service.amendMiddleOfficeTicket
         self.unbook_order_call = Stubs.win_act_middle_office_service.unBookOrder

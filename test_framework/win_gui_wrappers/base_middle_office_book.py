@@ -1,5 +1,6 @@
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails
+from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
@@ -13,6 +14,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.view_order_extraction_details = None
         self.extract_middle_office_blotter_values_request = None
         self.allocation_ticket_extraction_details = None
+        self.extraction_panel_details = None
         self.book_order_call = None
         self.amend_block_call = None
         self.unbook_order_call = None
@@ -25,6 +27,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.allocation_ticket_extraction_details_call = None
         self.extract_allocation_details = None
         self.extract_allocations_table_data = None
+        self.amend_ticket_book_extraction_details_call = None
 
     # endregion
     # region Common func
@@ -51,7 +54,7 @@ class BaseMiddleOfficeBook(BaseWindow):
     # region Get
     def extract_block_field(self, column_name, filter_list: list = None, row_number: int = None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
-        extraction_detail = self.extraction_detail(column_name, column_name)
+        extraction_detail = ExtractionDetail(column_name, column_name)
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
         if filter_list:
             self.extract_middle_office_blotter_values_request.set_filter(filter_list)
@@ -76,13 +79,13 @@ class BaseMiddleOfficeBook(BaseWindow):
     # endregion
     # region Set
     def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
-                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None,
-                                  comm_basis=None, comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None,
-                                  fee_rate=None, fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
+                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
+                                  comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
+                                  fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
                                   settl_amount=None, bo_notes=None, settl_currency=None, exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
-                                  arr_allocation_param: list = None):
+                                  arr_allocation_param: [] = None):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
@@ -219,9 +222,15 @@ class BaseMiddleOfficeBook(BaseWindow):
                                                                                      filter_allocations_grid=None,
                                                                                      panels=list_extraction)
         result = call(self.allocation_ticket_extraction_details_call, self.allocation_ticket_extraction_details.build())
-        self.clear_details([self.allocation_ticket_extraction_details])
         return result
 
+    def extracting_values_from_amend_ticket(self, filter_dict, list_extraction):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
+                                                               filter_dict,
+                                                               list_extraction
+                                                               )
+        result = call(self.amend_ticket_book_extraction_details_call, self.extraction_panel_details.build())
+        return result
     '''
     ********************************************************************************************
     FYI(OMS TEAM) list for list_extraction at extract_block_values_from_allocation_ticket method
