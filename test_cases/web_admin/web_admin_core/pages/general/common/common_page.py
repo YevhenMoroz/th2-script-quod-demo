@@ -85,3 +85,16 @@ class CommonPage(CommonPage):
 
     def extract_admin_version(self):
         return self.find_by_xpath(CommonConstants.ADMIN_VERSION_XPATH).text
+
+    def click_on_application_information_at_send_feedback(self):
+        self.find_by_xpath(CommonConstants.APPLICATION_INFORMATION_AT_SEND_FEEDBACK_XPATH).click()
+
+    def click_on_arrow_back_button_at_send_feedback(self):
+        self.find_by_xpath(CommonConstants.ARROW_BACK_BUTTON_XPATH).click()
+
+
+
+
+
+
+

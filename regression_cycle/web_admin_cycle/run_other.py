@@ -10,6 +10,7 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
 from test_cases.web_admin.web_admin_test_cases.others.QAP_3228 import QAP_3228
 from test_cases.web_admin.web_admin_test_cases.others.QAP_3229 import QAP_3229
 from test_cases.web_admin.web_admin_test_cases.others.QAP_5816 import QAP_5816
+from test_cases.web_admin.web_admin_test_cases.others.QAP_5922 import QAP_5922
 from test_cases.web_admin.web_admin_test_cases.others.QAP_676 import QAP_676
 from test_cases.web_admin.web_admin_test_cases.others.QAP_677 import QAP_677
 from test_cases.web_admin.web_admin_test_cases.others.QAP_678 import QAP_678
@@ -35,7 +36,6 @@ class RunOthers:
 
         try:
             start_time = time.monotonic()
-            #
             # QAP_676(self.web_driver_container, self.second_lvl_id).run()
             # QAP_677(self.web_driver_container, self.second_lvl_id).run()
             # QAP_678(self.web_driver_container, self.second_lvl_id).run()
@@ -48,11 +48,12 @@ class RunOthers:
             # QAP_835(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1738(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1739(self.web_driver_container, self.second_lvl_id).run()
-            QAP_1741(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_1741(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1831(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3228(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3229(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5816(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5922(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Others ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

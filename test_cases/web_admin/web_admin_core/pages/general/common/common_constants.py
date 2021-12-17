@@ -18,3 +18,5 @@ class CommonConstants:
     COPY_VERSION_BUTTON = '//*[@nbtooltip="Copy version"]'
     ABOUT_BUTTON_XPATH = '//*[@title="About"]//span'
     ADMIN_VERSION_XPATH = '//*[@id="admVersionInput"]'
+    APPLICATION_INFORMATION_AT_SEND_FEEDBACK_XPATH = '//*[text()="application information"]'
+    ARROW_BACK_BUTTON_XPATH = '//*[@data-name="arrow-back"]'
