@@ -47,7 +47,6 @@ class QAP_480(TestCase):
         # endregion
         # region create CO order
         fix_manager.send_message_fix_standard(fix_message)
-        order_id_first = order_book.extract_field('Order ID')
         # endregion
 
         # region accept CO order
