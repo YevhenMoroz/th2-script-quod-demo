@@ -1,14 +1,16 @@
+from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
 from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
 
-from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
 from stubs import Stubs
-from win_gui_modules.common_wrappers import GridScrollingDetails, RowsNumbersForGrid
+from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
+from win_gui_modules.common_wrappers import GridScrollingDetails, RowsNumbersForGrid, CommissionsDetails
+from win_gui_modules.middle_office_wrappers import TicketDetails, SettlementDetails, FeesDetails, MiscDetails
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
-    SecondLevelExtractionDetails, ManualCrossDetails
+    SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -63,7 +65,12 @@ class OMSOrderBook(BaseOrderBook):
         self.manual_cross_call = Stubs.win_act_order_book.manualCross
         self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
         self.mass_book_call = Stubs.win_act_order_book.massBook
-        self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
-        self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
+        self.ticket_details = TicketDetails(middle_office_pb2.TicketDetails())
+        self.settlement_details = SettlementDetails(middle_office_pb2.SettlementDetails())
+        self.commissions_details = CommissionsDetails(common_pb2.CommissionsDetails())
+        self.fees_details = FeesDetails(middle_office_pb2.FeesDetails())
+        self.misc_details = MiscDetails(middle_office_pb2.MiscDetails())
+        self.split_booking_details = SplitBookingDetails(self.base_request)
+        self.split_booking_call = Stubs.win_act_order_book.splitBooking
         self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc
     # endregion

@@ -1,6 +1,5 @@
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
@@ -52,7 +51,7 @@ class BaseMiddleOfficeBook(BaseWindow):
     # region Get
     def extract_block_field(self, column_name, filter_list: list = None, row_number: int = None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
-        extraction_detail = ExtractionDetail(column_name, column_name)
+        extraction_detail = self.extraction_detail(column_name, column_name)
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
         if filter_list:
             self.extract_middle_office_blotter_values_request.set_filter(filter_list)
@@ -77,13 +76,13 @@ class BaseMiddleOfficeBook(BaseWindow):
     # endregion
     # region Set
     def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
-                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
-                                  comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
-                                  fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
+                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None,
+                                  comm_basis=None, comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None,
+                                  fee_rate=None, fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
                                   settl_amount=None, bo_notes=None, settl_currency=None, exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
-                                  arr_allocation_param: [] = None):
+                                  arr_allocation_param: list = None):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)

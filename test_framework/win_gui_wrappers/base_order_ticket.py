@@ -73,7 +73,7 @@ class BaseOrderTicket(BaseWindow):
             self.new_order_details.set_lookup_instr(lookup)
         self.new_order_details.set_order_details(self.order_details)
         call(self.place_order_call, self.new_order_details.build())
-        self.clear_details([self.new_order_details])
+        self.clear_details([self.new_order_details, self.order_details])
 
     def re_order(self):
         self.new_order_details.set_order_details(self.order_details)
