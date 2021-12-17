@@ -33,9 +33,9 @@ def execute(report_id, session_id):
     oms_order_ticket = OMSOrderTicket(case_id, session_id)
     oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type='Limit',
                                        tif='Day', is_sell_side=False, instrument='VETO', account='MOClient_SA1',
-                                       desk='Desk of Order Book')
+                                       recipient='Desk of Order Book')
 
-    oms_order_ticket.oms_create_order(lookup='VETO')
+    oms_order_ticket.create_order(lookup='VETO')
     oms_order_inbox.accept_order('VETO', qty, price)
     oms_order_book.scroll_order_book(1)
     # region extract Venue Client Account

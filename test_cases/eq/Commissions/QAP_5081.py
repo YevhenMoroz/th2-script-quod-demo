@@ -29,8 +29,6 @@ def execute(report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    base_window = BaseWindow(case_id, session_id)
-    base_request = get_base_request(session_id, case_id)
     open_fe(session_id, report_id, work_dir, username, password)
     # create CO order
     oms_order_book = OMSOrderBook(case_id, session_id)
@@ -38,8 +36,8 @@ def execute(report_id, session_id):
     oms_order_ticket = OMSOrderTicket(case_id, session_id)
     oms_order_middle_office = OMSMiddleOfficeBook(case_id, session_id)
     oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type='Limit',
-                                       tif='Day', is_sell_side=False, instrument='ISI3', desk='Desk of Order Book')
-    oms_order_ticket.oms_create_order(lookup='ISI3')
+                                       tif='Day', is_sell_side=False, instrument='ISI3', recipient='Desk of Order Book')
+    oms_order_ticket.create_order(lookup='ISI3')
     oms_order_inbox.accept_order('ISI3', qty, price)
     oms_order_book.scroll_order_book(1)
     # endregion
