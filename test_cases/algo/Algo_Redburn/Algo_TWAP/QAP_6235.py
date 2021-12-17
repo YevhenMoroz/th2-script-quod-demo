@@ -23,8 +23,6 @@ waves = 4
 qty_twap_1 = AlgoFormulasManager.get_next_twap_slice(qty, waves)
 qty_nav = AlgoFormulasManager.get_twap_nav_child_qty(qty, waves, ats)
 navigator_limit_price_reference = DataSet.Reference.Limit.value
-
-nav_percent = 100
 price = 29.995
 price_nav = 30
 
@@ -89,7 +87,7 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice= price_nav, Waves= waves, NavigatorPercentage=nav_percent, NavigatorLimitPriceReference = navigator_limit_price_reference))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(NavigatorLimitPrice= price_nav, Waves= waves, NavigatorLimitPriceReference = navigator_limit_price_reference))
 
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 
