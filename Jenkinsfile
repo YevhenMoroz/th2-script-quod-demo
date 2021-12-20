@@ -5,7 +5,7 @@ pipeline {
         }
     }
     parameters{
-        string (name: 'NAME', defaultValue: '5.1.140.153|Regression|', description: '')
+        string(name: 'NAME', defaultValue: '5.1.140.153|Regression|', description: '')
         booleanParam(name: 'ALGO', defaultValue: true, description: '')
         booleanParam(name: 'OMS', defaultValue: false, description: '')
         booleanParam(name: 'FOREX', defaultValue: false, description: '')
