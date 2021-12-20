@@ -224,7 +224,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         result = call(self.allocation_ticket_extraction_details_call, self.allocation_ticket_extraction_details.build())
         return result
 
-    def extracting_values_from_amend_ticket(self, filter_dict, list_extraction):
+    def extracting_values_from_amend_ticket(self,  list_extraction, filter_dict=None,):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
                                                                list_extraction
