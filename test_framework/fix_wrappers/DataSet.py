@@ -82,6 +82,7 @@ class Connectivity(Enum):
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = 'rest_wa317ganymede'
     Ganymede_317_ja = '317_java_api'
+    Ganymede_317_als_email_report = 'log317-als-email-report'
 
 
 class GatewaySide(Enum):
