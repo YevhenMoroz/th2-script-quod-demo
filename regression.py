@@ -31,8 +31,6 @@ def regression_run(name, algo=True, equity=True, forex=True, retail=True, web_ad
         logging.error("Error execution", exc_info=True)
 
 
-print(os.environ['NAME'])
-
 if __name__ == '__main__':
     regression_run(name=os.environ['NAME'], algo=os.environ['ALGO'], equity=os.environ['OMS'], forex=os.environ['FOREX'], retail=os.environ['RETAIL'], web_admin=os.environ['WEB_ADMIN'])
     Stubs.factory.close()
