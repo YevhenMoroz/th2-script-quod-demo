@@ -1,3 +1,5 @@
+from time import sleep
+
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from custom.tenor_settlement_date import spo
@@ -252,11 +254,11 @@ def execute(report_id, session_id):
         # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
         # place_order(base_details, cp_service, client)
         send_rfq_and_filled_order_buy(case_id, ord_qty)
+        sleep(5)
         set_send_hedge_order(case_id, default_strategy_id)
         # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
         # place_order(base_details, cp_service, client)
         send_rfq_and_filled_order_sell(case_id, ord_qty)
-        cancel_order(ob_act, case_base_request, ord_id)
         ord_id = check_order_book_ao('Checking placed order with default strategy ID',
                                      case_id, case_base_request, ob_act, default_strategy_name)
         # Step 4
@@ -279,7 +281,6 @@ def execute(report_id, session_id):
     finally:
         try:
             # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
             # Set default parameters
             set_send_hedge_order(case_id, default_strategy_id)
         except Exception:

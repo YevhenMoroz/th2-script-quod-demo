@@ -11,6 +11,7 @@ from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from test_framework.win_gui_wrappers.data_set import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_order_ticket import FXOrderTicket
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
@@ -43,8 +44,6 @@ settle_currency = "USD"
 locale.setlocale(locale.LC_ALL, 'en_us')
 ord_qty = randint(2000000, 4000000)
 new_qty = randint(int(ord_qty), int(ord_qty)+1000000)
-ord_qty_ob = '{0:n}'.format(Decimal(ord_qty))
-new_qty_ob = '{0:n}'.format(Decimal(new_qty))
 api = Stubs.api_service
 ttl_test = 500
 ttl_default = 120
@@ -118,7 +117,7 @@ def execute(report_id, session_id):
     case_id = bca.create_event(case_name, report_id)
     case_base_request = get_base_request(session_id, case_id)
     base_details = BaseTileDetails(base=case_base_request)
-    cp_service = Stubs.win_act_cp_service
+    ar_service = Stubs.win_act_aggregated_rates_service
     pos_service = Stubs.act_fx_dealing_positions
     try:
         expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
@@ -132,9 +131,13 @@ def execute(report_id, session_id):
             ob_names.qty.value: order_info[ob_names.qty.value],
             ob_names.sts.value: sts_names.open.value},
             event_name='Checking that AH triggered')
-        #TODO Add order amending
 
-        amend_order(base_details, cp_service, new_qty)
+        #TODO Add order amending
+        FXOrderTicket(case_id, session_id).\
+            set_order_details(qty=new_qty).\
+            amend_order(filter_list=[ob_names.order_id.value, order_info[ob_names.order_id.value]])
+
+        # amend_order(base_details, ar_service, new_qty)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
                                                                   ob_names.orig.value, 'AutoHedger']). \
@@ -142,17 +145,23 @@ def execute(report_id, session_id):
         FXOrderBook(case_id, session_id).check_order_fields_list({
             ob_names.order_id.value: order_info[ob_names.order_id.value],
             ob_names.orig.value: 'AutoHedger',
-            ob_names.qty.value: new_qty_ob,
+            ob_names.qty.value: new_qty,
             ob_names.sts.value: sts_names.open.value},
             event_name='Checking that hedged order qty changed')
+
         FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, order_info[ob_names.order_id.value]]).\
             cancel_order()
+
+        order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
+                                                                  ob_names.orig.value, 'AutoHedger']). \
+            extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: '', ob_names.sts.value: ''})
+
         FXOrderBook(case_id, session_id).check_order_fields_list({
             ob_names.order_id.value: order_info[ob_names.order_id.value],
-            ob_names.orig.value: 'AutoHedger',
-            ob_names.qty.value: ord_qty_ob,
-            ob_names.sts.value: sts_names.open.value},
-            event_name='Checking that new hedged order created with qty from Position Book')
+            ob_names.qty.value: order_info[ob_names.qty.value],
+            ob_names.sts.value: order_info[ob_names.sts.value]},
+            event_name='Checking that new hedged order created with qty from Position Book',
+            verification_method=verification_not_equal)
         send_rfq_and_filled_order_buy(case_id, ord_qty)
         FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, order_info[ob_names.order_id.value]]). \
             cancel_order()

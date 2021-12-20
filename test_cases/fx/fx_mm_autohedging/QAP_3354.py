@@ -72,11 +72,11 @@ def execute(report_id, session_id):
             verify_order_pending(). \
             verify_order_filled()
 
-        FXOrderBook(case_id, case_base_request).set_filter(
+        FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "AO", "Orig", "AutoHedger", "Lookup", "USD/SEK-SPO.SPO", "Client ID", "QUOD4"]). \
             check_order_fields_list({"Sts": "Terminated", "Side": "Buy"},
                                     "Checking placed order AO USD/SEK")
-        FXOrderBook(case_id, case_base_request).set_filter(
+        FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "AO", "Orig", "AutoHedger", "Lookup", "EUR/NOK-SPO.SPO", "Client ID", "QUOD4"]). \
             check_order_fields_list({"Sts": "Terminated", "Side": "Sell"},
                                     "Checking placed order AO EUR/NOK")
@@ -105,7 +105,7 @@ def execute(report_id, session_id):
             verify_order_pending(). \
             verify_order_filled()
 
-        FXOrderBook(case_id, case_base_request).set_filter(
+        FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "AO", "Orig", "AutoHedger", "Lookup", "EUR/USD-SPO.SPO", "Client ID", "QUOD4"]). \
             check_order_fields_list({"Sts": "Terminated", "Side": "Buy"},
                                     "Checking placed order AO EUR/USD")

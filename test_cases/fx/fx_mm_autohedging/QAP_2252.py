@@ -226,7 +226,6 @@ def execute(report_id, session_id):
     finally:
         try:
             # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
             # Set default parameters
             set_send_hedge_order(case_id, ttl_default)
         except Exception:

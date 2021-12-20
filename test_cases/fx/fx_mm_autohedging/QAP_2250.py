@@ -244,8 +244,9 @@ def execute(report_id, session_id):
         ord_id = check_order_book_after_strategy_change(case_id, case_base_request, ob_act, ord_id, test_name)
         # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
         # place_order(base_details, cp_service, client)
-        # cancel_order(ob_act, case_base_request, ord_id)
         send_rfq_and_filled_order_buy(case_id, ord_qty)
+        cancel_order(ob_act, case_base_request, ord_id)
+
 
         # Step 4
         check_order_book_no_new_order(case_id, case_base_request, ob_act, ord_id)
