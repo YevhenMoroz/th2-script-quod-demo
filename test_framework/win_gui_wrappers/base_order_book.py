@@ -406,8 +406,8 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    def create_split_booking_parameter(self, split_qty: str, client=None, trade_date: str = None, give_up_broker=None,
-                                       net_gross_ind=None, agreed_price=None, settlement_type=None,
+    def create_split_booking_parameter(self, split_qty: str = None, client=None, trade_date: str = None,
+                                       give_up_broker=None, net_gross_ind=None, agreed_price=None, settlement_type=None,
                                        settlement_currency=None, exchange_rate: str = None, exchange_rate_calc=None,
                                        settlement_date: str = None, pset=None, comm_basis=None, comm_rate=None,
                                        comm_amount=None, comm_currency=None, remove_comm=False, fee_type=None,
@@ -496,19 +496,20 @@ class BaseOrderBook(BaseWindow):
             return None
 
     def __set_ticket_details(self, split_qty, client, trade_date, give_up_broker, net_gross_ind, agreed_price: str):
-        ticket_details = self.ticket_details
-        ticket_details.set_split_quantity(split_qty)
-        if client:
-            ticket_details.set_client(client)
-        if trade_date:
-            ticket_details.set_trade_date(trade_date)
-        if give_up_broker:
-            ticket_details.set_give_up_broker(give_up_broker)
-        if net_gross_ind:
-            ticket_details.set_net_gross_ind(net_gross_ind)
-        if agreed_price:
-            ticket_details.set_agreed_price(agreed_price)
-        return ticket_details.build()
+        if split_qty is not None:
+            ticket_details = self.ticket_details
+            ticket_details.set_split_quantity(split_qty)
+            if client:
+                ticket_details.set_client(client)
+            if trade_date:
+                ticket_details.set_trade_date(trade_date)
+            if give_up_broker:
+                ticket_details.set_give_up_broker(give_up_broker)
+            if net_gross_ind:
+                ticket_details.set_net_gross_ind(net_gross_ind)
+            if agreed_price:
+                ticket_details.set_agreed_price(agreed_price)
+            return ticket_details.build()
 
     def split_book(self, split_booking_params: list, row_numbers: list = None):
         if row_numbers:
