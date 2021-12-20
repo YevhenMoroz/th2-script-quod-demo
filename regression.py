@@ -3,6 +3,7 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from datetime import datetime
+import os
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 
@@ -31,5 +32,5 @@ def regression_run(name, algo=True, equity=True, forex=True, retail=True, web_ad
 
 
 if __name__ == '__main__':
-    regression_run(name='5.1.140.153|Regression|', algo=True, equity=False, forex=False, retail=False, web_admin=False)
+    regression_run(name=os.enviroment['NAME'], algo=os.enviroment['ALGO'], equity=os.enviroment['OMS'], forex=os.enviroment['FOREX'], retail=os.enviroment['RETAIL'], web_admin=os.enviroment['WEB_ADMIN'])
     Stubs.factory.close()
