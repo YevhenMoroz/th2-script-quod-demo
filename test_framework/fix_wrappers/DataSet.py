@@ -138,10 +138,13 @@ class FeeTypes(Enum):
     ValueAddedTax = "VAT"
 
 
-class FeesAndCommissions(Enum):
+class Fees(Enum):
     Fee1 = 1
     Fee2 = 2
     Fee3 = 3
+
+
+class Commissions(Enum):
     Commission1 = 1
     Commission2 = 2
     Commission3 = 3

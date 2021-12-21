@@ -1,214 +1,94 @@
+import logging
+import os
 import time
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
+from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
 from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
-
-from win_gui_modules.utils import get_base_request
-import logging
+from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommissionsSender
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.data_set import TradeBookColumns, MiddleOfficeColumns, AllocationsColumns
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4231"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "900"
-    price = "10"
-    client = "CLIENT_COMM_1"
-    account = "CLIENT_COMM_1_SA1"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    no_allocs = [
-        {
-            'AllocAccount': account,
-            'AllocQty': qty
-        }
-    ]
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Orders
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR',
-            float(price), int(qty), 1)
+class QAP_4231(TestCase):
 
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price, no_allocs)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
-    # endregion
-    eq_wrappers.book_order(base_request, client, price)
-    eq_wrappers.approve_block(base_request)
-    eq_wrappers.allocate_order(base_request)
-    # region Verify
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'Account': '*',
-        'OrdStatus': 2,
-        'TradeDate': '*',
-        'Side': 2,
-        'ExpireDate': '*',
-        'Price': price,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'LastExecutionPolicy': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SecondaryExecID': '*',
-        'Text': '*',
-        'SecondaryOrderID': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
-                                         key_parameters=['ClOrdID', 'OrdStatus'])
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'Account': client,
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '5',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'AllocInstructionMiscBlock1': '*',
-    }
-    fix_verifier_bo = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
-    params = {
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'AllocQty': qty,
-        'AllocAccount': account,
-        'ConfirmType': 2,
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'MatchStatus': '*',
-        'ConfirmStatus': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'CommissionData':
-            {'CommissionType': '3',
-             'Commission': '45',
-             'CommCurrency': 'EUR'},
-        'AllocInstructionMiscBlock1': '*',
-        'AllocID': '*',
-        'NetMoney': '*',
-        'ReportedPx': '*',
-        'CpctyConfGrp': '*',
-        'ConfirmTransType': '*',
-        'ConfirmID': '*'
-    }
-    fix_verifier_bo.CheckConfirmation(params, response, ['NoOrders'])
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'Account': client,
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '9.95',
-                'AllocAccount': account,
-                'AllocPrice': '10',
-                'AllocQty': qty,
-                'CommissionData': {
-                    'CommissionType': '3',
-                    'CommCurrency': 'EUR',
-                    'Commission': '45'}
-            }
-        ],
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '2',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'AllocInstructionMiscBlock1': '*',
-    }
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
-    # endregion
+    def __init__(self, report_id, session_id):
+        super().__init__(report_id, session_id)
+        session_alias = SessionAliasOMS()
+        self.ss_connectivity = session_alias.ss_connectivity
+        self.bs_connectivity = session_alias.bs_connectivity
+        self.wa_connectivity = session_alias.wa_connectivity
+        self.qty = "4231"
+        self.price = "4231"
+        self.client = CommissionClients.CLIENT_COMM_1.value
+        self.account = CommissionAccounts.CLIENT_COMM_1_SA1
+        self.case_id = create_event(self.__class__.__name__, self.report_id)
+
+    def execute(self):
+        main_window = BaseMainWindow(self.case_id, self.session_id)
+        trades = OMSTradesBook(self.case_id, self.session_id)
+        commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id)
+        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        commission_sender.clear_commissions()
+        commission_sender.modify_client_commission_request(recalculate=True, account=self.account).send_post_request()
+        self.__open_front_end(main_window, self.report_id)
+        self.__send_fix_orders()
+        self.__verify_commissions_of_executions(trades)
+        middle_office.set_modify_ticket_details(remove_comm=True)
+        middle_office.book_order()
+        self.__verify_fees_in_middle_office(middle_office)
+        middle_office.approve_block()
+        middle_office.allocate_block()
+        self.__verify_fees_in_allocation_ticket(middle_office)
+
+    def __send_fix_orders(self):
+        no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account.value, 'AllocQty': self.qty}]}
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+                self.bs_connectivity, self.client + '_EUREX', "XEUR", float(self.price), float(self.price),
+                int(self.qty), int(self.qty), 1)
+            fix_manager = FixManager(self.ss_connectivity, self.case_id)
+            new_order_single = FixMessageNewOrderSingleOMS().set_default_dma_limit_eurex().add_ClordId(
+                (os.path.basename(__file__)[:-3])).change_parameters(
+                {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
+                 'PreAllocGrp': no_allocs})
+            self.response: list = fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
+        finally:
+            time.sleep(2)
+            rule_manager.remove_rule(nos_rule)
+
+    def __open_front_end(self, main_window, report_id):
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        main_window.open_fe(report_id, work_dir, username, password)
+
+    def __verify_commissions_of_executions(self, trades: OMSTradesBook):
+        order_id = self.response[0].get_parameter("OrderID")
+        trades.set_filter(["Order ID", order_id])
+        commissions = {
+            TradeBookColumns.client_commission.value: trades.extract_field(TradeBookColumns.client_commission.value)}
+        trades.compare_values({TradeBookColumns.client_commission.value: ""}, commissions,
+                              event_name='Check values')
+
+    @staticmethod
+    def __verify_fees_in_middle_office(middle_office: OMSMiddleOfficeBook):
+        commission = middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value)
+        middle_office.compare_values({MiddleOfficeColumns.client_comm.value: ""}, commission, event_name='Check values')
+
+    @staticmethod
+    def __verify_fees_in_allocation_ticket(middle_office: OMSMiddleOfficeBook):
+        commission = middle_office.extract_allocate_value(AllocationsColumns.client_comm.value)
+        middle_office.compare_values({AllocationsColumns.client_comm.value: "1.123"}, commission,
+                                     event_name='Check values')
