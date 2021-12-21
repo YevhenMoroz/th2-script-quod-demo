@@ -73,20 +73,24 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     # endregion
     # region Set
-    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
+    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price= None,
                                   net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
                                   settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
-                                  bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False):
+                                  bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
+                                  alloc_account_filter=None, alloc_row_number: int = None):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
         if is_alloc_amend:
-            ticket_details = self.modify_ticket_details.add_amend_allocations_details()
-        else:
-            ticket_details = self.modify_ticket_details.add_ticket_details()
+            amend_allocations_details = self.modify_ticket_details.add_amend_allocations_details()
+            if alloc_account_filter is not None:
+                amend_allocations_details.set_filter({"Account ID": alloc_account_filter})
+            if alloc_row_number is not None:
+                amend_allocations_details.set_row_number(alloc_row_number)
+        ticket_details = self.modify_ticket_details.add_ticket_details()
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -97,18 +101,21 @@ class BaseMiddleOfficeBook(BaseWindow):
             ticket_details.set_net_gross_ind(net_gross_ind)
         if give_up_broker is not None:
             ticket_details.set_give_up_broker(give_up_broker)
-        commission_details = self.modify_ticket_details.add_commissions_details()
-        if comm_basis or comm_rate is not None:
+        if comm_basis or comm_rate is not None or remove_comm:
+            commission_details = self.modify_ticket_details.add_commissions_details()
             if toggle_manual:
                 commission_details.toggle_manual()
-            commission_details.add_commission(comm_basis, comm_rate)
-        if remove_comm:
-            commission_details.remove_commissions()
-        fees_details = self.modify_ticket_details.add_fees_details()
-        if fee_type or fee_basis or fee_rate or fee_category is not None:
-            fees_details.add_fees(fee_type, fee_basis, fee_rate, category=fee_category)
-        if remove_fee:
-            fees_details.remove_fees()
+            if comm_basis or comm_rate is not None:
+                commission_details.add_commission(comm_basis, comm_rate)
+            if remove_comm:
+                commission_details.remove_commissions()
+
+        if fee_type or fee_basis or fee_rate or fee_category is not None or remove_fee:
+            fees_details = self.modify_ticket_details.add_fees_details()
+            if fee_type or fee_basis or fee_rate or fee_category is not None:
+                fees_details.add_fees(fee_type, fee_basis, fee_rate, category=fee_category)
+            if remove_fee:
+                fees_details.remove_fees()
         settlement_details = self.modify_ticket_details.add_settlement_details()
         if settl_type is not None:
             settlement_details.set_settlement_type(settl_type)

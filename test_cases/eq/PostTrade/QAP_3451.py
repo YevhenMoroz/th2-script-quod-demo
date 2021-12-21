@@ -14,13 +14,15 @@ from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.utils import call
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_3411(TestCase):
+class QAP_3451(TestCase):
     def __init__(self, report_id, session_id):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
@@ -28,7 +30,7 @@ class QAP_3411(TestCase):
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
         self.als_email_report = SessionAliasOMS().als_email_report
 
-    def QAP_3411(self):
+    def QAP_3451(self):
         # region Declaration
         fix_manager = FixManager(self.ss_connectivity, self.case_id)
         read_log_verifier = ReadLogVerifier(self.als_email_report, self.case_id)
@@ -77,20 +79,21 @@ class QAP_3411(TestCase):
             "ConfirmStatus": "New",
             "ClientAccountID": account1
         }
-        read_log_verifier.check_read_log_message(als_logs_params,["ConfirmStatus"], timeout=50000)
+        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
         # endregion
         # region Un-allocate
-        mid_office.unallocate_order()
+        mid_office.set_modify_ticket_details(is_alloc_amend=True, alloc_account_filter=account1, agreed_price="1")
+        mid_office.amend_allocate()
         # endregion
         # region Check ALS logs Status Canceled
         als_logs_params = {
             "ConfirmationID": "*",
-            "ConfirmStatus": "Cancel",
+            "ConfirmStatus": "Replace",
             "ClientAccountID": account1
         }
-        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
+        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=60000)
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    # @decorator_try_except(test_id=os.path.basename(__file__))
     def execute(self):
-        self.QAP_3411()
+        self.QAP_3451()
