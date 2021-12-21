@@ -81,7 +81,7 @@ class QAP_3411(TestCase):
             "ConfirmStatus": "New",
             "ClientAccountID": account1
         }
-        read_log_verifier.check_read_log_message(als_logs_params,["ConfirmStatus"], timeout=30000)
+        read_log_verifier.check_read_log_message(als_logs_params,["ConfirmStatus"], timeout=50000)
         # endregion
         # region Un-allocate
         mid_office.unallocate_order()

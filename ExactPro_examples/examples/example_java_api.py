@@ -21,6 +21,7 @@ class ORSMessages(Enum):
     unmatch = 'Order_UnMatchRequest'
     manual_order_cross = 'Order_ManualOrderCrossRequest'
     wave_list_request = 'Order_OrderListWaveCreationRequest'
+    referencedata_instr = 'Referencedata_InstrDictionaryRequest'
 
 
 class TestCase:
@@ -129,10 +130,19 @@ class TestCase:
                 'QtyPercentageProfile': "RemainingQty"
             }
         }
+        ref_data_params = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'InstrDictionaryRequestBlock': {
+                'PreferredInstrList': {'PreferredInstrBlock': [{'InstrID': "UgJ1lTJriCq62f0NoP3nww"}],
+                                       "SecurityListRequestType": "ALL"},
+
+            }
+
+        }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.wave_list_request.value,
-                                                     wave_list_params, self.connectivity),
+            message=bca.message_to_grpc_fix_standard(ORSMessages.referencedata_instr.value,
+                                                     ref_data_params, self.connectivity),
             parent_event_id=self.case_id))
 
         # Main method
