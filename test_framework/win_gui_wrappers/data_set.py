@@ -198,3 +198,4 @@ class MiddleOfficeColumns(Enum):
 class AllocationsColumns(Enum):
     client_comm = "Client Comm"
     qty = "Alloc Qty"
+    fees = "Total Fees"
