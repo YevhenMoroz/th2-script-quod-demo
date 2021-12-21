@@ -8,3 +8,4 @@ class SessionAliasOMS:
         self.dc_connectivity = Connectivity.Ganymede_317_dc.value
         self.wa_connectivity = Connectivity.Ganymede_317_wa.value
         self.ja_connectivity = Connectivity.Ganymede_317_ja.value
+        self.als_email_report = Connectivity.Ganymede_317_als_email_report.value
