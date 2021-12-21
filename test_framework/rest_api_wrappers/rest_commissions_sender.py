@@ -1,5 +1,5 @@
 from test_framework.fix_wrappers.DataSet import Fees, CommissionClients, CommissionAccounts, \
-    CommissionProfiles, Commissions
+    CommissionProfiles, Commissions, FeeTypes, ExecScope
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
@@ -32,20 +32,20 @@ class RestCommissionsSender(RestApiManager):
         default_parameters = {
             'commDescription': fee.name,
             'commissionID': fee.value,
-            'miscFeeType': 'EXC'
+            'miscFeeType': FeeTypes.ExchFees.value
         }
         self.message.parameters = default_parameters
         return self
 
     def modify_fees_request(self, params=None, recalculate=False, fee: Fees = None,
-                            comm_profile: CommissionProfiles = None):
+                            comm_profile: CommissionProfiles = None, fee_type: FeeTypes = None):
         self.message.message_type = 'ModifyCommission'
         default_parameters = {
             'commDescription': "Fee1" if fee is None else fee.name,
-            'commExecScope': "ALL",
+            'commExecScope': ExecScope.AllExec.value,
             'commissionID': 1 if fee is None else fee.value,
             'execCommissionProfileID': 1 if comm_profile is None else comm_profile.value,
-            'miscFeeType': 'EXC',
+            'miscFeeType': FeeTypes.ExchFees.value if fee_type is None else fee_type.value,
             'recomputeInConfirmation': 'false' if recalculate is False else 'true',
         }
         self.message.parameters = params if params is not None else default_parameters

@@ -159,3 +159,11 @@ class CommissionProfiles(Enum):
     Bas_Qty = 6
     Abs_Amt_USD = 7
     Abs_Amt_2 = 8
+
+
+class ExecScope(Enum):
+    AllExec = "ALL"
+    DayFirstExec = "DAF"
+    FirstExec = "FST"
+
+
