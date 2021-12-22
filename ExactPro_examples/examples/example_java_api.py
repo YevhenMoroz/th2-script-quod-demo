@@ -133,7 +133,7 @@ class TestCase:
         ref_data_params = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'InstrDictionaryRequestBlock': {
-                'PreferredInstrList': {'PreferredInstrBlock': [{'InstrID': "UgJ1lTJriCq62f0NoP3nww"}],
+                'PreferredInstrList': {'PreferredInstrBlock': [{'InstrID': "InstrID=BQa078AxtFWrfb_M2D31Yw"}],
                                        "SecurityListRequestType": "ALL"},
 
             }

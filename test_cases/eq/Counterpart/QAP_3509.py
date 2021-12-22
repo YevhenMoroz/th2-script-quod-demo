@@ -20,10 +20,9 @@ timeouts = True
 
 
 class QAP_3509(TestCase):
-    def __init__(self, report_id, session_id, file_name):
+    def __init__(self, report_id, session_id):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
         self.dc_connectivity = SessionAliasOMS().dc_connectivity
@@ -34,13 +33,14 @@ class QAP_3509(TestCase):
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
         client = "CLIENT_COUNTERPART"
+        account = "CLIENT_COUNTERPART_SA1"
         # endregion
         # region DMA order
         change_params = {'Account': client,
                          'ExDestination': 'XEUR',
                          'PreAllocGrp': {
                              'NoAllocs': [{
-                                 'AllocAccount': "CLIENT_COUNTERPART_SA1",
+                                 'AllocAccount': account,
                                  'AllocQty': "100"}]}, }
         nos = FixMessageNewOrderSingleOMS().set_default_dma_limit(Instrument.ISI1).change_parameters(change_params)
         try:
