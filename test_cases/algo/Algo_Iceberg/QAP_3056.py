@@ -414,6 +414,7 @@ def execute(report_id):
         #endregion
 
     except:
+        bca.create_event('Fail test event', status='FAILED', parent_id=report_id)
         logging.error("Error execution",exc_info=True)
     finally:
         rule_destroyer(rule_list)
