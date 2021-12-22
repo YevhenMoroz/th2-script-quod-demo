@@ -81,7 +81,7 @@ class QAP_3743(TestCase):
              "SecondaryOrderID": "*",
              "LastMkt": "*",
              "Text": "*",
-             "Instrument": "*"}).remove_parameters(["CommissionData", "MiscFeesGrp", "SettlCurrency"])
+             "Instrument": "*"}).remove_parameters(["CommissionData", "SettlCurrency"])
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)
