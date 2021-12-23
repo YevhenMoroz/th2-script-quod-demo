@@ -29,7 +29,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
+    open_fe(session_id, report_id, case_id, work_dir, username,password)
     # endregion
 
     # region Create CO
