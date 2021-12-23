@@ -32,15 +32,16 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().change_parameters(quote_request_params)
         return self
 
-    def set_swap_rfq_params(self) -> FixMessage:
+    def set_swap_rfq_params(self):
         quote_request_swap_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
                 "Account": "CLIENT1",
                 "Side": "1",
+                "OrderQty": "1000000",
                 "Instrument": {
                     "Symbol": "EUR/USD",
-                    "SecurityType": "FXSPOT"
+                    "SecurityType": "FXSWAP"
                 },
                 "NoLegs": [
                     {
@@ -48,7 +49,7 @@ class FixMessageQuoteRequestFX(FixMessage):
                             "LegSymbol": "EUR/USD",
                             "LegSecurityType": "FXSPOT"
                         },
-                        "LegSide": "1",
+                        "LegSide": "2",
                         "LegSettlType": "0",
                         "LegSettlDate": spo(),
                         "LegOrderQty": "1000000"
@@ -59,7 +60,7 @@ class FixMessageQuoteRequestFX(FixMessage):
                             "LegSecurityType": "FXFWD"
                         },
                         "LegSide": "1",
-                        "LegSettlType": "0",
+                        "LegSettlType": "W1",
                         "LegSettlDate": wk1(),
                         "LegOrderQty": "1000000"
                     }
@@ -68,4 +69,12 @@ class FixMessageQuoteRequestFX(FixMessage):
             ]
         }
         super().change_parameters(quote_request_swap_params)
+        return self
+
+    def update_near_leg(self, near_leg_params: dict):
+        self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0] = near_leg_params
+        return self
+
+    def update_far_leg(self, far_leg_params):
+        self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1] = far_leg_params
         return self
