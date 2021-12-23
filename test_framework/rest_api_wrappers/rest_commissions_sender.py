@@ -51,7 +51,7 @@ class RestCommissionsSender(RestApiManager):
         self.message.parameters = params if params is not None else default_parameters
         return self
 
-    def modify_client_commission_request(self, params=None, client: Commissions = None,
+    def modify_client_commission_request(self, params=None, client: CommissionClients = None,
                                          account: CommissionAccounts = None, recalculate=False,
                                          commission: Fees = None,
                                          comm_profile: CommissionProfiles = None):
