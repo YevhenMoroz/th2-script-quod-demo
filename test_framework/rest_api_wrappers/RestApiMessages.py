@@ -30,6 +30,29 @@ class RestApiMessages:
         self.message_type = "CreateInstitution"
         self.parameters = params
 
+    def modify_venue_status_metric(self, venue,
+                                   status: str = 'false',
+                                   error_threshold: int = -1,
+                                   warning_threshold: int = 25):
+        self.message_type = 'ModifyVenueStatus'
+        modify_params = {
+            'alive': 'true',
+            'venueID': venue,
+            'venueStatusMetric': [
+                {
+                    'venueMetricType': "LUP",
+                    'enableMetric': status,
+                    'metricErrorThreshold': error_threshold,
+                    'metricWarningThreshold': warning_threshold
+                }
+            ]
+        }
+        self.parameters = modify_params
+
+    def modify_client_tier_instrument(self, params):
+        self.parameters = params
+        self.message_type = 'ModifyClientTierInstrSymbol'
+
     def modify_institution(self, params):
         self.message_type = "ModifyInstitution"
         self.parameters = params
