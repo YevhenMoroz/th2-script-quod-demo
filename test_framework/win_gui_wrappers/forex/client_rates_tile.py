@@ -112,15 +112,6 @@ class ClientRatesTile(ClientPricingTile):
         self.clear_details([self.extract_values_request])
         return response
 
-    def extract_base(self):
-        self.extract_table_value_request.set_bid_extraction_field(
-            ExtractionDetail(str(col_n.bid_base), col_n.bid_base))
-        self.extract_table_value_request.set_ask_extraction_field(
-            ExtractionDetail(str(col_n.ask_base), col_n.ask_base))
-        response = call(self.cp_service.extractRatesTileTableValues, self.extract_table_value_request.build())
-        self.clear_details([self.extract_table_value_request])
-        return response
-
     def extract_values_from_rates(self, *args: col_n, row_number: int = 1):
         self.extract_table_value_request.set_row_number(row_number)
         if col_n.bid_effective in args:
