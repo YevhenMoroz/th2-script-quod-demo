@@ -95,6 +95,16 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == MessageType.QuoteRequest.value:
+            response = self.act.placeQuoteFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.QuoteRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
