@@ -37,8 +37,8 @@ def test_run(parent_id=None):
 
         # import_AH_layout.execute(report_id, session_id)
         # AH_Precondition.execute(report_id)
-        QAP_1762.execute(report_id, session_id)
-        QAP_2113.execute(report_id, session_id)
+        # QAP_1762.execute(report_id, session_id)
+        # QAP_2113.execute(report_id, session_id)
         QAP_2159.execute(report_id, session_id)
         QAP_2228.execute(report_id, session_id)
         QAP_2255.execute(report_id, session_id)
