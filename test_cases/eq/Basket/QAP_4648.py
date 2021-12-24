@@ -23,14 +23,14 @@ timeouts = True
 class QAP4648(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
     def qap_4648(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.report_id)
+        fix_manager = FixManager(self.ss_connectivity, self.case_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         cl_inbox = OMSClientInbox(self.case_id, self.session_id)
         main_window = BaseMainWindow(self.case_id, self.session_id)

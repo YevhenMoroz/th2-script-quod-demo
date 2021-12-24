@@ -155,7 +155,7 @@ class BaseOrderBook(BaseWindow):
         self.set_order_details()
         return response
 
-    def extract_2lvl_fields(self, tab: str, column_names: [str], rows: [int], filter_dict: dict = None):
+    def extract_2lvl_fields(self, tab: str, column_names: list, rows: list, filter_dict: dict = None):
         """
         return arr of dict for avery rows
         """
