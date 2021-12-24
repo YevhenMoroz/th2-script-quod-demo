@@ -9,6 +9,7 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOr
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.forex.FixMessageQuote import FixMessageQuote
 
 
 class FixManager:
@@ -98,7 +99,7 @@ class FixManager:
         elif fix_message.get_message_type() == MessageType.QuoteRequest.value:
             response = self.act.placeQuoteFIX(
                 request=basic_custom_actions.convert_to_request(
-                    "Send MarketDataRequest",
+                    "Send Request For Quote",
                     self.__session_alias,
                     self.__case_id,
                     basic_custom_actions.message_to_grpc(MessageType.QuoteRequest.value,
@@ -139,18 +140,19 @@ class FixManager:
                                 repeating_group_list.append(repeating_group_list_field)
                             fields.update({field: repeating_group_list})
             message_type = message.metadata.message_type
-            responce_fix_message = None
+            response_fix_message = None
             if message_type == MessageType.NewOrderSingle.value:
-                responce_fix_message = FixMessageNewOrderSingle()
+                response_fix_message = FixMessageNewOrderSingle()
             elif message_type == MessageType.ExecutionReport.value:
-                responce_fix_message = FixMessageExecutionReport()
+                response_fix_message = FixMessageExecutionReport()
             elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
-                responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+                response_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+            elif message_type == MessageType.Quote.value:
+                response_fix_message = FixMessageQuote()
 
+            response_fix_message.change_parameters(fields)
 
-            responce_fix_message.change_parameters(fields)
-
-            response_messages.append(responce_fix_message)
+            response_messages.append(response_fix_message)
 
         return response_messages
 
