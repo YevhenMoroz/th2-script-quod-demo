@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_framework.win_gui_wrappers.data_set import ClientPrisingTileAction, RatesColumnNames, \
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, RatesColumnNames, \
     PricingButtonColor
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 from win_gui_modules.wrappers import set_base

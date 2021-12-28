@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.win_gui_wrappers.data_set import OrderBookColumns, TimeInForce
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager

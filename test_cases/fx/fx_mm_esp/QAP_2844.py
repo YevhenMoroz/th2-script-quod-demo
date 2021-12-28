@@ -9,8 +9,8 @@ from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers import DataSet
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
-from test_framework.win_gui_wrappers import data_set
-from test_framework.win_gui_wrappers.data_set import PriceNaming
+from test_framework.win_gui_wrappers import fe_trading_constant
+from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 from win_gui_modules.client_pricing_wrappers import BaseTileDetails
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest

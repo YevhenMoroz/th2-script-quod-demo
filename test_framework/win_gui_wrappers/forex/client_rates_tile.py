@@ -1,5 +1,5 @@
-from test_framework.win_gui_wrappers.data_set import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
-from test_framework.win_gui_wrappers.data_set import RatesColumnNames as col_n
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames as col_n
 from test_framework.win_gui_wrappers.forex.client_pricing_tile import ClientPricingTile
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
     ExtractRatesTileValues, ExtractRatesTileTableValuesRequest, SelectRowsRequest, DeselectRowsRequest, \
