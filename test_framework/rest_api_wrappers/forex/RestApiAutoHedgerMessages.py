@@ -83,14 +83,21 @@ class RestApiAutoHedgerMessages(RestApiMessages):
         self.message_type = 'createAutoHedger'
         return self
 
-    def add_schedule(self, hours_from_time, hours_to_time, minutes_from_time, minutes_to_time):
+    def add_schedule(self, hours_from_time = None, hours_to_time = None, minutes_from_time = None, minutes_to_time = None):
         timestamp = str(datetime.now().timestamp())
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         schedule_dict = {
-            'scheduleFromTime': str((datetime.now() - timedelta(hours=hours_from_time)).timestamp()).split(".", 1)[0] + '000',
-            'scheduleToTime': str((datetime.now() + timedelta(hours=hours_to_time)).timestamp()).split(".", 1)[0] + '000',
+            'scheduleFromTime': str((datetime.now() - timedelta
+            (hours=hours_from_time if hours_from_time is not None else 0,
+             minutes=minutes_from_time if minutes_from_time is not None else 0))
+                                    .timestamp()).split(".", 1)[0] + '000',
+            'scheduleToTime': str((datetime.now() + timedelta(
+                hours=hours_to_time if hours_to_time is not None else 0,
+                minutes=minutes_to_time if minutes_to_time is not None else 0)).
+                                  timestamp()).split(".", 1)[0] + '000',
             'weekDay': datetime.now().strftime("%a").upper()
         }
+        self.add_parameter({'autoHedgerSchedule'})
 
 
