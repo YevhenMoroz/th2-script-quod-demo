@@ -65,12 +65,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
             "TimeInForce": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["TimeInForce"],
             "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
-            "SettlDate": "*",
-            "ReplyReceivedTime": "*",
-            "SecondaryOrderID": "*",
-            "Text": "*",
-            "LastMkt": "*"
-
+            "ExpireDate": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["ExpireDate"],
+            "SettlDate": "*"
         }
         if new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"] == "2":
             change_parameters.update({"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
@@ -99,10 +95,38 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "ExDestination": "*",
             "GrossTradeAmt": "*",
             "SettlCurrency": "*",
-            "CommissionData": "*",
         }
         if new_order_single.get_parameter("OrdType") == "2":
             change_parameters.update({"Price": new_order_single.get_parameter("Price")})
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    def set_default_filled_list(self, new_order_list: FixMessageNewOrderList, ord_number: int = 0):
+        change_parameters = {
+            "ExecType": "F",
+            "OrdStatus": "2",
+            "Account": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Account"],
+            "OrderQtyData": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrderQtyData"],
+            "ClOrdID": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["ClOrdID"],
+            "HandlInst": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["HandlInst"],
+            "Side": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Side"],
+            "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
+            "TimeInForce": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["TimeInForce"],
+            "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
+            "SettlDate": "*",
+            "SecondaryOrderID": "*",
+            "LastExecutionPolicy": "*",
+            "TradeDate": "*",
+            "TradeReportingIndicator": "*",
+            "SecondaryExecID": "*",
+            "ExDestination": "*",
+            "GrossTradeAmt": "*",
+            "ReplyReceivedTime": "*",
+            "ExpireDate": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["ExpireDate"],
+        }
+        if new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"] == "2":
+            change_parameters.update({"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
@@ -206,8 +230,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "SecondaryOrderID": '*',
             "SecondaryExecID": '*',
             "ExDestination": '*',
-            "GrossTradeAmt": '*',
-            'ReplyReceivedTime': '*',
+            "GrossTradeAmt": '*'
         }
         if new_order_single.get_parameter("OrdType") == "2":
             change_parameters.update({"Price": new_order_single.get_parameter("Price")})

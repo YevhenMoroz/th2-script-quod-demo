@@ -52,7 +52,8 @@ class BaseBasketOrderBook(BaseWindow):
 
     def get_basket_orders_value(self, row_count: int, extract_value, basket_book_filter: dict = None):
         self.extract_basket_data_details.set_default_params(self.base_request)
-        self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
+        if basket_book_filter is not None:
+            self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
         self.extract_basket_data_details.set_column_names(
             [extract_value])  # Set column for child orders which data be extracted
         extract_child_details = self.extract_basket_order_details.ExtractChildOrderDataDetails(

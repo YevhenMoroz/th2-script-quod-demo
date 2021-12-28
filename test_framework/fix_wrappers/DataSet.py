@@ -26,7 +26,8 @@ class Instrument(Enum):
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
-        SecurityType='CS'
+        SecurityType='CS',
+        SecurityDesc='DREAMNEX'
     )
     test = dict(
         Symbol='FR0010436000',
