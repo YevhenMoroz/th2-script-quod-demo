@@ -58,18 +58,19 @@ def decorator_try_except(test_id):
             try:
                 return decorated_function(*args, **kwargs)
             except:
-                print("Tuple object - \n", args)
-                print("Object TestCase - \n", args[0])
-                print("Object attributes - \n", args[0].__dict__)
-                print("case_id - ", args[0].__dict__['case_id'])
-
+                # print("Tuple object - \n", args)
+                # print("Object TestCase - \n", args[0])
+                # print("Object attributes - \n", args[0].__dict__)
+                # print("case_id - ", args[0].__dict__['case_id'])
+                #
                 bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
                                  status='FAILED',
-                                 parent_id=args[0].__dict__['case_id'])
-                print(f"Test {test_id} was failed")
+                                 parent_id=args[0].__dict__['test_id'])
             finally:
                 pass
 
         return improved_function
 
     return get_function
+
+
