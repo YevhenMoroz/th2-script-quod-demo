@@ -40,32 +40,32 @@ def execute(report_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
 
-    order_buy('AURUM1', case_id, "USD/SEK", "SEK", "USD", "AURUM1_1")
-    order_sell('AURUM1', case_id, "USD/SEK", "SEK", "USD", "AURUM1_1")
-
-    order_buy('AURUM1', case_id, "NOK/SEK", "SEK", "NOK", "AURUM1_1")
-    order_sell('AURUM1', case_id, "NOK/SEK", "SEK", "NOK", "AURUM1_1")
+    # order_buy('AURUM1', case_id, "USD/SEK", "SEK", "USD", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "USD/SEK", "SEK", "USD", "AURUM1_1")
+    #
+    # order_buy('AURUM1', case_id, "NOK/SEK", "SEK", "NOK", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "NOK/SEK", "SEK", "NOK", "AURUM1_1")
 
     order_buy('AURUM1', case_id, "EUR/USD", "USD", "EUR", "AURUM1_1")
     order_sell('AURUM1', case_id, "EUR/USD", "USD", "EUR", "AURUM1_1")
 
-    order_buy('AURUM1', case_id, "EUR/NOK", "NOK", "EUR", "AURUM1_1")
-    order_sell('AURUM1', case_id, "EUR/NOK", "NOK", "EUR", "AURUM1_1")
-
+    # order_buy('AURUM1', case_id, "EUR/NOK", "NOK", "EUR", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "EUR/NOK", "NOK", "EUR", "AURUM1_1")
+    #
     order_buy('AURUM1', case_id, "USD/DKK", "DKK", "USD", "AURUM1_1")
     order_sell('AURUM1', case_id, "USD/DKK", "DKK", "USD", "AURUM1_1")
-
-    order_buy('AURUM1', case_id, "USD/ZAR", "ZAR", "USD", "AURUM1_1")
-    order_sell('AURUM1', case_id, "USD/ZAR", "ZAR", "USD", "AURUM1_1")
-
-    order_buy('AURUM1', case_id, "EUR/CHF", "CHF", "EUR", "AURUM1_1")
-    order_sell('AURUM1', case_id, "EUR/CHF", "CHF", "EUR", "AURUM1_1")
-
-    order_buy('AURUM1', case_id, "CHF/THB", "THB", "CHF", "AURUM1_1")
-    order_sell('AURUM1', case_id, "CHF/THB", "THB", "CHF", "AURUM1_1")
-
-    order_buy('AURUM1', case_id, "GBP/DKK", "DKK", "GBP", "AURUM1_1")
-    order_sell('AURUM1', case_id, "GBP/DKK", "DKK", "GBP", "AURUM1_1")
+    #
+    # order_buy('AURUM1', case_id, "USD/ZAR", "ZAR", "USD", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "USD/ZAR", "ZAR", "USD", "AURUM1_1")
+    #
+    # order_buy('AURUM1', case_id, "EUR/CHF", "CHF", "EUR", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "EUR/CHF", "CHF", "EUR", "AURUM1_1")
+    #
+    # order_buy('AURUM1', case_id, "CHF/THB", "THB", "CHF", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "CHF/THB", "THB", "CHF", "AURUM1_1")
+    #
+    # order_buy('AURUM1', case_id, "GBP/DKK", "DKK", "GBP", "AURUM1_1")
+    # order_sell('AURUM1', case_id, "GBP/DKK", "DKK", "GBP", "AURUM1_1")
 
     order_buy('Osmium1', case_id, "EUR/USD", "USD", "EUR", "Osmium1_1")
     order_sell('Osmium1', case_id, "EUR/USD", "USD", "EUR", "Osmium1_1")

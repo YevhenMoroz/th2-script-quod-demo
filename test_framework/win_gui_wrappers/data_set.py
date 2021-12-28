@@ -58,7 +58,7 @@ class OrderType(Enum):
 
 # TODO: Need to compare with actual version (v156)
 class InstrType(Enum):
-    spot = 'Spot'
+    spot = 'FXSpot'
     forward = 'FXForward'
     swap = 'FXSwap'
     ndf = 'NDF'
@@ -165,6 +165,10 @@ class PriceNaming(Enum):
     bid_large = "bid_large"
     bid_pips = "bid_pips"
     spread = "spread"
+
+
+class AutoHedgerID(Enum):
+    osmium = {'OsmiumAH': '400000018'}
 
 
 class RatesColumnNames(CustomEnum):

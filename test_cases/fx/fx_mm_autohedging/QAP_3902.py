@@ -2,6 +2,10 @@ from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_mm_autohedging.QAP_2250 import send_rfq_and_filled_order_sell, send_rfq_and_filled_order_buy
+from test_cases.fx.fx_mm_autohedging.QAP_2470 import alias_gtw
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 from win_gui_modules.aggregated_rates_wrappers import PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
@@ -222,24 +226,33 @@ def execute(report_id, session_id):
         initial_pos_working = get_dealing_positions_details(pos_service, case_base_request, symbol, account,
                                                             column_working)
         set_send_hedge_order(case_id)
-        create_or_get_esp_tile(base_details, ar_service)
-        modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, case_qty)
-        place_order_esp(base_details, ar_service)
-        send_order(case_base_request, order_ticket_service)
+        # create_or_get_esp_tile(base_details, ar_service)
+        # modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, case_qty)
+        # place_order_esp(base_details, ar_service)
+        # send_order(case_base_request, order_ticket_service)
+        fix_manager_gtw = FixManager(alias_gtw, case_id)
+        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+            {'TimeInForce': '1', 'Account': firm_account, 'OrdType': '1', 'OrderQty': case_qty})
+        fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # Step 2
         order_id_algo, algo_qty = check_order_book_algo('Checking placed order', case_id, case_base_request, ob_act,
                                                         case_qty)
         affected_pos_working = get_dealing_positions_details(pos_service, case_base_request, symbol, account,
                                                              column_working)
         compare_position('Checking that work positions affected by algo order', case_id, affected_pos_working, algo_qty)
-        call(cp_service.createRatesTile, base_details.build())
-        modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
-        place_order(base_details, cp_service, client)
+
+        # call(cp_service.createRatesTile, base_details.build())
+        # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
+        # place_order(base_details, cp_service, client)
+        send_rfq_and_filled_order_sell(case_id, '3000000')
+
         order_id_ah = check_order_book_hedger('Checking placed AH order', case_id, case_base_request, ob_act, algo_qty)
         # Step 4
         open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
         place_order(base_details, cp_service, client)
+        send_rfq_and_filled_order_buy(case_id, '3000000')
+
         cancel_order(ob_act, case_base_request, order_id_ah)
         cancel_order(ob_act, case_base_request, order_id_algo)
         affected_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account,

@@ -23,7 +23,7 @@ pos_service = Stubs.act_fx_dealing_positions
 client = 'Silver1'
 client_tier = 'Silver'
 account = 'Silver1_1'
-instrument = 'USD/DKK-Spot'
+instrument = 'USD/DKK-1W'
 status_true = 'true'
 status_false = 'false'
 timestamp = str(datetime.now().timestamp())
@@ -111,7 +111,7 @@ modify_params = {
     "clientTierInstrSymbolVenue": [
         {
             "venueID": case_venue,
-            'excludeWhenUnhealthy': status_false,
+            'excludeWhenUnhealthy': 'false',
             'criticalVenue': 'false'
         }
     ],
@@ -161,7 +161,7 @@ def execute(report_id, session_id):
                      prices_init[PriceNaming.bid_pips.value], '', '')
         # Step 2
         modify_venue_message.modify_venue_status_metric(case_venue, status_true)
-        modify_params["clientTierInstrSymbolVenue"][0]['excludeWhenUnhealthy'] = status_true
+        modify_params["clientTierInstrSymbolFwdVenue"][0]['excludeWhenUnhealthy'] = status_true
         modify_instrument_message.modify_client_tier_instrument(modify_params)
         rest_manager.send_post_request(modify_venue_message)
         rest_manager.send_post_request(modify_instrument_message)
@@ -181,7 +181,7 @@ def execute(report_id, session_id):
             call(cp_service.closeRatesTile, base_details.build())
             # Set settings back
             modify_venue_message.modify_venue_status_metric(case_venue)
-            modify_params["clientTierInstrSymbolVenue"][0]['excludeWhenUnhealthy'] = status_false
+            modify_params["clientTierInstrSymbolFwdVenue"][0]['excludeWhenUnhealthy'] = status_false
             modify_instrument_message.modify_client_tier_instrument(modify_params)
             rest_manager.send_post_request(modify_venue_message)
             rest_manager.send_post_request(modify_instrument_message)
