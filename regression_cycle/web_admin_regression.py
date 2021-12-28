@@ -38,15 +38,15 @@ def test_run(parent_id=None):
         web_driver_container = WebDriverContainer()
         RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
-        RunUsers(web_driver_container, parent_id).execute()
+        # RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()
         # RunClientsAccounts(web_driver_container, parent_id).execute()
         # RunOrderManagement(web_driver_container, parent_id).execute()
         # RunMiddleOffice(web_driver_container, parent_id).execute()
         # RunMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
-        RunPositions(web_driver_container, parent_id).execute()
-        RunOthers(web_driver_container, parent_id).execute()
+        # RunPositions(web_driver_container, parent_id).execute()
+        # RunOthers(web_driver_container, parent_id).execute()
 
 
         end_time = time.monotonic()

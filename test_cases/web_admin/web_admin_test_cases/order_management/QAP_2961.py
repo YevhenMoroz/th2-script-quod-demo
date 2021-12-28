@@ -25,7 +25,7 @@ class QAP_2961(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.parameter_at_lit_dark_block = "MaxDarkPercentage"
+        self.parameter_at_lit_dark_block = "Max Dark Percentage"
         self.value = "120"
 
     def precondition(self):

@@ -58,7 +58,7 @@ class RunClientsAccounts:
             # QAP_3104(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3230(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3231(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3232(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3232(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4381(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4382(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4864(self.web_driver_container, self.second_lvl_id).run()

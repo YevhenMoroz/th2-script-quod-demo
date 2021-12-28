@@ -31,6 +31,8 @@ class QAP_1736(CommonTestCase):
         self.venue = "BRU"
         self.currency = "AFN"
         self.instr_type = "Bond"
+        self.preferred_security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,6 +49,8 @@ class QAP_1736(CommonTestCase):
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
         values_sub_wizard.set_instr_type(self.instr_type)
+        values_sub_wizard.set_security_exchange(self.security_exchange)
+        values_sub_wizard.set_preferred_security_exchange(self.preferred_security_exchange)
         currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
         currency_sub_wizard.set_currency(self.currency)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)

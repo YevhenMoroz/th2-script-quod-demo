@@ -38,7 +38,7 @@ class ExecutionStrategiesConstants:
     REVERT_CHANGES_AT_WIZARD = "//*[text()='Revert Changes']"
     CLOSE_WIZARD = '//*[@data-name="close"]'
     # --VALUES TAB--
-    NAME_AT_VALUES_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
+    NAME_AT_VALUES_TAB_XPATH = '//*[@formcontrolname="algoPolicyName"]'
     STRATEGY_TYPE_AT_VALUES_TAB_XPATH = '//*[text()="Strategy Type *"]/preceding-sibling::input'
     DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[text()="Description"]/preceding-sibling::input'
     USER_AT_VALUES_TAB_XPATH = '//*[text()="User"]/preceding-sibling::input'

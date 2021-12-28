@@ -23,7 +23,7 @@ class QAP_2963(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.parameter_at_dark_block = "DarkResidentTime"
+        self.parameter_at_dark_block = "Dark Resident Time"
         self.value = "120"
 
     def precondition(self):

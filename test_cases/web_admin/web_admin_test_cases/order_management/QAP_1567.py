@@ -25,7 +25,7 @@ class QAP_1567(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.first_parameter = "AllowedAggressiveVenues"
+        self.first_parameter = "Allowed Aggressive Venues"
         self.first_venue = "EURONEXT AMSTERDAM"
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

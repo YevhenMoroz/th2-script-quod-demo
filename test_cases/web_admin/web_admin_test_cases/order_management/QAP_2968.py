@@ -23,7 +23,7 @@ class QAP_2968(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.parameter = "Visibility"
+        self.parameter = "Visibility for MULT"
         self.value = "30"
 
     def precondition(self):

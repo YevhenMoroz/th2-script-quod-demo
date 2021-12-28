@@ -27,7 +27,7 @@ class QAP_1737(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
         self.password = "adm02"
-        self.symbol = "EUR/USD"
+        self.symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = "EUR/USD"
@@ -37,6 +37,9 @@ class QAP_1737(CommonTestCase):
         self.currency = "AED"
         self.security_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = "Bond"
+        self.sub_venue ="Forward"
+        self.listing_group ="test"
+        self.settl_type = "BrokenDate"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -53,9 +56,12 @@ class QAP_1737(CommonTestCase):
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
         values_sub_wizard.set_instr_type(self.instr_type)
+        values_sub_wizard.set_settl_type(self.settl_type)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         attachment_sub_wizard.set_preferred_venue(self.preferred_venue)
+        attachment_sub_wizard.set_sub_venue(self.sub_venue)
+        attachment_sub_wizard.set_listing_group(self.listing_group)
         currency_sub_wizard = ListingsCurrencySubWizard(self.web_driver_container)
         currency_sub_wizard.set_currency(self.currency)
         # market_identifies_sub_wizard = ListingsMarketIdentifiersSubWizard(self.web_driver_container)

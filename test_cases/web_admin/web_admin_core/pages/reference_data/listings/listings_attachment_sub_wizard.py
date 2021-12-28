@@ -26,7 +26,7 @@ class ListingsAttachmentSubWizard(CommonPage):
         return self.get_text_by_xpath(ListingsConstants.ATTACHMENT_TAB_SUB_VENUE_XPATH)
 
     def set_listing_group(self, value):
-        self.set_combobox_value(ListingsConstants.ATTACHMENT_TAB_SUB_VENUE_XPATH, value)
+        self.set_combobox_value(ListingsConstants.ATTACHMENT_TAB_LISTING_GROUP_XPATH, value)
 
     def get_listing_group(self):
         return self.get_text_by_xpath(ListingsConstants.ATTACHMENT_TAB_SUB_VENUE_XPATH)

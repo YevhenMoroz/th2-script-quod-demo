@@ -21,7 +21,7 @@ class RootConstants:
     REFERENCE_DATA_TOGGLE_CSS_SELECTOR = "a[title='Reference Data']"
     VENUES_ITEM_XPATH = "//span[text()='Venues']"
     SUBVENUES_ITEM_XPATH = "//span[text()='SubVenues']"
-    LISTING_GROUPS_ITEM_XPATH = "//span[text()='ListingGroups']"
+    LISTING_GROUPS_ITEM_XPATH = "//span[text()='Listing Groups']"
     LISTINGS_ITEM_XPATH = "//span[text()='Listings']"
     RECOVER_HISTORICAL_VOLUME_ITEM_XPATH = "//span[text()='Recover Historical Volume']"
     INSTR_SYMBOL_INFO_ITEM_XPATH = "//span[text()='InstrSymbolInfo']"

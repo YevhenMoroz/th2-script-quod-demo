@@ -17,7 +17,7 @@ class QAP_3145(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.user_id = "adm01"
+        self.user_id = "adm03"
         self.perm_role = "Permissions for FIX Clients"
         self.email = "test"
 

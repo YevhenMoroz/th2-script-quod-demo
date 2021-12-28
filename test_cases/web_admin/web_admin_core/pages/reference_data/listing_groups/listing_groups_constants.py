@@ -1,5 +1,5 @@
 class ListingGroupsConstants:
-    LISTING_GROUPS_PAGE_TITLE_XPATH = "//*[@title='ListingGroups']//span"
+    LISTING_GROUPS_PAGE_TITLE_XPATH = "//*[@title='Listing Groups']//span"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"

@@ -25,7 +25,7 @@ class CounterpartsConstants:
     SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'
     CLEAR_CHANGES_XPATH = '//button[text()="Clear Changes"]'
     DOWNLOAD_PDF_XPATH = '//*[@class="nb-overlay-left"]//*[@data-name="download"]'
-    DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
+    DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = "//*[@data-name='download']"
 
     # ----------SUB_COUNTERPARTS_TAB----------
     PLUS_AT_SUB_COUNTERPARTS_TAB_XPATH = '//nb-accordion//nb-accordion-item[2]//*[@data-name="plus"]'

@@ -67,7 +67,7 @@ class RunOrderManagement:
             # QAP_1010(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1411(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1412(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_1567(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1567(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1582(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1592(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1593(self.web_driver_container, self.second_lvl_id).run()
@@ -100,7 +100,8 @@ class RunOrderManagement:
             # QAP_4856(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5207(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5819(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5923(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5820(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5923(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run Order Management ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

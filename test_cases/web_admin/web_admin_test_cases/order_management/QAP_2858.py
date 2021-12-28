@@ -19,7 +19,7 @@ class QAP_2858(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.strategy_type = "Quod LitDark"
-        self.parameter_at_passive_lit_block = "PostMode"
+        self.parameter_at_passive_lit_block = "Post Mode"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

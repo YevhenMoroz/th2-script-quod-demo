@@ -25,9 +25,9 @@ class QAP_3331(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod DarkPool"
-        self.dark_parameter_1 = "LISPhase"
-        self.dark_parameter_2 = "LISResidentTime"
-        self.dark_parameter_3 = "LISPools"
+        self.dark_parameter_1 = "LIS Phase"
+        self.dark_parameter_2 = "LIS Resident Time"
+        self.dark_parameter_3 = "LIS Pools"
         self.venue = "ADX"
 
     def precondition(self):

@@ -1,6 +1,7 @@
 import random
 import string
 import sys
+import time
 import traceback
 
 from custom import basic_custom_actions
@@ -24,7 +25,7 @@ class QAP_2970(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.parameter_at_dark_block = "DarkBrokerStrategies"
+        self.parameter_at_dark_block = "Dark Broker Strategies"
         self.first_strategy = "TestSuperStrategy1"
         self.first_value = "2"
         self.second_strategy = "test1582"
@@ -40,8 +41,10 @@ class QAP_2970(CommonTestCase):
         side_menu.open_execution_strategies_page()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
+        time.sleep(2)
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
         strategies_wizard.set_name(self.name)
+        time.sleep(2)
         strategies_wizard.set_user(self.user)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_dark_block()
@@ -69,7 +72,7 @@ class QAP_2970(CommonTestCase):
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
-            lit_general.set_parameter("BrokerStrategy")
+            lit_general.set_parameter("Broker Strategy")
             lit_general.set_value_by_dropdown_list_at_sub_wizard("TestSuperStrategy1")
             lit_general.click_on_checkmark_button()
             expected_parameter_at_lit_general_block = "TestSuperStrategy1"
