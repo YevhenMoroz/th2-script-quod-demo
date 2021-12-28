@@ -1,8 +1,9 @@
 import logging
 
 from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import verification, verify_ent
@@ -29,7 +30,7 @@ def execute(report_id, session_id):
     recipient = 'Desk of SalesDealers 1 (CL)'
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, 'Limit', 'Day', True, recipient, price, True,

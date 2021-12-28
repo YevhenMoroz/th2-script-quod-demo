@@ -6,7 +6,7 @@ from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from test_framework.win_gui_wrappers.data_set import InstrType
+from test_framework.win_gui_wrappers.fe_trading_constant import InstrType
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide
 from win_gui_modules.common_wrappers import BaseTileDetails

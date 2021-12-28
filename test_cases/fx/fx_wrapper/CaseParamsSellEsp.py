@@ -155,7 +155,7 @@ class CaseParamsSellEsp:
 
 
     # Set custom parameters for md verification
-    def prepare_md_for_verification(self, qty_count, published=True, which_bands_not_pb=None, priced=True,
+    def     prepare_md_for_verification(self, qty_count, published=True, which_bands_not_pb=None, priced=True,
                                     which_bands_not_pr=None):
         if len(qty_count) > 0:
             a = len(qty_count)

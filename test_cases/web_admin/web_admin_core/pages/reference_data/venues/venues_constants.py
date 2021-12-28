@@ -36,7 +36,7 @@ class VenuesConstants:
     MAIN_PAGE_COUNTERPART_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]//div[8]//input'
     MAIN_PAGE_COUNTERPART_XPATH = '//*[@col-id="counterpart.counterpartName"]//span//span[4]'
 
-    # --Description tab--
+    # --Values tab--
     DESCRIPTION_TAB_NAME_XPATH = '//*[@formcontrolname="venueName"]'
     DESCRIPTION_TAB_ID_XPATH = '//*[@formcontrolname="venueID"]'
     DESCRIPTION_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]//input'
@@ -50,7 +50,7 @@ class VenuesConstants:
     DESCRIPTION_TAB_COUNTERPART_XPATH = '//*[@id="counterpart"]'
     DESCRIPTION_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
     DESCRIPTION_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
-
+    VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//div[5]//div[2]//button'
     # --Profiles tab--
     PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH = '//*[@id="priceLimitProfile"]'
     PROFILES_TAB_PRICE_LIMIT_PROFILE_MANAGE_BUTTON_XPATH = '//*[@form-control-name="priceLimitProfile"]/parent::div/following-sibling::div//button'
@@ -96,11 +96,11 @@ class VenuesConstants:
     PRICE_LIMIT_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimit ng-star-inserted"]//input'
 
     # --Tick size profiles sub tab--
-    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
+    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
+    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
+    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
+    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
 
     TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_XPATH = '//*[@placeholder="External ID *"]'
     TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_FILTER_XPATH = '//*[@class="externalTickSizeProfileID ng2-smart-th ng-star-inserted"]//input'
@@ -110,11 +110,11 @@ class VenuesConstants:
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeRefPriceType ng-star-inserted"]//input'
 
     # --Tick size points sub tab--
-    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="plus"]'
+    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="checkmark"]'
+    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="close"]'
+    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="edit"]'
+    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="trash-2"]'
 
     TICK_SIZE_POINTS_TAB_TICK_XPATH = '//*[@placeholder="Tick *"]'
     TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '//*[@class="ng2-smart-th tickSize ng-star-inserted"]//input'
@@ -143,22 +143,22 @@ class VenuesConstants:
     HOLIDAYS_CALENDAR_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="holidayDescription ng2-smart-th ng-star-inserted"]//input'
 
     # --Trading phase profiles sub tab--
-    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
+    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
+    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
+    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
+    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_XPATH = '//*[@placeholder="TradingPhaseProfile Desc *"]'
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH = '//*[@class="ng2-smart-th tradPhaseProfileDesc ng-star-inserted"]//input'
 
     # --Trading phase profile sequence sub tab--
 
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="plus"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="checkmark"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="close"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="edit"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_DELETE_BUTTON = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_XPATH = '//*[@class="status-basic ng-untouched ng-pristine ng-valid nb-transition"]//input'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_SUBMIT_ALLOWED_FILTER_XPATH = '//*[@class="ng2-smart-th submitAllowed ng-star-inserted"]//input'
@@ -361,3 +361,16 @@ class VenuesConstants:
     STATUS_METRICS_TAB_WARNING_THRESHOLD_XPATH = '//*[@id="warnLast Update Elapsed Time (sec)"]'
     STATUS_METRICS_TAB_ERROR_THRESHOLD_XPATH = '//*[@id="errLast Update Elapsed Time (sec)"]'
     STATUS_METRICS_TAB_ENABLE_METRIC_CHECKBOX_XPATH = '//*[text()="Enable Metric"]/parent::label//input'
+
+    # --Exchange codes sub wizard--
+    EXCHANGE_CODES_TAB_PLUS_BUTTON_XPATH = '//*[@class="nb-plus ng2-add-btn"]'
+    EXCHANGE_CODES_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
+    EXCHANGE_CODES_TAB_CLOSE_BUTTON_XPATH = '//*[@class="nb-close ng2-cancel-btn"]'
+    EXCHANGE_CODES_TAB_EDIT_BUTTON_XPATH = '//*[@class="nb-edit ng2-edit-btn"]'
+    EXCHANGE_CODES_TAB_DELETE_BUTTON_XPATH = '//*[@class="nb-trash]'
+    EXCHANGE_CODES_TAB_VENUE_XPATH = '//*[@placeholder="Venue"]'
+    EXCHANGE_CODES_TAB_EXCHANGE_CODE_MIC_XPATH = '//*[@placeholder="Exchange Code (MIC) *"]'
+    EXCHANGE_CODES_TAB_REUTERS_EXCHANGE_CODE_XPATH = '//*[@placeholder="Reuters Exchange Code"]'
+    EXCHANGE_CODES_TAB_BLOOMBERG_EXCHANGE_CODE_XPATH = '//*[@placeholder="Bloomberg Exchange Code"]'
+    EXCHANGE_CODES_TAB_REFINITIV_COMPOSITE_EXCHANGE_CODE_XPATH = '//*[@placeholder="Refinitiv Composite Exchange Code"]'
+    EXCHANGE_CODES_TAB_BLOOMBERG_COMPOSITE_EXCHANGE_XPATH = '//*[@placeholder="Bloomberg Composite Exchange Code"]'

@@ -101,7 +101,7 @@ def extract_ask_part(base_request, service):
 def check_calculation(case_id, event_name, spot_rate, pts, px):
     pts = float(pts) / 10000
     expected_px = float(spot_rate) + pts
-
+    expected_px = round(expected_px, 7)
     verifier = Verifier(case_id)
     verifier.set_event_name(event_name)
     verifier.compare_values("Px value", str(expected_px), str(px))

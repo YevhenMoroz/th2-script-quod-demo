@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 
@@ -38,7 +39,7 @@ class QAP_919(CommonTestCase):
         client_sub_wizard.set_client(self.client)
         client_sub_wizard.set_type(self.type)
         client_sub_wizard.click_on_checkmark_button()
-        time.sleep(2)
+        time.sleep(3)
         client_sub_wizard.click_on_plus_button()
         client_sub_wizard.set_client(self.client)
         time.sleep(2)
@@ -57,4 +58,6 @@ class QAP_919(CommonTestCase):
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

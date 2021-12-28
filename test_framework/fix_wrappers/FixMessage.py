@@ -1,5 +1,6 @@
 from custom import basic_custom_actions
 
+
 class FixMessage:
 
     def __init__(self, message_type: str):
@@ -60,7 +61,7 @@ class FixMessage:
 
     def update_repeating_group(self, r_group: str, fields: list):
         self.remove_parameter(r_group)
-        self.add_fields_into_repeating_group(r_group,fields)
+        self.add_fields_into_repeating_group(r_group, fields)
         return self
 
     def add_fields_into_repeating_group(self, r_group: str, fields: list):
@@ -73,14 +74,16 @@ class FixMessage:
             self.add_tag({r_group: fields})
         return self
 
-
     def remove_fields_repeating_group(self, r_group: str, fields: list):
-        new_component = self.get_parameter(r_group)
-        ln = len(new_component)
-        for i in range(0, ln):
-            for j in fields:
-                if new_component[i] == j:
-                    new_component.pop(i)
+        new_repeating_gr = self.get_parameter(r_group)
+        for element in new_repeating_gr:
+            for i in fields:
+                if i in element.keys():
+                    del element[i]
+        self.change_parameters({r_group: new_repeating_gr})
+        return self
 
-        self.change_parameters({r_group: new_component})
+    def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
+        new_component = self.get_parameter(component)
+        new_component[index].update(kwargs)
         return self

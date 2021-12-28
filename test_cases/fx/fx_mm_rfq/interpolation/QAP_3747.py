@@ -74,8 +74,8 @@ def change_venue_status_msr(case_id, health, metric):
 
 def send_swap_and_filled(case_id):
     # Precondition
-    # change_venue_status_ms(case_id, 'true', '-1')
-    # change_venue_status_msr(case_id, 'true', '-1')
+    change_venue_status_ms(case_id, 'true', '-1')
+    change_venue_status_msr(case_id, 'true', '-1')
     time.sleep(3)
     params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
                                     orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
@@ -93,8 +93,8 @@ def send_swap_and_filled(case_id):
     # Step 2
     rfq.verify_quote_reject(text="no bid forward points for client tier `2600011' on EUR/USD WK2 on QUODFX")
 
-    # change_venue_status_ms(case_id, 'false', '0')
-    # change_venue_status_msr(case_id, 'false', '0')
+    change_venue_status_ms(case_id, 'false', '0')
+    change_venue_status_msr(case_id, 'false', '0')
 
 
 def execute(report_id):

@@ -28,8 +28,6 @@ bid_px_ccy1='104.63'
 offer_px_ccy1='104.635'
 bid_px_ccy2='104.632'
 offer_px_ccy2='104.633'
-ttl=15
-expire_time= (datetime.now() + timedelta(seconds=ttl) - timedelta(hours=3)).strftime("%Y%m%d-%H:%M:%S.000")
 defaultmdsymbol_spo = 'USD/JPY:SPO:REG:CITI'
 no_md_entries_usd_jpy_citi = [
     {
@@ -88,7 +86,7 @@ def execute(report_id):
                                    settldate=settldate, settltype=settltype, currency=currency1,ttl=5)
 
         rfq_1 = FixClientSellRfq(params_ccy1)
-        rfq_1.send_request_for_quote(expire_time)
+        rfq_1.send_request_for_quote()
         rfq_1.verify_quote_pending(offer_px=offer_px_ccy1, bid_px=bid_px_ccy1)
 
         #Step 2
@@ -96,7 +94,7 @@ def execute(report_id):
                                    settldate=settldate, settltype=settltype, currency=currency2,ttl=5)
 
         rfq_2 = FixClientSellRfq(params_ccy2)
-        rfq_2.send_request_for_quote(expire_time)
+        rfq_2.send_request_for_quote()
         rfq_2.verify_quote_pending(offer_px=offer_px_ccy2, bid_px=bid_px_ccy2)
 
 

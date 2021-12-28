@@ -1,8 +1,9 @@
-from test_framework.win_gui_wrappers.data_set import ClientPrisingTileAction, PriceNaming
-from test_framework.win_gui_wrappers.data_set import RatesColumnNames as col_n
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames as col_n
 from test_framework.win_gui_wrappers.forex.client_pricing_tile import ClientPricingTile
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
-    ExtractRatesTileValues, ExtractRatesTileTableValuesRequest, SelectRowsRequest, DeselectRowsRequest, GetCPRTPColors
+    ExtractRatesTileValues, ExtractRatesTileTableValuesRequest, SelectRowsRequest, DeselectRowsRequest, \
+    GetCPRTPColors, PlaceRateTileTableOrderRequest, RatesTileTableOrdSide
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
@@ -94,6 +95,39 @@ class ClientRatesTile(ClientPricingTile):
     def deselect_rows(self):
         call(self.cp_service.deselectRows, self.deselect_rows_request.build())
 
+    def place_order(self, client: str = None, qty: str = None, side: Side = Side.buy, price_large: str = None,
+                    price_pips: str = None, slippage: str = None, stop_price: str = None,
+                    order_type: OrderType = OrderType.limit, tif: TimeInForce = TimeInForce.FOK):
+        if client is not None:
+            self.place_order_request.set_client(client)
+        if qty is not None:
+            self.place_order_request.set_quantity(qty)
+        if price_large is not None:
+            self.place_order_request.set_order_price_large_value(price_large)
+        if price_pips is not None:
+            self.place_order_request.set_order_price_pips(price_pips)
+        if stop_price is not None:
+            self.place_order_request.set_stop_price(stop_price)
+        if slippage is not None:
+            self.place_order_request.set_slippage(slippage)
+        if order_type is OrderType.market:
+            self.place_order_request.set_order_type(OrderType.market.value)
+        if order_type is OrderType.previously_quoted:
+            self.place_order_request.set_order_type(OrderType.previously_quoted.value)
+        if tif is TimeInForce.IOC:
+            self.place_order_request.set_time_in_force(TimeInForce.IOC.value)
+        if side is Side.buy:
+            self.place_order_request.buy()
+        if side is Side.sell:
+            self.place_order_request.sell()
+        call(self.cp_service.placeRatesTileOrder, self.place_order_request.build())
+        self.clear_details([self.place_order_request])
+
+    def open_order_ticket_by_row(self, row, side: RatesTileTableOrdSide = RatesTileTableOrdSide.BUY):
+        self.place_order_by_row = PlaceRateTileTableOrderRequest(self.base_data, row, side)
+        call(self.cp_service.placeRateTileTableOrder, self.place_order_by_row.build())
+        self.clear_details([self.place_order_by_row])
+
     # endregion
 
     # region Extraction
@@ -165,7 +199,7 @@ class ClientRatesTile(ClientPricingTile):
 
     # endregion
     # region Check
-    def check_color_on_lines(self, x: int, y: int, expected_color: str = None):
+    def check_color_of_ricing_button(self, x: int = 0, y: int = 90, expected_color: str = None):
         self.extract_color_request.get_pricing_btn_pixel_color(x, y)
         color = call(self.cp_service.getCPRatesTileColors, self.extract_color_request.build())
         self.compare_values(expected_value=expected_color, actual_value=str(color["PRICING_BUTTON"]),

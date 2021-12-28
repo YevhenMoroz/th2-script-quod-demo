@@ -4,6 +4,7 @@ import os
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -27,7 +28,7 @@ def execute(report_id, session_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     base_window = BaseWindow(case_id, session_id)
-    base_window.open_fe(session_id, report_id, work_dir, username, password)
+    open_fe(session_id, report_id, work_dir, username, password)
     # create CO order
     oms_order_book = OMSOrderBook(case_id, session_id)
     oms_order_inbox = OMSClientInbox(case_id, session_id)

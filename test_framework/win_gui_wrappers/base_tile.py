@@ -4,7 +4,7 @@ from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
-from test_framework.win_gui_wrappers.data_set import Side
+from test_framework.win_gui_wrappers.fe_trading_constant import Side
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.utils import get_base_request
 

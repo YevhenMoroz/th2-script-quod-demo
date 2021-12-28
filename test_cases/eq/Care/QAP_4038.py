@@ -2,12 +2,13 @@ import logging
 
 import test_framework.old_wrappers.eq_fix_wrappers
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_wrappers, eq_fix_wrappers
-from test_framework.old_wrappers.fix_message import FixMessage
+from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
 from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
 from stubs import Stubs
 import time
+
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_book_wrappers import OrdersDetails
 
 from win_gui_modules.utils import get_base_request, call
@@ -36,7 +37,7 @@ def execute(report_id, session_id):
     work_dir = Stubs.custom_config['qf_trading_fe_folder']
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
 
     # region Create CO

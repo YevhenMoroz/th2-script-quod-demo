@@ -3,6 +3,7 @@ import os
 import time
 
 from custom.basic_custom_actions import create_event
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -24,7 +25,7 @@ def execute(report_id, session_id):
     username = Stubs.custom_config['qf_trading_fe_user']
     password = Stubs.custom_config['qf_trading_fe_password']
     middle_office = OMSMiddleOfficeBook(case_id, session_id)
-    middle_office.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     no_allocs: dict = {"NoAllocs": [{'AllocAccount': "CLIENT_COMM_1_SA4", 'AllocQty': str(int(qty) / 2)},
                                     {'AllocAccount': "CLIENT_COMM_1_SA5", 'AllocQty': str(int(qty) / 2)}]}
     try:
