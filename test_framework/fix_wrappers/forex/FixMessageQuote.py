@@ -9,6 +9,27 @@ class FixMessageQuote(FixMessage):
         super().__init__(message_type=MessageType.Quote.value)
         super().change_parameters(parameters)
 
+    def prepare_params_for_quote(self, quote_request: FixMessageQuoteRequestFX):
+        temp = dict(
+            QuoteID="*",
+            QuoteMsgID="*",
+            QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+            OfferPx="*",
+            OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
+            ValidUntilTime="*",
+            OfferSpotRate="*",
+            Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                            SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
+                                "SecurityType"],
+                            Product="4"),
+            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            SettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
+            Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            QuoteType=quote_request.get_parameter("NoRelatedSymbols")[0]["QuoteType"]
+        )
+        super().change_parameters(temp)
+        return self
+
     def set_params_for_quote(self, quote_request: FixMessageQuoteRequestFX):
         self.prepare_params_for_quote(quote_request)
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -30,7 +51,18 @@ class FixMessageQuote(FixMessage):
             self.add_tag({"BidPx": "*"})
         return self
 
-    def prepare_params_for_quote(self, quote_request: FixMessageQuoteRequestFX):
+    def set_params_for_quote_fwd(self, quote_request: FixMessageQuoteRequestFX):
+        self.set_params_for_quote(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidForwardPoints": "*"})
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"BidForwardPoints": "*"})
+        return self
+
+    def prepare_params_for_swap(self, quote_request: FixMessageQuoteRequestFX):
         temp = dict(
             QuoteID="*",
             QuoteMsgID="*",
@@ -39,14 +71,57 @@ class FixMessageQuote(FixMessage):
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             ValidUntilTime="*",
             OfferSpotRate="*",
+            BidSpotRate="*",
+            QuoteType="1",
+            OfferSwapPoints="*",
+            NoLegs=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"],
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
                             Product="4"),
-            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
-            SettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
-            Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
-            QuoteType=quote_request.get_parameter("NoRelatedSymbols")[0]["QuoteType"],
         )
         super().change_parameters(temp)
+        return self
+
+    def set_params_for_quote_swap(self, quote_request: FixMessageQuoteRequestFX):
+        temp = [dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSide"],
+                     LegBidPx="*",
+                     LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
+                     LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlDate"],
+                     LegOfferPx="*",
+                     LegOfferForwardPoints="*",
+                     LegBidForwardPoints="*",
+                     LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0][
+                         "LegSettlType"],
+                     InstrumentLeg=dict(
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityExchange="*",
+                         LegSecurityIDSource="*",
+                     )
+                     ),
+                dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSide"],
+                     LegBidPx="*",
+                     LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"],
+                     LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlDate"],
+                     LegOfferPx="*",
+                     LegOfferForwardPoints="*",
+                     LegBidForwardPoints="*",
+                     LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1][
+                         "LegSettlType"],
+                     InstrumentLeg=dict(
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityExchange="*",
+                         LegSecurityIDSource="*",
+                     )
+                     )
+                ]
+        self.prepare_params_for_swap(quote_request)
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"Side": "1"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"Side": "2"})
+        self.update_repeating_group("NoLegs", temp)
+
         return self
