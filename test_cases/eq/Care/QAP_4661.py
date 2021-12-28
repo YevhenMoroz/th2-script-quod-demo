@@ -1,9 +1,10 @@
 import logging
 
 from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_fix_wrappers, eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from test_framework.old_wrappers.fix_verifier import FixVerifier
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,7 +28,7 @@ def execute(report_id, session_id):
                                                                     tif,
                                                                     stop_price=price, price=price)
     response = precondition_fix_message.pop("response")
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     eq_wrappers.accept_order("VETO", qty, price)
     eq_fix_wrappers.amend_order_via_fix(case_id, precondition_fix_message,
                                         parametr_list={"TimeInForce": 0, "StopPx": stop_price})

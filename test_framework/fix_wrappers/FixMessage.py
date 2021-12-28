@@ -82,3 +82,8 @@ class FixMessage:
                     del element[i]
         self.change_parameters({r_group: new_repeating_gr})
         return self
+
+    def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
+        new_component = self.get_parameter(component)
+        new_component[index].update(kwargs)
+        return self

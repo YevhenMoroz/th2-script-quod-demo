@@ -30,7 +30,7 @@ qty_nav = qty - reserve
 qty_twap_2 = math.ceil((qty - reserve) / (waves - 1))
 price = 29.995
 price_nav = 30
-
+slice_duration = 2
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -98,7 +98,7 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params()
         twap_nav_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(Account= client, OrderQty = qty))
-        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav, SliceDuration=2, EndDate2=(now + timedelta(minutes=20)).strftime("%Y%m%d-%H:%M:%S")))
+        twap_nav_order.update_fields_in_component('QuodFlatParameters', dict(Waves= waves, NavigatorLimitPrice=price_nav, SliceDuration=slice_duration, EndDate2=(now + timedelta(minutes=20)).strftime("%Y%m%d-%H:%M:%S")))
 
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 

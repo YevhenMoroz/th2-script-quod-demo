@@ -97,6 +97,8 @@ class TradeBookColumns(Enum):
     symbol = 'Symbol'
     origin = 'Origin'
     owner = 'Owner'
+    exec_fees = "Exec Fees"
+    client_commission = "Client Commission"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -193,3 +195,12 @@ class PricingButtonColor(Enum):
     green_button = hash_green
     yellow_button = hash_yellow
     red_button = hash_red
+
+
+class MiddleOfficeColumns(Enum):
+    qty = "Qty"
+    price = "AvgPx"
+    client_id = "Client ID"
+    client_comm = "Client Comm"
+    fees = "Total Fees"
+

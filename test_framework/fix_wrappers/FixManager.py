@@ -22,7 +22,6 @@ class FixManager:
 
     def send_message(self, fix_message: FixMessage, custom_message =None ) -> None:
         # TODO add validation(valid MsgType)
-        print(fix_message.get_parameters())
         if custom_message==None:
             message="Send "
         else:
@@ -86,7 +85,6 @@ class FixManager:
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
-            print(fix_message.get_parameters())
             response = self.act.placeMarketDataRequestFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataRequest",

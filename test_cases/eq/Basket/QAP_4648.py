@@ -3,6 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -32,6 +33,7 @@ class QAP4648(TestCase):
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        main_window = BaseMainWindow(self.case_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
@@ -41,7 +43,7 @@ class QAP4648(TestCase):
         new_price = "1"
         # endregion
         # region Open FE
-        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        main_window.open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
@@ -58,8 +60,8 @@ class QAP4648(TestCase):
         cl_inbox.accept_order(lokup, qty, price)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_new(nol,1)
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new_list(nol)
+        exec_report2 = FixMessageExecutionReportOMS().set_default_new_list(nol, 1)
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)
@@ -71,7 +73,7 @@ class QAP4648(TestCase):
         fix_manager.send_message_and_receive_response_fix_standard(rep_req)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced(nol).change_parameters({'Price': new_price})
+        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced_list(nol).change_parameters({'Price': new_price})
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])

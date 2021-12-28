@@ -13,8 +13,6 @@ from rule_management import RuleManager
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 timeouts = True
 
 #text
@@ -416,6 +414,7 @@ def execute(report_id):
         #endregion
 
     except:
+        bca.create_event('Fail test event', status='FAILED', parent_id=report_id)
         logging.error("Error execution",exc_info=True)
     finally:
         rule_destroyer(rule_list)

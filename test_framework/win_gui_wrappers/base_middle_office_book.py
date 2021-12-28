@@ -1,4 +1,5 @@
 from test_framework.win_gui_wrappers.base_window import BaseWindow
+from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
@@ -46,12 +47,14 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     # endregion
     # region Get
-    def extract_block_field(self, column_name, filter_list: list, row_number: int):
+    def extract_block_field(self, column_name, filter_list: list= None, row_number: int= None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
-        extraction_detail = self.extraction_detail(column_name, column_name)
+        extraction_detail = ExtractionDetail(column_name, column_name)
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
-        self.extract_middle_office_blotter_values_request.set_filter(filter_list)
-        self.extract_middle_office_blotter_values_request.set_row_number(row_number)
+        if filter_list:
+            self.extract_middle_office_blotter_values_request.set_filter(filter_list)
+        if row_number:
+            self.extract_middle_office_blotter_values_request.set_row_number(row_number)
         response = call(self.extract_middle_office_blotter_values_call,
                         self.extract_middle_office_blotter_values_request.build())
         self.clear_details([self.extract_middle_office_blotter_values_request])
@@ -74,7 +77,8 @@ class BaseMiddleOfficeBook(BaseWindow):
                                   net_gross_ind=None, give_up_broker=None, selected_row_count=None, comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
-                                  settl_amount=None, bo_notes=None, settl_currency=None, misc_trade_date=None,
+                                  settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
+                                  exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
@@ -114,6 +118,13 @@ class BaseMiddleOfficeBook(BaseWindow):
             settlement_details.set_settlement_amount(settl_amount)
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
+        if exchange_rate is not None:
+            settlement_details.set_settlement_amount(exchange_rate)
+        if exchange_rate_calc is not None:
+            settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+        if toggle_recompute:
+            settlement_details.toggle_recompute()
+
         if misc_trade_date or bo_fields or bo_notes is not None:
             misc_details = self.modify_ticket_details.add_misc_details()
             if misc_trade_date is not None:

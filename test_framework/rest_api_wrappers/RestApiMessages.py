@@ -1,7 +1,3 @@
-from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionAccounts, \
-    CommissionClients
-
-
 class RestApiMessages:
 
     def __init__(self, message_type: str = ''):

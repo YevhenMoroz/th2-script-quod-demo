@@ -3,12 +3,14 @@ import logging
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
-from test_cases.win_gui_wrappers import OMSClientInbox
-from test_cases.win_gui_wrappers import OMSOrderBook
-from test_cases.win_gui_wrappers import OMSOrderTicket
+
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import BaseWindow
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from stubs import Stubs
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,7 @@ def execute(report_id, session_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     base_window = BaseWindow(case_id, session_id)
     base_request = get_base_request(session_id, case_id)
-    base_window.open_fe(session_id, report_id, work_dir, username, password)
+    open_fe(session_id, report_id, work_dir, username, password)
     # create CO order
     oms_order_book = OMSOrderBook(case_id, session_id)
     oms_order_inbox = OMSClientInbox(case_id, session_id)

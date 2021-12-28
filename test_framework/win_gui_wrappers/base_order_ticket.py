@@ -71,7 +71,9 @@ class BaseOrderTicket(BaseWindow):
 
     # endregion
     # region Actions
-    def create_order(self):
+    def create_order(self, lookup=None):
+        if lookup is not None:
+            self.new_order_details.set_lookup_instr(lookup)
         self.new_order_details.set_order_details(self.order_details)
         call(self.place_order_call, self.new_order_details.build())
         self.clear_details([self.new_order_details])
