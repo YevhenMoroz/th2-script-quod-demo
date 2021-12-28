@@ -8,13 +8,13 @@ class FxInstruments(Enum):
 
 
 class FxVenues(Enum):
-    venue_1 = ""
+    venue_1 = "CITI"
     venue_2 = ""
     venue_3 = ""
 
 
 class FxClients(Enum):
-    client_1 = ""
+    client_1 = "ASPECT_CITI"
     client_2 = ""
     client_3 = ""
 
