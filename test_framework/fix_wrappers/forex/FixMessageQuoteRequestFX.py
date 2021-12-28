@@ -10,7 +10,7 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().__init__(message_type=MessageType.QuoteRequest.value)
         super().change_parameters(parameters)
 
-    def set_rfq_params(self) -> FixMessage:
+    def set_rfq_params(self):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
@@ -32,15 +32,37 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().change_parameters(quote_request_params)
         return self
 
+    def set_rfq_params_fwd(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NoRelatedSymbols": [{
+                "Account": "Iridium1",
+                "Side": "1",
+                "Instrument": {
+                    "Symbol": "GBP/USD",
+                    "SecurityType": "FXFWD"
+                },
+                "SettlDate": wk1(),
+                "SettlType": "W1",
+                "Currency": "GBP",
+                "QuoteType": "1",
+                "OrderQty": "1000000",
+                "OrdType": "D"
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
+        return self
+
     def set_swap_rfq_params(self):
         quote_request_swap_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "CLIENT1",
+                "Account": "Iridium1",
                 "Side": "1",
                 "OrderQty": "1000000",
                 "Instrument": {
-                    "Symbol": "EUR/USD",
+                    "Symbol": "GBP/USD",
                     "SecurityType": "FXSWAP"
                 },
                 "NoLegs": [
