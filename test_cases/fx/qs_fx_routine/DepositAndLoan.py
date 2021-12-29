@@ -9,12 +9,13 @@ def send_swap_and_filled(case_id):
     quote_req_id = bca.client_orderid(8)
     params = {
         'QuoteReqID': quote_req_id,
-        'ClOrdID': "A0211460BPDE00",
+        'ClOrdID': "A0211460BPDE01",
         'NumOfCompetitors': "1",
         'InCompetition': "N",
         'NoRelatedSym': [{
             'Instrument': {
                 'Symbol': "USD",
+                'Product': "9",
             },
             "NoPartyIDs" : [
                 {
@@ -41,10 +42,10 @@ def send_swap_and_filled(case_id):
     act = Stubs.fix_act
     response = act.placeQuoteFIX(
         request=bca.convert_to_request(
-            "SendDepositAndLoan",
-            "fix-sell-esp-m-314-cnx",
+            "QuoteRequest",
+            "fix-sell-rfq-m-314-cnx",
             case_id,
-            bca.message_to_grpc("QuoteRequest", params, "fix-sell-esp-m-314-cnx")
+            bca.message_to_grpc("QuoteRequest", params, "fix-sell-rfq-m-314-cnx")
         )
     )
 
