@@ -11,7 +11,7 @@ from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, 
     QAP_3747, QAP_3689, QAP_3739
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3735
 from test_cases.fx.fx_taker_esp import QAP_5635, QAP_5537, QAP_5564
-from test_cases.fx.qs_fx_routine import QAP_5176, DepositAndLoan
+from test_cases.fx.qs_fx_routine import QAP_5176, DepositAndLoan, rfq_spo
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -66,12 +66,13 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        DepositAndLoan.execute(report_id)
+        # DepositAndLoan.execute(report_id)
         # QAP_2251.execute(report_id)
 
 
 
         # SendMD.execute(report_id)
+        rfq_spo.send_rfq_and_filled_order(report_id, '1000000')
         #
         # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
         # QAP_5176.execute(report_id)
@@ -101,7 +102,7 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        # rm = RuleManager()
+        rm = RuleManager()
         # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.add_fx_md_to('fix-fh-309-kratos')
         # rm.print_active_rules()
