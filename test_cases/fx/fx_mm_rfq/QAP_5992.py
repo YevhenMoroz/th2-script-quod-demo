@@ -35,23 +35,23 @@ class QAP_5992(TestCase):
     def pre_conditions_and_run(self):
         gateway_side_sell = DataSet.GatewaySide.Sell
         status = DataSet.Status.Fill
-        account = self.data_set.get_account_by_name("account_1")
+        account = self.data_set.get_client_by_name("client_2")
+        symbol = self.data_set.get_symbol_by_name("gbp_usd")
+        security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        settle_type_today = self.data_set.get_settle_type_by_name("today")
+        settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        settle_date_spo = self.data_set.get_settle_date_by_name("spot")
+        settle_date_tod = self.data_set.get_settle_date_by_name("today")
         instrument = {
-            "Symbol": "GBP/USD",
-            "SecurityType": "FXSWAP"
+            "Symbol": symbol,
+            "SecurityType": security_type_swap
         }
-        sec_type_spo = "FXSPOT"
-        sec_type_fwd = "FXFWD"
-        leg_symbol = "GBP/USD"
-        settle_date_tod = today()
-        settle_type_tod = "1"
-        settle_date_spo = spo()
-        settle_type_spo = "0"
-
         quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
-        quote_request.update_near_leg(leg_symbol=leg_symbol, leg_sec_type=sec_type_fwd, settle_type=settle_type_tod,
+        quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_fwd, settle_type=settle_type_today,
                                       settle_date=settle_date_tod)
-        quote_request.update_far_leg(leg_symbol=leg_symbol, settle_type=settle_type_spo, leg_sec_type=sec_type_spo,
+        quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_spot, leg_sec_type=security_type_spot,
                                      settle_date=settle_date_spo)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
                                                       Currency="GBP", Instrument=instrument)
