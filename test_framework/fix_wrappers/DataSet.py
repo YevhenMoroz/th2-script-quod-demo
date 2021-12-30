@@ -8,6 +8,7 @@ class DirectionEnum(Enum):
 
 class MessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
+    NewOrderMultiLeg = "NewOrderMultileg"
     ExecutionReport = "ExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
