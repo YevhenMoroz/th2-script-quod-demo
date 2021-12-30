@@ -3,7 +3,7 @@ from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-class FixMessageQuote(FixMessage):
+class FixMessageQuoteFX(FixMessage):
 
     def __init__(self, parameters: dict = None):
         super().__init__(message_type=MessageType.Quote.value)
@@ -69,6 +69,7 @@ class FixMessageQuote(FixMessage):
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
             OfferPx="*",
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
+            Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             ValidUntilTime="*",
             OfferSpotRate="*",
             BidSpotRate="*",

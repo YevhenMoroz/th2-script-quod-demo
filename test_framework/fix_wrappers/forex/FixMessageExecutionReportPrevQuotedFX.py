@@ -4,7 +4,7 @@ from custom.tenor_settlement_date import spo
 from test_framework.fix_wrappers.DataSet import GatewaySide, Status
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from test_framework.fix_wrappers.forex import FixMessageNewOrderMultiLeg
+from test_framework.fix_wrappers.forex import FixMessageNewOrderMultiLegFX
 
 
 class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
@@ -257,7 +257,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # endregion
     # region SWAP
-    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLeg, side: GatewaySide,
+    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, side: GatewaySide,
                                        status: Status):
         if side is GatewaySide.Buy:
             if status is Status.Pending:

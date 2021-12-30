@@ -2,16 +2,16 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.DataSet import MessageType
-from test_framework.fix_wrappers.forex import FixMessageQuoteRequestFX, FixMessageQuote
+from test_framework.fix_wrappers.forex import FixMessageQuoteRequestFX, FixMessageQuoteFX
 
 
-class FixMessageNewOrderMultiLeg(FixMessage):
+class FixMessageNewOrderMultiLegFX(FixMessage):
 
     def __init__(self, parameters: dict = None):
         super().__init__(message_type=MessageType.NewOrderMultiLeg.value)
         super().change_parameters(parameters)
 
-    def set_default_prev_quoted_swap(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuote,
+    def set_default_prev_quoted_swap(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
                                      price: str = None, side: str = None):
         quote_price = None
         if "Side" in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -34,8 +34,6 @@ class FixMessageNewOrderMultiLeg(FixMessage):
             "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"],
             "NoLegs": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"],
-            # "SettlDate": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
-            # "SettlType": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
             "QuoteID": quote.get_parameter("QuoteID")
         }
         super().change_parameters(base_parameters)
