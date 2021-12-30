@@ -2,8 +2,8 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.old_wrappers.ret_wrappers import verifier
-from test_framework.old_wrappers.RestApiManager import RestApiManager
-from test_framework.old_wrappers.RestApiMessages import RestApiMessages
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
 def execute(report_id):

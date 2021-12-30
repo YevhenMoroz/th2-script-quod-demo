@@ -1,13 +1,9 @@
 import os
 
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-
 from custom import basic_custom_actions as bca
-from custom.basic_custom_actions import convert_to_get_request, wrap_message, create_check_rule, wrap_filter
 from test_framework.old_wrappers.ret_wrappers import verifier
-from stubs import Stubs
-from test_framework.old_wrappers.RestApiManager import RestApiManager
-from test_framework.old_wrappers.RestApiMessages import RestApiMessages
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
 def execute(report_id):

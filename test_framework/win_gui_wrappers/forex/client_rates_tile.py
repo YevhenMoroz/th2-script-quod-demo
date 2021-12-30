@@ -1,5 +1,5 @@
-from test_framework.win_gui_wrappers.data_set import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
-from test_framework.win_gui_wrappers.data_set import RatesColumnNames as col_n
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames as col_n
 from test_framework.win_gui_wrappers.forex.client_pricing_tile import ClientPricingTile
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
     ExtractRatesTileValues, ExtractRatesTileTableValuesRequest, SelectRowsRequest, DeselectRowsRequest, \
@@ -146,15 +146,6 @@ class ClientRatesTile(ClientPricingTile):
         self.clear_details([self.extract_values_request])
         return response
 
-    def extract_base(self):
-        self.extract_table_value_request.set_bid_extraction_field(
-            ExtractionDetail(str(col_n.bid_base), col_n.bid_base))
-        self.extract_table_value_request.set_ask_extraction_field(
-            ExtractionDetail(str(col_n.ask_base), col_n.ask_base))
-        response = call(self.cp_service.extractRatesTileTableValues, self.extract_table_value_request.build())
-        self.clear_details([self.extract_table_value_request])
-        return response
-
     def extract_values_from_rates(self, *args: col_n, row_number: int = 1):
         self.extract_table_value_request.set_row_number(row_number)
         if col_n.bid_effective in args:
@@ -208,7 +199,7 @@ class ClientRatesTile(ClientPricingTile):
 
     # endregion
     # region Check
-    def check_color_on_lines(self, x: int, y: int, expected_color: str = None):
+    def check_color_of_ricing_button(self, x: int = 0, y: int = 90, expected_color: str = None):
         self.extract_color_request.get_pricing_btn_pixel_color(x, y)
         color = call(self.cp_service.getCPRatesTileColors, self.extract_color_request.build())
         self.compare_values(expected_value=expected_color, actual_value=str(color["PRICING_BUTTON"]),

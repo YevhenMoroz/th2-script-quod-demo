@@ -2,8 +2,8 @@ import logging
 import time
 
 from custom.basic_custom_actions import create_event
-from quod_qa.wrapper import eq_fix_wrappers
-from quod_qa.wrapper.fix_verifier import FixVerifier
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.old_wrappers import eq_fix_wrappers
 from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)

@@ -58,7 +58,7 @@ class OrderType(Enum):
 
 # TODO: Need to compare with actual version (v156)
 class InstrType(Enum):
-    spot = 'Spot'
+    spot = 'FXSpot'
     forward = 'FXForward'
     swap = 'FXSwap'
     ndf = 'NDF'
@@ -97,6 +97,8 @@ class TradeBookColumns(Enum):
     symbol = 'Symbol'
     origin = 'Origin'
     owner = 'Owner'
+    exec_fees = "Exec Fees"
+    client_commission = "Client Commission"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -167,6 +169,10 @@ class PriceNaming(Enum):
     spread = "spread"
 
 
+class AutoHedgerID(Enum):
+    osmium = {'OsmiumAH': '400000018'}
+
+
 class RatesColumnNames(CustomEnum):
     _settings_ = NoAlias
     ask_effective = "-"
@@ -189,3 +195,12 @@ class PricingButtonColor(Enum):
     green_button = hash_green
     yellow_button = hash_yellow
     red_button = hash_red
+
+
+class MiddleOfficeColumns(Enum):
+    qty = "Qty"
+    price = "AvgPx"
+    client_id = "Client ID"
+    client_comm = "Client Comm"
+    fees = "Total Fees"
+

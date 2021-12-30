@@ -23,7 +23,6 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
             'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
-            'LastMkt': new_order_single.get_parameter('ExDestination'),
             'TransactTime': '*',
             'ReportedPx': '*',
             'Side': new_order_single.get_parameter("Side"),
@@ -40,7 +39,8 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NetMoney': '*',
             'Instrument': '*',
             'TradeDate': '*',
-            'GrossTradeAmt': '*'
+            'GrossTradeAmt': '*',
+            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -60,7 +60,6 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
             'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],
-            'LastMkt': new_order_single.get_parameter('ExDestination'),
             'TransactTime': '*',
             'AllocTransType': '0',
             'ReportedPx': '*',
@@ -78,7 +77,8 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'NetMoney': '*',
             'Instrument': '*',
             'TradeDate': '*',
-            'GrossTradeAmt': '*'
+            'GrossTradeAmt': '*',
+            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)

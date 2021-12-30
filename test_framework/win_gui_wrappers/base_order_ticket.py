@@ -19,10 +19,12 @@ class BaseOrderTicket(BaseWindow):
         self.split_order_call = None
         self.child_care_order_call = None
         self.re_order_leaves_call = None
+        self.open_order_ticket_by_double_click_call = None
         self.re_order_call = None
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
         self.extract_order_ticket_errors_call = None
+
 
     # endregion
 
@@ -69,7 +71,9 @@ class BaseOrderTicket(BaseWindow):
 
     # endregion
     # region Actions
-    def create_order(self):
+    def create_order(self, lookup=None):
+        if lookup is not None:
+            self.new_order_details.set_lookup_instr(lookup)
         self.new_order_details.set_order_details(self.order_details)
         call(self.place_order_call, self.new_order_details.build())
         self.clear_details([self.new_order_details])
@@ -112,4 +116,10 @@ class BaseOrderTicket(BaseWindow):
         call(self.child_care_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
+    def open_order_ticket_by_double_click(self, filter_list: list = None):
+        self.modify_order_details.set_order_details(self.order_details)
+        if filter_list is not None:
+            self.modify_order_details.set_filter(filter_list)
+        call(self.open_order_ticket_by_double_click_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
     # endregion

@@ -7,6 +7,8 @@ from custom.tenor_settlement_date import spo, wk1
 from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 from win_gui_modules.aggregated_rates_wrappers import PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
@@ -33,6 +35,8 @@ firm_account = "QUOD4"
 from_currency = 'EUR'
 to_currency = 'USD'
 case_tenor = 'Spot'
+alias_gtw = "fix-sell-esp-t-314-stand"
+
 
 def create_or_get_esp_tile(base_request, service):
     call(service.createRatesTile, base_request.build())
@@ -194,10 +198,16 @@ def execute(report_id, session_id):
         # Step 2-3
         initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
 
-        create_or_get_esp_tile(base_details, ar_service)
-        modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, qty)
-        place_order_esp(base_details, ar_service)
-        send_order(case_base_request, order_ticket_service)
+        # create_or_get_esp_tile(base_details, ar_service)
+        # modify_esp_tile(base_details, ar_service, from_currency, to_currency, case_tenor, qty)
+        # place_order_esp(base_details, ar_service)
+        # send_order(case_base_request, order_ticket_service)
+
+        fix_manager_gtw = FixManager(alias_gtw, case_id)
+        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+            {'TimeInForce': '1', 'Account': firm_account, 'OrdType': '1', 'OrderQty': qty})
+        fix_manager_gtw.send_message_and_receive_response(new_order_sor)
+
         check_order_book_AO('Checking placed order AO, triggered by FIX', case_id, case_base_request, ob_act,
                             '3000000', "Terminated", ah_client, order_id)
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)

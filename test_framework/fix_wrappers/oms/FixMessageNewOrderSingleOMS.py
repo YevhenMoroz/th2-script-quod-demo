@@ -26,7 +26,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
 
     def set_default_dma_limit(self, instr: Instrument = None):
         self.change_parameters(self.base_parameters)
-        self.change_parameters({"OrdType": "2", "HandlInst": "2", "Price": "20"})
+        self.change_parameters({"OrdType": "2", "HandlInst": "1", "Price": "20"})
         if instr:
             self.change_parameters({"Instrument": instr.value})
         return self
@@ -40,7 +40,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
 
     def set_default_dma_market(self, instr: Instrument = None):
         self.change_parameters(self.base_parameters)
-        self.change_parameters({"OrdType": "1", "HandlInst": "2"})
+        self.change_parameters({"OrdType": "1", "HandlInst": "1"})
         if instr:
             self.change_parameters({"Instrument": instr.value})
         return self
@@ -48,6 +48,13 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
     def set_default_care_market(self, instr: Instrument = None):
         self.change_parameters(self.base_parameters)
         self.change_parameters({"OrdType": "1", "HandlInst": "3"})
+        if instr:
+            self.change_parameters({"Instrument": instr.value})
+        return self
+
+    def set_default_dma_limit_eurex(self, instr: Instrument = None):
+        self.change_parameters(self.base_parameters)
+        self.change_parameters({"OrdType": "2", "HandlInst": "2", "Price": "20","ExDestination": "XEUR"})
         if instr:
             self.change_parameters({"Instrument": instr.value})
         return self

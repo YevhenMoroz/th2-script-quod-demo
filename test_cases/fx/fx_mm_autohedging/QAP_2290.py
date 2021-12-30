@@ -113,12 +113,12 @@ def compare_position(even_name, case_id, expected_pos, actual_pos):
     verifier.verify()
 
 
-def check_order_book(even_name, case_id, base_request, act_ob, threshold, status_exp, qty):
+def check_order_book(even_name, case_id, base_request, act_ob, threshold, status_exp):
     ob = OrdersDetails()
     extraction_id = bca.client_orderid(4)
     ob.set_extraction_id(extraction_id)
     ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test", "Qty", qty])
+    ob.set_filter(["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "test", "Qty", str(threshold)])
     qty = ExtractionDetail("orderBook.qty", "Qty")
     status = ExtractionDetail("orderBook.sts", "Sts")
     order_id = ExtractionDetail("orderBook.order_id", "Order ID")
@@ -153,9 +153,9 @@ def execute(report_id, session_id):
 
         try:
             # Preconditions
-            call(cp_service.createRatesTile, base_details.build())
-            modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-            call(cp_service.closeRatesTile, base_details.build())
+            # call(cp_service.createRatesTile, base_details.build())
+            # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+            # call(cp_service.closeRatesTile, base_details.build())
 
 
             # Step 1

@@ -159,7 +159,8 @@ def execute(report_id, session_id):
     instrument = "GBP/AUD-1W"
     client_tier = "Silver"
 
-    def_md_symbol_gbp_aud = "GBP/AUD:FXF:WK1:HSBC"
+    def_md_symbol_gbp_aud_fwd = "GBP/AUD:FXF:WK1:HSBC"
+    def_md_symbol_gbp_aud_spo = "GBP/AUD:SPO:REG:HSBC"
     symbol_gbp_aud = "GBP/AUD"
 
     try:
@@ -170,7 +171,7 @@ def execute(report_id, session_id):
         create_or_get_pricing_tile(base_details, cp_service)
         modify_pricing_tile(base_details, cp_service, instrument, client_tier)
         # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_gbp_aud, symbol_gbp_aud)).send_market_data_spot()
+        # FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_gbp_aud_spo, symbol_gbp_aud)).send_market_data_spot()
         esp_pts = extract_pts_from_esp(base_details, ar_service)
         mm_base = extract_column_base(base_details, cp_service)
         pts_mm = check_column_pts(base_details, cp_service, case_id, esp_pts[0], esp_pts[1],

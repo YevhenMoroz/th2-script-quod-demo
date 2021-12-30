@@ -2,8 +2,8 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.old_wrappers.ret_wrappers import verifier
-from test_framework.old_wrappers.RestApiManager import RestApiManager
-from test_framework.old_wrappers.RestApiMessages import RestApiMessages
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
 def execute(report_id):
@@ -49,8 +49,12 @@ def execute(report_id):
         "pingRequired": "false",
         "generatePassword": "false",
         "generatePINCode": "false",
-        "deskID": "5",
         "headOfDesk": "false",
+        "deskUserRole": [
+            {
+                "deskID": 5
+            }
+        ]
     }
     api_message.modify_user(params=modify_user_params)
     api_manager.send_post_request(api_message=api_message)
@@ -66,7 +70,7 @@ def execute(report_id):
     verifier(case_id=case_id,
              event_name="Check User HierarchicalLevel after send POST request",
              expected_value="5",
-             actual_value=user_params["institutionID"].simple_value)
+             actual_value=user_params["deskUserRole"].list_value.values[0].message_value.fields["deskID"].simple_value)
     # end Pre-Condition region
 
     # region Get list of Client - Step 1

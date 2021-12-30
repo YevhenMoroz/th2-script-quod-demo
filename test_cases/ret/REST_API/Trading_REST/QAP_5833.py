@@ -9,8 +9,8 @@ from pandas.tseries.offsets import BusinessDay as bd
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps, wrap_message
 from stubs import Stubs
-from test_framework.old_wrappers.RestApiMessages import RestApiMessages
-from test_framework.old_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.old_wrappers.ret_wrappers import verifier
 
 logger = logging.getLogger(__name__)

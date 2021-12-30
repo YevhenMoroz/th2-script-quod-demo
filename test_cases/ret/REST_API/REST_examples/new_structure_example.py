@@ -17,8 +17,8 @@ from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from win_gui_modules.utils import get_base_request, call, close_fe, prepare_fe
 from test_framework.old_wrappers.ret_wrappers import enable_gating_rule, disable_gating_rule
 from test_framework.old_wrappers.web_rest_wrappers import WebAdminRestMessage
-from test_framework.old_wrappers.RestApiManager import RestApiManager
-from test_framework.old_wrappers.RestApiMessages import RestApiMessages
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
 def execute(report_id):

@@ -6,7 +6,7 @@ from stubs import Stubs
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from test_framework.win_gui_wrappers.data_set import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo

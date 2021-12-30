@@ -3,6 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
@@ -41,7 +42,7 @@ class QAP3882(TestCase):
         price = "20"
         # endregion
         # region Open FE
-        cl_inbox.open_fe(self.report_id, work_dir, username, password)
+        open_fe(self.report_id, work_dir, username, password)
         # endregion
         # region Send NewOrderList
         nol = FixMessageNewOrderListOMS().set_default_order_list()
@@ -61,8 +62,8 @@ class QAP3882(TestCase):
         basket_book.cancel_basket()
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_canceled(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_canceled(nol,1)
+        exec_report1 = FixMessageExecutionReportOMS().set_default_canceled_list(nol)
+        exec_report2 = FixMessageExecutionReportOMS().set_default_canceled_list(nol, 1)
         # endregion
         # region Check ExecutionReports
         fix_verifier.check_fix_message_fix_standard(exec_report1)

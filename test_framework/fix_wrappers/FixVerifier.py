@@ -116,6 +116,26 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == MessageType.Quote.value:
+            if key_parameters is None:
+                key_parameters = ['QuoteReqID']
+
+            if message_name is None:
+                message_name = "Check Quote"
+
+            # fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    message_name,
+                    basic_custom_actions.filter_to_grpc("Quote", fix_message.get_parameters(),
+                                                        key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+
         else:
             pass
         # TODO add exeption into else
@@ -205,25 +225,6 @@ class FixVerifier:
                     "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(MessageType.AllocationInstruction.value,
                                                                      fix_message.get_parameters(), key_parameters),
-                    self.__checkpoint,
-                    self.__session_alias,
-                    self.__case_id,
-                    Direction.Value(direction.value)
-                )
-            )
-        elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:
-            if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
-
-            if message_name is None:
-                message_name = "Check MarketDataSnapshotFullRefresh"
-
-            # fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
-            self.__verifier.submitCheckRule(
-                basic_custom_actions.create_check_rule(
-                    message_name,
-                    basic_custom_actions.filter_to_grpc("MarketDataSnapshotFullRefresh", fix_message.get_parameters(),
-                                                        key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

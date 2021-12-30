@@ -1,348 +1,95 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from stubs import Stubs
-from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base
+import os
 import time
+
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager
+from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    global rule_manager, trade_rule, nos_rule1, fix_message
-    case_name = "QAP-3509"
-    # region Declarations
-    qty = "800"
-    price = "40"
-    client = "CLIENT_COUNTERPART"
-    account = "CLIENT_COUNTERPART_SA1"
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    bo_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity()
-    no_allocs = [
-        {
-            'AllocAccount': account,
-            'AllocQty': qty
+class QAP3509(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+        self.dc_connectivity = SessionAliasOMS().dc_connectivity
+
+    def qap_3509(self):
+        # region Declaration
+        fix_manager = FixManager(self.ss_connectivity, self.report_id)
+        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
+        fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
+        client = "CLIENT_COUNTERPART"
+        # endregion
+        # region DMA order
+        change_params = {'Account': client,
+                         'ExDestination': 'XEUR',
+                         'PreAllocGrp': {
+                             'NoAllocs': [{
+                                 'AllocAccount': "CLIENT_COUNTERPART_SA1",
+                                 'AllocQty': "100"}]}, }
+        nos = FixMessageNewOrderSingleOMS().set_default_dma_limit(Instrument.ISI1).change_parameters(change_params)
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                             client + "_EUREX", "XEUR",
+                                                                                             20)
+            trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                       client + "_EUREX", "XEUR", 20,
+                                                                                       100, 2)
+
+            fix_manager.send_message_and_receive_response_fix_standard(nos)
+        finally:
+            time.sleep(1)
+            rule_manager.remove_rule(nos_rule)
+            rule_manager.remove_rule(trade_rele)
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        parties = {
+            'NoPartyIDs': [
+                {'PartyRole': "*",
+                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "*",
+                 'PartyID': "*",
+                 'PartyIDSource': "*"},
+                {'PartyRole': "*",
+                 'PartyID': "*",
+                 'PartyIDSource': "*"}
+            ]
         }
-    ]
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
-    # # endregion
-    # region Create order via FIX
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR', float(price))
-        nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR', float(price),
-            traded_qty=int(qty), delay=0)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, no_allocs)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(5)
-        rule_manager.remove_rule(nos_rule1)
-        rule_manager.remove_rule(nos_rule)
-
-    response = fix_message.pop('response')
-    params = {
-        'ExecType': '0',
-        'OrdStatus': '0',
-        'Side': 1,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'ExpireDate': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'ExecBroker': '*',
-        'NoParty': [
-            {'PartyRole': "32",
-             'PartyID': "Custodian - User2",
-             'PartyIDSource': "C"},
-            {'PartyRole': "67",
-             'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-             'PartyIDSource': "C"},
-            {'PartyRole': "38",
-             'PartyID': "PositionAccount - DMA Washbook",
-             'PartyIDSource': "C"},
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody - Venue(Paris)",
-             'PartyIDSource': "C"},
-            {'PartyRole': "36",
-             'PartyID': "gtwquod1",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'SecondaryOrderID': '*',
-        'LastMkt': '*',
-        'Text': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'Price': price,
-        'OrderQtyData': {
-            'OrderQty': qty
+        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos).change_parameters({"Parties": parties})
+        exec_report2 = FixMessageExecutionReportOMS().set_default_filled(nos).change_parameters({"Parties": parties})
+        # endregion
+        # region Check ExecutionReports
+        fix_verifier.check_fix_message_fix_standard(exec_report1)
+        fix_verifier.check_fix_message_fix_standard(exec_report2)
+        # endregion
+        # region Set-up parameters Confirmation report
+        no_party = {
+            'NoParty': parties['NoPartyIDs']
         }
-    }
-    fix_verifier_bo = FixVerifier(bo_connectivity, case_id)
-    fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=None)
-    params = {
-        'Account': client,
-        'ExecType': 'F',
-        'OrdStatus': '2',
-        'Side': 1,
-        'TradeDate': '*',
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'LastCapacity': '*',
-        'ExpireDate': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*',
-        'Currency': '*',
-        'VenueType': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'ExecBroker': '*',
-        'NoParty': [
-            {'PartyRole': "32",
-             'PartyID': "Beneficiary",
-             'PartyIDSource': "C"},
-            {'PartyRole': "67",
-             'PartyID': "InvestmentFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirma",
-             'PartyIDSource': "C"},
-            {'PartyRole': "28",
-             'PartyID': "Custodian",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody",
-             'PartyIDSource': "C"},
-            {'PartyRole': "36",
-             'PartyID': "gtwquod5",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'Price': price,
-        'OrderQtyData': {
-            'OrderQty': qty
-        }
-    }
-    fix_verifier_bo.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
+        conf_report = FixMessageConfirmationReportOMS().set_default_confirmation_new(nos).change_parameters(
+            {"NoParty": no_party})
+        # endregion
+        # region Check Book & Allocation
+        fix_verifier_dc.check_fix_message_fix_standard(conf_report)
+        # endregion
 
-    eq_wrappers.book_order(base_request, client, price)
-
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': [
-            {'PartyRole': "32",
-             'PartyID': "Beneficiary",
-             'PartyIDSource': "C"},
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "28",
-             'PartyID': "Custodian",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody",
-             'PartyIDSource': "C"},
-            {'PartyRole': "10",
-             'PartyID': "CREST",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'NoRootMiscFeesList': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '*',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'RootCommTypeClCommBasis': '*'
-
-    }
-    fix_verifier_bo.CheckAllocationInstruction(params, response, None)
-
-    eq_wrappers.approve_block(base_request)
-    # endregion
-    # region Allocate
-    modify_request = ModifyTicketDetails(base_request)
-    try:
-        call(Stubs.win_act_middle_office_service.allocateMiddleOfficeTicket, modify_request.build())
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    # endregion
-    # region Verify
-    params = {
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'AllocQty': qty,
-        'AllocAccount': '*',
-        'ConfirmType': 2,
-        'Side': '*',
-        'Currency': '*',
-        'BookID': '*',
-        'NoParty': [
-            {'PartyRole': "32",
-             'PartyID': "Custodian - User2",
-             'PartyIDSource': "C"},
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker",
-             'PartyIDSource': "C"},
-            {'PartyRole': "17",
-             'PartyID': "ContraFirma",
-             'PartyIDSource': "C"},
-            {'PartyRole': "28",
-             'PartyID': "Custodian",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody",
-             'PartyIDSource': "C"},
-            {'PartyRole': "10",
-             'PartyID': "CREST",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'MatchStatus': '*',
-        'ConfirmStatus': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'ReportedPx': '*',
-        'CpctyConfGrp': '*',
-        'ConfirmTransType': '*',
-        'ConfirmID': '*'
-    }
-    fix_verifier_bo.CheckConfirmation(params, response, None)
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': [
-            {'PartyRole': "32",
-             'PartyID': "Custodian - User2",
-             'PartyIDSource': "C"},
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "67",
-             'PartyID': "ContraFirm",
-             'PartyIDSource': "C"},
-            {'PartyRole': "28",
-             'PartyID': "Custodian",
-             'PartyIDSource': "C"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody - Venue(Paris)",
-             'PartyIDSource': "C"},
-            {'PartyRole': "10",
-             'PartyID': "CREST",
-             'PartyIDSource': "D"}
-        ],
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '2',
-        'BookID': '*',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '*',
-                'AllocAccount': account,
-                'AllocPrice': '40',
-                'AllocQty': qty,
-
-            }
-        ],
-    }
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
-    # endregion
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_3509()

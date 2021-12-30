@@ -1,4 +1,4 @@
-from regression_cycle.algo_regression_cycle import multilisted_regression, twap_regression, parcitipation_regression, iceberg_regression, twap_regression_rb, vwap_regression_rb, parcitipation_regression_rb
+from regression_cycle.algo_regression_cycle import iceberg_regression, multilisted_regression, twap_regression, parcitipation_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 def test_run(parent_id= None):
+    logging.getLogger().setLevel(logging.WARN)
     report_id = bca.create_event('Algo regression_cycle', parent_id)
     try:
         #RB

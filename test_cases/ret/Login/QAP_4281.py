@@ -18,7 +18,7 @@ timeouts = True
 
 @decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
-    case_name = "RIN_4281"
+    case_name = os.path.basename(__file__)
 
     seconds, nanos = timestamps()  # Store case start time
 

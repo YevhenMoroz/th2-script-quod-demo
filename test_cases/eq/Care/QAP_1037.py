@@ -1,22 +1,22 @@
 import logging
 from datetime import datetime
+
 from th2_grpc_hand import rhbatch_pb2
 
-from test_cases.wrapper import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
+from test_framework.old_wrappers import eq_wrappers
+from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+from win_gui_modules.utils import get_base_request, close_fe, call
+from win_gui_modules.wrappers import verification, verify_ent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-
 def execute(report_id, session_id):
-
     case_name = "QAP-1037"
     seconds, nanos = timestamps()
     case_id = create_event(case_name, report_id)
@@ -39,11 +39,11 @@ def execute(report_id, session_id):
     base_request2 = get_base_request(session_id2, case_id)
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
     # endregion
     # region switch user 1
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user(session_id, case_id)
     # endregion1
     # region create CO
     eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, username, price)
@@ -76,7 +76,7 @@ def execute(report_id, session_id):
 
     # endregion
     # region switch user 2
-    eq_wrappers.switch_user(session_id2,case_id)
+    switch_user(session_id2,case_id)
     # endregion
     # region Accept CO
     eq_wrappers.accept_order(lookup, qty, price)
@@ -88,7 +88,7 @@ def execute(report_id, session_id):
     eq_wrappers.complete_order(base_request2)
     # endregion
     # region switch user
-    eq_wrappers.switch_user(session_id, case_id)
+    switch_user(session_id, case_id)
     # endregion
     # region Check values after complete
     call(act.getOrdersDetails, order_details.request())

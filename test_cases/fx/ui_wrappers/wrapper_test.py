@@ -1,92 +1,78 @@
 import logging
 from pathlib import Path
+
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+from win_gui_modules.client_pricing_wrappers import PlaceRateTileTableOrderRequest, RatesTileTableOrdSide
+from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.order_book_wrappers import CancelOrderDetails, OrdersDetails, ExtractionDetail, ExtractionAction, \
     OrderInfo
+from win_gui_modules.order_ticket import FXOrderDetails
+from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.utils import get_base_request, call
+from win_gui_modules.wrappers import set_base
 
 
 def execute(report_id, session_id):
+    cp_service = Stubs.win_act_cp_service
+    pos_service = Stubs.act_fx_dealing_positions
+    order_ticket_service = Stubs.win_act_order_ticket_fx
+
     case_name = Path(__file__).name[:-3]
+    client_tier = "Argentum"
+    instrument_spot = "USD/CAD-SPOT"
+    client = "Silver"
+    symbol = instrument_spot[:7]
+    slippage = "2"
+    qty_2m = "2000000"
+    qty_6m = "6000000"
+    qty_8m = "8000000"
+    qty_3m = "3000000"
+
+    # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
 
+    set_base(session_id, case_id)
     case_base_request = get_base_request(session_id, case_id)
-    ob_service = Stubs.win_act_order_book
+    base_details = BaseTileDetails(base=case_base_request)
+    base_tile_data = BaseTileData(base=case_base_request)
+
+    def open_order_ticket_sell(btd, service, row):
+        request = PlaceRateTileTableOrderRequest(btd, row, RatesTileTableOrdSide.SELL)
+        call(service.placeRateTileTableOrder, request.build())
+
+    def place_order(base_request, service, qty):
+        order_ticket = FXOrderDetails()
+        order_ticket.set_qty(qty)
+        order_ticket.set_client(client)
+        order_ticket.set_slippage(slippage)
+        order_ticket.set_close()
+        new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
+        call(service.placeFxOrder, new_order_details.build())
+
+    def close_ticket(base_request, service):
+        order_ticket = FXOrderDetails()
+        order_ticket.set_close()
+        new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
+        call(service.placeFxOrder, new_order_details.build())
+
+    def place_order(base_request, service, qty):
+        order_ticket = FXOrderDetails()
+        order_ticket.set_qty(qty)
+        new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
+        call(service.placeFxOrder, new_order_details.build())
+
     try:
-        # region CancelOrder ↓
-        cancel_request = CancelOrderDetails(case_base_request)
-        cancel_request.set_filter(["Qty", "1000000"])
-        call(ob_service.cancelOrder, cancel_request.build())
-        # endregion
-
-        # region OrderExtract ↓
-        extraction_id = bca.client_orderid(5)
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(case_base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["Order ID", "AO1211201160203720001"])
-        main_order_qty = ExtractionDetail("order_qty", "Qty")
-
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_qty])
-        main_order_details.add_single_order_info(
-            OrderInfo.create(action=main_order_extraction_action))
-        request = call(ob_service.getOrdersDetails, main_order_details.request())
-
-        main_qty = request[main_order_qty.name]
-        print(main_qty)
-        # endregion
-
-        # region Verifier ↓
-        extraction_id = bca.client_orderid(5)
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(case_base_request)
-        main_order_details.set_extraction_id(extraction_id)
-        main_order_details.set_filter(["Order ID", "AO1211201160203720001"])
-        main_order_qty = ExtractionDetail("order_qty", "Qty")
-
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_qty])
-        main_order_details.add_single_order_info(
-            OrderInfo.create(action=main_order_extraction_action))
-        request = call(ob_service.getOrdersDetails, main_order_details.request())
-
-        qty = request[main_order_qty.name]
-        verifier = Verifier(case_id)
-        verifier.set_event_name("Check Qty")
-        verifier.compare_values("Qty", "1,000,000", qty)
-        verifier.verify()
-        # endregion
-
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(case_base_request)
-        main_order_details.set_extraction_id("order_info_extraction")
-        main_order_details.set_filter(["Order ID", "AO1211201160203720001"])
-        main_order_qty = ExtractionDetail("order_qty", "Qty")
-
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_qty])
-
-        child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-        sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-            extraction_details=[child1_id])
-        sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-
-        child2_id = ExtractionDetail("subOrder_lvl_2.id", "Order ID")
-        sub_lvl1_2_ext_action = ExtractionAction.create_extraction_action(
-            extraction_detail=child2_id)
-        sub_lv1_2_info = OrderInfo.create(actions=[sub_lvl1_2_ext_action])
-
-        sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info, sub_lv1_2_info])
-
-        main_order_details.add_single_order_info(
-            OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-        request = call(ob_service.getOrdersDetails, main_order_details.request())
-
-
-
+        # rates_tile = ClientRatesTile(case_id, session_id)
+        # rates_tile.modify_client_tile("EUR/USD-SPOT", "Iridium1")
+        # rates_tile.place_order(client="Iridium1")
+        open_order_ticket_sell(base_tile_data, cp_service, 1)
+        place_order(case_base_request, order_ticket_service, qty_3m)
+        close_ticket(case_base_request, order_ticket_service)
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)

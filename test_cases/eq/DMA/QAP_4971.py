@@ -2,9 +2,10 @@ import logging
 from datetime import datetime
 
 from custom.verifier import Verifier
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.order_ticket import ExtractOrderTicketErrorsRequest
 from win_gui_modules.utils import get_base_request, call
 
@@ -29,7 +30,7 @@ def execute(report_id, session_id):
     # endregion
 
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
 
     # region Create DMA order

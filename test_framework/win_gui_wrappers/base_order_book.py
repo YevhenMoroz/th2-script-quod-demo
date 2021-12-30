@@ -88,6 +88,7 @@ class BaseOrderBook(BaseWindow):
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
+        self.set_order_details()
         return response[field.name]
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
@@ -108,6 +109,7 @@ class BaseOrderBook(BaseWindow):
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
+        self.set_order_details()
         return response
 
     def extract_second_lvl_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
@@ -134,6 +136,7 @@ class BaseOrderBook(BaseWindow):
         )
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
+        self.set_order_details()
         return response
 
     def extract_2lvl_fields(self, tab: str, column_names: [str], rows: [int], filter_dict: dict = None):
@@ -167,7 +170,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key], verification_method)
+            self.verifier.compare_values(key, value.replace(',', ''), actual_list[key].replace(',', ''), verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",

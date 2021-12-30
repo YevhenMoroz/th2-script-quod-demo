@@ -9,7 +9,7 @@ from stubs import Stubs
 from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from test_framework.old_wrappers.ret_wrappers import close_order_book, decorator_try_except
 
 logger = logging.getLogger(__name__)

@@ -57,7 +57,7 @@ def login_fe(stub, session_id, init_event, case_id, username, password, expected
 
 @decorator_try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
-    case_name = "RIN_4278"
+    case_name = os.path.basename(__file__)
 
     seconds, nanos = timestamps()  # Store case start time
 

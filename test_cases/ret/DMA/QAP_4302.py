@@ -10,7 +10,7 @@ from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

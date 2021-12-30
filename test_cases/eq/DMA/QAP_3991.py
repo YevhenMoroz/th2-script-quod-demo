@@ -1,9 +1,10 @@
 import logging
 
 import test_framework.old_wrappers.eq_fix_wrappers
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
+from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import set_session_id, get_base_request
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,7 +33,7 @@ def execute(report_id):
     recipient = 'Desk of SalesDealers 1 (CL)'
     # endregion
     # region Open FE
-    eq_wrappers.open_fe(session_id, report_id, case_id, work_dir, username, password)
+    open_fe(session_id, report_id, case_id, work_dir, username)
     # endregion
     # region create DMA
     responce= test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, dummy_client, 2, qty, 0, price)
