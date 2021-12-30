@@ -20,15 +20,9 @@ class FxClients(Enum):
 
 
 class FxAccounts(Enum):
-    account_1 = ""
+    account_1 = "Argentina1"
     account_2 = ""
     account_3 = ""
-
-
-class FxWashbookAccounts(Enum):
-    washbook_account_1 = ""
-    washbook_account_2 = ""
-    washbook_account_3 = ""
 
 
 class FxRecipients(Enum):
