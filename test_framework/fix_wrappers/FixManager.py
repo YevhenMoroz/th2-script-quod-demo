@@ -9,7 +9,8 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOr
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
-from test_framework.fix_wrappers.forex.FixMessageQuote import FixMessageQuote
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 
 
 class FixManager:
@@ -104,6 +105,16 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == MessageType.NewOrderMultiLeg.value:
+            response = self.act.placeOrderMultilegFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Sen New Order Multi Leg",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(MessageType.NewOrderMultiLeg.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
@@ -146,8 +157,9 @@ class FixManager:
             elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
                 response_fix_message = FixMessageMarketDataSnapshotFullRefresh()
             elif message_type == MessageType.Quote.value:
-                response_fix_message = FixMessageQuote()
-
+                response_fix_message = FixMessageQuoteFX()
+            elif message_type == MessageType.NewOrderMultiLeg.value:
+                response_fix_message = FixMessageNewOrderMultiLegFX()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
