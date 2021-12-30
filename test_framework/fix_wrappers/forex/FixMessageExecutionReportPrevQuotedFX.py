@@ -69,6 +69,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             HandlInst="2",
             TargetStrategy="1008",
             StrategyName="1555",
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -80,7 +81,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        self.add_party_role()
         return self
 
     # CHECKED
@@ -114,9 +114,9 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             ExecRestatementReason=4,
+            NoParty="*"
         )
         super().change_parameters(temp)
-        self.add_party_role()
         instrument = dict(
             SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
@@ -158,6 +158,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             ExDestination='*',
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -169,13 +170,11 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        self.add_party_role()
         return self
 
     def __set_fill_sell_fwd(self, new_order_single: FixMessageNewOrderSingle = None):
         self.__set_fill_sell(new_order_single)
         self.add_tag({"LastForwardPoints": "*"})
-        self.add_party_role_fdw()
         return self
 
     # BUY SIDE

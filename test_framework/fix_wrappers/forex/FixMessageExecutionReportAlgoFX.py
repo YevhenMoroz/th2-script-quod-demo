@@ -70,7 +70,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             HandlInst="2",
             TargetStrategy="1008",
             StrategyName="1555",
-            PartyRole="*"
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -115,7 +115,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             ExecRestatementReason=4,
-            PartyRole="*"
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -167,7 +167,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
             SecondaryExecID='*',
-            PartyRole="*"
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
