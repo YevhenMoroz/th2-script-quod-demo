@@ -1,7 +1,5 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, today
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -16,9 +14,6 @@ from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMe
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
-
-connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
-fix_act = Stubs.fix_act
 
 
 class QAP_5992(TestCase):
