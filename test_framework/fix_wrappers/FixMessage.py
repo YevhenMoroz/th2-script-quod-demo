@@ -97,6 +97,12 @@ class FixMessage:
         self.change_parameters({r_group: new_repeating_gr})
         return self
 
+    def update_value_in_repeating_group(self, r_group, key_in_group, new_value):
+        for item in self.__parameters[r_group]:
+            if key_in_group in item.keys():
+                item.update({key_in_group: new_value})
+        return self
+
     def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
