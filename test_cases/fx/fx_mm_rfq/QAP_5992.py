@@ -26,6 +26,7 @@ class QAP_5992(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_rfq_connectivity
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
@@ -35,33 +36,23 @@ class QAP_5992(TestCase):
         gateway_side_sell = DataSet.GatewaySide.Sell
         status = DataSet.Status.Fill
         account = self.data_set.get_account_by_name("account_1")
-        near_leg = {
-            "InstrumentLeg": {
-                "LegSymbol": "GBP/USD",
-                "LegSecurityType": "FXFWD"
-            },
-            "LegSide": "2",
-            "LegSettlType": "1",
-            "LegSettlDate": today(),
-            "LegOrderQty": "1000000"
-        }
-
-        far_leg = {
-            "InstrumentLeg": {
-                "LegSymbol": "GBP/USD",
-                "LegSecurityType": "FXSPOT"
-            },
-            "LegSide": "1",
-            "LegSettlType": "0",
-            "LegSettlDate": spo(),
-            "LegOrderQty": "1000000"
-        }
         instrument = {
             "Symbol": "GBP/USD",
             "SecurityType": "FXSWAP"
         }
-        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params().update_near_leg(near_leg).update_far_leg(
-            far_leg)
+        sec_type_spo = "FXSPOT"
+        sec_type_fwd = "FXFWD"
+        leg_symbol = "GBP/USD"
+        settle_date_tod = today()
+        settle_type_tod = "1"
+        settle_date_spo = spo()
+        settle_type_spo = "0"
+
+        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request.update_near_leg(leg_symbol=leg_symbol, leg_sec_type=sec_type_fwd, settle_type=settle_type_tod,
+                                      settle_date=settle_date_tod)
+        quote_request.update_far_leg(leg_symbol=leg_symbol, settle_type=settle_type_spo, leg_sec_type=sec_type_spo,
+                                     settle_date=settle_date_spo)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
                                                       Currency="GBP", Instrument=instrument)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(quote_request, self.test_id)
