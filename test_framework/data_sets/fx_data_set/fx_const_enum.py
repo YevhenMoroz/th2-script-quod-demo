@@ -18,7 +18,7 @@ class FxVenues(Enum):
 class FxClients(Enum):
     client_1 = "ASPECT_CITI"
     client_2 = "Argentina1"
-    client_3 = ""
+    client_3 = "Iridium1"
 
 
 class FxSecurityTypes(Enum):
