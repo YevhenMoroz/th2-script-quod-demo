@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from custom.tenor_settlement_date import wk1
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
@@ -82,7 +83,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
             "MDReqID": "EUR/USD:FXF:WK1:HSBC",
             "Instrument": {
                 "Symbol": "EUR/USD",
-                "SecurityType": "FXSPOT"
+                "SecurityType": "FXFWD"
             },
             "NoMDEntries": [
                 {
@@ -92,7 +93,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000001",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 },
                 {
@@ -102,7 +103,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 1,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000001",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 },
                 {
@@ -112,7 +113,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 2,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000002",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 },
                 {
@@ -122,7 +123,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 2,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000002",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 },
                 {
@@ -132,7 +133,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 3,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000003",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 },
                 {
@@ -142,7 +143,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryPositionNo": 3,
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000003",
-                    "SettlDate": tsd.spo(),
+                    "SettlDate": wk1(),
                     "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
                 }
             ]
