@@ -77,6 +77,13 @@ class Connectivity(Enum):
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
+    Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
+    Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
+    Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
+    Luna_314_Feed_Handler = 'fix-fh-314-luna'
+    Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
+    Luna_314_dc = 'fix-sell-m-314luna-drop'
+    Luna_314_wa = "rest_wa314luna"
 
 
 class GatewaySide(Enum):
