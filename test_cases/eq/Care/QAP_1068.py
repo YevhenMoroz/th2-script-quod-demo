@@ -1,84 +1,83 @@
 import logging
-from datetime import datetime
+import os
+import time
 
-from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper import eq_wrappers
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager
 from stubs import Stubs
-from win_gui_modules.utils import get_base_request, prepare_fe, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.data_set import OrderBookColumns, SecondLevelTabs
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1068"
-    seconds, nanos = timestamps()  # Store case start time
+class QAP_1068(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "10"
-    lookup = "VETO"
-    client = "MOClient"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
+    def qap_1068(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        base_window = BaseMainWindow(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        fix_manager = FixManager(self.ss_connectivity)
+        fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
+        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
+        price = fix_message.get_parameter('Price')
+        route = 'ChiX direct access'
+        # endregion
 
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
-    # endregion
-    '''
-    # region Create CO
-    test_cases.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, qty, 0)
+        # region open FE
+        base_window.open_fe(self.report_id, work_dir, username, password, True)
+        # endregion
 
-    # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingle_Market(eq_wrappers.buy_connectivity, client + '_PARIS', 'XPAR',
-                                                    trade=False, tradedQty=int(qty), avgPrice=float(price))
+        # region create CO order
+        fix_manager.send_message_fix_standard(fix_message)
+        # endregion
 
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
+        # region direct  CO order from client_inbox
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingle_Market_FIXStandard(self.bs_connectivity,
+                                                                        'XPAR_' + fix_message.get_parameter('Account'),
+                                                                        'XPAR', False, int(qty), float(price))
+            order_inbox = OMSClientInbox(self.case_id, self.session_id)
+            order_inbox.accept_order('O', 'M', 'S')
+            order_book.direct_moc_order_correct(qty, route)
+        except Exception:
+            logger.debug({Exception}, " Exeption")
+        finally:
+            time.sleep(3)
+            rule_manager.remove_rule(nos_rule)
+        # endregion
 
-    order_status = ExtractionDetail("order_status", "Sts")
+        # region verify received child order
+        result = order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.sts.value,
+                                                                                  OrderBookColumns.qty.value], [1])
+        order_book.compare_values({OrderBookColumns.sts.value: 'Eliminated', OrderBookColumns.qty.value: '100'},
+                                  result[0],
+                                  'Check Value')
+        # endregion
 
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open")
-                                                  ]))
-    # endregion
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_1068()
 
-    # region DirectMOC split
-    try:
-        eq_wrappers.direct_moc_order('50', 'ChiX direct access')
-    finally:
-        rule_manager.remove_rule(nos_rule)
-    # endregion
-    '''
-    # check sub Order status
-    eq_wrappers.verify_order_value(base_request, case_id, "Order Status", "Eliminated", True)
-    eq_wrappers.verify_order_value(base_request, case_id, "Qty", str(int(int(qty) / 2)), True)
-    # endregion
-    # region Close FE
-    # close_fe(case_id, session_id)
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-
-    # endregion

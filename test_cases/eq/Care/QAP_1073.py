@@ -1,86 +1,85 @@
 import logging
+import os
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
+from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.data_set import OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1073"
+class QAP_1073(TestCase):
+    def __init__(self, report_id, session_id, file_name):
+        super().__init__(report_id, session_id)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.file_name = file_name
+        self.ss_connectivity = SessionAliasOMS().ss_connectivity
+        self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
-    # region Declarations
-    qty = "900"
-    price = "40"
-    new_price = "1"
-    lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    eq_wrappers.accept_order(lookup, qty, price)
-    param_list = {'Price': new_price}
-    # region ManualExecute
-    eq_wrappers.manual_execution(base_request, str(int((int(qty) / 2))), price)
-    response = fix_message.pop('response')
-    # Amend fix order
-    test_framework.old_wrappers.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, param_list)
-    # endregion
-    # region reject amend
-    eq_wrappers.reject_order(lookup, qty, price)
-    # endregion
-    # Check on ss
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'Account': client,
-        'OrdStatus': 1,
-        'TradeDate': '*',
-        'Side': 1,
-        'Price': price,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'LastCapacity': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*',
-        'ExpireDate': "*",
-        "VenueType": "*"
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
+    def qap_1073(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        base_window = BaseMainWindow(self.case_id, self.session_id)
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        username = Stubs.custom_config['qf_trading_fe_user']
+        password = Stubs.custom_config['qf_trading_fe_password']
+        fix_manager = FixManager(self.ss_connectivity)
+        fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
+        fix_message.change_parameter('OrderQtyData', {'OrderQty': '150'})
+        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
+        price = fix_message.get_parameter('Price')
+        # endregion
+
+        # region open FE
+        base_window.open_fe(self.report_id, work_dir, username, password, True)
+        # endregion
+
+        # region create CO order
+        fix_manager.send_message_fix_standard(fix_message)
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+
+        # region accept CO order
+        # order_book.scroll_order_book(1)
+        order_inbox = OMSClientInbox(self.case_id, self.session_id)
+        order_inbox.accept_order('O', 'M', 'S')
+        # endregion
+
+        # region compare values 1
+        order_book.set_filter(['Order ID', order_id])
+        exec_sts = order_book.extract_field(OrderBookColumns.exec_sts.value)
+        order_book.manual_execution(qty=str(int(qty) - 10), price=price)
+        order_book.set_filter(['Order ID', order_id])
+        exec_sts = order_book.extract_field(OrderBookColumns.exec_sts.value)
+        order_book.compare_values({'ExecSts': 'PartiallyFilled'}, {'Sts': exec_sts}, 'Compare values 1')
+        # endregion
+
+        # region amend order via FIX
+        order_book.set_filter(['Order ID', order_id])
+        fix_message.set_message_type(message_type=MessageType.OrderCancelReplaceRequest.value)
+        fix_message.add_tag({'OrigClOrdID': fix_message.get_parameter('ClOrdID')})
+        fix_message.change_parameter('OrderQtyData', {'OrderQty': '300'})
+        fix_manager.send_message_fix_standard(fix_message)
+        order_inbox.reject_order('O', 'M', 'S')
+        # endregion
+
+        # region compare values 2
+        order_book.set_filter(['Order ID', order_id])
+        qty = order_book.extract_field(OrderBookColumns.qty.value)
+        order_book.compare_values({'Qty': '150'}, {'Qty': qty}, 'Compare values 2')
+        # endregion
+
+    @decorator_try_except(test_id=os.path.basename(__file__))
+    def execute(self):
+        self.qap_1073()
