@@ -61,8 +61,9 @@ class FixMessageQuoteRequestFX(FixMessage):
                 "Account": "Iridium1",
                 "Side": "1",
                 "OrderQty": "1000000",
+                "Currency": "EUR",
                 "Instrument": {
-                    "Symbol": "GBP/USD",
+                    "Symbol": "EUR/USD",
                     "SecurityType": "FXSWAP"
                 },
                 "NoLegs": [
