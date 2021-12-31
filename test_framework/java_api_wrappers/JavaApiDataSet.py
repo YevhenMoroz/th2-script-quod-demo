@@ -14,9 +14,15 @@ class ORSMessages(Enum):
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
 
 
-class Listing(Enum):
-    PAR_VETO = {'ListingBlock': [{'ListingID': "1200"}]}
+class ListingID(Enum):
+    PAR_VETO = "1200"
 
 
 class InstrID(Enum):
     PAR = "5XRAA7DXZg14IOkuNrAfsg"
+
+
+class QtyPercentageProfile(Enum):
+    RemainingQty = "REM"
+    InitialQty = "INI"
+    TargetBasketQty = "TAB"

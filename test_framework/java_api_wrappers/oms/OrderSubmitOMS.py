@@ -4,7 +4,7 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
 from stubs import Stubs
-from test_framework.java_api_wrappers.JavaApiDataSet import Listing, InstrID
+from test_framework.java_api_wrappers.JavaApiDataSet import ListingID, InstrID
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 
 
@@ -31,7 +31,7 @@ class OrderSubmitOMS(OrderSubmit):
             'OrdQty': "100",
             'AccountGroupID': 'CLIENT1',
             'ExecutionPolicy': 'DMA',
-            'ListingList': Listing.PAR_VETO.value,
+            'ListingList': {'ListingBlock': [{'ListingID': ListingID.PAR_VETO.value}]},
             'InstrID': InstrID.PAR.value
         }
     }

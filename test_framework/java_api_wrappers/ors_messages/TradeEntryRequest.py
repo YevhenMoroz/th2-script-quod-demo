@@ -10,16 +10,16 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 class TradeEntryRequest(JavaApiMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessages.OrderSubmit.value)
+        super().__init__(message_type=ORSMessages.TradeEntryRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, ord_id) -> None:
+    def set_default(self, ord_id, exec_price="10", exec_qty="100") -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'TradeEntryRequestBlock': {
                 'OrdID': ord_id,
-                'ExecPrice': "10.000000000",
-                'ExecQty': "100.000000000",
+                'ExecPrice': exec_price,
+                'ExecQty': exec_qty,
                 'TradeEntryTransType': 'NEW',
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'LastMkt': 'XPAR',
@@ -29,4 +29,3 @@ class TradeEntryRequest(JavaApiMessage):
             }
         }
         super().change_parameters(base_parameters)
-

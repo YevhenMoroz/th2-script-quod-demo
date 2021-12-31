@@ -3,14 +3,14 @@ from datetime import datetime
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
-from test_framework.java_api_wrappers.JavaApiDataSet import ORSMessages, ListingID, InstrID
+from test_framework.java_api_wrappers.JavaApiDataSet import ORSMessages
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
-class OrderSubmit(JavaApiMessage):
+class UnMatchRequest(JavaApiMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessages.OrderSubmit.value)
+        super().__init__(message_type=ORSMessages.UnMatchRequest.value)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
@@ -30,9 +30,8 @@ class OrderSubmit(JavaApiMessage):
                 'ClientInstructionsOnly': 'No',
                 'OrdQty': "100",
                 'AccountGroupID': 'CLIENT1',
-                'ExecutionPolicy': 'DMA',
-                'ListingList': {'ListingBlock': [{'ListingID': ListingID.PAR_VETO.value}]},
-                'InstrID': InstrID.PAR.value
+                'ExecutionPolicy': 'DMA'
             }
         }
         super().change_parameters(base_parameters)
+
