@@ -55,10 +55,10 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
-    def set_default_care_market(self):
-        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': Stubs.custom_config['qf_trading_fe_user'],
-                                                   'RecipientRoleID': 'HSD',
-                                                   'RecipientDeskID': '1'}}
+    def set_default_care_market(self, recipient=Stubs.custom_config['qf_trading_fe_user'], role="HSD", desk="1"):
+        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
+                                                   'RecipientRoleID': role,
+                                                   'RecipientDeskID': desk}}
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Care'})
         self.add_tag(params)

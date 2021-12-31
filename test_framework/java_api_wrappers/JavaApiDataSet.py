@@ -8,10 +8,10 @@ class DirectionEnum(Enum):
 
 class ORSMessages(Enum):
     OrderSubmit = 'Order_OrderSubmit'
-    TradeEntry = 'Order_TradeEntryRequest'
-    OrderListWaveCreation = 'Order_OrderListWaveCreationRequest'
-    UnMatch = 'Order_UnMatchRequest'
-    ManualOrderCross = 'Order_ManualOrderCrossRequest'
+    TradeEntryRequest = 'Order_TradeEntryRequest'
+    OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
+    UnMatchRequest = 'Order_UnMatchRequest'
+    ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
 
 
 class Listing(Enum):
