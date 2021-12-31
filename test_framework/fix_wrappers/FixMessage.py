@@ -94,3 +94,6 @@ class FixMessage:
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
         return self
+
+    def set_message_type(self, message_type: str):
+        self.__message_type = message_type
