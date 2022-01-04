@@ -1,4 +1,4 @@
-from test_cases.RET.DMA import RIN_1188, RIN_1189, QAP_4169, QAP_4172, QAP_4654, QAP_5106, QAP_5170, QAP_5425, QAP_5426
+from test_cases.ret.DMA import RIN_1188, RIN_1189, QAP_4169, QAP_4172, QAP_4654, QAP_5106, QAP_5170, QAP_5425, QAP_5426
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

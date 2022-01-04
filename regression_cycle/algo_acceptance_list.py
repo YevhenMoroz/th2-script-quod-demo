@@ -6,7 +6,7 @@ from win_gui_modules.utils import set_session_id, prepare_fe, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 timeouts = False
 channels = dict()
 

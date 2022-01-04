@@ -305,7 +305,7 @@ class FixVerifier:
         self.verifier.submitCheckRule(
             bca.create_check_rule(
                 message_name,
-                bca.filter_to_grpc_fix("OrderCancelReplaceRequest", parameters, key_parameters),
+                bca.filter_to_grpc("OrderCancelReplaceRequest", parameters, key_parameters),
                 response.checkpoint_id,
                 self.TraderConnectivity,
                 case,

@@ -81,3 +81,6 @@ class VenuesDescriptionSubWizard(CommonPage):
 
     def click_on_counterpart_manage_button(self):
         self.find_by_xpath(VenuesConstants.DESCRIPTION_TAB_COUNTERPART_MANAGE_XPATH).click()
+
+    def click_on_mic_manage_button(self):
+        self.find_by_xpath(VenuesConstants.VALUES_TAB_MANAGE_MIC_BUTTON_XPATH).click()

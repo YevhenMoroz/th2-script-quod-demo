@@ -39,3 +39,6 @@ class MDEntitlementsDimensionsSubWizard(CommonPage):
 
     def get_location(self):
         return self.get_text_by_xpath(MDEntitlementsConstants.DIMENSIONS_TAB_LOCATION_XPATH)
+
+    def clear_location_field(self):
+        self.set_text_by_xpath(MDEntitlementsConstants.DIMENSIONS_TAB_LOCATION_XPATH,"")

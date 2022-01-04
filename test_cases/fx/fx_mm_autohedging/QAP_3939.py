@@ -163,7 +163,7 @@ def execute(report_id, session_id):
 
         actual_pos_client_intern_ = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                   account_client_intern)
-        ah_qty = FXOrderBook(case_id, case_base_request).set_filter(
+        ah_qty = FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "MO", "Orig", "AutoHedger", "Lookup", "USD/ZAR-SPO.SPO", "Client ID", "QUOD4", "InstrType",
              "FXSpot"]).extract_field("Qty").replace(",", "")
         if initial_pos_client_intern_!=0:
@@ -198,7 +198,7 @@ def execute(report_id, session_id):
         ah_qty = get_dealing_positions_details(pos_service, case_base_request, symbol,
                                                                   account_client_intern)
 
-        ah_qty = FXOrderBook(case_id, case_base_request).set_filter(
+        ah_qty = FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "MO", "Orig", "AutoHedger", "Lookup", "USD/ZAR-SPO.SPO", "Client ID", "QUOD4", "InstrType",
              "FXSpot"]).extract_field("Qty").replace(",", "")
         if initial_pos_client_intern_!=0:
