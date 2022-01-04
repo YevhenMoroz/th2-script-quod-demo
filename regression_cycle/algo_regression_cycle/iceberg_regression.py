@@ -4,8 +4,6 @@ from custom import basic_custom_actions as bca
 from test_cases.algo.Algo_Iceberg import QAP_3055, QAP_3054, QAP_3029, QAP_3056
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
@@ -14,6 +12,7 @@ username = Stubs.custom_config['qf_trading_fe_user']
 password = Stubs.custom_config['qf_trading_fe_password']
 
 def test_run(parent_id= None):
+    logging.getLogger().setLevel(logging.WARN)
     report_id = bca.create_event('Algo', parent_id)
     try:                
         # session_id = set_session_id()

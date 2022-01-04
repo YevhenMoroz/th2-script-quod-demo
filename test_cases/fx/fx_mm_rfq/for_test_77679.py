@@ -4,7 +4,7 @@ from pathlib import Path
 from random import randint
 
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
+from custom.tenor_settlement_date import spo, broken_w1w2, wk3, wk1, wk2
 from custom.verifier import Verifier
 from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
@@ -80,60 +80,103 @@ def execute(report_id, session_id):
         #                            account=client_tier)
         # rfq = FixClientSellRfq(params)
         # rfq.send_request_for_quote_no_reply()
-
+        # region Working ↓
         # quote_req_id = bca.client_orderid(8)
         # params = {
         #     'QuoteReqID': quote_req_id,
         #     'NoRelatedSymbols': [{
-        #         'Account': "Iridium1",
+        #         'Account': "CLIENT1",
         #         'Instrument': {
         #             'Symbol': "EUR/USD",
-        #             'SecurityType': "FXSPOT"
+        #             'SecurityType': "FXFWD"
+        #             # 'SecurityType': "FXSPOT"
         #         },
-        #         'SettlDate': spo(),
-        #         'SettlType': 0,
+        #         # 'SettlDate': spo(),
+        #         'SettlDate': wk3(),
+        #         'SettlType': "W3",
         #         'Currency': "EUR",
+        #         'Side': "1",
         #         'QuoteType': '1',
         #         'OrderQty': "25000000",
         #         'OrdType': 'D'
         #     }
         #     ]
         # }
-        # act = Stubs.fix_act
-        # response = act.sendQuoteViaWindow(
-        #     request=bca.convert_to_request(
-        #         "SendQuoteRequest",
-        #         "fix-ss-rfq-314-luna-standard",
-        #         case_id,
-        #         bca.message_to_grpc("QuoteRequest", params, "fix-ss-rfq-314-luna-standard")
-        #     )
-        # )
-        #
-        # check_dealer_intervention(case_base_request, dealer_service, case_id, "25000000")
+        quote_req_id = bca.client_orderid(8)
+        params = {
+            'QuoteReqID': quote_req_id,
+            "NoRelatedSymbols": [{
+                "Account": "CLIENT1",
+                "Side": "1",
+                "SettlDate": wk1(),
+                "OrderQty": "50000000",
+                "Instrument": {
+                    "Symbol": "EUR/USD",
+                    "SecurityType": "FXSWAP"
+                },
+                "NoLegs": [
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": "EUR/USD",
+                            "LegSecurityType": "FXFWD"
+                        },
+                        "LegSide": "1",
+                        "LegSettlType": "W1",
+                        "LegSettlDate": wk1(),
+                        "LegOrderQty": "50000000"
+                    },
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": "EUR/USD",
+                            "LegSecurityType": "FXFWD"
+                        },
+                        "LegSide": "2",
+                        "LegSettlType": "W2",
+                        "LegSettlDate": wk2(),
+                        "LegOrderQty": "50000000"
+                    }
+                ]
+            }
+            ]
+        }
+        act = Stubs.fix_act
+        response = act.sendQuoteViaWindow(
+            request=bca.convert_to_request(
+                "SendQuoteRequest",
+                "fix-ss-rfq-314-luna-standard",
+                case_id,
+                bca.message_to_grpc("QuoteRequest", params, "fix-ss-rfq-314-luna-standard")
+            )
+        )
+
+        # check_dealer_intervention(case_base_request, dealer_service, case_id, "50000000")
         # assign_firs_request(case_base_request, dealer_service)
         # estimate_first_request(case_base_request, dealer_service)
         # time.sleep(5)
         # press_send(case_base_request, dealer_service)
-        # a = next(response)
+        a = next(response)
         # quote_id = a.response_messages_list[0].fields['QuoteID'].simple_value
         # print(quote_id)
         # #
         # order_params = {
-        #     'Account': "Iridium1",
+        #     'Account': "CLIENT1",
         #     'HandlInst': "1",
         #     'Side': "1",
         #     'OrderQty': "25000000",
         #     'TimeInForce': "3",
-        #     'Price': '1.187',
+        #     'Price': '1.182',
         #     'QuoteID': quote_id,
         #     'OrdType': "D",
         #     'ClOrdID': bca.client_orderid(8),
         #     'TransactTime': datetime.utcnow().isoformat(),
-        #     'SettlType': "0",
-        #     'SettlDate': spo(),
+        #     # 'SettlType': "0",
+        #     'SettlType': "W3",
+        #     'SettlDate': wk3(),
+        #     # 'SettlDate': broken_w1w2(),
         #     'Instrument': {
         #         'Symbol': "EUR/USD",
-        #         'SecurityType': "FXSPOT",
+        #         # 'SecurityType': "FXSPOT",
+        #         'SecurityType': "FXFWD",
         #         'Product': 4,
         #     },
         #     'Currency': "EUR"
@@ -144,22 +187,23 @@ def execute(report_id, session_id):
         #         bca.message_to_grpc('NewOrderSingle', order_params,
         #                             "fix-ss-rfq-314-luna-standard")
         #     ))
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                   securitytype=security_type_spo, settldate=settle_date,
-                                   settltype=settle_type, securityid=symbol,
-                                   currency=currency, settlcurrency="USD",
-                                   account=account)
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_dmi()
-        check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
-        assign_firs_request(case_base_request, dealer_service)
-        estimate_first_request(case_base_request, dealer_service)
-        time.sleep(3)
-        press_send(case_base_request, dealer_service)
-        a = next(rfq)
-        quote_id = a.extract_filed('QuoteID')
-        price = rfq.extract_filed("OfferPX")
-        rfq.send_new_order_single(price, quote_id=quote_id)
+        # endregion
+        # params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
+        #                            securitytype=security_type_spo, settldate=settle_date,
+        #                            settltype=settle_type, securityid=symbol,
+        #                            currency=currency, settlcurrency="USD",
+        #                            account=account, side='2')
+        # rfq = FixClientSellRfq(params)
+        # rfq.send_request_for_dmi()
+        # check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
+        # assign_firs_request(case_base_request, dealer_service)
+        # estimate_first_request(case_base_request, dealer_service)
+        # time.sleep(3)
+        # press_send(case_base_request, dealer_service)
+        # a = next(rfq)
+        # quote_id = a.extract_filed('QuoteID')
+        # price = rfq.extract_filed("BidPx")
+        # rfq.send_new_order_single(price, quote_id=quote_id)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

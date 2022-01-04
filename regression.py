@@ -1,13 +1,15 @@
-from regression_cycle import retail_regression, fx_regression, algo_regression, eq_regression, web_admin_regression
+from regression_cycle import algo_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from datetime import datetime
+import os
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 
 
-def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=True):
+def regression_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=True):
+    logging.getLogger().setLevel(logging.WARN)
     report_id = bca.create_event(name + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     try:
         start = datetime.now()
@@ -15,14 +17,14 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
 
         if algo:
             algo_regression.test_run(report_id)
-        if equity:
-            eq_regression.test_run(report_id)
-        if forex:
-            fx_regression.test_run(report_id)
-        if retail:
-            retail_regression.test_run(report_id)
-        if web_admin:
-            web_admin_regression.test_run(report_id)
+        # if equity:
+        #     eq_regression.test_run(report_id)
+        # if forex:
+        #     fx_regression.test_run(report_id)
+        # if retail:
+        #     retail_regression.test_run(report_id)
+        # if web_admin:
+        #     web_admin_regression.test_run(report_id)
 
         print('duration time = ' + str(datetime.now() - start))
     except Exception:
@@ -30,5 +32,5 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
 
 
 if __name__ == '__main__':
-    test_run('5.1.140.153|Regression|', equity=True)
+    regression_run(name=os.environ['NAME'], algo=os.environ['ALGO'], equity=os.environ['OMS'], forex=os.environ['FOREX'], retail=os.environ['RETAIL'], web_admin=os.environ['WEB_ADMIN'])
     Stubs.factory.close()

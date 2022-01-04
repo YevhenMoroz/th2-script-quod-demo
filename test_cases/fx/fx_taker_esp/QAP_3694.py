@@ -3,7 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_framework.win_gui_wrappers.data_set import OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from stubs import Stubs
 from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide
@@ -22,6 +22,7 @@ def modify_order_ticket(base_request, service, qty):
     order_ticket = FXOrderDetails()
     order_ticket.set_qty(qty)
     order_ticket.set_place()
+    order_ticket.set_tif('GoodTillCancel')
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())
 
@@ -70,9 +71,9 @@ def execute(report_id, session_id):
         checkpoint_id1 = checkpoint_response1.checkpoint
 
         modify_order_ticket(case_base_request, order_ticket_service, qty)
-        FXOrderBook(case_id, case_base_request).set_filter([OrderBookColumns.qty.value, qty]).check_order_fields_list(
+        FXOrderBook(case_id, session_id).set_filter([OrderBookColumns.qty.value, qty]).check_order_fields_list(
             {OrderBookColumns.exec_sts.value: "Filled"})
-        order_book = FXOrderBook(case_id, case_base_request)
+        order_book = FXOrderBook(case_id, session_id)
         order_id = order_book.set_filter([OrderBookColumns.qty.value, qty]).extract_field(
             OrderBookColumns.order_id.value)
 

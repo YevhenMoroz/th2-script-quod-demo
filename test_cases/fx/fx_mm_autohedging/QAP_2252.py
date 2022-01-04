@@ -3,6 +3,7 @@ from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from custom.verifier import Verifier
 from stubs import Stubs
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_mm_autohedging.QAP_2250 import send_rfq_and_filled_order_sell, send_rfq_and_filled_order_buy
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
     ExtractionPositionsAction, PositionsInfo
 from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
@@ -193,10 +194,12 @@ def execute(report_id, session_id):
         expecting_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
         set_send_hedge_order(case_id, ttl_null)
         time.sleep(3)
-        call(cp_service.createRatesTile, base_details.build())
-        modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
-        place_order(base_details, cp_service, client)
+        # call(cp_service.createRatesTile, base_details.build())
+        # modify_rates_tile(base_details, cp_service, instrument_tier, client_tier)
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, SELL)
+        # place_order(base_details, cp_service, client)
+        send_rfq_and_filled_order_sell(case_id, '3000000')
+
         # Step 2
         ord_id = check_order_book_ao('Checking placed order', case_id, case_base_request, ob_act)
         time.sleep(40)
@@ -210,8 +213,9 @@ def execute(report_id, session_id):
         time.sleep(60)
         # Step 4
         check_order_book_new_ttl_applied(case_id, case_base_request, ob_act, ord_id)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
-        place_order(base_details, cp_service, client)
+        # open_ot_by_doubleclick_row(base_tile_data, cp_service, row, BUY)
+        # place_order(base_details, cp_service, client)
+        send_rfq_and_filled_order_buy(case_id, '3000000')
         cancel_order(ob_act, case_base_request, ord_id)
         # Step 5
         actual_pos = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
@@ -222,7 +226,6 @@ def execute(report_id, session_id):
     finally:
         try:
             # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
             # Set default parameters
             set_send_hedge_order(case_id, ttl_default)
         except Exception:

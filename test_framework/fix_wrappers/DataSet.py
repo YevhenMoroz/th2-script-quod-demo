@@ -16,6 +16,8 @@ class MessageType(Enum):
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
     ListStatus = "ListStatus"
+    QuoteRequest = "QuoteRequest"
+    Quote = "Quote"
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
 
@@ -86,6 +88,7 @@ class Status(Enum):
     New = "New"
     Fill = "Fill"
     PartialFill = "PartialFill"
+    Reject = "Reject"
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
 
@@ -138,3 +141,32 @@ class CommissionProfiles(Enum):
     Perc_Amt = 4
     Bas_Amt = 5
     Bas_Qty = 6
+
+class TimeInForce(Enum):
+    Day = 0
+    GoodTillCancel = 1
+    AtTheOpening = 2
+    ImmediateOrCancel = 3
+    FillOrKill = 4
+    GoodTillCrossing = 5
+    GoodTillDate = 6
+    AtTheClose = 7
+    ValidForAuction = 100
+
+class FreeNotesReject(Enum):
+    MissWouldPriceReference = "missing WouldPriceReference"
+    MissLimitPriceReference = "missing LimitPriceReference"
+    MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+    MissNavigatorLimitPrice = "missing Limit price for Navigator"
+
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'

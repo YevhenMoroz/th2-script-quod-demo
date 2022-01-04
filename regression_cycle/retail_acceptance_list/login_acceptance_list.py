@@ -1,4 +1,4 @@
-from test_cases.RET.Login import QAP_4281, QAP_4278, QAP_4325_manual
+from test_cases.ret.Login import QAP_4281, QAP_4278, QAP_4325_manual
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca

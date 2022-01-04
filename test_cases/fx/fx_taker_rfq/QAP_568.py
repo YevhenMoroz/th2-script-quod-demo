@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_framework.win_gui_wrappers.data_set import Side
+from test_framework.win_gui_wrappers.fe_trading_constant import Side
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
