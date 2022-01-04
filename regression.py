@@ -3,11 +3,12 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from datetime import datetime
+import os
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 
 
-def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=True):
+def regression_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=True):
     logging.getLogger().setLevel(logging.WARN)
     report_id = bca.create_event(name + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     try:
@@ -31,5 +32,5 @@ def test_run(name, algo=True, equity=True, forex=True, retail=True, web_admin=Tr
 
 
 if __name__ == '__main__':
-    test_run('5.1.140.153|Regression|', equity=True)
+    regression_run(name=os.environ['NAME'], algo=os.environ['ALGO'], equity=os.environ['OMS'], forex=os.environ['FOREX'], retail=os.environ['RETAIL'], web_admin=os.environ['WEB_ADMIN'])
     Stubs.factory.close()

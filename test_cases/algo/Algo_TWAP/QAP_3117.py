@@ -463,5 +463,6 @@ def execute(report_id):
     
     except:
         logging.error("Error execution",exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=report_id)
     finally:
         rule_destroyer(rule_list)

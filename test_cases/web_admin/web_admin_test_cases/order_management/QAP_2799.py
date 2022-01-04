@@ -30,7 +30,7 @@ class QAP_2799(CommonTestCase):
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.conditional_logic = " NOT IN "
         self.exec_policy = 'DMA'
-        self.client = " LOAD "
+        self.client = " QUODAH "
         self.percentage = "100"
 
     def precondition(self):
