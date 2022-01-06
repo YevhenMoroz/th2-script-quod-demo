@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class FixMessageType(Enum):
+class FIXMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     ExecutionReport = "ExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
