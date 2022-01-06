@@ -80,14 +80,12 @@ class FixMessage:
         return self
 
     def remove_fields_repeating_group(self, r_group: str, fields: list):
-        new_component = self.get_parameter(r_group)
-        ln = len(new_component)
-        for i in range(0, ln):
-            for j in fields:
-                if new_component[i] == j:
-                    new_component.pop(i)
-
-        self.change_parameters({r_group: new_component})
+        new_repeating_gr = self.get_parameter(r_group)
+        for element in new_repeating_gr:
+            for i in fields:
+                if i in element.keys():
+                    del element[i]
+        self.change_parameters({r_group: new_repeating_gr})
         return self
 
     def update_repeating_group_by_index(self, component: str, index: int, **kwargs):

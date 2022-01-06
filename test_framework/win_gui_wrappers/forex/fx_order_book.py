@@ -11,11 +11,11 @@ class FXOrderBook(BaseOrderBook):
         super().__init__(case_id, session_id)
         self.order_details = FXOrdersDetails()
         self.order_info = FXOrderInfo()
+        self.scrolling_details = GridScrollingDetails()
+        self.cancel_order_details = CancelFXOrderDetails(self.base_request)
         self.set_order_details()
         self.get_orders_details_call = Stubs.win_act_order_book_fx.getOrdersDetails
-        self.cancel_order_details = CancelFXOrderDetails(self.base_request)
         self.cancel_order_call = Stubs.win_act_order_book_fx.cancelOrder
-        self.scrolling_details = GridScrollingDetails()
         self.scrolling_operation = ScrollingOperation
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
 

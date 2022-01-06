@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.win_gui_wrappers.data_set import OrderBookColumns, TimeInForce
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -94,7 +94,7 @@ def execute(report_id, session_id):
 
         # STEP 1
         new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
-            {'TimeInForce': '3', "Side": "2", "Price": "1.18075"})
+            {'TimeInForce': '3', "Side": "2", "Price": "1.18"})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
 
@@ -107,12 +107,12 @@ def execute(report_id, session_id):
              "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
              ob_col.tif.value, tif.IOC.value]).check_order_fields_list({"ExecSts": "Filled"})
         FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
-            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "CITI", ob_col.limit_price.value: "1.18141",
+            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "CITI", ob_col.limit_price.value: "1.18075",
              ob_col.qty.value: "1,000,000"})
 
         # STEP 2
         new_order_sor_2 = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
-            {'TimeInForce': '3', 'OrderQty': '5000000', "Side": "2", "Price": "1.18066"})
+            {'TimeInForce': '3', 'OrderQty': '5000000', "Side": "2", "Price": "1.18"})
         new_order_sor_2.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor_2)
 
@@ -124,8 +124,11 @@ def execute(report_id, session_id):
             [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
              "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
              ob_col.tif.value, tif.IOC.value]).check_order_fields_list({ob_col.exec_sts.value: "Filled"})
-        FXOrderBook(case_id, session_id).check_second_lvl_fields_list(
-            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "BARX", ob_col.limit_price.value: "1.18146",
+        FXOrderBook(case_id, session_id).set_filter(
+            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
+             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
+             ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
+            {ob_col.exec_sts.value: "Filled", ob_col.venue.value: "BARX", ob_col.limit_price.value: "1.18066",
              ob_col.qty.value: "5,000,000"})
 
     except Exception:
