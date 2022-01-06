@@ -6,20 +6,6 @@ class DirectionEnum(Enum):
     ToQuod = "SECOND"
 
 
-class MessageType(Enum):
-    NewOrderSingle = "NewOrderSingle"
-    ExecutionReport = "ExecutionReport"
-    OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
-    OrderCancelRequest = "OrderCancelRequest"
-    MarketDataRequest = "MarketDataRequest"
-    MarketDataIncrementalRefresh = "MarketDataIncrementalRefresh"
-    MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
-    NewOrderList = "NewOrderList"
-    ListStatus = "ListStatus"
-    Confirmation = "Confirmation"
-    AllocationInstruction = "AllocationInstruction"
-
-
 class Instrument(Enum):
     FR0010436584 = dict(
         Symbol='FR0010436584',

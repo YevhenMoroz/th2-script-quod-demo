@@ -3,14 +3,15 @@ from datetime import datetime
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
-from test_framework.java_api_wrappers.JavaApiDataSet import ORSMessages, ListingID
+from test_framework.java_api_wrappers.JavaApiDataSet import ListingID
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
 class ManualOrderCrossRequest(JavaApiMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessages.ManualOrderCrossRequest.value)
+        super().__init__(message_type=ORSMessageType.ManualOrderCrossRequest.value)
         super().change_parameters(parameters)
 
     def set_default(self, ord_id1, ord_id2, exec_price="5", exec_qty="100") -> None:
