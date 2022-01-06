@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from test_framework.core.test_case import TestCase
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.fe_trading_constant import Side
 from test_framework.win_gui_wrappers.fe_trading_constant import ExecSts
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as ob
@@ -21,7 +21,7 @@ class QAP_Example(TestCase):
         self.rfq_tile = None
         self.order_book = None
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         client = self.data_set.get_client_by_name("client_1")
         venue = self.data_set.get_venue_by_name("venue_1")
@@ -34,6 +34,6 @@ class QAP_Example(TestCase):
         self.order_book = FXOrderBook(self.test_id, self.session_id)
         self.order_book.check_order_fields_list({ob.sts.value: ExecSts.terminated.value})
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()

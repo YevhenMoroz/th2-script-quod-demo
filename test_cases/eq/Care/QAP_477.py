@@ -2,7 +2,7 @@ import logging
 import os
 
 from rule_management import RuleManager
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 
 
 from custom import basic_custom_actions as bca
@@ -80,6 +80,6 @@ class QAP477(TestCase):
 
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_477()
