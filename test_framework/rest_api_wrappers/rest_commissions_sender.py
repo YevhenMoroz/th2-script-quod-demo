@@ -70,6 +70,26 @@ class RestCommissionsSender(RestApiManager):
         self.message.parameters = params if params is not None else default_parameters
         return self
 
+    def clear_commissions_request(self, commission: FeesAndCommissions):
+        self.message.message_type = 'ModifyClCommission'
+        default_parameters = {
+            'clCommissionID': 1 if commission is None else commission.value,
+            'clCommissionName': "Commission1" if commission is None else commission.name,
+            'recomputeInConfirmation': 'false',
+            'commissionAmountType': "BRK"
+        }
+        self.message.parameters = default_parameters
+        return self
+
+    def clear_commissions(self):
+        self.clear_commissions_request(FeesAndCommissions.Commission1)
+        self.send_post_request(self.message)
+        self.clear_commissions_request(FeesAndCommissions.Commission2)
+        self.send_post_request(self.message)
+        self.clear_commissions_request(FeesAndCommissions.Commission3)
+        self.send_post_request(self.message)
+        return self
+
     def send_post_request(self, api_message: RestApiMessages = None):
         if api_message is None:
             api_message = self.message

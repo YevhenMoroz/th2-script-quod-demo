@@ -1,6 +1,8 @@
 from test_framework.win_gui_wrappers.base_window import BaseWindow
+from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
+
 
 
 class BaseMiddleOfficeBook(BaseWindow):
@@ -12,6 +14,8 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.modify_ticket_details = None
         self.view_order_extraction_details = None
         self.extract_middle_office_blotter_values_request = None
+        self.allocation_ticket_extraction_details = None
+        self.extraction_panel_details = None
         self.book_order_call = None
         self.amend_block_call = None
         self.unbook_order_call = None
@@ -21,8 +25,10 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.unallocate_block_call = None
         self.extract_view_orders_table_data_call = None
         self.extract_middle_office_blotter_values_call = None
+        self.allocation_ticket_extraction_details_call = None
         self.extract_allocation_details = None
         self.extract_allocations_table_data = None
+        self.amend_ticket_book_extraction_details_call = None
 
     # endregion
     # region Common func
@@ -47,7 +53,7 @@ class BaseMiddleOfficeBook(BaseWindow):
 
     # endregion
     # region Get
-    def extract_block_field(self, column_name, filter_list: list= None, row_number: int= None):
+    def extract_block_field(self, column_name, filter_list: list = None, row_number: int = None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
         extraction_detail = ExtractionDetail(column_name, column_name)
         self.extract_middle_office_blotter_values_request.add_extraction_details([extraction_detail])
@@ -71,22 +77,54 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.clear_details([self.extract_allocation_details])
         return response
 
+    def extract_block_values_from_allocation_ticket(self, filter_dict: dict, list_extraction: list = None):
+        self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request,
+                                                                                     filter_middle_office_grid=filter_dict,
+                                                                                     filter_allocations_grid=None,
+                                                                                     panels=list_extraction)
+        result = call(self.allocation_ticket_extraction_details_call, self.allocation_ticket_extraction_details.build())
+        return result
+
+    def extracting_values_from_amend_ticket(self, list_extraction, filter_dict=None, ):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
+                                                               filter_dict,
+                                                               list_extraction
+                                                               )
+        result = call(self.amend_ticket_book_extraction_details_call, self.extraction_panel_details.build())
+        return result
+
+    '''
+    ********************************************************************************************
+    FYI(OMS TEAM) list for list_extraction at extract_block_values_from_allocation_ticket method
+    [
+    PanelForExtraction.MAIN_PANEL,
+    PanelForExtraction.SETTLEMENT,
+    PanelForExtraction.COMMISSION,
+    PanelForExtraction.FEES,
+    PanelForExtraction.MISC
+    ]
+    ********************************************************************************************
+    '''
     # endregion
     # region Set
-    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
+    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price= None,
                                   net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
                                   settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
-                                  bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False):
+                                  bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
+                                  alloc_account_filter=None, alloc_row_number: int = None):
         """extract_data can be book or alloc"""
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
         if is_alloc_amend:
-            ticket_details = self.modify_ticket_details.add_amend_allocations_details()
-        else:
-            ticket_details = self.modify_ticket_details.add_ticket_details()
+            amend_allocations_details = self.modify_ticket_details.add_amend_allocations_details()
+            if alloc_account_filter is not None:
+                amend_allocations_details.set_filter({"Account ID": alloc_account_filter})
+            if alloc_row_number is not None:
+                amend_allocations_details.set_row_number(alloc_row_number)
+        ticket_details = self.modify_ticket_details.add_ticket_details()
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -97,18 +135,21 @@ class BaseMiddleOfficeBook(BaseWindow):
             ticket_details.set_net_gross_ind(net_gross_ind)
         if give_up_broker is not None:
             ticket_details.set_give_up_broker(give_up_broker)
-        commission_details = self.modify_ticket_details.add_commissions_details()
-        if comm_basis or comm_rate is not None:
+        if comm_basis or comm_rate is not None or remove_comm:
+            commission_details = self.modify_ticket_details.add_commissions_details()
             if toggle_manual:
                 commission_details.toggle_manual()
-            commission_details.add_commission(comm_basis, comm_rate)
-        if remove_comm:
-            commission_details.remove_commissions()
-        fees_details = self.modify_ticket_details.add_fees_details()
-        if fee_type or fee_basis or fee_rate or fee_category is not None:
-            fees_details.add_fees(fee_type, fee_basis, fee_rate, category=fee_category)
-        if remove_fee:
-            fees_details.remove_fees()
+            if comm_basis or comm_rate is not None:
+                commission_details.add_commission(comm_basis, comm_rate)
+            if remove_comm:
+                commission_details.remove_commissions()
+
+        if fee_type or fee_basis or fee_rate or fee_category is not None or remove_fee:
+            fees_details = self.modify_ticket_details.add_fees_details()
+            if fee_type or fee_basis or fee_rate or fee_category is not None:
+                fees_details.add_fees(fee_type, fee_basis, fee_rate, category=fee_category)
+            if remove_fee:
+                fees_details.remove_fees()
         settlement_details = self.modify_ticket_details.add_settlement_details()
         if settl_type is not None:
             settlement_details.set_settlement_type(settl_type)
@@ -203,3 +244,4 @@ class BaseMiddleOfficeBook(BaseWindow):
         call(self.approve_block_call, self.view_order_extraction_details.build())
         self.clear_details([self.modify_ticket_details])
     # endregion
+

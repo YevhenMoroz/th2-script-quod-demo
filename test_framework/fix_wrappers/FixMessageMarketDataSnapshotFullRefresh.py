@@ -1,7 +1,7 @@
 from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from stubs import Stubs
 
@@ -9,7 +9,7 @@ from stubs import Stubs
 class FixMessageMarketDataSnapshotFullRefresh(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=MessageType.MarketDataSnapshotFullRefresh.value)
+        super().__init__(message_type=FIXMessageType.MarketDataSnapshotFullRefresh.value)
         super().change_parameters(parameters)
 
     def check_MDReqID(self, symbol: str, session_alias: str):
