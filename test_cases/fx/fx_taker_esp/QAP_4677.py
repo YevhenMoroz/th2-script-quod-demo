@@ -4,6 +4,7 @@ from pathlib import Path
 
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 
+import stubs
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
 from demo import logger
@@ -18,9 +19,8 @@ from win_gui_modules.order_ticket import FXOrderDetails, OrderTicketDetails, Ext
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
 from win_gui_modules.wrappers import set_base
-from win_gui_modules.client_pricing_wrappers import (SelectRowsRequest, DeselectRowsRequest, ExtractRatesTileValues,
-                                                     PlaceRateTileTableOrderRequest, RatesTileTableOrdSide,
-                                                     ExtractRatesTileTableValuesRequest)
+
+user = Stubs.custom_config['qf_trading_fe_user']
 
 
 def create_or_get_rates_tile(base_request, service):
@@ -34,7 +34,7 @@ def modify_order_ticket(base_request, service, small, large):
     order_ticket = FXOrderDetails()
     order_ticket.set_price_pips(value)
     order_ticket.set_price_large(large)
-    order_ticket.set_care_order('QA5', True)
+    order_ticket.set_care_order(user, True)
     order_ticket.set_place()
     new_order_details = NewFxOrderDetails(base_request, order_ticket)
     call(service.placeFxOrder, new_order_details.build())

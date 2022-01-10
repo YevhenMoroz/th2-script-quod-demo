@@ -9,6 +9,8 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOr
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 
 
 class FixManager:
@@ -93,6 +95,26 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == FIXMessageType.QuoteRequest.value:
+            response = self.act.placeQuoteFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send Request For Quote",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.QuoteRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.NewOrderMultiLeg.value:
+            response = self.act.placeOrderMultilegFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Sen New Order Multi Leg",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderMultiLeg.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
@@ -127,18 +149,21 @@ class FixManager:
                                 repeating_group_list.append(repeating_group_list_field)
                             fields.update({field: repeating_group_list})
             message_type = message.metadata.message_type
-            responce_fix_message = None
+            response_fix_message = None
             if message_type == FIXMessageType.NewOrderSingle.value:
-                responce_fix_message = FixMessageNewOrderSingle()
+                response_fix_message = FixMessageNewOrderSingle()
             elif message_type == FIXMessageType.ExecutionReport.value:
-                responce_fix_message = FixMessageExecutionReport()
+                response_fix_message = FixMessageExecutionReport()
             elif message_type == FIXMessageType.MarketDataSnapshotFullRefresh.value:
-                responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+                response_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+            elif message_type == FIXMessageType.Quote.value:
+                response_fix_message = FixMessageQuoteFX()
+            elif message_type == FIXMessageType.NewOrderMultiLeg.value:
+                response_fix_message = FixMessageNewOrderMultiLegFX()
+            response_fix_message.change_parameters(fields)
 
+            response_messages.append(response_fix_message)
 
-            responce_fix_message.change_parameters(fields)
-
-        response_messages.append(responce_fix_message)
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:

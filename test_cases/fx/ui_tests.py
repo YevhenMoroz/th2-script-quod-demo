@@ -355,15 +355,15 @@ def set_fx_order_ticket_value(base_request, order_ticket_service):
     # order_ticket.set_care_order('QA3 (HeadOfSaleDealer)', True)  # Desk Market Marking FX (CN)
     # order_ticket.set_care_order('Text Aspect Desk of Traders (CN)', False)#Stubs.custom_config['qf_trading_fe_user_desk'], False) # Desk Market Marking FX (CN)
 
-    # strategy = order_ticket.add_multilisting_strategy("Quod MultiListing")
-    # strategy.set_allow_missing_trim(True)
-    # strategy.set_available_venues(True)
-    # strategy.set_allowed_venues('HSBC')
-    # strategy.set_forbidden_venues('CITI')
-    # strategy.set_fok_exploration(True)
-    # strategy.set_available_venues(True)
-    # strategy.set_sweeping_allowed(True)
-    # strategy.set_post_mode('Single')
+    strategy = order_ticket.add_multilisting_strategy("Quod MultiListing")
+    strategy.set_allow_missing_trim(True)
+    strategy.set_available_venues(True)
+    strategy.set_allowed_venues('HSBC')
+    strategy.set_forbidden_venues('CITI')
+    strategy.set_fok_exploration(True)
+    strategy.set_available_venues(True)
+    strategy.set_sweeping_allowed(True)
+    strategy.set_post_mode('Single')
 
     strategy = order_ticket.add_twap_strategy("QUOD TWAP")
     strategy.set_start_date(from_date='Now', offset='1')
@@ -970,7 +970,7 @@ def execute(report_id, session_id):
 
         # region OrderBook actions
         # amend_order(ob_fx_act, base_request)
-        # open_order_ticket_via_double_click(ob_fx_act, base_request)
+        open_order_ticket_via_double_click(ob_fx_act, base_request)
         # cancel_order(ob_fx_act, base_request)
         # release_order(ob_fx_act, base_request)
         # clear_filters(ob_fx)

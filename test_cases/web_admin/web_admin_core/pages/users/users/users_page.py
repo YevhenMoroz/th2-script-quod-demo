@@ -40,6 +40,9 @@ class UsersPage(CommonPage):
     def click_on_pin_row_at_more_actions(self):
         self.find_by_xpath(UsersConstants.PIN_TO_ROW_AT_MORE_ACTIONS_XPATH).click()
 
+    def click_on_unpin_row_at_more_action(self):
+        self.find_by_xpath(UsersConstants.UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH).click()
+
     def click_on_ok(self):
         self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click()
 
