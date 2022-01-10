@@ -164,7 +164,7 @@ class RuleManager:
     def add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(session: str, account: str, exdestination: str,
                                                                  price: float,
                                                                  traded_price: float, qty: int, traded_qty: int,
-                                                                 delay: int):
+                                                                 delay: int = 0):
         return Stubs.simulator.createNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
             request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard(
                 connection_id=ConnectionID(session_alias=session),
