@@ -4,7 +4,7 @@ from pathlib import Path
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.win_gui_wrappers.data_set import PriceNaming
+from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 from win_gui_modules.wrappers import set_base
 

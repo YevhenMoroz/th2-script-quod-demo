@@ -50,9 +50,15 @@ class TimeInForce(Enum):
     DAY = 'Day'
 
 
+class OrderType(Enum):
+    limit = "Limit"
+    market = "Market"
+    previously_quoted = "PreviouslyQuoted"
+
+
 # TODO: Need to compare with actual version (v156)
 class InstrType(Enum):
-    spot = 'Spot'
+    spot = 'FXSpot'
     forward = 'FXForward'
     swap = 'FXSwap'
     ndf = 'NDF'
@@ -161,6 +167,10 @@ class PriceNaming(Enum):
     bid_large = "bid_large"
     bid_pips = "bid_pips"
     spread = "spread"
+
+
+class AutoHedgerID(Enum):
+    osmium = {'OsmiumAH': '400000018'}
 
 
 class RatesColumnNames(CustomEnum):

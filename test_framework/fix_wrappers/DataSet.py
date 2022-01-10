@@ -8,6 +8,7 @@ class DirectionEnum(Enum):
 
 class MessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
+    NewOrderMultiLeg = "NewOrderMultileg"
     ExecutionReport = "ExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
@@ -16,6 +17,8 @@ class MessageType(Enum):
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
     ListStatus = "ListStatus"
+    QuoteRequest = "QuoteRequest"
+    Quote = "Quote"
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
 
@@ -26,7 +29,8 @@ class Instrument(Enum):
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
-        SecurityType='CS'
+        SecurityType='CS',
+        SecurityDesc='DREAMNEX'
     )
     test = dict(
         Symbol='FR0010436000',
@@ -81,14 +85,23 @@ class Instrument(Enum):
 
 
 class Connectivity(Enum):
-    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
     Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
+    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
+    Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
+    Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
+    Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
+    Luna_314_Feed_Handler = 'fix-fh-314-luna'
+    Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
+    Luna_314_dc = 'fix-sell-m-314luna-drop'
+    Luna_314_wa = "rest_wa314luna"
+    Ganymede_317_ja = '317_java_api'
+    Ganymede_317_als_email_report = 'log317-als-email-report'
 
 
 class GatewaySide(Enum):
@@ -101,6 +114,7 @@ class Status(Enum):
     New = "New"
     Fill = "Fill"
     PartialFill = "PartialFill"
+    Reject = "Reject"
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
 
@@ -167,3 +181,33 @@ class ExecScope(Enum):
     FirstExec = "FST"
 
 
+class TimeInForce(Enum):
+    Day = 0
+    GoodTillCancel = 1
+    AtTheOpening = 2
+    ImmediateOrCancel = 3
+    FillOrKill = 4
+    GoodTillCrossing = 5
+    GoodTillDate = 6
+    AtTheClose = 7
+    ValidForAuction = 100
+
+
+class FreeNotesReject(Enum):
+    MissWouldPriceReference = "missing WouldPriceReference"
+    MissLimitPriceReference = "missing LimitPriceReference"
+    MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+    MissNavigatorLimitPrice = "missing Limit price for Navigator"
+
+
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'

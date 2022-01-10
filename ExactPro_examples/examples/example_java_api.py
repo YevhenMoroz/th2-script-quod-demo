@@ -20,6 +20,8 @@ class ORSMessages(Enum):
     trade_request = 'Order_TradeEntryRequest'
     unmatch = 'Order_UnMatchRequest'
     manual_order_cross = 'Order_ManualOrderCrossRequest'
+    wave_list_request = 'Order_OrderListWaveCreationRequest'
+    referencedata_instr = 'Referencedata_InstrDictionaryRequest'
 
 
 class TestCase:
@@ -117,10 +119,30 @@ class TestCase:
                 'LastMkt': 'UBSG'
             }
         }
+        wave_list_params = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'OrderListWaveCreationRequestBlock': {
+                'ParentOrdrList': {'ParentOrdrBlock': [
+                    {'ParentOrdID': "CO1211216084141219001"}, {'ParentOrdID': "CO1211216084141219002"}
+                ]},
+                'OrderListID': "LI1211216084141219001",
+                'PercentQtyToRelease': "1.000000000",
+                'QtyPercentageProfile': "RemainingQty"
+            }
+        }
+        ref_data_params = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'InstrDictionaryRequestBlock': {
+                'PreferredInstrList': {'PreferredInstrBlock': [{'InstrID': "InstrID=BQa078AxtFWrfb_M2D31Yw"}],
+                                       "SecurityListRequestType": "ALL"},
+
+            }
+
+        }
 
         self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard(ORSMessages.manual_order_cross.value,
-                                                     manual_order_cross_params, self.connectivity),
+            message=bca.message_to_grpc_fix_standard(ORSMessages.referencedata_instr.value,
+                                                     ref_data_params, self.connectivity),
             parent_event_id=self.case_id))
 
         # Main method

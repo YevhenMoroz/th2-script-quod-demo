@@ -26,10 +26,9 @@ timeouts = True
 
 
 class QAP_5860(TestCase):
-    def __init__(self, report_id, session_id, file_name):
+    def __init__(self, report_id, session_id):
         super().__init__(report_id, session_id)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
         self.dc_connectivity = SessionAliasOMS().dc_connectivity

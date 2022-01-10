@@ -61,11 +61,11 @@ class FeesConstants:
     ORDER_FEE_PROFILE_ROUNDING_MODULUS_XPATH = '//*[@formcontrolname = "commRoundingModulus"]'
 
     # Commission Profile Points
-    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="points-table-old_wrappers"]//*[@class="nb-plus piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="points-table-old_wrappers"]//*[@class="nb-checkmark"]'
-    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="points-table-old_wrappers"]//*[@class="nb-close"]'
-    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="points-table-old_wrappers"]//*[@class="nb-edit piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="points-table-old_wrappers"]//*[@class="nb-trash piloted-table-action"]'
+    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-plus piloted-table-action"]'
+    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-checkmark"]'
+    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-close"]'
+    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-edit piloted-table-action"]'
+    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-trash piloted-table-action"]'
 
     COMMISSION_PROFILE_BASE_VALUE_XPATH = '//*[@placeholder = "Base Value *"]'
     COMMISSION_PROFILE_MIN_COMMISSION_XPATH = '//*[@placeholder = "Min Commission"]'

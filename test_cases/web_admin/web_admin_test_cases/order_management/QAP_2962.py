@@ -23,7 +23,7 @@ class QAP_2962(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = "Quod LitDark"
-        self.parameter_at_dark_block = "DarkBrokerSequence"
+        self.parameter_at_dark_block = "Dark Broker Sequence"
         self.first_strategy = "TestSuperStrategy1"
         self.first_value = "1"
         self.second_strategy = "test1582"
