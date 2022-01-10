@@ -106,8 +106,6 @@ def execute(report_id, session_id):
         check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000.00")
         modify_order_ticket(case_base_request, order_ticket_service, "1k")
         check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000.00")
-        modify_order_ticket(case_base_request, order_ticket_service, "1b")
-        check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000000000.00")
         modify_order_ticket(case_base_request, order_ticket_service, "1kk")
         check_qty_in_ord_t(base_data, order_ticket_service, case_id, "1000.00")
         close_order_ticket(case_base_request, order_ticket_service)
