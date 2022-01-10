@@ -1,18 +1,21 @@
 from datetime import datetime
 
+from custom.tenor_settlement_date import spo
 from test_framework.fix_wrappers.DataSet import GatewaySide, Status
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.forex import FixMessageNewOrderMultiLegFX
 
 
-class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
+class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     def __init__(self, parameters: dict = None):
         super().__init__()
         super().change_parameters(parameters)
 
+    # region SINGLE
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: GatewaySide,
-                                         status: Status):
+                                         status: Status, is_forward: bool = False):
         if side is GatewaySide.Buy:
             if status is Status.Pending:
                 self.__set_pending_new_buy(new_order_single)
@@ -20,25 +23,21 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
                 self.__set_new_buy(new_order_single)
             elif status is Status.Fill:
                 self.__set_fill_buy(new_order_single)
-            elif status is Status.PartialFill:
-                self.__set_partial_fill_buy(new_order_single)
-            elif status is Status.Cancel:
-                self.__set_cancel_buy(new_order_single)
             else:
-                raise Exception(f'Incorrect Status')
+                raise Exception('Incorrect Status')
         elif side is GatewaySide.Sell:
             if status is Status.Pending:
                 self.__set_pending_new_sell(new_order_single)
             elif status is Status.New:
                 self.__set_new_sell(new_order_single)
             elif status is Status.Fill:
-                self.__set_fill_sell(new_order_single)
-            elif status is Status.PartialFill:
-                self.__set_partial_fill_sell(new_order_single)
-            elif status is Status.Cancel:
-                self.__set_cancel_sell(new_order_single)
+                if is_forward:
+                    self.__set_fill_sell_fwd(new_order_single)
+                else:
+                    self.__set_fill_sell(new_order_single)
+
             else:
-                raise Exception(f'Incorrect Status')
+                raise Exception('Incorrect Status')
         return self
 
     # SELL SIDE
@@ -129,7 +128,6 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
     # CHECKED
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
-            Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
             CumQty=new_order_single.get_parameter('OrderQty'),
             Currency=new_order_single.get_parameter('Currency'),
@@ -141,23 +139,17 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             Side=new_order_single.get_parameter('Side'),
             SettlType=new_order_single.get_parameter('SettlType'),
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
-            SpotSettlDate=new_order_single.get_parameter('SettlDate'),
-            StrategyName='1555',
+            SpotSettlDate=spo(),
             Price="*",
-            TargetStrategy='1008',
+            OrderCapacity="A",
             OrdStatus='2',
-            LastExecutionPolicy='*',
             TradeReportingIndicator='*',
             TransactTime='*',
             LastSpotRate='*',
-            SecondaryOrderID='*',
             AvgPx='*',
             ExecID='*',
             LastPx='*',
             OrderID='*',
-            Text='*',
-            ReplyReceivedTime='*',
             SettlDate='*',
             TradeDate=datetime.today().strftime('%Y%m%d'),
             ExecType='F',
@@ -166,7 +158,6 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             ExDestination='*',
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
-            SecondaryExecID='*',
             NoParty="*"
         )
         super().change_parameters(temp)
@@ -181,97 +172,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         super().update_fields_in_component("Instrument", instrument)
         return self
 
-    # TODO: doublecheck
-    def __set_partial_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            ReplyReceivedTime="*",
-            Account=new_order_single.get_parameter('Account'),
-            AvgPx='*',
-            ClOrdID=new_order_single.get_parameter('ClOrdID'),
-            CumQty="*",
-            Currency=new_order_single.get_parameter('Currency'),
-            ExecID='*',
-            LastSpotRate='*',
-            StrategyName='*',
-            SecondaryOrderID='*',
-            SpotSettlDate=new_order_single.get_parameter('SettlDate'),
-            HandlInst=new_order_single.get_parameter('HandlInst'),
-            LastPx='*',
-            LastQty='*',
-            OrderID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdStatus=1,
-            OrdType=new_order_single.get_parameter('OrdType'),
-            Price=new_order_single.get_parameter('Price'),
-            Side=new_order_single.get_parameter('Side'),
-            Text='Hello sim',
-            TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
-            TransactTime='*',
-            SettlDate='*',
-            TradeDate='*',
-            ExecType='F',
-            LastMkt='*',
-            SettlType=new_order_single.get_parameter('SettlType'),
-            LeavesQty="*",
-            TradeReportingIndicator='0',
-            GrossTradeAmt='*',
-            NoParty='*',
-            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
-            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
-            LastExecutionPolicy='*',
-            ExDestination='*',
-            QtyType=0,
-            Instrument=new_order_single.get_parameter('Instrument'),
-            SecondaryExecID='*'
-        )
-        super().change_parameters(temp)
-        instrument = dict(
-            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
-            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
-            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
-            SecurityIDSource="8",
-            Product="4",
-            SecurityExchange="*",
-        )
-        super().update_fields_in_component("Instrument", instrument)
-        # self.add_party_role()
-        return self
-
-    # TODO: doublecheck
-    def __set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter('Account'),
-            AvgPx=0,
-            ClOrdID='*',
-            CumQty=0,
-            Currency=new_order_single.get_parameter('Currency'),
-            ExecID='*',
-            HandlInst=new_order_single.get_parameter('HandlInst'),
-            LastPx=0,
-            LastQty=0,
-            OrderID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdStatus=4,
-            OrdType=new_order_single.get_parameter('OrdType'),
-            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
-            Price=new_order_single.get_parameter('Price'),
-            Side=new_order_single.get_parameter('Side'),
-            TimeInForce=0,
-            TransactTime='*',
-            SettlDate='*',
-            ExecType=4,
-            LeavesQty=0,
-            ExecRestatementReason='*',
-            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            TargetStrategy=1005,
-            Instrument=new_order_single.get_parameter('Instrument'),
-            QtyType='*',
-            NoParty='*',
-            NoStrategyParameters='*',
-            SecAltIDGrp='*',
-        )
-        super().change_parameters(temp)
+    def __set_fill_sell_fwd(self, new_order_single: FixMessageNewOrderSingle = None):
+        self.__set_fill_sell(new_order_single)
+        self.add_tag({"LastForwardPoints": "*"})
         return self
 
     # BUY SIDE
@@ -351,53 +254,125 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    # TODO: doublecheck
-    def __set_partial_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter('Account'),
-            CumQty=new_order_single.get_parameter('OrderQty'),
-            LastPx=new_order_single.get_parameter('Price'),
-            ExecID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdType=new_order_single.get_parameter('OrdType'),
-            ClOrdID='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
-            Text='Partial fill',
-            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            OrderID='*',
-            TransactTime='*',
-            Side=new_order_single.get_parameter('Side'),
-            AvgPx='*',
-            OrdStatus=1,
-            Price=new_order_single.get_parameter('Price'),
-            Currency=new_order_single.get_parameter('Currency'),
-            TimeInForce=0,
-            Instrument=new_order_single.get_parameter('Instrument'),
-            ExecType='F',
-            LeavesQty=0
-        )
-        super().change_parameters(temp)
+    # endregion
+    # region SWAP
+    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, side: GatewaySide,
+                                       status: Status):
+        if side is GatewaySide.Buy:
+            if status is Status.Pending:
+                self.__set_pending_new_buy(new_order_single)
+            elif status is Status.New:
+                self.__set_new_buy(new_order_single)
+            elif status is Status.Fill:
+                self.__set_fill_buy(new_order_single)
+            else:
+                raise Exception('Incorrect Status')
+        elif side is GatewaySide.Sell:
+            if status is Status.Pending:
+                self.__set_pending_new_sell(new_order_single)
+            elif status is Status.New:
+                self.__set_new_sell(new_order_single)
+            elif status is Status.Fill:
+                self.__set_fill_sell_swap(new_order_single)
+
+            else:
+                raise Exception('Incorrect Status')
         return self
 
-    # TODO: doublecheck
-    def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_fill_sell_swap(self, new_order_single: FixMessageNewOrderSingle = None):
+        self.prepare_swap_exec_report(new_order_single)
+        if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[0].pop("LegLastForwardPoints")
+        elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[1].pop("LegLastForwardPoints")
+        return self
+
+    def prepare_swap_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
+        no_legs = [
+            dict(LegSide=new_order_single.get_parameter("NoLegs")[0]["LegSide"],
+                 LegOrderQty=new_order_single.get_parameter("NoLegs")[0]["LegOrderQty"],
+                 LegSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
+                 LegSettlType=new_order_single.get_parameter("NoLegs")[0]["LegSettlType"],
+                 LegLastQty=new_order_single.get_parameter("OrderQty"),
+                 LegLastForwardPoints="*",
+                 LegPrice="*",
+                 LegLastPx="*",
+                 InstrumentLeg=dict(
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"] +
+                               "-SPO-QUODFX" if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
+                     LegSecurityExchange="XQFX",
+                     LegSecurityIDSource="8",
+                 )
+                 ),
+            dict(LegSide=new_order_single.get_parameter("NoLegs")[1]["LegSide"],
+                 LegOrderQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
+                 LegSettlDate=new_order_single.get_parameter("NoLegs")[1]["LegSettlDate"],
+                 LegSettlType=new_order_single.get_parameter("NoLegs")[1]["LegSettlType"],
+                 LegLastQty=new_order_single.get_parameter("OrderQty"),
+                 LegLastForwardPoints="*",
+                 LegPrice="*",
+                 LegLastPx="*",
+                 InstrumentLeg=dict(
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"] +
+                               "-SPO-QUODFX" if new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
+                     LegSecurityExchange="XQFX",
+                     LegSecurityIDSource="8",
+                 )
+                 )
+        ]
         temp = dict(
-            AvgPx='*',
-            ClOrdID='*',
-            CumQty='0',
-            ExecID='*',
-            OrderID='*',
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            Currency=new_order_single.get_parameter('Currency'),
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastQty=new_order_single.get_parameter('OrderQty'),
             OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdStatus=4,
-            OrigClOrdID='*',
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
-            Text='order canceled',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            SpotSettlDate=spo(),
+            Price="*",
+            LastSwapPoints="*",
+            OrderCapacity="A",
+            OrdStatus='2',
+            TradeReportingIndicator='*',
             TransactTime='*',
-            ExecType=4,
-            LeavesQty=0
+            LastSpotRate='*',
+            AvgPx='*',
+            ExecID='*',
+            LastPx='*',
+            OrderID='*',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='F',
+            LeavesQty=0,
+            GrossTradeAmt='*',
+            ExDestination='*',
+            QtyType=0,
+            SettlType="*",
+            NoParty="*",
+            NoLegs=no_legs,
+            Instrument=new_order_single.get_parameter('Instrument')
         )
         super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
         return self
+
+    # endregion
 
     def add_party_role(self):
         party = dict(
@@ -406,5 +381,25 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             PartyRoleQualifier="*",
             PartyIDSource="*",
         )
-        super().add_fields_into_repeating_group("NoParty", [party])
+        party_1 = dict(
+            PartyRole="*",
+            PartyID="*",
+            PartyIDSource="*",
+        )
+        super().add_fields_into_repeating_group("NoParty", [party, party_1, party_1, party_1])
+        return self
+
+    def add_party_role_fdw(self):
+        party = dict(
+            PartyRole="*",
+            PartyID="*",
+            PartyRoleQualifier="*",
+            PartyIDSource="*",
+        )
+        party_1 = dict(
+            PartyRole="*",
+            PartyID="*",
+            PartyIDSource="*",
+        )
+        super().update_repeating_group("NoParty", [party, party_1, party_1])
         return self

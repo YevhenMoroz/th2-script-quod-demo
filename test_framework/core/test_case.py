@@ -9,7 +9,6 @@ class TestCase(ABC):
         self.session_id = session_id
         self.report_id = report_id
         self.data_set = data_set
-        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
     @abstractmethod
     def run_pre_conditions_and_steps(self):

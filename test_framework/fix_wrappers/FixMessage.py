@@ -79,13 +79,33 @@ class FixMessage:
             self.add_tag({r_group: fields})
         return self
 
-    def remove_fields_repeating_group(self, r_group: str, fields: list):
+    def remove_fields_in_repeating_group(self, r_group: str, fields: list):
+        """
+        Removing list of fields from repeating group, for example we can delete Side from this msg
+        {
+        "NoRelatedSymbols": [{
+                "Account": "Iridium1",
+                "Side": "1",
+                "OrderQty": "1000000",
+                "Instrument": {
+                    "Symbol": "GBP/USD",
+                    "SecurityType": "FXSWAP"
+                }]
+        }
+        fix_message.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
+        """
         new_repeating_gr = self.get_parameter(r_group)
         for element in new_repeating_gr:
             for i in fields:
                 if i in element.keys():
                     del element[i]
         self.change_parameters({r_group: new_repeating_gr})
+        return self
+
+    def update_value_in_repeating_group(self, r_group, key_in_group, new_value):
+        for item in self.__parameters[r_group]:
+            if key_in_group in item.keys():
+                item.update({key_in_group: new_value})
         return self
 
     def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
