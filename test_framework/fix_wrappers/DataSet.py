@@ -91,6 +91,7 @@ class Status(Enum):
     Reject = "Reject"
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
+    Eliminate = "Eliminate"
 
 
 class CommissionClients(Enum):
