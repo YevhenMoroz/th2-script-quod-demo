@@ -250,7 +250,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             CumQty=new_order_single.get_parameter('OrderQty'),
-            LastPx=20,
+            LastPx='*',
             ExecID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdType=new_order_single.get_parameter('OrdType'),
@@ -281,7 +281,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             CumQty=new_order_single.get_parameter('OrderQty'),
-            LastPx=20,
+            LastPx='*',
             ExecID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdType=new_order_single.get_parameter('OrdType'),
