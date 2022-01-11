@@ -402,10 +402,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         return self
 
     def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict()
-        if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
-        temp.update(
+        temp = dict(
             AvgPx='*',
             ClOrdID='*',
             CumQty='0',
