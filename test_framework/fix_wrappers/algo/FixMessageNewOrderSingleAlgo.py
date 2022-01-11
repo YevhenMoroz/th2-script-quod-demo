@@ -50,8 +50,51 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Instrument": Instrument.PAR.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
-                'Waves': '5',
-                'WouldInAuction': '0'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_VWAP_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "1",
+            'QuodFlatParameters': {
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_POV_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "2",
+            'QuodFlatParameters': {
+                'MaxPercentageVolume': '10'
             }
         }
         super().change_parameters(base_parameters)
@@ -76,19 +119,42 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'QuodFlatParameters': {
                 'NavigatorExecution': '1',
                 'NavGuard': '0',
-                'NavigatorLimitPrice': '100',
             }
         }
         super().change_parameters(base_parameters)
         return self
 
-    def set_POV_params(self) -> FixMessageNewOrderSingle:
+    def set_VWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
             'ClOrdID': basic_custom_actions.client_orderid(9),
-            "HandlInst": "0",
+            "HandlInst": "2",
             "Side": "1",
-            "OrderQty": "1000",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.BUI.value,
+            "TargetStrategy": "1",
+            'QuodFlatParameters': {
+                'NavigatorExecution': '1',
+                'NavGuard': '0',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_POV_Navigator_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
             "TimeInForce": "0",
             "OrdType": "2",
             "TransactTime": datetime.utcnow().isoformat(),
@@ -96,10 +162,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "20",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010436584.value,
+            "Instrument": Instrument.PAR.value,
             "TargetStrategy": "2",
             'QuodFlatParameters': {
-                'MaxPercentageVolume': '10'
+                'MaxPercentageVolume': '10',
+                'NavigatorExecution': '1',
+                'NavGuard': '0'
             }
         }
         super().change_parameters(base_parameters)
@@ -132,6 +200,78 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_MOO_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "1012",
+            'QuodFlatParameters': {
+                'WouldInAuction': '0',
+                'ExcludePricePoint2': '1'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_MOC_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "1015",
+            'QuodFlatParameters': {
+                'WouldInAuction': '0',
+                'ExcludePricePoint2': '1'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_MOE_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            "Instrument": Instrument.PAR.value,
+            "TargetStrategy": "1014",
+            'QuodFlatParameters': {
+                'WouldInAuction': '0',
+                'ExcludePricePoint2': '1'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_MOO_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "CLIENT1",
@@ -146,7 +286,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "30",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010263202.value,
+            "Instrument": Instrument.PAR.value,
             "TargetStrategy": "1012",
             'QuodFlatParameters': {
                 'MaxParticipation': '10',
@@ -173,7 +313,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "30",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            "Instrument": Instrument.FR0010263202.value,
+            "Instrument": Instrument.PAR.value,
             "TargetStrategy": "1015",
             'QuodFlatParameters': {
                 'MaxParticipation': '10',
@@ -200,7 +340,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Price": "30",
             "Currency": "EUR",
             "ExDestination": "XPAR",
-            'Instrument': Instrument.FR0010263202.value,
+            'Instrument': Instrument.PAR.value,
             'TargetStrategy': '2',
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10',

@@ -39,6 +39,7 @@ from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3275 import QAP
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4118 import QAP_4118
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4439 import QAP_4439
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_5707 import QAP_5707
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_6118 import QAP_6118
 
 
 class RunMarketMaking:
@@ -69,14 +70,14 @@ class RunMarketMaking:
             # QAP_2056(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2158(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2247(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2557(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2289(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2324(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2379(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2442(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2557(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2626(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2628(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2649(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2649(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2772(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3008(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3009(self.web_driver_container, self.second_lvl_id).run()
@@ -84,9 +85,10 @@ class RunMarketMaking:
             # QAP_3053(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3274(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3275(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4118(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4118(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4439(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5707(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6118(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run FXMM ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

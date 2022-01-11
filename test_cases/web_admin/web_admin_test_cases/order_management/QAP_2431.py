@@ -21,7 +21,7 @@ class QAP_2431(CommonTestCase):
         self.name = "TestSuperStrategy"
         self.user = "QA1"
         self.strategy_type = "Quod MultiListing"
-        self.parameter = "SprayModify"
+        self.parameter = "Spray Modify"
         self.first_value = "Single"
         self.second_value = "Spray"
 
