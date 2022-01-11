@@ -1,7 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
-    FxWashbookAccounts, FxRecipients, DaysOfWeek
-    FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
+    FxRecipients, DaysOfWeek, FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
 
 
 class FxDataSet(BaseDataSet):
@@ -16,7 +15,6 @@ class FxDataSet(BaseDataSet):
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
-    washbook_accounts = FxWashbookAccounts
     recipients = FxRecipients
     days_of_week = DaysOfWeek
 
