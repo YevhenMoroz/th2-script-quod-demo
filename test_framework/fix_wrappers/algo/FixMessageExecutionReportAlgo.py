@@ -44,7 +44,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -78,7 +78,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -114,7 +114,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_pending_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter("Account"),
@@ -139,7 +139,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter("Account"),
@@ -164,7 +164,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -204,7 +204,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_partial_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -244,7 +244,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"),
                         LastPx=new_order_single.get_parameter('Price'))
         temp.update(
@@ -275,7 +275,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_partial_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"),
                         LastPx=new_order_single.get_parameter('Price'))
         temp.update(
@@ -305,7 +305,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -342,7 +342,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             AvgPx='*',
@@ -366,7 +366,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -403,7 +403,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == 2:
+        if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
         temp.update(
             AvgPx='*',
