@@ -39,3 +39,13 @@ class FxRecipients(Enum):
     recipient_user_1 = ""
     recipient_user_2 = ""
     recipient_user_3 = ""
+
+
+class DaysOfWeek(Enum):
+    monday = 'MON'
+    tuesday = 'TUE'
+    wednesday = 'WED'
+    thursday = 'THU'
+    friday = 'FRI'
+    sunday = 'SUN'
+    saturday = 'SAT'
