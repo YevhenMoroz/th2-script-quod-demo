@@ -21,7 +21,10 @@ password = Stubs.custom_config['qf_trading_fe_password']
 route = 'Route via FIXBUYTH2 - component'
 ss_connectivity = SessionAliasOMS().ss_connectivity
 bs_connectivity = SessionAliasOMS().bs_connectivity
-path_xlsx = str(Path("test_cases/eq/Basket/Basket_import_files/BasketTemplate_withHeader_diff_curency.xlsx").absolute())
+path_xlsx = str(
+    Path("test_cases/eq/Basket/Basket_import_files/BasketTemplate_withHeader_diff_currency.xlsx").absolute())
+
+
 # endregion
 
 class QAP_6385(TestCase):
@@ -44,7 +47,7 @@ class QAP_6385(TestCase):
         # endregion
         # region Verify basket
         ord_curr = basket_book.get_basket_orders_value(2, "Currency", {"Basket Name": basket_name})
-        basket_book.compare_values({"1": "UAH", "2": "USD"}, ord_curr,"Compare Basket currency")
+        basket_book.compare_values({"1": "UAH", "2": "USD"}, ord_curr, "Compare Basket currency")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
