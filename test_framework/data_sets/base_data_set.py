@@ -8,6 +8,10 @@ class BaseDataSet:
     accounts = None
     washbook_accounts = None
     recipients = None
+    db_listing = None
+    db_instrument = None
+    mic = None  # Market Identifier Code
+    currency = None
 
     def get_instruments(self):
         if self.instruments:
@@ -62,3 +66,23 @@ class BaseDataSet:
         if hasattr(self.recipients, name):
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
+
+    def get_db_listing_by_name(self, name: str):
+        if hasattr(self.db_listing, name):
+            return getattr(self.db_listing, name).value
+        raise ValueError(f"{self.db_listing} not found!")
+
+    def get_db_instrument_by_name(self, name: str):
+        if hasattr(self.db_instrument, name):
+            return getattr(self.db_instrument, name).value
+        raise ValueError(f"{self.db_instrument} not found!")
+
+    def get_mic_by_name(self, name: str):
+        if hasattr(self.mic, name):
+            return getattr(self.mic, name).value
+        raise ValueError(f"{self.mic} not found!")
+
+    def get_currency_by_name(self, name: str):
+        if hasattr(self.currency, name):
+            return getattr(self.currency, name).value
+        raise ValueError(f"{self.currency} not found!")
