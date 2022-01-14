@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from stubs import Stubs
 from win_gui_modules.layout_panel_wrappers import WorkspaceModificationRequest
 from win_gui_modules.utils import call, get_base_request
@@ -18,7 +18,7 @@ class LayoutLoader:
         self.base_request = get_base_request(self.session_id, self.case_id)
         set_base(self.session_id, self.case_id)
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def import_layout(self, file_name, dir_name):
         modification_request = WorkspaceModificationRequest()
         modification_request.set_default_params(base_request=self.base_request)
