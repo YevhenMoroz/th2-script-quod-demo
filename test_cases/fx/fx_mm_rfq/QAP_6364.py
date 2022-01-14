@@ -11,7 +11,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.core.try_exept_decorator import decorator_try_except
 
 
 class QAP_6364(TestCase):
