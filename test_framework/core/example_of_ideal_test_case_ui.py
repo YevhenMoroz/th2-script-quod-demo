@@ -1,7 +1,7 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.core.try_exept_decorator import decorator_try_except
 from test_framework.win_gui_wrappers.fe_trading_constant import Side
 from test_framework.win_gui_wrappers.fe_trading_constant import ExecSts
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as ob
