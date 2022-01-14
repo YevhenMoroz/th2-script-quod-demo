@@ -1,6 +1,7 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsClients, OmsAccounts, \
-    OmsWashbookAccounts, OmsRecipients, OmsFixInstruments, OmsDbListing, OmsDbInstrument, OmsMic, OmsCurrency
+    OmsWashbookAccounts, OmsRecipients, OmsFixInstruments, OmsDbListing, OmsDbInstrument, OmsMic, OmsCurrency, \
+    OmsVenueClientNames
 
 
 class OmsDataSet(BaseDataSet):
@@ -17,3 +18,4 @@ class OmsDataSet(BaseDataSet):
     db_instrument = OmsDbInstrument
     mic = OmsMic
     currency = OmsCurrency
+    venue_client_names = OmsVenueClientNames

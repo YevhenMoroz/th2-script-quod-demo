@@ -12,6 +12,7 @@ class BaseDataSet:
     db_instrument = None
     mic = None  # Market Identifier Code
     currency = None
+    venue_client_names = None
 
     def get_instruments(self):
         if self.instruments:
@@ -86,3 +87,8 @@ class BaseDataSet:
         if hasattr(self.currency, name):
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
+
+    def get_currency_by_name(self, name: str):
+        if hasattr(self.venue_client_names, name):
+            return getattr(self.venue_client_names, name).value
+        raise ValueError(f"{self.venue_client_names} not found!")

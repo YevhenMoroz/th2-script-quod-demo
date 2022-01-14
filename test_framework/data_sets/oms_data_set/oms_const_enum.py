@@ -77,6 +77,28 @@ class OmsClients(Enum):
     client_com_3 = "CLIENT_COMM_2"
 
 
+class OmsVenueClientNames(Enum):
+    """Base"""
+    client_1_venue_1 = "XPAR_CLIENT1"
+    client_1_venue_2 = "XEUR_CLIENT1"
+    """PostTrade"""
+    client_pt_1_venue_1 = "MOClient_PARIS"
+    client_pt_1_venue_2 = "MOClient_EUREX"
+    client_pt_2_venue_1 = "MOClient2_PARIS"
+    client_pt_3_venue_1 = "MOClient3_PARIS"
+    client_pt_4_venue_1 = "MOClient4_PARIS"
+    client_pt_5_venue_1 = "MOClient5_PARIS"
+    client_pt_6_venue_1 = "MOClient6_PARIS"
+    client_pt_7_venue_1 = "MOClient7_PARIS"
+    """Care"""
+    client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
+    client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
+    """Commissions"""
+    client_com_1_venue_1 = "CLIENT_FEES_1_PARIS"
+    client_com_2_venue_1 = "CLIENT_COMM_1_PARIS"
+    client_com_3_venue_1 = "CLIENT_COMM_2_PARIS"
+
+
 class OmsAccounts(Enum):
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
