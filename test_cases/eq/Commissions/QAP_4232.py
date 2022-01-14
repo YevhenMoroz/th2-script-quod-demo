@@ -4,15 +4,14 @@ import time
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
-from stubs import Stubs
 from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommissionsSender
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.data_set import TradeBookColumns, MiddleOfficeColumns, AllocationsColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns, MiddleOfficeColumns, \
+    AllocationsColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
@@ -35,13 +34,12 @@ class QAP_4232(TestCase):
         self.case_id = create_event(self.__class__.__name__, self.report_id)
 
     def execute(self):
-        main_window = BaseMainWindow(self.case_id, self.session_id)
         trades = OMSTradesBook(self.case_id, self.session_id)
         commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id)
         middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
         commission_sender.clear_fees()
-        commission_sender.modify_fees_request(recalculate=True).change_params({"venueID": "EUREX"}).send_post_request()
-        self.__open_front_end(main_window, self.report_id)
+        commission_sender.set_modify_fees_message(recalculate=True).change_message_params({"venueID": "EUREX"}). \
+            send_post_request()
         self.__send_fix_orders()
         self.__verify_fees_of_executions(trades)
         middle_office.set_modify_ticket_details(remove_fee=True)
@@ -67,13 +65,6 @@ class QAP_4232(TestCase):
         finally:
             time.sleep(2)
             rule_manager.remove_rule(nos_rule)
-
-    @staticmethod
-    def __open_front_end(main_window, report_id):
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        main_window.open_fe(report_id, work_dir, username, password)
 
     def __verify_fees_of_executions(self, trades: OMSTradesBook):
         order_id = self.response[0].get_parameter("OrderID")

@@ -4,15 +4,13 @@ import time
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager
-from stubs import Stubs
 from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts, FeeTypes, ExecScope
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommissionsSender
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.data_set import TradeBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
@@ -34,23 +32,14 @@ class QAP_4535(TestCase):
 
     def execute(self):
         case_id = create_event(self.__class__.__name__, self.report_id)
-        main_window = BaseMainWindow(case_id, self.session_id)
         trades = OMSTradesBook(case_id, self.session_id)
         commission_sender = RestCommissionsSender(self.wa_connectivity, case_id)
         commission_sender.clear_fees()
-        commission_sender.modify_fees_request(fee_type=FeeTypes.Agent)
-        commission_sender.change_params({'commExecScope': ExecScope.FirstExec.value, "venueID": "EUREX"})
+        commission_sender.set_modify_fees_message(fee_type=FeeTypes.Agent)
+        commission_sender.change_message_params({'commExecScope': ExecScope.FirstExec.value, "venueID": "EUREX"})
         commission_sender.send_post_request()
-        self.__open_front_end(main_window, self.report_id)
         self.__send_fix_orders(self.client, self.price, self.qty, case_id)
         self.__verify_commissions(trades)
-
-    @staticmethod
-    def __open_front_end(main_window, report_id):
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        main_window.open_fe(report_id, work_dir, username, password)
 
     def __send_fix_orders(self, client, price, qty, case_id):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account.value, 'AllocQty': qty}]}
