@@ -7,7 +7,7 @@ from stubs import Stubs
 from test_framework.java_api_wrappers.ors_messages.TradeEntryRequest import TradeEntryRequest
 
 
-class TradeEntryRequestOMS(TradeEntryRequest):
+class TradeEntryOMS(TradeEntryRequest):
     def __init__(self, data_set, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
@@ -29,6 +29,6 @@ class TradeEntryRequestOMS(TradeEntryRequest):
 
     def set_default_trade(self, ord_id, exec_price="10", exec_qty="100"):
         self.change_parameters(self.base_parameters)
-        self.update_fields_in_component('NewOrderSingleBlock',
+        self.update_fields_in_component('TradeEntryRequestBlock',
                                         {"OrdID": ord_id, "ExecPrice": exec_price, 'ExecQty': exec_qty})
         return self
