@@ -57,6 +57,7 @@ def rule_creation():
 
 def execute(report_id):
     try:
+        #TODO add checks
         rule_list = rule_creation()
 
         fix_manager = FixManager(Connectivity.Ganymede_316_Redburn.value, report_id)
