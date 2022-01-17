@@ -186,7 +186,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key], verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, filter_list=None):
