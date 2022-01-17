@@ -8,19 +8,18 @@ from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
+# region TestData
 case_from_currency = "EUR"
 case_to_currency = "USD"
 case_qty = "1000000"
 case_near_tenor = "SPOT"
 sell_side = Side.sell.value
-
+# endregion
 
 class QAP_Example(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rfq_tile = None
-        self.order_book = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
