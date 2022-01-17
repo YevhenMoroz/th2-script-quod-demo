@@ -1,18 +1,11 @@
 import logging
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from quod_qa.fx.qs_fx_routine import SendMD
-
 from rule_management import RuleManager
+
 from stubs import Stubs
-from test_cases.fx.fx_mm_autohedging import QAP_2251
-from test_cases.fx.fx_mm_esp import QAP_1518
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3806, QAP_3766, QAP_3805, \
-    QAP_3747, QAP_3689, QAP_3739
-from test_cases.fx.fx_mm_rfq.rejection import QAP_3735
-from test_cases.fx.fx_taker_esp import QAP_5635, QAP_5537, QAP_5564
-from test_cases.fx.qs_fx_routine import QAP_5176, DepositAndLoan, rfq_spo
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from test_cases.fx.qs_fx_routine import SendMD, rfq, DepositAndLoan, esp, rfq_swap_1w_2w
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -66,21 +59,16 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        # DepositAndLoan.execute(report_id)
+        DepositAndLoan.execute(report_id)
         # QAP_2251.execute(report_id)
 
 
 
         # SendMD.execute(report_id)
-        rfq_spo.send_rfq_and_filled_order(report_id, '1000000')
-        #
-        # QAP_5564_blocked_by_PFX_3932.execute(report_id,session_id)
-        # QAP_5176.execute(report_id)
-        # QAP_1518.execute(report_id)
-
-
 
         # rfq.execute(report_id)
+        # esp.execute(report_id)
+        # rfq_swap_1w_2w.execute(report_id)
 
 
 
@@ -102,9 +90,11 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        rm = RuleManager()
-        # rm.add_fx_md_to('fix-fh-q-314-luna')
+        # rm = RuleManager()
+        # rm.add_fx_md_to('fix-fh-314-luna')
         # rm.add_fx_md_to('fix-fh-309-kratos')
+
+        # rm.remove_rule_by_id(2)
         # rm.print_active_rules()
 
         # rm.print_active_rules_sim_test()
