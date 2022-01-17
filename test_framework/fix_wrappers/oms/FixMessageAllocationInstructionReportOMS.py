@@ -40,7 +40,6 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'Instrument': '*',
             'TradeDate': '*',
             'GrossTradeAmt': '*',
-            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
@@ -78,13 +77,12 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
             'Instrument': '*',
             'TradeDate': '*',
             'GrossTradeAmt': '*',
-            'LastMkt': '*'
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
 
-    def set_default_calculated (self, new_order_single: FixMessageNewOrderSingle):
+    def set_default_calculated(self, new_order_single: FixMessageNewOrderSingle):
         no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
         for no_alloc in no_allocs:
             no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))

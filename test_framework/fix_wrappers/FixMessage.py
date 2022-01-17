@@ -33,6 +33,11 @@ class FixMessage:
         self.__parameters.pop(parameter_name)
         return self
 
+    def remove_parameters(self, parameter_name_list: list):
+        for par in parameter_name_list:
+            self.__parameters.pop(par)
+        return self
+
     def add_ClordId(self, test_case_name):
         self.change_parameter("ClOrdID", test_case_name + " " + basic_custom_actions.client_orderid(9))
         return self
