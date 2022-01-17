@@ -13,7 +13,6 @@ class OMSTradesBook(BaseTradesBook):
         self.order_details = OrdersDetails()
         self.set_order_details()
         self.match_details = MatchDetails()
-        self.modify_trades_details = None
         self.cancel_manual_execution_details = CancelManualExecutionDetails()
         self.manual_match_call = Stubs.win_act_trades.manualMatch
         self.cancel_manual_execution_call = Stubs.win_act_trades.cancelManualExecution

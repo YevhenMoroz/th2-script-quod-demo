@@ -12,7 +12,6 @@ class BaseTradesBook(BaseWindow):
         self.order_info = None
         self.order_details = None
         self.match_details = None
-        self.modify_trades_details = None
         self.cancel_manual_execution_details = None
         self.manual_match_call = None
         self.cancel_manual_execution_call = None
@@ -71,11 +70,11 @@ class BaseTradesBook(BaseWindow):
         if qty_to_match is not None:
             self.match_details.set_qty_to_match(qty_to_match)
         self.match_details.click_match()
-        self.modify_trades_details = ModifyTradesDetails(self.match_details)
-        self.modify_trades_details.set_default_params(self.base_request)
+        modify_trades_details = ModifyTradesDetails(self.match_details)
+        modify_trades_details.set_default_params(self.base_request)
         if trades_filter_list is not None:
-            self.modify_trades_details.set_filter(trades_filter_list)
-        call(self.manual_match_call, self.modify_trades_details.build())
+            modify_trades_details.set_filter(trades_filter_list)
+        call(self.manual_match_call, modify_trades_details.build())
 
     def cancel_execution(self, trades_filter_list=None):
         self.cancel_manual_execution_details.set_default_params(self.base_request)
