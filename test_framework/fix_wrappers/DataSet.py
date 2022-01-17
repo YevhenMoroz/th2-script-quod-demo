@@ -152,10 +152,13 @@ class FeeTypes(Enum):
     ValueAddedTax = "VAT"
 
 
-class FeesAndCommissions(Enum):
+class Fees(Enum):
     Fee1 = 1
     Fee2 = 2
     Fee3 = 3
+
+
+class Commissions(Enum):
     Commission1 = 1
     Commission2 = 2
     Commission3 = 3
@@ -171,6 +174,13 @@ class CommissionProfiles(Enum):
     Abs_Amt_USD = 7
     Abs_Amt_2 = 8
 
+
+class ExecScope(Enum):
+    AllExec = "ALL"
+    DayFirstExec = "DAF"
+    FirstExec = "FST"
+
+
 class TimeInForce(Enum):
     Day = 0
     GoodTillCancel = 1
@@ -182,11 +192,13 @@ class TimeInForce(Enum):
     AtTheClose = 7
     ValidForAuction = 100
 
+
 class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
+
 
 class Reference(Enum):
     LastTradePrice = 'LTP'
