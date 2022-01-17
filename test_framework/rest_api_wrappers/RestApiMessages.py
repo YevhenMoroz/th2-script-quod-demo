@@ -16,22 +16,52 @@ class RestApiMessages:
     def get_parameter(self, parameter_name: str):
         return self.parameters[parameter_name]
 
-    def change_parameter(self, parameter_name: str, new_parameter_value):
-        self.parameters[parameter_name] = new_parameter_value
-        return self
+    def update_parameters(self, parameters: dict):  #
+        self.parameters.update(parameters)          # Universal method fro adding new parameters
+        return self                                 # and also updating existing
 
-    def change_parameters(self, parameter_list: dict):
-        if parameter_list is not None:
-            for key in parameter_list:
-                self.parameters[key] = parameter_list[key]
-        return self
-
-    def add_parameter(self, parameter: dict):
-        self.parameters.update(parameter)
+    def set_params(self, params: dict):
+        self.parameters = params
         return self
 
     def remove_parameter(self, parameter_name: str):
         self.parameters.pop(parameter_name)
+        return self
+
+    def add_value_to_component(self, component_name, values_list):
+        if type(values_list) is list:
+            for item in values_list:
+                self.parameters[str(component_name)].append(item)
+        else:
+            self.parameters[str(component_name)].append(values_list)
+        return self
+
+    def update_value_in_component(self, component_name, key_in_component, new_value, condition=None):
+        for item in self.parameters[component_name]:
+            if key_in_component in item.keys():
+                if condition is None:
+                    item.update({key_in_component, new_value})
+                elif item[key_in_component] == condition:
+                    item.update({key_in_component, new_value})
+        return self
+
+    def remove_value_from_component(self, component_name, condition_dict: dict):
+        for i in len(self.parameters[component_name]):
+            for key, value in condition_dict.items():
+                if self.parameters[component_name][i][key] == value:
+                    self.parameters[component_name][i] = None
+                    break
+
+    def clear_component(self, component_name):
+        if component_name in self.parameters.keys():
+            self.parameters[component_name] = []
+        return self
+
+    def add_component(self, component_name):
+        self.parameters.update({component_name: []})
+
+    def clear_params(self):
+        self.parameters = None
         return self
 
     def modify_user_to_site(self):
@@ -69,10 +99,6 @@ class RestApiMessages:
             ]
         }
         self.parameters = modify_params
-
-    def modify_client_tier_instrument(self, params):
-        self.parameters = params
-        self.message_type = 'ModifyClientTierInstrSymbol'
 
     def modify_institution(self, params):
         self.message_type = "ModifyInstitution"
@@ -146,9 +172,6 @@ class RestApiMessages:
 
     def find_all_client_tier(self):
         self.message_type = 'FindAllClientTier'
-
-    def find_all_client_tier_instr(self):
-        self.message_type = 'FindAllClientTierInstrSymbol'
 
     def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
         self.message_type = 'ModifyCommission'
