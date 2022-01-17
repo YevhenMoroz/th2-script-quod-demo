@@ -1,13 +1,14 @@
 from datetime import datetime
 
 from test_framework.fix_wrappers.FixMessage import FixMessage
-from test_framework.fix_wrappers.DataSet import Instrument, MessageType
+from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.data_sets.message_types import FIXMessageType
 
 
 class FixMessageNewOrderSingle(FixMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=MessageType.NewOrderSingle.value)
+        super().__init__(message_type=FIXMessageType.NewOrderSingle.value)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:

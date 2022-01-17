@@ -38,7 +38,7 @@ class ExecutionStrategiesConstants:
     REVERT_CHANGES_AT_WIZARD = "//*[text()='Revert Changes']"
     CLOSE_WIZARD = '//*[@data-name="close"]'
     # --VALUES TAB--
-    NAME_AT_VALUES_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
+    NAME_AT_VALUES_TAB_XPATH = '//*[@formcontrolname="algoPolicyName"]'
     STRATEGY_TYPE_AT_VALUES_TAB_XPATH = '//*[text()="Strategy Type *"]/preceding-sibling::input'
     DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[text()="Description"]/preceding-sibling::input'
     USER_AT_VALUES_TAB_XPATH = '//*[text()="User"]/preceding-sibling::input'
@@ -93,8 +93,8 @@ class ExecutionStrategiesConstants:
 
     # JUST FOR ACTIONS SUB WIZARD
     PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-plus piloted-table-action']"
-    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='nb-checkmark']"
-    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='nb-close']"
+    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-checkmark']"
+    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-close']"
     DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-trash piloted-table-action']"
     VALUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@placeholder='Value *']"
     VALUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='ng2-smart-th secondValue ng-star-inserted']//input"

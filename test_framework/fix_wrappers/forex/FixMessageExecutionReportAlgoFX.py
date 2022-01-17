@@ -70,6 +70,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             HandlInst="2",
             TargetStrategy="1008",
             StrategyName="1555",
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -81,7 +82,6 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        self.add_party_role()
         return self
 
     # CHECKED
@@ -115,9 +115,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             ExecRestatementReason=4,
+            NoParty="*"
         )
         super().change_parameters(temp)
-        self.add_party_role()
         instrument = dict(
             SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
@@ -164,10 +164,10 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             LeavesQty=0,
             GrossTradeAmt='*',
             ExDestination='*',
-            LastMkt='*',
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
-            SecondaryExecID='*'
+            SecondaryExecID='*',
+            NoParty="*"
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -179,7 +179,6 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        self.add_party_role()
         return self
 
     # TODO: doublecheck

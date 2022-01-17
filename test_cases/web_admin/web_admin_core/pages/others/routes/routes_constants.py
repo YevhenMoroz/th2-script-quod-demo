@@ -1,7 +1,7 @@
 class RoutesConstants:
     ROUTES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Routes ']"
     #   -----Main page-----
-    NAME_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[1]//*[@class="ag-input-old_wrappers"]//input'
+    NAME_FILTER_XPATH = '//*[@ref="headerRoot"]//*[@class="ag-header-container"]/div[2]/div[1]//input'
     DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[2]//*[@class="ag-input-old_wrappers"]//input'
     ES_INSTANCE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[3]//*[@class="ag-input-old_wrappers"]//input'
     CLIENT_ID_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[4]//*[@class="ag-input-old_wrappers"]//input'

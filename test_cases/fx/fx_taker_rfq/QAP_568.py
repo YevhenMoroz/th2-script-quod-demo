@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_framework.win_gui_wrappers.data_set import Side
+from test_framework.win_gui_wrappers.fe_trading_constant import Side
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
@@ -21,7 +21,7 @@ def set_order_ticket_options(option_service, base_request, client):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
-# @decorator_try_except(test_id=Path(__file__).name[:-3])
+# @try_except(test_id=Path(__file__).name[:-3])
 def execute(report_id, session_id):
     option_service = Stubs.win_act_options
 

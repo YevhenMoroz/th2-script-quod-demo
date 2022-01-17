@@ -112,15 +112,15 @@ modify_params = {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 1,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     },
                     {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 2,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     }
                 ]
             }
@@ -155,36 +155,36 @@ tenor_qty = [
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 1,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     },
                     {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 2,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     },
                     {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 3,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     },
                     {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 4,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     },
                     {
                         "MDQuoteType": "TRD",
                         "activeQuote": "true",
                         "indiceUpperQty": 5,
-                        'defaultBidMargin': None,
-                        'defaultOfferMargin': None,
+                        'defaultBidMargin': 0,
+                        'defaultOfferMargin': 0,
                     }
                 ]
 case_sweepable_qty = [

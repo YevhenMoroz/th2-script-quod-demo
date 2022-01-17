@@ -1,7 +1,7 @@
 from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 
 from custom import basic_custom_actions
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageListStatus import FixMessageListStatus
@@ -9,6 +9,8 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOr
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 
 
 class FixManager:
@@ -38,58 +40,78 @@ class FixManager:
         if case_id == None:
             case_id = self.__case_id
 
-        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+        if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderSingle.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
             response = self.act.placeOrderReplaceFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelRequest.value:
             response = self.act.placeOrderCancelFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelRequest",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.OrderCancelRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelRequest.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
             response = self.act.sendMessage(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataSnapshotFullRefresh",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.MarketDataSnapshotFullRefresh.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataSnapshotFullRefresh.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.MarketDataIncrementalRefresh.value:
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataIncrementalRefresh.value:
             response = self.act.sendMessage(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataIncrementalRefresh",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.MarketDataIncrementalRefresh.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataIncrementalRefresh.value, fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.MarketDataRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataRequest.value:
             response = self.act.placeMarketDataRequestFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send MarketDataRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(MessageType.MarketDataRequest.value,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.QuoteRequest.value:
+            response = self.act.placeQuoteFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send Request For Quote",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.QuoteRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.NewOrderMultiLeg.value:
+            response = self.act.placeOrderMultilegFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Sen New Order Multi Leg",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderMultiLeg.value,
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
@@ -127,18 +149,21 @@ class FixManager:
                                 repeating_group_list.append(repeating_group_list_field)
                             fields.update({field: repeating_group_list})
             message_type = message.metadata.message_type
-            responce_fix_message = None
-            if message_type == MessageType.NewOrderSingle.value:
-                responce_fix_message = FixMessageNewOrderSingle()
-            elif message_type == MessageType.ExecutionReport.value:
-                responce_fix_message = FixMessageExecutionReport()
-            elif message_type == MessageType.MarketDataSnapshotFullRefresh.value:
-                responce_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+            response_fix_message = None
+            if message_type == FIXMessageType.NewOrderSingle.value:
+                response_fix_message = FixMessageNewOrderSingle()
+            elif message_type == FIXMessageType.ExecutionReport.value:
+                response_fix_message = FixMessageExecutionReport()
+            elif message_type == FIXMessageType.MarketDataSnapshotFullRefresh.value:
+                response_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+            elif message_type == FIXMessageType.Quote.value:
+                response_fix_message = FixMessageQuoteFX()
+            elif message_type == FIXMessageType.NewOrderMultiLeg.value:
+                response_fix_message = FixMessageNewOrderMultiLegFX()
+            response_fix_message.change_parameters(fields)
 
+            response_messages.append(response_fix_message)
 
-            responce_fix_message.change_parameters(fields)
-
-        response_messages.append(responce_fix_message)
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
@@ -153,43 +178,43 @@ class FixManager:
             ))
 
     def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> PlaceMessageRequest:
-        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+        if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             response = self.act.placeOrderFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.NewOrderSingle.value,
+                    basic_custom_actions.message_to_grpc_fix_standard(FIXMessageType.NewOrderSingle.value,
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
             response = self.act.placeOrderReplaceFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.OrderCancelReplaceRequest.value,
+                    basic_custom_actions.message_to_grpc_fix_standard(FIXMessageType.OrderCancelReplaceRequest.value,
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelRequest.value:
             response = self.act.placeOrderCancelFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send OrderCancelRequest",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.OrderCancelRequest.value,
+                    basic_custom_actions.message_to_grpc_fix_standard(FIXMessageType.OrderCancelRequest.value,
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
                 ))
-        elif fix_message.get_message_type() == MessageType.NewOrderList.value:
+        elif fix_message.get_message_type() == FIXMessageType.NewOrderList.value:
             response = self.act.placeOrderListFIX(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderList",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc_fix_standard(MessageType.NewOrderList.value,
+                    basic_custom_actions.message_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
                 ))
@@ -229,13 +254,13 @@ class FixManager:
             message_type = message.metadata.message_type
             response_fix_message = None
 
-            if message_type == MessageType.NewOrderSingle.value:
+            if message_type == FIXMessageType.NewOrderSingle.value:
                 response_fix_message = FixMessageNewOrderSingle()
-            elif message_type == MessageType.ExecutionReport.value:
+            elif message_type == FIXMessageType.ExecutionReport.value:
                 response_fix_message = FixMessageExecutionReport()
-            elif message_type == MessageType.ListStatus.value:
+            elif message_type == FIXMessageType.ListStatus.value:
                 response_fix_message = FixMessageListStatus()
-            elif message_type == MessageType.OrderCancelReplaceRequest.value:
+            elif message_type == FIXMessageType.OrderCancelReplaceRequest.value:
                 response_fix_message = FixMessageOrderCancelReplaceRequest()
             response_fix_message.change_parameters(fields)
 
