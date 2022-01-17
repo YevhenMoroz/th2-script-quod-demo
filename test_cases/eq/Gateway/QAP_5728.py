@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -108,6 +108,6 @@ class QAP_5728(TestCase):
         fix_verifier.check_fix_message_fix_standard(fix_response_confirmation)
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_5728()

@@ -50,7 +50,7 @@ class BaseWindow:
         return normal_split_values_arr
 
 
-def decorator_try_except(test_id):
+def try_except(test_id):
     def get_function(decorated_function):
         @wraps(decorated_function)
         def improved_function(*args, **kwargs):

@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixM
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -90,6 +90,6 @@ class QAP_3509(TestCase):
         fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_3509()
