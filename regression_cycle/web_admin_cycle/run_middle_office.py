@@ -17,6 +17,7 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3237 import QAP
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3238 import QAP_3238
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3240 import QAP_3240
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3603 import QAP_3603
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3604 import QAP_3604
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_3605 import QAP_3605
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_4152 import QAP_4152
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_4858 import QAP_4858
@@ -42,15 +43,16 @@ class RunMiddleOffice:
             # QAP_3222(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3223(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3225(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3235(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3235(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3236(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3237(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3238(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3240(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3603(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3604(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3605(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4152(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4858(self.web_driver_container, self.second_lvl_id).run()
+            QAP_4858(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5448(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5665(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5666(self.web_driver_container, self.second_lvl_id).run()

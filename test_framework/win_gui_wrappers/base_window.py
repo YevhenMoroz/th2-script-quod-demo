@@ -36,41 +36,15 @@ class BaseWindow:
 
     @staticmethod
     def split_2lvl_values(split_values: dict):
-        print(split_values)
+        normal_split_values_arr = list()
         for split_key, split_value in split_values.items():
-            normal_split_values_arr = list()
             split_sentence = split_value.split('\n')
             split_sentence.pop(0)
             split_sentence.pop(len(split_sentence) - 1)
             for split_values1 in split_sentence:
-                split_values1 = re.findall('(\w+=\w+)', split_values1)
+                split_values1 = re.findall('(\w+=[^,}]+)', split_values1)
                 split_values1 = split_values1.__str__()
                 split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '')
                 split_normal_dictionarry = dict(item.split("=") for item in split_values1.split(', '))
                 normal_split_values_arr.append(split_normal_dictionarry)
         return normal_split_values_arr
-
-
-def decorator_try_except(test_id):
-    def get_function(decorated_function):
-        @wraps(decorated_function)
-        def improved_function(*args, **kwargs):
-            try:
-                return decorated_function(*args, **kwargs)
-            except:
-                # print("Tuple object - \n", args)
-                # print("Object TestCase - \n", args[0])
-                # print("Object attributes - \n", args[0].__dict__)
-                # print("case_id - ", args[0].__dict__['case_id'])
-                #
-                bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
-                                 status='FAILED',
-                                 parent_id=args[0].__dict__['test_id'])
-            finally:
-                pass
-
-        return improved_function
-
-    return get_function
-
-

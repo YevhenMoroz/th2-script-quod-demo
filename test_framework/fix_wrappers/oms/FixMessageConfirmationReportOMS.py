@@ -47,7 +47,6 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'Instrument': '*',
             'GrossTradeAmt': '*',
             'ConfirmID': '*',
-            'LastMkt': '*',
 
         }
         self.change_parameters(self.base_parameters)
