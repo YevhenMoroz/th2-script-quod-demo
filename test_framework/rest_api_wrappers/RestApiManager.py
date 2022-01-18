@@ -32,8 +32,9 @@ class RestApiManager:
         return response.response_message
 
     @staticmethod
-    def get_response_details(response, expected_entity_name, entity_field_id):
-        response_name = list(dict(response.fields).keys())[0]
+    def get_response_details(response, expected_entity_name, entity_field_id, response_name: str = None):
+        if response_name is None:
+            response_name = list(dict(response.fields).keys())[0]
         for count in range(len(response.fields[response_name].list_value.values)):
             entity = response.fields[response_name].list_value.values[count].message_value.fields[
                 entity_field_id].simple_value
@@ -50,6 +51,7 @@ class RestApiManager:
         result = dict()
         result_list = []
         temp = dict()
+        # region Parsing
         for i in MessageToDict(response)['fields']:                                                 #
             temp = MessageToDict(response)['fields'][i]['listValue']['values']                      # Parsing received results to a format:
         for i in range(len(temp)):                                                                  # {key:{item.key: item.value}}
@@ -78,6 +80,8 @@ class RestApiManager:
                         temp_list.append(temp_dict)
                     temp.update({key: temp_list})
             result.update({i: temp})
+        # endregion
+        # region filter
         if filter_dict is not None:                                                                 #
             result_out_of_filter = dict()                                                           # If dict of filters is present, applying it to result
             filtered_result = dict()                                                                #
@@ -91,9 +95,13 @@ class RestApiManager:
             for key in filtered_result.keys():
                 result_list.append(filtered_result[key])
         else:
+        # endregion
             for key in result.keys():
                 result_list.append(result[key])
-        return result_list
+        if len(result_list) == 1:
+            return result_list[0]
+        else:
+            return result_list
 
     @staticmethod
     def get_response_multiple_details(response, response_name, entity_field_id, field_name):

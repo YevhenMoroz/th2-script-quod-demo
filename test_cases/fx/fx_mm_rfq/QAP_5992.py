@@ -2,6 +2,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import decorator_try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.DataSet import DirectionEnum
@@ -13,7 +14,6 @@ from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX imp
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
 
 
 class QAP_5992(TestCase):

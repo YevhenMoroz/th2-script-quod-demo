@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-
 from test_framework.data_sets.base_data_set import BaseDataSet
+from abc import ABC, abstractmethod
 
 
 class TestCase(ABC):

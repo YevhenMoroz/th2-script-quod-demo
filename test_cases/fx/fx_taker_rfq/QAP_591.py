@@ -56,7 +56,7 @@ def check_quote_request_b(ex_id, base_request, service, case_id, status, quote_s
 
     verifier = Verifier(case_id)
     verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values('Venue', "HSBCR", response[qrb_venue.name])
+    verifier.compare_values('Venue', venue, response[qrb_venue.name])
     verifier.compare_values('Status', status, response[qrb_status.name])
     verifier.compare_values("QuoteStatus", quote_sts, response[qrb_quote_status.name])
     verifier.verify()

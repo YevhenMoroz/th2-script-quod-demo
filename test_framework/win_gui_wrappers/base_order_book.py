@@ -89,7 +89,7 @@ class BaseOrderBook(BaseWindow):
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
                                                   scrolling_operation=self.scrolling_operation.UP,
-                                                  number_of_scrolls=count, base=self.base_request)
+                                                  number_of_scrolls=count, base_request=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
@@ -186,7 +186,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value.replace(',', ''), actual_list[key].replace(',', ''), verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
@@ -202,7 +202,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, value, actual_list[key], verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, filter_list=None):
