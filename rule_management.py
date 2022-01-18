@@ -261,7 +261,7 @@ class RuleManager:
                                                                               ConnectionID(session_alias=session)))
 
     @staticmethod
-    def add_QuodMDAnswerRule(session: str, interval:int):
+    def add_QuodMDAnswerRule(session: str, interval: int):
         return Stubs.simulator.createQuodMDAnswerRule(request=
                                                       TemplateMDAnswerRule(connection_id=
                                                                            ConnectionID(session_alias=session), min=1,
@@ -455,6 +455,16 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # nos_rule = rule_manager.add_NewOrdSingle_Market("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", True, 0, 0)
-    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR", 20)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard('fix-buy-317-standard-test',
+    #                                                                                  'XPAR_CLIENT1', 'XPAR',
+    #                                                                                 float(20))
+    # nos_rule = rule_manager.add_NewOrdSingle_Market_FIXStandard('fix-buy-317-standard-test',
+    #                                                             'CLIENT_YMOROZ_PARIS', 'XPAR', False, 100, 10.0)
+    # nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard("fix-buy-317-standard-test", "XPAR_CLIENT1",
+    #                                                                      "XPAR", float(20))
+    # rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard("fix-buy-317-standard-test", "XPAR_CLIENT1", "XPAR",
+    #                                                               float(20), 100, 1)
+    rule_manager.remove_rules_by_id_range(95,98)
+    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-317-standard-test', 'XPAR_CLIENT1', 'XPAR',
+    #                                                           10)
     rule_manager.print_active_rules()
