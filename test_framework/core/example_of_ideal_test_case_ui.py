@@ -14,7 +14,10 @@ case_to_currency = "USD"
 case_qty = "1000000"
 case_near_tenor = "SPOT"
 sell_side = Side.sell.value
+
+
 # endregion
+
 
 class QAP_Example(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
@@ -25,16 +28,24 @@ class QAP_Example(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def pre_conditions_and_run(self):
+        # region Initialization
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        # endregion
+        # region Variables
         client = self.data_set.get_client_by_name("client_1")
         venue = self.data_set.get_venue_by_name("venue_1")
-        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        # endregion
+        # region Step1
         self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=case_from_currency, to_cur=case_to_currency,
                                                    near_qty=case_qty, near_tenor=case_near_tenor,
                                                    client=client, single_venue=venue)
         self.rfq_tile.send_rfq()
         self.rfq_tile.place_order(sell_side)
-        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        # endregion
+        # region Step2
         self.order_book.check_order_fields_list({ob.sts.value: ExecSts.terminated.value})
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def post_conditions(self):
