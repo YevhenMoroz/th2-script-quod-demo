@@ -2,7 +2,7 @@ import math
 import random
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import randint
 import psycopg2
 from psycopg2 import Error
@@ -114,6 +114,39 @@ def update_quod_settings(setting_value: str):
             connection.close()
             print("PostgreSQL connection is closed")
 
+
+def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
+                     minutes_to_time=None, day: str = None):
+    schedule_dict = {
+        'scheduleFromTime': str((datetime.now() - timedelta(
+            hours=hours_from_time if hours_from_time is not None else 0,
+            minutes=minutes_from_time if minutes_from_time is not None else 0))
+                                .timestamp()).split(".", 1)[0] + '000',
+        'scheduleToTime': str((datetime.now() + timedelta(
+            hours=hours_to_time if hours_to_time is not None else 0,
+            minutes=minutes_to_time if minutes_to_time is not None else 0)).
+                              timestamp()).split(".", 1)[0] + '000',
+        'weekDay': day if day is not None else datetime.now().strftime("%a").upper()
+    }
+    return schedule_dict
+
+
+def generate_schedule_list(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
+                     minutes_to_time=None, days: list = None):
+    schedule_dict_list = []
+    for day in days:
+        schedule_dict_list.append({
+            'scheduleFromTime': str((datetime.now() - timedelta(
+                hours=hours_from_time if hours_from_time is not None else 0,
+                minutes=minutes_from_time if minutes_from_time is not None else 0))
+                                    .timestamp()).split(".", 1)[0] + '000',
+            'scheduleToTime': str((datetime.now() + timedelta(
+                hours=hours_to_time if hours_to_time is not None else 0,
+                minutes=minutes_to_time if minutes_to_time is not None else 0)).
+                                  timestamp()).split(".", 1)[0] + '000',
+            'weekDay': day
+        })
+    return schedule_dict_list
 
 def clear_position():
     """

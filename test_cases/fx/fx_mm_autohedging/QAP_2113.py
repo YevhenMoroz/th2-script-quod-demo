@@ -44,6 +44,8 @@ settle_currency = "USD"
 locale.setlocale(locale.LC_ALL, 'en_us')
 ord_qty = randint(2000000, 4000000)
 new_qty = randint(int(ord_qty), int(ord_qty)+1000000)
+ord_qty= str(ord_qty)
+new_qty = str(new_qty)
 api = Stubs.api_service
 ttl_test = 500
 ttl_default = 120
@@ -132,12 +134,9 @@ def execute(report_id, session_id):
             ob_names.sts.value: sts_names.open.value},
             event_name='Checking that AH triggered')
 
-        #TODO Add order amending
         FXOrderTicket(case_id, session_id).\
             set_order_details(qty=new_qty).\
             amend_order(filter_list=[ob_names.order_id.value, order_info[ob_names.order_id.value]])
-
-        # amend_order(base_details, ar_service, new_qty)
 
         order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
                                                                   ob_names.orig.value, 'AutoHedger']). \
