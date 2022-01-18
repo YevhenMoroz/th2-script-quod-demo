@@ -4,8 +4,10 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 
 from stubs import Stubs
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3747
+from test_cases.fx.fx_taker_esp import QAP_5635, QAP_5537, QAP_5564, QAP_5589, QAP_5591, QAP_5598, QAP_5600
 from test_cases.fx.qs_fx_routine import SendMD, rfq, DepositAndLoan, esp, rfq_swap_1w_2w
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -33,8 +35,8 @@ def test_run():
         #     get_opened_fe(report_id, session_id)
 
         # QAP_2290.execute(report_id, session_id)
-        #
-        # QAP_5635.execute(report_id, session_id)
+
+        # QAP_3747.execute(report_id)
         # wrapper_test.execute(report_id,session_id)
 
 
@@ -94,7 +96,7 @@ def test_run():
         # rm.add_fx_md_to('fix-fh-314-luna')
         # rm.add_fx_md_to('fix-fh-309-kratos')
 
-        # rm.remove_rule_by_id(2)
+        # rm.remove_rule_by_id(4)
         # rm.print_active_rules()
 
         # rm.print_active_rules_sim_test()
