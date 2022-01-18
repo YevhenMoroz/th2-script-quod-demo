@@ -65,7 +65,3 @@ class QAP_Example(TestCase):
         # region Verify that order filled
         self.ord_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value})
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        pass
