@@ -1,7 +1,8 @@
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
 
-from test_framework.fix_wrappers.DataSet import MessageType, DirectionEnum
+from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from stubs import Stubs
 
@@ -22,7 +23,7 @@ class FixVerifier:
 
     def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
                           direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None):
-        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+        if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
 
@@ -33,7 +34,7 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(MessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.NewOrderSingle.value, fix_message.get_parameters(),
                                                         key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -41,7 +42,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
+        elif fix_message.get_message_type() == FIXMessageType.ExecutionReport.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
 
@@ -51,7 +52,7 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(MessageType.ExecutionReport.value, fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.ExecutionReport.value, fix_message.get_parameters(),
                                                         key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -59,7 +60,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.OrderCancelReplaceRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
 
@@ -78,7 +79,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.OrderCancelRequest.value:
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelRequest.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
 
@@ -97,7 +98,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.MarketDataSnapshotFullRefresh.value:
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
 
@@ -116,7 +117,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.Quote.value:
+        elif fix_message.get_message_type() == FIXMessageType.Quote.value:
             if key_parameters is None:
                 key_parameters = ['QuoteReqID']
 
@@ -142,14 +143,14 @@ class FixVerifier:
 
     def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None,
                                        direction: DirectionEnum = DirectionEnum.FromQuod):
-        if fix_message.get_message_type() == MessageType.NewOrderSingle.value:
+        if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
             fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check NewOrderSingle",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.NewOrderSingle.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderSingle.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -157,13 +158,13 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.ExecutionReport.value:
+        elif fix_message.get_message_type() == FIXMessageType.ExecutionReport.value:
             if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
+                key_parameters = ['ClOrdID', 'OrdStatus', 'ExecType']
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check ExecutionReport",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.ExecutionReport.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ExecutionReport.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -171,14 +172,14 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.NewOrderList.value:
+        elif fix_message.get_message_type() == FIXMessageType.NewOrderList.value:
             if key_parameters is None:
                 key_parameters = ['ListID']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.NewOrderList.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -186,14 +187,14 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.ListStatus.value:
+        elif fix_message.get_message_type() == FIXMessageType.ListStatus.value:
             if key_parameters is None:
                 key_parameters = ['ListID', 'ListOrderStatus']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.ListStatus.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ListStatus.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -201,14 +202,14 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.Confirmation.value:
+        elif fix_message.get_message_type() == FIXMessageType.Confirmation.value:
             if key_parameters is None:
                key_parameters = ['ConfirmTransType', 'NoOrders']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check Confirmation",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.Confirmation.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.Confirmation.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -216,14 +217,14 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
-        elif fix_message.get_message_type() == MessageType.AllocationInstruction.value:
+        elif fix_message.get_message_type() == FIXMessageType.AllocationInstruction.value:
             if key_parameters is None:
                 key_parameters = ['AllocType', 'NoOrders']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     "Check AllocationInstruction",
-                    basic_custom_actions.filter_to_grpc_fix_standard(MessageType.AllocationInstruction.value,
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.AllocationInstruction.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,

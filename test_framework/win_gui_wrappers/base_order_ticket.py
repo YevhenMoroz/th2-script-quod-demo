@@ -23,14 +23,13 @@ class BaseOrderTicket(BaseWindow):
         self.re_order_call = None
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
-        self.extract_order_ticket_errors_call = None
 
 
     # endregion
 
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, order_type=None,
-                          tif=None, account=None, display_qty=None, is_sell_side=False):
+                          tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None):
 
         if client is not None:
             self.order_details.set_client(client)
@@ -76,7 +75,7 @@ class BaseOrderTicket(BaseWindow):
             self.new_order_details.set_lookup_instr(lookup)
         self.new_order_details.set_order_details(self.order_details)
         call(self.place_order_call, self.new_order_details.build())
-        self.clear_details([self.new_order_details])
+        self.clear_details([self.new_order_details, self.order_details])
 
     def re_order(self):
         self.new_order_details.set_order_details(self.order_details)

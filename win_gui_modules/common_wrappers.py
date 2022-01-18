@@ -46,6 +46,8 @@ class CommissionsDetails:
     def remove_commissions(self):
         self.request.removeCommissions = True
 
+    def build(self):
+        return self.request
 
 class SpreadAction(Enum):
     WIDEN_SPREAD = common_pb2.WIDEN_SPREAD
@@ -132,9 +134,9 @@ class MoveWindowDetails:
 
 class GridScrollingDetails:
     def __init__(self, scrolling_operation: ScrollingOperation = None, number_of_scrolls: int = None,
-                 base: EmptyRequest = None):
-        if base is not None:
-            self._request = common_pb2.GridScrollingDetails(base=base)
+                 base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = common_pb2.GridScrollingDetails(base=base_request)
         else:
             self._request = common_pb2.GridScrollingDetails()
 

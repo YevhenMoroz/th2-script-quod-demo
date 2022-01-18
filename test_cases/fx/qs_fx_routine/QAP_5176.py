@@ -33,24 +33,26 @@ side = "1"
 leg1_side = "2"
 leg2_side = "1"
 
-
-
-
+# 'Account': "CLIENT1",
 def send_swap_and_filled(case_id):
     quote_req_id = bca.client_orderid(8)
     params = {
         'QuoteReqID': quote_req_id,
         'NoRelatedSym': [{
-            'Account': "CLIENT1",
             'Instrument': {
                 'Symbol': "EUR/USD",
-                'SecurityType': "FXSPOT"
+                'SymbolSfx': "SD/CD",
+                'Product': "4",
+                'SecurityType': "FOR"
             },
+            'Side': "2",
+            'OrderQty': "1000000",
+            'QuoteRequestType': "100",
+            'Price': "1.18198",
             'SettlDate': spo(),
             'SettlType': 0,
             'Currency': "EUR",
             'QuoteType': '1',
-            'OrderQty': "1000000",
             'OrdType': 'D'
         }
         ]
