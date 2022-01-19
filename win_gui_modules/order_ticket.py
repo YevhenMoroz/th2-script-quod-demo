@@ -6,10 +6,11 @@ from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
 from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import (TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy, FXMultilistingStrategy,
-                              FXTWAPStrategy)
+                              FXTWAPStrategy, QuodSyntheticStrategy)
 from .common_wrappers import CommissionsDetails
 
 from .utils import call
@@ -227,6 +228,12 @@ class FXOrderDetails:
         self.order.algoOrderParams.strategyType = strategy_type
         self.order.algoOrderParams.multilistingStrategy.CopyFrom(order_ticket_fx_pb2.FXMultilistingStrategy())
         return FXMultilistingStrategy(self.order.algoOrderParams.multilistingStrategy)
+
+    def add_synthetic_strategy(self) -> QuodSyntheticStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_fx_pb2.FXAlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = "Quod Synthetic OrdType"
+        self.order.algoOrderParams.syntheticOrdType.CopyFrom(order_ticket_fx_pb2.FXSyntheticOrdTypeStrategy())
+        return QuodSyntheticStrategy(self.order.algoOrderParams.syntheticOrdType)
 
     def add_twap_strategy(self, strategy_type: str) -> FXTWAPStrategy:
         self.order.algoOrderParams.CopyFrom(order_ticket_fx_pb2.FXAlgoOrderDetails())
