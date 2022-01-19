@@ -5,30 +5,36 @@ from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
 from win_gui_modules.order_book_wrappers import ReleaseFXOrderDetails, ModifyFXOrderDetails
 from win_gui_modules.order_ticket import FXOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
+from win_gui_modules.utils import call
 
 
 class FXOrderTicket(BaseOrderTicket):
     # region Constructor
-    def __init__(self, case_id, session_id, is_mm: bool = False):
+    def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
         self.order_details = FXOrderDetails()
-        self.new_order_details = NewFxOrderDetails(self.base_request, self.order_details, isMM=is_mm)
+        self.new_order_details = None
         self.release_order_request = ReleaseFXOrderDetails(self.base_request)
+        self.place_order_call = Stubs.win_act_order_ticket_fx.placeFxOrder
         self.open_order_ticket_by_double_click_call = Stubs.win_act_order_book_fx.openOrderTicketByDoubleClick
         self.modify_order_details = ModifyFXOrderDetails(self.base_request)
         self.amend_order_call = Stubs.win_act_order_book_fx.amendOrder
 
     def set_order_details(self, price_large=None, price_small=None, limit=None, qty=None, display_qty=None, client=None,
-                    tif=None, slippage=None, stop_price=None, order_type=None, place: bool = None, close: bool = None,
-                    pending: bool = None, keep_open: bool = None, custom_algo=None, custom_algo_check_box: bool = None,
-                    strategy=None, child_strategy=None, click_pips: int = None, click_qty: int = None,
-                    click_slippage: int = None, click_stop_price: int = None, click_display_qty: int = None, desk=None,
-                    partial_desc: bool = None, disclose_flag: DiscloseFlagEnum = None, add_multilisting_strategy=None,
-                    add_twap_strategy=None):
+                          tif=None, slippage=None, stop_price=None, order_type=None, place: bool = None,
+                          close: bool = False,
+                          pending: bool = None, keep_open: bool = None, custom_algo=None,
+                          custom_algo_check_box: bool = None,
+                          strategy=None, child_strategy=None, click_pips: int = None, click_qty: int = None,
+                          click_slippage: int = None, click_stop_price: int = None, click_display_qty: int = None,
+                          desk=None,
+                          partial_desc: bool = None, disclose_flag: DiscloseFlagEnum = None,
+                          add_multilisting_strategy=None,
+                          add_twap_strategy=None, expire_time: str = None):
         if price_large is not None:
             self.order_details.set_price_large(str(price_large))
         if price_small is not None:
-            self.order_details.set_price_large(str(price_small))
+            self.order_details.set_price_pips(str(price_small))
         if limit is not None:
             self.order_details.set_limit(str(limit))
         if qty is not None:
@@ -41,14 +47,16 @@ class FXOrderTicket(BaseOrderTicket):
             self.order_details.set_tif(tif)
         if slippage is not None:
             self.order_details.set_slippage(str(slippage))
+        if expire_time is not None:
+            self.order_details.set_expire_date(expire_time)
         if stop_price is not None:
             self.order_details.set_stop_price(str(stop_price))
         if order_type is not None:
             self.order_details.set_order_type(order_type)
         if place is not None:
             self.order_details.set_place(place)
-        if close is not None:
-            self.order_details.set_close(close)
+        if close is True:
+            self.order_details.set_close()
         if pending is not None:
             self.order_details.set_pending(pending)
         if keep_open is not None:
@@ -85,5 +93,7 @@ class FXOrderTicket(BaseOrderTicket):
             self.order_details.add_twap_strategy(add_twap_strategy)
         return self
 
-
-
+    def create_order(self, lookup=None, is_mm: bool = False):
+        self.new_order_details = NewFxOrderDetails(self.base_request, self.order_details, isMM=is_mm)
+        call(self.place_order_call, self.new_order_details.build())
+        self.clear_details([self.order_details])
