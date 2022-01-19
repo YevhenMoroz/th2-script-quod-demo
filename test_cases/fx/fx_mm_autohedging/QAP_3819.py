@@ -130,6 +130,10 @@ def send_client_rfq(cp_service, base_tile_data):
     call(cp_service.sendRFQOrder, base_tile_data)
 
 
+def close_dmi_window(base_request, dealer_interventions_service):
+    call(dealer_interventions_service.closeWindow, base_request)
+
+
 def execute(report_id, session_id):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
@@ -150,6 +154,7 @@ def execute(report_id, session_id):
         assign_firs_request(case_base_request, dealer_service)
         estimate_first_request(case_base_request, dealer_service)
         set_hedge_and_send_quote(case_base_request, dealer_service, status_false)
+        close_dmi_window(case_base_request, dealer_service)
         place_client_rfq_order_buy(cp_service, base_tile_data)
         # Step 2
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
@@ -164,6 +169,7 @@ def execute(report_id, session_id):
         assign_firs_request(case_base_request, dealer_service)
         estimate_first_request(case_base_request, dealer_service)
         set_hedge_and_send_quote(case_base_request, dealer_service, status_false)
+        close_dmi_window(case_base_request, dealer_service)
         place_client_rfq_order_sell(cp_service, base_tile_data)
         # Step 4
         actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
@@ -179,6 +185,7 @@ def execute(report_id, session_id):
         estimate_first_request(case_base_request, dealer_service)
         set_hedge_and_send_quote(case_base_request, dealer_service, status_true)
         reject_quote(case_base_request, dealer_service)
+        close_dmi_window(case_base_request, dealer_service)
         close_client_rfq_tile(cp_service, base_tile_data)
     except Exception:
         logging.error("Error execution", exc_info=True)
