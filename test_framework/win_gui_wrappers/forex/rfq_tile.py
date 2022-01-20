@@ -15,6 +15,7 @@ class RFQTile(AggregatesRatesTile):
         self.extraction_request = ExtractRFQTileValues(details=self.base_details)
         self.create_tile_call = self.ar_service.createRFQTile
         self.close_tile_call = self.ar_service.closeRFQTile
+        self.close_window_call = self.ar_service.closeWindow
         self.extract_call = self.ar_service.extractRFQTileValues
         self.set_extraction_id()
 
