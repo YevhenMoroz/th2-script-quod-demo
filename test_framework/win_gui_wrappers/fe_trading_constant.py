@@ -211,3 +211,4 @@ class AllocationsColumns(Enum):
     total_fees = "Total Fees"
     alt_account = "Alt Account"
     account_id = "Account ID"
+    security_acc = "Security Account"
