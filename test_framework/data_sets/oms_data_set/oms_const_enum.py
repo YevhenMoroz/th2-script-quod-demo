@@ -2,29 +2,29 @@ from enum import Enum
 
 
 class OmsFixInstruments(Enum):
-    instrument_1 = dict(
-        Symbol='FR0010436584',
+    instrument_1 = dict(           # without commission/fee
+        Symbol='FR0010436584',      # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
         SecurityDesc='DREAMNEX'
     )
-    instrument_2 = dict(
-        Symbol='ISI1',
+    instrument_2 = dict(            # with commission/fee
+        Symbol='ISI1',               # assigned counterpart_mma_2
         SecurityID='ISI1',
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
     instrument_3 = dict(
-        Symbol='ISI3',
-        SecurityID='ISI3',
+        Symbol='ISI3',              # with commission/fee
+        SecurityID='ISI3',          # assigned counterpart_mma_2
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
-    instrument_4 = dict(
+    instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
         SecurityIDSource='4',
