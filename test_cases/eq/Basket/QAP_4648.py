@@ -4,7 +4,7 @@ import os
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -20,17 +20,16 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP4648(TestCase):
-    def __init__(self, report_id, session_id, file_name):
+class QAP_4648(TestCase):
+    def __init__(self, report_id, session_id):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
     def qap_4648(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.report_id)
+        fix_manager = FixManager(self.ss_connectivity, self.case_id)
         fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
         cl_inbox = OMSClientInbox(self.case_id, self.session_id)
         main_window = BaseMainWindow(self.case_id, self.session_id)
@@ -79,7 +78,7 @@ class QAP4648(TestCase):
         fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    #@try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_4648()
 

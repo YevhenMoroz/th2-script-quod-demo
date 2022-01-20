@@ -12,18 +12,17 @@ from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixM
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP3510(TestCase):
-    def __init__(self, report_id, session_id, file_name):
+class QAP_3510(TestCase):
+    def __init__(self, report_id, session_id):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
         self.dc_connectivity = SessionAliasOMS().dc_connectivity
@@ -93,6 +92,6 @@ class QAP3510(TestCase):
         fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_3510()

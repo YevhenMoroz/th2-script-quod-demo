@@ -1,60 +1,80 @@
 import logging
-import time
+import os
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
+from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from test_framework.core.test_case import TestCase
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+# region TestData
+work_dir = Stubs.custom_config['qf_trading_fe_folder']
+username = Stubs.custom_config['qf_trading_fe_user']
+password = Stubs.custom_config['qf_trading_fe_password']
+route = 'Route via FIXBUYTH2 - component'
+ss_connectivity = SessionAliasOMS().ss_connectivity
+bs_connectivity = SessionAliasOMS().bs_connectivity
 
 
-def execute(report_id,session_id):
-    case_name = "QAP-477"
-    seconds, nanos = timestamps()
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    eq_wrappers.accept_order(lookup,qty,price)
-    # endregions
+# endregion
 
-    # region Check values in OrderBook
-    eq_wrappers.verify_order_value(base_request,case_id,"Sts","Open")
-    # endregion
-    # region DirectLOC split
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        eq_wrappers.direct_loc_order('50', 'Route via FIXBUYTH2 - component used by TH2 simulator and autotests')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-    # endregion
-    # check Child Order status
-    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', str(int(int(qty)/2)), True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecPcy', 'DMA', True)
-    # endregion
+class QAP_477(TestCase):
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        base_window = BaseMainWindow(self.test_id, self.session_id)
+        fix_manager = FixManager(ss_connectivity)
+        fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
+        # endregion
+        # region open FE
+        base_window.open_fe(self.report_id, work_dir, username, password, True)
+        # endregion
+        # region Create CO order
+        fix_manager.send_message_fix_standard(fix_message)
+        order_id_first = order_book.extract_field('Order ID')
+        # endregion
+        # region Accept CO order
+        order_inbox = OMSClientInbox(self.test_id, self.session_id)
+        order_inbox.accept_order('VETO', '100', '10')
+        # endregion
+        # region DirectLoc order
+        account = fix_message.get_parameter('Account')
+        price = fix_message.get_parameter('Price')
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
+                                                                                             'XPAR_' + account, 'XPAR',
+                                                                                             float(price))
+
+            order_book.direct_loc_order_correct(fix_message.get_parameter('OrderQtyData')['OrderQty'], route)
+        except Exception:
+            logger.error("Error execution", exc_info=True)
+        finally:
+            rule_manager.remove_rule(nos_rule)
+        # endregion
+        # region extraction_value
+        result = order_book.extract_2lvl_fields('Child Orders', ['Sts', 'Qty'], rows=[1],
+                                                filter_dict={'Order ID': order_id_first})
+        base_window.compare_values({'Sts': 'Open', 'Qty': '100'}, result[0], 'Equals value')
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        pass

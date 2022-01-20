@@ -1,12 +1,11 @@
 import logging
 
 from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
+from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from stubs import Stubs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -26,14 +25,14 @@ def execute(report_id, session_id):
     password = Stubs.custom_config['qf_trading_fe_password']
     # base_request = get_base_request(session_id, case_id)
     base_window = BaseWindow(case_id, session_id)
-    open_fe(session_id, report_id, work_dir, username, password)
+    base_window.open_fe(session_id, report_id, work_dir, username, password)
     # # create CO order
     oms_order_book = OMSOrderBook(case_id, session_id)
     oms_order_inbox = OMSClientInbox(case_id, session_id)
     oms_order_ticket = OMSOrderTicket(case_id, session_id)
     oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type='Limit',
-                                       tif='Day', is_sell_side=False, instrument='VETO', desk='Desk of Order Book')
-    oms_order_ticket.oms_create_order(lookup='VETO')
+                                       tif='Day', is_sell_side=False, instrument='VETO', recipient='Desk of Order Book')
+    oms_order_ticket.create_order(lookup='VETO')
     oms_order_inbox.accept_order('VETO', qty, price)
     # # oms_order_book.scroll_order_book(1)
     # # endregion

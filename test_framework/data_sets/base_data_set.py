@@ -1,3 +1,6 @@
+from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
+
+
 class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
@@ -8,6 +11,15 @@ class BaseDataSet:
     accounts = None
     washbook_accounts = None
     recipients = None
+    db_listing = None
+    db_instrument = None
+    mic = None  # Market Identifier Code
+    currency = None
+    venue_client_names = None
+    symbols = FxSymbols
+    security_types = FxSecurityTypes
+    settle_types = FxSettleTypes
+    settle_dates = FxSettleDates
 
     def get_instruments(self):
         if self.instruments:
@@ -62,3 +74,66 @@ class BaseDataSet:
         if hasattr(self.recipients, name):
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
+
+    def get_db_listing_by_name(self, name: str):
+        if hasattr(self.db_listing, name):
+            return getattr(self.db_listing, name).value
+        raise ValueError(f"{self.db_listing} not found!")
+
+    def get_db_instrument_by_name(self, name: str):
+        if hasattr(self.db_instrument, name):
+            return getattr(self.db_instrument, name).value
+        raise ValueError(f"{self.db_instrument} not found!")
+
+    def get_mic_by_name(self, name: str):
+        if hasattr(self.mic, name):
+            return getattr(self.mic, name).value
+        raise ValueError(f"{self.mic} not found!")
+
+    def get_currency_by_name(self, name: str):
+        if hasattr(self.currency, name):
+            return getattr(self.currency, name).value
+        raise ValueError(f"{self.currency} not found!")
+
+    def get_venue_client_names_by_name(self, name: str):
+        if hasattr(self.venue_client_names, name):
+            return getattr(self.venue_client_names, name).value
+        raise ValueError(f"{self.venue_client_names} not found!")
+
+    # region FX getters
+    def get_symbol_by_name(self, name: str):
+        """
+        get symbol from FxSymbols
+        example ---> get_symbol_by_name("eur_usd"):
+        """
+        if hasattr(self.symbols, name):
+            return getattr(self.symbols, name).value
+        raise ValueError(f"{self.symbols} not found!")
+
+    def get_security_type_by_name(self, name: str):
+        """
+        get security_type from FxSecurityTypes
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.security_types, name):
+            return getattr(self.security_types, name).value
+        raise ValueError(f"{self.security_types} not found!")
+
+    def get_settle_type_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.settle_types, name):
+            return getattr(self.settle_types, name).value
+        raise ValueError(f"{self.settle_types} not found!")
+
+    def get_settle_date_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_settle_date_by_name("spot"):
+        """
+        if hasattr(self.settle_dates, name):
+            return getattr(self.settle_dates, name).value
+        raise ValueError(f"{self.settle_dates} not found!")
+    # endregion

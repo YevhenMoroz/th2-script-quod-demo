@@ -17,6 +17,9 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_basket_order_details = None
         self.imported_file_mapping_field = None
         self.extract_template_details = None
+        self.extract_child_order_data = None
+        self.extract_child_details = None
+        self.extract_order_data_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -25,8 +28,13 @@ class BaseBasketOrderBook(BaseWindow):
         self.uncomplete_basket_call = None
         self.book_basket_call = None
         self.cancel_basket_call = None
+        self.remove_from_basket_call = None
+        self.extract_basket_data_call = None
+        self.extract_child_order_data_call = None
         self.extract_basket_data_details_call = None
         self.extract_basket_order_details_call = None
+        self.remove_from_basket_details = None
+
 
     # endregion
     # region Common func
@@ -52,10 +60,11 @@ class BaseBasketOrderBook(BaseWindow):
 
     def get_basket_orders_value(self, row_count: int, extract_value, basket_book_filter: dict = None):
         self.extract_basket_data_details.set_default_params(self.base_request)
-        self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
+        if basket_book_filter is not None:
+            self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
         self.extract_basket_data_details.set_column_names(
             [extract_value])  # Set column for child orders which data be extracted
-        extract_child_details = self.extract_basket_order_details.ExtractChildOrderDataDetails(
+        extract_child_details = self.extract_basket_order_details(
             self.extract_basket_data_details.build(),
             row_count)  # argument #2 - row numbers
         result = call(self.extract_basket_order_details_call, extract_child_details.build())
@@ -176,4 +185,9 @@ class BaseBasketOrderBook(BaseWindow):
     def cancel_basket(self, filter_list=None):
         call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
         self.clear_details([self.simple_request])
+    # endregion
+    def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
+        remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
+        call(self.remove_from_basket_call, remove_from_basket_details.build())
+
     # endregion
