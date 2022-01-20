@@ -44,8 +44,9 @@ class RunClientsAccounts:
             # QAP_4277(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4315(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4324(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4285(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4285(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4294(self.web_driver_container, self.second_lvl_id).run()
+            QAP_5601(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts Retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
