@@ -21,8 +21,8 @@ from test_cases.algo.Algo_Redburn.Algo_MOC import CLO_FPC_01, CLO_LIM_01, CLO_VO
     QA_CLO_Perc_for_Close100, QA_CLO_AuctionWouldCap, QA_CLO_AuctionWouldCap100, QA_CLO_AuctionWouldCap0, \
     QA_CLO_AuctionWouldCapMaxWouldPerc, QA_CLO_AuctionWouldCapMaxWouldShares, QA_CLO_WouldAtLast, QA_CLO_WouldAtLast2, \
     QA_CLO_Market, CLO_SCO_01, QA_CLO_AtLast, CLO_SCO_PRM, CLO_SCO_MKT, CLO_SCO_MID, QA_CLO_WouldShares0
-from test_cases.algo.Algo_Redburn.Many_Venues.MOO import MOO_AMS, MOO_ATH, MOO_BRU, MOO_COP, MOO_DUB, MOO_HEL, MOO_LIS, MOO_LSE, MOO_MAD, MOO_MIL, MOO_OSL, MOO_PAR, MOO_SIX, MOO_STO
-from test_cases.algo.Algo_Redburn.Many_Venues.MOC import MOC_AMS, MOC_ATH, MOC_BRU, MOC_COP, MOC_DUB, MOC_HEL, MOC_LIS, MOC_LSE, MOC_MAD, MOC_MIL, MOC_OSL, MOC_PAR, MOC_SIX, MOC_STO
+from test_cases.algo.Algo_Redburn.Many_Venues.MOO import MOO_AMS, MOO_ATH, MOO_BRU, MOO_COP, MOO_DUB, MOO_HEL, MOO_LIS, MOO_LSE, MOO_MAD, MOO_MIL, MOO_OSL, MOO_PAR, MOO_SIX, MOO_STO, MOO_WIE, MOO_XET
+from test_cases.algo.Algo_Redburn.Many_Venues.MOC import MOC_AMS, MOC_ATH, MOC_BRU, MOC_COP, MOC_DUB, MOC_HEL, MOC_LIS, MOC_LSE, MOC_MAD, MOC_MIL, MOC_OSL, MOC_PAR, MOC_SIX, MOC_STO, MOC_WIE, MOC_XET
 from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -83,8 +83,11 @@ def test_run():
         MOO_STO.execute(report_id)
         MOC_STO.execute(report_id)
         #WIENER
+        MOC_WIE.execute(report_id)
+        MOC_WIE.execute(report_id)
         #XETRA
-
+        MOC_XET.execute(report_id)
+        MOC_XET.execute(report_id)
         #endregion
 
         # region Reference
