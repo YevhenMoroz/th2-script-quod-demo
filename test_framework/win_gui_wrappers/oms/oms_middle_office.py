@@ -5,7 +5,7 @@ from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrde
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
-class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
+class OMSMiddleOffice(BaseMiddleOfficeBook):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)

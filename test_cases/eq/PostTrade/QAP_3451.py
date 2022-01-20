@@ -13,7 +13,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import try_except
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.utils import call
 
@@ -35,7 +35,7 @@ class QAP_3451(TestCase):
         fix_manager = FixManager(self.ss_connectivity, self.case_id)
         read_log_verifier = ReadLogVerifier(self.als_email_report, self.case_id)
         main_win = BaseMainWindow(self.case_id, self.session_id)
-        mid_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        mid_office = OMSMiddleOffice(self.case_id, self.session_id)
         client = "MOClient2"
         account1 = "MOClient2_SA1"
         account2 = "MOClient2_SA2"
