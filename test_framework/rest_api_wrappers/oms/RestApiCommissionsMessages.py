@@ -54,7 +54,3 @@ class RestApiCommissionsMessages(RestApiMessages):
             'commissionAmountType': "BRK"
         }
         self.parameters = default_parameters
-
-    def change_params(self, param_modify: dict):
-        for key, value in param_modify.items():
-            self.parameters[key] = value
