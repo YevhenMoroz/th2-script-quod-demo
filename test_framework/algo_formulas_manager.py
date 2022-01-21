@@ -53,5 +53,3 @@ class AlgoFormulasManager:
         first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
         reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
         return reserve
-
-print(AlgoFormulasManager.calc_ticks_offset_plus(20,1,0.05))
