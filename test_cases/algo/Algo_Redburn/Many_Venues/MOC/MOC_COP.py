@@ -22,7 +22,7 @@ def execute(report_id):
         'Side': 1,
         'OrderQty': 10000,
         'TimeInForce': 0,
-        'Price': 2,
+        'Price': 1.05,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
