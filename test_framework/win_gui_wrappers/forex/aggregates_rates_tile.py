@@ -9,6 +9,7 @@ class AggregatesRatesTile(BaseTile):
         self.ar_service = Stubs.win_act_aggregated_rates_service
         self.create_tile_call = None
         self.close_tile_call = None
+        self.close_window_call = None
 
     # region Actions
     def crete_tile(self):
@@ -17,4 +18,7 @@ class AggregatesRatesTile(BaseTile):
 
     def close_tile(self):
         call(self.close_tile_call, self.base_details.build())
+
+    def close_window(self):
+        call(self.close_window_call, self.base_request)
     # endregion

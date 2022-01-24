@@ -49,6 +49,7 @@ class QAP_918(CommonTestCase):
                             error_name)
 
             try:
+                time.sleep(2)
                 self.verify("after click on download PDF button", True,
                             users_wizard.click_download_pdf_entity_button_and_check_pdf(self.desks))
             except IndexError as e:

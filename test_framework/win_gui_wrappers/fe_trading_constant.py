@@ -212,3 +212,7 @@ class AllocationsColumns(Enum):
     alt_account = "Alt Account"
     account_id = "Account ID"
     security_acc = "Security Account"
+
+
+class SecondLevelTabs(Enum):
+    child_tab = 'Child Orders'

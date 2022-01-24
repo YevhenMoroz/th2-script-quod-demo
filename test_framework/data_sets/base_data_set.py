@@ -1,6 +1,3 @@
-from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
-
-
 class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
@@ -20,6 +17,7 @@ class BaseDataSet:
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    lookups = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -137,3 +135,8 @@ class BaseDataSet:
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
     # endregion
+
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")
