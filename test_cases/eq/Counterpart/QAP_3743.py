@@ -98,6 +98,6 @@ class QAP_3743(TestCase):
         fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
-    # @decorator_try_except(test_id=os.path.basename(__file__))
+    # @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_3743()

@@ -31,6 +31,9 @@ class BaseBasketOrderBook(BaseWindow):
         self.remove_from_basket_call = None
         self.extract_basket_data_call = None
         self.extract_child_order_data_call = None
+        self.extract_basket_data_details_call = None
+        self.extract_basket_order_details_call = None
+        self.remove_from_basket_details = None
 
 
     # endregion
@@ -61,7 +64,7 @@ class BaseBasketOrderBook(BaseWindow):
             self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
         self.extract_basket_data_details.set_column_names(
             [extract_value])  # Set column for child orders which data be extracted
-        extract_child_details = self.extract_basket_order_details.ExtractChildOrderDataDetails(
+        extract_child_details = self.extract_basket_order_details(
             self.extract_basket_data_details.build(),
             row_count)  # argument #2 - row numbers
         result = call(self.extract_basket_order_details_call, extract_child_details.build())

@@ -2,7 +2,7 @@ import logging
 import os
 import time
 from rule_management import RuleManager
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -60,6 +60,6 @@ class QAP_481(TestCase):
         order_book.compare_values({'ErrorMessage': 'Error - Qty Percentage should be greater than zero (0)'}, result,
                                   'Verify Error message')
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_481()

@@ -1,5 +1,5 @@
-from test_framework.java_api_wrappers.JavaApiDataSet import QtyPercentageProfile
 from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiConstants import QtyPercentageProfile
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 

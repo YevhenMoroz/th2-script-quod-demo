@@ -21,7 +21,7 @@ def set_order_ticket_options(option_service, base_request, client):
     call(option_service.setOptionOrderTicket, order_ticket_options.build())
 
 
-# @decorator_try_except(test_id=Path(__file__).name[:-3])
+# @try_except(test_id=Path(__file__).name[:-3])
 def execute(report_id, session_id):
     option_service = Stubs.win_act_options
 
