@@ -114,8 +114,12 @@ class BaseMiddleOfficeBook(BaseWindow):
                                   settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
-                                  alloc_account_filter=None, alloc_row_number: int = None):
-        """extract_data can be book or alloc"""
+                                  alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None):
+        """
+            1)extract_data can be book or alloc
+            2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
+           {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
+        """
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
         if is_alloc_amend:
@@ -125,6 +129,10 @@ class BaseMiddleOfficeBook(BaseWindow):
             if alloc_row_number is not None:
                 amend_allocations_details.set_row_number(alloc_row_number)
         ticket_details = self.modify_ticket_details.add_ticket_details()
+        allocations_details = self.modify_ticket_details.add_allocations_details()
+        if arr_allocation_param is not None:
+            for i in arr_allocation_param:
+                allocations_details.add_allocation_param(i)
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
