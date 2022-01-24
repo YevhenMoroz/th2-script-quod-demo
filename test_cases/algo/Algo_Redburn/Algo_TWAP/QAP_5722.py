@@ -173,7 +173,7 @@ def execute(report_id):
 
         #Cancel TWAP child
         cancel_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, gateway_side_buy, status_cancel)
-        fix_verifier_bs.check_fix_message(cancel_twap_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Navigator')
+        fix_verifier_bs.check_fix_message(cancel_twap_1_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel TWAP slice')
 
         cancel_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_cancel)
         cancel_twap_nav_order_params.change_parameters(dict(AvgPx=price_nav, CumQty=navigator_max_slice_size*2))

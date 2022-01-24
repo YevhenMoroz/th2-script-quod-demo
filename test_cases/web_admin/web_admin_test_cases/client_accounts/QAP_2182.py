@@ -17,8 +17,8 @@ class QAP_2182(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+        self.login = "adm03"
+        self.password = "adm03"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.route = "DB RFQ"
         self.client = "CLIENT1"

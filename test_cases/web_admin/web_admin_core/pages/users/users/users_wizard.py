@@ -22,7 +22,7 @@ class UsersWizard(CommonPage):
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
         self.find_by_xpath(UsersConstants.DOWNLOAD_PDF_AT_WIZARD_XPATH).click()
-        time.sleep(2)
+        time.sleep(3)
         return self.is_pdf_contains_value(value)
 
     def get_incorrect_or_missing_values_exception(self):

@@ -4,37 +4,36 @@ from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
 from stubs import Stubs
-from test_framework.java_api_wrappers.JavaApiDataSet import ListingID, InstrID
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 
 
 class OrderSubmitOMS(OrderSubmit):
-    def __init__(self, parameters: dict = None):
+    def __init__(self, data_set, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
-
-    base_parameters = {
-        'SEND_SUBJECT': 'QUOD.ORS.FE',
-        'NewOrderSingleBlock': {
-            'Side': 'Buy',
-            'QtyType': 'Units',
-            'OrdType': 'Market',
-            'TimeInForce': 'Day',
-            'PositionEffect': 'Open',
-            'SettlCurrency': 'EUR',
-            'OrdCapacity': 'Agency',
-            'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
-            'MaxPriceLevels': "1",
-            'ExecutionOnly': 'No',
-            'ClientInstructionsOnly': 'No',
-            'BookingType': 'RegularBooking',
-            'OrdQty': "100",
-            'AccountGroupID': 'CLIENT1',
-            'ExecutionPolicy': 'DMA',
-            'ListingList': {'ListingBlock': [{'ListingID': ListingID.PAR_VETO.value}]},
-            'InstrID': InstrID.PAR.value
+        self.data_set = data_set
+        self.base_parameters = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'NewOrderSingleBlock': {
+                'Side': 'Buy',
+                'QtyType': 'Units',
+                'OrdType': 'Market',
+                'TimeInForce': 'Day',
+                'PositionEffect': 'Open',
+                'SettlCurrency': 'EUR',
+                'OrdCapacity': 'Agency',
+                'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                'MaxPriceLevels': "1",
+                'ExecutionOnly': 'No',
+                'ClientInstructionsOnly': 'No',
+                'BookingType': 'RegularBooking',
+                'OrdQty': "100",
+                'AccountGroupID': 'CLIENT1',
+                'ExecutionPolicy': 'DMA',
+                'ListingList': {'ListingBlock': [{'ListingID': data_set.get_db_listing_by_name("listing_1")}]},
+                'InstrID': data_set.get_db_instrument_by_name("instrument_1")
+            }
         }
-    }
 
     def set_default_care_limit(self, recipient=Stubs.custom_config['qf_trading_fe_user'], role="HSD", desk="1"):
         params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,

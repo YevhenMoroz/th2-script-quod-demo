@@ -14,14 +14,10 @@ class CommonTestCase:
         #     f'{Stubs.custom_config["web_admin_login"]} tests_ ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
         self.test_case_id = bca.create_event(test_case_id, root_id)
 
-    # TODO: resolve issue with missing error message in the except block
+
     def run(self):
-        # try:
         self.__start_driver()
         self.test_context()
-        # except Exception as e:
-        # print("An error was occurred during the test case execution!\n" + str(e))
-        # finally:
         self.__stop_driver()
 
     @abc.abstractmethod

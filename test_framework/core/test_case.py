@@ -1,18 +1,21 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
+from abc import ABC, abstractmethod
 
 
-class TestCase:
+class TestCase(ABC):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         self.session_id = session_id
         self.report_id = report_id
         self.data_set = data_set
 
-    def pre_conditions_and_run(self):
-        raise Exception("You need to override pre_conditions_and_run method in child class test")
+    @abstractmethod
+    def run_pre_conditions_and_steps(self):
+        pass
 
-    def post_conditions(self):
-        raise Exception("You need to override post_conditions method in child class test")
+    @abstractmethod
+    def run_post_conditions(self):
+        pass
 
     def execute(self):
-        self.pre_conditions_and_run()
-        self.post_conditions()
+        self.run_pre_conditions_and_steps()
+        self.run_post_conditions()

@@ -6,7 +6,7 @@ from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
 from test_framework.old_wrappers.eq_wrappers import open_fe
-from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
+from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@decorator_try_except(test_id=os.path.basename(__file__))
+@try_except(test_id=os.path.basename(__file__))
 def execute(report_id, session_id):
     case_name = "QAP-4927"
     case_id = create_event(case_name, report_id)
