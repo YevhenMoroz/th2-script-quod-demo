@@ -23,7 +23,7 @@ class QAP_1014(TestCase):
         super().__init__(report_id, session_id, dataset)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         order_book = OMSOrderBook(self.case_id, self.session_id)
@@ -44,7 +44,7 @@ class QAP_1014(TestCase):
         # region create CO order
         order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
                                        partial_desk=True)
-        order_ticket.create_order(lookup='VETO')
+        order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
         # order_book.scroll_order_book(1)
         order_id_first = order_book.extract_field('Order ID')
         # endregion
@@ -53,12 +53,11 @@ class QAP_1014(TestCase):
 
         base_window2.open_fe(self.report_id, folder=work_dir, user='ishevchenko', password='ishevchenko', is_open=False)
         base_window2.switch_user()
-        print('Wow')
         # endregion
 
         # region accept CO order
         order_inbox = OMSClientInbox(self.case_id, session_id2)
-        order_inbox.accept_order('O', 'M', 'S')
+        order_inbox.accept_order(self.data_set.get_lookup_by_name('lookup_1'), qty, price)
         # endregion
 
         # region verify values
@@ -69,7 +68,6 @@ class QAP_1014(TestCase):
                                     "Event_Name")
         # endregion
 
-    try_except(test_id=os.path.basename(__file__))
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
        pass

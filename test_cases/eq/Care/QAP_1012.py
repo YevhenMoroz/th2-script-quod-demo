@@ -39,18 +39,19 @@ class QAP_1012(TestCase):
         client = self.data_set.get_client_by_name('client_pt_1')
         price = '100'
         qty = '100'
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
         user = Stubs.custom_config['qf_trading_fe_user']
         order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
-                                       partial_desk=False
+                                       partial_desk=True
                                        )
-        order_ticket.create_order(lookup='VETO')
+        order_ticket.create_order(lookup)
         order_book.scroll_order_book(1)
         order_id = order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
 
         # region accept CO order
         order_inbox = OMSClientInbox(self.case_id, self.session_id)
-        order_inbox.accept_order('O', 'M', 'S')
+        order_inbox.accept_order(lookup, qty, price)
         # endregion
 
         # region verify Sts of order
