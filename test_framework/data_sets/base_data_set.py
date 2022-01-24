@@ -20,6 +20,7 @@ class BaseDataSet:
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    route = None
 
     def get_instruments(self):
         if self.instruments:
@@ -136,4 +137,9 @@ class BaseDataSet:
         if hasattr(self.settle_dates, name):
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
+
+    def get_route(self, name:str):
+        if hasattr(self.route, name):
+            return getattr(self.route, name).value
+        raise ValueError(f"{self.route} not found!")
     # endregion
