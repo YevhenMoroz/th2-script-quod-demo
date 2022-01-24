@@ -4,7 +4,7 @@ from stubs import Stubs
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
-class JavaApiSender:
+class JavaApiManager:
     def __init__(self, session_alias, case_id=None):
         self.act = Stubs.act_java_api
         self.__session_alias = session_alias

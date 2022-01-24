@@ -112,3 +112,4 @@ class FixMessage:
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
         return self
+

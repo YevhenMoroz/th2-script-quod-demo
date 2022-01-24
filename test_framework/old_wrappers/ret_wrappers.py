@@ -440,7 +440,7 @@ def verifier(case_id, event_name, expected_value, actual_value):
     verifier.verify()
 
 
-def decorator_try_except(test_id):
+def try_except(test_id):
     def get_function(decorated_function):
         @wraps(decorated_function)
         def improved_function(*args, **kwargs):

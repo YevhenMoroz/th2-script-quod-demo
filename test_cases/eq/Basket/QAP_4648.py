@@ -4,7 +4,7 @@ import os
 from custom import basic_custom_actions as bca
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -78,7 +78,7 @@ class QAP_4648(TestCase):
         fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
 
-    #@decorator_try_except(test_id=os.path.basename(__file__))
+    #@try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_4648()
 

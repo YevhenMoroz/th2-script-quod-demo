@@ -42,7 +42,7 @@ def execute(report_id,session_id):
     desk = Stubs.custom_config['qf_trading_fe_user_desk']
     # endregion
     # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
+    open_fe(session_id, report_id, case_id, work_dir, username, password)
     eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
     # endregion
     # region switch user 1

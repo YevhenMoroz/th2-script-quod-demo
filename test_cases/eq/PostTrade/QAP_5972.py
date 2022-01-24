@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
+from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
@@ -77,7 +77,7 @@ class QAP5972(TestCase):
         oms_middle_office.compare_values({'AvgPx': '1.124'}, price_of_block, 'Check Price of block')
         # # endregion
 
-    # @decorator_try_except(test_id=os.path.basename(__file__))
+    # @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         """
 
