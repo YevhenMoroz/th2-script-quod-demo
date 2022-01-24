@@ -1,118 +1,89 @@
 import logging
+import os
+import time
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from test_framework.old_wrappers import eq_wrappers
+from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import verification, verify_ent
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+bs_connectivity = SessionAliasOMS().bs_connectivity
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1717"
-    seconds, nanos = timestamps()
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "3"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create CO
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client +"_PARIS", "XPAR", 3)
+class QAP_1717(TestCase):
+    def __init__(self, report_id, session_id, dataset):
+        super().__init__(report_id, session_id, dataset)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 3, client, 2, qty, 6, price)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
-    # endregions
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        client = self.data_set.get_client_by_name('client_pt_1')
+        price = '100'
+        qty = '50'
+        qty_percent = '100'
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        user = Stubs.custom_config['qf_trading_fe_user']
+        # endregion
 
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "Limit Price")
+        # region create CO order
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
+                                       partial_desk=True)
+        order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
+        order_id_first = order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
 
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    request = call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open")
-                                                  ]))
-    # endregion
-    # region Direct
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client +"_PARIS", "XPAR", 3)
-        eq_wrappers.direct_order(lookup, qty, price, 100)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        rule_manager.remove_rule(nos_rule)
+        # region accept CO order
+        client_inbox.accept_order(lookup, qty, price)
+        # endregion
 
-    # endregion
-    order_id = eq_wrappers.get_order_id(base_request)
-    # check Child Order status
+        # region Direct CO order
+        try:
+            rule_manager = RuleManager()
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
+                                                                                             self.data_set.get_venue_client_names_by_name(
+                                                                                                 'client_pt_1_venue_1'),
+                                                                                             self.data_set.get_mic_by_name(
+                                                                                                 'mic_1'), float(price)
+                                                                                             )
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(bs_connectivity,
+                                                                           self.data_set.get_venue_client_names_by_name(
+                                                                               'client_pt_1_venue_1'),
+                                                                           self.data_set.get_mic_by_name(
+                                                                               'mic_1'), float(price), int(qty), delay=0
+                                                                           )
+            order_book.direct_order_correct(lookup, qty, price, qty_percent)
+        except Exception as e:
+            logger.error(f'{e} your exception')
+        finally:
+            time.sleep(3)
+            rule_manager.remove_rule(nos_rule)
+            rule_manager.remove_rule(trade_rule)
 
-    order_info_extraction = "getOrderInfo"
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(order_info_extraction)
-    main_order_details.set_filter(["Order ID", eq_wrappers.get_order_id(base_request)])
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[main_order_id])
-    child1_id = ExtractionDetail("subOrder_lvl_1.id", "Order ID")
-    child_order_qty = ExtractionDetail("subOrder_lvl_1.Qty", "Qty")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child1_id])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
+        # endregion
 
-    child_ord_id1 = request[child1_id.name]
-    lvl2_details = OrdersDetails.create()
-    lvl2_details.set_default_params(base_request)
-    algo_split_man_extr_id = "order.direct"
-    lvl2_details.set_extraction_id(algo_split_man_extr_id)
-    lvl2_details.set_filter(["Order ID", child_ord_id1])
+        # region extract values from second level tab
+        # region extraction_value
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id_first])
+        result = order_book.extract_2lvl_fields('Child Orders',
+                                                [OrderBookColumns.sts.value, OrderBookColumns.qty.value], rows=[1])
+        order_book.compare_values({OrderBookColumns.sts.value: 'Open', OrderBookColumns.qty.value: qty}, result[0],
+                                  'Equals values')
+        # endregion
 
-    call(Stubs.win_act_order_book.getChildOrdersDetails, lvl2_details.request())
-    eq_wrappers.verify_order_value(base_request, case_id, 'Order ID', child_ord_id1, True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', qty, True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecPcy', 'DMA', True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Open', True)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        pass

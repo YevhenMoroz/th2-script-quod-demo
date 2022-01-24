@@ -5,7 +5,7 @@ from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
-    direct_moc_request
+    direct_moc_request, direct_order_request
 
 
 class BaseOrderBook(BaseWindow):
@@ -73,6 +73,7 @@ class BaseOrderBook(BaseWindow):
         self.direct_loc_request_correct_call = None
         self.extract_error_from_order_ticket_call = None
         self.split_limit_call = None
+        self.direct_order_correct_call = None
 
     # endregion
 
@@ -190,7 +191,8 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
@@ -206,7 +208,7 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
@@ -553,3 +555,6 @@ class BaseOrderBook(BaseWindow):
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
         self.clear_details([self.extract_error_from_order_ticket])
         return result
+
+    def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
+        call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
