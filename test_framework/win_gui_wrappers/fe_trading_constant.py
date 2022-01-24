@@ -202,12 +202,13 @@ class MiddleOfficeColumns(Enum):
     price = "AvgPx"
     client_id = "Client ID"
     client_comm = "Client Comm"
-    fees = "Total Fees"
+    total_fees = "Total Fees"
 
 
 class AllocationsColumns(Enum):
     client_comm = "Client Comm"
-    qty = "Alloc Qty"
+    alloc_qty = "Alloc Qty"
+    total_fees = "Total Fees"
 
 
 class SecondLevelTabs(Enum):

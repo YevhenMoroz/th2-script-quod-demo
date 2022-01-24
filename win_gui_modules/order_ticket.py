@@ -159,6 +159,9 @@ class FXOrderDetails:
     def set_display_qty(self, qty: str):
         self.order.displayQty = qty
 
+    def set_expire_date(self, expire_date: str):
+        self.order.tifDate = expire_date
+
     def set_client(self, client: str):
         self.order.client = client
 

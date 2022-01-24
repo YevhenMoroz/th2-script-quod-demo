@@ -8,6 +8,7 @@ from test_cases.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_framework.import_layouts.layout_loader import LayoutLoader
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -29,7 +30,7 @@ def test_run(parent_id=None):
         else:
             get_opened_fe(report_id, session_id)
 
-        import_rfq_taker_layout.execute(report_id, session_id)
+        LayoutLoader(report_id, session_id).import_layout("rfq_taker_layout.xml", "fx")
 
         QAP_6.execute(report_id, session_id)
         QAP_564.execute(report_id, session_id)
@@ -56,7 +57,7 @@ def test_run(parent_id=None):
         QAP_589.execute(report_id, session_id)
         QAP_590.execute(report_id, session_id)
         QAP_591.execute(report_id, session_id)
-        QAP_592.execute(report_id, session_id)
+        # QAP_592.execute(report_id, session_id)
         QAP_593.execute(report_id, session_id)
         QAP_594.execute(report_id, session_id)
         QAP_595.execute(report_id, session_id)

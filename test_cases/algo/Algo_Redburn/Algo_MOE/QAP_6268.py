@@ -20,7 +20,7 @@ qty = 100000
 price = 30
 limit_price_offset = 5
 text_reject_limit_price_reference = DataSet.FreeNotesReject.MissLimitPriceReference.value
-tif_atc = DataSet.TimeInForce.AtTheClose.value
+tif_vfa = DataSet.TimeInForce.ValidForAuction.value
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -89,12 +89,12 @@ def execute(report_id):
         fix_verifier_ss.check_fix_message(moe_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_moe_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(moe_order, gateway_side_sell, status_pending)
-        pending_moe_order_params.change_parameter('TimeInForce', tif_atc)
+        pending_moe_order_params.change_parameter('TimeInForce', tif_vfa)
         pending_moe_order_params.remove_parameter('TargetStrategy')
         fix_verifier_ss.check_fix_message(pending_moe_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         reject_moe_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(moe_order, gateway_side_sell, status_reject)
-        reject_moe_order_params.change_parameters(dict(Text=text_reject_limit_price_reference, TimeInForce=tif_atc))
+        reject_moe_order_params.change_parameters(dict(Text=text_reject_limit_price_reference, TimeInForce=tif_vfa))
         reject_moe_order_params.remove_parameter('TargetStrategy')
         fix_verifier_ss.check_fix_message(reject_moe_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport Reject')
         #endregion

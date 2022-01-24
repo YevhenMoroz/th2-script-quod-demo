@@ -13,6 +13,10 @@ class BaseDataSet:
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    symbols = FxSymbols
+    security_types = FxSecurityTypes
+    settle_types = FxSettleTypes
+    settle_dates = FxSettleDates
     lookups = None
 
     def get_instruments(self):
@@ -93,6 +97,44 @@ class BaseDataSet:
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
         raise ValueError(f"{self.venue_client_names} not found!")
+
+    # region FX getters
+    def get_symbol_by_name(self, name: str):
+        """
+        get symbol from FxSymbols
+        example ---> get_symbol_by_name("eur_usd"):
+        """
+        if hasattr(self.symbols, name):
+            return getattr(self.symbols, name).value
+        raise ValueError(f"{self.symbols} not found!")
+
+    def get_security_type_by_name(self, name: str):
+        """
+        get security_type from FxSecurityTypes
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.security_types, name):
+            return getattr(self.security_types, name).value
+        raise ValueError(f"{self.security_types} not found!")
+
+    def get_settle_type_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.settle_types, name):
+            return getattr(self.settle_types, name).value
+        raise ValueError(f"{self.settle_types} not found!")
+
+    def get_settle_date_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_settle_date_by_name("spot"):
+        """
+        if hasattr(self.settle_dates, name):
+            return getattr(self.settle_dates, name).value
+        raise ValueError(f"{self.settle_dates} not found!")
+    # endregion
 
     def get_lookup_by_name(self, name: str):
         if hasattr(self.lookups, name):
