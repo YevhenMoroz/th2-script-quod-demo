@@ -3,7 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.fix_wrappers.DataSet import Instrument, FeesAndCommissions, CommissionProfiles
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
@@ -16,7 +16,6 @@ from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -54,7 +53,7 @@ class QAP_5728(TestCase):
         password = Stubs.custom_config['qf_trading_fe_password']
         fee_commission = RestCommissionsSender(self.wa_connectivity, self.case_id)
         fee_commission.send_default_fee()
-        fee_commission.modify_client_commission_request()
+        fee_commission.modify_client_commission_request(comm_profile=CommissionProfiles.Perc_Qty)
         fee_commission.send_post_request()
         # endregion
 
@@ -95,14 +94,14 @@ class QAP_5728(TestCase):
         fix_response_confirmation = FixMessageConfirmationReportOMS().set_default_confirmation_new(fix_message)
         fix_response_confirmation.change_parameters({'SettlCurrFxRate': '*',
                                                      'NoMiscFees': [{
-                                                         'MiscFeeAmt': '*',
-                                                         'MiscFeeCurr': '*',
-                                                         'MiscFeeType': '*'
+                                                         'MiscFeeAmt': '1.12',
+                                                         'MiscFeeCurr': 'EUR',
+                                                         'MiscFeeType': '4'
                                                      }],
                                                      'CommissionData': {
-                                                         'CommissionType': '*',
-                                                         'Commission': '*',
-                                                         'CommCurrency': '*'
+                                                         'CommissionType': '3',
+                                                         'Commission': '1',
+                                                         'CommCurrency': 'EUR'
                                                      }
                                                      })
         fix_verifier.check_fix_message_fix_standard(fix_response_confirmation)

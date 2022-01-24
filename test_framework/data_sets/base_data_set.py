@@ -13,6 +13,7 @@ class BaseDataSet:
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    lookups = None
 
     def get_instruments(self):
         if self.instruments:
@@ -92,3 +93,8 @@ class BaseDataSet:
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
         raise ValueError(f"{self.venue_client_names} not found!")
+
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")

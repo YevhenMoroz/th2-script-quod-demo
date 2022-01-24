@@ -1,5 +1,4 @@
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
-
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
@@ -27,6 +26,7 @@ class BaseOrderBook(BaseWindow):
         self.rows_numbers_for_grid = None
         self.suspend_order_details = None
         self.disclose_flag_details = None
+        self.switcher = {1: 'disable', 2: 'real_time', 3: 'manual'}
         self.add_to_basket_details = None
         self.create_basket_details = None
         self.reassign_order_details = None
@@ -37,6 +37,8 @@ class BaseOrderBook(BaseWindow):
         self.mass_exec_summary_average_price_detail = None
         self.extraction_error_message_details = None
         self.extract_direct_values = None
+        self.order_ticket_details = None
+        self.extract_error_from_order_ticket = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
@@ -69,6 +71,8 @@ class BaseOrderBook(BaseWindow):
         self.split_booking_call = None
         self.direct_moc_request_correct_call = None
         self.direct_loc_request_correct_call = None
+        self.extract_error_from_order_ticket_call = None
+        self.split_limit_call = None
 
     # endregion
 
@@ -89,7 +93,7 @@ class BaseOrderBook(BaseWindow):
     def scroll_order_book(self, count: int = 1):
         self.scrolling_details.__class__.__init__(self=self.scrolling_details,
                                                   scrolling_operation=self.scrolling_operation.UP,
-                                                  number_of_scrolls=count, base=self.base_request)
+                                                  number_of_scrolls=count, base_request=self.base_request)
         call(self.order_book_grid_scrolling_call, self.scrolling_details.build())
 
     # endregion
@@ -205,10 +209,11 @@ class BaseOrderBook(BaseWindow):
             self.verifier.compare_values(key, value, actual_list[key], verification_method)
         self.verifier.verify()
 
-    def is_menu_item_present(self, menu_item, filter_list=None):
+    def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
         """
         check order context menu and return a bool value
         """
+        self.menu_item_details.set_selected_rows(orders_count)
         self.menu_item_details.set_menu_item(menu_item)
         if filter_list is not None:
             self.menu_item_details.set_filter(filter_list)
@@ -308,9 +313,13 @@ class BaseOrderBook(BaseWindow):
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
         """ type_disclose - can have next values: disable, real_time, manual """
-        self.disclose_flag_details = getattr(self.disclose_flag_details, type_disclose)
-        self.disclose_flag_details.set_row_numbers(row_numbers)
-        call(self.cancel_order_call, self.disclose_flag_details.build())
+        if type_disclose == 'manual':
+            self.disclose_flag_details.manual()
+        if type_disclose == 'real_time':
+            self.disclose_flag_details.real_time()
+        if row_numbers is not None:
+            self.disclose_flag_details.set_row_numbers(row_numbers)
+        call(self.disclose_flag_call, self.disclose_flag_details.build())
         self.clear_details([self.disclose_flag_details])
 
     def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
@@ -333,7 +342,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -349,6 +358,8 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
@@ -385,7 +396,6 @@ class BaseOrderBook(BaseWindow):
                                                                panel_of_extraction
                                                                )
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
-        self.clear_details([self.extraction_panel_details])
         return result
 
     def direct_moc_order_correct(self, qty, route):
@@ -525,3 +535,21 @@ class BaseOrderBook(BaseWindow):
                         direct_moc_request("UnmatchedQty", qty, route, self.extract_direct_values))
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
+
+    def set_order_ticket_details(self, qty, type, price):
+        order_ticket_details = self.order_ticket_details()
+        order_ticket_details.set_quantity(qty)
+        order_ticket_details.set_order_type(type)
+        order_ticket_details.set_limit(price)
+        self.modify_order_details.set_order_details(order_ticket_details)
+        return self.modify_order_details
+
+    def split_limit_order(self):
+        call(self.split_limit_call, self.modify_order_details.build())
+        # self.clear_details([self.modify_order_details])
+
+    def extract_error_message_from_order_ticket(self):
+        self.extract_error_from_order_ticket.extract_error_message()
+        result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
+        self.clear_details([self.extract_error_from_order_ticket])
+        return result
