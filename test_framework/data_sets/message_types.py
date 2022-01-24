@@ -13,6 +13,9 @@ class FIXMessageType(Enum):
     ListStatus = "ListStatus"
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
+    QuoteRequest = "QuoteRequest"
+    NewOrderMultiLeg = "NewOrderMultileg"
+    Quote = "Quote"
 
 
 class ORSMessageType(Enum):
