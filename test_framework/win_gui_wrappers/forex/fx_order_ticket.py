@@ -1,9 +1,10 @@
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
 from win_gui_modules.order_book_wrappers import ReleaseFXOrderDetails, ModifyFXOrderDetails
-from win_gui_modules.order_ticket import FXOrderDetails
+from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
 from win_gui_modules.utils import call
 
@@ -14,11 +15,14 @@ class FXOrderTicket(BaseOrderTicket):
         super().__init__(case_id, session_id)
         self.order_details = FXOrderDetails()
         self.new_order_details = None
+        self.base_tile_data = BaseTileData(base=self.base_request)
+        self.extract_request = ExtractFxOrderTicketValuesRequest(self.base_tile_data)
         self.release_order_request = ReleaseFXOrderDetails(self.base_request)
         self.place_order_call = Stubs.win_act_order_ticket_fx.placeFxOrder
         self.open_order_ticket_by_double_click_call = Stubs.win_act_order_book_fx.openOrderTicketByDoubleClick
         self.modify_order_details = ModifyFXOrderDetails(self.base_request)
         self.amend_order_call = Stubs.win_act_order_book_fx.amendOrder
+        self.extract_call = Stubs.win_act_order_ticket_fx.extractFxOrderTicketValues
 
     def set_order_details(self, price_large=None, price_small=None, limit=None, qty=None, display_qty=None, client=None,
                           tif=None, slippage=None, stop_price=None, order_type=None, place: bool = None,
@@ -97,3 +101,8 @@ class FXOrderTicket(BaseOrderTicket):
         self.new_order_details = NewFxOrderDetails(self.base_request, self.order_details, isMM=is_mm)
         call(self.place_order_call, self.new_order_details.build())
         self.clear_details([self.order_details])
+
+    def extract_order_ticket_errors(self):
+        self.extract_request.get_error_message_text("errorMsg")
+        response = call(self.extract_call, self.extract_request.build())
+        return response["errorMsg"]
