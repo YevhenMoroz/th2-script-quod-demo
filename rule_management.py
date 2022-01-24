@@ -26,7 +26,7 @@ class RuleManager:
     def __init__(self):
         # Default rules IDs. Might be changed
         self.default_rules_id = [1, 3,  5, 6, 7, 8, 9, 10, 11]
-        self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
+        self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32700"))
 
     # Console output list of IDs active rules
     @staticmethod
@@ -38,19 +38,12 @@ class RuleManager:
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
     @staticmethod
-    def print_active_rules_sim_test():
-        test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
-        running_rules = test_core.getRulesInfo(request=Empty()).info
-        print(f'Rules running(test_sim) :{len(running_rules)}')
+    def print_active_rules_equity():
         active_rules = dict()
-        for rule in running_rules:
+        for rule in Stubs.core_equity.getRulesInfo(request=Empty()).info:
             active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
         for key, value in active_rules.items():
-            if '.' in value[0]:
-                print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
-            else:
-                print(f'{key} -> {value[0]} -> {value[1]}')
-        print('=' * 50)
+            print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
     # --- REMOVE RULES SECTION ---
 
@@ -60,6 +53,12 @@ class RuleManager:
             rule_id = rule.id.id
             if rule_id not in self.default_rules_id:
                 Stubs.core.removeRule(RuleID(id=rule_id))
+
+    def remove_all_rules_equity(self):
+        for rule in Stubs.core_equity.getRulesInfo(request=Empty()).info:
+            rule_id = rule.id.id
+            if rule_id not in self.default_rules_id:
+                Stubs.core_equity.removeRule(RuleID(id=rule_id))
 
     # Remove rules that contains <remove_rule_name>
     # <session> - optional parameter
@@ -83,6 +82,9 @@ class RuleManager:
     def remove_rule_by_id(self, rule_id: int):
         if rule_id not in self.default_rules_id:
             Stubs.core.removeRule(RuleID(id=rule_id))
+
+    def remove_rule_by_id_equity(self, rule_id: int):
+        Stubs.core_equity.removeRule(RuleID(id=rule_id))
 
     # Remove rule by ID
     # Example: 101
@@ -136,8 +138,8 @@ class RuleManager:
 
     @staticmethod
     def add_NewOrdSingleExecutionReportTrade_FIXStandard(session: str, account: str, venue: str, price: float,
-                                                        traded_qty: int,
-                                                        delay: int):
+                                                         traded_qty: int,
+                                                         delay: int):
         return Stubs.simulator.createNewOrdSingleExecutionReportTradeFIXStandard(
             request=TemplateNewOrdSingleExecutionReportTradeFIXStandard(
                 connection_id=ConnectionID(session_alias=session),
