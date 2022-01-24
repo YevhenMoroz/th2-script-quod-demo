@@ -47,6 +47,11 @@ class OmsVenues(Enum):
     venue_3 = "JSE"
 
 
+class OmsLookupForVenues(Enum):
+    """USED FOR CREATING ORDER VIA FE"""
+    lookup_1 = 'VETO'
+
+
 class OmsClients(Enum):
     """Base"""
     client_1 = "CLIENT1"
