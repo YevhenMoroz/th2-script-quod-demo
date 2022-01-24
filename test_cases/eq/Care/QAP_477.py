@@ -25,6 +25,10 @@ password = Stubs.custom_config['qf_trading_fe_password']
 route = 'Route via FIXBUYTH2 - component'
 ss_connectivity = SessionAliasOMS().ss_connectivity
 bs_connectivity = SessionAliasOMS().bs_connectivity
+qty = '100'
+limit = '10'
+instr = 'VETO'
+venue = 'XPAR'
 
 
 # endregion
@@ -52,7 +56,7 @@ class QAP_477(TestCase):
         # endregion
         # region Accept CO order
         order_inbox = OMSClientInbox(self.test_id, self.session_id)
-        order_inbox.accept_order('VETO', '100', '10')
+        order_inbox.accept_order(instr, qty, limit)
         # endregion
         # region DirectLoc order
         account = fix_message.get_parameter('Account')
@@ -60,7 +64,7 @@ class QAP_477(TestCase):
         try:
             rule_manager = RuleManager()
             nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
-                                                                                             'XPAR_' + account, 'XPAR',
+                                                                                             'XPAR_' + account, venue,
                                                                                              float(price))
 
             order_book.direct_loc_order_correct(fix_message.get_parameter('OrderQtyData')['OrderQty'], route)
@@ -72,9 +76,11 @@ class QAP_477(TestCase):
         # region extraction_value
         result = order_book.extract_2lvl_fields('Child Orders', ['Sts', 'Qty'], rows=[1],
                                                 filter_dict={'Order ID': order_id_first})
-        base_window.compare_values({'Sts': 'Open', 'Qty': '100'}, result[0], 'Equals value')
+        base_window.compare_values({'Sts': 'Open', 'Qty': qty}, result[0], 'Equals value')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         pass
+
+
