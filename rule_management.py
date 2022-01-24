@@ -25,7 +25,7 @@ class RuleManager:
 
     def __init__(self):
         # Default rules IDs. Might be changed
-        self.default_rules_id = [1, 3,  5, 6, 7, 8, 9, 10, 11]
+        self.default_rules_id = [1, 3,  5, 6, 7, 8, 9, 10, 11, 12, 13]
         self.test_core = core_test.SimStub(grpc.insecure_channel("10.0.22.22:32314"))
 
     # Console output list of IDs active rules
@@ -266,6 +266,12 @@ class RuleManager:
                                                       TemplateMDAnswerRule(connection_id=
                                                                            ConnectionID(session_alias=session), min=1,
                                                                            max=2, interval=30))
+
+    @staticmethod
+    def add_QuodMDUpdateFXRule(session: str, interval:int):
+        return Stubs.simulator.createQuodMDUpdateFXRule(request=
+                                                      TemplateMDAnswerRule(connection_id=
+                                                                           ConnectionID(session_alias=session),interval=30))
 
     @staticmethod
     def add_SingleExec(party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str, mask_as_connectivity: str):

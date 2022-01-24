@@ -61,7 +61,7 @@ def test_run():
         # QAP_2290.execute(report_id,session_id)
         # QAP_2322.execute(report_id, session_id)
 
-        DepositAndLoan.execute(report_id)
+        # DepositAndLoan.execute(report_id)
         # QAP_2251.execute(report_id)
 
 
@@ -92,12 +92,15 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        # rm = RuleManager()
+        rm = RuleManager()
         # rm.add_fx_md_to('fix-fh-314-luna')
+
+        # Rule to update Quod with MD which we store in map  QuodMDUpdateFXRule
+        rm.add_QuodMDUpdateFXRule('fix-fh-314-luna', 2)
         # rm.add_fx_md_to('fix-fh-309-kratos')
 
-        # rm.remove_rule_by_id(4)
-        # rm.print_active_rules()
+        rm.remove_rule_by_id(16)
+        rm.print_active_rules()
 
         # rm.print_active_rules_sim_test()
 
