@@ -6,7 +6,7 @@ from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 
 from test_cases.web_admin.web_admin_core.pages.root.root_constants import RootConstants
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from test_framework.web_trading.web_trading_core.pages.login.login_constatns import LoginConstants
+from test_framework.web_trading.web_trading_core.pages.login.login_constants import LoginConstants
 
 
 class LoginPage(CommonPage):
