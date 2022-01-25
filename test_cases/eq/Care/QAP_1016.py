@@ -25,7 +25,7 @@ password = Stubs.custom_config['qf_trading_fe_password']
 order_type = "Limit"
 qty = "900"
 price = "20"
-instrument = "VETO"
+
 
 
 class QAP_1016(TestCase):
@@ -52,10 +52,11 @@ class QAP_1016(TestCase):
         # region Create CO
 
         client = self.data_set.get_client_by_name('client_co_1')
+        lookup = self.data_set.get_client_by_name('lookup_1')
 
         order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif='Day', is_sell_side=False, instrument=instrument, recipient=username)
-        order_ticket.create_order(lookup=instrument)
+                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=username)
+        order_ticket.create_order(lookup=lookup)
         order_id = order_book.extract_field('Order ID')
 
         # endregion
