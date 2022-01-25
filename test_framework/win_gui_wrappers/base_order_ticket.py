@@ -13,6 +13,7 @@ class BaseOrderTicket(BaseWindow):
         self.extract_order_ticket_values_request = None
         self.extract_order_ticket_errors_request = None
         self.order_ticket_extracted_value = None
+        self.base_tile_data = None
         self.place_order_call = None
         self.amend_order_call = None
         self.split_limit_order_call = None
@@ -23,7 +24,6 @@ class BaseOrderTicket(BaseWindow):
         self.re_order_call = None
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
-
 
     # endregion
 

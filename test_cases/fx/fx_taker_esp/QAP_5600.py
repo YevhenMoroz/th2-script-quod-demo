@@ -130,6 +130,7 @@ def execute(report_id, session_id):
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \
             set_params_from_new_order_single(new_order_sor, gateway_side_sell, status)
+        execution_report_filled_1.change_parameter("LastQty", "1000000")
         time.sleep(5)
         fix_verifier.check_fix_message(fix_message=execution_report_filled_1,
                                        direction=DirectionEnum.FromQuod)

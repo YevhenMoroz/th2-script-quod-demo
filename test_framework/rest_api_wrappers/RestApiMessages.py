@@ -1,6 +1,3 @@
-from test_framework.fix_wrappers.DataSet import FeesAndCommissions, CommissionClients, CommissionAccounts
-
-
 class RestApiMessages:
 
     def __init__(self, message_type: str = ''):
@@ -274,3 +271,6 @@ class RestApiMessages:
             default_parameters["accountID"] = account.value
         self.parameters = params if params is not None else default_parameters
         return self
+
+    def find_all_client_tier_instr(self):
+        self.message_type = 'FindAllClientTierInstrSymbol'

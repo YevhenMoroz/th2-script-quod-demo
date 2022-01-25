@@ -1,4 +1,4 @@
-from regression_cycle import algo_regression
+from regression_cycle import algo_regression, fx_regression
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -20,7 +20,7 @@ def regression_run(name, algo=True, equity=True, forex=True, retail=True, web_ad
         # if equity:
         #     eq_regression.test_run(report_id)
         # if forex:
-        #     fx_regression.test_run(report_id)
+            fx_regression.test_run(report_id)
         # if retail:
         #     retail_regression.test_run(report_id)
         # if web_admin:

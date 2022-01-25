@@ -7,7 +7,7 @@ from stubs import Stubs
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -69,6 +69,6 @@ class Qap5858(TestCase):
         oms_order_book.compare_values(expected_result, actually_result, event_name='Check values')
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_5858()

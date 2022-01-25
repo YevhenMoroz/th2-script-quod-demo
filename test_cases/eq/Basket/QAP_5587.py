@@ -16,7 +16,7 @@ from test_framework.fix_wrappers.oms.FixMessageListStatusOMS import FixMessageLi
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from win_gui_modules.common_wrappers import GridScrollingDetails
@@ -115,6 +115,6 @@ class QAP_5587(TestCase):
         fix_verifier.check_fix_message_fix_standard(exec_report4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
 
-    #@decorator_try_except(test_id=os.path.basename(__file__))
+    #@try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_5587()

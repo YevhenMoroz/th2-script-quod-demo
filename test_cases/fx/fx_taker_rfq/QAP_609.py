@@ -203,7 +203,7 @@ def execute(report_id, session_id):
         check_quote_request_b("QRB_5", case_base_request, ar_service, case_id,
                               quote_sts_new, quote_quote_sts_accepted, case_venue_citir)
         # Step 7
-
+        cancel_rfq(base_rfq_details_0, ar_service)
         # Step 8
         place_order_tob(base_rfq_details_1, ar_service)
         quote_citir = check_order_book("OB_4", case_base_request, case_instr_type_ndf, ob_act, case_id,
