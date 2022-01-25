@@ -145,6 +145,23 @@ class ExecSts(Enum):
     terminated = 'Terminated'
 
 
+class Status(Enum):
+    terminated = 'Terminated'
+    expired = 'Expired'
+    new = 'New'
+    rejected = 'Rejected'
+    frozen = 'Frozen'
+
+
+class QuoteStatus(Enum):
+    accepted = 'Accepted'
+    terminated = 'Terminated'
+    expired = 'Expired'
+    canceled = 'Canceled'
+    filled = 'Filled'
+    removed = 'RemovedFromMarket'
+
+
 class Side(Enum):
     sell = "Sell"
     buy = "Buy"
