@@ -154,6 +154,13 @@ class FxSymbols(Enum):
     symbol_ndf_synth_1 = "SGD/RUB"  # cross thought USD
 
 
+class FxCurrencies(Enum):
+    currency_eur = "EUR"
+    currency_usd = "USD"
+    currency_gbp = "GBP"
+    currency_php = "PHP"
+
+
 class FxRecipients(Enum):
     recipient_desk_1 = ""
     recipient_desk_2 = ""
