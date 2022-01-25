@@ -4,6 +4,7 @@ import time
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
+from test_framework.core.test_case import TestCase
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -12,7 +13,6 @@ from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMess
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.ors_messages.TradeEntryRequest import TradeEntryRequest
-from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -20,7 +20,6 @@ from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-data_set = OmsDataSet()
 
 ss_connectivity = SessionAliasOMS().ss_connectivity
 bs_connectivity = SessionAliasOMS().bs_connectivity
@@ -28,7 +27,7 @@ java_api_connectivity = SessionAliasOMS().ja_connectivity
 
 
 class QAP_1751(TestCase):
-    def __init__(self, report_id, session_id, data_set=None):
+    def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
@@ -51,8 +50,8 @@ class QAP_1751(TestCase):
         fix_execution_message_second.change_parameter('ExecType', 'B')
         fix_execution_message_second.change_parameter('OrdStatus', 'B')
         client = fix_message.get_parameter('Account')
-        client_for_rule =  data_set.get_venue_client_names_by_name('client_1_venue_1')
-        exec_destination = data_set.get_mic_by_name('mic1')
+        client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        exec_destination = self.data_set.get_mic_by_name('mic1')
         price = fix_message.get_parameter('Price')
         lookup = fix_message.get_parameter('Instrument')
         price_first_split = '5'
@@ -76,7 +75,7 @@ class QAP_1751(TestCase):
         order_book.set_filter([OrderBookColumns.order_id.value, order_id])
         try:
             nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
-                                                                                                client_for_rule,
+                                                                                             client_for_rule,
                                                                                              exec_destination,
                                                                                              float(price_first_split))
             trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(bs_connectivity,
@@ -98,7 +97,7 @@ class QAP_1751(TestCase):
 
         # region  execution summary order
         trade_entry_request_message = TradeEntryRequest()
-        trade_entry_request_message.set_default(data_set, order_id, price_first_split
+        trade_entry_request_message.set_default(self.data_set, order_id, price_first_split
                                                 , first_split_qty)
         trade_entry_request_message.get_parameter('TradeEntryRequestBlock')['TradeEntryTransType'] = 'CAL'
         execid = order_book.extract_2lvl_fields(SecondLevelTabs.execution_tab.value, ['ExecID'], rows=[1],
@@ -149,7 +148,7 @@ class QAP_1751(TestCase):
 
         # region  execution summary order
         trade_entry_request_message_second = TradeEntryRequest()
-        trade_entry_request_message_second.set_default(data_set, order_id, price
+        trade_entry_request_message_second.set_default(self.data_set, order_id, price
                                                        , second_split_qty)
         trade_entry_request_message_second.get_parameter('TradeEntryRequestBlock')['TradeEntryTransType'] = 'CAL'
         execid_second = order_book.extract_2lvl_fields(SecondLevelTabs.execution_tab.value, ['ExecID'], rows=[3],
