@@ -12,7 +12,6 @@ class TestCase(ABC):
     def run_pre_conditions_and_steps(self):
         pass
 
-    @abstractmethod
     def run_post_conditions(self):
         pass
 

@@ -16,7 +16,9 @@ class BaseMainWindow(BaseWindow):
 
     # endregion
 
-    def open_fe(self, report_id, folder, user, password, is_open=True):
+    def open_fe(self, report_id, folder=Stubs.custom_config['qf_trading_fe_folder'],
+                user=Stubs.custom_config['qf_trading_fe_user'], password=Stubs.custom_config['qf_trading_fe_password'],
+                is_open=True):
         init_event = create_event("Initialization", parent_id=report_id)
         set_base(self.session_id, self.case_id)
         if not is_open:

@@ -60,15 +60,12 @@ def try_except(test_id):
         def improved_function(*args, **kwargs):
             try:
                 return decorated_function(*args, **kwargs)
-            except:
-                # print("Tuple object - \n", args)
-                # print("Object TestCase - \n", args[0])
-                # print("Object attributes - \n", args[0].__dict__)
-                # print("case_id - ", args[0].__dict__['case_id'])
-                #
+            except Exception as error:
+                print(args[0])
                 bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
                                  status='FAILED',
-                                 parent_id=args[0].__dict__['test_id'])
+                                 parent_id=args[0].__dict__['case_id'])
+                print(f"Test {test_id} was failed")
             finally:
                 pass
 

@@ -5,7 +5,7 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
-    instruments = None
+    fix_instruments = None
     venues = None
     clients = None
     accounts = None
@@ -21,10 +21,11 @@ class BaseDataSet:
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
     route = None
+    lookups = None
 
     def get_instruments(self):
-        if self.instruments:
-            return self.instruments.__members__
+        if self.fix_instruments:
+            return self.fix_instruments.__members__
 
     def get_venues(self):
         if self.venues:
@@ -46,10 +47,10 @@ class BaseDataSet:
         if self.recipients:
             return self.recipients.__members__
 
-    def get_instrument_by_name(self, name: str):
-        if hasattr(self.instruments, name):
-            return getattr(self.instruments, name).value
-        raise ValueError(f"{self.instruments} not found!")
+    def get_fix_instrument_by_name(self, name: str):
+        if hasattr(self.fix_instruments, name):
+            return getattr(self.fix_instruments, name).value
+        raise ValueError(f"{self.fix_instruments} not found!")
 
     def get_venue_by_name(self, name: str):
         if hasattr(self.venues, name):
@@ -143,3 +144,8 @@ class BaseDataSet:
             return getattr(self.route, name).value
         raise ValueError(f"{self.route} not found!")
     # endregion
+
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")
