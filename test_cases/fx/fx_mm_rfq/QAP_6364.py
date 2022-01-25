@@ -10,7 +10,7 @@ from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.core.try_exept_decorator import decorator_try_except
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb
 
@@ -29,10 +29,10 @@ class QAP_6364(TestCase):
         self.md_req_id = None
         self.quote_request_book = None
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def pre_conditions_and_run(self):
-        account = self.data_set.get_client_by_name("client_3")
-        symbol = self.data_set.get_symbol_by_name("gbp_usd")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        account = self.data_set.get_client_by_name("client_mm_3")
+        symbol = self.data_set.get_symbol_by_name("symbol_2")
         security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         qty = random_qty(1, 2, 7)
         instrument = {
@@ -55,8 +55,8 @@ class QAP_6364(TestCase):
         self.quote_request_book.set_filter([qrb.qty.value, qty]).check_quote_book_fields_list(
             {qrb.automatic_quoting.value: "No"})
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def post_conditions(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # Step 3
         self.market_data_snap_shot.set_market_data_fwd()
         self.market_data_snap_shot.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
