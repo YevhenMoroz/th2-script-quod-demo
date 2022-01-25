@@ -178,5 +178,5 @@ class OmsCurrency(Enum):
     currency_4 = "USD"
     currency_5 = "UAH"
 
-class OmsRoute(Enum):
+class OmsRoutes(Enum):
     route_1= "Route via FIXBUYTH2 - component"

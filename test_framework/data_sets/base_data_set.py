@@ -20,7 +20,7 @@ class BaseDataSet:
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
-    route = None
+    routes = None
     lookups = None
 
     def get_instruments(self):
@@ -140,9 +140,9 @@ class BaseDataSet:
         raise ValueError(f"{self.settle_dates} not found!")
 
     def get_route(self, name:str):
-        if hasattr(self.route, name):
-            return getattr(self.route, name).value
-        raise ValueError(f"{self.route} not found!")
+        if hasattr(self.routes, name):
+            return getattr(self.routes, name).value
+        raise ValueError(f"{self.routes} not found!")
     # endregion
 
     def get_lookup_by_name(self, name: str):
