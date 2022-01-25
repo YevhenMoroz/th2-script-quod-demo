@@ -2,7 +2,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import decorator_try_except
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.DataSet import DirectionEnum
@@ -26,12 +26,12 @@ class QAP_5992(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def pre_conditions_and_run(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         gateway_side_sell = DataSet.GatewaySide.Sell
         status = DataSet.Status.Fill
-        account = self.data_set.get_client_by_name("client_2")
-        symbol = self.data_set.get_symbol_by_name("gbp_usd")
+        account = self.data_set.get_client_by_name("client_mm_2")
+        symbol = self.data_set.get_symbol_by_name("symbol_2")
         security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
@@ -59,7 +59,3 @@ class QAP_5992(TestCase):
                                                                                                   gateway_side_sell,
                                                                                                   status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
-
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def post_conditions(self):
-        pass
