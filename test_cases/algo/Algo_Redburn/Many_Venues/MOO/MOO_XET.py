@@ -20,7 +20,7 @@ def execute(report_id):
         'ClOrdID': (os.path.basename(__file__)[:-3]) + '_' + bca.client_orderid(9),
         'HandlInst': 2,
         'Side': 1,
-        'OrderQty': 10000,
+        'OrderQty': 10000000,
         'TimeInForce': 0,
         'Price': 92,
         'OrdType': 2,
