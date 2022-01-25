@@ -7,13 +7,25 @@ from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 class RestApiClientTierInstrSymbolMessages(RestApiMessages):
 
     def find_all_client_tier_instrument(self):
-        self.clear_params()
+        self.clear_message_params()
         self.message_type = 'FindAllClientTierInstrSymbol'
         return self
 
-    def modify_client_tier_instrument(self, symbol, account='CLIENT1'):
+    def modify_client_tier_instrument(self):
+        self.message_type = 'ModifyClientTierInstrSymbol'
+        return self
+
+    def create_client_tier_instrument(self):
+        self.message_type = 'CreateClientTierInstrSymbol'
+        return self
+
+    def disable_client_tier_instrument(self):
+        self.message_type = 'DisableClientTierInstrSymbol'
+        return self
+
+    def set_defeault_params(self):
         self.parameters = {
-            "instrSymbol": str(symbol),
+            "instrSymbol": '',
             "quoteTTL": 120,
             "clientTierID": '',
             "alive": "true",
@@ -29,7 +41,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
                     "indiceUpperQty": 2,
                     "publishPrices": "true"
                 }
-                ],
+            ],
             "clientTierInstrSymbolTenor": [
                 {
                     "tenor": "SPO",
@@ -64,7 +76,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             ],
             "clientTierInstrSymbolActGrp": [
                 {
-                    "accountGroupID": account
+                    "accountGroupID": ''
                 }
             ],
             "clientTierInstrSymbolFwdVenue": [
@@ -75,20 +87,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
                     "venueID": "HSBCR"
                 }
             ],
-            }
-        self.message_type = 'ModifyClientTierInstrSymbol'
-        return self
-
-    def create_client_tier_instrument(self):
-        self.parameters = {
-            }
-        self.message_type = 'CreateClientTierInstrSymbol'
-        return self
-
-    def disable_client_tier_instrument(self):
-        self.parameters = {
-            }
-        self.message_type = 'DisableClientTierInstrSymbol'
+        }
         return self
 
     def add_sweepable_qty(self, sweepable_qty, default_bid_margin=None, default_offer_margin=None):

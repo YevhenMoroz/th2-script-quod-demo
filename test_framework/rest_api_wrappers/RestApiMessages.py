@@ -16,19 +16,34 @@ class RestApiMessages:
     def get_parameter(self, parameter_name: str):
         return self.parameters[parameter_name]
 
-    def update_parameters(self, parameters: dict):  #
-        self.parameters.update(parameters)          # Universal method fro adding new parameters
-        return self                                 # and also updating existing
+    def update_parameters(self, parameters: dict):
+        """
+        Universal method for adding and/or updating parameters
+        Can take a list of parameters: {'ParameterName_1':'Value',...,'ParameterName_N':'Value'}
+        """
+        self.parameters.update(parameters)
+        return self
 
     def set_params(self, params: dict):
+        """
+        Method for setting ready dictionary as message parameters
+        """
         self.parameters = params
         return self
 
     def remove_parameter(self, parameter_name: str):
+        """
+        Method for removing parameter from message
+        """
         self.parameters.pop(parameter_name)
         return self
 
     def add_value_to_component(self, component_name, values_list):
+        """
+        Method for adding new values to the component of message
+        value_list = [{'ParameterName_1':'Value'},...,{'ParameterName_N':'Value'}] or
+        value_list = {'ParameterName_1':'Value'} for single value
+        """
         if type(values_list) is list:
             for item in values_list:
                 self.parameters[str(component_name)].append(item)
@@ -36,16 +51,28 @@ class RestApiMessages:
             self.parameters[str(component_name)].append(values_list)
         return self
 
-    def update_value_in_component(self, component_name, key_in_component, new_value, condition=None):
+    def update_value_in_component(self, component_name, key_in_component, new_value, condition: dict = None):
+        """
+        Method for updating value in component with optional condition
+        Condition format: condition = {'ConditionKey': 'ConditionValue'}
+        In case of multiple values in condition:
+        condition = {'ConditionKey_1': 'ConditionValue',...,'ConditionKey_N': 'ConditionValue'}
+        Will implement OR logic, e.g. it will update value if any of the conditions is TRUE
+        """
         for item in self.parameters[component_name]:
             if key_in_component in item.keys():
                 if condition is None:
-                    item.update({key_in_component, new_value})
-                elif item[key_in_component] == condition:
-                    item.update({key_in_component, new_value})
+                    item.update({key_in_component: new_value})
+                else:
+                    for key in condition.keys():
+                        if item[key] == condition[key]:
+                            item.update({key_in_component: new_value})
         return self
 
     def remove_value_from_component(self, component_name, condition_dict: dict):
+        """
+        Method for removing values from component
+        """
         for i in len(self.parameters[component_name]):
             for key, value in condition_dict.items():
                 if self.parameters[component_name][i][key] == value:
@@ -53,15 +80,47 @@ class RestApiMessages:
                     break
 
     def clear_component(self, component_name):
+        """
+        Method for clearing the whole component
+        """
         if component_name in self.parameters.keys():
             self.parameters[component_name] = []
         return self
 
     def add_component(self, component_name):
+        """
+        Method for setting up new empty component in message
+        """
         self.parameters.update({component_name: []})
 
-    def clear_params(self):
+    def clear_message_params(self):
+        """
+        Method for clearing parameters of message
+        """
         self.parameters = None
+        return self
+
+    def clear_message_type(self):
+        """
+        Method for clearing type of message
+        """
+        self.message_type = None
+        return self
+
+    def clear_message(self):
+        """
+        Method for clearing message
+        """
+        self.message_type = None
+        self.parameters = None
+        return self
+
+    def change_params(self, param_modify: dict):
+        """
+        Method for changing parameters in message
+        """
+        for key, value in param_modify.items():
+            self.parameters[key] = value
         return self
 
     def modify_user_to_site(self):
@@ -194,11 +253,6 @@ class RestApiMessages:
             'miscFeeType': 'EXC'
         }
         self.parameters = default_parameters
-        return self
-
-    def change_params(self, param_modify: dict):
-        for key, value in param_modify.items():
-            self.parameters[key] = value
         return self
 
     def modify_client_commission_request(self, params=None, client: CommissionClients = None,
