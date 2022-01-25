@@ -5,7 +5,7 @@ from win_gui_modules.utils import call
 
 
 
-class BaseMiddleOfficeBook(BaseWindow):
+class BaseMiddleOffice(BaseWindow):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
