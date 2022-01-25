@@ -1,5 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts
+from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
+    FxClientTiers, FxSymbols
 
 
 class FxDataSet(BaseDataSet):
@@ -10,4 +11,6 @@ class FxDataSet(BaseDataSet):
     venues = FxVenues
     clients = FxClients
     accounts = FxAccounts
+    client_tiers = FxClientTiers
+    symbols = FxSymbols
 
