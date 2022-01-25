@@ -17,6 +17,7 @@ class BaseDataSet:
     currency = None
     venue_client_names = None
     client_tiers = None
+    days_of_week = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
@@ -105,7 +106,7 @@ class BaseDataSet:
     def get_symbol_by_name(self, name: str):
         """
         get symbol from FxSymbols
-        example ---> get_symbol_by_name("eur_usd"):
+        example ---> get_symbol_by_name("symbol_1"):
         """
         if hasattr(self.symbols, name):
             return getattr(self.symbols, name).value
@@ -146,4 +147,13 @@ class BaseDataSet:
         if hasattr(self.client_tiers, name):
             return getattr(self.client_tiers, name).value
         raise ValueError(f"{self.client_tiers} not found!")
+
+    def get_day_of_wee_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_day_of_wee_by_name("monday"):
+        """
+        if hasattr(self.days_of_week, name):
+            return getattr(self.days_of_week, name).value
+        raise ValueError(f"{self.days_of_week} not found!")
     # endregion
