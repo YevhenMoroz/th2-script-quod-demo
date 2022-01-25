@@ -9,8 +9,8 @@ timeouts = True
 
 def execute(report_id):
     instrument = {
-        'Symbol': 'DE000A0KRJ36-XETR',
-        'SecurityID': 'DE000A0KRJ36',
+        'Symbol': 'DE0005190003-XETR',
+        'SecurityID': 'DE0005190003',
         'SecurityIDSource': '4',
         'SecurityExchange': 'XETR'
     }
@@ -22,7 +22,7 @@ def execute(report_id):
         'Side': 1,
         'OrderQty': 10000,
         'TimeInForce': 0,
-        'Price': 0.01,
+        'Price': 92,
         'OrdType': 2,
         'TransactTime': datetime.utcnow().isoformat(),
         'Instrument': instrument,
