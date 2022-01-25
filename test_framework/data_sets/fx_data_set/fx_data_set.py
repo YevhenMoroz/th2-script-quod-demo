@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
-    FxClientTiers, FxSymbols, DaysOfWeek
+    FxClientTiers, FxSymbols, DaysOfWeek, FxCurrencies
 
 
 class FxDataSet(BaseDataSet):
@@ -14,4 +14,5 @@ class FxDataSet(BaseDataSet):
     client_tiers = FxClientTiers
     symbols = FxSymbols
     days_of_week = DaysOfWeek
+    currency = FxCurrencies
 
