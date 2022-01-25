@@ -10,9 +10,7 @@ class WebDriverContainer:
 
     DOWNLOAD_DIRECTORY_NAME = "downloads"
 
-    INITIAL_URL = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
-
-    def __init__(self):
+    def __init__(self, url="http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"):
         current_dir = os.getcwd()
         self.download_dir = os.path.join(current_dir, self.DOWNLOAD_DIRECTORY_NAME)
 
@@ -21,16 +19,16 @@ class WebDriverContainer:
         self.chrome_options = webdriver.ChromeOptions()
         self.chrome_options.add_experimental_option('prefs', {'plugins.always_open_pdf_externally': True,
                                                               'download.default_directory': self.download_dir})
-
+        self.initial_url = url
         self.chrome_driver = None
         self.wait_driver = None
 
-    def start_driver(self, initial_url: str = INITIAL_URL):
+    def start_driver(self):
         self.chrome_driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
         self.wait_driver = WebDriverWait(self.chrome_driver, self.TIMEOUT_DELAY)
 
         self.chrome_driver.maximize_window()
-        self.chrome_driver.get(initial_url)
+        self.chrome_driver.get(self.initial_url)
 
     def get_driver(self):
         return self.chrome_driver

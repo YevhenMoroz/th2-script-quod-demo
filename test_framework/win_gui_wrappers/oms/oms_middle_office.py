@@ -1,11 +1,11 @@
-from test_framework.win_gui_wrappers.base_middle_office_book import BaseMiddleOfficeBook
+from test_framework.win_gui_wrappers.base_middle_office import BaseMiddleOffice
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
-class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
+class OMSMiddleOffice(BaseMiddleOffice):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)

@@ -209,3 +209,10 @@ class AllocationsColumns(Enum):
     client_comm = "Client Comm"
     alloc_qty = "Alloc Qty"
     total_fees = "Total Fees"
+    alt_account = "Alt Account"
+    account_id = "Account ID"
+    security_acc = "Security Account"
+
+
+class SecondLevelTabs(Enum):
+    child_tab = 'Child Orders'
