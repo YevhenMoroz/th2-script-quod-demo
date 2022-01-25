@@ -18,6 +18,7 @@ class BaseDataSet:
     venue_client_names = None
     client_tiers = None
     days_of_week = None
+    tenors = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
@@ -148,12 +149,21 @@ class BaseDataSet:
             return getattr(self.client_tiers, name).value
         raise ValueError(f"{self.client_tiers} not found!")
 
-    def get_day_of_wee_by_name(self, name: str):
+    def get_day_of_week_by_name(self, name: str):
         """
         get settle type by name from FxSettleTypes
-        example ---> get_day_of_wee_by_name("monday"):
+        example ---> get_day_of_week_by_name("monday"):
         """
         if hasattr(self.days_of_week, name):
             return getattr(self.days_of_week, name).value
         raise ValueError(f"{self.days_of_week} not found!")
+
+    def get_tenor_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors, name):
+            return getattr(self.tenors, name).value
+        raise ValueError(f"{self.tenors} not found!")
     # endregion

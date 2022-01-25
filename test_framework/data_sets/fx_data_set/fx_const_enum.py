@@ -116,6 +116,20 @@ class FxSettleTypes(Enum):
     # TODO add more settle types
 
 
+class FxTenors(Enum):
+    tenor_spot = "Spot"
+    tenor_tod = "Today"
+    tenor_tom = "Tom"
+    tenor_1w = "1W"
+    tenor_2w = "2W"
+    tenor_3w = "3W"
+    tenor_1m = "1M"
+    tenor_2m = "2M"
+    tenor_1y = "1Y"
+    tenor_2y = "2Y"
+
+
+
 class FxSettleDates(Enum):
     today = today()
     tomorrow = tom()
@@ -152,6 +166,13 @@ class FxSymbols(Enum):
     symbol_synth_5 = "GBP/CAD"  # cross thought USD
 
     symbol_ndf_synth_1 = "SGD/RUB"  # cross thought USD
+
+
+class FxCurrencies(Enum):
+    currency_eur = "EUR"
+    currency_usd = "USD"
+    currency_gbp = "GBP"
+    currency_php = "PHP"
 
 
 class FxRecipients(Enum):
