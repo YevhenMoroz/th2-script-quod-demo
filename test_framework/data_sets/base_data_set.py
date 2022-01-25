@@ -16,6 +16,7 @@ class BaseDataSet:
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    client_tiers = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
@@ -136,4 +137,13 @@ class BaseDataSet:
         if hasattr(self.settle_dates, name):
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
+
+    def get_client_tier_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_client_tier_by_name("client_tier_1"):
+        """
+        if hasattr(self.client_tiers, name):
+            return getattr(self.client_tiers, name).value
+        raise ValueError(f"{self.client_tiers} not found!")
     # endregion
