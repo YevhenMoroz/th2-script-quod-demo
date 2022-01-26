@@ -1,9 +1,13 @@
 import logging
+import time
 from datetime import datetime
+
+from MyFiles.MyTest import MyTest
 from custom import basic_custom_actions as bca
+from rule_management import RuleManager
 from stubs import Stubs
 from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
-from test_cases.fx.fx_taker_rfq import QAP_6
+from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -26,14 +30,21 @@ def test_run():
     data_set = FxDataSet()
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
+        #
         QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        # QAP_6.QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
-        # MyTest.execute(report_id, session_id)
+        # rm = RuleManager()
+        # rm.print_active_rules()
+        # rm.print_active_rules_sim_test()
+        # time.sleep(5)
+        # send_rfq.execute(report_id)
+
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
