@@ -44,11 +44,6 @@ class QAP_1016(TestCase):
         order_book = OMSOrderBook(self.test_id, self.session_id)
         order_ticket  = OMSOrderTicket(self.test_id, self.session_id)
         # endregion
-        # region Open FE
-
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
-
-        # endregion
         # region Create CO
 
         client = self.data_set.get_client_by_name('client_co_1')
