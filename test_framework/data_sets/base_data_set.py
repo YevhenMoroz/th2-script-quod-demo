@@ -13,10 +13,10 @@ class BaseDataSet:
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
-    symbols = FxSymbols
-    security_types = FxSecurityTypes
-    settle_types = FxSettleTypes
-    settle_dates = FxSettleDates
+    symbols = None
+    security_types = None
+    settle_types = None
+    settle_dates = None
     lookups = None
 
     def get_instruments(self):
