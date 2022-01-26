@@ -34,7 +34,7 @@ class QAP_6153(TestCase):
         self.init_rest_message = RestApiClientTierInstrSymbolMessages()
         self.no_related_symbols = [{
             'Instrument': {
-                'Symbol': 'EUR/USD',
+                'Symbol': 'NOK/SEK',
                 'SecurityType': 'FXSPOT',
                 'Product': '4', },
             'SettlType': '0', }]
