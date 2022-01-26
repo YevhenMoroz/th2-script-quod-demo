@@ -50,7 +50,7 @@ class QAP_477(TestCase):
         ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
         base_window = BaseMainWindow(self.test_id, self.session_id)
         fix_manager = FixManager(ss_connectivity)
-        fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit()
+        fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         # endregion
         # region open FE
         base_window.open_fe(self.report_id, work_dir, username, password, True)
