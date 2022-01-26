@@ -67,7 +67,7 @@ class InstrType(Enum):
 
 
 class QuoteBookColumns(Enum):
-    quote_id = 'ID'
+    quote_id = 'Id'
     account_group = 'AccountGroup'
     security_id = 'SecurityID'
     owner = 'Owner'
