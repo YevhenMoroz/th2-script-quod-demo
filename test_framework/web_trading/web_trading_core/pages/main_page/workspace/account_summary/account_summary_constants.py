@@ -1,6 +1,7 @@
 #region Account Summary
 ACCOUNT_SUMMARY_BUTTON = '//*[@class="container"]//button[8]'
 MAXIMIZE_BUTTON_XPATH = ''
+MINIMIZE_BUTTON_XPATH = ''
 CLOSE_BUTTON_XPATH = ''
 COPY_PANAL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
 FIELD_CHOOSER_XPATH = '//*[@name="btnColumnHiding"]'
@@ -23,12 +24,13 @@ FILTER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@id="igx-grid-0_-1_0_4"]//div[contain
 BUYING_POWER_COLUMN_XPATH = '//*[@id="igx-grid-0_-1_0_5"]//span[text()=" Buying Power "]'
 SORT_BUYING_POWER_COLUMN_XPATH = '//*[@id="igx-grid-0_-1_0_5"]//igx-icon[contains(@class, "sort-icon")]'
 FILTER_BUYING_POWER_COLUMN_XPATH = '//*[@id="igx-grid-0_-1_0_5"]//div[contains(@class, "igx-excel-filter__icon")]'
-USER_CASH_ACCOUNT_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_cashAccount"]'
-USER_CURRENCY_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_currency"]'
-USER_AVAILABLE_CASH_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_availableCash"]'
-USER_TRANSACTION_HOLDING_AMOUNT_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_holdingAmount"]'
-USER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_reservedAmount"]'
-USER_BUYING_POWER_COLUMN_XPATH = '//*[@aria-describedby="igx-grid-0_buyingPower"]'
+USER_CASH_ACCOUNT_COLUMN_XPATH = '//*[@id="igx-grid-2_0_0"]'
+USER_CURRENCY_COLUMN_XPATH = '//*[@id="igx-grid-2_0_1"]'
+USER_AVAILABLE_CASH_COLUMN_XPATH = '///*[@id="igx-grid-2_0_2"]'
+USER_TRANSACTION_HOLDING_AMOUNT_COLUMN_XPATH = '//*[@id="igx-grid-2_0_3"]'
+USER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@id="igx-grid-2_0_4"]'
+USER_BUYING_POWER_COLUMN_XPATH = '//*[@id="igx-grid-2_0_5"]'
+HORIZONTAL_SCROLL_XPATH = '//*[@class="igx-vhelper--horizontal ng-star-inserted"]/div[@class="igx-vhelper__placeholder-content"]'
 #endregion
 
 #region Field chooser
@@ -56,4 +58,13 @@ CLOSE_AF_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__inputs ng-star-in
 CONDITION_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__buttons ng-star-inserted")]//button[1]'
 AND_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__buttons ng-star-inserted")]//button[2]'
 OR_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__buttons ng-star-inserted")]//button[3]'
+#endregion
+
+#region Filter
+PIN_BUTTON_XPATH = '//*[@aria-label="Pin column"]'
+HIDE_BUTTON_XPATH = '//*[@aria-label="Hide column"]'
+SEARCH_FIELD_XPATH = '//*[@class="igx-excel-filter__menu-main"]/igx-input-group'
+SELECT_ALL_CHECKBOX_XPATH = '//*[@id="igx-checkbox-155-input"]'
+CANCEL_XPATH = '//*[@class="igx-excel-filter__cancel"]'
+APPLY_XPATH = '//*[@class="igx-excel-filter__apply"]'
 #endregion
