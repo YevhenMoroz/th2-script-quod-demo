@@ -35,7 +35,7 @@ class OMSOrderTicket(BaseOrderTicket):
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
-                          capacity=None, recipient=None, partial_desk=False,
+                          capacity=None, settl_date=None, recipient=None, partial_desk=False,
                           disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
                           alloc_details: dict = None):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
@@ -49,6 +49,8 @@ class OMSOrderTicket(BaseOrderTicket):
             self.order_details.set_washbook(washbook)
         if capacity is not None:
             self.order_details.set_capacity(capacity)
+        if settl_date is not None:
+            self.order_details.set_settl_date(settl_date)
         if recipient is not None:
             self.order_details.set_care_order(recipient, partial_desk, disclose_flag)
         if alloc_details:
