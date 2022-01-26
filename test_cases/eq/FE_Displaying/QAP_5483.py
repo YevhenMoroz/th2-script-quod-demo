@@ -5,6 +5,7 @@ import time
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -27,7 +28,7 @@ class QAP_5483(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         order_book = OMSOrderBook(self.case_id, self.session_id)
