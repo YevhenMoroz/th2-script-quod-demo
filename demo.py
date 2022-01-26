@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('skomanova ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('test ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     session_id = set_session_id()
     data_set = OmsDataSet()
