@@ -7,6 +7,7 @@ from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_
 
 class OrderBookColumns(Enum):
     order_id = "Order ID"
+    quote_id = "QuoteID"
     cl_ord_id = "ClOrdID"
     security_id = "Security Id"
     symbol = "Symbol"
