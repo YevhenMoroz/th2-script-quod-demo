@@ -40,7 +40,7 @@ class QAP_1751(TestCase):
         first_split_qty = '20000'
         second_split_qty = '10000'
         type_of_split_order = 'Limit'
-        fix_message = FixMessageNewOrderSingleOMS()
+        fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         fix_message.set_default_care_limit()
         fix_message.change_parameter('OrderQtyData', {'OrderQty': new_qty})
         fix_execution_message = FixMessageExecutionReportOMS(fix_message.get_parameters())
