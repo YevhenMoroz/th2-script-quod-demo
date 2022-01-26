@@ -1,4 +1,5 @@
 #region Account Summary
+ACCOUNT_SUMMARY_BUTTON = '//*[@class="container"]//button[8]'
 MAXIMIZE_BUTTON_XPATH = ''
 CLOSE_BUTTON_XPATH = ''
 COPY_PANAL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
