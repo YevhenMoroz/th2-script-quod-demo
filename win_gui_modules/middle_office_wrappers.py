@@ -491,6 +491,28 @@ class AllocationBlockExtractionDetails:
 
 
 class MassApproveDetails:
+    def __init__(self, base_request: EmptyRequest = None, rows_numbers: list = None):
+        if base_request is not None:
+            self._request = middle_office_pb2.MassApproveDetails(base=base_request)
+        else:
+            self._request = middle_office_pb2.MassApproveDetails()
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self._request.rowsNumbers.append(number)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_rows_number(self, rows_numbers: list):
+        for number in rows_numbers:
+            self._request.rowsNumbers.append(number)
+
+    def build(self):
+        return self._request
+
+
+class MassApproveDetails:
     def __init__(self, base: EmptyRequest = None, rows_numbers: list = None):
         if base is not None:
             self._request = middle_office_pb2.MassApproveDetails(base=base)
