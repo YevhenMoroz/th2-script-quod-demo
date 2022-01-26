@@ -73,6 +73,7 @@ class OmsClients(Enum):
     client_pt_5 = "MOClient5"  # CS = Manual, BA = Auto, Other Manual
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
+    client_pt_8 = "MOClient7"
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -123,6 +124,7 @@ class OmsAccounts(Enum):
     client_pt_5_acc_2 = "MOClient5_SA2"
     client_pt_6_acc_1 = "MOClient6_SA1"
     client_pt_6_acc_2 = "MOClient6_SA2"
+    client_pt_7_acc_1 = "MOClient7_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Commissions"""

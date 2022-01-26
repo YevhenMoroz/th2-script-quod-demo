@@ -1,7 +1,8 @@
 from test_framework.win_gui_wrappers.base_middle_office import BaseMiddleOffice
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
-    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails
+    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails, \
+    MassApproveDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
@@ -27,4 +28,8 @@ class OMSMiddleOffice(BaseMiddleOffice):
         self.extract_middle_office_blotter_values_call = Stubs.win_act_middle_office_service.extractMiddleOfficeBlotterValues
         self.extract_allocation_details = AllocationsExtractionDetails(self.base_request)
         self.extract_allocations_table_data = Stubs.win_act_middle_office_service.extractAllocationsTableData
+        self.mass_approve_details = MassApproveDetails(self.base_request)
+        self.mass_approve_call = Stubs.win_act_middle_office_service.massApprove
+        self.mass_allocate_call = Stubs.win_act_middle_office_service.massAllocate
+        self.unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
         # endregion

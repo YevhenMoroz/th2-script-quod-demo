@@ -203,6 +203,11 @@ class MiddleOfficeColumns(Enum):
     client_id = "Client ID"
     client_comm = "Client Comm"
     total_fees = "Total Fees"
+    sts = 'Status'
+    match_status = 'Match Status'
+    summary_status = 'Summary Status'
+    order_id = 'Order ID'
+    block_id = 'Block ID'
 
 
 class AllocationsColumns(Enum):
@@ -212,6 +217,8 @@ class AllocationsColumns(Enum):
     alt_account = "Alt Account"
     account_id = "Account ID"
     security_acc = "Security Account"
+    sts = 'Status'
+    match_status = 'Match Status'
 
 
 class SecondLevelTabs(Enum):

@@ -179,9 +179,9 @@ class SimpleRequest:
 
 
 class RowsNumbersForGrid:
-    def __init__(self, base: EmptyRequest = None, rows_numbers: list = None):
-        if base is not None:
-            self._request = common_pb2.RowsNumbersForGrid(base=base)
+    def __init__(self, base_request: EmptyRequest = None, rows_numbers: list = None):
+        if base_request is not None:
+            self._request = common_pb2.RowsNumbersForGrid(base=base_request)
         else:
             self._request = common_pb2.RowsNumbersForGrid()
 
