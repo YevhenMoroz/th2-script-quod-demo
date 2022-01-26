@@ -1,25 +1,26 @@
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageConfirmationReport import FixMessageConfirmationReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
 class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
-    def __init__(self, parameters: dict = None):
+    def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
 
-    base_parameters = {
-        'AllocQty': '100',
-        'AllocAccount': 'MOClient_SA1',
-        'ConfirmType': '2',
-        'Side': '1',
-        'AvgPx': '20',
-        'QuodTradeQualifier': 'AL',
-        'Currency': 'EUR',
-        'NetMoney': '2000',
-        'MatchStatus': '0',
-        'ConfirmStatus': '1',
-        'GrossTradeAmt': '2000',
-    }
+        self.base_parameters = {
+            'AllocQty': '100',
+            'AllocAccount': data_set.get_account_by_name("client_co_1_acc_1"),
+            'ConfirmType': '2',
+            'Side': '1',
+            'AvgPx': '20',
+            'QuodTradeQualifier': 'AL',
+            'Currency': data_set.get_currency_by_name("currency_1"),
+            'NetMoney': '2000',
+            'MatchStatus': '0',
+            'ConfirmStatus': '1',
+            'GrossTradeAmt': '2000',
+        }
 
     def set_default_confirmation_new(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {

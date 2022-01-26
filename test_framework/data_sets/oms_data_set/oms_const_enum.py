@@ -74,7 +74,7 @@ class OmsClients(Enum):
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     """Care"""
-    client_co_1 = "CLIENT_FIX_CARE"
+    client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
     """Commissions"""
     client_com_1 = "CLIENT_COMM_1"
