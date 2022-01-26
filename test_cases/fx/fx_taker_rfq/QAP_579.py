@@ -2,7 +2,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
@@ -16,7 +16,7 @@ class QAP_579(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
-        self.order_book = BaseOrderBook(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         self.quote_book = FXQuoteBook(self.test_id, self.session_id)
 
@@ -48,7 +48,7 @@ class QAP_579(TestCase):
              qrb.status.value: st.new.value,
              qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
 
-        self.rfq_tile.place_order(side=Side.sell.value)
+        self.rfq_tile.place_order(side=Side.buy.value)
 
         self.order_book.set_filter(
             [ob.symbol.value, eur_usd_symbol, ob.qty.value, qty]).check_order_fields_list(
@@ -57,7 +57,8 @@ class QAP_579(TestCase):
              ob.exec_sts.value: ExecSts.filled.value,
              ob.qty.value: qty}, 'Checking currency value in order book')
 
-        quote_id = self.order_book.extract_field(ob.quote_id.value)
+        quote_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, qty]).\
+            extract_field(ob.quote_id.value)
 
         self.quote_book.set_filter(
             [qb.security_id.value, eur_usd_symbol, qb.quote_id.value, quote_id]).check_quote_book_fields_list(
