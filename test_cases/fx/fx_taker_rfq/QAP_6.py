@@ -33,7 +33,6 @@ class QAP_6(TestCase):
                                                    near_qty=case_qty, near_tenor=case_near_tenor,
                                                    client=case_client, single_venue=case_venue)
         self.rfq_tile.send_rfq()
-
         self.quote_request_book.set_filter(
             [qrb.instrument_symbol.value, case_usd_php_symbol]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: case_eur_usd_symbol,
@@ -47,7 +46,6 @@ class QAP_6(TestCase):
                                                    near_qty=case_qty, near_tenor=case_near_tenor,
                                                    client=case_client, single_venue=case_venue)
         self.rfq_tile.send_rfq()
-
         self.quote_request_book.set_filter(
             [qrb.instrument_symbol.value, case_usd_php_symbol]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: case_usd_php_symbol,
