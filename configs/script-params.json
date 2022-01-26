@@ -1,5 +1,5 @@
 {
-  "target_server_win": "quod_17q",
+  "target_server_win": "rnenakho",
   "target_server_web": "web",
 
   "web_admin_url": "",
@@ -7,8 +7,8 @@
   "web_admin_password": "",
 
   "qf_trading_fe_folder": "",
-  "qf_trading_fe_user": "OOS",
-  "qf_trading_fe_password": "OOS",
+  "qf_trading_fe_user": "QA2",
+  "qf_trading_fe_password": "QA2",
 
   "qf_trading_fe_folder_1": "",
   "qf_trading_fe_user_1": "",
