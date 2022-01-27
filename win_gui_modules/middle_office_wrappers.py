@@ -376,6 +376,9 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def build(self):
         return self._request
 
+    def clear_filter(self):
+        self._request.clearMiddleOfficeFilter = True
+
 
 class AllocationsExtractionDetails:
     def __init__(self, base_request: EmptyRequest = None):
