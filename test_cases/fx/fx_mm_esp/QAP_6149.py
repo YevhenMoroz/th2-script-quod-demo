@@ -67,8 +67,11 @@ class QAP_6149(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
-        # endregion
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         time.sleep(10)
+        # endregion
+
         # region Step 2
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_5')}). \
@@ -78,7 +81,10 @@ class QAP_6149(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
+
         # region Step 3
         self.fix_md.set_market_data().\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fx_fh_connectivity, 'FX')
@@ -92,7 +98,10 @@ class QAP_6149(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
+
         # region Step 4
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_5')}). \
@@ -102,6 +111,8 @@ class QAP_6149(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
 
 
