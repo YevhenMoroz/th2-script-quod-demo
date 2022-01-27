@@ -1,5 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts
+from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
+    FxClientTiers, FxSymbols, DaysOfWeek, FxCurrencies, FxTenors
 
 
 class FxDataSet(BaseDataSet):
@@ -10,13 +11,9 @@ class FxDataSet(BaseDataSet):
     venues = FxVenues
     clients = FxClients
     accounts = FxAccounts
+    client_tiers = FxClientTiers
+    symbols = FxSymbols
+    days_of_week = DaysOfWeek
+    currency = FxCurrencies
+    tenors = FxTenors
 
-
-    def get_security_type_by_name(self, name: str):
-        """
-        get security_type from FxSecurityTypes
-        example ---> get_security_type_by_name("fxspot"):
-        """
-        if hasattr(self.security_types, name):
-            return getattr(self.security_types, name).value
-        raise ValueError(f"{self.security_types} not found!")

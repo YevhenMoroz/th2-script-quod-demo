@@ -9,7 +9,7 @@ from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
+from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -49,6 +49,6 @@ class QAP_4627(TestCase):
         ord_book.compare_values(exp_val, act_val, "Check Held")
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_4627()

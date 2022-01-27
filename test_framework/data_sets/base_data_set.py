@@ -11,6 +11,14 @@ class BaseDataSet:
     accounts = None
     washbook_accounts = None
     recipients = None
+    db_listing = None
+    db_instrument = None
+    mic = None  # Market Identifier Code
+    currency = None
+    venue_client_names = None
+    client_tiers = None
+    days_of_week = None
+    tenors = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
@@ -70,11 +78,36 @@ class BaseDataSet:
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
 
+    def get_db_listing_by_name(self, name: str):
+        if hasattr(self.db_listing, name):
+            return getattr(self.db_listing, name).value
+        raise ValueError(f"{self.db_listing} not found!")
+
+    def get_db_instrument_by_name(self, name: str):
+        if hasattr(self.db_instrument, name):
+            return getattr(self.db_instrument, name).value
+        raise ValueError(f"{self.db_instrument} not found!")
+
+    def get_mic_by_name(self, name: str):
+        if hasattr(self.mic, name):
+            return getattr(self.mic, name).value
+        raise ValueError(f"{self.mic} not found!")
+
+    def get_currency_by_name(self, name: str):
+        if hasattr(self.currency, name):
+            return getattr(self.currency, name).value
+        raise ValueError(f"{self.currency} not found!")
+
+    def get_venue_client_names_by_name(self, name: str):
+        if hasattr(self.venue_client_names, name):
+            return getattr(self.venue_client_names, name).value
+        raise ValueError(f"{self.venue_client_names} not found!")
+
     # region FX getters
     def get_symbol_by_name(self, name: str):
         """
         get symbol from FxSymbols
-        example ---> get_symbol_by_name("eur_usd"):
+        example ---> get_symbol_by_name("symbol_1"):
         """
         if hasattr(self.symbols, name):
             return getattr(self.symbols, name).value
@@ -106,4 +139,31 @@ class BaseDataSet:
         if hasattr(self.settle_dates, name):
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
+
+    def get_client_tier_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_client_tier_by_name("client_tier_1"):
+        """
+        if hasattr(self.client_tiers, name):
+            return getattr(self.client_tiers, name).value
+        raise ValueError(f"{self.client_tiers} not found!")
+
+    def get_day_of_week_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_day_of_week_by_name("monday"):
+        """
+        if hasattr(self.days_of_week, name):
+            return getattr(self.days_of_week, name).value
+        raise ValueError(f"{self.days_of_week} not found!")
+
+    def get_tenor_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypes
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors, name):
+            return getattr(self.tenors, name).value
+        raise ValueError(f"{self.tenors} not found!")
     # endregion

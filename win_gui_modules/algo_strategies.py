@@ -93,7 +93,6 @@ class FXMultilistingStrategy:
         self.strategy.forbiddenVenues = forbidden_venues
 
 
-
 class FXTWAPStrategy:
 
     def __init__(self, strategy: order_ticket_fx_pb2.FXTWAPStrategyParams()):
@@ -129,3 +128,9 @@ class FXTWAPStrategy:
         self.strategy.reserveQuantity = reserve_quantity
 
 
+class QuodSyntheticStrategy:
+    def __init__(self, strategy: order_ticket_fx_pb2.FXSyntheticOrdTypeStrategy()):
+        self.strategy = strategy
+
+    def set_trigger_type(self, trig_type: str):
+        self.strategy.triggerType = trig_type

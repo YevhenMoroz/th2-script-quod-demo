@@ -11,7 +11,7 @@ from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import BaseWindow, decorator_try_except
+from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -94,6 +94,6 @@ class QAP_5684(TestCase):
 
         # endregion
 
-    @decorator_try_except(test_id=os.path.basename(__file__))
+    @try_except(test_id=os.path.basename(__file__))
     def execute(self):
         self.qap_5684()
