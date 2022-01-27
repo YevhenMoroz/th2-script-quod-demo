@@ -50,6 +50,8 @@ class QAP_566(TestCase):
         self.verifier.verify()
         # endregion
 
+        self.rfq_tile.close_tile()
+
     @try_except
     def run_post_conditions(self):
         self.rfq_tile.close_tile()
