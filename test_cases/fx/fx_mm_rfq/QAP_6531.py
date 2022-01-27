@@ -1,4 +1,3 @@
-import locale
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -36,16 +35,13 @@ class QAP_6531(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        gateway_side_sell = DataSet.GatewaySide.Sell
-        status = DataSet.Status.Fill
         freenotes = "tomorrow is spot date, prices are indicative - manual intervention required"
         account = self.data_set.get_client_by_name("client_mm_3")
         symbol = self.data_set.get_symbol_by_name("symbol_12")
         qty1 = random_qty(1, 3, 7)
         qty2 = random_qty(1, 3, 7)
-        locale.setlocale(locale.LC_ALL, 'en_US')
-        qty1_test = locale.format_string("%d", int(qty1), grouping=True)
-        qty2_test = locale.format_string("%d", int(qty2), grouping=True)
+        qty1_test = format(int(qty1), ',d')
+        qty2_test = format(int(qty2), ',d')
         security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
