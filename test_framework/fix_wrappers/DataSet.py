@@ -82,6 +82,13 @@ class Instrument(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    RF = dict(
+        Symbol='RF',
+        SecurityID='FR0000121121_EUR',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class Connectivity(Enum):
