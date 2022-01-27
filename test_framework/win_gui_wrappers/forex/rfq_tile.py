@@ -27,7 +27,7 @@ class RFQTile(AggregatesRatesTile):
                         near_tenor: str = None, far_tenor: str = None, client: str = None,
                         near_maturity_date: int = None, far_maturity_date: int = None, left_check: bool = False,
                         near_date: int = None, far_date: int = None, right_check: bool = False,
-                        single_venue: str = None, venue_list: list = None):
+                        single_venue: str = None, venue_list: list = None, change_currency: bool = False):
         if from_cur is not None:
             self.modify_request.set_from_currency(from_cur)
         if to_cur is not None:
@@ -60,6 +60,8 @@ class RFQTile(AggregatesRatesTile):
             self.modify_request.click_checkbox_left()
         if right_check is not False:
             self.modify_request.click_checkbox_right()
+        if change_currency is not False:
+            self.modify_request.set_change_currency(change_currency)
         call(self.ar_service.modifyRFQTile, self.modify_request.build())
         self.clear_details([self.modify_request])
 
