@@ -28,6 +28,7 @@ class QAP_6(TestCase):
         far_tenor = self.data_set.get_tenor_by_name('tenor_1w')
         venue = self.data_set.get_venue_by_name('venue_1')
         client = self.data_set.get_client_by_name("client_1")
+
         # region Step 1
         self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
                                                    near_qty=qty, near_tenor=near_tenor,
