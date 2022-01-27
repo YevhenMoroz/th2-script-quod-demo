@@ -195,9 +195,18 @@ def execute(report_id):
         fix_verifier_bs.check_fix_message(cancel_would_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Would order')
         # endregion
 
-        time.sleep(10)
-        order_cancel = FixMessageOrderCancelRequest(twap_nav_order)
-        fix_manager.send_message_and_receive_response(order_cancel)
+        # region Cancel Algo Order
+        case_id_4 = bca.create_event("Cancel Algo Order", case_id)
+        fix_verifier_ss.set_case_id(case_id_4)
+        # Cancel Order
+        cancel_request_twap_nav_order = FixMessageOrderCancelRequest(twap_nav_order)
+        fix_manager.send_message_and_receive_response(cancel_request_twap_nav_order, case_id_4)
+        fix_verifier_ss.check_fix_message(cancel_request_twap_nav_order, direction=ToQuod, message_name='Sell side Cancel Request')
+
+        cancel_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_cancel)
+        cancel_twap_nav_order_params.change_parameters(dict(AvgPx=price_would, CumQty=qty_nav_child1))
+        fix_verifier_ss.check_fix_message(cancel_twap_nav_order_params, key_parameters=key_params, message_name='Sell side ExecReport Cancel')
+        #endregion
         
     except:
         logging.error("Error execution", exc_info=True)
