@@ -208,7 +208,8 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
         self.verifier.verify()
 
     def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
@@ -277,9 +278,10 @@ class BaseOrderBook(BaseWindow):
         call(self.group_modify_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def reassign_order(self, recipient):
+    def reassign_order(self, recipient, partial_desk: bool = False):
         self.reassign_order_details.base.CopyFrom(self.base_request)
         self.reassign_order_details.desk = recipient
+        self.reassign_order_details.partialDesk = partial_desk
         call(self.reassign_order_call, self.reassign_order_details)
 
     def check_in_order(self, filter_list=None):
