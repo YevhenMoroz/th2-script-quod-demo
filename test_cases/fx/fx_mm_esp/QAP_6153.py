@@ -31,14 +31,13 @@ class QAP_6153(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.rest_massage = RestApiClientTierInstrSymbolMessages()
-        self.init_rest_message = RestApiClientTierInstrSymbolMessages()
         self.no_related_symbols = [{
             'Instrument': {
                 'Symbol': 'NOK/SEK',
                 'SecurityType': 'FXSPOT',
                 'Product': '4', },
             'SettlType': '0', }]
-        self.bands = ["1000000", '5000000', '10000000']
+        self.bands = ["1000000", '3000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
