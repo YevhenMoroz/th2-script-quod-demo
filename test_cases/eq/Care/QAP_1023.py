@@ -1,13 +1,10 @@
 import logging
 from datetime import datetime
-from th2_grpc_hand import rhbatch_pb2
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -35,25 +32,13 @@ class QAP_1023(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
     def run_pre_conditions_and_steps(self):
-        case_name = "QAP-1023"
-
-        seconds, nanos = timestamps()  # Store case start time
-        # region Declarations
-        time = datetime.utcnow().isoformat()
-        session_id = set_session_id()
-        case_id = create_event(case_name, self.report_id)
-        base_request = get_base_request(session_id, case_id)
         client = self.data_set.get_client_by_name('client_co_1')
         lookup = self.data_set.get_lookup_by_name('lookup_1')
-        session_id2 = Stubs.win_act.register(
-            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
         base_window = BaseMainWindow(self.test_id, self.session_id)
-        base_window2 = BaseMainWindow(self.test_id, session_id2)
         order_book = OMSOrderBook(self.test_id, self.session_id)
         order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         client_inbox = OMSClientInbox(self.test_id, self.session_id)
         # endregion
-
         # region open FE
         base_window.open_fe(self.report_id, work_dir, username, password, True)
         # endregion
@@ -66,7 +51,7 @@ class QAP_1023(TestCase):
         order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
             {"Sts": "Sent"})
         # region Reassign order
-        order_book.reassign_order(desk)
+        order_book.reassign_order(desk, partial_desk=False)
         order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
             {"Sts": "Sent"})
         # endregion
