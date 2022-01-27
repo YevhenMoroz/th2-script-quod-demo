@@ -5,19 +5,12 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
-    FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
-from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
-from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb, QuoteStatus as qs, \
-    Status
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 
 
