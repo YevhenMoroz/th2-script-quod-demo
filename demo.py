@@ -6,6 +6,8 @@ from MyFiles.MyTest import MyTest
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
+from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
+from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -35,9 +37,11 @@ def test_run():
         # else:
         #     get_opened_fe(report_id, session_id)
         #
-        QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_3537(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_6149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
         # rm = RuleManager()
         # rm.print_active_rules()
