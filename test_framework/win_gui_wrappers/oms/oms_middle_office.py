@@ -31,5 +31,5 @@ class OMSMiddleOffice(BaseMiddleOffice):
         self.mass_approve_details = MassApproveDetails(self.base_request)
         self.mass_approve_call = Stubs.win_act_middle_office_service.massApprove
         self.mass_allocate_call = Stubs.win_act_middle_office_service.massAllocate
-        self.unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
+        self.mass_unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
         # endregion
