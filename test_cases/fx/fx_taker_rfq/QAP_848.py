@@ -33,12 +33,13 @@ class QAP_848(TestCase):
         rfq_venue = self.data_set.get_venue_by_name('venue_rfq_1')
         client = self.data_set.get_client_by_name("client_1")
 
-        # region Step 2
+        # region Step 1
         self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
                                                    near_qty=qty, near_tenor=near_tenor,
                                                    client=client, single_venue=venue,
                                                    change_currency=True)
-
+        # endregion
+        # region Step 2
         self.rfq_tile.send_rfq()
 
         self.quote_request_book.set_filter(
