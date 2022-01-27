@@ -84,6 +84,15 @@ class RFQTile(AggregatesRatesTile):
     # endregion
 
     # region Extraction
+    def check_currency_pair(self, currency_pair: str = None):
+        self.verifier.set_event_name("Check currency pair")
+        if currency_pair is not None:
+            self.extraction_request.extract_currency_pair(currency_pair)
+            response = call(self.extract_call, self.extraction_request.build())
+            extract_currency_pair = response[currency_pair]
+            self.verifier.compare_values("Currency pair", currency_pair, extract_currency_pair)
+        self.verifier.verify()
+
     def check_qty(self, near_qty: str = None, far_qty: str = None):
         self.verifier.set_event_name("Check Qty")
         if near_qty is not None:
