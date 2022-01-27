@@ -69,7 +69,7 @@ def test_run():
         # SendMD.execute(report_id)
 
         # rfq.execute(report_id)
-        # esp.execute(report_id)
+        esp.execute(report_id)
         # rfq_swap_1w_2w.execute(report_id)
 
 
@@ -92,15 +92,15 @@ def test_run():
         # QAP_3689.execute(report_id)
 
 
-        rm = RuleManager()
+        # rm = RuleManager()
         # rm.add_fx_md_to('fix-fh-314-luna')
 
         # Rule to update Quod with MD which we store in map  QuodMDUpdateFXRule
-        rm.add_QuodMDUpdateFXRule('fix-fh-314-luna', 2)
+        # rm.add_QuodMDUpdateFXRule('fix-fh-314-luna', 2)
         # rm.add_fx_md_to('fix-fh-309-kratos')
 
-        rm.remove_rule_by_id(16)
-        rm.print_active_rules()
+        # rm.remove_rule_by_id(16)
+        # rm.print_active_rules()
 
         # rm.print_active_rules_sim_test()
 
