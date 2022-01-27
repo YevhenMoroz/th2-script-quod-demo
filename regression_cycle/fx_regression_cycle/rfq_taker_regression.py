@@ -1,5 +1,5 @@
-from test_cases.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
-    QAP_573, QAP_574, QAP_575, QAP_576, QAP_577, QAP_578, QAP_579, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, \
+from test_cases.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_567, QAP_568, QAP_569, QAP_570, QAP_571, \
+    QAP_573, QAP_574, QAP_575, QAP_576, QAP_577, QAP_578, QAP_580, QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, \
     QAP_589, QAP_590, QAP_591, QAP_593, QAP_594, QAP_595, QAP_597, QAP_598, QAP_592, QAP_599, QAP_600, QAP_601, QAP_602, \
     QAP_604, QAP_605, QAP_606, QAP_609, QAP_610, QAP_611, QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, \
     QAP_687, QAP_702, QAP_708, QAP_709, QAP_710, QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_848, QAP_849, \
@@ -8,6 +8,8 @@ from test_cases.fx.fx_taker_rfq import QAP_6, QAP_564, QAP_565, QAP_566, QAP_567
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_rfq.QAP_566 import QAP_566
+from test_cases.fx.fx_taker_rfq.QAP_579 import QAP_579
 from test_framework.import_layouts.layout_loader import LayoutLoader
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -35,7 +37,7 @@ def test_run(parent_id=None):
         QAP_6.execute(report_id, session_id)
         QAP_564.execute(report_id, session_id)
         QAP_565.execute(report_id, session_id)
-        QAP_566.execute(report_id, session_id)
+        QAP_566(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_567.execute(report_id, session_id)
         QAP_568.execute(report_id, session_id)
         QAP_569.execute(report_id, session_id)
@@ -47,7 +49,7 @@ def test_run(parent_id=None):
         QAP_576.execute(report_id, session_id)
         QAP_577.execute(report_id, session_id)
         QAP_578.execute(report_id, session_id)
-        QAP_579.execute(report_id, session_id)
+        QAP_579(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_580.execute(report_id, session_id)
         QAP_581.execute(report_id, session_id)
         QAP_582.execute(report_id, session_id)

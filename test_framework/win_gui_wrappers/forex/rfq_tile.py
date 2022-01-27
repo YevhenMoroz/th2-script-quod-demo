@@ -152,7 +152,7 @@ class RFQTile(AggregatesRatesTile):
         if ask_small is not None:
             self.extraction_request.extract_best_ask_small(ask_small)
         if best_bid is not None:
-            self.extraction_request.extract_best_bid_large(best_bid)
+            self.extraction_request.extract_best_bid(best_bid)
         if best_ask is not None:
             self.extraction_request.extract_best_ask(best_ask)
         response = call(self.extract_call, self.extraction_request.build())

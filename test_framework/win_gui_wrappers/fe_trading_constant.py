@@ -7,6 +7,7 @@ from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_
 
 class OrderBookColumns(Enum):
     order_id = "Order ID"
+    quote_id = "QuoteID"
     cl_ord_id = "ClOrdID"
     security_id = "Security Id"
     symbol = "Symbol"
@@ -66,7 +67,7 @@ class InstrType(Enum):
 
 
 class QuoteBookColumns(Enum):
-    quote_id = 'ID'
+    quote_id = 'Id'
     account_group = 'AccountGroup'
     security_id = 'SecurityID'
     owner = 'Owner'
@@ -143,6 +144,23 @@ class ExecSts(Enum):
     held = 'Held'
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
+
+
+class Status(Enum):
+    terminated = 'Terminated'
+    expired = 'Expired'
+    new = 'New'
+    rejected = 'Rejected'
+    frozen = 'Frozen'
+
+
+class QuoteStatus(Enum):
+    accepted = 'Accepted'
+    terminated = 'Terminated'
+    expired = 'Expired'
+    canceled = 'Canceled'
+    filled = 'Filled'
+    removed = 'RemovedFromMarket'
 
 
 class Side(Enum):
