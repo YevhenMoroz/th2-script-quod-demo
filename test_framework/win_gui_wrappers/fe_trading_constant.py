@@ -36,6 +36,7 @@ class OrderBookColumns(Enum):
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
+    currency = 'Currency'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
