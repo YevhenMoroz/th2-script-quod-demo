@@ -5,7 +5,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
-from custom.basic_custom_actions import create_event
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsMic, OmsVenueClientNames
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
@@ -17,11 +16,11 @@ from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from win_gui_modules.utils import close_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 # region TestData
 work_dir = Stubs.custom_config['qf_trading_fe_folder']
 username = Stubs.custom_config['qf_trading_fe_user']
@@ -37,6 +36,7 @@ instr = 'VETO'
 
 # endregion
 
+
 class QAP_477(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
@@ -44,15 +44,12 @@ class QAP_477(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-      # region Declaration
+        # region Declaration
         order_book = OMSOrderBook(self.test_id, self.session_id)
         ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
         base_window = BaseMainWindow(self.test_id, self.session_id)
         fix_manager = FixManager(ss_connectivity)
         fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        # endregion
-        # region open FE
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
         # endregion
         # region Create CO order
         fix_manager.send_message_fix_standard(fix_message)
@@ -63,13 +60,10 @@ class QAP_477(TestCase):
         order_inbox.accept_order(instr, qty, limit)
         # endregion
         # region DirectLoc order
-        # account = fix_message.get_parameter('Account')
         price = fix_message.get_parameter('Price')
         try:
-
             rule_manager = RuleManager()
             venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
-                # self.data_set.venue_client_names.client_1_venue_1)
             venue = self.data_set.get_mic_by_name("mic_1")
             nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
                                                                                              venue_client_names, venue,
@@ -86,10 +80,6 @@ class QAP_477(TestCase):
                                                 filter_dict={'Order ID': order_id_first})
         base_window.compare_values({'Sts': 'Open', 'Qty': qty}, result[0], 'Equals value')
         # endregion
-
-
-
-
 
 
 
