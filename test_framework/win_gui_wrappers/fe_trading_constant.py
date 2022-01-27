@@ -219,6 +219,7 @@ class AllocationsColumns(Enum):
     security_acc = "Security Account"
     sts = 'Status'
     match_status = 'Match Status'
+    alloc_id = 'Allocation ID'
 
 
 class SecondLevelTabs(Enum):

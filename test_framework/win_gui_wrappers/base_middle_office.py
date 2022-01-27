@@ -70,7 +70,7 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.extract_middle_office_blotter_values_request])
         return response
 
-    def extract_list_of_block_fields(self, list_of_column: list, filter_list: list) -> dict:
+    def extract_list_of_block_fields(self, list_of_column: list, filter_list: list = None, row_number: int = None) -> dict:
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
         list_of_extraction = []
         for column in list_of_column:
@@ -79,6 +79,8 @@ class BaseMiddleOffice(BaseWindow):
         if filter_list:
             self.extract_middle_office_blotter_values_request.set_filter(filter_list)
         self.extract_middle_office_blotter_values_request.add_extraction_details(list_of_extraction)
+        if row_number:
+            self.extract_middle_office_blotter_values_request.set_row_number(row_number)
         response = call(self.extract_middle_office_blotter_values_call,
                         self.extract_middle_office_blotter_values_request.build())
         self.clear_details([self.extract_middle_office_blotter_values_request])
@@ -306,6 +308,6 @@ class BaseMiddleOffice(BaseWindow):
 
     def mass_unallocate(self, position_of_block: list):
         self.mass_approve_details.set_rows_number(position_of_block)
-        call(self.mass_unallocate_call, self.mass_approve_details.build)
+        call(self.mass_unallocate_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
     # endregion
