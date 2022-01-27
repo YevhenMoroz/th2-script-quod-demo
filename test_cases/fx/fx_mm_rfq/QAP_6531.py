@@ -71,9 +71,7 @@ class QAP_6531(TestCase):
 
         self.quote_request_book.set_filter(
             [qrb.qty.value, qty1_test]).check_quote_book_fields_list(
-            {qrb.qty.value: qty1_test,
-             qrb.free_notes.value: freenotes
-             }, 'Checking that Freenotes contains correct value')
+            {qrb.free_notes.value: freenotes})
 
         # Step 2
         quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
@@ -88,6 +86,4 @@ class QAP_6531(TestCase):
 
         self.quote_request_book.set_filter(
             [qrb.qty.value, qty2_test]).check_quote_book_fields_list(
-            {qrb.qty.value: qty2_test,
-             qrb.free_notes.value: freenotes
-             }, 'Checking that Freenotes contains correct value')
+            {qrb.free_notes.value: freenotes})
