@@ -19,6 +19,7 @@ class BaseDataSet:
     client_tiers = None
     days_of_week = None
     tenors = None
+    side = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
@@ -52,6 +53,11 @@ class BaseDataSet:
         if hasattr(self.instruments, name):
             return getattr(self.instruments, name).value
         raise ValueError(f"{self.instruments} not found!")
+
+    def get_side_by_name(self, name: str):
+        if hasattr(self.side, name):
+            return getattr(self.side, name).value
+        raise ValueError(f"{self.side} not found!")
 
     def get_venue_by_name(self, name: str):
         if hasattr(self.venues, name):
@@ -125,7 +131,7 @@ class BaseDataSet:
     def get_settle_type_by_name(self, name: str):
         """
         get settle type by name from FxSettleTypes
-        example ---> get_security_type_by_name("fxspot"):
+        example ---> get_settle_types_by_name("fxspot"):
         """
         if hasattr(self.settle_types, name):
             return getattr(self.settle_types, name).value

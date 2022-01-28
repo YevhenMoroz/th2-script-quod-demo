@@ -265,7 +265,7 @@ class RuleManager:
         return Stubs.simulator.createQuodMDAnswerRule(request=
                                                       TemplateMDAnswerRule(connection_id=
                                                                            ConnectionID(session_alias=session), min=1,
-                                                                           max=2, interval=30))
+                                                                           max=5, interval=30))
 
     @staticmethod
     def add_QuodMDUpdateFXRule(session: str, interval:int):

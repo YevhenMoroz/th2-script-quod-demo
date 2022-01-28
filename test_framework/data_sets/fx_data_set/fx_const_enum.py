@@ -193,3 +193,7 @@ class DaysOfWeek(Enum):
     friday = "FRI"
     sunday = "SUN"
     saturday = "SAT"
+
+class FxSide(Enum):
+    sell = "2"
+    buy = "1"
