@@ -36,6 +36,8 @@ class BaseMiddleOffice(BaseWindow):
     def set_filter(self, filter_list: list):
         self.extract_middle_office_blotter_values_request.set_filter(filter_list)
 
+    def clear_filter(self):
+        self.extract_middle_office_blotter_values_request.clear_filter()
     # endregion
     # region Check
     def check_booking_toggle_manual(self):
