@@ -84,7 +84,7 @@ class Instrument(Enum):
     )
     RF = dict(
         Symbol='RF',
-        SecurityID='FR0000121121_EUR',
+        SecurityID='FR0000121121',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
