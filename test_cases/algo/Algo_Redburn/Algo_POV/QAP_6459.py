@@ -75,7 +75,7 @@ def execute(report_id):
         case_id_1 = bca.create_event("Create Algo Order", case_id)
         fix_verifier_ss.set_case_id(case_id_1)
 
-        pov_scaling_order = FixMessageNewOrderSingleAlgo().set_POV_Scaling_params()
+        pov_scaling_order = FixMessageNewOrderSingleAlgo().set_POV_params()
         pov_scaling_order.add_ClordId((os.path.basename(__file__)[:-3]))
         pov_scaling_order.change_parameters(dict(Account= client, OrderQty = qty))
         pov_scaling_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=percentage_of_volume))
