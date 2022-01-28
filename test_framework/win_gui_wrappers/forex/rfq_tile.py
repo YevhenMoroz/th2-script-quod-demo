@@ -43,13 +43,13 @@ class RFQTile(AggregatesRatesTile):
         if client is not None:
             self.modify_request.set_client(client)
         if near_maturity_date is not None:
-            self.modify_request.set_maturity_date(bca.get_t_plus_date(near_maturity_date))
+            self.modify_request.set_maturity_date(bca.get_t_plus_date(near_maturity_date, is_weekend_holiday=False))
         if far_maturity_date is not None:
-            self.modify_request.set_maturity_date(bca.get_t_plus_date(far_maturity_date))
+            self.modify_request.set_maturity_date(bca.get_t_plus_date(far_maturity_date, is_weekend_holiday=False))
         if near_date is not None:
-            self.modify_request.set_settlement_date(bca.get_t_plus_date(near_date))
+            self.modify_request.set_settlement_date(bca.get_t_plus_date(near_date, is_weekend_holiday=False))
         if far_date is not None:
-            self.modify_request.set_far_leg_settlement_date(bca.get_t_plus_date(far_date))
+            self.modify_request.set_far_leg_settlement_date(bca.get_t_plus_date(far_date, is_weekend_holiday=False))
         if single_venue is not None:
             action = ContextAction.create_venue_filter(single_venue)
             self.modify_request.add_context_action(action)
