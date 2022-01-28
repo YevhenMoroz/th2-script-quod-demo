@@ -1,7 +1,6 @@
 from pathlib import Path
 import random
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
