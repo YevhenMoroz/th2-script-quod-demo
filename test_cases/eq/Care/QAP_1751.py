@@ -1,11 +1,12 @@
 import logging
 import os
 import time
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
@@ -31,6 +32,7 @@ class QAP_1751(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         order_book = OMSOrderBook(self.case_id, self.session_id)
