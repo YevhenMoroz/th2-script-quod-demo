@@ -49,9 +49,7 @@ class QAP_566(TestCase):
         self.rfq_tile.compare_values("5", str(tob_len), "Number of digits in TOB")
         # endregion
 
-        self.rfq_tile.close_tile()
-
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()
 

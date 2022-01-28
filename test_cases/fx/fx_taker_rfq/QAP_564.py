@@ -57,8 +57,7 @@ class QAP_564(TestCase):
         self.rfq_tile.crete_tile().modify_rfq_tile(near_tenor=near_tenor_2)
         self.rfq_tile.check_date(near_date=wk1_front_end())
         # endregion
-        self.rfq_tile.close_tile()
 
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()

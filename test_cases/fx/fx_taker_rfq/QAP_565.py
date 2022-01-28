@@ -19,10 +19,8 @@ class QAP_565(TestCase):
         venues = [venue_citi, venue_hsbc]
         # region Step 1
         self.rfq_tile.crete_tile().modify_rfq_tile(venue_list=venues)
-
         # endregion
-        self.rfq_tile.close_tile()
 
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()

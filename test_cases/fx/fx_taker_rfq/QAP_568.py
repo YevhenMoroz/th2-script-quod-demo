@@ -98,10 +98,8 @@ class QAP_568(TestCase):
             {qb.security_id.value: eur_usd_symbol,
              qb.quote_status.value: st.terminated.value,
              qb.quote_id.value: quote_id}, 'Checking currency value in quote book')
-
-        self.rfq_tile.close_tile()
         # endregion
 
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()
