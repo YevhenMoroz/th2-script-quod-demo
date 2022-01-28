@@ -207,6 +207,7 @@ class FreeNotesReject(Enum):
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
+    InvalidPercentageOfVolume = "invalid value for percentage of volume"
 
 
 class Reference(Enum):
