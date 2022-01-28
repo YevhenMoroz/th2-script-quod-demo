@@ -18,13 +18,17 @@ class QAP_848(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = None
+        self.order_book = None
+        self.quote_request_book = None
+        self.quote_book = None
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         self.quote_book = FXQuoteBook(self.test_id, self.session_id)
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
         eur_currency = self.data_set.get_currency_by_name('currency_eur')
         usd_currency = self.data_set.get_currency_by_name('currency_usd')
         eur_usd_symbol = self.data_set.get_symbol_by_name('symbol_1')

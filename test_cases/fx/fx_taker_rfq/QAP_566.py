@@ -17,12 +17,13 @@ class QAP_566(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rfq_tile = RFQTile(self.test_id, self.session_id)
-        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
-        self.verifier = Verifier(self.test_id)
+        self.rfq_tile = None
+        self.quote_request_book = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         eur_currency = self.data_set.get_currency_by_name('currency_eur')
         usd_currency = self.data_set.get_currency_by_name('currency_usd')
         eur_usd_symbol = self.data_set.get_symbol_by_name('symbol_1')
@@ -45,9 +46,7 @@ class QAP_566(TestCase):
         # region Step 2
         bid = self.rfq_tile.extract_price(best_bid='best_bid')
         tob_len = len(bid['best_bid'][2:])
-        self.verifier.set_event_name("Check digits in TOB")
-        self.verifier.compare_values("Number of digits in TOB", "5", str(tob_len))
-        self.verifier.verify()
+        self.rfq_tile.compare_values("5", str(tob_len), "Number of digits in TOB")
         # endregion
 
         self.rfq_tile.close_tile()
