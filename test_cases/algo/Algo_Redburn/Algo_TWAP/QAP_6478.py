@@ -183,6 +183,7 @@ def execute(report_id):
         fix_verifier_bs.check_fix_message(new_would_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Would order')
 
         time.sleep(5)
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data for Disable Would Opportunity", case_id))
         market_data_snap_shot_3 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         market_data_snap_shot_3.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_bid, MDEntrySize=qty_bid)
         market_data_snap_shot_3.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_ask, MDEntrySize=qty_ask)
