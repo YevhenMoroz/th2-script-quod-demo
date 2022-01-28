@@ -548,10 +548,6 @@ class BaseOrderBook(BaseWindow):
         self.modify_order_details.set_order_details(order_ticket_details)
         return self.modify_order_details
 
-    def split_limit_order(self):
-        call(self.split_limit_call, self.modify_order_details.build())
-        # self.clear_details([self.modify_order_details])
-
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
