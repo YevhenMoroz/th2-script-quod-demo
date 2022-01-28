@@ -39,6 +39,7 @@ class OrderBookColumns(Enum):
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
     last_market = 'LastMkt'
+    post_trade_status = 'PostTradeStatus'
     # endregion
 
 
@@ -208,6 +209,7 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
+    conf_service = ""
 
 
 class AllocationsColumns(Enum):
@@ -220,6 +222,7 @@ class AllocationsColumns(Enum):
     sts = 'Status'
     match_status = 'Match Status'
     alloc_id = 'Allocation ID'
+    avg_px = 'Avg Px'
 
 
 class SecondLevelTabs(Enum):
