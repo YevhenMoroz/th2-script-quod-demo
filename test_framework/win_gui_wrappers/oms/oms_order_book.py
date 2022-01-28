@@ -73,4 +73,7 @@ class OMSOrderBook(BaseOrderBook):
         self.split_booking_details = SplitBookingDetails(self.base_request)
         self.split_booking_call = Stubs.win_act_order_book.splitBooking
         self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc
+        self.mass_book_details = RowsNumbersForGrid(self.base_request)
+        self.mass_book_call = Stubs.win_act_order_book.massBook
+
     # endregion
