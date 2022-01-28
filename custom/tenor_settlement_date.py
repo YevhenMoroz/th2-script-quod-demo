@@ -120,7 +120,7 @@ def wk3_front_end():
 
 
 def m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=22)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def m2_front_end():
