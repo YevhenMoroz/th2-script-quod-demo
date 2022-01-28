@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers.DataSet import Instrument
 from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
