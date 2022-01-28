@@ -369,7 +369,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": "EUR",
             "ExDestination": "XPAR",
             'Instrument': Instrument.RF.value,
-            'TargetStrategy': '2',
+            'TargetStrategy': '1008',
             'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'AvailableVenues',
