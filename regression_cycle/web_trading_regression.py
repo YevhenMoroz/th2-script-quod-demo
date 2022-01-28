@@ -25,11 +25,9 @@ def test_run(parent_id=None):
         # logger.info(f"Root event was created (id = {report_id.id})")
 
         # content
-        web_driver_container = WebDriverContainer(url="http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin")
+        web_driver_container = WebDriverContainer(browser="Firefox", url="web_trading_url")
 
-
-        # RunGeneral(web_driver_container, parent_id).execute() just for e.g.
-
+        RunGeneral(web_driver_container, parent_id).execute()
 
         end_time = time.monotonic()
         print("Test cases completed\n" +
