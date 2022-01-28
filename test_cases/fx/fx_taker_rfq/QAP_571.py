@@ -1,104 +1,61 @@
-import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
-
-
-def modify_tile(base_request, service, **kwargs):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    if "qty" in kwargs.keys():
-        modify_request.set_quantity(kwargs["qty"])
-    if "qty_as_string" in kwargs.keys():
-        modify_request.set_quantity_as_string(kwargs["qty_as_string"])
-    if "from_c" in kwargs.keys():
-        modify_request.set_from_currency(kwargs["from_c"])
-    if "to_c" in kwargs.keys():
-        modify_request.set_to_currency(kwargs["to_c"])
-
-    call(service.modifyRFQTile, modify_request.build())
+qty = '5000000'
+qty1 = '1000000'
+qty_1m = '1m'
+qty2 = '1000'
+qty_1k = '1k'
 
 
-def check_currency_pair(base_request, service, case_id, currency_pair):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_currency_pair("aggrRfqTile.currencypair")
-    response = call(service.extractRFQTileValues, extract_value.build())
-    extract_currency_pair = response["aggrRfqTile.currencypair"]
+class QAP_571(TestCase):
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = None
+        self.order_book = None
+        self.quote_request_book = None
+        self.quote_book = None
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check currency pair on RFQ tile")
-    verifier.compare_values("Currency", currency_pair, extract_currency_pair)
-    verifier.verify()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        eur_currency = self.data_set.get_currency_by_name('currency_eur')
+        usd_currency = self.data_set.get_currency_by_name('currency_usd')
+        default_currency = self.data_set.get_symbol_by_name('symbol_ndf_3')
+        eur_usd_symbol = self.data_set.get_symbol_by_name('symbol_1')
 
-
-def check_qty(base_request, service, case_id, near_qty):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_quantity("aggrRfqTile.nearqty")
-    response = call(service.extractRFQTileValues, extract_value.build())
-    extract_near_qty = response["aggrRfqTile.nearqty"].replace(',', '')
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Qty in RFQ tile")
-    verifier.compare_values('Near leg qty', str(near_qty), extract_near_qty[:-3])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_name = Path(__file__).name[:-3]
-    case_qty = 5000000
-    case_default_currency = "AUD/BRL"
-    case_from_currency = "EUR"
-    case_to_currency = "USD"
-    case_cur_pair = case_from_currency + "/" + case_to_currency
-    case_string_qty = "1m"
-    case_string_qty_to_int = 1000000
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        
-        # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        check_currency_pair(base_rfq_details, ar_service, case_id, case_default_currency)
-        # Step 2
+        # region Step 1
+        self.rfq_tile.crete_tile()
+        self.rfq_tile.check_currency_pair(currency_pair=default_currency)
+        # endregion
+        # region Step 2
         # TODO Change currency pair from drop down
-        # Step 3
-        modify_tile(base_rfq_details, ar_service, from_c=case_from_currency, to_c=case_to_currency)
-        check_currency_pair(base_rfq_details, ar_service, case_id, case_cur_pair)
-        # Step 4
-        modify_tile(base_rfq_details, ar_service, qty=case_qty)
-        check_qty(base_rfq_details, ar_service, case_id, case_qty)
-        # Step 5
-        modify_tile(base_rfq_details, ar_service, qty_as_string=case_string_qty)
-        check_qty(base_rfq_details, ar_service, case_id, case_string_qty_to_int)
+        # endregion
+        # region Step 3
+        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency)
+        self.rfq_tile.check_currency_pair(currency_pair=eur_usd_symbol)
+        # endregion
+        # region Step 4
+        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty)
+        self.rfq_tile.check_qty(near_qty=qty)
+        # endregion
+        # region Step 5
+        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty_1m)
+        self.rfq_tile.check_qty(near_qty=qty1)
+        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty_1k)
+        self.rfq_tile.check_qty(near_qty=qty2)
+        # endregion
 
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()
