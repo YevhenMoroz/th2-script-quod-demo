@@ -1,16 +1,16 @@
 import logging
-from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from th2_grpc_hand import rhbatch_pb2
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from win_gui_modules.utils import get_base_request, close_fe
+from win_gui_modules.utils import close_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,32 +31,22 @@ class QAP_1017(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        case_name = "QAP-1017"
         seconds, nanos = timestamps()  # Store case start time
-
         client = self.data_set.get_client_by_name('client_co_1')
         lookup = self.data_set.get_lookup_by_name('lookup_1')
-
         # region Declarations
-        act = Stubs.win_act_order_book
         # endregion
         # region Open FE
-        stub = Stubs.win_act
-        case_id = create_event(case_name, self.report_id)
         session_id2 = Stubs.win_act.register(
             rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-        init_event = create_event("Initialization", parent_id=self.report_id)
-
-        base_window = BaseMainWindow(self.test_id, self.session_id)
         base_window2 = BaseMainWindow(self.test_id, session_id2)
         order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         order_book = OMSOrderBook(self.test_id, self.session_id)
         client_inbox = OMSClientInbox(self.test_id, self.session_id)
-
         # endregion
         # region switch to user1
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
         base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
         # endregion
         # region Create CO
@@ -80,6 +70,4 @@ class QAP_1017(TestCase):
         order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
             {"Sts": "Open"})
         # endregion
-
-        close_fe(case_id, session_id2)
-        logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        close_fe(self.test_id, session_id2)
