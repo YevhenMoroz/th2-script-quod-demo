@@ -14,7 +14,7 @@ from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMess
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.ors_messages.TradeEntryRequest import TradeEntryRequest
-from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns, OrderType
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -41,7 +41,7 @@ class QAP_1751(TestCase):
         new_qty = '30000'
         first_split_qty = '20000'
         second_split_qty = '10000'
-        type_of_split_order = 'Limit'
+        type_of_split_order = OrderType.limit.value
         fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         fix_message.set_default_care_limit()
         fix_message.change_parameter('OrderQtyData', {'OrderQty': new_qty})

@@ -209,7 +209,7 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
-    conf_service = ""
+    conf_service = "Conf Service"
 
 
 class AllocationsColumns(Enum):
