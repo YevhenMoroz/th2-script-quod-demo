@@ -120,7 +120,7 @@ def wk3_front_end():
 
 
 def m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=22)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def m2_front_end():
@@ -136,7 +136,7 @@ def m4_front_end():
 
 
 def next_working_day_after_25dec_front_end():
-    return (tm(datetime(2021, 12, 25).isoformat()) + bd(n=0)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime(2022, 12, 25).isoformat()) + bd(n=0)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def y1_front_end():
