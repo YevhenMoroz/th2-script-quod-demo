@@ -13,13 +13,9 @@ class RestApiMessages:
     def get_parameter(self, parameter_name: str):
         return self.parameters[parameter_name]
 
-    def update_parameters(self, parameters: dict):
-        """
-        Universal method for adding and/or updating parameters
-        Can take a list of parameters: {'ParameterName_1':'Value',...,'ParameterName_N':'Value'}
-        """
-        self.parameters.update(parameters)
-        return self
+    def update_parameters(self, parameters: dict):  #
+        self.parameters.update(parameters)  # Universal method fro adding new parameters
+        return self  # and also updating existing
 
     def set_params(self, params: dict):
         """
@@ -228,49 +224,6 @@ class RestApiMessages:
 
     def find_all_client_tier(self):
         self.message_type = 'FindAllClientTier'
-
-    def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
-        self.message_type = 'ModifyCommission'
-        default_parameters = {
-            'commDescription': "Fee1" if fee is None else fee.name,
-            'commExecScope': "ALL",
-            'commissionID': 1 if fee is None else fee.value,
-            'execCommissionProfileID': 1,
-            'miscFeeType': 'EXC',
-            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-        }
-        self.parameters = params if params is not None else default_parameters
-        return self
-
-    def clear_fees_request(self, commission_id):
-        self.message_type = 'ModifyCommission'
-        default_parameters = {
-            'commDescription': "FeeCleared",
-            'commissionID': commission_id,
-            'miscFeeType': 'EXC'
-        }
-        self.parameters = default_parameters
-        return self
-
-    def modify_client_commission_request(self, params=None, client: CommissionClients = None,
-                                         account: CommissionAccounts = None, recalculate=False,
-                                         commission: FeesAndCommissions = None):
-        self.message_type = 'ModifyClCommission'
-        default_parameters = {
-            'accountGroupID': "CLIENT_COMM_1" if client is None else client.value,
-            'clCommissionDescription': "Commission of Testing MOClient",
-            'clCommissionID': 1 if commission is None else commission.value,
-            'clCommissionName': "Commission1" if commission is None else commission.name,
-            'commissionAmountType': "BRK",
-            'commissionProfileID': 1,
-            'recomputeInConfirmation': 'false' if recalculate is False else 'true',
-            'venueID': "EUREX"
-        }
-        if account is not None and client is None:
-            default_parameters.pop("accountGroupID")
-            default_parameters["accountID"] = account.value
-        self.parameters = params if params is not None else default_parameters
-        return self
 
     def find_all_client_tier_instr(self):
         self.message_type = 'FindAllClientTierInstrSymbol'
