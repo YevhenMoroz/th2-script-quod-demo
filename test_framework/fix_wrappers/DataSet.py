@@ -96,6 +96,7 @@ class Connectivity(Enum):
     Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
     Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
     Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
+    Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_Feed_Handler = 'fix-fh-314-luna'
     Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
     Luna_314_dc = 'fix-sell-m-314luna-drop'

@@ -7,6 +7,7 @@ from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_
 
 class OrderBookColumns(Enum):
     order_id = "Order ID"
+    quote_id = "QuoteID"
     cl_ord_id = "ClOrdID"
     security_id = "Security Id"
     symbol = "Symbol"
@@ -35,6 +36,7 @@ class OrderBookColumns(Enum):
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
+    currency = 'Currency'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -66,7 +68,7 @@ class InstrType(Enum):
 
 
 class QuoteBookColumns(Enum):
-    quote_id = 'ID'
+    quote_id = 'Id'
     account_group = 'AccountGroup'
     security_id = 'SecurityID'
     owner = 'Owner'
