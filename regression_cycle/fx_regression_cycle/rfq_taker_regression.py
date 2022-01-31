@@ -1,4 +1,4 @@
-from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_585, QAP_587, QAP_589, QAP_590, QAP_591, QAP_593,\
+from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_589, QAP_590, QAP_591, QAP_593,\
     QAP_594, QAP_595, QAP_597,\
     QAP_598, QAP_592, QAP_599, QAP_600, QAP_601, QAP_602, QAP_604, QAP_605, QAP_606, QAP_609, QAP_610, QAP_611, \
     QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, QAP_708, QAP_709, QAP_710, \
@@ -25,6 +25,8 @@ from test_cases.fx.fx_taker_rfq.QAP_580 import QAP_580
 from test_cases.fx.fx_taker_rfq.QAP_581 import QAP_581
 from test_cases.fx.fx_taker_rfq.QAP_582 import QAP_582
 from test_cases.fx.fx_taker_rfq.QAP_584 import QAP_584
+from test_cases.fx.fx_taker_rfq.QAP_585 import QAP_585
+from test_cases.fx.fx_taker_rfq.QAP_587 import QAP_587
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -73,8 +75,8 @@ def test_run(parent_id=None):
         QAP_581(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_582(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_584(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_585.execute(report_id, session_id)
-        QAP_587.execute(report_id, session_id)
+        QAP_585(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_587(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_589.execute(report_id, session_id)
         QAP_590.execute(report_id, session_id)
         QAP_591.execute(report_id, session_id)
