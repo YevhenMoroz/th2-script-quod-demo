@@ -108,6 +108,11 @@ class Connectivity(Enum):
     Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_wa = "rest_wa314luna"
+    Kratos_309_ss_rfq = 'fix-sell-rfq-m-309kratos-stand'
+    Kratos_309_bs_rfq = 'fix-bs-rfq-309-kratos-stand'
+    Kratos_309_ss_esp = 'fix-sell-esp-m-309kratos-stand'
+    Kratos_309_bs_esp = 'fix-bs-esp-309-kratos-stand'
+    Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
 

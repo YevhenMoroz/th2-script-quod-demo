@@ -18,12 +18,17 @@ class BaseDataSet:
     currency = None
     venue_client_names = None
     client_tiers = None
+    client_tiers_id = None
     days_of_week = None
     tenors = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    auto_hedgers = None
+    auto_hedgers_id = None
+    algo_policies = None
+    algo_policies_id = None
 
     def get_instruments(self):
         if self.instruments:
@@ -134,7 +139,7 @@ class BaseDataSet:
 
     def get_settle_date_by_name(self, name: str):
         """
-        get settle type by name from FxSettleDate
+        get settle date by name from FxSettleDates
         example ---> get_settle_date_by_name("spot"):
         """
         if hasattr(self.settle_dates, name):
@@ -143,16 +148,25 @@ class BaseDataSet:
 
     def get_client_tier_by_name(self, name: str):
         """
-        get settle type by name from ClientTier
+        get client tier by name from FxClientTiers
         example ---> get_client_tier_by_name("client_tier_1"):
         """
         if hasattr(self.client_tiers, name):
             return getattr(self.client_tiers, name).value
         raise ValueError(f"{self.client_tiers} not found!")
 
+    def get_client_tier_id_by_name(self, name: str):
+        """
+        get client tier ID by name from FxClientTiersID
+        example ---> get_client_tier_id_by_name("client_tier_id_1"):
+        """
+        if hasattr(self.client_tiers_id, name):
+            return getattr(self.client_tiers_id, name).value
+        raise ValueError(f"{self.client_tiers_id} not found!")
+
     def get_day_of_week_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get day of week by name from DaysOfWeek
         example ---> get_day_of_week_by_name("monday"):
         """
         if hasattr(self.days_of_week, name):
@@ -161,12 +175,48 @@ class BaseDataSet:
 
     def get_tenor_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get tenor by name from FxTenors
         example ---> get_tenor_by_name("tenor_spot"):
         """
         if hasattr(self.tenors, name):
             return getattr(self.tenors, name).value
         raise ValueError(f"{self.tenors} not found!")
+
+    def get_auto_hedger_by_name(self, name: str):
+        """
+        get auto hedger by name from FXAutoHedgers
+        example ---> get_client_tier_by_name("auto_hedger_1"):
+        """
+        if hasattr(self.auto_hedgers, name):
+            return getattr(self.auto_hedgers, name).value
+        raise ValueError(f"{self.auto_hedgers} not found!")
+
+    def get_auto_hedger_id_by_name(self, name: str):
+        """
+        get auto hedger ID by name from FXAutoHedgersID
+        example ---> get_client_tier_id_by_name("auto_hedger_id_1"):
+        """
+        if hasattr(self.auto_hedgers_id, name):
+            return getattr(self.auto_hedgers_id, name).value
+        raise ValueError(f"{self.auto_hedgers_id} not found!")
+
+    def get_algo_policy_by_name(self, name: str):
+        """
+        get algo policy by name from FXAlgoPolicies
+        example ---> get_client_tier_by_name("algo_policy_1"):
+        """
+        if hasattr(self.algo_policies, name):
+            return getattr(self.algo_policies, name).value
+        raise ValueError(f"{self.algo_policies} not found!")
+
+    def get_algo_policy_id_by_name(self, name: str):
+        """
+        get algo policy ID by name from FXAlgoPoliciesID
+        example ---> get_client_tier_id_by_name("algo_policy_id_1"):
+        """
+        if hasattr(self.algo_policies_id, name):
+            return getattr(self.algo_policies_id, name).value
+        raise ValueError(f"{self.algo_policies_id} not found!")
     # endregion
 
 

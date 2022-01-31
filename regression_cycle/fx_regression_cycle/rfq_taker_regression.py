@@ -1,8 +1,8 @@
-from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_578, QAP_580,\
-    QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, QAP_590, QAP_591, QAP_593, QAP_594, QAP_595, QAP_597,\
+from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_578, QAP_580, \
+    QAP_581, QAP_582, QAP_584, QAP_585, QAP_587, QAP_589, QAP_590, QAP_591, QAP_593, QAP_594, QAP_595, QAP_597, \
     QAP_598, QAP_592, QAP_599, QAP_600, QAP_601, QAP_602, QAP_604, QAP_605, QAP_606, QAP_609, QAP_610, QAP_611, \
     QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, QAP_708, QAP_709, QAP_710, \
-    QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_849, QAP_850, QAP_982, QAP_992, QAP_1585, QAP_1713,\
+    QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_849, QAP_850, QAP_982, QAP_992, QAP_1585, QAP_1713, \
     QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, QAP_3589, QAP_2836, \
     import_rfq_taker_layout, QAP_3048
 from stubs import Stubs
@@ -130,6 +130,7 @@ def test_run(parent_id=None):
         logging.error("Error execution", exc_info=True)
     finally:
         Stubs.win_act.unregister(session_id)
+
 
 if __name__ == '__main__':
     test_run()

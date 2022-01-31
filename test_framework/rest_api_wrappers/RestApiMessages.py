@@ -13,9 +13,13 @@ class RestApiMessages:
     def get_parameter(self, parameter_name: str):
         return self.parameters[parameter_name]
 
-    def update_parameters(self, parameters: dict):  #
-        self.parameters.update(parameters)  # Universal method fro adding new parameters
-        return self  # and also updating existing
+    def update_parameters(self, parameters: dict):
+        """
+        Universal method for adding and/or updating parameters
+        Can take a list of parameters: {'ParameterName_1':'Value',...,'ParameterName_N':'Value'}
+        """
+        self.parameters.update(parameters)
+        return self
 
     def set_params(self, params: dict):
         """
