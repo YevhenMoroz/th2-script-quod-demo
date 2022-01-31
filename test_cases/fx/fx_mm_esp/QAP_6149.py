@@ -39,6 +39,9 @@ class QAP_6149(TestCase):
         self.bands_nok_sek = None
         self.no_related_symbols_eur_usd = None
         self.bands_eur_usd = None
+        self.nok_sek = None
+        self.eur_usd = None
+        self.security_type = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
