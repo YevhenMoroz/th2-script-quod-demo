@@ -140,8 +140,8 @@ def execute(report_id, session_id):
                         case_to_currency, case_near_tenor, case_client, venues)
         send_rfq(base_rfq_details, ar_service)
         check_quote_request_b("QRB_0", case_base_request, ar_service, common_act, case_venue)
-        #
-        # # Step 2
+
+        # Step 2
         place_order_tob(base_rfq_details, ar_service)
         ob_quote_id = check_order_book("OB_0", case_base_request, case_instr_type, ob_act, case_id)
         check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, ob_quote_id)
