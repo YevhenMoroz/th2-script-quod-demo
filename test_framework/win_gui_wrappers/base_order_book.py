@@ -2,10 +2,12 @@ from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter, \
+    InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
     direct_moc_request, direct_order_request
+
 
 
 class BaseOrderBook(BaseWindow):
@@ -51,6 +53,8 @@ class BaseOrderBook(BaseWindow):
         self.notify_dfd_order_call = None
         self.check_out_order_call = None
         self.reassign_order_call = None
+        self.transfer_order_details = None
+        self.transfer_order_call = None
         self.complete_order_call = None
         self.check_in_order_call = None
         self.suspend_order_call = None
@@ -74,6 +78,11 @@ class BaseOrderBook(BaseWindow):
         self.extract_error_from_order_ticket_call = None
         self.split_limit_call = None
         self.direct_order_correct_call = None
+        self.transfer_pool_call = None
+        self.transfer_pool_details = None
+        self.internal_transfer_action = None
+
+
 
     # endregion
 
@@ -239,6 +248,22 @@ class BaseOrderBook(BaseWindow):
             self.cancel_order_details.set_filter(filter_list)
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
+
+    def transfer_order(self,  desk: str, partial_desk: bool = False, filter_list: list = None):
+        self.transfer_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.transfer_order_details.set_filter(filter_list)
+        self.transfer_order_details.set_transfer_order_user(desk, partial_desk)
+        call(self.transfer_order_call, self.transfer_order_details.build())
+        self.clear_details([self.transfer_order_details])
+
+    def internal_transfer(self, transfer_accept: bool = True):
+        if transfer_accept:
+            self.transfer_pool_details.confirm_ticket_accept()
+        else:
+            self.transfer_pool_details.cancel_ticket_reject()
+        call(self.transfer_pool_call, self.internal_transfer_action.build())
+        self.clear_details([self.transfer_pool_details])
 
     def complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
@@ -541,7 +566,7 @@ class BaseOrderBook(BaseWindow):
         return response
 
     def set_order_ticket_details(self, qty, type, price):
-        order_ticket_details = self.order_ticket_details()
+        order_ticket_details = self.order_ticket_details
         order_ticket_details.set_quantity(qty)
         order_ticket_details.set_order_type(type)
         order_ticket_details.set_limit(price)
