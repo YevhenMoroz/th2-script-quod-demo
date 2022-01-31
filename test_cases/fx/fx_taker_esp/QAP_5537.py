@@ -17,7 +17,7 @@ defaultmdsymbol_spo_EBS = 'EUR/USD:SPO:REG:EBS-CITI'
 no_md_entries_spo_db = [
     {
         "MDEntryType": "0",
-        "QuoteEntryID": "2_EUR/USD_2021100176E27F147A3E1310_Bid1",
+        "QuoteEntryID": "2_EUR/USD_202200176E27F147A3E1310_Bid1",
         "MDEntryPx": 1.18075,
         "MDEntrySize": 1000000,
         "MDEntryPositionNo": 1,
@@ -27,7 +27,7 @@ no_md_entries_spo_db = [
     },
     {
         "MDEntryType": "1",
-        "QuoteEntryID": "2_EUR/USD_2021100176E27F147A3E1310_Offer1",
+        "QuoteEntryID": "2_EUR/USD_202200176E27F147A3E1310_Offer1",
         "MDEntryPx": 1.18141,
         "MDEntrySize": 1000000,
         "MDEntryPositionNo": 1,
@@ -37,7 +37,7 @@ no_md_entries_spo_db = [
     },
     {
         "MDEntryType": "0",
-        "QuoteEntryID": "2_EUR/USD_2021100176E27F147A3E1310_Bid2",
+        "QuoteEntryID": "2_EUR/USD_2022200176E27F147A3E1310_Bid2",
         "MDEntryPx": 1.18071,
         "MDEntrySize": 2000000,
         "MDEntryPositionNo": 1,
@@ -47,7 +47,7 @@ no_md_entries_spo_db = [
     },
     {
         "MDEntryType": "1",
-        "QuoteEntryID": "2_EUR/USD_2021100176E27F147A3E1310_Offer2",
+        "QuoteEntryID": "2_EUR/USD_2022200176E27F147A3E1310_Offer2",
         "MDEntryPx": 1.18145,
         "MDEntrySize": 2000000,
         "MDEntryPositionNo": 1,
@@ -59,7 +59,7 @@ no_md_entries_spo_db = [
 no_md_entries_spo_ebs = [
     {
         "MDEntryType": "0",
-        "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid1",
+        "QuoteEntryID": "1_EUR/USD_2022300176E27F147A3E1310_Bid1",
         "MDEntryPx": 1.18066,
         "MDEntrySize": 1000000,
         "MDEntryPositionNo": 1,
@@ -69,7 +69,7 @@ no_md_entries_spo_ebs = [
     },
     {
         "MDEntryType": "1",
-        "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer1",
+        "QuoteEntryID": "1_EUR/USD_2022300176E27F147A3E1310_Offer1",
         "MDEntryPx": 1.18146,
         "MDEntrySize": 1000000,
         "MDEntryPositionNo": 1,
@@ -79,7 +79,7 @@ no_md_entries_spo_ebs = [
     },
     {
         "MDEntryType": "0",
-        "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Bid2",
+        "QuoteEntryID": "1_EUR/USD_2022400176E27F147A3E1310_Bid2",
         "MDEntryPx": 1.18061,
         "MDEntrySize": 2000000,
         "MDEntryPositionNo": 1,
@@ -89,7 +89,7 @@ no_md_entries_spo_ebs = [
     },
     {
         "MDEntryType": "1",
-        "QuoteEntryID": "1_EUR/USD_2021100176E27F147A3E1310_Offer2",
+        "QuoteEntryID": "1_EUR/USD_2022400176E27F147A3E1310_Offer2",
         "MDEntryPx": 1.18149,
         "MDEntrySize": 2000000,
         "MDEntryPositionNo": 1,
