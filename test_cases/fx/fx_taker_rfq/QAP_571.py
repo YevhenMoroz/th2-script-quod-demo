@@ -33,17 +33,17 @@ class QAP_571(TestCase):
         # TODO Change currency pair from drop down
         # endregion
         # region Step 3
-        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency)
+        self.rfq_tile.modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency)
         self.rfq_tile.check_currency_pair(currency_pair=eur_usd_symbol)
         # endregion
         # region Step 4
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty)
+        self.rfq_tile.modify_rfq_tile(near_qty=qty)
         self.rfq_tile.check_qty(near_qty=qty)
         # endregion
         # region Step 5
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty_1m)
+        self.rfq_tile.modify_rfq_tile(near_qty=qty_1m)
         self.rfq_tile.check_qty(near_qty=qty1)
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=qty_1k)
+        self.rfq_tile.modify_rfq_tile(near_qty=qty_1k)
         self.rfq_tile.check_qty(near_qty=qty2)
         # endregion
 
