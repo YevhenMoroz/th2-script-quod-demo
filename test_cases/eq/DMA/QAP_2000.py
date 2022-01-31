@@ -10,7 +10,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -21,7 +21,7 @@ timeouts = True
 # region TestData
 ss_connectivity = SessionAliasOMS().ss_connectivity
 bs_connectivity = SessionAliasOMS().bs_connectivity
-qty = '300'
+qty = '40'
 
 
 # endregion
@@ -45,11 +45,11 @@ class QAP_2000(TestCase):
         # region Create DMA order via FIX
         fix_manager.send_message_fix_standard(fix_message)
         try:
-            rule_manager = RuleManager()
+            rule_manager = RuleManager(Simulators.equity)
             venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
             venue = self.data_set.get_mic_by_name('mic_1')
             nos_rule = rule_manager.add_NewOrdSingle_Market_FIXStandard(bs_connectivity, venue_client_names, venue,
-                                                                        True, int(qty), 0)
+                                                                        False, int(qty), 0)
 
         except Exception:
             logger.error('Error execution', exc_info=True)
