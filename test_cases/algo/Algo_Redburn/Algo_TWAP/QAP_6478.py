@@ -26,10 +26,11 @@ qty_bid = qty_ask = 1000000
 qty = 75000
 qty_would = 10000
 waves = 5
-qty_twap_child = AlgoFormulasManager.get_next_twap_slice(qty, waves)
-qty_nav_child1 = AlgoFormulasManager.get_twap_nav_child_qty(qty, waves, ats)
-qty_nav_rebalance = AlgoFormulasManager.get_nav_reserve(qty, waves, ats)
+qty_twap_child = AlgoFormulasManager.get_next_twap_slice(qty, waves)            # 15000
+qty_nav_child1 = AlgoFormulasManager.get_twap_nav_child_qty(qty, waves, ats)    # 25000
+qty_nav_rebalance = AlgoFormulasManager.get_nav_reserve(qty, waves, ats)        # 50000
 nav_rebalance_time = 15
+tif_ioc = DataSet.TimeInForce.ImmediateOrCancel.value
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -99,7 +100,6 @@ def execute(report_id):
         twap_nav_order = FixMessageNewOrderSingleAlgo().set_TWAP_Navigator_params().add_ClordId((os.path.basename(__file__)[:-3]))
         twap_nav_order.change_parameters(dict(OrderQty=qty, Account=client, Price=price_would))
         twap_nav_order.update_fields_in_component("QuodFlatParameters", dict(TriggerPriceRed=price_would, NavigatorRebalanceTime=nav_rebalance_time, Waves=waves))
-
         fix_manager.send_message_and_receive_response(twap_nav_order, case_id_1)
 
         time.sleep(1)
@@ -146,23 +146,68 @@ def execute(report_id):
         # endregion
 
         # region Rebalance navigator child
-        # endregion
+        fix_verifier_bs.set_case_id(bca.create_event("Rebalance Navigator slice", case_id))
+        nav_rebalance_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_rebalance_child.change_parameters(dict(OrderQty=qty_nav_rebalance, Price=price_would))
+        fix_verifier_bs.check_fix_message(nav_rebalance_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Rebalance Navigator')
+
+        pending_nav_rebalance_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_rebalance_child, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_nav_rebalance_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Rebalance Navigator')
+
+        new_nav_rebalance_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_rebalance_child, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_nav_rebalance_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Rebalance Navigator')
 
         time.sleep(5)
+
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data for Would Opportunity", case_id))
         market_data_snap_shot_2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_bid, MDEntrySize=qty_bid)
         market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_would, MDEntrySize=qty_would)
         fix_manager_fh.send_message(market_data_snap_shot_2)
 
+        # Cancel Rebalance Navigator child
+        cancel_nav_rebalance_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_rebalance_child, gateway_side_buy, status_cancel)
+        fix_verifier_bs.check_fix_message(cancel_nav_rebalance_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Rebalance Navigator')
+        # endregion
+
+        # region Would child order
+        fix_verifier_bs.set_case_id(bca.create_event("Would child order", case_id))
+        would_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        would_child.change_parameters(dict(OrderQty=qty_would, Price=price_would, TimeInForce=tif_ioc))
+        fix_verifier_bs.check_fix_message(would_child, key_parameters=key_params, message_name='Buy side NewOrderSingle Would order')
+
+        pending_would_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(would_child, gateway_side_buy, status_pending)
+        fix_verifier_bs.check_fix_message(pending_would_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport PendingNew Would order')
+
+        new_would_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(would_child, gateway_side_buy, status_new)
+        fix_verifier_bs.check_fix_message(new_would_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport New Would order')
+
         time.sleep(5)
+        fix_manager_fh.set_case_id(bca.create_event("Send Market Data for Disable Would Opportunity", case_id))
         market_data_snap_shot_3 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         market_data_snap_shot_3.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_bid, MDEntrySize=qty_bid)
         market_data_snap_shot_3.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_ask, MDEntrySize=qty_ask)
         fix_manager_fh.send_message(market_data_snap_shot_3)
 
-        time.sleep(10)
-        order_cancel = FixMessageOrderCancelRequest(twap_nav_order)
-        fix_manager.send_message_and_receive_response(order_cancel)
+        # Cancel Would child
+        cancel_would_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(would_child, gateway_side_buy, status_cancel)
+        cancel_would_child_params.change_parameters(dict(OrdType=would_child.get_parameter('OrdType'), TimeInForce=would_child.get_parameter('TimeInForce'), ExDestination=would_child.get_parameter('ExDestination')))
+        cancel_would_child_params.remove_parameter('OrigClOrdID')
+        fix_verifier_bs.check_fix_message(cancel_would_child_params, key_parameters=key_params, direction=ToQuod, message_name='Buy side ExecReport Cancel Would order')
+        # endregion
+
+        # region Cancel Algo Order
+        case_id_4 = bca.create_event("Cancel Algo Order", case_id)
+        fix_verifier_ss.set_case_id(case_id_4)
+        # Cancel Order
+        cancel_request_twap_nav_order = FixMessageOrderCancelRequest(twap_nav_order)
+        fix_manager.send_message_and_receive_response(cancel_request_twap_nav_order, case_id_4)
+        fix_verifier_ss.check_fix_message(cancel_request_twap_nav_order, direction=ToQuod, message_name='Sell side Cancel Request')
+
+        cancel_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, gateway_side_sell, status_cancel)
+        cancel_twap_nav_order_params.change_parameters(dict(AvgPx=price_would, CumQty=qty_nav_child1))
+        fix_verifier_ss.check_fix_message(cancel_twap_nav_order_params, key_parameters=key_params, message_name='Sell side ExecReport Cancel')
+        #endregion
         
     except:
         logging.error("Error execution", exc_info=True)
