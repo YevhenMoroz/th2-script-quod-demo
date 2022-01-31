@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
     FixMessageMarketDataSnapshotFullRefreshSellFX
 
 
-class QAP_1554_new(TestCase):
+class QAP_1554(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
