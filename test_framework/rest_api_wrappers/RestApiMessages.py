@@ -226,9 +226,6 @@ class RestApiMessages:
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
 
-    def find_all_client_tier(self):
-        self.message_type = 'FindAllClientTier'
-
     def modify_fees_request(self, params=None, recalculate=False, fee: FeesAndCommissions = None):
         self.message_type = 'ModifyCommission'
         default_parameters = {
@@ -272,5 +269,3 @@ class RestApiMessages:
         self.parameters = params if params is not None else default_parameters
         return self
 
-    def find_all_client_tier_instr(self):
-        self.message_type = 'FindAllClientTierInstrSymbol'
