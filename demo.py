@@ -1,17 +1,17 @@
 import logging
-import time
 from datetime import datetime
 
 from MyFiles.MyTest import MyTest
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from stubs import Stubs
 from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
 from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
+from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -37,9 +37,11 @@ def test_run():
         # else:
         #     get_opened_fe(report_id, session_id)
         #
-        # QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_3761(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_5992(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_3537(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        # QAP_6149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_6149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
