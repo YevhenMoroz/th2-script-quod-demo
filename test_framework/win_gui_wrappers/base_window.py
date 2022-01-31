@@ -52,3 +52,4 @@ class BaseWindow:
                     split_normal_dictionarry = dict(item.split("=") for item in split_values1.split(', '))
                     normal_split_values_arr.append(split_normal_dictionarry)
             return normal_split_values_arr
+

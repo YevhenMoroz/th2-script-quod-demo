@@ -74,6 +74,8 @@ class BaseOrderBook(BaseWindow):
         self.extract_error_from_order_ticket_call = None
         self.split_limit_call = None
         self.direct_order_correct_call = None
+        self.mass_book_details = None
+        self.mass_book_call = None
 
     # endregion
 
@@ -548,10 +550,6 @@ class BaseOrderBook(BaseWindow):
         self.modify_order_details.set_order_details(order_ticket_details)
         return self.modify_order_details
 
-    def split_limit_order(self):
-        call(self.split_limit_call, self.modify_order_details.build())
-        # self.clear_details([self.modify_order_details])
-
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
@@ -560,3 +558,10 @@ class BaseOrderBook(BaseWindow):
 
     def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
         call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
+
+    def mass_book(self, positions_of_orders: list):
+        self.mass_book_details.set_rows_numbers(positions_of_orders)
+        call(self.mass_book_call, self.mass_book_details.build())
+        self.clear_details([self.mass_book_details])
+
+
