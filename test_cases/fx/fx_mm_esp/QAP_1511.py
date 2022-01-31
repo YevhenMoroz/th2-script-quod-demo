@@ -46,12 +46,10 @@ class QAP_1511(TestCase):
         bid_qty = actual_qty[str(bid_band)]
         self.rates_tile.compare_values(expected_qty_1, bid_qty,
                                        event_name=event_name)
-        # self.rates_tile.select_rows([2])
         actual_qty = self.rates_tile.extract_values_from_rates(bid_band, ask_band, row_number=2)
         bid_qty = actual_qty[str(bid_band)]
         self.rates_tile.compare_values(expected_qty_5, bid_qty,
                                        event_name=event_name)
-        # self.rates_tile.select_rows([3])
         actual_qty = self.rates_tile.extract_values_from_rates(bid_band, ask_band, row_number=3)
         bid_qty = actual_qty[str(bid_band)]
         self.rates_tile.compare_values(expected_qty_10, bid_qty,
