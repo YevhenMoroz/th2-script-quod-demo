@@ -97,6 +97,17 @@ class FxClientTiers(Enum):
     client_tier_8 = "Aurum"  # For AutoHedger testing
 
 
+class FxClientTiersID(Enum):
+    client_tier_id_1 = "2200009"  # For ESP_MM testing
+    client_tier_id_2 = "2600011"  # For MM_RFQ testing - Explicitly Request Swap Points
+    client_tier_id_3 = "2400009"  # For MM_RFQ testing
+    client_tier_id_4 = "2000010"  # For ESP_MM testing
+    client_tier_id_5 = "2000011"  # For ESP_MM testing
+    client_tier_id_6 = "2600010"  # For AutoHedger testing
+    client_tier_id_7 = "2600009"  # For MM_Positions testing
+    client_tier_id_8 = "2600012"  # For AutoHedger testing
+
+
 class FxSecurityTypes(Enum):
     fx_spot = "FXSPOT"
     fx_fwd = "FXFWD"
@@ -127,7 +138,6 @@ class FxTenors(Enum):
     tenor_2m = "2M"
     tenor_1y = "1Y"
     tenor_2y = "2Y"
-
 
 
 class FxSettleDates(Enum):
