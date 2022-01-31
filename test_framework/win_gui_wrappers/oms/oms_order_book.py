@@ -10,7 +10,8 @@ from win_gui_modules.middle_office_wrappers import TicketDetails, SettlementDeta
 from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, CancelOrderDetails, ModifyOrderDetails, \
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
-    SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails
+    SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
+    TransferPoolDetailsCLass, InternalTransferActionDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -75,5 +76,11 @@ class OMSOrderBook(BaseOrderBook):
         self.direct_loc_request_correct_call = Stubs.win_act_order_book.orderBookDirectLoc
         self.mass_book_details = RowsNumbersForGrid(self.base_request)
         self.mass_book_call = Stubs.win_act_order_book.massBook
+        self.transfer_order_details = TransferOrderDetails()
+        self.transfer_order_call = Stubs.win_act_order_book.transferOrder
+        self.transfer_pool_details = TransferPoolDetailsCLass()
+        self.transfer_pool_call = Stubs.care_orders_action.internalTransferAction
+        self.internal_transfer_action = InternalTransferActionDetails(self.base_request, self.transfer_pool_details.build())
 
-    # endregion
+
+        # endregion
