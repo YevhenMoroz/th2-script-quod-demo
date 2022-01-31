@@ -73,7 +73,7 @@ class ClientRatesTile(ClientPricingTile):
             self.modify_request.increase_ask()
         if ClientPrisingTileAction.decrease_ask in args:
             self.modify_request.decrease_ask()
-        if ClientPrisingTileAction.increase_ask in args:
+        if ClientPrisingTileAction.increase_bid in args:
             self.modify_request.increase_bid()
         if ClientPrisingTileAction.decrease_bid in args:
             self.modify_request.decrease_bid()
@@ -147,6 +147,14 @@ class ClientRatesTile(ClientPricingTile):
         return response
 
     def extract_values_from_rates(self, *args: col_n, row_number: int = 1):
+        """
+        -----Example of usage-----
+        ask_base = RatesColumnNames.ask_base
+        bid_base = RatesColumnNames.bid_base
+        base_before = self.rates_tile.extract_values_from_rates(bid_base, ask_base)
+        -----Get extracted value-----
+        value = base_before[str(bid_base)]
+        """
         self.extract_table_value_request.set_row_number(row_number)
         if col_n.bid_effective in args:
             self.extract_table_value_request.set_bid_extraction_field(
