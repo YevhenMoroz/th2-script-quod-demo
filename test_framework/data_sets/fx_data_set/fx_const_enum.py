@@ -203,3 +203,38 @@ class DaysOfWeek(Enum):
     friday = "FRI"
     sunday = "SUN"
     saturday = "SAT"
+
+
+class FXAutoHedgers(Enum):
+    auto_hedger_1 = "OsmiumAH"
+    auto_hedger_2 = "AURUM_AH"
+    auto_hedger_3 = "DEFAULT"
+    auto_hedger_4 = "Internal"
+    auto_hedger_5 = "AUTOHEDGER1"
+    auto_hedger_6 = "AUTOHEDGER0"
+    auto_hedger_7 = "AUTOHEDGER_Int"
+    auto_hedger_8 = "OsmiumAH2"
+
+
+class FXAutoHedgersID(Enum):
+    auto_hedger_id_1 = "1400008"
+    auto_hedger_id_2 = "1400010"
+    auto_hedger_id_3 = "1600010"
+    auto_hedger_id_4 = "1400009"
+    auto_hedger_id_5 = "1400006"
+    auto_hedger_id_6 = "1"
+    auto_hedger_id_7 = "1400005"
+    auto_hedger_id_8 = "1600011"
+
+
+class FXAlgoPolicies(Enum):
+    algo_policy_1 = "Hedging_Test"
+    algo_policy_2 = "test"
+    algo_policy_3 = "test_fake"
+
+
+class FXAlgoPoliciesID(Enum):
+    algo_policy_id_1 = "400019"
+    algo_policy_id_2 = "200011"
+    algo_policy_id_3 = "400024"
+
