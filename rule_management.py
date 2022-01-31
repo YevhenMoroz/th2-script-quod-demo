@@ -401,7 +401,4 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager(Simulators.equity)
-    # rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard("fix-buy-317-standard-test",
-    #                                                                       "MOClient_PARIS", "XPAR", 10.0)
-    rule_manager.remove_rules_by_id_range(5, 7)
     rule_manager.print_active_rules()
