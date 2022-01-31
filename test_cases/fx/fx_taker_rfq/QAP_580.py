@@ -53,6 +53,12 @@ class QAP_580(TestCase):
         # endregion
         # region Step 3
         self.rfq_tile.cancel_rfq()
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, qty]).check_quote_book_fields_list(
+            {qrb.instrument_symbol.value: eur_usd_symbol,
+             qrb.quote_status.value: qs.terminated.value,
+             qrb.status.value: st.terminated.value,
+             qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
         # endregion
         # region Step 4
         self.rfq_tile.send_rfq()
