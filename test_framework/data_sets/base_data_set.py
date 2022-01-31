@@ -17,6 +17,7 @@ class BaseDataSet:
     currency = None
     venue_client_names = None
     client_tiers = None
+    client_tiers_id = None
     days_of_week = None
     tenors = None
     symbols = FxSymbols
@@ -133,7 +134,7 @@ class BaseDataSet:
 
     def get_settle_date_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get settle date by name from FxSettleDates
         example ---> get_settle_date_by_name("spot"):
         """
         if hasattr(self.settle_dates, name):
@@ -142,8 +143,17 @@ class BaseDataSet:
 
     def get_client_tier_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get client tier by name from FxClientTiers
         example ---> get_client_tier_by_name("client_tier_1"):
+        """
+        if hasattr(self.client_tiers, name):
+            return getattr(self.client_tiers, name).value
+        raise ValueError(f"{self.client_tiers} not found!")
+
+    def get_client_tier_id_by_name(self, name: str):
+        """
+        get client tier ID by name from FxClientTiersID
+        example ---> get_client_tier_id_by_name("client_tier_id_1"):
         """
         if hasattr(self.client_tiers, name):
             return getattr(self.client_tiers, name).value
@@ -151,7 +161,7 @@ class BaseDataSet:
 
     def get_day_of_week_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get day of week by name from DaysOfWeek
         example ---> get_day_of_week_by_name("monday"):
         """
         if hasattr(self.days_of_week, name):
@@ -160,7 +170,7 @@ class BaseDataSet:
 
     def get_tenor_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get tenor by name from FxTenors
         example ---> get_tenor_by_name("tenor_spot"):
         """
         if hasattr(self.tenors, name):
