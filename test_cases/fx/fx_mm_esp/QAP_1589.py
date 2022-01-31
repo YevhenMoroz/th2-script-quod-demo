@@ -155,7 +155,7 @@ from datetime import datetime, timedelta
 pips = "50"
 ask_base = RatesColumnNames.ask_base
 bid_base = RatesColumnNames.bid_base
-action = ClientPrisingTileAction.narrow_spread
+action = ClientPrisingTileAction.widen_spread
 
 
 class QAP_1589(TestCase):
@@ -179,12 +179,29 @@ class QAP_1589(TestCase):
         self.rates_tile.modify_client_tile(instrument=instrument, client_tier=client)
         self.rates_tile.press_use_default()
         base_before = self.rates_tile.extract_values_from_rates(bid_base, ask_base)
+        # endregion
+        # region Step 2
         self.rates_tile.modify_client_tile(pips=pips)
         self.rates_tile.modify_spread(action)
         base_after = self.rates_tile.extract_values_from_rates(bid_base, ask_base)
-        expected_after = str(int(base_before[bid_base]) + int(pips))
-        self.rates_tile.compare_values(expected_value=expected_after, actual_value=base_after[bid_base])
+        expected_after = str(int(base_before[str(bid_base)]) + int(pips))
+        self.rates_tile.compare_values(expected_after, base_after[str(bid_base)],
+                                       event_name="Check that values change after modify spread")
+        # endregion
+        # region Step 3
+        self.rates_tile.press_live()
+        base_with_live = self.rates_tile.extract_values_from_rates(bid_base, ask_base)
+        self.rates_tile.compare_values(base_with_live[str(bid_base)], base_before[str(bid_base)],
+                                       event_name="Values after enable live")
+        # endregion
+        # region Step 4
+        self.rates_tile.press_live()
+        base_without_live = self.rates_tile.extract_values_from_rates(bid_base, ask_base)
+        self.rates_tile.compare_values(base_after[str(bid_base)], base_without_live[str(bid_base)],
+                                       event_name="Values after disable live")
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        self.rates_tile.press_use_default()
         self.rates_tile.close_tile()
