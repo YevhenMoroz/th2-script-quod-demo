@@ -193,12 +193,13 @@ class TransferOrderDetails:
         self.transfer_order_details.multipleRowSelection = True
         self.transfer_order_details.selectedRowCount = selected_row_count
 
-    def build(self):
-        return self.transfer_order_details
 
     def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
         self.transfer_order_details.desk = desk
         self.transfer_order_details.partialDesk = partial_desk
+
+    def build(self):
+        return self.transfer_order_details
 
 
 class TransferPoolDetailsCLass:
