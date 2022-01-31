@@ -1,20 +1,11 @@
-import logging
-import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames, ClientPrisingTileAction, PriceNaming
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from datetime import datetime, timedelta
+
 
 
 pips_1 = "1"
@@ -22,10 +13,6 @@ pips_2 = "2"
 pips_3 = "3"
 pips_4 = "4"
 pips_5 = "5"
-
-ask_base = RatesColumnNames.ask_base
-bid_base = RatesColumnNames.bid_base
-action = ClientPrisingTileAction.widen_spread
 
 ask_pips = PriceNaming.ask_pips
 bid_pips = PriceNaming.bid_pips
