@@ -46,7 +46,7 @@ class QAP_6598(TestCase):
         new_order_sor.add_tag({"ExDestination": "CITI-SW"})
         self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion
-        # region Step 2
+        # region Step 2-3
         execution_report_filled = FixMessageExecutionReportAlgoFX(). \
             set_params_from_new_order_single(new_order_sor, gateway_side_buy, status)
         execution_report_filled.change_parameter("LastQty", "*")
