@@ -8,8 +8,9 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 qty = str(random.randint(1000000, 2000000))
+year = int(datetime.now().year)
 click_to_sunday = 7 - int(datetime.now().strftime('%w'))
-click_to_25dec = int(str(datetime(2022, 12, 25) - datetime.now()).split()[0])
+click_to_25dec = int(str(datetime(year, 12, 25) - datetime.now()).split()[0])
 
 
 class QAP_575(TestCase):
