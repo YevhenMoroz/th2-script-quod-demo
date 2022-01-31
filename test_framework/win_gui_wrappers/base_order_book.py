@@ -78,6 +78,8 @@ class BaseOrderBook(BaseWindow):
         self.extract_error_from_order_ticket_call = None
         self.split_limit_call = None
         self.direct_order_correct_call = None
+        self.mass_book_details = None
+        self.mass_book_call = None
         self.transfer_pool_call = None
         self.transfer_pool_details = None
         self.internal_transfer_action = None
@@ -566,7 +568,7 @@ class BaseOrderBook(BaseWindow):
         return response
 
     def set_order_ticket_details(self, qty, type, price):
-        order_ticket_details = self.order_ticket_details
+        order_ticket_details = self.order_ticket_details()
         order_ticket_details.set_quantity(qty)
         order_ticket_details.set_order_type(type)
         order_ticket_details.set_limit(price)
@@ -585,3 +587,10 @@ class BaseOrderBook(BaseWindow):
 
     def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
         call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
+
+    def mass_book(self, positions_of_orders: list):
+        self.mass_book_details.set_rows_numbers(positions_of_orders)
+        call(self.mass_book_call, self.mass_book_details.build())
+        self.clear_details([self.mass_book_details])
+
+

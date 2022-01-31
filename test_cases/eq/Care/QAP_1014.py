@@ -4,10 +4,10 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
+from test_framework.core.test_case import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -32,7 +32,6 @@ class QAP_1014(TestCase):
         client = self.data_set.get_client_by_name('client_pt_1')
         price = '100'
         qty = '50'
-        desk = 'Desk of Order Book'
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         user = Stubs.custom_config['qf_trading_fe_user']
         # endregion
@@ -45,8 +44,7 @@ class QAP_1014(TestCase):
         order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
                                        partial_desk=True)
         order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
-        # order_book.scroll_order_book(1)
-        order_id_first = order_book.extract_field('Order ID')
+        order_id_first = order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
 
         # region switch user
@@ -62,9 +60,10 @@ class QAP_1014(TestCase):
 
         # region verify values
         order_book_2 = OMSOrderBook(self.case_id, session_id=session_id2)
-        status = order_book_2.extract_field('Sts')
-        order_id = order_book_2.extract_field('Order ID')
-        base_window2.compare_values({'Sts': 'Open', 'Order ID': order_id_first}, {'Sts': status, 'Order ID': order_id},
+        status = order_book_2.extract_field(OrderBookColumns.sts.value)
+        order_id = order_book_2.extract_field(OrderBookColumns.order_id.value)
+        base_window2.compare_values({OrderBookColumns.sts.value: 'Open', OrderBookColumns.order_id.value: order_id_first}, {OrderBookColumns.sts.value: status,
+                                                                                  OrderBookColumns.order_id.value: order_id},
                                     "Event_Name")
         # endregion
 

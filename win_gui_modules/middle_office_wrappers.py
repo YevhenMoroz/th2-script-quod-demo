@@ -376,6 +376,9 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def build(self):
         return self._request
 
+    def clear_filter(self):
+        self._request.clearMiddleOfficeFilter = True
+
 
 class AllocationsExtractionDetails:
     def __init__(self, base_request: EmptyRequest = None):
@@ -491,9 +494,9 @@ class AllocationBlockExtractionDetails:
 
 
 class MassApproveDetails:
-    def __init__(self, base: EmptyRequest = None, rows_numbers: list = None):
-        if base is not None:
-            self._request = middle_office_pb2.MassApproveDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None, rows_numbers: list = None):
+        if base_request is not None:
+            self._request = middle_office_pb2.MassApproveDetails(base=base_request)
         else:
             self._request = middle_office_pb2.MassApproveDetails()
 
