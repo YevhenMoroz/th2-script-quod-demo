@@ -1,12 +1,9 @@
 import os
 
-import re
 import pyperclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.select import Select
-
 from test_cases.web_admin.web_admin_core.utils.common_constants import CommonConstants
 from test_cases.web_admin.web_admin_core.utils.csv_utils.csv_reader import CsvReader
 from test_cases.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfReader
@@ -19,6 +16,7 @@ class CommonPage:
     def __init__(self, web_driver_container: WebDriverContainer):
         self.web_driver_container = web_driver_container
         self.web_driver_wait = web_driver_container.get_wait_driver()
+
 
     def find_by_css_selector(self, css_selector: str):
         return self.find_by(By.CSS_SELECTOR, css_selector)
@@ -134,3 +132,10 @@ class CommonPage:
             return True
         else:
             return False
+
+    def find_element_in_shadow_root(self, css_path):
+        '''
+        Method was created for searching elements in DOM for #shadow-root tags
+        '''
+        search_button = self.web_driver_container.get_driver().execute_script(css_path)
+        search_button.click()

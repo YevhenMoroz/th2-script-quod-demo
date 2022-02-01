@@ -82,10 +82,10 @@ def execute(report_id, session_id):
                          actual_pos_eur_chf_client, VerificationMethod.NOT_EQUALS)
         compare_position('Checking positions Client QUOD4_1 EUR/USD NOT EQUAL', case_id, initial_pos_eur_usd_quod,
                          actual_pos_eur_usd_quod, VerificationMethod.NOT_EQUALS)
-        compare_position('Checking positions Client QUOD4_1 USD/CHF NOT EQUAL', case_id, initial_pos_usd_chf_quod,
+        compare_position('Checking positions Client QUOD4_1 USD/CHF NOT EQUAL', case_id, str(float(initial_pos_usd_chf_quod)-float(370)),
                          actual_pos_usd_chf_quod, VerificationMethod.NOT_EQUALS)
 
-        FXOrderBook(case_id, case_base_request).set_filter(
+        FXOrderBook(case_id, session_id).set_filter(
             ["Order ID", "MO", "Orig", "FIX", "Lookup", "EUR/CHF-SPO.SPO", "Client ID", "AURUM1"]). \
             check_order_fields_list({"Sts": "Terminated", "Side": "Buy"},
                                     "Checking placed order MO USD/SEK")

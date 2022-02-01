@@ -27,6 +27,8 @@ class QAP_Example(TestCase):
         self.order_book = None
 
     @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+    @try_except(test_id=Path(__file__).name[:-3])
     def pre_conditions_and_run(self):
         # region Initialization
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
@@ -49,4 +51,6 @@ class QAP_Example(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def post_conditions(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         self.rfq_tile.close_tile()

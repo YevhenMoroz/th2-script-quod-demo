@@ -353,3 +353,35 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_Multilisting_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": "EUR",
+            "ExDestination": "XPAR",
+            'Instrument': Instrument.RF.value,
+            'TargetStrategy': '1008',
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'AvailableVenues',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+                {
+                    'StrategyParameterName': 'AllowMissingPrimary',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self

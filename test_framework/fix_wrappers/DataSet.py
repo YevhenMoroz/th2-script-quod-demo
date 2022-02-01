@@ -82,6 +82,13 @@ class Instrument(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    RF = dict(
+        Symbol='FR0000121121_EUR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class Connectivity(Enum):
@@ -96,10 +103,16 @@ class Connectivity(Enum):
     Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
     Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
     Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
+    Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_Feed_Handler = 'fix-fh-314-luna'
     Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_wa = "rest_wa314luna"
+    Kratos_309_ss_rfq = 'fix-sell-rfq-m-309kratos-stand'
+    Kratos_309_bs_rfq = 'fix-bs-rfq-309-kratos-stand'
+    Kratos_309_ss_esp = 'fix-sell-esp-m-309kratos-stand'
+    Kratos_309_bs_esp = 'fix-bs-esp-309-kratos-stand'
+    Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
 
@@ -200,6 +213,7 @@ class FreeNotesReject(Enum):
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
+    InvalidPercentageOfVolume = "invalid value for percentage of volume"
 
 
 class Reference(Enum):

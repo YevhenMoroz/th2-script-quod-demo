@@ -8,6 +8,7 @@ from test_cases.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_
     QAP_4228, QAP_4509, QAP_4510, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_5345
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, \
     QAP_3807, QAP_3850, QAP_3811, QAP_3851, QAP_3806
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
 from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
@@ -70,6 +71,7 @@ def test_run(parent_id=None):
         QAP_3811.execute(report_id, session_id)
         QAP_3851.execute(report_id)
         QAP_3806.execute(report_id)
+        QAP_3761(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # endregion
 
         QAP_1563.execute(report_id)
