@@ -56,8 +56,8 @@ class QAP_6181(TestCase):
         try:
             rule_manager = RuleManager(sim=Simulators.equity)
             nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
-                                                                                                 self.data_set.get_venue_client_names_by_name('client_1_venue_1'),
-                                                                                                 self.data_set.get_mic_by_name('mic_1'), float(price))
+                                                    self.data_set.get_venue_client_names_by_name('client_1_venue_1'),
+                                                    self.data_set.get_mic_by_name('mic_1'), float(price))
 
             order_ticket.set_order_details(self.data_set.get_client_by_name('client_1'), limit=price, qty=qty,
                                            order_type=order_type)
