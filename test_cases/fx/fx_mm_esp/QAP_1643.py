@@ -34,7 +34,7 @@ def execute(report_id, session_id):
         rates_tile.compare_values(expected_value=expected_px, actual_value=px_after[str(cn.ask_px)],
                                   event_name="Check PX", value_name="Px Column")
         # Step 5
-        rates_tile.check_color_on_lines(0, 90, expected_color=str(PricingButtonColor.yellow_button.value))
+        rates_tile.check_color_of_pricing_button(0, 90, expected_color=str(PricingButtonColor.yellow_button.value))
         # Step 6
         rates_tile.modify_spread(action.narrow_spread)
         px_after_2 = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
@@ -42,7 +42,7 @@ def execute(report_id, session_id):
         rates_tile.compare_values(expected_value=expected_px, actual_value=px_after_2[str(cn.ask_px)],
                                   event_name="Check PX", value_name="Px Column")
         # Step 7
-        rates_tile.check_color_on_lines(0, 90, expected_color=str(PricingButtonColor.green_button.value))
+        rates_tile.check_color_of_pricing_button(0, 90, expected_color=str(PricingButtonColor.green_button.value))
         rates_tile.deselect_rows()
         rates_tile.press_use_default()
 

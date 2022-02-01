@@ -41,3 +41,28 @@ class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_mo(self) -> FixMessageNewOrderSingle:
+        instrument = dict(
+            Symbol='EUR/USD',                                    # 55
+            SecurityType='FXSPOT',                               # 167
+        )
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(9),                    # 11
+            "Account": "TH2_Taker",                              # 1
+            "HandlInst": "2",                                    # 21
+            "Side": "1",                                         # 54
+            "OrderQty": "1000000",                               # 38
+            "TimeInForce": "0",                                  # 59
+            "OrdType": "2",                                      # 40
+            "TransactTime": datetime.utcnow().isoformat(),       # 60
+            "Price": "1.18999",                                  # 44
+            "Currency": "EUR",                                   # 15
+            "Instrument": instrument,
+            "SettlDate": spo(),                                  # 64
+            "SettlType": '0',                                    # 63
+            "ExDestination": "CITI-SW"                           # 100
+
+        }
+        super().change_parameters(base_parameters)
+        return self

@@ -19,7 +19,7 @@ timeouts = True
 qty = 100000
 price = 20
 max_participation = 120
-text_reject_invalid_maxparticipation = DataSet.FreeNotesReject.InvalidMaxParticipation
+text_reject_invalid_maxparticipation = DataSet.FreeNotesReject.InvalidMaxParticipation.value
 
 #Key parameters
 key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -33,6 +33,7 @@ gateway_side_sell = DataSet.GatewaySide.Sell
 status_pending = DataSet.Status.Pending
 status_new = DataSet.Status.New
 status_fill = DataSet.Status.Fill
+status_reject = DataSet.Status.Reject
 status_cancel = DataSet.Status.Cancel
 
 # venue param

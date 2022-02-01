@@ -34,6 +34,10 @@ class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
         super().change_parameters(md_req_parameters)
         return self
 
+    def set_md_uns_parameters_maker(self) -> FixMessageMarketDataRequest:
+        self.change_parameters({"SubscriptionRequestType": "2"})
+        return self
+
     def set_md_req_parameters_taker(self) -> FixMessageMarketDataRequest:
         md_req_parameters = {
             "MDReqID": bca.client_orderid(10),
