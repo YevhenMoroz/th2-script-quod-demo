@@ -64,3 +64,13 @@ class AlgoMic(Enum):
     mic_1 = "XPAR"
     mic_2 = "TRQX"
     mic_3 = "XLON"
+
+class AlgoListingId(Enum):
+    listing_1 = "1015"
+
+class AlgoCurrency(Enum):
+    currency_1 = "EUR"
+    currency_2 = "GBP"
+    currency_3 = "GBp"
+    currency_4 = "USD"
+    currency_5 = "UAH"
