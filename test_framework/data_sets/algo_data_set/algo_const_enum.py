@@ -59,3 +59,8 @@ class AlgoRecipients(Enum):
     recipient_user_1 = ""
     recipient_user_2 = ""
     recipient_user_3 = ""
+
+class AlgoMic(Enum):
+    mic_1 = "XPAR"
+    mic_2 = "TRQX"
+    mic_3 = "XLON"

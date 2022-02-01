@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.algo_data_set.algo_const_enum import AlgoFixInstruments, AlgoVenues, AlgoClients, \
-    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients
+    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients, AlgoMic
 
 
 class AlgoDataSet(BaseDataSet):
@@ -13,3 +13,4 @@ class AlgoDataSet(BaseDataSet):
     accounts = AlgoAccounts
     washbook_accounts = AlgoWashbookAccounts
     recipients = AlgoRecipients
+    mic = AlgoMic
