@@ -12,24 +12,20 @@ from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBook
     Status as st, QuoteStatus as qs, QuoteBookColumns as qb, \
     ExecSts, Side
 
-qty = str(random.randint(1000000, 2000000))
-
 
 class QAP_584(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rfq_tile = None
-        self.order_book = None
-        self.quote_request_book = None
-        self.quote_book = None
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        self.qty = str(random.randint(1000000, 2000000))
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         eur_currency = self.data_set.get_currency_by_name('currency_eur')
         usd_currency = self.data_set.get_currency_by_name('currency_usd')
         near_tenor = self.data_set.get_tenor_by_name('tenor_spot')
@@ -40,13 +36,13 @@ class QAP_584(TestCase):
 
         # region Step 1
         self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
-                                                   near_qty=qty, near_tenor=near_tenor,
+                                                   near_qty=self.qty, near_tenor=near_tenor,
                                                    client=client, single_venue=venue)
         # endregion
         # region Step 2
         self.rfq_tile.send_rfq()
         self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, qty]).check_quote_book_fields_list(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: eur_usd_symbol,
              qrb.quote_status.value: qs.accepted.value,
              qrb.status.value: st.new.value,
@@ -55,7 +51,7 @@ class QAP_584(TestCase):
         # region Step 3
         self.rfq_tile.cancel_rfq()
         self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, qty]).check_quote_book_fields_list(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: eur_usd_symbol,
              qrb.quote_status.value: qs.terminated.value,
              qrb.status.value: st.terminated.value,
@@ -65,7 +61,7 @@ class QAP_584(TestCase):
         self.rfq_tile.send_rfq()
         time.sleep(120)
         self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, qty]).check_quote_book_fields_list(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: eur_usd_symbol,
              qrb.quote_status.value: qs.expired.value,
              qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
@@ -73,7 +69,7 @@ class QAP_584(TestCase):
         # region Step 6
         self.rfq_tile.send_rfq()
         self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, qty]).check_quote_book_fields_list(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: eur_usd_symbol,
              qrb.quote_status.value: qs.accepted.value,
              qrb.status.value: st.new.value,
@@ -83,13 +79,13 @@ class QAP_584(TestCase):
         self.rfq_tile.place_order(side=Side.sell.value)
 
         self.order_book.set_filter(
-            [ob.symbol.value, eur_usd_symbol, ob.qty.value, qty]).check_order_fields_list(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
             {ob.symbol.value: eur_usd_symbol,
              ob.sts.value: st.terminated.value,
              ob.exec_sts.value: ExecSts.filled.value,
-             ob.qty.value: qty}, 'Checking currency value in order book')
+             ob.qty.value: self.qty}, 'Checking currency value in order book')
 
-        quote_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, qty]). \
+        quote_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_field(ob.quote_id.value)
 
         self.quote_book.set_filter(
