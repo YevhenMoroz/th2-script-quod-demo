@@ -86,13 +86,13 @@ class QAP_6153(TestCase):
         # endregion
 
         # region Postconditions
-        @try_except(test_id=Path(__file__).name[:-3])
-        def run_post_conditions(self):
-            self.rest_massage.modify_client_tier_instrument(). \
-                update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
-            self.rest_manager.send_post_request(self.rest_massage)
-            self.fix_subscribe.set_md_uns_parameters_maker()
-            self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_massage.modify_client_tier_instrument(). \
+            update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
+        self.rest_manager.send_post_request(self.rest_massage)
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
 
 
