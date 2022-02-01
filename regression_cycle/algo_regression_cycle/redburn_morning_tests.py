@@ -86,7 +86,7 @@ def test_run():
         MOC_WIE.execute(report_id)
         MOC_WIE.execute(report_id)
         #XETRA
-        MOC_XET.execute(report_id)
+        MOO_XET.execute(report_id)
         MOC_XET.execute(report_id)
         #endregion
 
