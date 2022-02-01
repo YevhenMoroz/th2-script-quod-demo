@@ -10,6 +10,7 @@ class BaseOrderTicket(BaseWindow):
         self.order_details = None
         self.new_order_details = None
         self.modify_order_details = None
+        self.modify_order_details = None
         self.extract_order_ticket_values_request = None
         self.extract_order_ticket_errors_request = None
         self.order_ticket_extracted_value = None
@@ -24,6 +25,7 @@ class BaseOrderTicket(BaseWindow):
         self.re_order_call = None
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
+        self.mass_modify_order_call = None
 
     # endregion
 
@@ -92,6 +94,14 @@ class BaseOrderTicket(BaseWindow):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         call(self.amend_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
+
+    def mass_modify_order(self, row_count: int, filter_list: list = None):
+        self.modify_order_details.set_order_details(self.order_details)
+        self.modify_order_details.set_selected_row_count(row_count)
+        if filter_list is not None:
+            self.modify_order_details.set_filter(filter_list)
+        call(self.mass_modify_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
     def split_order(self, filter_list: list = None):

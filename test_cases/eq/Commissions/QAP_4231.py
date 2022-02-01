@@ -12,7 +12,7 @@ from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCom
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class QAP_4231(TestCase):
     def execute(self):
         trades = OMSTradesBook(self.case_id, self.session_id)
         commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id)
-        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         commission_sender.clear_commissions()
         commission_sender.set_modify_client_commission_message(recalculate=True,
                                                                account=self.account).send_post_request()
@@ -75,12 +75,12 @@ class QAP_4231(TestCase):
                               event_name='Check values')
 
     @staticmethod
-    def __verify_fees_in_middle_office(middle_office: OMSMiddleOfficeBook):
+    def __verify_fees_in_middle_office(middle_office: OMSMiddleOffice):
         commission = middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value)
         middle_office.compare_values({MiddleOfficeColumns.client_comm.value: ""}, commission, event_name='Check values')
 
     @staticmethod
-    def __verify_fees_in_allocation_ticket(middle_office: OMSMiddleOfficeBook):
+    def __verify_fees_in_allocation_ticket(middle_office: OMSMiddleOffice):
         commission = middle_office.extract_allocate_value(AllocationsColumns.client_comm.value)
         middle_office.compare_values({AllocationsColumns.client_comm.value: "1.123"}, commission,
                                      event_name='Check values')

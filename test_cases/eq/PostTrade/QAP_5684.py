@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class QAP_5684(TestCase):
         # region Declaration
         base_window = BaseMainWindow(self.case_id, self.session_id)
         oms_order_book = OMSOrderBook(self.case_id, self.session_id)
-        oms_middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        oms_middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']

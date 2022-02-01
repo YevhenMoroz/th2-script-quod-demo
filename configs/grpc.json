@@ -39,6 +39,19 @@
         "endpoints": ["simulator"]
       }
     },
+    "SimulatorEquity": {
+      "service-class": "TemplateSimulatorServiceEquityService",
+      "endpoints": {
+        "sim_equity": {
+          "host": "10.0.22.22",
+          "port": 32700
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": ["sim_equity"]
+      }
+    },
     "Simulator2": {
       "service-class": "SimService",
       "endpoints": {

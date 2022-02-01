@@ -1,4 +1,3 @@
-from enum import Enum
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
 
 
@@ -6,7 +5,7 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
-    instruments = None
+    fix_instruments = None
     venues = None
     clients = None
     accounts = None
@@ -17,6 +16,11 @@ class BaseDataSet:
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    symbols = None
+    security_types = None
+    settle_types = None
+    settle_dates = None
+    lookups = None
     client_tiers = None
     client_tiers_id = None
     days_of_week = None
@@ -31,8 +35,8 @@ class BaseDataSet:
     algo_policies_id = None
 
     def get_instruments(self):
-        if self.instruments:
-            return self.instruments.__members__
+        if self.fix_instruments:
+            return self.fix_instruments.__members__
 
     def get_venues(self):
         if self.venues:
@@ -54,10 +58,10 @@ class BaseDataSet:
         if self.recipients:
             return self.recipients.__members__
 
-    def get_instrument_by_name(self, name: str):
-        if hasattr(self.instruments, name):
-            return getattr(self.instruments, name).value
-        raise ValueError(f"{self.instruments} not found!")
+    def get_fix_instrument_by_name(self, name: str):
+        if hasattr(self.fix_instruments, name):
+            return getattr(self.fix_instruments, name).value
+        raise ValueError(f"{self.fix_instruments} not found!")
 
     def get_venue_by_name(self, name: str):
         if hasattr(self.venues, name):
@@ -146,6 +150,11 @@ class BaseDataSet:
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
 
+    def get_route(self, name:str):
+        if hasattr(self.routes, name):
+            return getattr(self.routes, name).value
+        raise ValueError(f"{self.routes} not found!")
+
     def get_client_tier_by_name(self, name: str):
         """
         get client tier by name from FxClientTiers
@@ -218,6 +227,12 @@ class BaseDataSet:
             return getattr(self.algo_policies_id, name).value
         raise ValueError(f"{self.algo_policies_id} not found!")
     # endregion
+
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")
+
 
 
 

@@ -11,7 +11,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.fe_trading_constant import MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class QAP_3310(TestCase):
         case_id = create_event(self.__class__.__name__, self.report_id)
         RestCommissionsSender(self.wa_connectivity, case_id).send_default_fee()
         self.__send_fix_orders(self.client, self.price, self.qty, case_id)
-        middle_office = OMSMiddleOfficeBook(case_id, self.session_id)
+        middle_office = OMSMiddleOffice(case_id, self.session_id)
         order_book = OMSOrderBook(case_id, self.session_id)
         order_book.scroll_order_book(1)
         middle_office.book_order()
@@ -60,6 +60,6 @@ class QAP_3310(TestCase):
             rule_manager.remove_rule(nos_rule)
 
     @staticmethod
-    def __verify_fees(middle_office: OMSMiddleOfficeBook):
+    def __verify_fees(middle_office: OMSMiddleOffice):
         fees = middle_office.extract_block_field(MiddleOfficeColumns.fees.value)
         middle_office.compare_values({MiddleOfficeColumns.fees.value: ""}, fees, event_name='Check values')

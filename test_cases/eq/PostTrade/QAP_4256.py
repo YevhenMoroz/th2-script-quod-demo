@@ -8,7 +8,7 @@ from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.data_set import AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class QAP_4256(TestCase):
     def execute(self):
         case_id = create_event(self.__class__.__name__, self.report_id)
         main_window = BaseMainWindow(case_id, self.session_id)
-        middle_office = OMSMiddleOfficeBook(case_id, self.session_id)
+        middle_office = OMSMiddleOffice(case_id, self.session_id)
         order_ticket = OMSOrderTicket(case_id, self.session_id)
         self.__open_front_end(main_window, self.report_id)
         alloc_details = {self.account1: "250", self.account2: "250"}
