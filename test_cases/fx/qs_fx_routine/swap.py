@@ -2,12 +2,12 @@ import logging
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from quod_qa.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
+from quod_qa.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
+from quod_qa.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
+from quod_qa.fx.fx_wrapper.FixClientBuy import FixClientBuy
+from quod_qa.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
+from quod_qa.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 
 
 logger = logging.getLogger(__name__)
