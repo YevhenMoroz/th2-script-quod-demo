@@ -18,5 +18,5 @@ class MainPageConstants:
     DASHBOARD_CSS = '*[aria-label="Dashboard"]'
     DASHBOARD_CLOSE_BUTTON_CSS = '*[title="Close"]'
     NEW_WORKSPACE_CSS = '*[aria-label="New Workspace"]'
-    NEW_WORKSPACE_CLOSE_BUTTON_CSS = '*[title="Close"]'
+    NEW_WORKSPACE_CLOSE_BUTTON_CSS = 'return document.querySelector("igc-dockmanager").shadowRoot.querySelector("*[aria-controls=\'tab-panel-2\']").shadowRoot.querySelector("*[title=\'Close\']")'
     # endregion

@@ -1,10 +1,7 @@
 import time
 
 from selenium.webdriver.common.keys import Keys
-
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
-
-from test_cases.web_admin.web_admin_core.pages.root.root_constants import RootConstants
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.login.login_constants import LoginConstants
 
@@ -29,21 +26,18 @@ class LoginPage(CommonPage):
         login_button = self.find_by_xpath(LoginConstants.LOGIN_BUTTON_XPATH)
         login_button.click()
 
-    # def check_is_login_successful(self):
-    #     self.find_by_css_selector(RootConstants.HEADER_CONTAINER_CSS_SELECTOR)
-
-    # def check_is_web_admin_preloaded(self):
-    #     """
-    #      this method takes the title from the loaded web page, if the title text is taken by xPass, it will return true
-    #     """
-    #     if self.find_by_xpath("//*[text()='System Administration - ']").text == 'System Administration -':
-    #         return True
-    #     else:
-    #         return 'Page is not preloaded'
+    def check_is_web_admin_preloaded(self):
+        """
+         this method takes the user_name from the loaded web page
+        """
+        self.find_by_xpath("//*[text()='User']")
 
     def login_to_web_admin(self, login, password):
-        self.set_login(login)
-        self.set_password(password)
-        time.sleep(1)
-        self.click_login_button()
-        # self.check_is_login_successful()
+        try:
+            self.set_login(login)
+            self.set_password(password)
+            time.sleep(1)
+            self.click_login_button()
+            self.check_is_web_admin_preloaded()
+        except Exception as e:
+            print("Login fail" + e.__class__.__name__)
