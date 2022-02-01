@@ -11,12 +11,3 @@ class FxDataSet(BaseDataSet):
     clients = FxClients
     accounts = FxAccounts
 
-
-    def get_security_type_by_name(self, name: str):
-        """
-        get security_type from FxSecurityTypes
-        example ---> get_security_type_by_name("fxspot"):
-        """
-        if hasattr(self.security_types, name):
-            return getattr(self.security_types, name).value
-        raise ValueError(f"{self.security_types} not found!")
