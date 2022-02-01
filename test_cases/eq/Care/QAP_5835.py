@@ -1,37 +1,56 @@
 import logging
+import os
+from pathlib import Path
 
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from test_framework.win_gui_wrappers.base_window import BaseWindow
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.utils import get_base_request
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderType, TimeInForce, OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+ss_connectivity = SessionAliasOMS().ss_connectivity
+bs_connectivity = SessionAliasOMS().bs_connectivity
 
-def execute(report_id, session_id):
-    case_name = "QAP-5835"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    base_window = BaseWindow(case_id, session_id)
-    oms_order_book = OMSOrderBook(case_id, session_id)
-    open_fe(session_id, report_id, work_dir, username, password)
-    # endregion
-    fix_manager = FixManager('fix-sell-317-standard-test', case_id)
-    fix_message_new_order_single = FixMessageNewOrderSingleOMS()
-    fix_message_new_order_single.set_default_DMA()
-    fix_message_new_order_single.change_parameters({"HandlInst": "3", "Account": "MOClient3_PARIS"})
-    fix_manager.send_message(fix_message_new_order_single)
-    oms_order_book.scroll_order_book(1)
-    client = oms_order_book.extract_field('Client ID')
-    actually_dict = {'Client ID': client}
-    base_window.compare_values({'Client ID': 'MOClient2'}, actually_dict, 'Compare Client ID')
+
+class QAP_5835(TestCase):
+    def __init__(self, report_id, session_id, date_set):
+        super().__init__(report_id, session_id, date_set)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+
+    # @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declarations
+        client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        expected_client = self.data_set.get_client_by_name('client_pt_8')
+        fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        fix_message.change_parameter('Account', client)
+        fix_manager = FixManager(ss_connectivity, self.case_id)
+        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
+        price = fix_message.get_parameter('Price')
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        # endregion
+
+        # region send CO order
+        fix_manager.send_message_fix_standard(fix_message)
+        # endregion
+
+        # region accept CO order
+        client_inbox.accept_order(lookup, qty, price)
+        # endregion
+
+        client_id = order_book.extract_field(OrderBookColumns.client_id.value)
+        order_book.compare_values({OrderBookColumns.client_id.value: expected_client},
+                                  {OrderBookColumns.client_id.value: client_id}, 'Checking of values')
+
