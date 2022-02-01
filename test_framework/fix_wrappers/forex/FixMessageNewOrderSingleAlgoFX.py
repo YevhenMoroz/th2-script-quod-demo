@@ -4,7 +4,6 @@ from custom.tenor_settlement_date import spo
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
-
 class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
 
     def __init__(self, parameters: dict = None):
