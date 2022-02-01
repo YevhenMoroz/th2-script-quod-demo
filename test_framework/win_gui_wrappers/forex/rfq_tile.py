@@ -15,6 +15,7 @@ class RFQTile(AggregatesRatesTile):
         self.extraction_request = ExtractRFQTileValues(details=self.base_details)
         self.create_tile_call = self.ar_service.createRFQTile
         self.close_tile_call = self.ar_service.closeRFQTile
+        self.close_window_call = self.ar_service.closeWindow
         self.extract_call = self.ar_service.extractRFQTileValues
         self.set_extraction_id()
 
@@ -26,7 +27,7 @@ class RFQTile(AggregatesRatesTile):
                         near_tenor: str = None, far_tenor: str = None, client: str = None,
                         near_maturity_date: int = None, far_maturity_date: int = None, left_check: bool = False,
                         near_date: int = None, far_date: int = None, right_check: bool = False,
-                        single_venue: str = None, venue_list: list = None):
+                        single_venue: str = None, venue_list: list = None, change_currency: bool = False):
         if from_cur is not None:
             self.modify_request.set_from_currency(from_cur)
         if to_cur is not None:
@@ -42,13 +43,13 @@ class RFQTile(AggregatesRatesTile):
         if client is not None:
             self.modify_request.set_client(client)
         if near_maturity_date is not None:
-            self.modify_request.set_maturity_date(bca.get_t_plus_date(near_maturity_date))
+            self.modify_request.set_maturity_date(bca.get_t_plus_date(near_maturity_date, is_weekend_holiday=False))
         if far_maturity_date is not None:
-            self.modify_request.set_maturity_date(bca.get_t_plus_date(far_maturity_date))
+            self.modify_request.set_maturity_date(bca.get_t_plus_date(far_maturity_date, is_weekend_holiday=False))
         if near_date is not None:
-            self.modify_request.set_settlement_date(bca.get_t_plus_date(near_date))
+            self.modify_request.set_settlement_date(bca.get_t_plus_date(near_date, is_weekend_holiday=False))
         if far_date is not None:
-            self.modify_request.set_far_leg_settlement_date(bca.get_t_plus_date(far_date))
+            self.modify_request.set_far_leg_settlement_date(bca.get_t_plus_date(far_date, is_weekend_holiday=False))
         if single_venue is not None:
             action = ContextAction.create_venue_filter(single_venue)
             self.modify_request.add_context_action(action)
@@ -59,6 +60,8 @@ class RFQTile(AggregatesRatesTile):
             self.modify_request.click_checkbox_left()
         if right_check is not False:
             self.modify_request.click_checkbox_right()
+        if change_currency is not False:
+            self.modify_request.set_change_currency(change_currency)
         call(self.ar_service.modifyRFQTile, self.modify_request.build())
         self.clear_details([self.modify_request])
 
@@ -81,6 +84,15 @@ class RFQTile(AggregatesRatesTile):
     # endregion
 
     # region Extraction
+    def check_currency_pair(self, currency_pair: str = None):
+        self.verifier.set_event_name("Check currency pair")
+        if currency_pair is not None:
+            self.extraction_request.extract_currency_pair(currency_pair)
+            response = call(self.extract_call, self.extraction_request.build())
+            extract_currency_pair = response[currency_pair]
+            self.verifier.compare_values("Currency pair", currency_pair, extract_currency_pair)
+        self.verifier.verify()
+
     def check_qty(self, near_qty: str = None, far_qty: str = None):
         self.verifier.set_event_name("Check Qty")
         if near_qty is not None:
@@ -151,7 +163,7 @@ class RFQTile(AggregatesRatesTile):
         if ask_small is not None:
             self.extraction_request.extract_best_ask_small(ask_small)
         if best_bid is not None:
-            self.extraction_request.extract_best_bid_large(best_bid)
+            self.extraction_request.extract_best_bid(best_bid)
         if best_ask is not None:
             self.extraction_request.extract_best_ask(best_ask)
         response = call(self.extract_call, self.extraction_request.build())

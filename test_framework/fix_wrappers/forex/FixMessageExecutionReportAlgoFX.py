@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from custom.tenor_settlement_date import spo
 from test_framework.fix_wrappers.DataSet import GatewaySide, Status
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
@@ -142,7 +143,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter('SettlType'),
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
-            SpotSettlDate=new_order_single.get_parameter('SettlDate'),
+            SpotSettlDate=spo(),
             StrategyName='1555',
             Price="*",
             TargetStrategy='1008',
@@ -194,7 +195,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             LastSpotRate='*',
             StrategyName='*',
             SecondaryOrderID='*',
-            SpotSettlDate=new_order_single.get_parameter('SettlDate'),
+            SpotSettlDate=spo(),
             HandlInst=new_order_single.get_parameter('HandlInst'),
             LastPx='*',
             LastQty='*',
@@ -334,21 +335,46 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             OrdType=new_order_single.get_parameter('OrdType'),
             ClOrdID='*',
             LastQty=new_order_single.get_parameter('OrderQty'),
-            Text='Fill',
-            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            Text='*',
+            ReplyReceivedTime='*',
+            LastSpotRate='*',
+            SettlCurrency='*',
+            SettlDate=new_order_single.get_parameter('SettlDate'),
+            SpotSettlDate=spo(),
             OrderID='*',
             TransactTime='*',
+            LastExecutionPolicy='*',
             Side=new_order_single.get_parameter('Side'),
             AvgPx='*',
+            NoParty='*',
+            QtyType='*',
+            SettlType=new_order_single.get_parameter('SettlType'),
+            SecondaryOrderID='*',
+            OrderCapacity='*',
             OrdStatus=2,
+            HandlInst="*",
+            TradeReportingIndicator="0",
+            TradeDate=datetime.today().strftime('%Y%m%d'),
             Price=new_order_single.get_parameter('Price'),
             Currency=new_order_single.get_parameter('Currency'),
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             Instrument=new_order_single.get_parameter('Instrument'),
+            SecondaryExecID='*',
+            ExDestination=new_order_single.get_parameter('ExDestination'),
+            GrossTradeAmt="*",
             ExecType='F',
             LeavesQty=0
         )
         super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange=new_order_single.get_parameter('ExDestination'),
+        )
+        super().update_fields_in_component("Instrument", instrument)
         return self
 
     # TODO: doublecheck

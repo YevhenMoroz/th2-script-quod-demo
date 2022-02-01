@@ -1,78 +1,32 @@
-import logging
 from pathlib import Path
-import timestring
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1_front_end
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+from custom.tenor_settlement_date import m1_front_end
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_573(TestCase):
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = None
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        eur_currency = self.data_set.get_currency_by_name('currency_eur')
+        usd_currency = self.data_set.get_currency_by_name('currency_usd')
+        near_tenor = self.data_set.get_tenor_by_name('tenor_1m')
+        client = self.data_set.get_client_by_name("client_1")
 
-def check_date(base_request, service, case_id, date):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extract_value.extract_near_settlement_date("aggrRfqTile.nearSettlement")
-    extraction_id = bca.client_orderid(4)
-    extract_value.set_extraction_id(extraction_id)
-    response = call(service.extractRFQTileValues, extract_value.build())
-    extract_date = response["aggrRfqTile.nearSettlement"]
-    extract_date = timestring.Date(extract_date)
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Tenor date on RFQ tile")
-    verifier.compare_values("Date", date, str(extract_date))
-    verifier.verify()
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
+                                                   near_tenor=near_tenor,
+                                                   client=client)
+        self.rfq_tile.check_date(near_date=m1_front_end())
+        # endregion
 
-
-def modify_rfq_tile(base_request, service, cur1, cur2, client, tenor):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
-    modify_request.set_client(client)
-    call(service.modifyRFQTile, modify_request.build())
-
-
-def execute(report_id, session_id):
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_name = Path(__file__).name[:-3]
-    case_client = "ASPECT_CITI"
-    case_from_currency = "EUR"
-    case_to_currency = "USD"
-    case_tenor = "1W"
-    date = wk1_front_end()
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        
-        # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_from_currency,
-                        case_to_currency, case_client, case_tenor)
-        check_date(base_rfq_details, ar_service, case_id, date)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()

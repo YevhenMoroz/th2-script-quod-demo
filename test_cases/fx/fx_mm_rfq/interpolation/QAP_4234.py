@@ -1,60 +1,52 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from test_cases.fx.fx_wrapper.common_tools import random_qty
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 
-client = 'Argentina1'
-account = 'Argentina1_1'
-client_tier = 'Argentina'
-symbol = "GBP/USD"
-security_type_swap = "FXSWAP"
-security_type_fwd = "FXFWD"
-security_type_spo = "FXSPO"
-settle_date_spo = spo()
-settle_date_w1 = wk1()
-settle_type_spo = "0"
-settle_type_w1 = "W1"
-currency = "GBP"
-settle_currency = "USD"
-qty = '1000000'
-side = "1"
-leg1_side = "2"
-leg2_side = "1"
-price_to_check = '0.000005'
-leg_last_px_near = '1.196045'
-leg_last_px_far = '1.19605'
-last_spot_rate = '1.19603'
+text = "no bid forward points for client tier `2600011' on GBP/USD WK1 on QUODFX - manual intervention required"
+qty = random_qty(1, 2, 7)
+qty_col = QuoteRequestBookColumns.qty.value
+free_notes_col = QuoteRequestBookColumns.free_notes.value
 
 
-def send_swap_and_filled(case_id):
+class QAP_4234(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = SessionAliasFX().ss_rfq_connectivity
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.quote_request_book = None
 
-    params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                    orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
-                                    currency=currency, settlcurrency=settle_currency,
-                                    leg1_settltype=settle_type_spo, leg2_settltype=settle_type_w1,
-                                    settldate=settle_date_spo, leg1_settldate=settle_date_spo,
-                                    leg2_settldate=settle_date_w1,
-                                    symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                    securitytype=security_type_swap, leg1_securitytype=security_type_spo,
-                                    leg2_securitytype=security_type_fwd,
-                                    securityid=symbol, account=account)
-    # Step 1
-    rfq = FixClientSellRfq(params_swap)
-    rfq.send_request_for_quote_swap()
-    rfq.verify_quote_reject(text='no bid forward points for client tier `2600011\' on GBP/USD WK1 on QUODFX')
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        account = self.data_set.get_client_by_name("client_mm_2")
+        symbol = self.data_set.get_symbol_by_name("symbol_2")
+        security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        settle_type_wk1 = self.data_set.get_settle_type_by_name("wk1")
+        settle_date_spo = self.data_set.get_settle_date_by_name("spot")
+        settle_date_w1 = self.data_set.get_settle_date_by_name("wk1")
+        instrument = {
+            "Symbol": symbol,
+            "SecurityType": security_type_swap
+        }
+        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_spot, settle_type=settle_type_spot,
+                                      settle_date=settle_date_spo, leg_qty=qty)
+        quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_wk1, leg_sec_type=security_type_fwd,
+                                     settle_date=settle_date_w1, leg_qty=qty)
+        quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
+                                                      Currency="GBP", Instrument=instrument, OrderQty=qty)
+        self.fix_manager_gtw.send_message(quote_request)
 
-
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
-        send_swap_and_filled(case_id)
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.quote_request_book.set_filter([qty_col, qty]).check_quote_book_fields_list({free_notes_col: text})
