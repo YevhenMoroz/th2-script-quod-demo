@@ -11,8 +11,8 @@ class BaseDataSet:
     accounts = None
     washbook_accounts = None
     recipients = None
-    db_listing = None
-    db_instrument = None
+    listing_id = None
+    instrument_id = None
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
@@ -88,15 +88,15 @@ class BaseDataSet:
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
 
-    def get_db_listing_by_name(self, name: str):
-        if hasattr(self.db_listing, name):
-            return getattr(self.db_listing, name).value
-        raise ValueError(f"{self.db_listing} not found!")
+    def get_listing_id_by_name(self, name: str):
+        if hasattr(self.listing_id, name):
+            return getattr(self.listing_id, name).value
+        raise ValueError(f"{self.listing_id} not found!")
 
-    def get_db_instrument_by_name(self, name: str):
-        if hasattr(self.db_instrument, name):
-            return getattr(self.db_instrument, name).value
-        raise ValueError(f"{self.db_instrument} not found!")
+    def get_instrument_id_by_name(self, name: str):
+        if hasattr(self.instrument_id, name):
+            return getattr(self.instrument_id, name).value
+        raise ValueError(f"{self.instrument_id} not found!")
 
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
