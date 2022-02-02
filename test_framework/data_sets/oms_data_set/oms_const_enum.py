@@ -2,24 +2,24 @@ from enum import Enum
 
 
 class OmsFixInstruments(Enum):
-    instrument_1 = dict(           # without commission/fee
-        Symbol='FR0010436584',      # assigned counterpart_reb_1
+    instrument_1 = dict(  # without commission/fee
+        Symbol='FR0010436584',  # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
         SecurityDesc='DREAMNEX'
     )
-    instrument_2 = dict(            # with commission/fee
-        Symbol='ISI1',               # assigned counterpart_mma_2
+    instrument_2 = dict(  # with commission/fee
+        Symbol='ISI1',  # assigned counterpart_mma_2
         SecurityID='ISI1',
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
     instrument_3 = dict(
-        Symbol='ISI3',              # with commission/fee
-        SecurityID='ISI3',          # assigned counterpart_mma_2
+        Symbol='ISI3',  # with commission/fee
+        SecurityID='ISI3',  # assigned counterpart_mma_2
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
@@ -183,6 +183,11 @@ class OmsCurrency(Enum):
 
 class OmsRoutes(Enum):
     route_1 = "Route via FIXBUYTH2 - component"
+
+
+class OmsVenueClientAccounts(Enum):
+    client_pt_1_acc_1_venue_client_account = 'MOCLIENT_SA1'
+    client_pt_1_acc_2_venue_client_account = 'MOCLIENT_SA2'
 
 
 class OMSCommissionProfiles(Enum):
