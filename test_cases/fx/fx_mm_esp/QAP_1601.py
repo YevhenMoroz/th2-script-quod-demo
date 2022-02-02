@@ -1,75 +1,44 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_1601(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = None
+        self.ask_pips = PriceNaming.ask_pips
+        self.bid_pips = PriceNaming.bid_pips
+        self.spread = PriceNaming.spread
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = symbol + "-Spot"
+        self.spread_event = "Spread validation"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Initialization
 
-def modify_rates_tile(base_request, service, instrument, client, pips):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    modify_request.set_pips(pips)
-    call(service.modifyRatesTile, modify_request.build())
+        # endregion
 
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        self.rates_tile.press_use_default()
+        bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
+        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        expected_spread = str(
+            round((float(bid_n_ask_values[self.bid_pips.value]) - float(bid_n_ask_values[self.ask_pips.value])) * -0.1, 1))
+        self.rates_tile.compare_values(expected_spread, actual_spread,
+                                       event_name=self.spread_event)
+        # endregion
 
-def check_spread(base_request, service, case_id):
-    extract_value_request = ExtractRatesTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value_request.set_extraction_id(extraction_id)
-    extract_value_request.extract_spread("rates_tile.spread")
-    extract_value_request.extract_ask_large_value("rates_tile.ask_large")
-    extract_value_request.extract_bid_large_value("rates_tile.bid_large")
-    extract_value_request.extract_ask_pips("rates_tile.ask_pips")
-    extract_value_request.extract_bid_pips("rates_tile.bid_pips")
-    response = call(service.extractRateTileValues, extract_value_request.build())
-
-    bid = float(response["rates_tile.bid_large"] + response["rates_tile.bid_pips"])
-    ask = float(response["rates_tile.ask_large"] + response["rates_tile.ask_pips"])
-    extracted_spread = response["rates_tile.spread"]
-    calculated_spread = round((ask - bid) * 10000, 1)
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check calculation of spread")
-    verifier.compare_values("Spread", str(calculated_spread), extracted_spread)
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "EUR/USD-Spot"
-    client_tier = "Silver"
-    pips = "2"
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier, pips)
-        check_spread(base_details, cp_service, case_id)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()
