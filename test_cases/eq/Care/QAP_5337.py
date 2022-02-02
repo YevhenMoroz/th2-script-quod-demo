@@ -34,6 +34,7 @@ class QAP_5337(TestCase):
         self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
         self.recipient = Stubs.custom_config['qf_trading_fe_user']
         self.work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        self.recipient_2 = Stubs.custom_config['qf_trading_fe_user_2']
         self.qty = '100'
         self.price = '100'
 
@@ -44,7 +45,7 @@ class QAP_5337(TestCase):
             rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
         base_window_2 = BaseMainWindow(case_id=self.case_id, session_id=session_id2)
         order_book_2 = OMSOrderBook(self.case_id, session_id2)
-        base_window_2.open_fe(self.report_id, folder=self.work_dir, user='HD3', password='HD3',
+        base_window_2.open_fe(self.report_id, folder=self.work_dir, user=self.recipient_2, password=self.recipient_2,
                               is_open=False)
         # endregion
         # region switch on 1 user again
@@ -68,7 +69,7 @@ class QAP_5337(TestCase):
         # endregion
 
         # region transfer on second user
-        self.order_book.transfer_order(desk='HD3', partial_desk=False)
+        self.order_book.transfer_order(desk=self.recipient_2, partial_desk=False)
         base_window_2.switch_user()
         # endregion
 
