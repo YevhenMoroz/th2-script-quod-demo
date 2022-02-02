@@ -139,6 +139,7 @@ class FxTenors(Enum):
     tenor_1y = "1Y"
     tenor_2y = "2Y"
     tenor_sn = "SN"
+    tenor_mar_imm = "Mar IMM"
 
 
 class FxSettleDates(Enum):
