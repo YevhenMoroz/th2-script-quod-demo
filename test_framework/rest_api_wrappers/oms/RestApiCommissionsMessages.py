@@ -6,8 +6,8 @@ from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 class RestApiCommissionsMessages(RestApiMessages):
 
-    def __init__(self, data_set: BaseDataSet, message_type: str = ''):
-        super().__init__(message_type)
+    def __init__(self, data_set: BaseDataSet):
+        super().__init__()
         self.data_set = data_set
 
     def clear_fees_request(self, fee: Enum):
