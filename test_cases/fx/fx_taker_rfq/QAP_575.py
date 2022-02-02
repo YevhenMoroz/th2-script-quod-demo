@@ -32,9 +32,8 @@ class QAP_575(TestCase):
         self.rfq_tile.check_date(next_monday_front_end())
         # endregion
         # region Step 2
-        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
-                                                   near_qty=self.qty, near_date=self.click_to_25dec,
-                                                   client=client)
+        self.rfq_tile.modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency, near_qty=self.qty,
+                                      near_date=self.click_to_25dec, client=client)
         self.rfq_tile.check_date(next_working_day_after_25dec_front_end())
         # endregion
 
