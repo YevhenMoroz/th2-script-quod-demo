@@ -3,10 +3,9 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, RatesColumnNames, \
-    PricingButtonColor
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, \
+    RatesColumnNames, PricingButtonColor
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-
 
 
 class QAP_1643(TestCase):
@@ -41,8 +40,6 @@ class QAP_1643(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-
         # region step 1
         self.rates_tile.crete_tile()
         self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
@@ -93,8 +90,6 @@ class QAP_1643(TestCase):
         self.rates_tile.press_pricing()
         self.rates_tile.check_color_of_pricing_button(expected_color=str(PricingButtonColor.green_button.value))
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
