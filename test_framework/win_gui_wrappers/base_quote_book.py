@@ -47,6 +47,26 @@ class BaseQuoteBook(BaseWindow):
         response = call(self.grpc_call, self.quote_book_details.request())
         return response
 
+    def extract_2nd_lvl_field(self, column_name: str) -> str:
+        field = ExtractionDetail("quoteBook." + column_name, column_name)
+        self.quote_book_details.add_child_extraction_detail(field)
+        response = call(self.grpc_call, self.quote_book_details.request())
+        return response[field.name]
+
+    def extract_2nd_lvl_fields_list(self, list_fields: dict) -> dict:
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and return new dict where
+        key = key and value is extracted field from FE
+        """
+        list_of_fields = []
+        for field in list_fields.items():
+            key = list(field)[0]
+            field = ExtractionDetail(key, key)
+            list_of_fields.append(field)
+        self.quote_book_details.add_child_extraction_details(list_of_fields)
+        response = call(self.grpc_call, self.quote_book_details.request())
+        return response
     # endregion
 
     # region Check
@@ -57,6 +77,20 @@ class BaseQuoteBook(BaseWindow):
         For example {"Sts": "Terminated", "Owner": "QA1", etc}
         """
         actual_list = self.extract_fields_list(expected_fields)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, value, actual_list[key])
+        self.verifier.verify()
+
+    def check_2nd_lvl_quote_book_fields_list(self, expected_fields: dict, event_name="Check Quote Book"):
+        """
+        Receives dict as an argument, where the key is column name what
+        we extract from GUI and value is expected result
+        For example {"Sts": "Terminated", "Owner": "QA1", etc}
+        """
+        actual_list = self.extract_2nd_lvl_fields_list(expected_fields)
         for items in expected_fields.items():
             key = list(items)[0]
             value = list(items)[1]
