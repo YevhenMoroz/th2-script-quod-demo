@@ -33,11 +33,11 @@ class OmsFixInstruments(Enum):
     )
 
 
-class OmsDbInstrument(Enum):
+class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
 
 
-class OmsDbListing(Enum):
+class OmsListingId(Enum):
     listing_1 = "1200"
 
 
