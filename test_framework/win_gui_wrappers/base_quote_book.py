@@ -1,6 +1,8 @@
+from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
+from custom import basic_custom_actions as bca
 
 
 class BaseQuoteBook(BaseWindow):
@@ -11,8 +13,10 @@ class BaseQuoteBook(BaseWindow):
 
     # region Common func
     def set_quote_book_details(self):
+        self.extraction_id = bca.client_orderid(4)
         self.quote_book_details.set_extraction_id(self.extraction_id)
         self.quote_book_details.set_default_params(self.base_request)
+        self.verifier = Verifier(self.case_id)
 
     def set_filter(self, filter_list: list):
         """
@@ -30,6 +34,8 @@ class BaseQuoteBook(BaseWindow):
         field = ExtractionDetail("quoteBook." + column_name, column_name)
         self.quote_book_details.add_extraction_detail(field)
         response = call(self.grpc_call, self.quote_book_details.request())
+        self.clear_details([self.quote_book_details])
+        self.set_quote_book_details()
         return response[field.name]
 
     def extract_fields_list(self, list_fields: dict) -> dict:
@@ -45,12 +51,16 @@ class BaseQuoteBook(BaseWindow):
             list_of_fields.append(field)
         self.quote_book_details.add_extraction_details(list_of_fields)
         response = call(self.grpc_call, self.quote_book_details.request())
+        self.clear_details([self.quote_book_details])
+        self.set_quote_book_details()
         return response
 
     def extract_2nd_lvl_field(self, column_name: str) -> str:
         field = ExtractionDetail("quoteBook." + column_name, column_name)
         self.quote_book_details.add_child_extraction_detail(field)
         response = call(self.grpc_call, self.quote_book_details.request())
+        self.clear_details([self.quote_book_details])
+        self.set_quote_book_details()
         return response[field.name]
 
     def extract_2nd_lvl_fields_list(self, list_fields: dict) -> dict:
@@ -66,7 +76,10 @@ class BaseQuoteBook(BaseWindow):
             list_of_fields.append(field)
         self.quote_book_details.add_child_extraction_details(list_of_fields)
         response = call(self.grpc_call, self.quote_book_details.request())
+        self.clear_details([self.quote_book_details])
+        self.set_quote_book_details()
         return response
+
     # endregion
 
     # region Check
