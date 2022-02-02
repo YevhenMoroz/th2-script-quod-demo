@@ -11,7 +11,7 @@ class OrderBookColumns(Enum):
     cl_ord_id = "ClOrdID"
     security_id = "Security Id"
     symbol = "Symbol"
-
+    client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
