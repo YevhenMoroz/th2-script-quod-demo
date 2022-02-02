@@ -70,7 +70,46 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         return self
 
     def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        pass
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            CumQty="0",
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst="1",
+            LastQty="0",
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            SettlType=new_order_single.get_parameter("SettlType"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            Price="*",
+            OrdStatus="8",
+            TransactTime="*",
+            ExecRestatementReason="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            OrderCapacity="A",
+            SettlDate="*",
+            ExecType="8",
+            LeavesQty="0",
+            Text="*",
+            QtyType="0",
+            Instrument=new_order_single.get_parameter("Instrument"),
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
 
     def add_party_role(self):
         party = dict(
