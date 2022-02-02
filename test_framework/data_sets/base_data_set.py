@@ -33,6 +33,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    verifier_key_parameters = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -233,6 +234,9 @@ class BaseDataSet:
             return getattr(self.lookups, name).value
         return ValueError(f"{self.lookups} not found!")
 
-
+    def get_verifier_key_parameters_by_name(self, name: str):
+        if hasattr(self.verifier_key_parameters, name):
+            return getattr(self.verifier_key_parameters, name).value
+        raise ValueError(f"{self.verifier_key_parameters} not found!")
 
 

@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.algo_data_set.algo_const_enum import AlgoFixInstruments, AlgoVenues, AlgoClients, \
-    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients, AlgoMic, AlgoListingId, AlgoCurrency
+    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients, AlgoMic, AlgoListingId, AlgoCurrency, AlgoVerifierKeyParameters
 
 
 class AlgoDataSet(BaseDataSet):
@@ -16,4 +16,5 @@ class AlgoDataSet(BaseDataSet):
     mic = AlgoMic
     listing_id = AlgoListingId
     currency = AlgoCurrency
+    verifier_key_parameters = AlgoVerifierKeyParameters
 

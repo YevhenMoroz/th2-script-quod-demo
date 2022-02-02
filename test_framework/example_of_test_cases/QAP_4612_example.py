@@ -71,16 +71,15 @@ class QAP_4612_example(TestCase):
         self.s_par = self.data_set.get_listing_id_by_name("listing_1")
         # endregion
 
+        # region Key parameters
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-        #Key parameters
-        #TODO add enum
-        key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-        key_params = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']
-
 
         # region Rule creation
         rule_manager = RuleManager()
@@ -121,10 +120,10 @@ class QAP_4612_example(TestCase):
         self.fix_verifier_sell.check_fix_message(twap_would_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_twap_would_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_would_order, self.gateway_side_sell, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(pending_twap_would_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
+        self.fix_verifier_sell.check_fix_message(pending_twap_would_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_would_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_would_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(new_twap_would_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport New')
+        self.fix_verifier_sell.check_fix_message(new_twap_would_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check First TWAP child
@@ -132,16 +131,16 @@ class QAP_4612_example(TestCase):
 
         twap_1_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
         twap_1_child.change_parameters(dict(OrderQty=self.qty, Price=self.price_would, TimeInForce=self.tif_ioc, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(twap_1_child, key_parameters=key_params, message_name='Buy side NewOrderSingle TWAP child')
+        self.fix_verifier_buy.check_fix_message(twap_1_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child')
 
         pending_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_twap_1_child_params, key_parameters=key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
+        self.fix_verifier_buy.check_fix_message(pending_twap_1_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
 
         new_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_twap_1_child_params, key_parameters=key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child')
+        self.fix_verifier_buy.check_fix_message(new_twap_1_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child')
 
         fill_twap_1_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_1_child, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(fill_twap_1_child_params, key_parameters=key_params, direction=self.ToQuod, message_name='Buy side ExecReport Fill TWAP child')
+        self.fix_verifier_buy.check_fix_message(fill_twap_1_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Fill TWAP child')
 
         time.sleep(3)
         # endregion
@@ -151,7 +150,7 @@ class QAP_4612_example(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_4)
         # Fill Order
         fill_twap_would_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_would_order, self.gateway_side_sell, self.status_fill)
-        self.fix_verifier_sell.check_fix_message(fill_twap_would_order, key_parameters=key_params_cl, message_name='Sell side ExecReport Fill')
+        self.fix_verifier_sell.check_fix_message(fill_twap_would_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Fill')
         # endregion
 
         @try_except(test_id=Path(__file__).name[:-3])
