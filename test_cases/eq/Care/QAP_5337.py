@@ -29,25 +29,22 @@ class QAP_5337(TestCase):
     def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.recipient = Stubs.custom_config['qf_trading_fe_user']
+        self.work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        self.qty = '100'
+        self.price = '100'
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        recipient = Stubs.custom_config['qf_trading_fe_user']
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        qty = '100'
-        price = '100'
-        # endregion
-
         # region switch on second user
         session_id2 = Stubs.win_act.register(
             rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
         base_window_2 = BaseMainWindow(case_id=self.case_id, session_id=session_id2)
         order_book_2 = OMSOrderBook(self.case_id, session_id2)
-        base_window_2.open_fe(self.report_id, folder=work_dir, user='HD3', password='HD3',
+        base_window_2.open_fe(self.report_id, folder=self.work_dir, user='HD3', password='HD3',
                               is_open=False)
         # endregion
         # region switch on 1 user again
@@ -56,21 +53,22 @@ class QAP_5337(TestCase):
         # endregion
 
         # region creating order
-        order_ticket.set_order_details(self.data_set.get_client_by_name('client_pt_1'), limit=price, qty=qty,
-                                       recipient=recipient, partial_desk=True)
-        order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
+        self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_pt_1'), limit=self.price,
+                                            qty=self.qty,
+                                            recipient=self.recipient, partial_desk=True)
+        self.order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
 
         # endregion
 
         # region verifying of Status
-        order_sts = order_book.extract_field(OrderBookColumns.sts.value)
-        order_book.compare_values({OrderBookColumns.sts.value: 'Open'},
-                                  {OrderBookColumns.sts.value: order_sts}, 'Comparing values')
+        order_sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.order_book.compare_values({OrderBookColumns.sts.value: 'Open'},
+                                       {OrderBookColumns.sts.value: order_sts}, 'Comparing values')
 
         # endregion
 
         # region transfer on second user
-        order_book.transfer_order(desk='HD3', partial_desk=False)
+        self.order_book.transfer_order(desk='HD3', partial_desk=False)
         base_window_2.switch_user()
         # endregion
 
@@ -81,16 +79,17 @@ class QAP_5337(TestCase):
         # endregion
 
         # region manual execute CO order form first user
-        order_book.manual_execution(qty=qty, price=price)
+        self.order_book.manual_execution(qty=self.qty, price=self.price)
         # endregion
 
         # region extraction values
-        order_sts = order_book.extract_fields_list({OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
-                                                    OrderBookColumns.exec_progress.value:
-                                                        OrderBookColumns.exec_progress.value,
-                                                    OrderBookColumns.owner.value: OrderBookColumns.owner.value})
+        order_sts = self.order_book.extract_fields_list(
+            {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
+             OrderBookColumns.exec_progress.value:
+                 OrderBookColumns.exec_progress.value,
+             OrderBookColumns.owner.value: OrderBookColumns.owner.value})
 
-        order_book.compare_values({OrderBookColumns.exec_sts.value: 'Filled',
-                                   OrderBookColumns.exec_progress.value: '100%',
-                                   OrderBookColumns.owner.value: recipient}, order_sts, 'Comparing values')
+        self.order_book.compare_values({OrderBookColumns.exec_sts.value: 'Filled',
+                                        OrderBookColumns.exec_progress.value: '100%',
+                                        OrderBookColumns.owner.value: self.recipient}, order_sts, 'Comparing values')
         # endregion
