@@ -1,50 +1,26 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction
-from win_gui_modules.common_wrappers import BaseTileDetails
-
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_565(TestCase):
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = None
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        venue_citi = self.data_set.get_venue_by_name('venue_1')
+        venue_hsbc = self.data_set.get_venue_by_name('venue_2')
+        venues = [venue_citi, venue_hsbc]
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile(venue_list=venues)
+        # endregion
 
-def modify_rfq_tile(base_request, service, venues):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    action = ContextAction.create_venue_filters(venues)
-    modify_request.add_context_action(action)
-    call(service.modifyRFQTile, modify_request.build())
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-    venues = ["HSBC", "CITI"]
-
-    try:
-        
-        # Steps 1-2
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, venues)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()

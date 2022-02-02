@@ -1,10 +1,30 @@
 from enum import Enum
 
 
-class AlgoInstruments(Enum):
-    instrument_1 = ""
-    instrument_2 = ""
-    instrument_3 = ""
+class AlgoFixInstruments(Enum):
+    instrument_1 = dict(
+        Symbol='BUI',
+        SecurityID='FR0000062788',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_2 = dict(
+        Symbol='PAR',
+        SecurityID='FR0010263202',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+    instrument_3 = dict(
+        Symbol='FR0010436584',
+        SecurityID='FR0010436584',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS',
+        SecurityDesc='DREAMNEX'
+    )
 
 
 class AlgoVenues(Enum):
@@ -14,9 +34,9 @@ class AlgoVenues(Enum):
 
 
 class AlgoClients(Enum):
-    client_1 = ""
-    client_2 = ""
-    client_3 = ""
+    client_1 = "CLIENT1"
+    client_2 = "CLIENT2"
+    client_3 = "CLIENT3"
 
 
 class AlgoAccounts(Enum):

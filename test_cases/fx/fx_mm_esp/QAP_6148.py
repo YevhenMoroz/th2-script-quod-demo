@@ -30,8 +30,8 @@ from win_gui_modules.utils import call, get_base_request
 
 alias_fh = "fix-fh-314-luna"
 
-symbol = 'USD/PHP'
-security_type = 'NDF'
+symbol = 'EUR/USD'
+security_type = 'FXF'
 tenor = 'WK1'
 tenor_fe = '1W'
 tenor_fe_spo = 'Spot'
@@ -40,12 +40,12 @@ venue = 'HSBC'
 BUY = RatesTileTableOrdSide.BUY
 instrument = f'{symbol}-{tenor_fe}'
 instrument_spot = f'{symbol}-{tenor_fe_spo}'
-client_tier = 'Palladium1'
+client_tier = 'Silver'
 default_md_symbol_fwd_hsbc = f'{symbol}:{security_type}:{tenor}:{venue}'
 md_instrument = {
     'Instrument': {
-        'Symbol': 'USD/PHP',
-        'SecurityType': 'FXNDF'
+        'Symbol': symbol,
+        'SecurityType': 'FXFWD'
     }
 }
 locale.setlocale(locale.LC_ALL, 'en_us')
@@ -128,7 +128,7 @@ def open_ot_by_doubleclick_row(btd, cp_service, _row, _side):
 
 def place_order(base_request, service):
     place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_client(client_tier)
+    place_request.set_client(client_tier+"1")
     place_request.set_quantity(qty)
     call(service.placeRatesTileOrder, place_request.build())
 
@@ -152,7 +152,7 @@ def execute(report_id, session_id):
             update_MDReqID(default_md_symbol_fwd_hsbc, alias_fh, 'FX')
 
         #
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC USD/PHP Non Executable")
+        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD Non Executable")
         time.sleep(5)
         #
         rates_tile = ClientRatesTile(case_id, session_id)
@@ -184,7 +184,7 @@ def execute(report_id, session_id):
         market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
             .update_repeating_group('NoMDEntries', no_md_entries_fwd_hsbc). \
             update_MDReqID(default_md_symbol_fwd_hsbc, alias_fh, 'FX')
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC USD/PHP Executable")
+        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD Executable")
         time.sleep(5)
         rates_tile.close_tile()
     except Exception:
