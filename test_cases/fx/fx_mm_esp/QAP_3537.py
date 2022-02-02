@@ -35,17 +35,21 @@ class QAP_3537(TestCase):
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.no_related_symbols_eur_usd = [{
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT',
-                'Product': '4', },
-            'SettlType': '0', }]
-        self.bands_eur_usd = ["1000000", '5000000', '10000000']
-
+        self.no_related_symbols_eur_usd = None
+        self.bands_eur_usd = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Test variables
+
+        self.no_related_symbols_eur_usd = [{
+            'Instrument': {
+                'Symbol': self.data_set.get_symbol_by_name('symbol_1'),
+                'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
+                'Product': '4', },
+            'SettlType': self.data_set.get_settle_type_by_name('fx_spot'), }]
+        self.bands_eur_usd = ["1000000", '5000000', '10000000']
+        # endregion
         # region Step 1
         self.fix_md.set_market_data().\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fx_fh_connectivity, 'FX')

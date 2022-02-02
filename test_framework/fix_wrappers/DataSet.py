@@ -82,6 +82,13 @@ class Instrument(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    RF = dict(
+        Symbol='FR0000121121_EUR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class Connectivity(Enum):
@@ -206,6 +213,7 @@ class FreeNotesReject(Enum):
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
+    InvalidPercentageOfVolume = "invalid value for percentage of volume"
 
 
 class Reference(Enum):

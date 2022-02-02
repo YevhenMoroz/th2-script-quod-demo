@@ -35,21 +35,28 @@ class QAP_6149(TestCase):
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
+        self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
         self.no_related_symbols_nok_sek = [{
             'Instrument': {
-                'Symbol': 'NOK/SEK',
-                'SecurityType': 'FXSPOT',
+                'Symbol': self.nok_sek,
+                'SecurityType': self.security_type,
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.settle_type, }]
         self.bands_nok_sek = ["1000000", '3000000']
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT',
+                'Symbol': self.eur_usd,
+                'SecurityType': self.security_type,
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.settle_type, }]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

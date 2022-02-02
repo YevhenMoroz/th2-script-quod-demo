@@ -31,23 +31,28 @@ class QAP_6153(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.rest_massage = RestApiClientTierInstrSymbolMessages()
+        self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
         self.no_related_symbols = [{
             'Instrument': {
-                'Symbol': 'NOK/SEK',
-                'SecurityType': 'FXSPOT',
+                'Symbol': self.nok_sek,
+                'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.settle_type, }]
         self.bands = ["1000000", '3000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Test variables
+
+        # endregion
         # region Step 1
         self.rest_massage.find_all_client_tier_instrument()
         params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
         params_eur_usd = self.rest_manager. \
-            parse_response_details(
-            params_eur_usd,
-            {'clientTierID': '2000011', 'instrSymbol': "EUR/USD"})
+            parse_response_details(params_eur_usd,
+            {'clientTierID': '2000011', 'instrSymbol': self.eur_usd})
         # endregion
 
         # region Step 2
@@ -58,8 +63,8 @@ class QAP_6153(TestCase):
         # endregion
         time.sleep(10)
         # region Step 3
-        self.fix_subscribe.set_md_req_parameters_maker().\
-            change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_5')}).\
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_5')}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
@@ -70,19 +75,12 @@ class QAP_6153(TestCase):
         # endregion
 
         # region Postconditions
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         self.rest_massage.modify_client_tier_instrument(). \
-                update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
+            update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
         self.rest_manager.send_post_request(self.rest_massage)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
-
-    # @try_except
-    # def run_post_conditions(self):
-    #     self.rest_massage.modify_client_tier_instrument(). \
-    #         update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
-    #     self.rest_manager.send_post_request(self.rest_massage)
-    #     self.fix_subscribe.set_md_uns_parameters_maker()
-    #     self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
-
-
