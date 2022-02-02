@@ -99,8 +99,6 @@ class OmsVenueClientNames(Enum):
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
     """Commissions"""
-    client_com_1_venue_1 = "CLIENT_COMM_1_PARIS"
-    client_com_2_venue_1 = "CLIENT_COMM_2_PARIS"
     client_com_1_venue_2 = "CLIENT_COMM_1_EUREX"
 
 
