@@ -21,7 +21,7 @@ timeouts = True
 class QAP_1014(TestCase):
     def __init__(self, report_id, session_id, dataset):
         super().__init__(report_id, session_id, dataset)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -62,11 +62,10 @@ class QAP_1014(TestCase):
         order_book_2 = OMSOrderBook(self.case_id, session_id=session_id2)
         status = order_book_2.extract_field(OrderBookColumns.sts.value)
         order_id = order_book_2.extract_field(OrderBookColumns.order_id.value)
-        base_window2.compare_values({OrderBookColumns.sts.value: 'Open', OrderBookColumns.order_id.value: order_id_first}, {OrderBookColumns.sts.value: status,
-                                                                                  OrderBookColumns.order_id.value: order_id},
-                                    "Event_Name")
+        base_window2.compare_values(
+            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.order_id.value: order_id_first},
+            {OrderBookColumns.sts.value: status,
+             OrderBookColumns.order_id.value: order_id},
+            "Event_Name")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-       pass
