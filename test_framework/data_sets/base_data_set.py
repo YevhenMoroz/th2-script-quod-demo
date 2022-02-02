@@ -1,3 +1,5 @@
+from enum import Enum
+
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
 
 
@@ -20,7 +22,13 @@ class BaseDataSet:
     security_types = None
     settle_types = None
     settle_dates = None
+    routes = None
     lookups = None
+    commission_profiles = None
+    misc_fee_type = None
+    fee_exec_scope: Enum = None
+    fee = None
+    commission = None
     client_tiers = None
     client_tiers_id = None
     days_of_week = None
@@ -150,7 +158,7 @@ class BaseDataSet:
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
 
-    def get_route(self, name:str):
+    def get_route(self, name: str):
         if hasattr(self.routes, name):
             return getattr(self.routes, name).value
         raise ValueError(f"{self.routes} not found!")
@@ -233,6 +241,35 @@ class BaseDataSet:
             return getattr(self.lookups, name).value
         return ValueError(f"{self.lookups} not found!")
 
+    def get_comm_profile_by_name(self, name: str):
+        if hasattr(self.commission_profiles, name):
+            return getattr(self.commission_profiles, name).value
+        return ValueError(f"{self.commission_profiles} not found!")
 
+    def get_misc_fee_type_by_name(self, name: str):
+        if hasattr(self.misc_fee_type, name):
+            return getattr(self.misc_fee_type, name).value
+        return ValueError(f"{self.misc_fee_type} not found!")
 
+    def get_fee_exec_scope_by_name(self, name: str):
+        if hasattr(self.fee_exec_scope, name):
+            return getattr(self.fee_exec_scope, name).value
+        return ValueError(f"{self.fee_exec_scope} not found!")
 
+    def get_fee_by_name(self, name: str):
+        if hasattr(self.fee, name):
+            return getattr(self.fee, name)
+        return ValueError(f"{self.fee} not found!")
+
+    def get_fees(self):
+        if self.fee:
+            return self.fee
+
+    def get_commission_by_name(self, name: str):
+        if hasattr(self.commission, name):
+            return getattr(self.commission, name)
+        return ValueError(f"{self.commission} not found!")
+
+    def get_commissions(self):
+        if self.commission:
+            return self.commission
