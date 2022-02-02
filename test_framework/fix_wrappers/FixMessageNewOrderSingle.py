@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.DataSet import Instrument
 from test_framework.data_sets.message_types import FIXMessageType
@@ -7,8 +8,8 @@ from test_framework.data_sets.message_types import FIXMessageType
 
 class FixMessageNewOrderSingle(FixMessage):
 
-    def __init__(self, parameters: dict = None):
-        super().__init__(message_type=FIXMessageType.NewOrderSingle.value)
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
+        super().__init__(message_type=FIXMessageType.NewOrderSingle.value, data_set=data_set)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
