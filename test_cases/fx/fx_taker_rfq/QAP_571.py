@@ -36,13 +36,13 @@ class QAP_571(TestCase):
         self.rfq_tile.check_currency_pair(currency_pair=eur_usd_symbol)
         # endregion
         # region Step 4
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=self.qty)
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty)
         self.rfq_tile.check_qty(near_qty=self.qty)
         # endregion
         # region Step 5
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=self.qty_1m)
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty_1m)
         self.rfq_tile.check_qty(near_qty=self.qty1)
-        self.rfq_tile.crete_tile().modify_rfq_tile(near_qty=self.qty_1k)
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty_1k)
         self.rfq_tile.check_qty(near_qty=self.qty2)
         # endregion
 

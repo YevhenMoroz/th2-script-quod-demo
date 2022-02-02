@@ -15,9 +15,9 @@ class QAP_575(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.qty = str(random.randint(1000000, 2000000))
-        self.click_to_sunday = 7 - int(datetime.now().strftime('%w'))
-        self.click_to_25dec = int(str(datetime(2022, 12, 25) - datetime.now()).split()[0])
         self.year = int(datetime.now().year)
+        self.click_to_sunday = 7 - int(datetime.now().strftime('%w'))
+        self.click_to_25dec = int(str(datetime(self.year, 12, 25) - datetime.now()).split()[0])
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
