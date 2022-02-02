@@ -86,11 +86,10 @@ class RFQTile(AggregatesRatesTile):
     # region Extraction
     def check_currency_pair(self, currency_pair: str = None):
         self.verifier.set_event_name("Check currency pair")
-        if currency_pair is not None:
-            self.extraction_request.extract_currency_pair(currency_pair)
-            response = call(self.extract_call, self.extraction_request.build())
-            extract_currency_pair = response[currency_pair]
-            self.verifier.compare_values("Currency pair", currency_pair, extract_currency_pair)
+        self.extraction_request.extract_currency_pair(currency_pair)
+        response = call(self.extract_call, self.extraction_request.build())
+        extract_currency_pair = response[currency_pair]
+        self.verifier.compare_values("Currency pair", currency_pair, extract_currency_pair)
         self.verifier.verify()
 
     def check_qty(self, near_qty: str = None, far_qty: str = None):
@@ -170,6 +169,7 @@ class RFQTile(AggregatesRatesTile):
         return response
 
     def check_checkboxes(self, left_checkbox: str = None, right_checkbox: str = None):
+        self.verifier.set_event_name("Check checkboxes")
         if left_checkbox is not None:
             self.extraction_request.extract_left_checkbox(left_checkbox)
             response = call(self.extract_call, self.extraction_request.build())
@@ -183,6 +183,7 @@ class RFQTile(AggregatesRatesTile):
         self.verifier.verify()
 
     def check_labels(self, left_label: str = None, right_label: str = None):
+        self.verifier.set_event_name("Check labels")
         if left_label is not None:
             self.extraction_request.extract_cur_label_left(left_label)
             response = call(self.extract_call, self.extraction_request.build())
@@ -195,7 +196,8 @@ class RFQTile(AggregatesRatesTile):
             self.verifier.compare_values("Right label", right_label, right)
         self.verifier.verify()
 
-    def check_buttons(self, buy_button: str = None, sell_button: str = None):
+    def check_buttons(self, buy_button: str = None, sell_button: str = None, send_button: str = None):
+        self.verifier.set_event_name("Check buttons")
         if buy_button is not None:
             self.extraction_request.extract_is_buy_button_enabled(buy_button)
             response = call(self.extract_call, self.extraction_request.build())
@@ -206,6 +208,11 @@ class RFQTile(AggregatesRatesTile):
             response = call(self.extract_call, self.extraction_request.build())
             sell = response[sell_button]
             self.verifier.compare_values("Sell button", sell_button, sell)
+        if send_button is not None:
+            self.extraction_request.extract_send_button_text(send_button)
+            response = call(self.extract_call, self.extraction_request.build())
+            send = response[send_button]
+            self.verifier.compare_values("Send button", send_button, send)
         self.verifier.verify()
 
         # endregion
