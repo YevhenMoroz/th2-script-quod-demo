@@ -18,7 +18,7 @@ class QAP_1601(TestCase):
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
-        self.instrument = symbol + "-Spot"
+        self.instrument = self.symbol + "-Spot"
         self.spread_event = "Spread validation"
 
     @try_except(test_id=Path(__file__).name[:-3])
