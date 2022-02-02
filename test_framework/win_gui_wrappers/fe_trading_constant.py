@@ -32,11 +32,14 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-    client_id = "Client ID"
+
+    client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    venue_client_account = "Venue Client Account"
+    account_id = 'Account ID'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -228,7 +231,7 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
-    conf_service = ""
+    conf_service = "Conf Service"
 
 
 class AllocationsColumns(Enum):
