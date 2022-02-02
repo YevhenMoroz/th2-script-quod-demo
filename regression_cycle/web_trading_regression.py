@@ -8,8 +8,6 @@ from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDr
 from stubs import Stubs
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
 logging.getLogger().setLevel(logging.WARN)
 timeouts = False
 channels = dict()
@@ -25,7 +23,7 @@ def test_run(parent_id=None):
         # logger.info(f"Root event was created (id = {report_id.id})")
 
         # content
-        web_driver_container = WebDriverContainer(browser="Firefox", url="web_trading_url")
+        web_driver_container = WebDriverContainer(browser="Chrome", url="web_trading_url")
 
         RunGeneral(web_driver_container, parent_id).execute()
 

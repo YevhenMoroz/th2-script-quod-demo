@@ -6,8 +6,7 @@ from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDr
 from custom import basic_custom_actions as bca
 
 
-#TODO: rename this file in future raleted to component
-from test_cases.web_trading.test_cases.pages.login.QAP_test import QAP_test
+from test_cases.web_trading.test_cases.pages.order_book.QAP_6568 import QAP_6568
 
 
 class RunGeneral:
@@ -21,7 +20,7 @@ class RunGeneral:
         try:
             start_time = time.monotonic()
 
-            QAP_test(self.web_driver_container, self.second_lvl_id).run() ## e.g. test, after you must change,rename or delete this
+            QAP_6568(self.web_driver_container, self.second_lvl_id).run() ## e.g. test, after you must change,rename or delete this
 
 
             end_time = time.monotonic()

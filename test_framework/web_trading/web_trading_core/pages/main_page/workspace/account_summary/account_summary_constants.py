@@ -1,15 +1,17 @@
 class AccountSummaryConstants:
-    INIMIZE_BUTTON_XPATH = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
-    CLOSE_BUTTON_XPATH = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[title=\'Close\']")'
-    COPY_PANAL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
+    # region Account Summary
+    MAXIMIZE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
+    MINIMIZE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
+    CLOSE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[title=\'Close\']")'
+    COPY_PANEL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
     FIELD_CHOOSER_XPATH = '//*[@name="btnColumnHiding"]'
     ADVANCED_FILTERING_BUTTON_XPATH = '//*[@name="btnAdvancedFiltering"]'
     HORIZONTAL_SCROLL_XPATH = '//*[@class="igx-vhelper--horizontal ng-star-inserted"]/div[@class="igx-vhelper__placeholder-content"]'
     # endregion
 
     # region Field chooser
-    FILTER_COLUMNS_LIST_FIELD_XPATH = '//*[@class="igx-column-actions__header"]//input'
-    CASH_ACCOUNT_CHECKBOX_XPATH = '//*[@class="igx-overlay__content"]//*[text()=" Cash Account "]'
+    SEARCH_FILTER_COLUMNS_LIST_FIELD_XPATH = '//*[@class="igx-column-actions__header"]//input'
+    COLUMNS_LIST_CHECKBOX_XPATH = '//*[@class="igx-overlay__content"]//*[text()="{}"]'
     HIDE_ALL_BUTTON_XPATH = '//*[text()="Hide All"]'
     SHOW_ALL_BUTTON_XPATH = '//*[text()="Show All"]'
     # endregion
@@ -23,9 +25,9 @@ class AccountSummaryConstants:
     APPLY_BUTTON_XPATH = '//*[@class="igx-excel-filter__apply"]/button'
     BACK_LINE_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__line")]'
     SELECT_COLUMN_FIELD_XPATH = '//*[@placeholder="Select column"]'
-    SELECT_COLUMN_CASH_ACCOUNT_XPATH = '//*[@class="igx-drop-down__list-scroll"]//*[text()=" Cash Account "]'
+    SELECT_COLUMN_LIST_XPATH = '//*[@class="igx-drop-down__list-scroll"]//*[text()="{}"]'
     SELECT_FILTER_FIELD_XPATH = '//*[@placeholder="Select filter"]'
-    SELECT_FILTER_CONTAINS_XPATH = '//*[text()="Contains"]'
+    SELECT_FILTER_LIST_XPATH = '//*[text()="{}"]'
     VALUE_FIELD_XPATH = '//*[@placeholder="Value"]'
     CHECK_AF_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__inputs ng-star-inserted")]//button[1]'
     CLOSE_AF_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__inputs ng-star-inserted")]//button[2]'
@@ -70,10 +72,10 @@ class AccountSummaryConstants:
     # endregion
 
     # region Orders fields
-    USER_CASH_ACCOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_cashAccount")]'
-    USER_CURRENCY_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_currency")]'
-    USER_AVAILABLE_CASH_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_availableCash")]'
-    USER_TRANSACTION_HOLDING_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_holdingAmount")]'
-    USER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_reservedAmount")]'
-    USER_BUYING_POWER_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_buyingPower")]'
+    USER_CASH_ACCOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_cashAccount")]//span'
+    USER_CURRENCY_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_currency")]//span'
+    USER_AVAILABLE_CASH_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_availableCash")]//span'
+    USER_TRANSACTION_HOLDING_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_holdingAmount")]//span'
+    USER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_reservedAmount")]//span'
+    USER_BUYING_POWER_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_buyingPower")]//span'
     # endregion

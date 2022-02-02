@@ -1,8 +1,8 @@
 class PositionsConstants:
     # region Positions
-    MAXIMIZE_BUTTON_XPATH = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
-    MINIMIZE_BUTTON_XPATH = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
-    CLOSE_BUTTON_XPATH = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[title=\'Close\']")'
+    MAXIMIZE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
+    MINIMIZE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[name=\'maximize\']")'
+    CLOSE_BUTTON_CSS = 'return document.querySelector("*[slot=\'tab_default_123456789\']").querySelector("igc-dockmanager").shadowRoot.querySelector("igc-pane-header-component").shadowRoot.querySelector("*[title=\'Close\']")'
     COPY_PANEL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
     FIELD_CHOOSER_XPATH = '//*[@name="btnColumnHiding"]'
     ADVANCED_FILTERING_BUTTON_XPATH = '//*[@name="btnAdvancedFiltering"]'
@@ -11,7 +11,7 @@ class PositionsConstants:
 
     # region Field chooser
     FILTER_COLUMNS_LIST_FIELD_XPATH = '//*[@class="igx-column-actions__header"]//input'
-    SYMBOL_CHECKBOX_XPATH = '//*[@class="igx-overlay__content"]//*[text()=" Symbol "]'
+    LIST_CHECKBOX_XPATH = '//*[@class="igx-overlay__content"]//*[text()="{}"]'
     HIDE_ALL_BUTTON_XPATH = '//*[text()="Hide All"]'
     SHOW_ALL_BUTTON_XPATH = '//*[text()="Show All"]'
     # endregion
@@ -25,9 +25,9 @@ class PositionsConstants:
     APPLY_BUTTON_XPATH = '//*[@class="igx-excel-filter__apply"]/button'
     BACK_LINE_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__line")]'
     SELECT_COLUMN_FIELD_XPATH = '//*[@placeholder="Select column"]'
-    SELECT_COLUMN_SYMBOL_XPATH = '//*[@class="igx-drop-down__list-scroll"]//*[text()=" Symbol "]'
+    SELECT_COLUMN_LIST_XPATH = '//*[@class="igx-drop-down__list-scroll"]//*[text()="{}"]'
     SELECT_FILTER_FIELD_XPATH = '//*[@placeholder="Select filter"]'
-    SELECT_FILTER_CONTAINS_XPATH = '//*[text()="Contains"]'
+    SELECT_FILTER_LIST_XPATH = '//*[text()="{}"]'
     VALUE_FIELD_XPATH = '//*[@placeholder="Value"]'
     CHECK_AF_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__inputs ng-star-inserted")]//button[1]'
     CLOSE_AF_BUTTON_XPATH = '//*[contains(@class,"igx-filter-tree__inputs ng-star-inserted")]//button[2]'
@@ -86,14 +86,14 @@ class PositionsConstants:
     # endregion
 
     # region Orders fields
-    ORDER_SYMBOL_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_InstrSymbol")]'
-    ORDER_INSTR_TYPE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_InstrType")]'
-    ORDER_EXCHANGE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_SecurityExchange")]'
-    ORDER_TOTAL_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_TotalTransactionQty")]'
-    ORDER_RESERVED_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_ReservedQty")]'
-    ORDER_COVERED_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_CoveredQty")]'
-    ORDER_LEAVES_BUY_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_LeavesBuyQty")]'
-    ORDER_LEAVES_SELL_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_LeavesSellQty")]'
-    ORDER_CUMULATIVE_BUY_AMT_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionAmounts_CumBuyAmt")]'
-    ORDER_CUMULATIVE_SELL_AMT_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionAmounts_CumSellAmt")]'
+    ORDER_SYMBOL_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_InstrSymbol")]//span'
+    ORDER_INSTR_TYPE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_InstrType")]//span'
+    ORDER_EXCHANGE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_SecurityExchange")]//span'
+    ORDER_TOTAL_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_TotalTransactionQty")]//span'
+    ORDER_RESERVED_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_ReservedQty")]//span'
+    ORDER_COVERED_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_CoveredQty")]//span'
+    ORDER_LEAVES_BUY_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_LeavesBuyQty")]//span'
+    ORDER_LEAVES_SELL_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionQtys_LeavesSellQty")]//span'
+    ORDER_CUMULATIVE_BUY_AMT_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionAmounts_CumBuyAmt")]//span'
+    ORDER_CUMULATIVE_SELL_AMT_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionAmounts_CumSellAmt")]//span'
     # endregion
