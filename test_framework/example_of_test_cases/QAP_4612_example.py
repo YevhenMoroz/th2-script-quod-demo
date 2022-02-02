@@ -36,9 +36,11 @@ class QAP_4612_example(TestCase):
         self.price_ask = 21
         self.price_bid = 19.98
         self.price_trigger = self.price_ask + self.tick
+        #TODO add enum
         self.would_price_reference = 'MAN'
         self.would_price_offset = 1
         self.price_would = AlgoFormulasManager.calc_ticks_offset_minus(self.price_trigger, self.would_price_offset, self.tick)
+        #TODO add enum
         self.tif_ioc = 3
         #endregion
 
@@ -54,7 +56,7 @@ class QAP_4612_example(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_instrument_by_name("instrument_2")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
         # endregion
 
         # region Direction
@@ -66,7 +68,7 @@ class QAP_4612_example(TestCase):
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_1")
         self.account = self.data_set.get_account_by_name("account_1")
-        self.s_par = '1015'
+        self.s_par = self.data_set.get_listing_id_by_name("listing_1")
         # endregion
 
         self.rule_list = []
@@ -104,7 +106,7 @@ class QAP_4612_example(TestCase):
         case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        twap_would_order = FixMessageNewOrderSingleAlgo().set_TWAP_params()
+        twap_would_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
         twap_would_order.add_ClordId((os.path.basename(__file__)[:-3]))
         twap_would_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price_parent))
         twap_would_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=now.strftime("%Y%m%d-%H:%M:%S"), EndDate2=(now + timedelta(minutes=4)).strftime("%Y%m%d-%H:%M:%S"),
