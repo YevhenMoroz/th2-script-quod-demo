@@ -27,7 +27,7 @@ class QAP_5835(TestCase):
         super().__init__(report_id, session_id, date_set)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declarations
         client_inbox = OMSClientInbox(self.case_id, self.session_id)
