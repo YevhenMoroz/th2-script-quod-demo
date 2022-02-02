@@ -34,7 +34,14 @@ from test_cases.fx.fx_taker_rfq.QAP_593 import QAP_593
 from test_cases.fx.fx_taker_rfq.QAP_594 import QAP_594
 from test_cases.fx.fx_taker_rfq.QAP_595 import QAP_595
 from test_cases.fx.fx_taker_rfq.QAP_597 import QAP_597
+from test_cases.fx.fx_taker_rfq.QAP_598 import QAP_598
+from test_cases.fx.fx_taker_rfq.QAP_599 import QAP_599
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
+from test_cases.fx.fx_taker_rfq.QAP_600 import QAP_600
+from test_cases.fx.fx_taker_rfq.QAP_601 import QAP_601
+from test_cases.fx.fx_taker_rfq.QAP_602 import QAP_602
+from test_cases.fx.fx_taker_rfq.QAP_604 import QAP_604
+from test_cases.fx.fx_taker_rfq.QAP_606 import QAP_606
 
 from test_framework.core.example_of_ideal_test_case_ui import QAP_Example
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -97,9 +104,14 @@ def test_run():
         # QAP_593(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_594(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_595(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_597(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-
-
+        # QAP_597(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_598(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_599(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_600(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_601(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_602(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_604(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_606(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         print(f"Duration is {datetime.now() - start_time}")
     except Exception:
         logging.error("Error execution", exc_info=True)
