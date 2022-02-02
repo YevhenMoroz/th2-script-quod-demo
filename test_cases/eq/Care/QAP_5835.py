@@ -24,31 +24,28 @@ class QAP_5835(TestCase):
     def __init__(self, report_id, session_id, date_set):
         super().__init__(report_id, session_id, date_set)
         self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.expected_client = self.data_set.get_client_by_name('client_pt_8')
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message.change_parameter('Account', self.client)
+        self.fix_manager = FixManager(ss_connectivity, self.case_id)
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declarations
-        client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        lookup = self.data_set.get_lookup_by_name('lookup_1')
-        client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        expected_client = self.data_set.get_client_by_name('client_pt_8')
-        fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        fix_message.change_parameter('Account', client)
-        fix_manager = FixManager(ss_connectivity, self.case_id)
-        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
-        price = fix_message.get_parameter('Price')
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        # endregion
-
         # region send CO order
-        fix_manager.send_message_fix_standard(fix_message)
+        self.fix_manager.send_message_fix_standard(self.fix_message)
         # endregion
 
         # region accept CO order
-        client_inbox.accept_order(lookup, qty, price)
+        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
         # endregion
 
-        client_id = order_book.extract_field(OrderBookColumns.client_id.value)
-        order_book.compare_values({OrderBookColumns.client_id.value: expected_client},
+        client_id = self.order_book.extract_field(OrderBookColumns.client_id.value)
+        self.order_book.compare_values({OrderBookColumns.client_id.value: self.expected_client},
                                   {OrderBookColumns.client_id.value: client_id}, 'Checking of values')
 
