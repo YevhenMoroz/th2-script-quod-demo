@@ -2,13 +2,39 @@ import logging
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from my_methods import send_md, send_rfq, test_ob
 from rule_management import RuleManager
 
 from stubs import Stubs
 from test_cases.fx.fx_mm_esp import QAP_2750, QAP_6148
 from test_cases.fx.fx_mm_esp.QAP_1589 import QAP_1589
 from test_cases.fx.fx_mm_rfq import QAP_3494
+from test_cases.fx.fx_taker_rfq.QAP_564 import QAP_564
+from test_cases.fx.fx_taker_rfq.QAP_565 import QAP_565
+from test_cases.fx.fx_taker_rfq.QAP_566 import QAP_566
+from test_cases.fx.fx_taker_rfq.QAP_568 import QAP_568
+from test_cases.fx.fx_taker_rfq.QAP_569 import QAP_569
+from test_cases.fx.fx_taker_rfq.QAP_570 import QAP_570
+from test_cases.fx.fx_taker_rfq.QAP_571 import QAP_571
+from test_cases.fx.fx_taker_rfq.QAP_573 import QAP_573
+from test_cases.fx.fx_taker_rfq.QAP_574 import QAP_574
+from test_cases.fx.fx_taker_rfq.QAP_575 import QAP_575
+from test_cases.fx.fx_taker_rfq.QAP_576 import QAP_576
+from test_cases.fx.fx_taker_rfq.QAP_578 import QAP_578
+from test_cases.fx.fx_taker_rfq.QAP_579 import QAP_579
+from test_cases.fx.fx_taker_rfq.QAP_580 import QAP_580
+from test_cases.fx.fx_taker_rfq.QAP_581 import QAP_581
+from test_cases.fx.fx_taker_rfq.QAP_582 import QAP_582
+from test_cases.fx.fx_taker_rfq.QAP_584 import QAP_584
+from test_cases.fx.fx_taker_rfq.QAP_585 import QAP_585
+from test_cases.fx.fx_taker_rfq.QAP_587 import QAP_587
+from test_cases.fx.fx_taker_rfq.QAP_589 import QAP_589
+from test_cases.fx.fx_taker_rfq.QAP_590 import QAP_590
+from test_cases.fx.fx_taker_rfq.QAP_591 import QAP_591
+from test_cases.fx.fx_taker_rfq.QAP_593 import QAP_593
+from test_cases.fx.fx_taker_rfq.QAP_594 import QAP_594
+from test_cases.fx.fx_taker_rfq.QAP_595 import QAP_595
+from test_cases.fx.fx_taker_rfq.QAP_597 import QAP_597
+from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 
 from test_framework.core.example_of_ideal_test_case_ui import QAP_Example
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -24,7 +50,7 @@ channels = dict()
 def test_run():
     # Generation id and time for test run
 
-    report_id = bca.create_event("ostronov " + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event("RNenakhov " + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     logger.info(f"Root event was created (id = {report_id.id})")
     logging.getLogger().setLevel(logging.WARN)
@@ -45,10 +71,34 @@ def test_run():
         # rm.add_fx_md_to("fix-fh-314-luna")
         # rm.print_active_rules()
         # send_md.execute(report_id, 1.18123, 1.18223)
+        # QAP_6(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_564(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_565(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_566(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_568(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_569(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_570(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_571(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_573(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_574(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_575(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_576(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_578(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_579(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_580(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_581(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_582(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_584(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_585(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_587(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_589(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_590(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_591(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_593(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_594(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_595(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_597(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
-        QAP_1589(report_id, session_id, data_set).execute()
-
-        # QAP_3805.execute(report_id)
 
         print(f"Duration is {datetime.now() - start_time}")
     except Exception:
