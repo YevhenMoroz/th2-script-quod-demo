@@ -4,12 +4,16 @@ from test_cases.fx.fx_mm_esp import QAP_1418, QAP_1536, QAP_1560, QAP_1599, QAP_
     QAP_2086, QAP_2085, QAP_2079, QAP_3841, QAP_1554, QAP_1597, QAP_3390, QAP_2750, QAP_2823, QAP_2874, QAP_2876, \
     QAP_2880, QAP_2879, QAP_2873, QAP_2872, QAP_2966, QAP_3848, QAP_2012, QAP_4094, QAP_2078, QAP_1511, QAP_1589, \
     QAP_4016, QAP_3661, QAP_1644, QAP_2990, QAP_2844, QAP_2050, QAP_2051, QAP_6148, QAP_2957, QAP_6145, QAP_6151
+from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
 from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
+from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
+from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
 from test_cases.fx.fx_mm_synthetic import QAP_2646
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_taker_esp import QAP_3140, QAP_3141
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -24,6 +28,7 @@ def test_run(parent_id=None):
     report_id = bca.create_event('ESP MM regression', parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    data_set = FxDataSet()
 
     try:
         if not Stubs.frontend_is_open:
@@ -95,6 +100,11 @@ def test_run(parent_id=None):
         QAP_5389().execute(report_id)
         QAP_6145.execute(report_id)
         QAP_6151.execute(report_id)
+        QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_6149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_3537(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)

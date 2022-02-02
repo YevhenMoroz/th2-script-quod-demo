@@ -11,6 +11,16 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.message_type = 'FindAllClientTierInstrSymbol'
         return self
 
+    def find_all_client_tier_instrument_filtered(self, client_tier_id: str, instrument: str):
+        self.clear_message_params()
+        search = f"?queryID={client_tier_id}&queryID2={instrument}"
+        self.parameters = {
+            'clientTierID': client_tier_id,
+            'instrSymbol': instrument
+        }
+        self.message_type = 'FindAllClientTierInstrSymbolFiltered'
+        return self
+
     def modify_client_tier_instrument(self):
         self.message_type = 'ModifyClientTierInstrSymbol'
         return self
@@ -92,9 +102,10 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
 
     def add_sweepable_qty(self, sweepable_qty, default_bid_margin=None, default_offer_margin=None):
         qty_list = self.get_parameter('clientTierInstrSymbolQty')
+        parent_indice_upper_qty = str(int(len(qty_list)) + int(1))
         qty_list.append({
             "upperQty": str(sweepable_qty),
-            "indiceUpperQty": str(int(len(qty_list))+int(1)),
+            "indiceUpperQty": str(int(len(qty_list)) + int(1)),
             "publishPrices": "true"
         })
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
@@ -106,14 +117,17 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
                 "upperQty": str(sweepable_qty),
                 "MDQuoteType": "TRD",
                 "activeQuote": "true",
-                "indiceUpperQty": str(len(qty_list)),
+                "indiceUpperQty": str(int(len(tenors)) + int(1)),
                 'defaultBidMargin': 0 if default_bid_margin is None else str(default_bid_margin),
                 'defaultOfferMargin': 0 if default_offer_margin is None else str(default_offer_margin),
+                'parentIndiceUpperQty': parent_indice_upper_qty,
+                'editableQty': 'false',
+                'publishPrices': 'true'
             })
             tenor.update({'lastUpdateTime': timestamp})
         self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
 
-    def set_sweepable_qty(self, sweepable_qty_list, default_bid_margin=None, default_offer_margin=None):
+    def set_sweepable_qty(self, sweepable_qty_list: list, default_bid_margin=None, default_offer_margin=None):
         timestamp = str(datetime.now().timestamp())
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
@@ -133,6 +147,9 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
                 "indiceUpperQty": i,
                 'defaultBidMargin': 0 if default_bid_margin is None else str(default_bid_margin),
                 'defaultOfferMargin': 0 if default_offer_margin is None else str(default_offer_margin),
+                'parentIndiceUpperQty': i,
+                'editableQty': 'false',
+                'publishPrices': 'true'
             })
             i += 1
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
@@ -141,5 +158,28 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
         return self
 
-
-
+    def delete_sweepable_qty(self, indice_upper_qty_to_delete: list = None):
+        qty_list = self.get_parameter('clientTierInstrSymbolQty')
+        tenors = self.get_parameter('clientTierInstrSymbolTenor')
+        timestamp = str(datetime.now().timestamp())
+        timestamp = timestamp.split(".", 1)
+        timestamp = timestamp[0]
+        for indice_upper_qty in indice_upper_qty_to_delete:
+            qty_list.pop(indice_upper_qty)
+        i = 1
+        for qty in qty_list:
+            qty['indiceUpperQty'] = str(i)
+            i += 1
+        for tenor in tenors:
+            id_to_delete = []
+            id = 1
+            for tenor_qty in tenor['clientTierInstrSymbolTenorQty']:
+                if tenor_qty['parentIndiceUpperQty'] not in range(len(qty_list)+1):
+                    id_to_delete.append(id)
+                id += 1
+            if len(id_to_delete)>0:
+                for id in id_to_delete:
+                    tenor['clientTierInstrSymbolTenorQty'].pop(id)
+            tenor.update({'lastUpdateTime': timestamp})
+        self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
+        return self

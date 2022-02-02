@@ -17,6 +17,7 @@ class QAP_575(TestCase):
         self.qty = str(random.randint(1000000, 2000000))
         self.click_to_sunday = 7 - int(datetime.now().strftime('%w'))
         self.click_to_25dec = int(str(datetime(2022, 12, 25) - datetime.now()).split()[0])
+        self.year = int(datetime.now().year)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
