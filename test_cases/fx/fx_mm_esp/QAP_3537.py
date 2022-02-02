@@ -27,20 +27,6 @@ class QAP_3537(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = None
-        self.fx_fh_connectivity = None
-        self.fix_subscribe = None
-        self.fix_md = None
-        self.fix_md_snapshot = None
-        self.fix_manager_fh = None
-        self.fix_manager_gtw = None
-        self.fix_verifier = None
-        self.no_related_symbols_eur_usd = None
-        self.bands_eur_usd = None
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
-        # region Test variables
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
         self.fix_subscribe = FixMessageMarketDataRequestFX()
@@ -49,12 +35,19 @@ class QAP_3537(TestCase):
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.no_related_symbols_eur_usd = None
+        self.bands_eur_usd = None
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Test variables
+
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
                 'Symbol': self.data_set.get_symbol_by_name('symbol_1'),
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.data_set.get_settle_type_by_name('fx_spot'), }]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
         # endregion
         # region Step 1
