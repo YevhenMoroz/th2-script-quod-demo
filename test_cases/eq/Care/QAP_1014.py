@@ -69,6 +69,3 @@ class QAP_1014(TestCase):
             "Event_Name")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        pass
