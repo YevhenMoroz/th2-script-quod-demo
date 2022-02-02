@@ -1,10 +1,12 @@
 import logging
 import os
 import time
+from pathlib import Path
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -17,7 +19,7 @@ logger.setLevel(logging.INFO)
 
 
 class QAP_5734(TestCase):
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
         session_alias = SessionAliasOMS()
@@ -34,6 +36,7 @@ class QAP_5734(TestCase):
         self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.commission_sender.set_modify_client_commission_message(account=self.account).send_post_request()
         self.__send_fix_order()
