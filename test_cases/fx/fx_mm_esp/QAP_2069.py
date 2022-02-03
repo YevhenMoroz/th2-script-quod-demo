@@ -44,10 +44,12 @@ class QAP_2069(TestCase):
         self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
         self.rates_tile.press_use_default()
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
-        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        print(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]))
+        actual_spread = str(round(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]), 1))
         expected_spread = str(
-            round((float(bid_n_ask_values[self.bid_pips.value]) - float(bid_n_ask_values[self.ask_pips.value])) * -0.1,
-                  1))
+            round(
+                (float(bid_n_ask_values[self.bid_pips.value]) - float(bid_n_ask_values[self.ask_pips.value])) * -0.001,
+                1))
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
         # endregion
@@ -56,7 +58,7 @@ class QAP_2069(TestCase):
         self.rates_tile.modify_client_tile(pips=self.pips_2)
         self.rates_tile.modify_spread(self.widen_spread)
         prev_spread = actual_spread
-        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        actual_spread = str(round(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]), 1))
         expected_spread = str(float(prev_spread) + int(self.pips_2) * 2)
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
@@ -66,7 +68,7 @@ class QAP_2069(TestCase):
         self.rates_tile.modify_client_tile(pips=self.pips_1)
         self.rates_tile.modify_spread(self.narrow_spread)
         prev_spread = actual_spread
-        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        actual_spread = str(round(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]), 1))
         expected_spread = str(round(float(prev_spread) - int(self.pips_1) * 2, 1))
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
@@ -76,7 +78,7 @@ class QAP_2069(TestCase):
         self.rates_tile.modify_client_tile(pips=self.pips_2)
         self.rates_tile.modify_spread(self.increase_ask)
         prev_spread = actual_spread
-        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        actual_spread = str(round(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]), 1))
         expected_spread = str(round(float(prev_spread) - int(self.pips_2), 1))
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
@@ -86,7 +88,7 @@ class QAP_2069(TestCase):
         self.rates_tile.modify_client_tile(pips=self.pips_3)
         self.rates_tile.modify_spread(self.decrease_bid)
         prev_spread = actual_spread
-        actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
+        actual_spread = str(round(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]), 1))
         expected_spread = str(round(float(prev_spread) + int(self.pips_3), 1))
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
@@ -94,13 +96,13 @@ class QAP_2069(TestCase):
 
         # region step 7
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
-        expected_bid = str(int(bid_n_ask_values[self.bid_pips.value]) - 40)
-        expected_ask = str(int(bid_n_ask_values[self.ask_pips.value]) - 40)
+        expected_bid = str(round((int(bid_n_ask_values[self.bid_pips.value]) - 4000) * 0.01, 1))
+        expected_ask = str(round((int(bid_n_ask_values[self.ask_pips.value]) - 4000) * 0.01, 1))
         self.rates_tile.modify_client_tile(pips=self.pips_4)
         self.rates_tile.modify_spread(self.skew_towards_bid)
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
-        actual_bid = str(int(bid_n_ask_values[self.bid_pips.value]))
-        actual_ask = bid_n_ask_values[self.ask_pips.value]
+        actual_bid = str(round(int(bid_n_ask_values[self.bid_pips.value]) * 0.01, 1))
+        actual_ask = str(round(int(bid_n_ask_values[self.ask_pips.value]) * 0.01, 1))
         self.rates_tile.compare_values(expected_ask, actual_ask,
                                        event_name=self.ask_event)
         self.rates_tile.compare_values(expected_bid, actual_bid,
@@ -109,13 +111,13 @@ class QAP_2069(TestCase):
 
         # region step 8
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
-        expected_bid = str(int(bid_n_ask_values[self.bid_pips.value]) + 50)
-        expected_ask = str(int(bid_n_ask_values[self.ask_pips.value]) + 50)
+        expected_bid = str(round((int(bid_n_ask_values[self.bid_pips.value]) + 5000) * 0.01, 1))
+        expected_ask = str(round((int(bid_n_ask_values[self.ask_pips.value]) + 5000) * 0.01, 1))
         self.rates_tile.modify_client_tile(pips=self.pips_5)
         self.rates_tile.modify_spread(self.skew_towards_ask)
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
-        actual_bid = bid_n_ask_values[self.bid_pips.value]
-        actual_ask = bid_n_ask_values[self.ask_pips.value]
+        actual_bid = str(round(int(bid_n_ask_values[self.bid_pips.value]) * 0.01, 1))
+        actual_ask = str(round(int(bid_n_ask_values[self.ask_pips.value]) * 0.01, 1))
         self.rates_tile.compare_values(expected_ask, actual_ask,
                                        event_name=self.ask_event)
         self.rates_tile.compare_values(expected_bid, actual_bid,
