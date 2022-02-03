@@ -76,13 +76,13 @@ class QAP_3362(TestCase):
         self.middle_office.mass_approve([1, 2])
 
         self.__verify_after_mass_action_for_block(2, [MiddleOfficeColumns.sts.value,
-                                                      MiddleOfficeColumns.match_status.value,
-                                                      MiddleOfficeColumns.summary_status.value],
+                                                      MiddleOfficeColumns.match_status.value
+                                                      ],
                                                   'approve', {MiddleOfficeColumns.sts.value: 'Accepted',
                                                               MiddleOfficeColumns.match_status.value: 'Matched'})
         self.__verify_after_mass_action_for_block(1, [MiddleOfficeColumns.sts.value,
-                                                      MiddleOfficeColumns.match_status.value,
-                                                      MiddleOfficeColumns.summary_status.value]
+                                                      MiddleOfficeColumns.match_status.value
+                                                      ]
                                                   , 'approve', {MiddleOfficeColumns.sts.value: 'Accepted',
                                                                 MiddleOfficeColumns.match_status.value: 'Matched'})
         # endregion
@@ -142,8 +142,8 @@ class QAP_3362(TestCase):
 
         # region unallocate
         self.middle_office.extract_list_of_block_fields([MiddleOfficeColumns.sts.value],
-                                                   filter_list=[MiddleOfficeColumns.sts.value,
-                                                                'Accepted'])
+                                                        filter_list=[MiddleOfficeColumns.sts.value,
+                                                                     'Accepted'])
         self.middle_office.mass_unallocate([1, 2])
         # region
 
