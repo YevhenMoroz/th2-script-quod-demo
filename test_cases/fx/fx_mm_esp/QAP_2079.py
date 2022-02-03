@@ -33,7 +33,7 @@ class QAP_2079(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1
+        # region step 1-2
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
 
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
@@ -44,13 +44,13 @@ class QAP_2079(TestCase):
                                             key_parameters=["MDReqID"])
         # endregion
 
-        # region step 2
+        # region step 3
         self.new_order_single.set_default().change_parameters(
             {"Account": self.account, "TimeInForce": "3", "Price": self.price})
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
-        # region step 3-5
+        # region step 4-5
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

@@ -1,7 +1,5 @@
-import time
 from pathlib import Path
 
-from custom.tenor_settlement_date import wk1
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
@@ -14,9 +12,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.forex.RestApiModifyMarketMakingStatusMessages import \
-    RestApiModifyMarketMakingStatusMessages
 
 
 class QAP_2075(TestCase):
@@ -50,7 +45,7 @@ class QAP_2075(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region fix code
+        # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
 
@@ -60,11 +55,16 @@ class QAP_2075(TestCase):
         self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
+        # endregion
+
+        # region step 2
         self.new_order_single.set_default().change_parameters(
             {"Account": self.account, "Instrument": self.instrument,
              "SettlDate": self.settle_date, "SettlType": self.settle_type, "TimeInForce": "3"})
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        # endregion
 
+        # region step 3-4
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill)
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

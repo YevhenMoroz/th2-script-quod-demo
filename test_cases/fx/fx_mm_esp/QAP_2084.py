@@ -50,7 +50,7 @@ class QAP_2084(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
-        # region step 3-5
+        # region step 3
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

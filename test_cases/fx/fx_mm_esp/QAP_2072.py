@@ -39,13 +39,13 @@ class QAP_2072(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1-2
+        # region step 1
         self.rates_tile.crete_tile()
         self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
         self.rates_tile.press_use_default()
         # endregion
 
-        # region step 5
+        # region step 2-3
         row_values_1 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=1)
         ask_px_before_1 = row_values_1[str(self.ask_px)]
         expected_ask_px_1 = str(int(ask_px_before_1) + 20)
@@ -54,8 +54,8 @@ class QAP_2072(TestCase):
         expected_ask_px_2 = str(int(ask_px_before_2) + 20)
         row_values_3 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=3)
         expected_ask_px_3 = row_values_3[str(self.ask_px)]
-        self.rates_tile.modify_client_tile(pips=self.pips_2)
         self.rates_tile.select_rows([1, 2])
+        self.rates_tile.modify_client_tile(pips=self.pips_2)
         self.rates_tile.modify_spread(self.decrease_ask)
         row_values_1 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=1)
         actual_ask_px_1 = str(int(row_values_1[str(self.ask_px)]))
