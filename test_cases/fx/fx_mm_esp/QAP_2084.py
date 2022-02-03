@@ -1,7 +1,5 @@
-import time
 from pathlib import Path
 
-from custom.tenor_settlement_date import wk1
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
@@ -14,9 +12,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.forex.RestApiModifyMarketMakingStatusMessages import \
-    RestApiModifyMarketMakingStatusMessages
 
 
 class QAP_2084(TestCase):
@@ -33,21 +28,8 @@ class QAP_2084(TestCase):
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
         self.account = self.data_set.get_client_by_name("client_mm_4")
-        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
-        self.settle_date = self.data_set.get_settle_date_by_name("spot")
-        self.settle_type = self.data_set.get_settle_type_by_name("spot")
-        self.currency = self.data_set.get_currency_by_name("currency_eur")
         self.status_reject = Status.Reject
         self.qty = "58000000"
-        self.instrument = {
-            'Symbol': self.eur_usd,
-            'SecurityType': self.security_type,
-            'Product': '4'}
-        self.no_related_symbols = [{
-            'Instrument': self.instrument,
-            'SettlType': self.settle_type}]
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
