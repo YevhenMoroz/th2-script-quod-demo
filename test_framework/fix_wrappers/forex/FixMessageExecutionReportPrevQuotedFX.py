@@ -15,117 +15,16 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # region SINGLE
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: GatewaySide,
-                                         status: Status, is_forward: bool = False):
-        if side is GatewaySide.Buy:
-            if status is Status.Pending:
-                self.__set_pending_new_buy(new_order_single)
-            elif status is Status.New:
-                self.__set_new_buy(new_order_single)
-            elif status is Status.Fill:
-                self.__set_fill_buy(new_order_single)
-            else:
-                raise Exception('Incorrect Status')
-        elif side is GatewaySide.Sell:
-            if status is Status.Pending:
-                self.__set_pending_new_sell(new_order_single)
-            elif status is Status.New:
-                self.__set_new_sell(new_order_single)
-            elif status is Status.Fill:
-                if is_forward:
-                    self.__set_fill_sell_fwd(new_order_single)
-                else:
-                    self.__set_fill_sell(new_order_single)
-
+                                         status: Status):
+        if side is GatewaySide.Sell:
+            if status is Status.Fill:
+                self.__set_fill_sell(new_order_single)
             else:
                 raise Exception('Incorrect Status')
         return self
 
     # SELL SIDE
-    # CHECKED
-    def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Side=new_order_single.get_parameter("Side"),
-            ClOrdID=new_order_single.get_parameter("ClOrdID"),
-            OrdType=new_order_single.get_parameter("OrdType"),
-            OrderQty=new_order_single.get_parameter("OrderQty"),
-            Account=new_order_single.get_parameter("Account"),
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
-            Currency=new_order_single.get_parameter("Currency"),
-            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
-            TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            Instrument=new_order_single.get_parameter("Instrument"),
-            NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
-            ExecID="*",
-            OrderID="*",
-            ExecType="A",
-            OrdStatus="A",
-            AvgPx="*",
-            Price="*",
-            TransactTime="*",
-            LastPx="*",
-            QtyType="*",
-            CumQty="*",
-            LastQty="*",
-            HandlInst="2",
-            TargetStrategy="1008",
-            StrategyName="1555",
-            NoParty="*"
-        )
-        super().change_parameters(temp)
-        instrument = dict(
-            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
-            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
-            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
-            SecurityIDSource="8",
-            Product="4",
-            SecurityExchange="*",
-        )
-        super().update_fields_in_component("Instrument", instrument)
-        return self
 
-    # CHECKED
-    def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter('Account'),
-            ClOrdID=new_order_single.get_parameter("ClOrdID"),
-            Currency=new_order_single.get_parameter("Currency"),
-            HandlInst=new_order_single.get_parameter("HandlInst"),
-            Instrument=new_order_single.get_parameter("Instrument"),
-            OrderQty=new_order_single.get_parameter("OrderQty"),
-            OrdType=new_order_single.get_parameter("OrdType"),
-            SettlType=new_order_single.get_parameter("SettlType"),
-            Side=new_order_single.get_parameter("Side"),
-            TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
-            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
-            NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
-            ExecType="0",
-            Price="*",
-            StrategyName="1555",
-            OrdStatus="0",
-            TransactTime='*',
-            AvgPx='0',
-            CumQty='0',
-            ExecID='*',
-            LastPx='0',
-            LastQty='0',
-            QtyType='0',
-            OrderID='*',
-            SettlDate='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
-            ExecRestatementReason=4,
-            NoParty="*"
-        )
-        super().change_parameters(temp)
-        instrument = dict(
-            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
-            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
-            Product="4",
-        )
-        super().update_fields_in_component("Instrument", instrument)
-        return self
-
-    # CHECKED
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
@@ -170,111 +69,17 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        return self
-
-    def __set_fill_sell_fwd(self, new_order_single: FixMessageNewOrderSingle = None):
-        self.__set_fill_sell(new_order_single)
-        self.add_tag({"LastForwardPoints": "*"})
-        return self
-
-    # BUY SIDE
-    # TODO: doublecheck
-    def __set_pending_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter("Account"),
-            ClOrdID='*',
-            OrdType=new_order_single.get_parameter('OrdType'),
-            OrderQty=new_order_single.get_parameter("OrderQty"),
-            Text='*',
-            Price=new_order_single.get_parameter("Price"),
-            Side=new_order_single.get_parameter("Side"),
-            TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            ExecType="A",
-            OrdStatus="A",
-            CumQty='0',
-            ExecID='*',
-            OrderID='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
-            TransactTime='*',
-            AvgPx='*',
-            ExDestination='XPAR'
-        )
-        super().change_parameters(temp)
-        return self
-
-    # TODO: doublecheck
-    def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter("Account"),
-            ClOrdID='*',
-            OrdType=new_order_single.get_parameter('OrdType'),
-            OrderQty=new_order_single.get_parameter("OrderQty"),
-            Text='*',
-            Price=new_order_single.get_parameter("Price"),
-            Side=new_order_single.get_parameter("Side"),
-            TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            ExecType="0",
-            OrdStatus="0",
-            CumQty='0',
-            ExecID='*',
-            OrderID='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
-            TransactTime='*',
-            AvgPx='*',
-            ExDestination='XPAR'
-        )
-        super().change_parameters(temp)
-        return self
-
-    # TODO: doublecheck
-    def __set_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
-        temp = dict(
-            Account=new_order_single.get_parameter('Account'),
-            CumQty=new_order_single.get_parameter('OrderQty'),
-            LastPx=new_order_single.get_parameter('Price'),
-            ExecID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdType=new_order_single.get_parameter('OrdType'),
-            ClOrdID='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
-            Text='Fill',
-            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            OrderID='*',
-            TransactTime='*',
-            Side=new_order_single.get_parameter('Side'),
-            AvgPx='*',
-            OrdStatus=2,
-            Price=new_order_single.get_parameter('Price'),
-            Currency=new_order_single.get_parameter('Currency'),
-            TimeInForce=0,
-            Instrument=new_order_single.get_parameter('Instrument'),
-            ExecType='F',
-            LeavesQty=0
-        )
-        super().change_parameters(temp)
+        if new_order_single.get_parameter('SettlType') != "0":
+            super().add_tag({"LastForwardPoints": "*"})
         return self
 
     # endregion
     # region SWAP
     def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, side: GatewaySide,
                                        status: Status):
-        if side is GatewaySide.Buy:
-            if status is Status.Pending:
-                self.__set_pending_new_buy(new_order_single)
-            elif status is Status.New:
-                self.__set_new_buy(new_order_single)
-            elif status is Status.Fill:
-                self.__set_fill_buy(new_order_single)
-            else:
-                raise Exception('Incorrect Status')
-        elif side is GatewaySide.Sell:
-            if status is Status.Pending:
-                self.__set_pending_new_sell(new_order_single)
-            elif status is Status.New:
-                self.__set_new_sell(new_order_single)
-            elif status is Status.Fill:
+        if side is GatewaySide.Sell:
+            if status is Status.Fill:
                 self.__set_fill_sell_swap(new_order_single)
-
             else:
                 raise Exception('Incorrect Status')
         return self
