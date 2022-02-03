@@ -40,7 +40,7 @@ class ClientRFQTile(ClientPricingTile):
         call(self.cp_service.modifyRFQTile, self.modify_request.build())
         self.clear_details([self.modify_request])
 
-    def place_send_rfq(self):
+    def send_rfq(self):
         call(self.send_call, self.base_data)
 
     def place_order(self, side: Side):
