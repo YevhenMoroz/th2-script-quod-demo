@@ -1,4 +1,4 @@
-from test_framework.data_sets.base_data_set import Connectivity
+from test_framework.fix_wrappers.DataSet import Connectivity
 
 
 class SessionAliasOMS:
