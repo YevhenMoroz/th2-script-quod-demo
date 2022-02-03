@@ -40,6 +40,7 @@ class OrderBookColumns(Enum):
     currency = 'Currency'
     venue_client_account = "Venue Client Account"
     account_id = 'Account ID'
+    done_for_day = 'DoneForDay'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
