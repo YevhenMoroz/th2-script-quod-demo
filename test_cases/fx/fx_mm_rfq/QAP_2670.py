@@ -47,12 +47,15 @@ class QAP_2670(TestCase):
         self.quote_response = None
 
     def run_pre_conditions_and_steps(self):
+        # region Step 1
         quote_request = FixMessageQuoteRequestFX().set_rfq_params()
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency=self.currency, Instrument=self.instrument_spot,
-                                                      OrderQty=self.qty)
+                                                      OrderQty=self.qty, Side="2")
         response = self.fix_manager_gtw.send_quote_to_dealer_and_receive_response(quote_request, self.test_id)
         quote = FixMessageQuoteFX().set_params_for_dealer(quote_request)
+        # endregion
+        # region Step 2
         self.dealer_intervention.set_list_filter(
             [self.qty_column, self.qty, self.cur_column, self.currency]).check_unassigned_fields(
             {self.sts_column: self.sts_new})
@@ -64,12 +67,14 @@ class QAP_2670(TestCase):
         self.quote_response = next(response)
         quote_from_di = self.fix_manager_gtw.parse_response(self.quote_response)[0]
         self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
-
+        # endregion
+        # region Step 3
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_for_dealer(quote_request, quote_from_di)
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
                                                                                                     self.status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
 
     def run_post_conditions(self):
         self.dealer_intervention.close_window()
