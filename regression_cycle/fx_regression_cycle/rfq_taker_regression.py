@@ -1,5 +1,4 @@
-from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_594, QAP_595, QAP_597,\
-    QAP_598, QAP_592, QAP_599, QAP_600, QAP_601, QAP_602, QAP_604, QAP_605, QAP_606, QAP_609, QAP_610, QAP_611, \
+from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_605, QAP_609, QAP_610, QAP_611, \
     QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, QAP_708, QAP_709, QAP_710, \
     QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_849, QAP_850, QAP_982, QAP_992, QAP_1585, QAP_1713,\
     QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, QAP_3589, QAP_2836, \
@@ -30,7 +29,17 @@ from test_cases.fx.fx_taker_rfq.QAP_589 import QAP_589
 from test_cases.fx.fx_taker_rfq.QAP_590 import QAP_590
 from test_cases.fx.fx_taker_rfq.QAP_591 import QAP_591
 from test_cases.fx.fx_taker_rfq.QAP_593 import QAP_593
+from test_cases.fx.fx_taker_rfq.QAP_594 import QAP_594
+from test_cases.fx.fx_taker_rfq.QAP_595 import QAP_595
+from test_cases.fx.fx_taker_rfq.QAP_597 import QAP_597
+from test_cases.fx.fx_taker_rfq.QAP_598 import QAP_598
+from test_cases.fx.fx_taker_rfq.QAP_599 import QAP_599
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
+from test_cases.fx.fx_taker_rfq.QAP_600 import QAP_600
+from test_cases.fx.fx_taker_rfq.QAP_601 import QAP_601
+from test_cases.fx.fx_taker_rfq.QAP_602 import QAP_602
+from test_cases.fx.fx_taker_rfq.QAP_604 import QAP_604
+from test_cases.fx.fx_taker_rfq.QAP_606 import QAP_606
 from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.import_layouts.layout_loader import LayoutLoader
@@ -85,17 +94,17 @@ def test_run(parent_id=None):
         QAP_591(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_592.execute(report_id, session_id)
         QAP_593(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_594.execute(report_id, session_id)
-        QAP_595.execute(report_id, session_id)
-        QAP_597.execute(report_id, session_id)
-        QAP_598.execute(report_id, session_id)
-        QAP_599.execute(report_id, session_id)
-        QAP_600.execute(report_id, session_id)
-        QAP_601.execute(report_id, session_id)
-        QAP_602.execute(report_id, session_id)
-        QAP_604.execute(report_id, session_id)
+        QAP_594(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_595(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_597(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_598(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_599(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_600(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_601(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_602(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_604(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_605.execute(report_id, session_id)
-        QAP_606.execute(report_id, session_id)
+        QAP_606(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_609.execute(report_id, session_id)
         QAP_610.execute(report_id, session_id)
         QAP_611.execute(report_id, session_id)
