@@ -62,17 +62,21 @@ class FixMessageQuoteFX(FixMessage):
             self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"OfferPx": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"BidSpotRate": "*"})
-            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
-            self.add_tag({"BidPx": "*"})
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
-            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"BidPx": "*"})
             self.add_tag({"OfferPx": "*"})
             self.add_tag({"OfferSize": "*"})
             self.add_tag({"OfferSpotRate": "*"})
-            self.add_tag({"BidSpotRate": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferPx": "*"})
+            self.add_tag({"OfferSize": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
         return self
 
     def set_params_for_dealer_fwd(self, quote_request: FixMessageQuoteRequestFX):
