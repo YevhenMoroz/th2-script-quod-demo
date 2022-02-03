@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from custom.tenor_settlement_date import spo
-from test_framework.data_sets.constants import GatewaySide, Status
+from test_framework.data_sets.constants import Status
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from test_framework.fix_wrappers.forex import FixMessageNewOrderMultiLegFX
@@ -14,13 +14,11 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     # region SINGLE
-    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: GatewaySide,
-                                         status: Status):
-        if side is GatewaySide.Sell:
-            if status is Status.Fill:
-                self.__set_fill_sell(new_order_single)
-            else:
-                raise Exception('Incorrect Status')
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+        if status is Status.Fill:
+            self.__set_fill_sell(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
         return self
 
     # SELL SIDE
@@ -75,13 +73,11 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # endregion
     # region SWAP
-    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, side: GatewaySide,
-                                       status: Status):
-        if side is GatewaySide.Sell:
-            if status is Status.Fill:
-                self.__set_fill_sell_swap(new_order_single)
-            else:
-                raise Exception('Incorrect Status')
+    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, status: Status):
+        if status is Status.Fill:
+            self.__set_fill_sell_swap(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
         return self
 
     def __set_fill_sell_swap(self, new_order_single: FixMessageNewOrderSingle = None):
