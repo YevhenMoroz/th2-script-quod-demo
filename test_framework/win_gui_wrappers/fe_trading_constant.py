@@ -37,6 +37,7 @@ class OrderBookColumns(Enum):
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    tenor = "Tenor"
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
