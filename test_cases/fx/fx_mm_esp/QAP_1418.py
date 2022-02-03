@@ -45,7 +45,9 @@ class QAP_1418(TestCase):
         self.rates_tile.press_use_default()
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
         actual_spread = self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]
-        expected_spread = str(round((float(bid_n_ask_values[self.bid_pips.value]) - float(bid_n_ask_values[self.ask_pips.value])) * -0.1, 1))
+        expected_spread = str(
+            round((float(bid_n_ask_values[self.bid_pips.value]) - float(bid_n_ask_values[self.ask_pips.value])) * -0.1,
+                  1))
         self.rates_tile.compare_values(expected_spread, actual_spread,
                                        event_name=self.spread_event)
         # endregion
@@ -119,8 +121,6 @@ class QAP_1418(TestCase):
         self.rates_tile.compare_values(expected_bid, actual_bid,
                                        event_name=self.bid_event)
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
