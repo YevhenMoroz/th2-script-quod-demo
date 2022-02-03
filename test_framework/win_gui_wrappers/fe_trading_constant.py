@@ -32,7 +32,7 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-
+    suspend = 'Suspended'
     client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'

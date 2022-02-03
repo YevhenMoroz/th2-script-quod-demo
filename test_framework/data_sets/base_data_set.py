@@ -33,6 +33,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    venue_client_accounts = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -232,6 +233,12 @@ class BaseDataSet:
         if hasattr(self.lookups, name):
             return getattr(self.lookups, name).value
         return ValueError(f"{self.lookups} not found!")
+
+    def get_venue_client_account(self, name: str):
+        if hasattr(self.venue_client_accounts, name):
+            return getattr(self.venue_client_accounts, name).value
+        return ValueError(f"{self.lookups} not found!")
+
 
 
 
