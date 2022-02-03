@@ -104,6 +104,16 @@ class RFQTile(AggregatesRatesTile):
         self.clear_details([self.extraction_request])
         self.set_default_params()
 
+    def check_currency(self, currency: str = None):
+        self.verifier.set_event_name("Check currency")
+        self.extraction_request.extract_currency(currency)
+        response = call(self.extract_call, self.extraction_request.build())
+        extract_currency = response[currency]
+        self.verifier.compare_values("Currency", currency, extract_currency)
+        self.verifier.verify()
+        self.clear_details([self.extraction_request])
+        self.set_default_params()
+
     def check_qty(self, near_qty: str = None, far_qty: str = None):
         self.verifier.set_event_name("Check Qty")
         if near_qty is not None:
