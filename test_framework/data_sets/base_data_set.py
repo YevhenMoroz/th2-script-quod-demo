@@ -41,6 +41,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    venue_client_accounts = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -278,3 +279,4 @@ class BaseDataSet:
     def get_commissions(self):
         if self.commission:
             return self.commission
+
