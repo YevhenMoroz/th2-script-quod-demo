@@ -206,7 +206,7 @@ class RatesColumnNames(CustomEnum):
     bid_base = "Base"
     bid_band = "Band"
     bid_pub = "Pub"
-    bid_pts = "bid_pts.Pts"
+    bid_pts = "Pts"
     bid_spot = "Spot"
     bid_px = "Px"
 
