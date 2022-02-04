@@ -6,7 +6,7 @@
   "web_admin_login": "",
   "web_admin_password": "",
 
-  "qf_trading_fe_folder": "",
+  "qf_trading_fe_folder": "C:\\ProgramData\\QuodFinancialQUOD_QUOD314_LUNA\\Quod_Financial_Trader_Front-end_64bits",
   "qf_trading_fe_folder_305": "",
   "qf_trading_fe_folder_309": "",
   "qf_trading_fe_exec": "",
