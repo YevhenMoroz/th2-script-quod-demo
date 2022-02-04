@@ -20,7 +20,6 @@ class QAP_2072(TestCase):
         self.px_event_3 = "Px validation of the 3rd row"
         self.pips_2 = "2"
 
-
         self.ask_px = RatesColumnNames.ask_px
         self.bid_px = RatesColumnNames.bid_px
 
@@ -68,8 +67,6 @@ class QAP_2072(TestCase):
         self.rates_tile.compare_values(expected_ask_px_3, actual_ask_px_3,
                                        event_name=self.px_event_3)
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

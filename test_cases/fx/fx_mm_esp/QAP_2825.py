@@ -18,7 +18,6 @@ class QAP_2825(TestCase):
         self.px_event = "Px validation"
         self.pips_2 = "2"
 
-
         self.ask_px = RatesColumnNames.ask_px
         self.bid_px = RatesColumnNames.bid_px
 
@@ -55,8 +54,6 @@ class QAP_2825(TestCase):
                                        event_name=self.px_event)
 
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
