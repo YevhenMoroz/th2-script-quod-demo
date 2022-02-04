@@ -6,6 +6,7 @@ from test_cases.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_
     QAP_2992, QAP_3003, QAP_3005, QAP_3106, QAP_3107, QAP_3108, \
     QAP_3109, QAP_3110, QAP_3111, QAP_3112, QAP_3113, QAP_3234, QAP_3250, QAP_3409, QAP_3494, QAP_4085, \
     QAP_4228, QAP_4509, QAP_4510, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_5345
+from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, \
     QAP_3807, QAP_3850, QAP_3811, QAP_3851, QAP_3806
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
@@ -155,6 +156,8 @@ def test_run(parent_id=None):
         QAP_4223.execute(report_id, session_id)
         QAP_4777.execute(report_id, session_id)
         QAP_4748.execute(report_id, session_id)
+        QAP_6192(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+
 
     except Exception:
         logging.error("Error execution", exc_info=True)
