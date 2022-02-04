@@ -1,11 +1,13 @@
 import logging
 import os
 import time
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -41,7 +43,7 @@ class QAP_5000(TestCase):
         self.order_type = OrderType.limit.value
         self.order_book_column = OrderBookColumns
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region create CO order
         self.fix_manager.send_message_fix_standard(self.fix_message)
