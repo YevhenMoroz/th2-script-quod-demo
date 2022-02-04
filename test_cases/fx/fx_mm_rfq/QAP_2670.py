@@ -4,6 +4,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets import constants
 from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -20,7 +21,7 @@ from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDeale
 
 
 class QAP_2670(TestCase):
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
@@ -46,6 +47,7 @@ class QAP_2670(TestCase):
         self.status = constants.Status.Fill
         self.quote_response = None
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
         quote_request = FixMessageQuoteRequestFX().set_rfq_params()
@@ -76,5 +78,6 @@ class QAP_2670(TestCase):
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.dealer_intervention.close_window()
