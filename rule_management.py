@@ -399,5 +399,8 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager(Simulators.equity)
+    rule_manager = RuleManager()
+    rule_manager_eq = RuleManager(Simulators.equity)
     rule_manager.print_active_rules()
+    print("_________________________")
+    rule_manager_eq.print_active_rules()
