@@ -30,8 +30,8 @@
       "service-class": "TemplateSimulatorServiceService",
       "endpoints": {
         "simulator": {
-          "host": "10.0.22.22",
-          "port": 32313
+          "host": "10.0.22.24",
+          "port": 32315
         }
       },
       "strategy": {
@@ -43,8 +43,8 @@
       "service-class": "SimService",
       "endpoints": {
         "simulator": {
-          "host": "10.0.22.22",
-          "port": 32313
+          "host": "10.0.22.24",
+          "port": 32315
         }
       },
       "strategy": {
