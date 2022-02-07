@@ -1,11 +1,12 @@
-from test_framework.win_gui_wrappers.base_middle_office_book import BaseMiddleOfficeBook
+from test_framework.win_gui_wrappers.base_middle_office import BaseMiddleOffice
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
-    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails
+    ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails, \
+    MassApproveDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 
 
-class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
+class OMSMiddleOffice(BaseMiddleOffice):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
@@ -27,4 +28,8 @@ class OMSMiddleOfficeBook(BaseMiddleOfficeBook):
         self.extract_middle_office_blotter_values_call = Stubs.win_act_middle_office_service.extractMiddleOfficeBlotterValues
         self.extract_allocation_details = AllocationsExtractionDetails(self.base_request)
         self.extract_allocations_table_data = Stubs.win_act_middle_office_service.extractAllocationsTableData
+        self.mass_approve_details = MassApproveDetails(self.base_request)
+        self.mass_approve_call = Stubs.win_act_middle_office_service.massApprove
+        self.mass_allocate_call = Stubs.win_act_middle_office_service.massAllocate
+        self.mass_unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
         # endregion

@@ -13,7 +13,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_window import decorator_try_except
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class QAP_3380(TestCase):
     @decorator_try_except(test_id=os.path.basename(__file__)[:-3])
     def execute(self):
         order_book = OMSOrderBook(self.case_id, self.session_id)
-        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         RestCommissionsSender(self.wa_connectivity, self.case_id).clear_commissions()
         self.__send_fix_orders()
         print("Sent")
@@ -67,7 +67,7 @@ class QAP_3380(TestCase):
             rule_manager.remove_rule(nos_rule)
 
     @staticmethod
-    def __verify_commissions(middle_office: OMSMiddleOfficeBook):
+    def __verify_commissions(middle_office: OMSMiddleOffice):
         commissions = middle_office.extracting_values_from_amend_ticket(
             [
                 PanelForExtraction.COMMISSION,

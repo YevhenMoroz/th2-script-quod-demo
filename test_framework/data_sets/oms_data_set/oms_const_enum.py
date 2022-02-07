@@ -2,29 +2,29 @@ from enum import Enum
 
 
 class OmsFixInstruments(Enum):
-    instrument_1 = dict(
-        Symbol='FR0010436584',
+    instrument_1 = dict(           # without commission/fee
+        Symbol='FR0010436584',      # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
         SecurityDesc='DREAMNEX'
     )
-    instrument_2 = dict(
-        Symbol='ISI1',
+    instrument_2 = dict(            # with commission/fee
+        Symbol='ISI1',               # assigned counterpart_mma_2
         SecurityID='ISI1',
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
     instrument_3 = dict(
-        Symbol='ISI3',
-        SecurityID='ISI3',
+        Symbol='ISI3',              # with commission/fee
+        SecurityID='ISI3',          # assigned counterpart_mma_2
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
-    instrument_4 = dict(
+    instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
         SecurityIDSource='4',
@@ -33,11 +33,11 @@ class OmsFixInstruments(Enum):
     )
 
 
-class OmsDbInstrument(Enum):
+class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
 
 
-class OmsDbListing(Enum):
+class OmsListingId(Enum):
     listing_1 = "1200"
 
 
@@ -45,6 +45,11 @@ class OmsVenues(Enum):
     venue_1 = "PARIS"
     venue_2 = "EUREX"
     venue_3 = "JSE"
+
+
+class OmsLookupForVenues(Enum):
+    """USED FOR CREATING ORDER VIA FE"""
+    lookup_1 = 'VETO'
 
 
 class OmsClients(Enum):
@@ -68,8 +73,9 @@ class OmsClients(Enum):
     client_pt_5 = "MOClient5"  # CS = Manual, BA = Auto, Other Manual
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
+    client_pt_8 = "MOClient7"
     """Care"""
-    client_co_1 = "CLIENT_FIX_CARE"
+    client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
     """Commissions"""
     client_com_1 = "CLIENT_COMM_1"
@@ -118,6 +124,7 @@ class OmsAccounts(Enum):
     client_pt_5_acc_2 = "MOClient5_SA2"
     client_pt_6_acc_1 = "MOClient6_SA1"
     client_pt_6_acc_2 = "MOClient6_SA2"
+    client_pt_7_acc_1 = "MOClient7_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Commissions"""
@@ -172,3 +179,6 @@ class OmsCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+
+class OmsRoutes(Enum):
+    route_1= "Route via FIXBUYTH2 - component"

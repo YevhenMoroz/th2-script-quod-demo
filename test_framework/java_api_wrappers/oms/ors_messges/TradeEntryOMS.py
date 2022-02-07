@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
-from stubs import Stubs
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.java_api_wrappers.ors_messages.TradeEntryRequest import TradeEntryRequest
 
 
 class TradeEntryOMS(TradeEntryRequest):
-    def __init__(self, data_set, parameters: dict = None):
+    def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
         self.data_set = data_set
