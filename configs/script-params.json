@@ -1,6 +1,6 @@
 {
-  "target_server_win": "",
-  "target_server_web": "",
+  "target_server_win": "rnenakho",
+  "target_server_web": "web",
 
   "web_admin_url": "http://10.0.22.40:3180/quodadmin/qakharkiv3/",
   "web_admin_login": "adm03",
