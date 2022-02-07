@@ -2,7 +2,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import decorator_try_except
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
@@ -24,10 +24,10 @@ class QAP_4234(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.quote_request_book = None
 
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def pre_conditions_and_run(self):
-        account = self.data_set.get_client_by_name("client_2")
-        symbol = self.data_set.get_symbol_by_name("gbp_usd")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        account = self.data_set.get_client_by_name("client_mm_2")
+        symbol = self.data_set.get_symbol_by_name("symbol_2")
         security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
@@ -50,7 +50,3 @@ class QAP_4234(TestCase):
 
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         self.quote_request_book.set_filter([qty_col, qty]).check_quote_book_fields_list({free_notes_col: text})
-
-    @decorator_try_except(test_id=Path(__file__).name[:-3])
-    def post_conditions(self):
-        pass

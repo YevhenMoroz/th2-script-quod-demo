@@ -217,7 +217,8 @@ class FeesDetails:
     def remove_fees(self):
         self.request.removeFees = True
 
-    def add_fees(self, feeType: str= None, basis: str = None, rate: str = None, amount: str = None, currency: str = None, category: str = None):
+    def add_fees(self, feeType: str = None, basis: str = None, rate: str = None, amount: str = None,
+                 currency: str = None, category: str = None):
         var = self.request.feesTabTableParams.add()
         if feeType is not None:
             var.feeType = feeType
@@ -375,6 +376,9 @@ class ExtractMiddleOfficeBlotterValuesRequest:
     def build(self):
         return self._request
 
+    def clear_filter(self):
+        self._request.clearMiddleOfficeFilter = True
+
 
 class AllocationsExtractionDetails:
     def __init__(self, base_request: EmptyRequest = None):
@@ -442,15 +446,12 @@ class ExtractionPanelDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-
     def set_filter(self, filter: dict):
         self._request.filter.update(filter)
-
 
     def set_panels(self, panels: list):
         for panel in panels:
             self._request.panels.append(panel)
-
 
     def build(self):
         return self._request
@@ -487,6 +488,28 @@ class AllocationBlockExtractionDetails:
     def set_panels(self, panels: list):
         for panel in panels:
             self._request.panels.append(panel)
+
+    def build(self):
+        return self._request
+
+
+class MassApproveDetails:
+    def __init__(self, base_request: EmptyRequest = None, rows_numbers: list = None):
+        if base_request is not None:
+            self._request = middle_office_pb2.MassApproveDetails(base=base_request)
+        else:
+            self._request = middle_office_pb2.MassApproveDetails()
+
+        if rows_numbers is not None:
+            for number in rows_numbers:
+                self._request.rowsNumbers.append(number)
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_rows_number(self, rows_numbers: list):
+        for number in rows_numbers:
+            self._request.rowsNumbers.append(number)
 
     def build(self):
         return self._request

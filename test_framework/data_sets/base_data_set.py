@@ -1,4 +1,3 @@
-from enum import Enum
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
 
 
@@ -6,25 +5,39 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
-    instruments = None
+    fix_instruments = None
     venues = None
     clients = None
     accounts = None
     washbook_accounts = None
     recipients = None
-    db_listing = None
-    db_instrument = None
+    listing_id = None
+    instrument_id = None
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    symbols = None
+    security_types = None
+    settle_types = None
+    settle_dates = None
+    lookups = None
+    client_tiers = None
+    client_tiers_id = None
+    days_of_week = None
+    tenors = None
     symbols = FxSymbols
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    auto_hedgers = None
+    auto_hedgers_id = None
+    algo_policies = None
+    algo_policies_id = None
+    verifier_key_parameters = None
 
     def get_instruments(self):
-        if self.instruments:
-            return self.instruments.__members__
+        if self.fix_instruments:
+            return self.fix_instruments.__members__
 
     def get_venues(self):
         if self.venues:
@@ -46,10 +59,10 @@ class BaseDataSet:
         if self.recipients:
             return self.recipients.__members__
 
-    def get_instrument_by_name(self, name: str):
-        if hasattr(self.instruments, name):
-            return getattr(self.instruments, name).value
-        raise ValueError(f"{self.instruments} not found!")
+    def get_fix_instrument_by_name(self, name: str):
+        if hasattr(self.fix_instruments, name):
+            return getattr(self.fix_instruments, name).value
+        raise ValueError(f"{self.fix_instruments} not found!")
 
     def get_venue_by_name(self, name: str):
         if hasattr(self.venues, name):
@@ -76,15 +89,15 @@ class BaseDataSet:
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
 
-    def get_db_listing_by_name(self, name: str):
-        if hasattr(self.db_listing, name):
-            return getattr(self.db_listing, name).value
-        raise ValueError(f"{self.db_listing} not found!")
+    def get_listing_id_by_name(self, name: str):
+        if hasattr(self.listing_id, name):
+            return getattr(self.listing_id, name).value
+        raise ValueError(f"{self.listing_id} not found!")
 
-    def get_db_instrument_by_name(self, name: str):
-        if hasattr(self.db_instrument, name):
-            return getattr(self.db_instrument, name).value
-        raise ValueError(f"{self.db_instrument} not found!")
+    def get_instrument_id_by_name(self, name: str):
+        if hasattr(self.instrument_id, name):
+            return getattr(self.instrument_id, name).value
+        raise ValueError(f"{self.instrument_id} not found!")
 
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
@@ -105,7 +118,7 @@ class BaseDataSet:
     def get_symbol_by_name(self, name: str):
         """
         get symbol from FxSymbols
-        example ---> get_symbol_by_name("eur_usd"):
+        example ---> get_symbol_by_name("symbol_1"):
         """
         if hasattr(self.symbols, name):
             return getattr(self.symbols, name).value
@@ -131,70 +144,99 @@ class BaseDataSet:
 
     def get_settle_date_by_name(self, name: str):
         """
-        get settle type by name from FxSettleTypes
+        get settle date by name from FxSettleDates
         example ---> get_settle_date_by_name("spot"):
         """
         if hasattr(self.settle_dates, name):
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
+
+    def get_route(self, name:str):
+        if hasattr(self.routes, name):
+            return getattr(self.routes, name).value
+        raise ValueError(f"{self.routes} not found!")
+
+    def get_client_tier_by_name(self, name: str):
+        """
+        get client tier by name from FxClientTiers
+        example ---> get_client_tier_by_name("client_tier_1"):
+        """
+        if hasattr(self.client_tiers, name):
+            return getattr(self.client_tiers, name).value
+        raise ValueError(f"{self.client_tiers} not found!")
+
+    def get_client_tier_id_by_name(self, name: str):
+        """
+        get client tier ID by name from FxClientTiersID
+        example ---> get_client_tier_id_by_name("client_tier_id_1"):
+        """
+        if hasattr(self.client_tiers_id, name):
+            return getattr(self.client_tiers_id, name).value
+        raise ValueError(f"{self.client_tiers_id} not found!")
+
+    def get_day_of_week_by_name(self, name: str):
+        """
+        get day of week by name from DaysOfWeek
+        example ---> get_day_of_week_by_name("monday"):
+        """
+        if hasattr(self.days_of_week, name):
+            return getattr(self.days_of_week, name).value
+        raise ValueError(f"{self.days_of_week} not found!")
+
+    def get_tenor_by_name(self, name: str):
+        """
+        get tenor by name from FxTenors
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors, name):
+            return getattr(self.tenors, name).value
+        raise ValueError(f"{self.tenors} not found!")
+
+    def get_auto_hedger_by_name(self, name: str):
+        """
+        get auto hedger by name from FXAutoHedgers
+        example ---> get_client_tier_by_name("auto_hedger_1"):
+        """
+        if hasattr(self.auto_hedgers, name):
+            return getattr(self.auto_hedgers, name).value
+        raise ValueError(f"{self.auto_hedgers} not found!")
+
+    def get_auto_hedger_id_by_name(self, name: str):
+        """
+        get auto hedger ID by name from FXAutoHedgersID
+        example ---> get_client_tier_id_by_name("auto_hedger_id_1"):
+        """
+        if hasattr(self.auto_hedgers_id, name):
+            return getattr(self.auto_hedgers_id, name).value
+        raise ValueError(f"{self.auto_hedgers_id} not found!")
+
+    def get_algo_policy_by_name(self, name: str):
+        """
+        get algo policy by name from FXAlgoPolicies
+        example ---> get_client_tier_by_name("algo_policy_1"):
+        """
+        if hasattr(self.algo_policies, name):
+            return getattr(self.algo_policies, name).value
+        raise ValueError(f"{self.algo_policies} not found!")
+
+    def get_algo_policy_id_by_name(self, name: str):
+        """
+        get algo policy ID by name from FXAlgoPoliciesID
+        example ---> get_client_tier_id_by_name("algo_policy_id_1"):
+        """
+        if hasattr(self.algo_policies_id, name):
+            return getattr(self.algo_policies_id, name).value
+        raise ValueError(f"{self.algo_policies_id} not found!")
     # endregion
 
-# region Common Enums
-class Connectivity(Enum):
-    Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
-    Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
-    Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
-    Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
-    Ganymede_317_ss = 'fix-sell-317-standard-test'
-    Ganymede_317_bs = 'fix-buy-317-standard-test'
-    Ganymede_317_dc = 'fix-sell-317-backoffice'
-    Ganymede_317_wa = "rest_wa317ganymede"
-    Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
-    Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
-    Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
-    Luna_314_Feed_Handler = 'fix-fh-314-luna'
-    Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
-    Luna_314_dc = 'fix-sell-m-314luna-drop'
-    Luna_314_wa = "rest_wa314luna"
-    Ganymede_317_ja = '317_java_api'
-    Ganymede_317_als_email_report = 'log317-als-email-report'
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")
 
+    def get_verifier_key_parameters_by_name(self, name: str):
+        if hasattr(self.verifier_key_parameters, name):
+            return getattr(self.verifier_key_parameters, name).value
+        raise ValueError(f"{self.verifier_key_parameters} not found!")
 
-class DirectionEnum(Enum):
-    FromQuod = "FIRST"
-    ToQuod = "SECOND"
-
-
-class GatewaySide(Enum):
-    Sell = "Sell"
-    Buy = "Buy"
-
-
-class MessageType(Enum):
-    NewOrderSingle = "NewOrderSingle"
-    NewOrderMultiLeg = "NewOrderMultileg"
-    ExecutionReport = "ExecutionReport"
-    OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
-    OrderCancelRequest = "OrderCancelRequest"
-    MarketDataRequest = "MarketDataRequest"
-    MarketDataIncrementalRefresh = "MarketDataIncrementalRefresh"
-    MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
-    NewOrderList = "NewOrderList"
-    ListStatus = "ListStatus"
-    QuoteRequest = "QuoteRequest"
-    Quote = "Quote"
-    Confirmation = "Confirmation"
-    AllocationInstruction = "AllocationInstruction"
-
-
-class Status(Enum):
-    Pending = "Pending"
-    New = "New"
-    Fill = "Fill"
-    PartialFill = "PartialFill"
-    Reject = "Reject"
-    CancelRequest = "CancelReplace"
-    Cancel = "Cancel"
-    Eliminate = "Eliminate"
-# endregion
 

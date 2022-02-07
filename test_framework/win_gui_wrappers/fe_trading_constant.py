@@ -7,6 +7,7 @@ from test_cases.fx.fx_wrapper.common_tools import hash_green, hash_yellow, hash_
 
 class OrderBookColumns(Enum):
     order_id = "Order ID"
+    quote_id = "QuoteID"
     cl_ord_id = "ClOrdID"
     security_id = "Security Id"
     symbol = "Symbol"
@@ -35,10 +36,12 @@ class OrderBookColumns(Enum):
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
+    currency = 'Currency'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
     last_market = 'LastMkt'
+    post_trade_status = 'PostTradeStatus'
     # endregion
 
 
@@ -66,7 +69,7 @@ class InstrType(Enum):
 
 
 class QuoteBookColumns(Enum):
-    quote_id = 'ID'
+    quote_id = 'Id'
     account_group = 'AccountGroup'
     security_id = 'SecurityID'
     owner = 'Owner'
@@ -145,6 +148,23 @@ class ExecSts(Enum):
     terminated = 'Terminated'
 
 
+class Status(Enum):
+    terminated = 'Terminated'
+    expired = 'Expired'
+    new = 'New'
+    rejected = 'Rejected'
+    frozen = 'Frozen'
+
+
+class QuoteStatus(Enum):
+    accepted = 'Accepted'
+    terminated = 'Terminated'
+    expired = 'Expired'
+    canceled = 'Canceled'
+    filled = 'Filled'
+    removed = 'RemovedFromMarket'
+
+
 class Side(Enum):
     sell = "Sell"
     buy = "Buy"
@@ -203,9 +223,26 @@ class MiddleOfficeColumns(Enum):
     client_id = "Client ID"
     client_comm = "Client Comm"
     total_fees = "Total Fees"
+    sts = 'Status'
+    match_status = 'Match Status'
+    summary_status = 'Summary Status'
+    order_id = 'Order ID'
+    block_id = 'Block ID'
+    conf_service = ""
 
 
 class AllocationsColumns(Enum):
     client_comm = "Client Comm"
     alloc_qty = "Alloc Qty"
     total_fees = "Total Fees"
+    alt_account = "Alt Account"
+    account_id = "Account ID"
+    security_acc = "Security Account"
+    sts = 'Status'
+    match_status = 'Match Status'
+    alloc_id = 'Allocation ID'
+    avg_px = 'Avg Px'
+
+
+class SecondLevelTabs(Enum):
+    child_tab = 'Child Orders'

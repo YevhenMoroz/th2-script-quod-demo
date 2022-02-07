@@ -1,12 +1,13 @@
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
-
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter, \
+    InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
-    direct_moc_request
+    direct_moc_request, direct_order_request
+
 
 
 class BaseOrderBook(BaseWindow):
@@ -27,6 +28,7 @@ class BaseOrderBook(BaseWindow):
         self.rows_numbers_for_grid = None
         self.suspend_order_details = None
         self.disclose_flag_details = None
+        self.switcher = {1: 'disable', 2: 'real_time', 3: 'manual'}
         self.add_to_basket_details = None
         self.create_basket_details = None
         self.reassign_order_details = None
@@ -37,6 +39,8 @@ class BaseOrderBook(BaseWindow):
         self.mass_exec_summary_average_price_detail = None
         self.extraction_error_message_details = None
         self.extract_direct_values = None
+        self.order_ticket_details = None
+        self.extract_error_from_order_ticket = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
         self.extract_booking_block_values_call = None
@@ -49,6 +53,8 @@ class BaseOrderBook(BaseWindow):
         self.notify_dfd_order_call = None
         self.check_out_order_call = None
         self.reassign_order_call = None
+        self.transfer_order_details = None
+        self.transfer_order_call = None
         self.complete_order_call = None
         self.check_in_order_call = None
         self.suspend_order_call = None
@@ -69,6 +75,16 @@ class BaseOrderBook(BaseWindow):
         self.split_booking_call = None
         self.direct_moc_request_correct_call = None
         self.direct_loc_request_correct_call = None
+        self.extract_error_from_order_ticket_call = None
+        self.split_limit_call = None
+        self.direct_order_correct_call = None
+        self.mass_book_details = None
+        self.mass_book_call = None
+        self.transfer_pool_call = None
+        self.transfer_pool_details = None
+        self.internal_transfer_action = None
+
+
 
     # endregion
 
@@ -186,7 +202,8 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
         self.verifier.verify()
 
     def check_second_lvl_fields_list(self, expected_fields: dict, event_name="Check second lvl in Order Book",
@@ -202,13 +219,15 @@ class BaseOrderBook(BaseWindow):
             key = list(items)[0]
             value = list(items)[1]
             self.verifier.set_event_name(event_name)
-            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''), verification_method)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
         self.verifier.verify()
 
-    def is_menu_item_present(self, menu_item, filter_list=None):
+    def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
         """
         check order context menu and return a bool value
         """
+        self.menu_item_details.set_selected_rows(orders_count)
         self.menu_item_details.set_menu_item(menu_item)
         if filter_list is not None:
             self.menu_item_details.set_filter(filter_list)
@@ -232,6 +251,22 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
+    def transfer_order(self,  desk: str, partial_desk: bool = False, filter_list: list = None):
+        self.transfer_order_details.set_default_params(self.base_request)
+        if filter_list is not None:
+            self.transfer_order_details.set_filter(filter_list)
+        self.transfer_order_details.set_transfer_order_user(desk, partial_desk)
+        call(self.transfer_order_call, self.transfer_order_details.build())
+        self.clear_details([self.transfer_order_details])
+
+    def internal_transfer(self, transfer_accept: bool = True):
+        if transfer_accept:
+            self.transfer_pool_details.confirm_ticket_accept()
+        else:
+            self.transfer_pool_details.cancel_ticket_reject()
+        call(self.transfer_pool_call, self.internal_transfer_action.build())
+        self.clear_details([self.transfer_pool_details])
+
     def complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
@@ -252,7 +287,7 @@ class BaseOrderBook(BaseWindow):
         if filter_list is not None:
             self.modify_order_details.set_filter()
         if row_count is not None:
-            self.modify_order_details.set_selected_row_count()
+            self.modify_order_details.set_selected_row_count(row_count)
         call(self.notify_dfd_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
@@ -270,9 +305,10 @@ class BaseOrderBook(BaseWindow):
         call(self.group_modify_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def reassign_order(self, recipient):
+    def reassign_order(self, recipient, partial_desk: bool = False):
         self.reassign_order_details.base.CopyFrom(self.base_request)
         self.reassign_order_details.desk = recipient
+        self.reassign_order_details.partialDesk = partial_desk
         call(self.reassign_order_call, self.reassign_order_details)
 
     def check_in_order(self, filter_list=None):
@@ -308,9 +344,13 @@ class BaseOrderBook(BaseWindow):
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
         """ type_disclose - can have next values: disable, real_time, manual """
-        self.disclose_flag_details = getattr(self.disclose_flag_details, type_disclose)
-        self.disclose_flag_details.set_row_numbers(row_numbers)
-        call(self.cancel_order_call, self.disclose_flag_details.build())
+        if type_disclose == 'manual':
+            self.disclose_flag_details.manual()
+        if type_disclose == 'real_time':
+            self.disclose_flag_details.real_time()
+        if row_numbers is not None:
+            self.disclose_flag_details.set_row_numbers(row_numbers)
+        call(self.disclose_flag_call, self.disclose_flag_details.build())
         self.clear_details([self.disclose_flag_details])
 
     def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
@@ -333,7 +373,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -349,6 +389,8 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
@@ -385,7 +427,6 @@ class BaseOrderBook(BaseWindow):
                                                                panel_of_extraction
                                                                )
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
-        self.clear_details([self.extraction_panel_details])
         return result
 
     def direct_moc_order_correct(self, qty, route):
@@ -525,3 +566,31 @@ class BaseOrderBook(BaseWindow):
                         direct_moc_request("UnmatchedQty", qty, route, self.extract_direct_values))
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
+
+    def set_order_ticket_details(self, qty, type, price):
+        order_ticket_details = self.order_ticket_details()
+        order_ticket_details.set_quantity(qty)
+        order_ticket_details.set_order_type(type)
+        order_ticket_details.set_limit(price)
+        self.modify_order_details.set_order_details(order_ticket_details)
+        return self.modify_order_details
+
+    def split_limit_order(self):
+        call(self.split_limit_call, self.modify_order_details.build())
+        # self.clear_details([self.modify_order_details])
+
+    def extract_error_message_from_order_ticket(self):
+        self.extract_error_from_order_ticket.extract_error_message()
+        result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
+        self.clear_details([self.extract_error_from_order_ticket])
+        return result
+
+    def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
+        call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
+
+    def mass_book(self, positions_of_orders: list):
+        self.mass_book_details.set_rows_numbers(positions_of_orders)
+        call(self.mass_book_call, self.mass_book_details.build())
+        self.clear_details([self.mass_book_details])
+
+
