@@ -55,7 +55,8 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             ExDestination="*",
             QtyType=0,
             Instrument=new_order_single.get_parameter("Instrument"),
-            NoParty="*"
+            NoParty="*",
+
         )
         super().change_parameters(temp)
         instrument = dict(
@@ -67,6 +68,8 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
+        if new_order_single.get_parameter('SettlType') != "0":
+            super().add_tag({"LastForwardPoints": "*"})
         return self
 
     def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):

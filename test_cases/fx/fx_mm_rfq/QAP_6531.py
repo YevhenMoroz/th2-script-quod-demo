@@ -33,8 +33,6 @@ class QAP_6531(TestCase):
         symbol = self.data_set.get_symbol_by_name("symbol_12")
         qty1 = random_qty(1, 3, 7)
         qty2 = random_qty(1, 3, 7)
-        qty1_test = format(int(qty1), ',d')
-        qty2_test = format(int(qty2), ',d')
         security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
@@ -55,15 +53,15 @@ class QAP_6531(TestCase):
                                       settle_type=settle_type_tomorrow,
                                       settle_date=settle_date_tom, leg_qty=qty1)
         quote_request.update_far_leg(leg_symbol=symbol, leg_sec_type=security_type_fwd,
-                                      settle_type=settle_type_wk1,
-                                      settle_date=settle_date_wk1, leg_qty=qty1)
+                                     settle_type=settle_type_wk1,
+                                     settle_date=settle_date_wk1, leg_qty=qty1)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
                                                       Currency="USD", Instrument=instrument, OrderQty=qty1)
 
         self.fix_manager_gtw.send_message(quote_request)
 
         self.quote_request_book.set_filter(
-            [qrb.qty.value, qty1_test]).check_quote_book_fields_list(
+            [qrb.qty.value, qty1]).check_quote_book_fields_list(
             {qrb.free_notes.value: freenotes})
 
         # Step 2
@@ -78,5 +76,5 @@ class QAP_6531(TestCase):
         self.fix_manager_gtw.send_message(quote_request)
 
         self.quote_request_book.set_filter(
-            [qrb.qty.value, qty2_test]).check_quote_book_fields_list(
+            [qrb.qty.value, qty2]).check_quote_book_fields_list(
             {qrb.free_notes.value: freenotes})
