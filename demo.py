@@ -50,6 +50,7 @@ from test_cases.fx.fx_taker_rfq.QAP_645 import QAP_645
 from test_cases.fx.fx_taker_rfq.QAP_646 import QAP_646
 from test_cases.fx.fx_taker_rfq.QAP_648 import QAP_648
 from test_cases.fx.fx_taker_rfq.QAP_702 import QAP_702
+from test_cases.fx.fx_taker_rfq.QAP_709 import QAP_709
 
 from test_framework.core.example_of_ideal_test_case_ui import QAP_Example
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -126,7 +127,8 @@ def test_run():
         # QAP_643(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_645(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_646(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_702(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_702(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_709(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         print(f"Duration is {datetime.now() - start_time}")
     except Exception:
         logging.error("Error execution", exc_info=True)
