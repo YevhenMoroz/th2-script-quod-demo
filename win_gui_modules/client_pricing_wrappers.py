@@ -363,10 +363,10 @@ class ModifyClientRFQTileRequest:
     def change_client_tier(self, client_tier: str):
         self.modify_request.clientTier = client_tier
 
-    def change_near_leg_aty(self, qty: str):
+    def change_near_leg_qty(self, qty: str):
         self.modify_request.nearLegQtyStr = qty
 
-    def change_far_leg_aty(self, qty: str):
+    def change_far_leg_qty(self, qty: str):
         self.modify_request.farLegQtySTR = qty
 
     def build(self):

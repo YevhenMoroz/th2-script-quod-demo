@@ -1,83 +1,74 @@
-import logging
-from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, RatesColumnNames
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_2072(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = symbol + "-Spot"
+        self.px_event_1 = "Px validation of the 1st row"
+        self.px_event_2 = "Px validation of the 2nd row"
+        self.px_event_3 = "Px validation of the 3rd row"
+        self.pips_2 = "2"
 
+        self.ask_px = RatesColumnNames.ask_px
+        self.bid_px = RatesColumnNames.bid_px
 
-def use_default(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_use_defaults()
-    call(service.modifyRatesTile, modify_request.build())
+        self.ask_pips = PriceNaming.ask_pips
+        self.bid_pips = PriceNaming.bid_pips
 
+        self.spread = PriceNaming.spread
+        self.widen_spread = ClientPrisingTileAction.widen_spread
+        self.narrow_spread = ClientPrisingTileAction.narrow_spread
+        self.decrease_ask = ClientPrisingTileAction.decrease_ask
+        self.decrease_bid = ClientPrisingTileAction.decrease_bid
+        self.skew_towards_bid = ClientPrisingTileAction.skew_towards_bid
+        self.skew_towards_ask = ClientPrisingTileAction.skew_towards_ask
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_client_tier(client)
-    modify_request.set_instrument(instrument)
-    call(service.modifyRatesTile, modify_request.build())
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        self.rates_tile.press_use_default()
+        # endregion
 
+        # region step 2-3
+        row_values_1 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=1)
+        ask_px_before_1 = row_values_1[str(self.ask_px)]
+        expected_ask_px_1 = str(int(ask_px_before_1) + 20)
+        row_values_2 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=2)
+        ask_px_before_2 = row_values_2[str(self.ask_px)]
+        expected_ask_px_2 = str(int(ask_px_before_2) + 20)
+        row_values_3 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=3)
+        expected_ask_px_3 = row_values_3[str(self.ask_px)]
+        self.rates_tile.select_rows([1, 2])
+        self.rates_tile.modify_client_tile(pips=self.pips_2)
+        self.rates_tile.modify_spread(self.decrease_ask)
+        row_values_1 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=1)
+        actual_ask_px_1 = str(int(row_values_1[str(self.ask_px)]))
+        row_values_2 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=2)
+        actual_ask_px_2 = str(int(row_values_2[str(self.ask_px)]))
+        row_values_3 = self.rates_tile.extract_values_from_rates(self.ask_px, self.bid_px, row_number=3)
+        actual_ask_px_3 = str(int(row_values_3[str(self.ask_px)]))
+        self.rates_tile.compare_values(expected_ask_px_1, actual_ask_px_1,
+                                       event_name=self.px_event_1)
+        self.rates_tile.compare_values(expected_ask_px_2, actual_ask_px_2,
+                                       event_name=self.px_event_2)
+        self.rates_tile.compare_values(expected_ask_px_3, actual_ask_px_3,
+                                       event_name=self.px_event_3)
+        # endregion
 
-def check_base(base_request, service, case_id, row, base):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(row)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check base margins")
-    verifier.compare_values("Base", base, response["rateTile.askBase"])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    instrument = "EUR/USD-SPOT"
-    client_tier = "Silver"
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-
-        check_base(base_details, cp_service, case_id, 1, "0.1")
-        check_base(base_details, cp_service, case_id, 2, "0")
-
-        use_default(base_details, cp_service)
-
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.press_use_default()
+        self.rates_tile.close_tile()

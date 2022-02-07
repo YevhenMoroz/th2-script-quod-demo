@@ -1,3 +1,4 @@
+import os
 from os.path import abspath, dirname, join
 import grpc
 from th2_common.schema.factory.common_factory import CommonFactory
@@ -27,6 +28,7 @@ from th2_grpc_act_java_api_quod.act_service import ActService
 from th2_grpc_sim_fix_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_fix_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 from th2_grpc_sim_fix_quod.template_simulator_service_equity_service import TemplateSimulatorServiceEquityService
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Stubs:

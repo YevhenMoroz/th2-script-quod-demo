@@ -1,77 +1,85 @@
+import time
 from pathlib import Path
-
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from custom import basic_custom_actions as bca
-import logging
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
+from stubs import Stubs
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.fix_wrappers.DataSet import DirectionEnum
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium1'
-account = 'Palladium1_1'
-side = '1'
-orderqty1 = '1000000'
-orderqty2 = '2000000'
-ordtype = '2'
-timeinforce = '4'
-currency= 'EUR'
-settlcurrency = 'CAD'
-settltype1='0'
-settltype2='W1'
-symbol='EUR/USD'
-securitytype1='FXSPOT'
-securitytype2='FXFWD'
-securityidsource='8'
-securityid='EUR/USD'
-bands=[2000000,6000000,12000000]
-md=None
-settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
-settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
-defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
 
 
+class QAP_1554(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
+        self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
+        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.client = self.data_set.get_client_by_name('client_mm_4')
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.no_related_symbols_eur_usd = [{
+            'Instrument': {
+                'Symbol': self.eur_usd,
+                'SecurityType': self.security_type,
+                'Product': '4', },
+            'SettlType': '0', }]
+        self.bands_eur_usd = ["2000000", '6000000', '12000000']
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1-3
+        self.fix_md.set_market_data()
+        self.fix_manager_fh.send_message(self.fix_md)
+        time.sleep(10)
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.client}). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
+        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
+        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
+        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
+        time.sleep(10)
+        # endregion
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
-
-        #Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype1, settldate=settldate1, symbol=symbol, securitytype=securitytype1)).\
-            send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype1)).send_market_data_spot()
-
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype1, settldate= settldate1, symbol=symbol,
-                                   securitytype=securitytype1, securityidsource=securityidsource, securityid=securityid)
-        params.prepare_md_for_verification(bands)
-        #Steps 1-2
-        FixClientSellEsp(params).\
-            send_md_request().\
-            verify_md_pending().\
-            send_md_unsubscribe()
-
-        #Steps 3-4
-        params2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty2, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype2, settldate= settldate2, symbol=symbol,
-                                   securitytype=securitytype2, securityidsource=securityidsource, securityid=securityid)
-        params2.prepare_md_for_verification(bands)
-        FixClientSellEsp(params2).\
-            send_md_request().\
-            verify_md_pending().\
-            send_md_unsubscribe()
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        pass
+        # region Step 4-5
+        self.fix_md.set_market_data(). \
+            update_value_in_repeating_group("NoMDEntries", "MDEntrySize", '2000000'). \
+            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fx_fh_connectivity, 'FX')
+        self.fix_manager_fh.send_message(self.fix_md)
+        time.sleep(10)
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_4')}). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
+        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
+        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
+        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
+        time.sleep(10)
+        # endregion
 
 
 
