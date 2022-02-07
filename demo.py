@@ -2,17 +2,20 @@ import logging
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from my_methods import send_md, send_rfq, test_ob
+from my_methods import send_rfq
 from rule_management import RuleManager
 
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_2750, QAP_6148
+from test_cases.fx.fx_mm_esp import QAP_6151, QAP_2957
 from test_cases.fx.fx_mm_esp.QAP_1589 import QAP_1589
-from test_cases.fx.fx_mm_rfq import QAP_3494
+from test_cases.fx.fx_mm_esp.QAP_6697 import QAP_6697
+from test_cases.fx.fx_mm_rfq import for_test_77679
+from test_cases.fx.fx_mm_rfq.QAP_2472 import QAP_2472
+from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
+from test_cases.fx.fx_mm_rfq.QAP_3704 import QAP_3704
 
-from test_framework.core.example_of_ideal_test_case_ui import QAP_Example
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-from win_gui_modules.utils import set_session_id, get_opened_fe, prepare_fe_2
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
