@@ -8,12 +8,15 @@ from stubs import Stubs
 
 
 class FixVerifier:
-    def __init__(self, session_alias, case_id=None):
+    def __init__(self, session_alias, case_id=None, checkpoint=None):
         self.__verifier = Stubs.verifier
         self.__session_alias = session_alias
         self.__case_id = case_id
-        self.__checkpoint = self.__verifier.createCheckpoint(
-            basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
+        if checkpoint is not None:
+            self.__checkpoint = checkpoint
+        else:
+            self.__checkpoint = self.__verifier.createCheckpoint(
+                basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
 
     def get_case_id(self):
         return self.__case_id
@@ -34,7 +37,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(FIXMessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.NewOrderSingle.value,
+                                                        fix_message.get_parameters(),
                                                         key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -52,7 +56,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc(FIXMessageType.ExecutionReport.value, fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.ExecutionReport.value,
+                                                        fix_message.get_parameters(),
                                                         key_parameters),
                     self.__checkpoint,
                     self.__session_alias,
@@ -204,7 +209,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == FIXMessageType.Confirmation.value:
             if key_parameters is None:
-               key_parameters = ['ConfirmTransType', 'NoOrders']
+                key_parameters = ['ConfirmTransType', 'NoOrders']
 
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(

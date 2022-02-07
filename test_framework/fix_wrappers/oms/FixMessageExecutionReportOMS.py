@@ -1,41 +1,39 @@
-from datetime import datetime
-
-from test_framework.fix_wrappers import DataSet
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
 class FixMessageExecutionReportOMS(FixMessageExecutionReport):
-    def __init__(self, parameters: dict = None):
+    def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
 
-    base_parameters = {
-        "Account": "CLIENT1",
-        "HandlInst": "0",
-        "Side": "1",
-        'OrderQtyData': {'OrderQty': "100"},
-        "TimeInForce": "0",
-        "OrdType": "2",
-        "OrderCapacity": "A",
-        "Price": "20",
-        "Currency": "EUR",
-        "Instrument": DataSet.Instrument.FR0010436584.value,
-        "ExecType": "0",
-        "OrdStatus": "0",
-        "OrderID": "*",
-        "ExecID": "*",
-        "LastQty": "*",
-        "TransactTime": "*",
-        "AvgPx": "*",
-        "Parties": "*",
-        "LeavesQty": "*",
-        "CumQty": "*",
-        "LastPx": "*",
-        "QtyType": "*",
+        self.base_parameters = {
+            "Account": data_set.get_client_by_name("client_1"),
+            "HandlInst": "0",
+            "Side": "1",
+            'OrderQtyData': {'OrderQty': "100"},
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "OrderCapacity": "A",
+            "Price": "20",
+            "Currency": data_set.get_currency_by_name("currency_1"),
+            "Instrument": data_set.get_fix_instrument_by_name("instrument_1"),
+            "ExecType": "0",
+            "OrdStatus": "0",
+            "OrderID": "*",
+            "ExecID": "*",
+            "LastQty": "*",
+            "TransactTime": "*",
+            "AvgPx": "*",
+            "Parties": "*",
+            "LeavesQty": "*",
+            "CumQty": "*",
+            "LastPx": "*",
+            "QtyType": "*",
 
-    }
+        }
 
     def set_default_new(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {

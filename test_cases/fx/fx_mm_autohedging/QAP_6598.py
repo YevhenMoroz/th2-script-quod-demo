@@ -25,24 +25,16 @@ class QAP_6598(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_t_connectivity = None
-        self.dc_connectivity = None
-        self.fix_manager_gtw = None
-        self.fix_verifier = None
-
-    def run_pre_conditions_and_steps(self):
-        # region Initialization
         self.ss_t_connectivity = SessionAliasFX().ss_esp_t_connectivity
         self.dc_connectivity = SessionAliasFX().dc_connectivity
         self.fix_manager_gtw = FixManager(self.ss_t_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.dc_connectivity, self.test_id)
-        # endregion
-        # region Variables
-        account = self.data_set.get_client_by_name("client_int_1")
-        # endregion
+        self.account = self.data_set.get_client_by_name("client_int_1")
+
+    def run_pre_conditions_and_steps(self):
         # region Step 1
         new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_mo().change_parameters(
-            {'TimeInForce': "3", "OrderQty": qty, "Account": account})
+            {'TimeInForce': "3", "OrderQty": qty, "Account": self.account})
         new_order_sor.add_tag({"ExDestination": "CITI-SW"})
         self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion

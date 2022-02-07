@@ -7,7 +7,7 @@ from custom.basic_custom_actions import create_event
 from test_framework.old_wrappers.eq_wrappers import open_fe
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from stubs import Stubs
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -34,7 +34,7 @@ def execute(report_id, session_id):
     oms_order_book = OMSOrderBook(case_id, session_id)
     oms_order_inbox = OMSClientInbox(case_id, session_id)
     oms_order_ticket = OMSOrderTicket(case_id, session_id)
-    oms_order_middle_office = OMSMiddleOfficeBook(case_id, session_id)
+    oms_order_middle_office = OMSMiddleOffice(case_id, session_id)
     oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type='Limit',
                                        tif='Day', is_sell_side=False, instrument='ISI3', recipient='Desk of Order Book')
     oms_order_ticket.create_order(lookup='ISI3')

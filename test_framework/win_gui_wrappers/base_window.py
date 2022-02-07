@@ -53,27 +53,3 @@ class BaseWindow:
                     normal_split_values_arr.append(split_normal_dictionarry)
             return normal_split_values_arr
 
-
-def try_except(test_id):
-    def get_function(decorated_function):
-        @wraps(decorated_function)
-        def improved_function(*args, **kwargs):
-            try:
-                return decorated_function(*args, **kwargs)
-            except:
-                # print("Tuple object - \n", args)
-                # print("Object TestCase - \n", args[0])
-                # print("Object attributes - \n", args[0].__dict__)
-                # print("case_id - ", args[0].__dict__['case_id'])
-                #
-                bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
-                                 status='FAILED',
-                                 parent_id=args[0].__dict__['test_id'])
-            finally:
-                pass
-
-        return improved_function
-
-    return get_function
-
-

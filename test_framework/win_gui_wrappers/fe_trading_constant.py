@@ -37,10 +37,15 @@ class OrderBookColumns(Enum):
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    tenor = "Tenor"
+    near_leg = 'Near Leg Tenor'
+    far_leg = 'Far Leg Tenor'
+    beneficiary = 'Beneficiary'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
     last_market = 'LastMkt'
+    post_trade_status = 'PostTradeStatus'
     # endregion
 
 
@@ -223,12 +228,29 @@ class MiddleOfficeColumns(Enum):
     client_id = "Client ID"
     client_comm = "Client Comm"
     total_fees = "Total Fees"
+    sts = 'Status'
+    match_status = 'Match Status'
+    summary_status = 'Summary Status'
+    order_id = 'Order ID'
+    block_id = 'Block ID'
+    conf_service = ""
 
 
 class AllocationsColumns(Enum):
     client_comm = "Client Comm"
     alloc_qty = "Alloc Qty"
     total_fees = "Total Fees"
+    alt_account = "Alt Account"
+    account_id = "Account ID"
+    security_acc = "Security Account"
+    sts = 'Status'
+    match_status = 'Match Status'
+    alloc_id = 'Allocation ID'
+    avg_px = 'Avg Px'
+
+
+class SecondLevelTabs(Enum):
+    child_tab = 'Child Orders'
 
 
 class RFQPanelValues(Enum):

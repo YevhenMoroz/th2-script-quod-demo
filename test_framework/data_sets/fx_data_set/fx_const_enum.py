@@ -138,6 +138,8 @@ class FxTenors(Enum):
     tenor_2m = "2M"
     tenor_1y = "1Y"
     tenor_2y = "2Y"
+    tenor_sn = "SN"
+    tenor_mar_imm = "Mar IMM"
 
 
 class FxSettleDates(Enum):
@@ -186,6 +188,7 @@ class FxCurrencies(Enum):
     currency_usd = "USD"
     currency_gbp = "GBP"
     currency_php = "PHP"
+    currency_cad = "CAD"
 
 
 class FxRecipients(Enum):
