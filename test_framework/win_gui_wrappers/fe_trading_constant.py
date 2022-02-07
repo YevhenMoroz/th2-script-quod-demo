@@ -38,6 +38,9 @@ class OrderBookColumns(Enum):
     instrument_type = 'InstrType'
     currency = 'Currency'
     tenor = "Tenor"
+    near_leg = 'Near Leg Tenor'
+    far_leg = 'Far Leg Tenor'
+    beneficiary = 'Beneficiary'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'

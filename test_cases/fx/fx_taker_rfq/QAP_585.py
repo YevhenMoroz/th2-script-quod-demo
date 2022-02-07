@@ -1,161 +1,121 @@
-import logging
+import random
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import RFQTileOrderSide, PlaceRFQRequest, ModifyRFQTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, ExtractionDetail, ExtractionAction
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb, OrderBookColumns as ob, \
+    Status as st, QuoteStatus as qs, QuoteBookColumns as qb, \
+    ExecSts, Side
 
 
-def send_rfq(base_request, service):
-    call(service.sendRFQOrder, base_request.build())
+class QAP_585(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        self.qty = str(random.randint(1000000, 2000000))
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        eur_currency = self.data_set.get_currency_by_name('currency_eur')
+        usd_currency = self.data_set.get_currency_by_name('currency_usd')
+        near_tenor = self.data_set.get_tenor_by_name('tenor_spot')
+        venue = self.data_set.get_venue_by_name('venue_1')
+        rfq_venue = self.data_set.get_venue_by_name('venue_rfq_1')
+        eur_usd_symbol = self.data_set.get_symbol_by_name('symbol_1')
+        client = self.data_set.get_client_by_name("client_1")
+        quote_owner = Stubs.custom_config['qf_trading_fe_user']
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_quantity(qty)
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
-    modify_request.set_client(client)
-    call(service.modifyRFQTile, modify_request.build())
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
+                                                   near_qty=self.qty, near_tenor=near_tenor,
+                                                   client=client, single_venue=venue)
+        # endregion
+        # region Step 2
+        self.rfq_tile.send_rfq()
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.instrument_symbol.value: eur_usd_symbol,
+             qrb.quote_status.value: qs.accepted.value,
+             qrb.status.value: st.new.value,
+             qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
 
+        self.quote_book.set_filter(
+            [qb.security_id.value, eur_usd_symbol, qb.owner.value, quote_owner]).check_quote_book_fields_list(
+            {qb.security_id.value: eur_usd_symbol,
+             qb.quote_status.value: qs.accepted.value,
+             qb.owner.value: quote_owner}, 'Checking currency value in quote book')
+        # endregion
+        # region Step 3
+        self.rfq_tile.place_order(side=Side.buy.value)
 
-def place_order(base_request, service, venue):
-    rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_venue(venue)
-    rfq_request.set_action(RFQTileOrderSide.BUY)
-    call(service.placeRFQOrder, rfq_request.build())
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.symbol.value: eur_usd_symbol,
+             ob.sts.value: st.terminated.value,
+             ob.exec_sts.value: ExecSts.filled.value,
+             ob.qty.value: self.qty}, 'Checking currency value in order book')
+        # endregion
+        # region Step 4
+        self.rfq_tile.send_rfq()
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.instrument_symbol.value: eur_usd_symbol,
+             qrb.quote_status.value: qs.accepted.value,
+             qrb.status.value: st.new.value,
+             qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
 
+        self.quote_book.set_filter(
+            [qb.security_id.value, eur_usd_symbol, qb.owner.value, quote_owner]).check_quote_book_fields_list(
+            {qb.security_id.value: eur_usd_symbol,
+             qb.quote_status.value: qs.accepted.value,
+             qb.owner.value: quote_owner}, 'Checking currency value in quote book')
+        # endregion
+        # region Step 5
+        self.rfq_tile.place_order(side=Side.buy.value)
 
-def cancel_rfq(base_request, service):
-    call(service.cancelRFQ, base_request.build())
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.symbol.value: eur_usd_symbol,
+             ob.sts.value: st.terminated.value,
+             ob.exec_sts.value: ExecSts.filled.value,
+             ob.qty.value: self.qty}, 'Checking currency value in order book')
+        # endregion
+        # region Step 6
+        self.rfq_tile.send_rfq()
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.instrument_symbol.value: eur_usd_symbol,
+             qrb.quote_status.value: qs.accepted.value,
+             qrb.status.value: st.new.value,
+             qrb.venue.value: rfq_venue}, 'Checking that regular currency RFQ is placed')
 
+        self.quote_book.set_filter(
+            [qb.security_id.value, eur_usd_symbol, qb.owner.value, quote_owner]).check_quote_book_fields_list(
+            {qb.security_id.value: eur_usd_symbol,
+             qb.quote_status.value: qs.accepted.value,
+             qb.owner.value: quote_owner}, 'Checking currency value in quote book')
+        # endregion
+        # region Step 7
+        self.rfq_tile.place_order(side=Side.buy.value)
 
-def check_quote_request_b(ex_id, base_request, service, act, venue):
-    qrb = QuoteDetailsRequest(base=base_request)
-    qrb.set_extraction_id(ex_id)
-    qrb.set_filter(["Venue", venue])
-    qrb_venue = ExtractionDetail("quoteRequestBook.venue", "Venue")
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb_quote_status = ExtractionDetail("quoteRequestBook.qoutestatus", "QuoteStatus")
-    qrb.add_extraction_details([qrb_venue, qrb_status, qrb_quote_status])
-    call(service.getQuoteRequestBookDetails, qrb.request())
-    call(act.verifyEntities, verification(ex_id, "checking QRB",
-                                          [verify_ent("QRB Venue", qrb_venue.name, venue),
-                                           verify_ent("QRB Status", qrb_status.name, "New"),
-                                           verify_ent("QRB QuoteStatus", qrb_quote_status.name, "Accepted")]))
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.symbol.value: eur_usd_symbol,
+             ob.sts.value: st.terminated.value,
+             ob.exec_sts.value: ExecSts.filled.value,
+             ob.qty.value: self.qty}, 'Checking currency value in order book')
+        # endregion
 
-
-def check_quote_book(ex_id, base_request, service, act, owner, venue):
-    qb = QuoteDetailsRequest(base=base_request)
-    qb.set_extraction_id(ex_id)
-    qb.set_filter(["Venue", venue])
-    qb_owner = ExtractionDetail("quoteBook.owner", "Owner")
-    qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
-    qb_id = ExtractionDetail("quoteBook.id", "Id")
-    qb.add_extraction_details([qb_owner, qb_quote_status, qb_id])
-    data = call(service.getQuoteBookDetails, qb.request())
-    call(act.verifyEntities, verification(ex_id, "checking QB",
-                                          [verify_ent("QB Owner", qb_owner.name, owner),
-                                           verify_ent("QB QuoteStatus", qb_quote_status.name, "Accepted")]))
-    return data[qb_id.name]
-
-
-def check_order_book(ex_id, base_request, instr_type, act, act_ob, qb_id, venue):
-    ob = OrdersDetails()
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(ex_id)
-    ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
-    ob_venue = ExtractionDetail("orderBook.venue", "Venue")
-    ob_exec_sts = ExtractionDetail("orderBook.execsts", "ExecSts")
-    ob_id = ExtractionDetail("orderBook.quoteid", "QuoteID")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
-                                                                                 ob_venue,
-                                                                                 ob_exec_sts,
-                                                                                 ob_id])))
-    call(act_ob.getOrdersDetails, ob.request())
-    call(act.verifyEntities, verification(ex_id, "checking OB",
-                                          [verify_ent("OB InstrType", ob_instr_type.name, instr_type),
-                                           verify_ent("OB Venue", ob_venue.name, venue),
-                                           verify_ent("OB ExecSts", ob_exec_sts.name, "Filled"),
-                                           verify_ent("OB ID vs QB ID", ob_id.name, qb_id)]))
-
-
-def execute(report_id, session_id):
-    common_act = Stubs.win_act
-
-    case_name = Path(__file__).name[:-3]
-    quote_owner = Stubs.custom_config['qf_trading_fe_user']
-    case_instr_type = "Spot"
-    case_venue = "CITI"
-    case_qty = 1000000
-    case_near_tenor = "Spot"
-    case_from_currency = "EUR"
-    case_to_currency = "USD"
-    case_client = "ASPECT_CITI"
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-    ob_act = Stubs.win_act_order_book
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        
-        # Steps 1-2
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_qty, case_from_currency,
-                        case_to_currency, case_near_tenor, case_client)
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_0", case_base_request, ar_service, common_act, case_venue)
-        qb_quote_id = check_quote_book("QB_0", case_base_request, ar_service, common_act, quote_owner, case_venue)
-        # Step 3
-        place_order(base_rfq_details, ar_service, case_venue)
-
-        check_order_book("OB_0", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id, case_venue)
-        # Step 4
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_1", case_base_request, ar_service, common_act, case_venue)
-        qb_quote_id = check_quote_book("QB_1", case_base_request, ar_service, common_act, quote_owner, case_venue)
-
-        # Step 5
-        place_order(base_rfq_details, ar_service, case_venue)
-
-        check_order_book("OB_1", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id, case_venue)
-
-        # Step 6
-        send_rfq(base_rfq_details, ar_service)
-        check_quote_request_b("QRB_2", case_base_request, ar_service, common_act, case_venue)
-        qb_quote_id = check_quote_book("QB_2", case_base_request, ar_service, common_act, quote_owner, case_venue)
-
-        # Step 7
-        place_order(base_rfq_details, ar_service, case_venue)
-
-        check_order_book("OB_2", case_base_request, case_instr_type, common_act, ob_act, qb_quote_id, case_venue)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()
