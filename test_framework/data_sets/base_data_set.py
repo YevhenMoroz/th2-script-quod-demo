@@ -41,6 +41,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    venue_client_accounts = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -241,6 +242,11 @@ class BaseDataSet:
             return getattr(self.lookups, name).value
         return ValueError(f"{self.lookups} not found!")
 
+    def get_venue_client_account(self, name: str):
+        if hasattr(self.venue_client_accounts, name):
+            return getattr(self.venue_client_accounts, name).value
+        return ValueError(f"{self.lookups} not found!")
+
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
             return getattr(self.commission_profiles, name).value
@@ -273,3 +279,4 @@ class BaseDataSet:
     def get_commissions(self):
         if self.commission:
             return self.commission
+

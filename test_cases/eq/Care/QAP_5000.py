@@ -1,61 +1,113 @@
 import logging
+import os
 import time
+from pathlib import Path
 
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from rule_management import RuleManager
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs, OrderType
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+timeouts = True
+
+ss_connectivity = SessionAliasOMS().ss_connectivity
+bs_connectivity = SessionAliasOMS().bs_connectivity
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-5000"
-    # region Declarations
-    qty = "40"
-    price = "11"
-    client = "CLIENT_FIX_CARE"
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
+class QAP_5000(TestCase):
+    def __init__(self, report_id, session_id, data_set):
+        super().__init__(report_id, session_id, data_set)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.fix_manager = FixManager(ss_connectivity, self.case_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.fix_message.set_default_care_limit()
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
+        self.recipient = Stubs.custom_config['qf_trading_fe_user']
+        self.work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.order_type = OrderType.limit.value
+        self.order_book_column = OrderBookColumns
 
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(self.order_book_column.order_id.value)
 
-    # region Create CO
-    fix_message = eq_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    eq_wrappers.accept_order('VETO', qty, price)
-    order_id = eq_wrappers.get_order_id(base_request)
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_wrappers.get_buy_connectivity(),
-                                                                             client + "_PARIS", 'XPAR', float(price))
-        eq_wrappers.split_order(base_request, qty, 'Limit', price)
-        order_id_child = eq_wrappers.get_2nd_lvl_detail(base_request, 'Order ID')
-    finally:
-        time.sleep(2)
-        rule_manager.remove_rule(nos_rule)
+        # endregion
 
-    # endregion
-    # region check values of order
+        # region accept order
+        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        # endregion
 
-    eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Open', True)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Suspended', '', False)
-    # endregion
-    try:
-        cancel_rule = rule_manager.add_OrderCancelRequest(eq_wrappers.get_buy_connectivity(), client + "_PARIS", 'XPAR',
-                                                          True)
-        eq_wrappers.suspend_order(base_request, True)
-    finally:
-        time.sleep(5)
-        rule_manager.remove_rule(cancel_rule)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Suspended', 'Yes', False)
-    eq_wrappers.verify_order_value(base_request, case_id, 'Sts', 'Cancelled', True)
+        # region split CO order
+        try:
+            rule_manager = RuleManager(sim=Simulators.equity)
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
+                                                                                             self.data_set.
+                                                                                             get_venue_client_names_by_name(
+                                                                                                 'client_pt_1_venue_1'),
+                                                                                             self.data_set.
+                                                                                             get_mic_by_name(
+                                                                                                 'mic_1'),
+                                                                                             float(self.price))
+            self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_1'), limit=self.price,
+                                                qty=self.qty,
+                                                order_type=self.order_type)
+            self.order_ticket.split_limit_order()
+        except Exception as E:
+            logger.error(f'{E}')
+        finally:
+            time.sleep(5)
+            rule_manager.remove_rule(nos_rule)
+        # endregion
 
+        # region set suspend option for CO order with cancelling of child order
+        try:
+            rule_manager = RuleManager(sim=Simulators.equity)
+            cancel_trade_rule = rule_manager.add_OrderCancelRequest(bs_connectivity,
+                                                                    self.data_set.get_venue_client_names_by_name(
+                                                                        'client_pt_1_venue_1'),
+                                                                    self.data_set.get_mic_by_name('mic_1'),
+                                                                    True
+                                                                    )
+            self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_1'), limit=self.price,
+                                                qty=self.qty,
+                                                order_type=self.order_type)
+            self.order_book.suspend_order(True, {self.order_book_column.order_id.value: order_id})
+        except Exception as E:
+            logger.error(f'{E}')
+        finally:
+            time.sleep(5)
+            rule_manager.remove_rule(cancel_trade_rule)
+            rule_manager.remove_rule(nos_rule)
+        # endregion
+
+        # region verify values after last action
+        suspend_for_order = self.order_book.extract_field(self.order_book_column.suspend.value)
+        self.order_book.compare_values({self.order_book_column.suspend.value: 'YES'},
+                                       {self.order_book_column.suspend.value: suspend_for_order},
+                                       'Comparing value at parent order')
+        value_from_child = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
+                                                               [OrderBookColumns.sts.value], [1]
+                                                               )
+
+        self.order_book.compare_values({OrderBookColumns.sts.value: 'Cancelled'}, value_from_child[0],
+                                       'Comparing of child order value')
+
+        # endregion

@@ -32,7 +32,7 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-
+    suspend = 'Suspended'
     client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
@@ -40,6 +40,7 @@ class OrderBookColumns(Enum):
     currency = 'Currency'
     venue_client_account = "Venue Client Account"
     account_id = 'Account ID'
+    done_for_day = 'DoneForDay'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
