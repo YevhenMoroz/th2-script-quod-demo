@@ -13,12 +13,16 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
 
     def find_all_client_tier_instrument_filtered(self, client_tier_id: str, instrument: str):
         self.clear_message_params()
-        search = f"?queryID={client_tier_id}&queryID2={instrument}"
+        search = f"findClientTierInstrSymbol?queryID={client_tier_id}&#38;queryID2={instrument}"
         self.parameters = {
-            'clientTierID': client_tier_id,
-            'instrSymbol': instrument
+            'URI':
+                {
+                    'clientTierID': client_tier_id,
+                    'currency1': instrument.split('/')[0],
+                    'currency2': instrument.split('/')[1],
+                }
         }
-        self.message_type = 'FindAllClientTierInstrSymbolFiltered'
+        self.message_type = 'FindClientTierInstrSymbol'
         return self
 
     def modify_client_tier_instrument(self):
@@ -174,10 +178,10 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             id_to_delete = []
             id = 1
             for tenor_qty in tenor['clientTierInstrSymbolTenorQty']:
-                if tenor_qty['parentIndiceUpperQty'] not in range(len(qty_list)+1):
+                if tenor_qty['parentIndiceUpperQty'] not in range(len(qty_list) + 1):
                     id_to_delete.append(id)
                 id += 1
-            if len(id_to_delete)>0:
+            if len(id_to_delete) > 0:
                 for id in id_to_delete:
                     tenor['clientTierInstrSymbolTenorQty'].pop(id)
             tenor.update({'lastUpdateTime': timestamp})

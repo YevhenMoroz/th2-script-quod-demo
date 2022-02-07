@@ -127,6 +127,9 @@ class OrderTicketDetails:
     def set_capacity(self, capacity: str):
         self.order.advOrdParams.capacity = capacity
 
+    def set_settl_date(self, settl_date: str):
+        self.order.advOrdParams.settlDate = settl_date
+
     def add_commissions_details(self) -> CommissionsDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)

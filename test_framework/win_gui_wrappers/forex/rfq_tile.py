@@ -1,7 +1,5 @@
 from datetime import datetime
-
 import timestring
-
 from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.forex.aggregates_rates_tile import AggregatesRatesTile
 from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, PlaceRFQRequest, \
@@ -162,6 +160,8 @@ class RFQTile(AggregatesRatesTile):
             extract_date = str(timestring.Date(extract_date))
             self.verifier.compare_values("Far date", far_date, extract_date)
         self.verifier.verify()
+        self.clear_details([self.extraction_request])
+        self.set_default_params()
 
     def check_diff(self, near_date: str = None, far_date: str = None):
         self.verifier.set_event_name("Check diff")

@@ -36,6 +36,20 @@ class FixManager:
                                                      self.__session_alias)
             ))
 
+    def send_quote_to_dealer_and_receive_response(self, fix_message: FixMessage, case_id=None):
+        if case_id is not None:
+            case_id = self.__case_id
+        response = self.act.sendQuoteViaWindow(
+            request=basic_custom_actions.convert_to_request(
+                "Send QuoteRequest to Dealer Intervention",
+                self.__session_alias,
+                case_id,
+                basic_custom_actions.message_to_grpc(FIXMessageType.QuoteRequest.value, fix_message.get_parameters(),
+                                                     self.__session_alias)
+            ))
+        return response
+
+
     def send_message_and_receive_response(self, fix_message: FixMessage, case_id=None) -> list:
         if case_id == None:
             case_id = self.__case_id

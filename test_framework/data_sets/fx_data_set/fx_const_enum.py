@@ -1,6 +1,6 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf
 
 
 class FxInstruments(Enum):
@@ -149,6 +149,7 @@ class FxSettleDates(Enum):
     wk1 = wk1()
     wk2 = wk2()
     wk3 = wk3()
+    wk_ndf = wk1_ndf()
     # TODO add more settle dates
 
 
@@ -165,6 +166,7 @@ class FxSymbols(Enum):
     symbol_10 = "GBP/NOK"
     symbol_11 = "GBP/SEK"
     symbol_12 = "USD/CAD"
+    symbol_13 = "EUR/CAD"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

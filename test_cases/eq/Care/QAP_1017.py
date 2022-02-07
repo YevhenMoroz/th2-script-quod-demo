@@ -1,66 +1,73 @@
 import logging
-from datetime import datetime
-
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
 from th2_grpc_hand import rhbatch_pb2
-
 from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
-from win_gui_modules.utils import get_base_request, close_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from win_gui_modules.utils import close_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+work_dir = Stubs.custom_config['qf_trading_fe_folder']
+username = Stubs.custom_config['qf_trading_fe_user']
+password = Stubs.custom_config['qf_trading_fe_password']
+username2 = Stubs.custom_config['qf_trading_fe_user_2']
+password2 = Stubs.custom_config['qf_trading_fe_password_2']
+qty = "900"
+price = "20"
+order_type = "Limit"
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1017"
-    seconds, nanos = timestamps()  # Store case start time
+class QAP_1017(TestCase):
 
-    # region Declarations
-    act = Stubs.win_act_order_book
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    # endregion
-    # region Open FE
-    stub = Stubs.win_act
-    case_id = create_event(case_name, report_id)
-    session_id2 = Stubs.win_act.register(
-        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-    init_event = create_event("Initialization", parent_id=report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    username2 = Stubs.custom_config['qf_trading_fe_user2']
-    password2 = Stubs.custom_config['qf_trading_fe_password2']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    eq_wrappers.open_fe2(session_id2, report_id,work_dir, username2, password2)
-    # endregion
-    # region switch to user1
-    switch_user()
-    # endregion
-    # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True,
-                             recipient=Stubs.custom_config['qf_trading_fe_user_desk'], price=price,recipient_user=True)
-    # endregion
-    # region Check values in OrderBook
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
-    # endregion
-    # region switch to user2
-    switch_user()
-    # endregion
-    # region Accept CO
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    # region Check values in OrderBook after Accept
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
-    # endregion
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-    close_fe(case_id, session_id2)
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        seconds, nanos = timestamps()  # Store case start time
+        client = self.data_set.get_client_by_name('client_co_1')
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        # region Declarations
+        # endregion
+        # region Open FE
+        session_id2 = Stubs.win_act.register(
+            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+        base_window2 = BaseMainWindow(self.test_id, session_id2)
+        order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        # endregion
+        # region switch to user1
+        base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
+        # endregion
+        # region Create CO
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
+                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=username2)
+        order_ticket.create_order(lookup=lookup)
+        order_id = order_book.extract_field('Order ID')
+        # endregion
+        # region Check values in OrderBook
+        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
+            {"Sts": "Sent"})
+        # endregion
+        # region switch to user2
+        # base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
+        base_window2.switch_user()
+        # endregion
+        # region Accept CO
+        client_inbox.accept_order(lookup, qty, price)
+        # endregion
+        # region Check values in OrderBook after Accept
+        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
+            {"Sts": "Open"})
+        # endregion
+        close_fe(self.test_id, session_id2)
