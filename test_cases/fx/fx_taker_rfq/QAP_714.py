@@ -62,7 +62,7 @@ class QAP_714(TestCase):
              ob.sts.value: st.terminated.value,
              ob.exec_sts.value: ExecSts.filled.value,
              ob.qty.value: self.qty,
-             ob.currency.value: usd_currency}, 'Checking currency value in order book')
+             ob.side.value: Side.sell.value}, 'Checking currency value in order book')
 
         quote_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_field(ob.quote_id.value)
