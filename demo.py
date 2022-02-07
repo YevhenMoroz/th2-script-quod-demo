@@ -39,17 +39,17 @@ def test_run():
 
     try:
 
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
         # rm= RuleManager()
         # rm.remove_rule_by_id(15)
         # rm.add_fx_md_to("fix-fh-314-luna")
         # rm.print_active_rules()
         # send_md.execute(report_id, 1.18123, 1.18223)
 
-        QAP_1589(report_id, session_id, data_set).execute()
+        QAP_6697(report_id, data_set=data_set).execute()
 
         # QAP_3805.execute(report_id)
 
