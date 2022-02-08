@@ -233,6 +233,7 @@ class MiddleOfficeColumns(Enum):
     order_id = 'Order ID'
     block_id = 'Block ID'
     conf_service = "Conf Service"
+    side = 'Side'
 
 
 class AllocationsColumns(Enum):
