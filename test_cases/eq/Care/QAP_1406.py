@@ -1,46 +1,55 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.DataSet import Connectivity
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1406"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "900"
-    price = "40"
-    dummy_client = "DUMMY_CLIENT"
-    client = "CLIENT_FIX_CARE"
-    route = "Route via FIXBUYTH2"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create CO
-    responce= test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, dummy_client, 2, qty, 0, price)
-    # endregion
-    # region verify values
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Held")
-    eq_wrappers.verify_order_value(base_request, case_id, "Client ID", "DUMMY")
-    # endregion verify values
-    # region GroupModify
-    eq_wrappers.group_modify(base_request,client,routes=route)
-    # endregion
-    # region verify values
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
-    eq_wrappers.verify_order_value(base_request, case_id, "Client ID", client)
-    eq_wrappers.verify_order_value(base_request, case_id, "Routes", route)
-    # endregion verify values
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_1406(TestCase):
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
+        self.fix_message.change_parameter("Account", "client2341")
+        self.lookup = "VETO"
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.client = data_set.get_client_by_name("client_co_1")
+        self.route = data_set.get_route("route_1")
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region group modify
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).group_modify(client=self.client, security_account= "CLIENT_FIX_CARE_SA1", routes=self.route)
+        # endregion
+        # region accept order
+        self.client_inbox.accept_order(self.lookup, self.qty, "10")
+        # endregion
+        # region check open status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+
