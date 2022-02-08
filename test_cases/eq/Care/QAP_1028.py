@@ -8,6 +8,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -43,12 +44,12 @@ class QAP_1028(TestCase):
         # endregion
         # region Create CO
         order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=username2)
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
         order_ticket.create_order(lookup=lookup)
         # endregion
-        order_id = order_book.extract_field('Order ID')
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Sent"})
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: "Sent"})
         # endregion
         # region Reassign orderQA
         order_book.reassign_order(desk, partial_desk=False)
@@ -56,6 +57,6 @@ class QAP_1028(TestCase):
         # region Reject order
         client_inbox.reject_order(lookup, qty, price)
         # endregion
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Rejected"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.rejected.value})
 

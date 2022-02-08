@@ -317,7 +317,7 @@ class RFQExtractionDetailsRequest:
     def extract_case_state_value_label_control(self, name: str):
         self.extract_value(RFQPanelValues.CASE_STATE_VALUE_LABEL_CONTROL, name)
 
-    def extract_quot_estate_value_label_control(self, name: str):
+    def extract_quote_state_value_label_control(self, name: str):
         self.extract_value(RFQPanelValues.QUOT_ESTATE_VALUE_LABEL_CONTROL, name)
 
     def extract_value(self, field: RFQPanelValues, name: str):

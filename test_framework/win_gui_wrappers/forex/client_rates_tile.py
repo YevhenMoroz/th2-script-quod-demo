@@ -1,4 +1,5 @@
-from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, OrderType
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, Side, TimeInForce, \
+    OrderType
 from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames as col_n
 from test_framework.win_gui_wrappers.forex.client_pricing_tile import ClientPricingTile
 from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
@@ -203,6 +204,17 @@ class ClientRatesTile(ClientPricingTile):
                 ExtractionDetail(str(col_n.bid_px), col_n.bid_px.value))
         response = call(self.cp_service.extractRatesTileTableValues, self.extract_table_value_request.build())
         self.clear_details([self.extract_table_value_request])
+        return response
+
+    def extract_header(self, instrument: str = None, client_tier: str = None, date: str = None):
+        if instrument is not None:
+            self.extract_values_request.extract_instrument(instrument)
+        if client_tier is not None:
+            self.extract_values_request.extract_client_tier(client_tier)
+        if date is not None:
+            self.extract_values_request.extract_value_date(date)
+        response = call(self.cp_service.extractRateTileValues, self.extract_values_request.build())
+        self.clear_details([self.extract_values_request])
         return response
 
     # endregion
