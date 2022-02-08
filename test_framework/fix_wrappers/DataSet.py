@@ -214,6 +214,8 @@ class FreeNotesReject(Enum):
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
     InvalidPercentageOfVolume = "invalid value for percentage of volume"
+    InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
+    InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
 
 
 class Reference(Enum):

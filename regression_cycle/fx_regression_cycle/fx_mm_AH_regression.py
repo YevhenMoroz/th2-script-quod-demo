@@ -5,10 +5,12 @@ from test_cases.fx.fx_mm_autohedging import QAP_2159, QAP_2255, \
     QAP_3939, QAP_3039, QAP_2470, QAP_3354, QAP_3067, QAP_1762, QAP_2326, import_AH_layout, AH_Precondition
 from test_cases.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2291, QAP_2292, \
     QAP_3902
+from test_cases.fx.fx_mm_autohedging.QAP_6598 import QAP_6598
 from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe, prepare_fe
 
@@ -26,7 +28,7 @@ def test_run(parent_id=None):
     fe_dir = Stubs.custom_config['qf_trading_fe_folder']
     fe_user = Stubs.custom_config['qf_trading_fe_user']
     fe_password = Stubs.custom_config['qf_trading_fe_password']
-
+    data_set = FxDataSet()
     try:
         # prepare_position()
         Stubs.frontend_is_open = True
@@ -72,6 +74,7 @@ def test_run(parent_id=None):
         QAP_6008.execute(report_id, session_id)
         QAP_6010.execute(report_id, session_id)
         QAP_6116.execute(report_id, session_id)
+        QAP_6598(report_id, data_set=data_set)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

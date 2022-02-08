@@ -1,14 +1,15 @@
 from datetime import datetime
 
 from custom import basic_custom_actions
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.DataSet import Instrument
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
 class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
-    def __init__(self, parameters: dict = None):
-        super().__init__()
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
+        super().__init__(data_set=data_set)
         super().change_parameters(parameters)
 
     # set_DMA_params
@@ -175,7 +176,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_TWAP_Navigator_Guard_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': "CLIENT1",
+            # 'Account': "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
@@ -184,11 +186,13 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Price': 30,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': Instrument.BUI.value,
+            # 'Instrument': Instrument.BUI.value,
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             'OrderCapacity': 'A',
-            'Currency': "EUR",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
             'TargetStrategy': 1005,
-            'ExDestination': 'XPAR',
+            # 'ExDestination': 'XPAR',
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
             'QuodFlatParameters': {
                 'NavigatorLimitPrice': '31',
                 'NavGuard': '1',
@@ -197,7 +201,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'Waves': '5',
             }
         }
-        super().change_parameters(base_parameters)
         return self
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:

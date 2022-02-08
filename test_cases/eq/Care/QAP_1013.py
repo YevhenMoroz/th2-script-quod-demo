@@ -5,8 +5,8 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
-from test_framework.win_gui_wrappers.base_window import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -49,7 +49,7 @@ class QAP_1013(TestCase):
         # region verify Sts of order
         order_book.set_filter([OrderBookColumns.order_id.value, order_id])
         sts = order_book.extract_field(OrderBookColumns.sts.value)
-        order_book.compare_values({OrderBookColumns.sts.value: 'Rejected'}, {OrderBookColumns.sts.value: sts},
+        order_book.compare_values({OrderBookColumns.sts.value: ExecSts.rejected.value}, {OrderBookColumns.sts.value: sts},
                                   'Verifier data')
         # endregion
 

@@ -27,25 +27,6 @@ class QAP_6149(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = None
-        self.fx_fh_connectivity = None
-        self.fix_subscribe = None
-        self.fix_md = None
-        self.fix_md_snapshot = None
-        self.fix_manager_fh = None
-        self.fix_manager_gtw = None
-        self.fix_verifier = None
-        self.no_related_symbols_nok_sek = None
-        self.bands_nok_sek = None
-        self.no_related_symbols_eur_usd = None
-        self.bands_eur_usd = None
-        self.nok_sek = None
-        self.eur_usd = None
-        self.security_type = None
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
-        # region Test variables
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
         self.fix_subscribe = FixMessageMarketDataRequestFX()
@@ -57,21 +38,28 @@ class QAP_6149(TestCase):
         self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
+        self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
         self.no_related_symbols_nok_sek = [{
             'Instrument': {
                 'Symbol': self.nok_sek,
                 'SecurityType': self.security_type,
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.settle_type, }]
         self.bands_nok_sek = ["1000000", '3000000']
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
                 'Symbol': self.eur_usd,
                 'SecurityType': self.security_type,
                 'Product': '4', },
-            'SettlType': '0', }]
+            'SettlType': self.settle_type, }]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
-        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Step 1
         self.fix_md.set_market_data().\
             update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0').\

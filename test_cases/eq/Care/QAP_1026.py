@@ -1,80 +1,84 @@
 import logging
 from th2_grpc_hand import rhbatch_pb2
-from custom.verifier import Verifier
 from custom.basic_custom_actions import create_event
 from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import set_session_id, get_base_request, close_fe, call
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.base_window import BaseWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from win_gui_modules.utils import  close_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+work_dir = Stubs.custom_config['qf_trading_fe_folder']
+username = Stubs.custom_config['qf_trading_fe_user']
+password = Stubs.custom_config['qf_trading_fe_password']
+username2 = Stubs.custom_config['qf_trading_fe_user_2']
+password2 = Stubs.custom_config['qf_trading_fe_password_2']
+qty = "900"
+qty2 = "500"
+price = "40"
+order_type = "Limit"
 
-def execute(report_id, session_id):
-    case_name = "QAP-1026"
 
-    # region Declarations
-    qty = "900"
-    price = "40"
-    lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    username2 = Stubs.custom_config['qf_trading_fe_user2']
-    password2 = Stubs.custom_config['qf_trading_fe_password2']
-    session_id2 = Stubs.win_act.register(
-        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    base_request2 = get_base_request(session_id2, case_id)
-    # endregion
-    # region open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
-    # endregion
-    # region switch user 1
-    switch_user()
-    # endregion
-    # region Create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, "Limit", is_care=True, recipient=username2, price=price,
-                             recipient_user=True)
-    # endregion
-    # region Verify
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
-    # endregion
-    # region switch user 2
-    switch_user()
-    # endregion
-    # region Accept
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    # region Split
-    eq_wrappers.split_limit_order(base_request2, qty, "Limit", price, "1")
-    # endregion
-    # region Verify
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("getOrderInfo")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[main_order_id])
-    child_displ_qty = ExtractionDetail("lvl_1.displ_qty", "DisplQty")
-    child_exec_pcy =ExtractionDetail("lvl_1.exec_pcy", "ExecPcy")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child_displ_qty,child_exec_pcy])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking child Algo")
-    verifier.compare_values("DisplQty", "1", request["lvl_1.displ_qty"])
-    verifier.compare_values("ExecPcy", "Synth (Quod Synthetic Iceberg)", request["lvl_1.exec_pcy"])
-    verifier.verify()
-    # endregion
-    close_fe(case_id, session_id2)
+class QAP_1026(TestCase):
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declarations
+        client = self.data_set.get_client_by_name('client_co_1')
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        # region Declarations
+        session_id2 = Stubs.win_act.register(
+            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+        base_window = BaseMainWindow(self.test_id, self.session_id)
+        base_window2 = BaseMainWindow(self.test_id, session_id2)
+        order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        order_ticket2 = OMSOrderTicket(self.test_id, session_id2)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        order_book2 = OMSOrderBook(self.test_id, session_id2)
+        client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        client_inbox2 = OMSClientInbox(self.test_id, session_id2)
+        # endregion
+        # region open FE
+        base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
+        # endregion
+        # region switch user 1
+        base_window.switch_user()
+        # endregion
+        # region Create CO
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
+        order_ticket.create_order(lookup=lookup)
+        # endregion
+        # region Verify
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: "Sent"})
+        # endregion
+        # region switch user 2
+        base_window2.switch_user()
+        # endregion
+        # region Accept
+        client_inbox2.accept_order(lookup, qty, price)
+        # endregion
+        # region Split
+        # endregion
+        # region Verify
+        order_ticket2.set_order_details(qty=qty2)
+        order_ticket2.split_order([OrderBookColumns.order_id.value, order_id])
+        order_book2.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list(
+            {OrderBookColumns.qty.value: qty2})
+        # endregion
+        close_fe(self.test_id, session_id2)

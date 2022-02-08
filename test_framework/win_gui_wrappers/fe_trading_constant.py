@@ -32,7 +32,7 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-
+    suspend = 'Suspended'
     client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
@@ -40,6 +40,11 @@ class OrderBookColumns(Enum):
     currency = 'Currency'
     venue_client_account = "Venue Client Account"
     account_id = 'Account ID'
+    done_for_day = 'DoneForDay'
+    tenor = "Tenor"
+    near_leg = 'Near Leg Tenor'
+    far_leg = 'Far Leg Tenor'
+    beneficiary = 'Beneficiary'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -190,6 +195,7 @@ class PriceNaming(Enum):
     bid_large = "bid_large"
     bid_pips = "bid_pips"
     spread = "spread"
+    ttl = "ttl"
 
 
 class AutoHedgerID(Enum):
@@ -209,7 +215,7 @@ class RatesColumnNames(CustomEnum):
     bid_base = "Base"
     bid_band = "Band"
     bid_pub = "Pub"
-    bid_pts = "bid_pts.Pts"
+    bid_pts = "Pts"
     bid_spot = "Spot"
     bid_px = "Px"
 
@@ -249,3 +255,53 @@ class AllocationsColumns(Enum):
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
+
+
+class RFQPanelValues(Enum):
+    button_text = "button_text"
+    is_bid_price_pips_enabled = "is_bid_price_pips_enabled"
+    is_ask_price_pips_enabled = "is_ask_price_pips_enabled"
+    is_near_leg_quantity_enabled = "is_near_leg_quantity_enabled"
+    is_far_leg_quantity_enabled = "is_far_leg_quantity_enabled"
+    is_price_spread_enabled = "is_price_spread_enabled"
+    is_bid_price_large_enabled = "is_bid_price_large_enabled"
+    is_ask_price_large_enabled = "is_ask_price_large_enabled"
+
+
+class RFQPanelPtsAndPx(Enum):
+    bid_near_points_value_label = "bid_near_points_value_label"
+    bid_far_points_value_label = "bid_far_points_value_label"
+    bid_near_price_value_label = "bid_near_price_value_label"
+    bid_far_price_value_label = "bid_far_price_value_label"
+    bid_value_label = "bid_value_label"
+    ask_value_label = "ask_value_label"
+    ask_near_points_value_label = "ask_near_points_value_label"
+    ask_far_points_value_label = "ask_far_points_value_label"
+    ask_near_price_value_label = "ask_near_price_value_label"
+    ask_far_price_value_label = "ask_far_price_value_label"
+
+
+class RFQPanelQty(Enum):
+    near_leg_quantity = "near_leg_quantity"
+    far_leg_quantity = "far_leg_quantity"
+    opposite_near_bid_qty_value_label = "opposite_near_bid_qty_value_label"
+    opposite_near_ask_qty_value_label = "opposite_near_ask_qty_value_label"
+    opposite_far_bid_qty_value_label = "opposite_far_bid_qty_value_label"
+    opposite_far_ask_qty_value_label = "opposite_far_ask_qty_value_label"
+
+
+class RFQPanelHeaderValues(Enum):
+    request_state = "request_state"
+    request_side = "request_side"
+    instrument_label_control = "instrument_label_control"
+    currency_value_label_control = "currency_value_label_control"
+    near_tenor_label = "near_tenor_label"
+    far_tenor_label = "far_tenor_label"
+    near_settl_date_label = "near_settl_date_label"
+    far_settl_date_label = "far_settl_date_label"
+    party_value_label_control = "party_value_label_control"
+    case_state_value_label_control = "case_state_value_label_control"
+    quote_state_value_label_control = "quote_state_value_label_control"
+    fill_side_value_label_control = "fill_side_value_label_control"
+    request_side_value_label_control = "request_side_value_label_control"
+    creation_value_label_control = "creation_value_label_control"
