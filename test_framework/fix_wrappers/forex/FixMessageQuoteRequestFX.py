@@ -39,12 +39,12 @@ class FixMessageQuoteRequestFX(FixMessage):
                 "Account": "Iridium1",
                 "Side": "1",
                 "Instrument": {
-                    "Symbol": "GBP/USD",
+                    "Symbol": "EUR/USD",
                     "SecurityType": "FXFWD"
                 },
                 "SettlDate": wk1(),
                 "SettlType": "W1",
-                "Currency": "GBP",
+                "Currency": "EUR",
                 "QuoteType": "1",
                 "OrderQty": "1000000",
                 "OrdType": "D"
