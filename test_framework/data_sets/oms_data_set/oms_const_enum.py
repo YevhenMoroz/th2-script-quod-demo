@@ -33,11 +33,11 @@ class OmsFixInstruments(Enum):
     )
 
 
-class OmsInstrumentId(Enum):
+class OmsDbInstrument(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
 
 
-class OmsListingId(Enum):
+class OmsDbListing(Enum):
     listing_1 = "1200"
 
 
@@ -182,3 +182,7 @@ class OmsCurrency(Enum):
 
 class OmsRoutes(Enum):
     route_1= "Route via FIXBUYTH2 - component"
+
+class OmsQtyTypes(Enum):
+    qty_type_1 = "UnmatchedQty"
+    qty_type_2 = "OrderQty"

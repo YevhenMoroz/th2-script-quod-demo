@@ -37,6 +37,8 @@ class OrderBookColumns(Enum):
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    venue_client_account = "Venue Client Account"
+    account_id = 'Account ID'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -142,6 +144,7 @@ class ExecSts(Enum):
     eliminated = 'Eliminated'
     rejected = 'Rejected'
     open = 'Open'
+    sent = 'Sent'
     cancelled = 'Cancelled'
     held = 'Held'
     partially_filled = 'PartiallyFilled'
@@ -228,7 +231,7 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
-    conf_service = ""
+    conf_service = "Conf Service"
 
 
 class AllocationsColumns(Enum):
@@ -246,3 +249,7 @@ class AllocationsColumns(Enum):
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
+
+class PostTradeStatuses(Enum):
+    ready_to_book = "ReadyToBook"
+    booked = "Booked"
