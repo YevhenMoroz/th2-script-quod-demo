@@ -50,6 +50,7 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    disclose_exec = "DiscloseExec"
     # endregion
 
 
@@ -59,6 +60,7 @@ class TimeInForce(Enum):
     GTC = 'GoodTillCancel'
     GTD = 'GoodTillDate'
     DAY = 'Day'
+    ATC = "AtTheClose"
 
 
 class OrderType(Enum):
@@ -310,3 +312,11 @@ class RFQPanelHeaderValues(Enum):
     fill_side_value_label_control = "fill_side_value_label_control"
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
+
+class PostTradeStatuses(Enum):
+    ready_to_book = "ReadyToBook"
+    booked = "Booked"
+
+class DiscloseExec(Enum):
+    manual = 'M'
+    real_time = 'R'
