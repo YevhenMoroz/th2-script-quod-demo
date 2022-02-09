@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
-from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails, GroupModifyDetails
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
@@ -81,6 +81,7 @@ class OMSOrderBook(BaseOrderBook):
         self.transfer_pool_details = TransferPoolDetailsCLass()
         self.transfer_pool_call = Stubs.care_orders_action.internalTransferAction
         self.internal_transfer_action = InternalTransferActionDetails(self.base_request, self.transfer_pool_details.build())
+        self.group_modify_details = GroupModifyDetails()
 
 
         # endregion
