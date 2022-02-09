@@ -177,13 +177,11 @@ def reject_order_request(instr: str, qty: str, limit: str):
     return request
 
 
-def direct_order_request(instr: str, qty: str, limit: str, qty_percent: str):
+def direct_order_request(qty_type: str, qty_percentage: str, route: str):
     request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.orderDetails.instrLookupSymbol = instr
-    request.orderDetails.limitPrice = limit
-    request.orderDetails.quantity = qty
-    request.qtyPercentage = qty_percent
-
+    request.qtyType = qty_type
+    request.qtyPercentage = qty_percentage
+    request.route = route
     return request
 
 
