@@ -53,20 +53,14 @@ class QAP_848(TestCase):
 
         self.order_book.set_filter(
             [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
-            {ob.symbol.value: eur_usd_symbol,
-             ob.sts.value: st.terminated.value,
+            {ob.sts.value: st.terminated.value,
              ob.exec_sts.value: ExecSts.filled.value,
              ob.qty.value: self.qty,
              ob.currency.value: usd_currency}, 'Checking currency value in order book')
 
-        quote_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
-            extract_field(ob.quote_id.value)
-
         self.quote_book.set_filter(
-            [qb.security_id.value, eur_usd_symbol, qb.quote_id.value, quote_id]).check_quote_book_fields_list(
-            {qb.security_id.value: eur_usd_symbol,
-             qb.quote_status.value: st.terminated.value,
-             qb.quote_id.value: quote_id}, 'Checking currency value in quote book')
+            [qb.bid_size.value, self.qty]).check_quote_book_fields_list(
+            {qb.quote_status.value: st.terminated.value}, 'Checking currency value in quote book')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
