@@ -83,6 +83,7 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_call = None
         self.transfer_pool_details = None
         self.internal_transfer_action = None
+        self.group_modify_details = None
 
 
 
@@ -292,18 +293,19 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.modify_order_details])
 
     def group_modify(self, client=None, security_account=None, routes=None, free_notes=None, filter_list=None):
+        self.group_modify_details.base.CopyFrom(self.base_request)
         if filter_list is not None:
-            self.modify_order_details.set_filter()
+            self.group_modify_details.set_filter()
         if client is not None:
-            self.modify_order_details.client = client
+            self.group_modify_details.client = client
         if security_account is not None:
-            self.modify_order_details.securityAccount = security_account
+            self.group_modify_details.securityAccount = security_account
         if routes is not None:
-            self.modify_order_details.routes = routes
+            self.group_modify_details.routes = routes
         if free_notes is not None:
-            self.modify_order_details.freeNotes = free_notes
-        call(self.group_modify_order_call, self.modify_order_details.build())
-        self.clear_details([self.modify_order_details])
+            self.group_modify_details.freeNotes = free_notes
+        call(self.group_modify_order_call, self.group_modify_details)
+        self.clear_details([self.group_modify_details])
 
     def reassign_order(self, recipient, partial_desk: bool = False):
         self.reassign_order_details.base.CopyFrom(self.base_request)
