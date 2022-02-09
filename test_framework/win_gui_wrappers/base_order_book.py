@@ -587,8 +587,8 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extract_error_from_order_ticket])
         return result
 
-    def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
-        call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
+    def direct_order(self, qty: str, route: str, qty_type: str):
+        call(self.direct_order_correct_call, direct_order_request(qty_type, qty, route))
 
     def mass_book(self, positions_of_orders: list):
         self.mass_book_details.set_rows_numbers(positions_of_orders)

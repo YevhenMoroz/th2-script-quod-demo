@@ -82,6 +82,7 @@ class OMSOrderBook(BaseOrderBook):
         self.transfer_pool_call = Stubs.care_orders_action.internalTransferAction
         self.internal_transfer_action = InternalTransferActionDetails(self.base_request, self.transfer_pool_details.build())
         self.group_modify_details = GroupModifyDetails()
+        self.direct_order_correct_call = Stubs.win_act_order_book.orderBookDirectOrder
 
 
         # endregion
