@@ -95,8 +95,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
             MDReqID=md_request.get_parameter("MDReqID"),
             OrigMDArrivalTime="*",
             LastUpdateTime="*",
+            OrigClientVenueID="*",
             OrigMDTime="*",
-            MDTime="*",
             Instrument=dict(Symbol=md_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"]),
             NoMDEntries=[
                 dict()

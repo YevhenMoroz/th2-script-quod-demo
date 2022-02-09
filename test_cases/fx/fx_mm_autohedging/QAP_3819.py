@@ -109,7 +109,7 @@ def modify_client_rfq_tile(cp_service, base_tile_data):
     request.set_from_curr(currency)
     request.set_to_curr(settle_currency)
     request.change_near_tenor(tenor)
-    request.change_near_leg_aty(qty)
+    request.change_near_leg_qty(qty)
     request.change_client(client)
     call(cp_service.modifyRFQTile, request.build())
 

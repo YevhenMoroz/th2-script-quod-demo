@@ -1,4 +1,4 @@
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.data_sets.constants import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -49,6 +49,45 @@ class FixMessageQuoteFX(FixMessage):
             self.add_tag({"BidSpotRate": "*"})
             self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"BidPx": "*"})
+        return self
+
+    def set_params_for_dealer(self, quote_request: FixMessageQuoteRequestFX):
+        self.prepare_params_for_quote(quote_request)
+        self.remove_parameters(["SettlType", "SettlDate", "QuoteType"])
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
+            self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"OfferPx": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferPx": "*"})
+            self.add_tag({"OfferSize": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferPx": "*"})
+            self.add_tag({"OfferSize": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
+        return self
+
+    def set_params_for_dealer_fwd(self, quote_request: FixMessageQuoteRequestFX):
+        self.set_params_for_dealer(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidForwardPoints": "*"})
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"BidForwardPoints": "*"})
         return self
 
     def set_params_for_quote_fwd(self, quote_request: FixMessageQuoteRequestFX):

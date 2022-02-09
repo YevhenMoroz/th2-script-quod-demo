@@ -17,8 +17,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_1014(TestCase):
+
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, dataset):
         super().__init__(report_id, session_id, dataset)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -59,6 +61,4 @@ class QAP_1014(TestCase):
                                     "Event_Name")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-       pass
+
