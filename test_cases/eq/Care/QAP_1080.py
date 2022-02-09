@@ -36,7 +36,7 @@ class QAP_1080(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        # region create CO order
+        # region create CO order via Fix
         self.fix_manager.send_message_fix_standard(self.fix_message)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
@@ -62,7 +62,14 @@ class QAP_1080(TestCase):
         # region accept cancel
         self.client_inbox.accept_and_cancel_children(self.lookup, self.qty2, self.price)
         # endregion
-        # region check cancelled status
+        # region check open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.cancelled.value})
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+        # region accept cancel
+        self.client_inbox.reject_order(self.lookup, self.qty2, self.price)
+        # endregion
+        # region check open status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
