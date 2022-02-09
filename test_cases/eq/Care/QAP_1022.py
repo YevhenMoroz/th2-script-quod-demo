@@ -62,7 +62,7 @@ class QAP_1022(TestCase):
         # endregion
         # region Check values in OrderBook
         self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: "Sent"})
+            {OrderBookColumns.sts.value: ExecSts.sent.value})
         # endregion
         # region Accept CO
         self.base_window.switch_user()
