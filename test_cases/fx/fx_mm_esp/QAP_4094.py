@@ -11,31 +11,6 @@ from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 
-class QAP_1597(TestCase):
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: Environment = None):
-        super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
-        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.md_reject = FixMessageMarketDataRequestRejectFX()
-        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
-        self.symbol = "EUR/sdf"
-        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
-        self.settle_type = self.data_set.get_settle_type_by_name("spot")
-        self.client = self.data_set.get_client_by_name("client_mm_1")
-        self.text = "no active client tier"
-        self.no_related_symbol = [
-            {
-                "Instrument": {
-                    "Symbol": self.symbol,
-                    "SecurityType": self.security_type,
-                    "Product": "4",
-                },
-                "SettlType": self.settle_type,
-            }
-        ]
 
 class QAP_4094(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
