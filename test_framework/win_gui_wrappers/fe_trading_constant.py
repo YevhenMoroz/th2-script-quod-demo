@@ -46,6 +46,17 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    near_tenor = 'NearTenor'
+    near_qty = 'NearQty'
+    near_fwd_pts = 'NearFwdPts'
+    near_px = 'NearPx'
+    near_settl_date = 'NearSettlDate'
+    far_tenor = 'FarTenor'
+    far_qty = 'FarQty'
+    far_fwd_pts = 'FarFwdPts'
+    far_px = 'FarPx'
+    far_settl_date = 'FarSettlDate'
+    last_spot_rate = 'LastSpotRate'
     # endregion
 
 
@@ -106,6 +117,17 @@ class TradeBookColumns(Enum):
     owner = 'Owner'
     exec_fees = "Exec Fees"
     client_commission = "Client Commission"
+    near_tenor = 'Near Leg Tenor'
+    near_qty = 'NearQty'
+    near_fwd_pts = 'NearFwdPts'
+    near_px = 'NearPx'
+    near_settl_date = 'Near Leg Settle Date'
+    far_tenor = 'Far Leg Tenor'
+    far_qty = 'FarQty'
+    far_fwd_pts = 'FarFwdPts'
+    far_px = 'FarPx'
+    far_settl_date = 'Far Leg Settle Date'
+    last_spot_rate = 'LastSpotRate'
 
 
 class QuoteRequestBookColumns(Enum):
