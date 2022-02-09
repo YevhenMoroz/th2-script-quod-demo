@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 
 
 #TODO: rename this file in future raleted to component
-from test_cases.web_trading.test_cases.pages.login.QAP_test import QAP_test
+from test_cases.web_trading.test_cases.pages.login.QAP_6293 import QAP_6293
 
 
 class RunGeneral:
@@ -21,11 +21,14 @@ class RunGeneral:
         try:
             start_time = time.monotonic()
 
-            QAP_test(self.web_driver_container, self.second_lvl_id).run() ## e.g. test, after you must change,rename or delete this
+            QAP_6293(self.web_driver_container, self.second_lvl_id).run() ## e.g. test, after you must change,rename or delete this
 
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+
+
+
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

@@ -10,7 +10,7 @@ from test_framework.web_trading.web_trading_core.pages.login.login_page import L
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page import MainPage
 
 
-class QAP_test(CommonTestCase):
+class QAP_6293(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
@@ -24,7 +24,6 @@ class QAP_test(CommonTestCase):
         login_page.click_login_button()
         time.sleep(2)
 
-
     def test_context(self):
         try:
 
@@ -34,9 +33,7 @@ class QAP_test(CommonTestCase):
             time.sleep(2)
             main_page.click_on_close_new_workspace_button()
             time.sleep(10)
-
-
-
+            self.verify("Just for test", True, True)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
