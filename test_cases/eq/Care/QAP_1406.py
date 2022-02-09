@@ -42,6 +42,10 @@ class QAP_1406(TestCase):
         self.fix_manager.send_message_fix_standard(self.fix_message)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
+        # region check held status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.held.value})
+        # endregion
         # region group modify
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).group_modify(client=self.client, security_account= "CLIENT_FIX_CARE_SA1", routes=self.route)
         # endregion
