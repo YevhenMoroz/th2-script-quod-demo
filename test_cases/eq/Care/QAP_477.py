@@ -47,6 +47,7 @@ class QAP_477(TestCase):
         self.venue = self.data_set.get_mic_by_name("mic_1")
         self.route = self.data_set.get_route("route_1")
         self.price = self.fix_message.get_parameter('Price')
+        self.qty_type = self.data_set.get_qty_type('qty_type_1')
         self.qty = '100'
         self.limit = '10'
         self.instr = 'VETO'
@@ -65,7 +66,7 @@ class QAP_477(TestCase):
         # endregion
         # region DirectLoc order
         try:
-            self.order_book.direct_loc_order_correct(self.fix_message.get_parameter('OrderQtyData')['OrderQty'], self.route)
+            self.order_book.direct_order(self.fix_message.get_parameter('OrderQtyData')['OrderQty'], self.route, self.qty_type)
         except Exception:
             logger.error("Error execution", exc_info=True)
         finally:
