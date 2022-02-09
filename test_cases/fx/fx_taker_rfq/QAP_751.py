@@ -60,7 +60,8 @@ class QAP_751(TestCase):
 
         exec_id1 = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_second_lvl_fields_list({ob.exec_id.value: ''})
-
+        # endregion
+        # region Step 3
         trades_info = self.trade_book.set_filter([tb.exec_id.value, exec_id1[ob.exec_id.value]]).extract_fields(
             {tb.near_qty.value: '', tb.near_fwd_pts.value: '', tb.near_px.value: '', tb.last_spot_rate.value: '',
              tb.far_qty.value: '', tb.far_fwd_pts.value: '', tb.far_px.value: ''})
