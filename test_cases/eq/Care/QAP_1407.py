@@ -6,7 +6,7 @@ from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -33,18 +33,11 @@ class QAP_1407(TestCase):
         self.fix_manager.send_message_fix_standard(self.fix_message)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
-        # region open group modify window
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).group_modify()
+        # region group modify window is present
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.held.value})
         # endregion
         # region group modify window is present
-        self.order_book.is_menu_item_present("Group Modify")
+        self.order_book.is_menu_item_present("Group Modify", [1])
+        # endregion
 
-
-    # endregion
-    # region Verify
-    result=eq_wrappers.is_menu_item_present(base_request,"Group Modify")
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking Menu Item")
-    verifier.compare_values("FeeAgent", "false", result['isMenuItemPresent'])
-    verifier.verify()
-    # endregion
