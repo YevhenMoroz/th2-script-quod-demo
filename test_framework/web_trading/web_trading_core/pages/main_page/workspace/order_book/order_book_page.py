@@ -1,3 +1,5 @@
+import time
+
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order_book.order_book_constants import \
@@ -8,8 +10,6 @@ class OrderBookPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    # TODO: implement methods, if something changed in FE part, please take a look
-
     # region Filter values in main page
     def get_symbol(self):
         return self.find_by_xpath(OrderBookConstants.ORDER_SYMBOL_XPATH).text
@@ -18,7 +18,7 @@ class OrderBookPage(CommonPage):
         return self.find_by_xpath(OrderBookConstants.ORDER_INSTR_TYPE_XPATH).text
 
     def get_order_id(self):
-        return self.find_by_xpath(OrderBookConstants.ORDER_ORDER_ID_XPATH).text
+        pass
 
     def get_account_code(self):
         return self.find_by_xpath(OrderBookConstants.ORDER_ACCOUNT_CODE_XPATH).text
@@ -135,3 +135,83 @@ class OrderBookPage(CommonPage):
 
     def click_on_close_order_book_wizard(self):
         self.find_element_in_shadow_root(OrderBookConstants.CLOSE_BUTTON_CSS)
+
+    def check_order(self):
+        return self.get_symbol(), self.get_account(), self.get_side(), self.get_order_qty(), self.get_price(), self.get_order_type()
+
+    #region Filter Column Buttons
+
+    def click_on_filter_order_id_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ORDER_ID_COLUMN_XPATH).click()
+
+    def click_on_filter_symbol_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_SYMBOL_COLUMN_XPATH).click()
+
+    def click_on_filter_instr_type_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_INSTR_TYPE_COLUMN_XPATH).click()
+
+    def click_on_filter_account_code_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ACCOUNT_CODE_COLUMN_XPATH).click()
+
+    def click_on_filter_side_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_SIDE_COLUMN_XPATH).click()
+
+    def click_on_filter_order_qty_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ORDER_QTY_COLUMN_XPATH).click()
+
+    def click_on_filter_price_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_PRICE_COLUMN_XPATH).click()
+
+    def click_on_filter_avg_price_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_AVG_PRICE_COLUMN_XPATH).click()
+
+    def click_on_filter_leaves_qty_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_LEAVES_QTY_COLUMN_XPATH).click()
+
+    def click_on_filter_order_type_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ORDER_TYPE_COLUMN_XPATH).click()
+
+    def click_on_filter_cum_qty_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_CUM_QTY_COLUMN_XPATH).click()
+
+    def click_on_filter_order_status_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ORDER_STATUS_COLUMN_XPATH).click()
+
+    def click_on_filter_expire_date_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_EXPIRE_DATE_COLUMN_XPATH).click()
+
+    def click_on_filter_settle_date_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_SETTLE_DATE_COLUMN_XPATH).click()
+
+    def click_on_filter_settle_type_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_SETTLE_TYPE_COLUMN_XPATH).click()
+
+    def click_on_filter_time_in_force_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_TIME_IN_FORCE_COLUMN_XPATH).click()
+
+    def click_on_filter_free_notes_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_FREE_NOTES_COLUMN_XPATH).click()
+
+    def click_on_filter_account_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_ACCOUNT_COLUMN_XPATH).click()
+
+    def click_on_filter_transaction_time_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_TRANSACTION_TIME_COLUMN_XPATH).click()
+
+    def click_on_filter_ciordid_button(self):
+        self.find_by_xpath(OrderBookConstants.FILTER_CIORDID_COLUMN_XPATH).click()
+
+    #endregion
+
+    #region Filter
+
+    def set_search_field(self, order_id):
+        self.set_text_by_xpath(OrderBookConstants.SEARCH_FIELD_XPATH, order_id)
+
+    def click_on_apply_button(self):
+        self.find_by_xpath(OrderBookConstants.APPLY_BUTTON_XPATH).click()
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(OrderBookConstants.APPLY_BUTTON_XPATH).click()
+
+    #endregion

@@ -17,7 +17,9 @@ class OrderTicketPage(CommonPage):
         self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol))
 
     def set_account(self, account):
-        self.set_text_by_xpath(OrderTicketConstants.ACCOUNTS_FIELD_XPATH, account)
+        self.find_by_xpath(OrderTicketConstants.ACCOUNTS_FIELD_XPATH).click()
+        time.sleep(2)
+        self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_ACCOUNTS_XPATH.format(account))
 
     def click_on_buy_mode_button(self):
         self.find_by_xpath(OrderTicketConstants.MODE_BUY_BUTTON_XPATH).click()
@@ -55,3 +57,17 @@ class OrderTicketPage(CommonPage):
 
     def get_error_notification(self):
         return self.find_by_xpath(OrderTicketConstants.NOTIFICATION_ACCOUNT_XPATH).text
+
+    def create_order(self, symbol, account, quantity, price, order_type):
+        self.set_symbol(symbol)
+        time.sleep(2)
+        self.set_account(account)
+        time.sleep(2)
+        self.click_on_buy_mode_button()
+        time.sleep(2)
+        self.set_quantity(quantity)
+        time.sleep(2)
+        self.set_price(price)
+        time.sleep(2)
+        self.set_order_type(order_type)
+        time.sleep(2)

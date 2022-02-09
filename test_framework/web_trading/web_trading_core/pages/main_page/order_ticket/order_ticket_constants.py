@@ -1,7 +1,8 @@
 class OrderTicketConstants:
-    SEARCH_SYMBOL_FIELD_XPATH = '//*[@name="txtSearch1"]'
+    SEARCH_SYMBOL_FIELD_XPATH = '//*[@id="order"]//*[@name="txtSearch1"]'
     LIST_OF_SYMBOL_XPATH = '//*[@class="igx-overlay__content"]//span[text()="{}"]'
     ACCOUNTS_FIELD_XPATH = '//*[text()="Accounts"]/following-sibling::igx-select/descendant ::input'
+    LIST_OF_ACCOUNTS_XPATH = '//*[@class="igx-overlay__content"]//span[text()="{}"]'
     MODE_BUY_BUTTON_XPATH = '//*[@class="inside-button"]/span[@class="make-bold"]'
     MODE_SELL_BUTTON_XPATH = '//*[@class="inside-button-sell"]/span[@class="make-bold"]'
     QUANTITY_FIELD_XPATH = '//*[@name="quantity"]'
