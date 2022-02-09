@@ -54,6 +54,7 @@ from test_cases.fx.fx_taker_rfq.QAP_709 import QAP_709
 from test_cases.fx.fx_taker_rfq.QAP_710 import QAP_710
 from test_cases.fx.fx_taker_rfq.QAP_714 import QAP_714
 from test_cases.fx.fx_taker_rfq.QAP_741 import QAP_741
+from test_cases.fx.fx_taker_rfq.QAP_751 import QAP_751
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, get_opened_fe, prepare_fe_2
 
@@ -71,7 +72,7 @@ def test_run():
 
     logger.info(f"Root event was created (id = {report_id.id})")
     logging.getLogger().setLevel(logging.WARN)
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 309"
     session_id = set_session_id()
     start_time = datetime.now()
     print(f"Start time :{start_time}")
@@ -131,8 +132,9 @@ def test_run():
         # QAP_702(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_709(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_710(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_714(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_741(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_714(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_741(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_751(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
         print(f"Duration is {datetime.now() - start_time}")
     except Exception:
