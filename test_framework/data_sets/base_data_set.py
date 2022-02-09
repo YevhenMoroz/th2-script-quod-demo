@@ -1,3 +1,5 @@
+from enum import Enum
+
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
 
 
