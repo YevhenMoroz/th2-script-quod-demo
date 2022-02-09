@@ -42,10 +42,8 @@ class QAP_2005(TestCase):
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-
         self.fix_message_amend = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         self.fix_message_cancel = FixMessageOrderCancelRequestOMS()
-
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.exec_sts = None
@@ -63,21 +61,19 @@ class QAP_2005(TestCase):
             self.fix_message.set_default_dma_limit()
             self.fix_message.change_parameter('Side', '2')
             self.fix_message.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty})
-            # self.fix_manager.send_message_fix_standard(self.fix_message)
             response = self.fix_manager.send_message_and_receive_response(self.fix_message)
-            # get Client Order ID
-            cl_ord_id = response[0].get_parameters()['ClOrdID']
+            # get Order ID
+            order_id = response[0].get_parameters()['OrderID']
 
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
-
         # endregion
+
         # region Set-up parameters for ExecutionReports
         self.exec_report.set_default_new(self.fix_message)
-        # self.exec_report.remove_parameter('Price')
         self.exec_report.change_parameters({'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*'})
         # endregion
 
@@ -86,7 +82,7 @@ class QAP_2005(TestCase):
         # endregion
 
         # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
         # endregion
 
         # region Check values in OrderBook
@@ -95,38 +91,60 @@ class QAP_2005(TestCase):
                                        {OrderBookColumns.sts.value: sts}, 'Checking order status in the order book')
         # endregion
 
-        print('-----------------------------------------AMEND Start----------------------')
         # region Amend order
         try:
             nos_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
                                                                                    self.venue_client_names,
                                                                                    self.venue, True)
-            self.fix_message_amend.set_default(self.fix_message)
-            self.fix_message_amend.change_parameter('Price', self.price_amend)
+            # FIX
+            # self.fix_message_amend.set_default(self.fix_message)
+            # self.fix_message_amend.change_parameter('Price', self.price_amend)
             # response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_amend)
-            self.fix_manager.send_message_fix_standard(self.fix_message_amend)
+            # self.fix_manager.send_message_fix_standard(self.fix_message_amend)
             # Front
-            # self.order_ticket.set_order_details(limit='19')
-            # self.order_ticket.amend_order([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        except Exception:
-            logger.error('Error execution', exc_info=True)
-        finally:
-            time.sleep(1)
-            self.rule_manager.remove_rule(nos_rule)
-
-        print('-----------------------------------------Cancel Start----------------------')
-        # region Cancelling order
-        try:
-            nos_rule = self.rule_manager.add_OrderCancelRequest_FIXStandard(self.bs_connectivity,
-                                                                            self.venue_client_names,
-                                                                            self.venue, True)
-            self.fix_message_cancel.set_default(self.fix_message)
-            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel)
-            # Front
-            # self.order_book.cancel_order(filter_list=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
+            self.order_ticket.set_order_details(limit='19')
+            self.order_ticket.amend_order([OrderBookColumns.order_id.value, order_id])
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
         # endregion
+
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        # endregion
+
+        # region Check values in OrderBook after Amend
+        price_after_amend = self.order_book.extract_field(OrderBookColumns.limit_price.value)
+        self.order_book.compare_values({OrderBookColumns.limit_price.value: self.price_amend},
+                                       {OrderBookColumns.limit_price.value: price_after_amend},
+                                       'Checking the limit price after amending in the order book')
+        # endregion
+
+        # region Cancelling order
+        try:
+            nos_rule = self.rule_manager.add_OrderCancelRequest_FIXStandard(self.bs_connectivity,
+                                                                            self.venue_client_names,
+                                                                            self.venue, True)
+            self.fix_message_cancel.set_default(self.fix_message)
+            self.fix_manager.send_message_fix_standard(self.fix_message_cancel)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
+        # endregion
+
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        # endregion
+
+        # region Check values in OrderBook after Cancel
+        sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.cancelled.value},
+                                       {OrderBookColumns.sts.value: sts},
+                                       'Checking order status after cancelling in the order book')
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
