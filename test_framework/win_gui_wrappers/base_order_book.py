@@ -431,11 +431,11 @@ class BaseOrderBook(BaseWindow):
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
         return result
 
-    def direct_moc_order_correct(self, qty, route):
-        call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
+    def direct_moc_order(self, qty, route, qty_type):
+        call(self.direct_moc_request_correct_call, direct_moc_request_correct(qty_type, qty, route))
 
-    def direct_loc_order_correct(self, qty, route):
-        call(self.direct_loc_request_correct_call, direct_loc_request_correct("UnmatchedQty", qty, route))
+    def direct_loc_order(self, qty, route, qty_type):
+        call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
