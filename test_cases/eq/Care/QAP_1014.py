@@ -1,53 +1,71 @@
 import logging
-from datetime import datetime
+import os
+from pathlib import Path
 
-from custom.basic_custom_actions import create_event, timestamps
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_fix_wrappers import create_order_via_fix
+from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base, accept_order_request
+from test_framework.core.test_case import TestCase
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from win_gui_modules.utils import set_session_id
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1014"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    time = datetime.utcnow().isoformat()
-    lookup = "VETO"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
+class QAP_1014(TestCase):
+    def __init__(self, report_id, session_id, dataset):
+        super().__init__(report_id, session_id, dataset)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
 
-    create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        order_book = OMSOrderBook(self.case_id, self.session_id)
+        order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        base_window = BaseMainWindow(self.case_id, self.session_id)
+        client = self.data_set.get_client_by_name('client_pt_1')
+        price = '100'
+        qty = '50'
+        work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        user = Stubs.custom_config['qf_trading_fe_user']
+        # endregion
 
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create CO
-    # endregion
-    # region Check values in OrderBook
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Sent")
-    eq_wrappers.verify_order_value(base_request, case_id, "Qty", qty)
-    eq_wrappers.verify_order_value(base_request, case_id, "Limit Price", price)
-    # endregion
-    # region Accept CO
-    call(common_act.acceptOrder, accept_order_request(lookup, qty, price))
-    # endregion
-    # region Check values in OrderBook after Accept
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        # region open FE
+        # endregion
+        session_id2 = set_session_id()
+        base_window2 = BaseMainWindow(case_id=self.case_id, session_id=session_id2)
+        # region create CO order
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
+                                       partial_desk=True)
+        order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
+        order_id_first = order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+
+        # region switch user
+
+        base_window2.open_fe(self.report_id, folder=work_dir, user='ishevchenko', password='ishevchenko', is_open=False)
+        base_window2.switch_user()
+        # endregion
+
+        # region accept CO order
+        order_inbox = OMSClientInbox(self.case_id, session_id2)
+        order_inbox.accept_order(self.data_set.get_lookup_by_name('lookup_1'), qty, price)
+        # endregion
+
+        # region verify values
+        order_book_2 = OMSOrderBook(self.case_id, session_id=session_id2)
+        status = order_book_2.extract_field(OrderBookColumns.sts.value)
+        order_id = order_book_2.extract_field(OrderBookColumns.order_id.value)
+        base_window2.compare_values(
+            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.order_id.value: order_id_first},
+            {OrderBookColumns.sts.value: status,
+             OrderBookColumns.order_id.value: order_id},
+            "Event_Name")
+        # endregion
+

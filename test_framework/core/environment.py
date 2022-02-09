@@ -19,7 +19,7 @@ class Environment:
         if env.value == EnvironmentType.quod316_ganymede_standard.value:
             if EnvironmentType.quod316_ganymede_standard.value not in Environment.environment_instances.keys():
                 site_environment = Environment(
-                    environment_type = EnvironmentType.quod316_ganymede_standard.value,
+                    environment_type=EnvironmentType.quod316_ganymede_standard.value,
                     sell_side=Connectivity.Ganymede_316_Sell_Side.value,
                     buy_side=Connectivity.Ganymede_316_Buy_Side.value,
                     feed_handler=Connectivity.Ganymede_316_Feed_Handler.value

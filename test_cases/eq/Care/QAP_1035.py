@@ -1,102 +1,88 @@
 import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
 from th2_grpc_hand import rhbatch_pb2
-from custom.basic_custom_actions import timestamps
-from test_framework.old_wrappers import eq_wrappers
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.old_wrappers.eq_wrappers import *
 from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import call, get_base_request, close_fe
-from win_gui_modules.wrappers import verify_ent, verification
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from win_gui_modules.utils import  close_fe
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+work_dir = Stubs.custom_config['qf_trading_fe_folder']
+username = Stubs.custom_config['qf_trading_fe_user']
+password = Stubs.custom_config['qf_trading_fe_password']
+username2 = Stubs.custom_config['qf_trading_fe_user_2']
+password2 = Stubs.custom_config['qf_trading_fe_password_2']
+desk = Stubs.custom_config['qf_trading_fe_user_desk']
+qty = "900"
+price = "40"
+order_type = "Limit"
 
 
-def execute(report_id,session_id):
-    case_name = "QAP-1035"
-    seconds, nanos = timestamps()  # Store case start time
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    order_type = "Limit"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    username2 = Stubs.custom_config['qf_trading_fe_user2']
-    password2 = Stubs.custom_config['qf_trading_fe_password2']
-    desk = Stubs.custom_config['qf_trading_fe_user_desk']
-    session_id2 = Stubs.win_act.register(
-        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
-    #  endregion
-    # region switch to user1
-    switch_user()
-    # endregion
-    # region create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, is_care=True, recipient=username, price=price)
-    # endregion
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
+class QAP_1035(TestCase):
 
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "Limit Price")
-    order_pts = ExtractionDetail("order_pts", "PostTradeStatus")
-    order_dfd = ExtractionDetail("order_dfd", "DoneForDay")
-    order_es = ExtractionDetail("order_es", "ExecSts")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_pts,
-                                                                                            order_dfd,
-                                                                                            order_es
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Sent")
-                                                  ]))
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-    # endregion
-    # region switch to user2
-    switch_user(session_id2, case_id)
-    # endregion
-    # region accept CO
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    # region switch to user1
-    switch_user(session_id2, case_id)
-    # endregion
-    # region manual execution
-    eq_wrappers.manual_execution(base_request, qty, price)
-    # endregion
-    # region complete
-    eq_wrappers.complete_order(base_request)
-    # endregion
-    # region Check values after complete
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Order Qty", order_qty.name, qty),
-                                                  verify_ent("Order Price", order_price.name, price),
-                                                  verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
-                                                  verify_ent("DoneForDay", order_dfd.name, "Yes"),
-                                                  verify_ent("ExecSts", order_es.name, "Filled")
-                                                  ]))
-    # endregion
-    close_fe(case_id, session_id2)
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declarations
+        client = self.data_set.get_client_by_name('client_co_1')
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        # region Declarations
+        session_id2 = Stubs.win_act.register(
+            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+        base_window = BaseMainWindow(self.test_id, self.session_id)
+        base_window2 = BaseMainWindow(self.test_id, session_id2)
+        order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        order_book2 = OMSOrderBook(self.test_id, session_id2)
+        client_inbox2 = OMSClientInbox(self.test_id, session_id2)
+        # endregion
+        # region open FE
+        base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
+        #  endregion
+        # region switch to user1
+        base_window.switch_user()
+        # endregion
+        # region create CO
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
+        order_ticket.create_order(lookup=lookup)
+        # endregion
+        # region Check values in OrderBook
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: "Sent"})
+        # endregion
+        # region switch to user2
+        base_window2.switch_user()
+        # endregion
+        # region accept CO
+        client_inbox2.accept_order(lookup, qty, price)
+        order_book2.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+        # region switch to user1
+        base_window.switch_user()
+        # endregion
+        # region manual execution
+        order_book.manual_execution()
+        # endregion
+        # region complete
+        order_book.complete_order()
+        # endregion
+        # region Check values after complete
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        close_fe(self.test_id, session_id2)
+
