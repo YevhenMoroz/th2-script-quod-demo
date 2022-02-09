@@ -21,3 +21,9 @@ class MenuPage(CommonPage):
 
     def click_on_logout_button(self):
         self.find_by_xpath(MenuConstants.LOGOUT_BUTTON_XPATH).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(MenuConstants.NO_BUTTON_XPATH).click()
+
+    def click_on_yes_button(self):
+        self.find_by_xpath(MenuConstants.YES_BUTTON_XPATH).click()
