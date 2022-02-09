@@ -31,7 +31,7 @@
       "endpoints": {
         "simulator": {
           "host": "10.0.22.22",
-          "port": 32313
+          "port": 32315
         }
       },
       "strategy": {
@@ -57,7 +57,7 @@
       "endpoints": {
         "simulator": {
           "host": "10.0.22.22",
-          "port": 32313
+          "port": 32315
         }
       },
       "strategy": {
