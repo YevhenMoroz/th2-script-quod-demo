@@ -16,7 +16,7 @@ def regression_run():
 
         report_id = bca.create_event(root.find("name").text + start.strftime(' %Y%m%d-%H:%M:%S'))
 
-        if eval(root.find("algo").attrib["run"]):
+        if eval(root.find(".//product_line[@name='algo']").attrib["run"]):
             algo_regression.test_run(report_id)
         # if eval(root.find("fx").attrib["run"]):
         #     algo_regression.test_run(report_id)
