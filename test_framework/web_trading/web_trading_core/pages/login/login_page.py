@@ -45,8 +45,19 @@ class LoginPage(CommonPage):
     def get_error_notification(self):
         return self.find_by_xpath(LoginConstants.LOGIN_FAILURE_XPATH).text
 
-    def check_is_login_button_disabled(self):
-        return self.is_button_enabled(LoginConstants.LOGIN_BUTTON_XPATH)
+    def check_is_login_button_enabled(self):
+        return self.is_field_enabled(LoginConstants.LOGIN_BUTTON_XPATH)
 
     def get_version(self):
         return self.find_by_xpath(LoginConstants.VERSION_XPATH).text
+
+    #region just for reset password test
+    #can be using just for one of the application, otherwise need to extend for using
+    def write_new_password_if_file(self, path_to_file, password):
+            self.write_to_file(path_to_file, password)
+
+
+
+    def get_password_from_file(self, path_to_file):
+        return self.parse_from_file(path_to_file)
+    #endregion

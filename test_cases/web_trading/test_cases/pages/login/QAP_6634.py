@@ -14,8 +14,8 @@ class QAP_6634(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA5"
-        self.password = "QA5"
+        self.login = "QA1"
+        self.password = "QA1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

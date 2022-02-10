@@ -3,52 +3,27 @@ import time
 import traceback
 import random
 import string
-
-import txt as txt
-
 from custom import basic_custom_actions
+from stubs import ROOT_DIR
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page import MainPage
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.menu_page import MenuPage
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_page import ProfilePage
-from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_security_sub_wizard import ProfileSecuritySubWizard
-from test_cases.web_trading.test_cases.pages.login import temporary_password_reset
+from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_security_sub_wizard import \
+    ProfileSecuritySubWizard
 
-#TODO: create logic for password reset , add txt file + parse method for that.
-#DOUBLE CHECK
+
 class QAP_6296(CommonTestCase):
+    PATH_TO_TEMPORARY_PASSWORD_RESET_FILE = f'{ROOT_DIR}\\test_cases\\web_admin\\web_admin_core\\resourses\\temporary_password_reset_QAP_6296.txt'
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = self.getPasswordFromFile("temporary_password_reset.txt")
-
-        # self.old_password = 'Qa4%Qa4%'
-        # self.new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        # self.confirm_password = self.new_password
-
-        # TODO:
-        # 1. password
-        # 2. file --> temporary..txt
-        # 3. 2 methods --> : 1 ParseFromfile 2WriteInFile
-        # 4. Step :
-        #     - password = ParseFromFile(temporary..txt) -- считает твой актуальный старый пароль (и он будет циклически перезаписыватся в этот файл при каждом запуске теста)
-        #     - set_old_passrowd(password)
-        #     - password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        #     - WriteInFile(temporary..txt,password) , в итоге old pass changed to new password and eventually new password is your actual old password in next start test case
-        #
-
-    def getPasswordFromFile(self, file1):
-        with open(file1, "r") as file:
-            password = file.readline()
-            return password
-
-    def setPasswordToFile(self, file1, password):
-        with open(file1, "w") as file:
-            file.write(password)
-
+        self.login = "QA5"
+        self.password = "QA5"
+        self.password_for_reset = str
+        self.new_password = '!new1234' + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -62,21 +37,27 @@ class QAP_6296(CommonTestCase):
         time.sleep(1)
         profile_page = ProfilePage(self.web_driver_container)
         profile_page.click_on_security_button()
+        time.sleep(2)
         security_sub_wizard = ProfileSecuritySubWizard(self.web_driver_container)
-        security_sub_wizard.set_old_password(self.password)
-
-        new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.setPasswordToFile("temporary_password_reset.txt", new_password)
-
-        security_sub_wizard.set_new_password(new_password)
-        security_sub_wizard.set_confirm_password(new_password)
+        # get actual password from file
+        self.password_for_reset = login_page.get_password_from_file(self.PATH_TO_TEMPORARY_PASSWORD_RESET_FILE)
+        security_sub_wizard.set_old_password(self.password_for_reset)
+        time.sleep(2)
+        security_sub_wizard.set_new_password(self.new_password)
+        # write new generated password in file for future use
+        login_page.write_new_password_if_file(self.PATH_TO_TEMPORARY_PASSWORD_RESET_FILE, self.new_password)
+        security_sub_wizard.set_confirm_password(self.new_password)
+        time.sleep(4)
         profile_page.click_on_save_button()
+        time.sleep(2)
         profile_page.click_on_close_button()
         main_page.click_on_menu_button()
         menu_page.click_on_logout_button()
+        time.sleep(2)
         menu_page.click_on_yes_button()
+        time.sleep(2)
         login_page.set_login(self.login)
-        login_page.set_password(new_password)
+        login_page.set_password(self.new_password)
         login_page.click_login_button()
         time.sleep(2)
 

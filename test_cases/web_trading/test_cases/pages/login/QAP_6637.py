@@ -8,7 +8,7 @@ from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDr
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
 
-#DONE
+
 class QAP_6637(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
