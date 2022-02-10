@@ -55,6 +55,12 @@ from test_cases.fx.fx_taker_rfq.QAP_710 import QAP_710
 from test_cases.fx.fx_taker_rfq.QAP_714 import QAP_714
 from test_cases.fx.fx_taker_rfq.QAP_741 import QAP_741
 from test_cases.fx.fx_taker_rfq.QAP_751 import QAP_751
+from test_cases.fx.fx_taker_rfq.QAP_842 import QAP_842
+from test_cases.fx.fx_taker_rfq.QAP_847 import QAP_847
+from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
+from test_cases.fx.fx_taker_rfq.QAP_849 import QAP_849
+from test_cases.fx.fx_taker_rfq.QAP_850 import QAP_850
+from test_cases.fx.fx_taker_rfq.QAP_982 import QAP_982
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, get_opened_fe, prepare_fe_2
 
@@ -134,7 +140,13 @@ def test_run():
         # QAP_710(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_714(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_741(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_751(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_751(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_842(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_847(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_848(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_849(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_850(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_982(report_id=report_id, session_id=session_id, data_set=data_set).execute()
 
         print(f"Duration is {datetime.now() - start_time}")
     except Exception:
