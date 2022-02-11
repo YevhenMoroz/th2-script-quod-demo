@@ -6,8 +6,8 @@ from custom import basic_custom_actions as bca
 
 class FixMessageQuoteRequestFX(FixMessage):
 
-    def __init__(self, parameters: dict = None):
-        super().__init__(message_type=MessageType.QuoteRequest.value)
+    def __init__(self, parameters: dict = None, data_set= None):
+        super().__init__(message_type=MessageType.QuoteRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
     def set_rfq_params(self):
