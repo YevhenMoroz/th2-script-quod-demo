@@ -4,6 +4,9 @@ class AccountsConstants:
     NEW_BUTTON_XPATH = "//button[text()='New']"
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@col-id="clearingAccountType"]//*[@class="ag-group-value"]'
     MAIN_PAGE_CLIENT ='//*[@col-id="accountGroup.accountGroupName"]//*[@class="ag-group-value"]'
+    ACCOUNT_VALUE_FOR_LOAD = "//*[@id='undefined']"
+    LOAD_BUTTON = "//button[text()='Load']"
+    CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[text()='Ok']"
 
     WIZARD_ID_INPUT_XPATH = "//input[@id='accountID']"
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"
@@ -70,8 +73,6 @@ class AccountsConstants:
     CLONE_ENTITY_BUTTON_GRID_XPATH = "//nb-icon[@nbtooltip='Clone']"
     DOWNLOAD_PDF_ENTITY_BUTTON_GRID_XPATH = "//nb-icon[@nbtooltip='Download PDF']"
     ENABLE_DISABLE_TOGGLE_BUTTON_GRID_XPATH = "//div[contains(@class, 'toggle')]"
-
-    CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[text()='Ok']"
 
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     EXT_ID_CLIENT_XPATH = "//*[@col-id='clientAccountID']/span[1]/span[4]"

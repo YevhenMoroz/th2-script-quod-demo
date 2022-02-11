@@ -35,7 +35,7 @@ def test_run(parent_id=None):
         # logger.info(f"Root event was created (id = {report_id.id})")
 
         # content
-        web_driver_container = WebDriverContainer()
+        web_driver_container = WebDriverContainer('Chrome', 'web_admin_306_saturn')
         RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
         # RunUsers(web_driver_container, parent_id).execute()
@@ -47,7 +47,6 @@ def test_run(parent_id=None):
         # RunRiskLimits(web_driver_container, parent_id).execute()
         # RunPositions(web_driver_container, parent_id).execute()
         # RunOthers(web_driver_container, parent_id).execute()
-
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

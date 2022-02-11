@@ -8,7 +8,7 @@ class ProfileConstants:
     # region - Personal Details
     PERSONAL_DETAILS_BUTTON_XPATH = '//*[@class="nav"]/span[1]'
     PREFERENCE_BUTTON_XPATH = '//*[@class="nav"]/span[2]'
-    SECURITY_BUTTON_XPATH = '//*[@class="nav"]/span[3]'
+    SECURITY_BUTTON_XPATH = '//*[text()="Security"]'
     TERMS_AND_CONDITION_BUTTON_XPATH = '//*[@class="nav"]/span[4]'
     FIRST_NAME_FIELD_XPATH = '//*[@name="firstName"]'
     LAST_NAME_FIELD_XPATH = '//*[@name="lastName"]'

@@ -28,6 +28,8 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_4382 import Q
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_4864 import QAP_4864
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5443 import QAP_5443
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5601 import QAP_5601
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_6278 import QAP_6278
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_6290 import QAP_6290
 
 
 class RunClientsAccounts:
@@ -64,6 +66,9 @@ class RunClientsAccounts:
             # QAP_4864(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5443(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5601(self.web_driver_container, self.second_lvl_id).run()
+
+            # QAP_6278(self.web_driver_container, self.second_lvl_id).run()
+            QAP_6290(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

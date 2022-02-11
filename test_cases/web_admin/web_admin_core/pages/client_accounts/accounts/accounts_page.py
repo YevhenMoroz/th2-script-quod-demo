@@ -15,6 +15,10 @@ class AccountsPage(CommonPage):
 
         time.sleep(2)
 
+    def click_on_load_button(self):
+        load_button = self.find_by_xpath(AccountsConstants.LOAD_BUTTON)
+        load_button.click()
+
     def filter_grid(self, id_value: str):
         self.set_text_by_xpath(AccountsConstants.ID_INPUT_GRID_FILTER_XPATH, id_value)
         time.sleep(2)
@@ -65,3 +69,12 @@ class AccountsPage(CommonPage):
 
     def set_id(self, value):
         self.set_text_by_xpath(AccountsConstants.ID_INPUT_GRID_FILTER_XPATH, value)
+
+    def set_account_for_load(self, value):
+        self.set_text_by_xpath(AccountsConstants.ACCOUNT_VALUE_FOR_LOAD, value)
+
+    def load_account_from_global_filter(self, user_id):
+        self.set_account_for_load(user_id)
+        time.sleep(2)
+        self.click_on_load_button()
+        time.sleep(2)
