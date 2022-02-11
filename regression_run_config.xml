@@ -105,6 +105,10 @@
                         <fe_environment></fe_environment>
                     </environments>
                 </component>
+            </components>
+        </product_line>
+        <product_line name="OMS" run="True">
+            <components>
                 <component name = "DMA" run = "True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
@@ -115,9 +119,7 @@
                             <fe_environment>quod317_fe</fe_environment>
                         </fe_environments>
                     </environments>
-
                 </component>
-
             </components>
         </product_line>
     </product_lines>
