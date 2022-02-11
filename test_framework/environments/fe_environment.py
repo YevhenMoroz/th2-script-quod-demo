@@ -1,5 +1,5 @@
 from test_framework.environments.base_environment import BaseEnvironment
-from test_framework.data_sets.constants import Connectivity
+from test_framework.data_sets.constants import Connectivity, FE_Credentials
 from test_framework.data_sets.environment_type import EnvironmentType
 
 
@@ -14,7 +14,8 @@ class FEEnvironment(BaseEnvironment):
 
     @staticmethod
     def get_instance(env: EnvironmentType):
-        if env.value == EnvironmentType.quod316_fe.value:
+        print(env.value)
+        if env.value is None:
             if EnvironmentType.quod316_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod316_fe.value,
@@ -24,6 +25,16 @@ class FEEnvironment(BaseEnvironment):
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod316_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod316_fe.value]
+        if env.value == EnvironmentType.quod317_fe.value:
+            if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
+                site_environment = FEEnvironment(
+                    environment_type=EnvironmentType.quod317_fe.value,
+                    user=FE_Credentials.user.value,
+                    password=FE_Credentials.password.value,
+                    path=FE_Credentials.path.value
+                )
+                FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
+            return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
         else:
             raise Exception('No such environment')
 

@@ -19,17 +19,16 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-ss_connectivity = SessionAliasOMS().ss_connectivity
-bs_connectivity = SessionAliasOMS().bs_connectivity
-
 
 class QAP_3359(TestCase):
-    def __init__(self, report_id, session_id, data_set):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.order_book = OMSOrderBook(self.case_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.fix_manager = FixManager(ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        print(self.environment.get_list_fix_environment()[0].buy_side)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.qty = '300'
         self.price = '10'
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
@@ -51,11 +50,11 @@ class QAP_3359(TestCase):
         # region create  DMA order
         try:
             rule_manager = RuleManager(Simulators.equity)
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
                                                                                              self.client_for_rule,
                                                                                              self.exec_destination,
                                                                                              float(self.price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(bs_connectivity,
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
                                                                                        self.client_for_rule,
                                                                                        self.exec_destination,
                                                                                        float(self.price),
