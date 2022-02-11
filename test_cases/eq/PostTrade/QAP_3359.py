@@ -8,10 +8,8 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
-    AllocationsColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -27,7 +25,6 @@ class QAP_3359(TestCase):
         self.order_book = OMSOrderBook(self.case_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        print(self.environment.get_list_fix_environment()[0].buy_side)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.qty = '300'
         self.price = '10'

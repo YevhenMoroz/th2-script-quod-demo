@@ -59,3 +59,10 @@ class Status(Enum):
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+
+
+class FE_Credentials(Enum):
+    # TODO нужно сетать свои значения(если вы запускаете на своих машинах)
+    user = 'vskulinec'  # ваш юзер с stubs
+    password = 'vskulinec'  # ваш пароль с stubs
+    path = '"C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits"' # ваш путь к фронту с stubs
