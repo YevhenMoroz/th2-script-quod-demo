@@ -14,7 +14,6 @@ class FEEnvironment(BaseEnvironment):
 
     @staticmethod
     def get_instance(env: EnvironmentType):
-        print(env.value)
         if env.value is None:
             if EnvironmentType.quod316_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
