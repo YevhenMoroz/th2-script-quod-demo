@@ -11,13 +11,18 @@ from test_framework.web_trading.web_trading_core.pages.main_page.menu.menu_page 
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_page import ProfilePage
 from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_ticket_page import OrderTicketPage
 
-#DONE
+
 class QAP_6568(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA5"
-        self.password = "QA5"
+        self.login = "QA3"
+        self.password = "QA3"
+        self.quantity = '11'
+        self.price = "22"
+        self.symbol = "AADIIND-Z  "
+        self.order_type = " Limit "
+        self.time_in_force = "Day "
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -37,12 +42,12 @@ class QAP_6568(CommonTestCase):
         main_page.click_on_new_workspace_button()
         main_page.click_on_buy_button()
         order_ticket = OrderTicketPage(self.web_driver_container)
-        order_ticket.set_symbol("FIFMPS4FQP-MF ")
+        order_ticket.set_symbol(self.symbol)
         order_ticket.click_on_buy_mode_button()
-        order_ticket.set_quantity("11")
-        order_ticket.set_price("22")
-        order_ticket.set_order_type(" Limit ")
-        order_ticket.set_time_in_force("Day ")
+        order_ticket.set_quantity(self.quantity)
+        order_ticket.set_price(self.price)
+        order_ticket.set_order_type(self.order_type)
+        order_ticket.set_time_in_force(self.time_in_force)
         order_ticket.click_on_buy_button()
 
     def test_context(self):
