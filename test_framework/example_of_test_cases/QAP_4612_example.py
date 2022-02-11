@@ -22,11 +22,13 @@ class QAP_4612_example(TestCase):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
+        self.fix_env1 = self.environment.get_list_fix_environment()[0]
+
         # region th2 components
-        self.fix_manager_sell = FixManager(self.environment.sell_side, self.test_id)
-        self.fix_manager_feed_handler = FixManager(self.environment.feed_handler, self.test_id)
-        self.fix_verifier_sell = FixVerifier(self.environment.sell_side, self.test_id)
-        self.fix_verifier_buy = FixVerifier(self.environment.buy_side, self.test_id)
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         # endregion
 
         # region order parameters
@@ -83,8 +85,8 @@ class QAP_4612_example(TestCase):
 
         # region Rule creation
         rule_manager = RuleManager()
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.environment.buy_side, self.account, self.ex_destination_1, True, self.qty, self.price_ask)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.environment.buy_side, self.account, self.ex_destination_1, True)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty, self.price_ask)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_ioc_rule, ocr_rule]
         # endregion
 
@@ -92,7 +94,7 @@ class QAP_4612_example(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.environment.feed_handler)
+        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty)
         market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot)
