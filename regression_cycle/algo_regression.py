@@ -1,13 +1,8 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle import iceberg_regression, multilisted_regression, twap_regression
+from regression_cycle.algo_regression_cycle import iceberg_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-
-from test_framework.core.environment import Environment
-from test_framework.data_sets.environment_type import EnvironmentType
-
 
 
 def test_run(parent_id=None):

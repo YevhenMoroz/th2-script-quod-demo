@@ -1,10 +1,10 @@
-from test_framework.core.environment import Environment
 from test_framework.data_sets.base_data_set import BaseDataSet
 from abc import ABC, abstractmethod
+from test_framework.environments.full_environment import FullEnvironment
 
 
 class TestCase(ABC):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: Environment = None):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         self.session_id = session_id
         self.report_id = report_id
         self.data_set = data_set
