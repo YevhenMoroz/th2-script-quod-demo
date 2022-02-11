@@ -50,6 +50,8 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    washbook = 'Wash Book'
+    capacity = 'Capacity'
     # endregion
 
 
@@ -305,3 +307,7 @@ class RFQPanelHeaderValues(Enum):
     fill_side_value_label_control = "fill_side_value_label_control"
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
+
+
+class Capacity(Enum):
+    agency = 'Agency'
