@@ -59,10 +59,3 @@ class Status(Enum):
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
-
-
-class FE_Credentials(Enum):
-    # TODO нужно сетать свои значения(если вы запускаете на своих машинах)
-    user = ''  # ваш юзер с stubs
-    password = ''  # ваш пароль с stubs
-    path = '' # ваш путь к фронту с stubs
