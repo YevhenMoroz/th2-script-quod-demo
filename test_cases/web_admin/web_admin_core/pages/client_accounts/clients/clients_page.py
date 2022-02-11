@@ -39,6 +39,9 @@ class ClientsPage(CommonPage):
     def click_on_logout(self):
         self.find_by_xpath(ClientsConstants.LOGOUT_BUTTON_XPATH).click()
 
+    def click_on_load_button(self):
+        self.find_by_xpath(ClientsConstants.LOAD_BUTTON).click()
+
     def set_name(self, value):
         self.set_text_by_xpath(ClientsConstants.MAIN_PAGE_NAME_FILTER_XPATH, value)
 
@@ -60,5 +63,24 @@ class ClientsPage(CommonPage):
     def set_client_group(self, value):
         self.set_text_by_xpath(ClientsConstants.MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH, value)
 
+    def set_client_name_for_load(self, value):
+        self.set_text_by_xpath(ClientsConstants.CLIENT_LOAD_FILTER, value)
+
     def get_clearing_account_type(self):
         return self.find_by_xpath(ClientsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH).text
+
+    def get_client_name(self):
+        return self.find_by_xpath(ClientsConstants.MAIN_PAGE_CLIENT_NAME).text
+
+    def get_popup_text(self):
+        popup = self.find_by_xpath(ClientsConstants.POPUP_TEXT_XPATH)
+        text = popup.text
+
+        popup.click()
+        return text
+
+    def load_client_from_global_filter(self, user_id):
+        self.set_client_name_for_load(user_id)
+        time.sleep(2)
+        self.click_on_load_button()
+        time.sleep(2)

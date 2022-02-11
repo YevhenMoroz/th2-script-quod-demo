@@ -1,111 +1,78 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest, \
-    ExtractRatesTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, \
+    RatesColumnNames
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_2587(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = None
 
+        self.ask_spot = RatesColumnNames.ask_spot
+        self.bid_spot = RatesColumnNames.bid_spot
+        self.ask_pts = RatesColumnNames.ask_pts
+        self.bid_pts = RatesColumnNames.bid_pts
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+        self.ask_pips = PriceNaming.ask_pips
+        self.bid_pips = PriceNaming.bid_pips
+        self.ask_large = PriceNaming.ask_large
+        self.bid_large = PriceNaming.bid_large
 
+        self.rates_tile_spot = ClientRatesTile(self.test_id, self.session_id, index=0)
+        self.rates_tile_w1 = ClientRatesTile(self.test_id, self.session_id, index=1)
 
-def extract_ask_value(base_request, service):
-    extract_value_request = ExtractRatesTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value_request.set_extraction_id(extraction_id)
-    extract_value_request.extract_ask_large_value("rates_tile.ask_large")
-    extract_value_request.extract_ask_pips("rates_tile.ask_pips")
-    response = call(service.extractRateTileValues, extract_value_request.build())
-    ask = float(response["rates_tile.ask_large"] + response["rates_tile.ask_pips"])
-    return ask
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.instr_spot = self.symbol + "-Spot"
+        self.instr_w1 = self.symbol + "-1W"
+        self.spot_event = "spot value validation"
+        self.pts_event = "pts value validation"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.rates_tile_spot.crete_tile()
+        self.rates_tile_spot.modify_client_tile(instrument=self.instr_spot, client_tier=self.client)
 
-def extract_column_spot(base_request, service):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askSpot", "Spot"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidSpot", "Spot"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-    return response["rateTile.askSpot"]
+        self.rates_tile_w1.crete_tile()
+        self.rates_tile_w1.modify_client_tile(instrument=self.instr_w1, client_tier=self.client)
+        # endregion
 
+        # region step 2
+        spot_values = self.rates_tile_spot.extract_prices_from_tile(self.bid_pips, self.ask_pips, self.bid_large,
+                                                                    self.ask_large)
+        spot_ask_pips = spot_values[self.ask_pips.value]
+        spot_ask_large = spot_values[self.ask_large.value]
+        spot_price = spot_ask_large + spot_ask_pips
+        print("spot tile tob has extracted")
 
-def check_spot(case_id, spot, spot_1w):
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare spot")
-    verifier.compare_values("Value of spot", str(spot), spot_1w)
-    verifier.verify()
+        w1_values = self.rates_tile_w1.extract_values_from_rates(self.bid_spot, self.ask_spot, self.bid_pts,
+                                                                 self.ask_pts)
+        w1_tile_spot_price = w1_values[str(self.ask_spot)]
+        print("w1 tile rows has extracted")
 
+        self.rates_tile_spot.compare_values(spot_price, w1_tile_spot_price,
+                                            event_name=self.spot_event)
 
-def check_pts_column(base_request, service, case_id, px, spot):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askPts", "Pts"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidPts", "Pts"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-    extracted_pts = response["rateTile.askPts"]
-    calculated_pts = round(((float(px) - float(spot)) * 10000), 3)
+        w1_tob_values = self.rates_tile_w1.extract_prices_from_tile(self.bid_pips, self.ask_pips, self.bid_large,
+                                                                    self.ask_large)
+        w1_ask_pips = w1_tob_values[self.ask_pips.value]
+        w1_ask_large = w1_tob_values[self.ask_large.value]
+        w1_price = w1_ask_large + w1_ask_pips
+        expected_pts = str(round((float(w1_price) - float(spot_price)) * 10000, 1))
+        actual_pts = str(float(w1_values[str(self.ask_pts)]))
+        print("w1 tile tob has extracted")
+        self.rates_tile_spot.compare_values(expected_pts, actual_pts,
+                                            event_name=self.pts_event)
+        # endregion
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check calculation of pts")
-    verifier.compare_values("Pts", str(calculated_pts), extracted_pts[:-2])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    instrument_1w = "EUR/USD-1W"
-    instrument_spo = "EUR/USD-SPOT"
-    client_tier = "Silver"
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details_spo = BaseTileDetails(base=case_base_request, window_index=0)
-    base_details_1w = BaseTileDetails(base=case_base_request, window_index=1)
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details_spo, cp_service)
-        create_or_get_rates_tile(base_details_1w, cp_service)
-        modify_rates_tile(base_details_spo, cp_service, instrument_spo, client_tier)
-        modify_rates_tile(base_details_1w, cp_service, instrument_1w, client_tier)
-        # Step 2
-        spot = extract_ask_value(base_details_spo, cp_service)
-        column_spot = extract_column_spot(base_details_1w, cp_service)
-        check_spot(case_id, spot, column_spot)
-
-        ask_1w = extract_ask_value(base_details_1w, cp_service)
-        check_pts_column(base_details_1w, cp_service, case_id, ask_1w, column_spot)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details_spo.build())
-            call(cp_service.closeRatesTile, base_details_1w.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile_spot.close_tile()
+        self.rates_tile_w1.close_tile()

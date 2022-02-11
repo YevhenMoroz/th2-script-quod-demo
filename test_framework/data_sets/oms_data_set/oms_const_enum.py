@@ -2,24 +2,24 @@ from enum import Enum
 
 
 class OmsFixInstruments(Enum):
-    instrument_1 = dict(           # without commission/fee
-        Symbol='FR0010436584',      # assigned counterpart_reb_1
+    instrument_1 = dict(  # without commission/fee
+        Symbol='FR0010436584',  # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
         SecurityDesc='DREAMNEX'
     )
-    instrument_2 = dict(            # with commission/fee
-        Symbol='ISI1',               # assigned counterpart_mma_2
+    instrument_2 = dict(  # with commission/fee
+        Symbol='ISI1',  # assigned counterpart_mma_2
         SecurityID='ISI1',
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
     instrument_3 = dict(
-        Symbol='ISI3',              # with commission/fee
-        SecurityID='ISI3',          # assigned counterpart_mma_2
+        Symbol='ISI3',  # with commission/fee
+        SecurityID='ISI3',  # assigned counterpart_mma_2
         SecurityIDSource='4',
         SecurityExchange='XEUR',
         SecurityType='CS'
@@ -99,9 +99,7 @@ class OmsVenueClientNames(Enum):
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
     """Commissions"""
-    client_com_1_venue_1 = "CLIENT_FEES_1_PARIS"
-    client_com_2_venue_1 = "CLIENT_COMM_1_PARIS"
-    client_com_3_venue_1 = "CLIENT_COMM_2_PARIS"
+    client_com_1_venue_2 = "CLIENT_COMM_1_EUREX"
 
 
 class OmsAccounts(Enum):
@@ -180,5 +178,58 @@ class OmsCurrency(Enum):
     currency_4 = "USD"
     currency_5 = "UAH"
 
+
 class OmsRoutes(Enum):
-    route_1= "Route via FIXBUYTH2 - component"
+    route_1 = "Route via FIXBUYTH2 - component"
+
+
+class OmsVenueClientAccounts(Enum):
+    client_pt_1_acc_1_venue_client_account = 'MOCLIENT_SA1'
+    client_pt_1_acc_2_venue_client_account = 'MOCLIENT_SA2'
+
+
+class OMSCommissionProfiles(Enum):
+    abs_amt = 1
+    per_u_qty = 2
+    perc_qty = 3
+    perc_amt = 4
+    bas_amt = 5
+    bas_qty = 6
+    abs_amt_usd = 7
+    abs_amt_2 = 8
+
+
+class OMSFeeType(Enum):
+    agent = "AGE"
+    exch_fees = "EXC"
+    levy = "LEV"
+    consumption_tax = "CTX"
+    conversion = "CON"
+    extra = "EXT"
+    local_comm = "LOC"
+    markup = "MAR"
+    other = "OTH"
+    per_transac = "TRA"
+    regulatory = "REG"
+    route = "ROU"
+    stamp = "STA"
+    tax = "TAX"
+    value_added_tax = "VAT"
+
+
+class OMSExecScope(Enum):
+    all_exec = "ALL"
+    day_first_exec = "DAF"
+    first_exec = "FST"
+
+
+class OMSFee(Enum):
+    fee1 = 1
+    fee2 = 2
+    fee3 = 3
+
+
+class OMSCommission(Enum):
+    commission1 = 1
+    commission2 = 2
+    commission3 = 3
