@@ -193,12 +193,13 @@ class TransferOrderDetails:
         self.transfer_order_details.multipleRowSelection = True
         self.transfer_order_details.selectedRowCount = selected_row_count
 
-    def build(self):
-        return self.transfer_order_details
 
     def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
         self.transfer_order_details.desk = desk
         self.transfer_order_details.partialDesk = partial_desk
+
+    def build(self):
+        return self.transfer_order_details
 
 
 class TransferPoolDetailsCLass:
@@ -1106,6 +1107,33 @@ class SplitBookingDetails:
 
     def build(self):
         return self._request
+
+
+class MassManualExecutionDetails:
+    def __init__(self, base_request: EmptyRequest = None, count_of_selected_rows: int = None, price: str = None):
+        if base_request is not None:
+            self._request = order_book_pb2.MassManualExecutionDetails(base=base_request)
+        else:
+            self._request = order_book_pb2.MassManualExecutionDetails()
+
+        if price is not None:
+            self._request.price = price
+
+        if count_of_selected_rows is not None:
+            self._request.countOfSelectedRows = count_of_selected_rows
+
+    def set_default_params(self, base_request):
+        self._request.base.CopyFrom(base_request)
+
+    def set_price(self, price:str):
+        self._request.price = price
+
+    def set_count_of_selected_rows(self, rows:int):
+        self._request.countOfSelectedRows = rows
+
+    def build(self):
+        return self._request
+
 
 # class QuoteRequestDetails:
 #     def __init__(self):

@@ -9,12 +9,12 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -48,13 +48,13 @@ class QAP_5728(TestCase):
                                  'AllocQty': "100"}]}}
         fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit().change_parameters(change_params)
         fix_verifier = FixVerifier(self.dc_connectivity, self.case_id)
-        middle_office = OMSMiddleOfficeBook(self.case_id, self.session_id)
+        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
         fee_commission = RestCommissionsSender(self.wa_connectivity, self.case_id)
         fee_commission.send_default_fee()
-        fee_commission.set_modify_client_commission_message()
+        fee_commission.modify_client_commission_request(comm_profile=CommissionProfiles.Perc_Qty)
         fee_commission.send_post_request()
         # endregion
 

@@ -13,7 +13,7 @@ from test_framework.rest_api_wrappers.rest_commissions_sender import RestCommiss
 from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.data_set import TradeBookColumns, MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOfficeBook
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
@@ -37,7 +37,7 @@ class QAP_5951(TestCase):
         case_name = "QAP-5951"
         case_id = create_event(case_name, self.report_id)
         main_window = BaseMainWindow(case_id, self.session_id)
-        middle_office = OMSMiddleOfficeBook(case_id, self.session_id)
+        middle_office = OMSMiddleOffice(case_id, self.session_id)
         trades = OMSTradesBook(case_id, self.session_id)
         order_book = OMSOrderBook(case_id, self.session_id)
         RestCommissionsSender(self.wa_connectivity, case_id).clear_fees().send_default_fee()
@@ -84,7 +84,7 @@ class QAP_5951(TestCase):
         trades.compare_values({TradeBookColumns.exec_fees.value: "1.123"}, fees, event_name='Check values')
 
     @staticmethod
-    def __verify_fees_in_middle_office(middle_office: OMSMiddleOfficeBook):
+    def __verify_fees_in_middle_office(middle_office: OMSMiddleOffice):
         commissions = middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value, row_number=1)
         fees = middle_office.extract_block_field(MiddleOfficeColumns.fees.value, row_number=1)
         middle_office.compare_values({MiddleOfficeColumns.client_comm.value: "1.123"}, commissions,

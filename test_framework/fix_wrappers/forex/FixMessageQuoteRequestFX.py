@@ -14,15 +14,15 @@ class FixMessageQuoteRequestFX(FixMessage):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "CLIENT1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "Instrument": {
-                    "Symbol": "EUR/USD",
-                    "SecurityType": "FXSPOT"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                 },
-                "SettlDate": spo(),
-                "SettlType": "0",
-                "Currency": "EUR",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "QuoteType": "1",
                 "OrderQty": "1000000",
                 "OrdType": "D"
@@ -36,15 +36,15 @@ class FixMessageQuoteRequestFX(FixMessage):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "Iridium1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "Instrument": {
-                    "Symbol": "EUR/USD",
-                    "SecurityType": "FXFWD"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
                 },
-                "SettlDate": wk1(),
-                "SettlType": "W1",
-                "Currency": "EUR",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlType": self.get_data_set().get_settle_type_by_name("wk1"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "QuoteType": "1",
                 "OrderQty": "1000000",
                 "OrdType": "D"
@@ -58,33 +58,33 @@ class FixMessageQuoteRequestFX(FixMessage):
         quote_request_swap_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "Iridium1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "OrderQty": "1000000",
-                "Currency": "EUR",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "Instrument": {
-                    "Symbol": "EUR/USD",
-                    "SecurityType": "FXSWAP"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_swap")
                 },
                 "NoLegs": [
                     {
                         "InstrumentLeg": {
-                            "LegSymbol": "EUR/USD",
-                            "LegSecurityType": "FXSPOT"
+                            "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                         },
                         "LegSide": "2",
-                        "LegSettlType": "0",
-                        "LegSettlDate": spo(),
+                        "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                        "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
                         "LegOrderQty": "1000000"
                     },
                     {
                         "InstrumentLeg": {
-                            "LegSymbol": "EUR/USD",
-                            "LegSecurityType": "FXFWD"
+                            "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "SecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
                         },
                         "LegSide": "1",
-                        "LegSettlType": "W1",
-                        "LegSettlDate": wk1(),
+                        "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                        "SettlType": self.get_data_set().get_settle_type_by_name("wk1"),
                         "LegOrderQty": "1000000"
                     }
                 ]
