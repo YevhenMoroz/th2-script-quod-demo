@@ -1,5 +1,5 @@
 from test_framework.environments.base_environment import BaseEnvironment
-from test_framework.data_sets.constants import Connectivity, FE_Credentials
+from test_framework.data_sets.constants import Connectivity
 from test_framework.data_sets.environment_type import EnvironmentType
 
 
@@ -28,9 +28,9 @@ class FEEnvironment(BaseEnvironment):
             if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod317_fe.value,
-                    user=FE_Credentials.user.value,
-                    password=FE_Credentials.password.value,
-                    path=FE_Credentials.path.value
+                    user="",
+                    password="",
+                    path=""
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
