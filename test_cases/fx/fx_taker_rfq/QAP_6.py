@@ -71,6 +71,6 @@ class QAP_6(TestCase):
              qrb.status.value: Status.new.value}, 'Checking that NDF currency SWAP RFQ is placed')
         # endregion
 
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()
