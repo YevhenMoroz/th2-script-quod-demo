@@ -1,33 +1,31 @@
-from datetime import datetime
-
-from custom import basic_custom_actions
-from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessage, FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageOrderCancelRejectReport import FixMessageOrderCancelRejectReport
 
 
-class FixMessageOrderCancelRejectReportOMS(FixMessage):
+class FixMessageOrderCancelRejectReportOMS(FixMessageOrderCancelRejectReport):
+    def __init__(self, parameters: dict = None):
+        super().__init__()
+        self.parameters = parameters
+        self.change_parameters(parameters)
 
-    def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None):
-        super().__init__(message_type="OrderCancelRejectRequest")
-        if new_order_single is not None:
-            self.change_parameters(new_order_single.get_parameters())
-        super().change_parameters(parameters)
+    def set_default_cancel_replace_request(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            "OrderID": new_order_single.get_parameter("ClOrdID"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "OrigClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "OrderStatus": '0',
+            "CxlRejResponseTo": '2'
+        }
+        self.change_parameters(change_parameters)
+        return self
 
-    def update_fix_message_cancel_replace_request(self, parameters: dict) -> None:
-        temp = dict(
-            OrderID=parameters["ClOrdID"],
-            ClOrdID=parameters["ClOrdID"],
-            OrigClOrdID=parameters["ClOrdID"],
-            OrderStatus='0',
-            CxlRejResponseTo='2'
-        )
-        super().change_parameters(temp)
-
-    def update_fix_message_cancel_request(self, parameters: dict) -> None:
-        temp = dict(
-            OrderID=parameters["ClOrdID"],
-            ClOrdID=parameters["ClOrdID"],
-            OrigClOrdID=parameters["ClOrdID"],
-            OrderStatus='0',
-            CxlRejResponseTo='1'
-        )
-        super().change_parameters(temp)
+    def set_default__cancel_request(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            "OrderID": new_order_single.get_parameter("ClOrdID"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "OrigClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "OrderStatus": '0',
+            "CxlRejResponseTo": '1'
+        }
+        self.change_parameters(change_parameters)
+        return self

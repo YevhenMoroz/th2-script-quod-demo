@@ -222,6 +222,21 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.FixMessageOrderCancelRejectReport.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID', 'OrderStatus', 'CxlRejResponseTo']
+
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check FixMessageOrderCancelRejectReport",
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.FixMessageOrderCancelRejectReport.value,
+                                                                     fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         elif fix_message.get_message_type() == FIXMessageType.AllocationInstruction.value:
             if key_parameters is None:
                 key_parameters = ['AllocType', 'NoOrders']
@@ -237,6 +252,7 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+
         else:
             pass
         # TODO add exeption into else
