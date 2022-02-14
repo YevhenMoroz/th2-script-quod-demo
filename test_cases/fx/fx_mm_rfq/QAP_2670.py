@@ -51,7 +51,7 @@ class QAP_2670(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        quote_request = FixMessageQuoteRequestFX().set_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_rfq_params()
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency=self.currency, Instrument=self.instrument_spot,
                                                       OrderQty=self.qty, Side="2")
