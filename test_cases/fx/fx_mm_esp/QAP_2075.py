@@ -41,7 +41,6 @@ class QAP_2075(TestCase):
         self.no_related_symbols = [{
             'Instrument': self.instrument,
             'SettlType': self.settle_type}]
-        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

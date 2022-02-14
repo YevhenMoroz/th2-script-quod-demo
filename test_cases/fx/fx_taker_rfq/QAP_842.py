@@ -1,72 +1,40 @@
-import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
-
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_842(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.qty1 = '10000000'
+        self.qty2 = '0'
+        self.qty3 = '2000000'
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
 
-def check_qty(base_request, service, case_id, near_qty):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value.set_extraction_id(extraction_id)
-    extract_value.extract_quantity("aggrRfqTile.nearqty")
-    response = call(service.extractRFQTileValues, extract_value.build())
-    extract_near_qty = response["aggrRfqTile.nearqty"].replace(',', '')
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile()
+        self.rfq_tile.check_qty(near_qty=self.qty1)
+        # endregion
+        # region Step 2
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty2)
+        self.rfq_tile.check_qty(near_qty=self.qty2)
+        # endregion
+        # region Step 3
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty3)
+        self.rfq_tile.check_qty(near_qty=self.qty3)
+        # endregion
+        # region Step 4
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty2)
+        self.rfq_tile.check_qty(near_qty=self.qty2)
+        # endregion
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Qty in RFQ tile")
-    verifier.compare_values('Near leg qty', str(near_qty), extract_near_qty[:-3])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_name = Path(__file__).name[:-3]
-    case_default_qty = 10000000
-    case_qty0 = 0
-    case_qty1 = 2000000
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-    modify_request = ModifyRFQTileRequest(details=base_rfq_details)
-
-    try:
-        # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        check_qty(base_rfq_details, ar_service, case_id, case_default_qty)
-        # Step 2
-        modify_request.set_quantity(0)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty0)
-        # Step 3
-        modify_request.set_quantity(case_qty1)
-        modify_request.set_change_currency(True)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty1)
-        # Step 4
-        modify_request.set_quantity(0)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty(base_rfq_details, ar_service, case_id, case_qty0)
-
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()

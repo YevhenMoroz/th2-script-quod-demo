@@ -41,3 +41,12 @@ class LoginPage(CommonPage):
             self.check_is_web_admin_preloaded()
         except Exception as e:
             print("Login fail" + e.__class__.__name__)
+
+    def get_error_notification(self):
+        return self.find_by_xpath(LoginConstants.LOGIN_FAILURE_XPATH).text
+
+    def check_is_login_button_disabled(self):
+        return self.is_button_enabled(LoginConstants.LOGIN_BUTTON_XPATH)
+
+    def get_version(self):
+        return self.find_by_xpath(LoginConstants.VERSION_XPATH).text

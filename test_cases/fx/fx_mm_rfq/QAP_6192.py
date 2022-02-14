@@ -44,7 +44,7 @@ class QAP_6192(TestCase):
             "Symbol": symbol,
             "SecurityType": security_type_swap
         }
-        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
         quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_spot, settle_type=settle_type_spot,
                                       settle_date=settle_date_spo)
         quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_wk1, leg_sec_type=security_type_fwd,
@@ -61,6 +61,5 @@ class QAP_6192(TestCase):
         new_order_single = FixMessageNewOrderMultiLegFX().set_default_prev_quoted_swap(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_swap(new_order_single,
-                                                                                                  gateway_side_sell,
                                                                                                   status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)

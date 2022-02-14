@@ -32,11 +32,15 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-    client_id = "Client ID"
+    suspend = 'Suspended'
+    client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    venue_client_account = "Venue Client Account"
+    account_id = 'Account ID'
+    done_for_day = 'DoneForDay'
     tenor = "Tenor"
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
@@ -46,6 +50,17 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    near_tenor = 'NearTenor'
+    near_qty = 'NearQty'
+    near_fwd_pts = 'NearFwdPts'
+    near_px = 'NearPx'
+    near_settl_date = 'NearSettlDate'
+    far_tenor = 'FarTenor'
+    far_qty = 'FarQty'
+    far_fwd_pts = 'FarFwdPts'
+    far_px = 'FarPx'
+    far_settl_date = 'FarSettlDate'
+    last_spot_rate = 'LastSpotRate'
     # endregion
 
 
@@ -106,6 +121,17 @@ class TradeBookColumns(Enum):
     owner = 'Owner'
     exec_fees = "Exec Fees"
     client_commission = "Client Commission"
+    near_tenor = 'Near Leg Tenor'
+    near_qty = 'NearQty'
+    near_fwd_pts = 'NearFwdPts'
+    near_px = 'NearPx'
+    near_settl_date = 'Near Leg Settle Date'
+    far_tenor = 'Far Leg Tenor'
+    far_qty = 'FarQty'
+    far_fwd_pts = 'FarFwdPts'
+    far_px = 'FarPx'
+    far_settl_date = 'Far Leg Settle Date'
+    last_spot_rate = 'LastSpotRate'
 
 
 class QuoteRequestBookColumns(Enum):
@@ -233,7 +259,7 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
-    conf_service = ""
+    conf_service = "Conf Service"
 
 
 class AllocationsColumns(Enum):
