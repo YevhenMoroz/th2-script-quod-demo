@@ -327,3 +327,9 @@ class RFQPanelHeaderValues(Enum):
     fill_side_value_label_control = "fill_side_value_label_control"
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
+
+
+class PanicValues(Enum):
+    executable = "executable"
+    pricing = "pricing"
+    hedge_orders = "hedge_orders"
