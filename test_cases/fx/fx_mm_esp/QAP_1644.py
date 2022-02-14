@@ -39,8 +39,6 @@ class QAP_1644(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-
         # region step 1-2
         self.rates_tile.crete_tile()
         self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)

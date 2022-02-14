@@ -12,8 +12,6 @@ class QAP_2069(TestCase):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
-        # endregion
-        # region Variables
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
         symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.instrument = symbol + "-1W"
