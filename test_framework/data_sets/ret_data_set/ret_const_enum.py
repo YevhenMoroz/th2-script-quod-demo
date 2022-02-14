@@ -19,6 +19,7 @@ class RetClients(Enum):
     client_2 = "POOJA"
     client_3 = "QAP-4318"
     client_4 = "test_client"
+    client_5 = "test_api_client"
 
 
 class RetAccounts(Enum):
@@ -41,3 +42,26 @@ class RetRecipients(Enum):
     recipient_user_3 = "QA3"
     recipient_user_4 = "QA4"
     recipient_user_5 = "QA5"
+    MarketDataRequest = "MarketDataRequest"
+
+
+class DirectionEnum(Enum):
+    FromQuod = "FIRST"
+    ToQuod = "SECOND"
+
+
+class MessageType(Enum):
+    NewOrderSingle = "NewOrderSingle"
+    NewOrderReply = "NewOrderReply"
+    OrderUpdate = "OrderUpdate"
+    NewOrderMultiLeg = "NewOrderMultileg"
+    ExecutionReport = "ExecutionReport"
+    OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
+    OrderCancelRequest = "OrderCancelRequest"
+    MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
+    NewOrderList = "NewOrderList"
+    ListStatus = "ListStatus"
+    QuoteRequest = "QuoteRequest"
+    Quote = "Quote"
+    Confirmation = "Confirmation"
+    AllocationInstruction = "AllocationInstruction"

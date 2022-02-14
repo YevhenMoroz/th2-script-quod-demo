@@ -1,8 +1,9 @@
 class RestApiMessages:
 
-    def __init__(self, message_type: str = ''):
+    def __init__(self, message_type, data_set=None):
         self.parameters = dict()
         self.message_type = message_type
+        self.data_set = data_set
 
     def get_message_type(self):
         return self.message_type
@@ -160,6 +161,19 @@ class RestApiMessages:
         self.message_type = "ModifyInstitution"
         self.parameters = params
 
+    def drop_session(self, user_id, role_id, session_key):
+        self.message_type = "DropSession"
+        drop_session_params = {
+            "dropSessionElement": [
+                {
+                    "userID": user_id,
+                    "roleID": role_id,
+                    "sessionKey": session_key
+                }
+            ]
+        }
+        self.parameters = drop_session_params
+
     def modify_user(self, params):
         self.message_type = "ModifyUser"
         self.parameters = params
@@ -182,6 +196,10 @@ class RestApiMessages:
 
     def modify_gating_rule(self, params):
         self.message_type = "ModifyGatingRule"
+        self.parameters = params
+
+    def create_security_account(self, params):
+        self.message_type = "CreateSecurityAccount"
         self.parameters = params
 
     def create_client(self, params):
@@ -208,6 +226,25 @@ class RestApiMessages:
         }
         self.parameters = disable_params
 
+    def send_user_feedback(self, params):
+        self.message_type = 'SendUserFeedback'
+        self.parameters = params
+
+    def create_wash_book_rule(self, params):
+        self.message_type = "CreateWashBookRule"
+        self.parameters = params
+
+    def modify_wash_book_rule(self, params):
+        self.message_type = "ModifyWashBookRule"
+        self.parameters = params
+
+    def delete_wash_book_rule(self, wash_book_rule_id):
+        self.message_type = "DeleteWashBookRule"
+        delete_params = {
+            'washBookRuleID': int(wash_book_rule_id),
+        }
+        self.parameters = delete_params
+
     def find_all_institution(self):
         self.message_type = "FindAllInstitution"
 
@@ -222,6 +259,9 @@ class RestApiMessages:
 
     def find_all_user(self):
         self.message_type = "FindAllUser"
+
+    def find_all_user_session(self):
+        self.message_type = "FindAllUserSession"
 
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
