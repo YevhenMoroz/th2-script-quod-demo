@@ -1,77 +1,86 @@
-import time
-
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-import logging
 from pathlib import Path
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium2'
-account = 'Palladium2_2'
-side = '1'
-orderqty1 = '1000000'
-ordtype = '2'
-timeinforce = '4'
-currency= 'GBP'
-settlcurrency = 'NOK'
-settltype='W1'
-symbol='GBP/NOK'
-securitytype_fwd='FXFWD'
-securitytype_spo='FXSPOT'
-securityid='GBP/NOK'
-bands=[1000000,2000000]
-bands_not_pub=[2000000]
-md=None
-settldate_wk1=tsd.wk1()
-settldate_spo=tsd.spo()
-defaultmdsymbol_spo='GBP/NOK:SPO:REG:HSBC'
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.forex.RestApiModifyMarketMakingStatusMessages import \
+    RestApiModifyMarketMakingStatusMessages
 
 
+class QAP_2872(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.dealer_intervention = None
+        self.rest_message = RestApiModifyMarketMakingStatusMessages()
+        self.rest_manager = RestApiManager
+        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.new_order_single = FixMessageNewOrderSingleFX()
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.client = self.data_set.get_client_by_name("client_mm_5")
+        self.gbp_nok = self.data_set.get_symbol_by_name("symbol_10")
+        self.instrument = self.gbp_nok + "-1W"
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.security_type = self.data_set.get_security_type_by_name('fx_fwd')
+        self.settltype = self.data_set.get_settle_type_by_name("wk1")
+        self.no_related_symbols = [{
+            'Instrument': {
+                'Symbol': self.gbp_nok,
+                'SecurityType': self.security_type,
+                'Product': '4'},
+            'SettlType': self.settltype}]
+        self.instrument = {
+            'Symbol': self.gbp_nok,
+            'SecurityType': self.security_type,
+            'Product': '4'}
+        self.status_reject = Status.Reject
+        self.bands = ["1000000", '2000000']
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1-3
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.client}). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
+        # self.md_snapshot.remove_parameters(["MDTime"])
+        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
 
+        # region step 4
+        self.new_order_single.set_default().change_parameters(
+            {"Account": self.client, "Instrument": self.instrument, "Currency": self.currency,
+             "SettlType": self.settltype})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
-
-        # Preconditions
-        params_sell=CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate_spo, symbol=symbol, securitytype=securitytype_spo)
-        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
-        #Send market data to the HSBC venue GBP/NOK spot
-        FixClientBuy(CaseParamsBuy(case_id,defaultmdsymbol_spo,symbol,securitytype_spo)).\
-            send_market_data_spot()
-
-        #Step 1-3
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty1, ordtype=ordtype, timeinforce=timeinforce, currency=currency,
-                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate_wk1, symbol=symbol, securitytype=securitytype_fwd,
-                                   securityid=securityid)
-        params.prepare_md_for_verification(bands, published=False)
-        md = FixClientSellEsp(params).\
-            send_md_request().\
-            verify_md_pending()
-        price=md.extract_filed('Price')
-
-        #Step 4
-        text='not tradeable'
-        md.send_new_order_single(price).\
-            verify_order_pending().\
-            verify_order_rejected(text)
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            md.send_md_unsubscribe()
-        except:
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-
-
-
-
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe)

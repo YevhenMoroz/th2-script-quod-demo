@@ -27,7 +27,7 @@ class QAP_1418(TestCase):
         self.pips_5 = "5"
 
         self.ask_pips = PriceNaming.ask_pips
-        self.bid_pips = PriceNaming.bid_pip
+        self.bid_pips = PriceNaming.bid_pips
 
         self.spread = PriceNaming.spread
         self.widen_spread = ClientPrisingTileAction.widen_spread

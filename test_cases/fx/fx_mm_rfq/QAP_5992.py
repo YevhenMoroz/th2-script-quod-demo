@@ -43,7 +43,7 @@ class QAP_5992(TestCase):
             "Symbol": symbol,
             "SecurityType": security_type_swap
         }
-        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
         quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_fwd, settle_type=settle_type_today,
                                       settle_date=settle_date_tod)
         quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_spot, leg_sec_type=security_type_spot,

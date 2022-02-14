@@ -2,7 +2,8 @@ from pathlib import Path
 
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum, Status
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -39,7 +40,6 @@ class QAP_2084(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

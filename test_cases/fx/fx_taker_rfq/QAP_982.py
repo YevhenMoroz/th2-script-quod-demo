@@ -1,78 +1,51 @@
-import logging
 from pathlib import Path
-import timestring
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo_front_end
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ExtractRFQTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_982(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        self.qty = '10000000'
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        aud_currency = self.data_set.get_currency_by_name('currency_aud')
+        aud_brl_symbol = self.data_set.get_symbol_by_name('symbol_ndf_3')
+        near_tenor = self.data_set.get_tenor_by_name('tenor_spot')
 
-def check_default_value_rfq_tile(exec_id, base_request, service, case_id, curr_pair, qty, near_tenor, date,
-                                 curr_button):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extract_value.set_extraction_id(exec_id)
-    extract_value.extract_tenor("aggrRfqTile.nearTenor")
-    extract_value.extract_near_settlement_date("aggrRfqTile.nearSettlement")
-    extract_value.extract_quantity("aggrRfqTile.qty")
-    extract_value.extract_currency_pair("aggrRfqTile.currPair")
-    extract_value.extract_currency("aggrRfqTile.curr")
-    response = call(service.extractRFQTileValues, extract_value.build())
+        # region Step 1
+        self.rfq_tile.crete_tile()
+        self.rfq_tile.check_currency_pair(currency_pair=aud_brl_symbol)
+        # endregion
+        # region Step 2
+        self.rfq_tile.check_qty(near_qty=self.qty)
+        # endregion
+        # region Step 3
+        self.rfq_tile.check_tenor(near_tenor=near_tenor)
+        # endregion
+        # region Step 4
+        self.rfq_tile.check_date(near_date=spo_front_end())
+        # endregion
+        # region Step 5
+        self.rfq_tile.check_labels(left_label='Sell AUD', right_label='Buy AUD')
+        # endregion
+        # region Step 6
+        self.rfq_tile.check_currency(currency=aud_currency)
+        # endregion
 
-    extract_tenor = response["aggrRfqTile.nearTenor"]
-    extract_near_setl_date = response["aggrRfqTile.nearSettlement"]
-    extract_near_setl_date = timestring.Date(extract_near_setl_date)
-    extract_qty = response["aggrRfqTile.qty"]
-    extract_cur_pair = response["aggrRfqTile.currPair"]
-    extract_cur = response["aggrRfqTile.curr"]
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify default value in RFQ tile")
-    verifier.compare_values("Tenor", near_tenor, extract_tenor)
-    verifier.compare_values("Near Setll Date", date, str(extract_near_setl_date))
-    verifier.compare_values("Qty", qty, extract_qty)
-    verifier.compare_values("Currencies pair", curr_pair, extract_cur_pair)
-    verifier.compare_values("Currencies button", curr_button, extract_cur)
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_name = Path(__file__).name[:-3]
-
-    case_cur_pair = "AUD/BRL"
-    case_qty = "10,000,000.00"
-    case_near_tenor = "Spot"
-    case_date = spo_front_end()
-    case_curr_button = "AUD"
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        create_or_get_rfq(base_rfq_details, ar_service)
-        check_default_value_rfq_tile("CDV_0", base_rfq_details, ar_service, case_id, case_cur_pair,
-                                     case_qty, case_near_tenor, case_date, case_curr_button)
-
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()

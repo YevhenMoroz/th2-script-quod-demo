@@ -1,75 +1,59 @@
-import logging
 from datetime import datetime
 from pathlib import Path
-
-import timestring
-
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo_front_end
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames, ClientPrisingTileAction, PriceNaming
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+from win_gui_modules.client_pricing_wrappers import ExtractRatesTileValues
+
+ask_band = RatesColumnNames.ask_band
+bid_band = RatesColumnNames.bid_band
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_2796(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_14")
+        self.instrument = self.symbol + "-Spot"
+
+        self.now = datetime.now()
+        self.date = spo_front_end()
 
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+        self.instrument_event = "instrument validation"
+        self.client_tier_event = "client_tier validation"
+        self.date_event = "date validation"
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
 
 
-def check_date(base_request, service, case_id, expected_date):
-    extract_request = ExtractRatesTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_request.set_extraction_id(extraction_id)
-    extract_request.extract_value_date("ratesTile.Date")
-    response = call(service.extractRateTileValues, extract_request.build())
 
-    now = datetime.now()
-    extracted_value = response["ratesTile.Date"]
-    date = extracted_value + "-" + str(now.year)
-    extracted_date = datetime.strptime(date, "%d-%b-%Y").strftime('%Y-%m-%d %H:%M:%S')
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Tenor date on pricing tile")
-    verifier.compare_values("Date", expected_date, str(extracted_date))
-    verifier.verify()
+        header_values = self.rates_tile.extract_header(instrument="instrument", client_tier="client_tier", date="date")
+        actual_instrument = header_values["instrument"]
+        actual_client_tier = header_values["client_tier"]
+        extracted_date_value = header_values["date"]
+        fedate = extracted_date_value + "-" + str(self.now.year)
+        actual_date = datetime.strptime(fedate, "%d-%b-%Y").strftime('%Y-%m-%d %H:%M:%S')
+        self.rates_tile.compare_values(self.instrument, actual_instrument,
+                                       event_name=self.instrument_event)
+        self.rates_tile.compare_values(self.date, actual_date,
+                                       event_name=self.date_event)
+        self.rates_tile.compare_values(self.client, actual_client_tier,
+                                       event_name=self.client_tier_event)
+        # endregion
 
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "NOK/SEK-Spot"
-    client_tier = "Silver"
-    date_spo = spo_front_end()
-
-    try:
-        create_or_get_rates_tile(base_details, cp_service)
-        # Step 2
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        check_date(base_details, cp_service, case_id, date_spo)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()

@@ -23,7 +23,7 @@ def test_run():
 
     try:
         base_main_window.open_fe(report_id=report_id)
-        QAP_1016(report_id, data_set).execute()
+        QAP_1016(report_id=report_id, session_id=session_id, data_set=data_set).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
