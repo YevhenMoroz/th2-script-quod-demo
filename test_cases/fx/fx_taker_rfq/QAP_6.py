@@ -37,7 +37,7 @@ class QAP_6(TestCase):
         self.rfq_tile.send_rfq()
 
         self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, usd_php_symbol]).check_quote_book_fields_list(
+            [qrb.instrument_symbol.value, eur_usd_symbol]).check_quote_book_fields_list(
             {qrb.instrument_symbol.value: eur_usd_symbol,
              qrb.quote_status.value: qs.accepted.value,
              qrb.status.value: Status.new.value}, 'Checking that regular currency RFQ is placed')

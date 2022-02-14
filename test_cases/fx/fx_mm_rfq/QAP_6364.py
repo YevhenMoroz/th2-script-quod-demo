@@ -45,7 +45,7 @@ class QAP_6364(TestCase):
         self.market_data_snap_shot.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.market_data_snap_shot, "Send MD GBP/USD FWD HSBC")
         # Step 2
-        quote_request = FixMessageQuoteRequestFX().set_rfq_params_fwd()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_rfq_params_fwd()
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency="GBP", Instrument=self.instrument, OrderQty=self.qty)
         self.fix_manager_rfq.send_message(quote_request, "Send Quote Request")

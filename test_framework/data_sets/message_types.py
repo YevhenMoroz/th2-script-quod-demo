@@ -7,6 +7,7 @@ class FIXMessageType(Enum):
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
     MarketDataRequest = "MarketDataRequest"
+    QuoteRequestReject = "QuoteRequestReject"
     MarketDataIncrementalRefresh = "MarketDataIncrementalRefresh"
     MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
     NewOrderList = "NewOrderList"
@@ -16,6 +17,7 @@ class FIXMessageType(Enum):
     QuoteRequest = "QuoteRequest"
     NewOrderMultiLeg = "NewOrderMultileg"
     Quote = "Quote"
+    MarketDataRequestReject = "MarketDataRequestReject"
 
 
 class ORSMessageType(Enum):

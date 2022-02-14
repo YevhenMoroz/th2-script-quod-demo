@@ -1,133 +1,47 @@
-import logging
-from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_3045(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = None
 
+        self.expected_base_1m = "0.1"
+        self.expected_base_3m = "0"
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_client_tier(client)
-    modify_request.set_instrument(instrument)
-    call(service.modifyRatesTile, modify_request.build())
+        self.ask_base = RatesColumnNames.ask_base
+        self.bid_base = RatesColumnNames.bid_base
 
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
 
-def check_margins(base_request, service, case_id, row, base):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(row)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_3")
+        self.instrument = self.symbol + "-Spot"
+        self.base_event = "base value validation"
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check base margins")
-    verifier.compare_values("Base", base, response["rateTile.askBase"])
-    verifier.verify()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 5
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
 
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base, row_number=1)
+        actual_base_1m = row_values[str(self.ask_base)]
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base, row_number=2)
+        actual_base_3m = row_values[str(self.ask_base)]
+        self.rates_tile.compare_values(self.expected_base_1m, actual_base_1m,
+                                       event_name=self.base_event)
+        self.rates_tile.compare_values(self.expected_base_3m, actual_base_3m,
+                                       event_name=self.base_event)
+        # endregion
 
-no_md_entries = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19597,
-        "MDEntrySize": 200000,
-        "MDEntryPositionNo": 1,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19609,
-        "MDEntrySize": 200000,
-        "MDEntryPositionNo": 1,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19594,
-        "MDEntrySize": 6000000,
-        "MDEntryPositionNo": 2,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19612,
-        "MDEntrySize": 6000000,
-        "MDEntryPositionNo": 2,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19591,
-        "MDEntrySize": 1200000000,
-        "MDEntryPositionNo": 3,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19615,
-        "MDEntrySize": 1200000000,
-        "MDEntryPositionNo": 3,
-        "SettlDate": spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    instrument = "EUR/GBP-SPOT"
-    client_tier = "Silver"
-
-    default_md_symbol_spo = "EUR/GBP:SPO:REG:HSBC"
-    symbol = "EUR/GBP"
-    security_type_spo = "FXSPOT"
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        params = CaseParamsBuy(case_id, default_md_symbol_spo, symbol, security_type_spo)
-        params.prepare_custom_md_spot(no_md_entries)
-        FixClientBuy(params).send_market_data_spot()
-        check_margins(base_details, cp_service, case_id, 1, "0.1")
-        check_margins(base_details, cp_service, case_id, 2, "0")
-
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()
