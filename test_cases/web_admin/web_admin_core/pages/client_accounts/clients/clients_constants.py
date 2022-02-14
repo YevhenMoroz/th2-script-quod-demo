@@ -21,6 +21,9 @@ class ClientsConstants:
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     REQUEST_FAILED_MESSAGE_XPATH = "//*[text()='Request failed, verify the input data. If the problem persists, please contact the administrator for full details']"
+    CLIENT_LOAD_FILTER = "//*[@id='lookup-input']"
+    LOAD_BUTTON = "//button[contains(@class, 'lookup-btn')]"
+    POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -31,6 +34,7 @@ class ClientsConstants:
     MAIN_PAGE_DISCLOSE_EXEC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@col-id="clearingAccountType"]//span//span[4]'
+    MAIN_PAGE_CLIENT_NAME = '//*[@col-id="accountGroupName"]//span[@class="ag-group-value"]'
 
     # values tab
     VALUES_TAB_ID_XPATH = '//*[@formcontrolname="accountGroupID"]'

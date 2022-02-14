@@ -14,16 +14,16 @@ class ProfilePersonalDetailsSubWizard(CommonPage):
         return self.find_by_xpath(ProfileConstants.LAST_NAME_FIELD_XPATH).text
 
     def get_mobile_no(self):
-        return self.get_text_by_xpath(ProfileConstants.MOBILE_NO_FIELD_XPATH).text
+        return self.get_text_by_xpath(ProfileConstants.MOBILE_NO_FIELD_XPATH)
 
     def get_email(self):
-        return self.get_text_by_xpath(ProfileConstants.EMAIL_FIELD_XPATH).text
+        return self.get_text_by_xpath(ProfileConstants.EMAIL_FIELD_XPATH)
 
     def get_country(self):
-        return self.get_text_by_xpath(ProfileConstants.COUNTRY_FIELD_XPATH).text
+        return self.get_text_by_xpath(ProfileConstants.COUNTRY_FIELD_XPATH)
 
     def get_address(self):
-        return self.get_text_by_xpath(ProfileConstants.ADDRESS_FIELD_XPATH).text
+        return self.get_text_by_xpath(ProfileConstants.ADDRESS_FIELD_XPATH)
 
     def get_data_of_birth(self):
-        return self.get_text_by_xpath(ProfileConstants.DATA_OF_BIRTH_FIELD_XPATH).text
+        return self.get_text_by_xpath(ProfileConstants.DATA_OF_BIRTH_FIELD_XPATH)

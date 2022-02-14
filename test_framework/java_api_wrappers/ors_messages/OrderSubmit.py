@@ -32,8 +32,8 @@ class OrderSubmit(JavaApiMessage):
                 'OrdQty': "100",
                 'AccountGroupID': data_set.get_client_by_name("client1"),
                 'ExecutionPolicy': 'DMA',
-                'ListingList': {'ListingBlock': [{'ListingID': data_set.get_db_listing_by_name("instrument_1")}]},
-                'InstrID': data_set.get_db_instrument_by_name("listing_1")
+                'ListingList': {'ListingBlock': [{'ListingID': data_set.get_listing_id_by_name("instrument_1")}]},
+                'InstrID': data_set.get_instrument_id_by_name("listing_1")
             }
         }
         super().change_parameters(base_parameters)

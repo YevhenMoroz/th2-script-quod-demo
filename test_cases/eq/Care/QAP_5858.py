@@ -1,13 +1,12 @@
 import logging
-import logging
 import os
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderType, TimeInForce, OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -17,58 +16,58 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class Qap5858(TestCase):
-    def __init__(self, report_id, session_id, file_name):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+class QAP_5858(TestCase):
+    def __init__(self, report_id, session_id, date_set):
+        super().__init__(report_id, session_id, date_set)
+        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
 
-    def qap_5858(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declarations
         qty = "900"
         price = "30"
-        client = "MOClient"
-        account = 'MOClient_SA1'
-        account_new = 'MOClient_SA2'
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        base_window = BaseMainWindow(self.case_id, self.session_id)
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
+        client = self.data_set.get_client_by_name('client_pt_1')
+        account = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        account_new = self.data_set.get_account_by_name('client_pt_1_acc_2')
+        venue_client_account_first = self.data_set.get_venue_client_account('client_pt_1_acc_1_venue_client_account')
+        venue_client_account_second = self.data_set.get_venue_client_account('client_pt_1_acc_2_venue_client_account')
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        order_type = OrderType.limit.value
+        time_in_force = TimeInForce.DAY.value
+        user = Stubs.custom_config['qf_trading_fe_user']
+        venue_client_column_name = OrderBookColumns.venue_client_account.value
+        account_id_column_name = OrderBookColumns.account_id.value
         # create CO order
         oms_order_book = OMSOrderBook(self.case_id, self.session_id)
         oms_order_inbox = OMSClientInbox(self.case_id, self.session_id)
         oms_order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type='Limit',
-                                           tif='Day', is_sell_side=False, instrument='VETO', account='MOClient_SA1',
-                                           recipient='Desk of Order Book')
-
-        oms_order_ticket.create_order(lookup='VETO')
-        oms_order_inbox.accept_order('VETO', qty, price)
-        oms_order_book.scroll_order_book(1)
+        oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
+                                           partial_desk=False, account=account)
+        oms_order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))
+        oms_order_inbox.accept_order(lookup, qty, price)
         # region extract Venue Client Account
-        venue_client_account = oms_order_book.extract_field('Venue Client Account')
+        venue_client_account = oms_order_book.extract_field(venue_client_column_name)
+        extracted_account = oms_order_book.extract_field(account_id_column_name)
         # endregion
 
         # region verify velues
-        expected_result = {'Account ID': 'MOClient_SA1', 'Venue Client Account': 'MOCLIENT_SA1'}
-        actually_result = {'Account ID': account, 'Venue Client Account': venue_client_account}
-        oms_order_book.compare_values(expected_result, actually_result, event_name='Check values')
+        expected_result = {account_id_column_name: account,
+                           venue_client_column_name: venue_client_account_first}
+        actually_result = {account_id_column_name: extracted_account, venue_client_column_name: venue_client_account}
+        oms_order_book.compare_values(expected_result, actually_result, event_name='Check values 1')
         # endregion
 
         # region amend order
         oms_order_ticket.set_order_details(account=account_new)
         oms_order_ticket.amend_order()
+        #endregion
 
         # region extract Venue Client Account
         venue_client_new_account = oms_order_book.extract_field('Venue Client Account')
-        expected_result = {'Account ID': 'MOClient_SA2', 'Venue Client Account': 'MOCLIENT_SA2'}
-        actually_result = {'Account ID': account_new, 'Venue Client Account': venue_client_new_account}
-        oms_order_book.compare_values(expected_result, actually_result, event_name='Check values')
+        extracted_account = oms_order_book.extract_field(account_id_column_name)
+        expected_result = {account_id_column_name: account_new,
+                           venue_client_column_name: venue_client_account_second}
+        actually_result = {account_id_column_name: extracted_account,
+                           venue_client_column_name: venue_client_new_account}
+        oms_order_book.compare_values(expected_result, actually_result, event_name='Check values 2')
         # endregion
-
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_5858()
