@@ -12,8 +12,8 @@ class FixMessageOrderCancelRequestOMS(FixMessageOrderCancelRequest):
 
     def set_default(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
-            "OrigClOrdID": new_order_single.get_parameter("Account"),
-            "ClOrdID": new_order_single.get_parameter("OrderQtyData"),
+            "OrigClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
             "Side": new_order_single.get_parameter("Side"),
             "Account": new_order_single.get_parameter("Account"),
             "TransactTime": datetime.utcnow().isoformat()

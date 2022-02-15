@@ -6,14 +6,15 @@ from test_framework.data_sets.environment_type import EnvironmentType
 class FixEnvironment(BaseEnvironment):
     environment_instances = {}
 
-    def __init__(self, environment_type: str = None, sell_side: str = None, sell_side2: str = None, buy_side: str = None, buy_side2: str = None, feed_handler: str = None, back_office: str = None):
+    def __init__(self, environment_type: str = None, sell_side: str = None, sell_side2: str = None,
+                 buy_side: str = None, buy_side2: str = None, feed_handler: str = None, drop_copy: str = None):
         self.environment_type = environment_type
         self.sell_side = sell_side
         self.sell_side2 = sell_side2
         self.buy_side = buy_side
         self.buy_side2 = buy_side2
         self.feed_handler = feed_handler
-        self.back_office = back_office
+        self.drop_copy = drop_copy
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -25,7 +26,8 @@ class FixEnvironment(BaseEnvironment):
                     buy_side=Connectivity.Ganymede_316_Buy_Side.value,
                     feed_handler=Connectivity.Ganymede_316_Feed_Handler.value
                 )
-                FixEnvironment.environment_instances.update({EnvironmentType.quod316_ganymede_standard.value: site_environment})
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod316_ganymede_standard.value: site_environment})
             return FixEnvironment.environment_instances[EnvironmentType.quod316_ganymede_standard.value]
         elif env.value == EnvironmentType.quod316_ganymede_redburn.value:
             if EnvironmentType.quod316_ganymede_redburn.value not in FixEnvironment.environment_instances.keys():
@@ -35,8 +37,20 @@ class FixEnvironment(BaseEnvironment):
                     buy_side=Connectivity.Ganymede_316_Buy_Side.value,
                     feed_handler=Connectivity.Ganymede_316_Feed_Handler.value
                 )
-                FixEnvironment.environment_instances.update({EnvironmentType.quod316_ganymede_redburn.value: site_environment})
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod316_ganymede_redburn.value: site_environment})
             return FixEnvironment.environment_instances[EnvironmentType.quod316_ganymede_redburn.value]
+        elif env.value == EnvironmentType.quod317_ganymede_standard_test.value:
+            if EnvironmentType.quod317_ganymede_standard_test.value not in FixEnvironment.environment_instances.keys():
+                site_environment = FixEnvironment(
+                    environment_type=EnvironmentType.quod317_ganymede_standard_test.value,
+                    sell_side=Connectivity.Ganymede_317_ss.value,
+                    buy_side=Connectivity.Ganymede_317_bs.value,
+                    drop_copy=Connectivity.Ganymede_317_dc.value
+                )
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod317_ganymede_standard_test.value: site_environment})
+                return FixEnvironment.environment_instances[EnvironmentType.quod317_ganymede_standard_test.value]
         else:
             raise Exception('No such environment')
 

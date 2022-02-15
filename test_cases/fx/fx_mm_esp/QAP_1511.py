@@ -13,6 +13,7 @@ from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesT
 class QAP_1511(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rates_tile = None
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
@@ -33,14 +34,6 @@ class QAP_1511(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Initialization
-        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
-        # endregion
-
-        # region Variables
-
-        # endregion
-
         # region step 1
         self.rates_tile.crete_tile()
         self.rates_tile.modify_client_tile(instrument=self.instrument1, client_tier=self.client)
