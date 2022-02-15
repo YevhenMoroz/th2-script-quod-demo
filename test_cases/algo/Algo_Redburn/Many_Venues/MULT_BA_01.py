@@ -20,7 +20,7 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': (os.path.basename(__file__)[:-3]) + '_' + + bca.client_orderid(9),
+            'ClOrdID': (os.path.basename(__file__)[:-3]) + '_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
             'OrderQty': 10000000,
