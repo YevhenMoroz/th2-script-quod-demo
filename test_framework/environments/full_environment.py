@@ -1,5 +1,6 @@
 from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.data_sets.environment_type import EnvironmentType
+from test_framework.environments.fe_environment import FEEnvironment
 
 
 class FullEnvironment:
@@ -15,8 +16,8 @@ class FullEnvironment:
             for instance in environment:
                 if instance.tag == "fix_environment":
                     self.__list_fix_environment.append(FixEnvironment.get_instance(EnvironmentType[instance.text]))
-
-
+                if instance.tag == "fe_environment":
+                    self.__list_fe_environment.append(FEEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
     def get_list_fix_environment(self):
@@ -31,4 +32,3 @@ class FullEnvironment:
     def get_list_web_trading_environment(self):
         return self.__list_web_trading_environment
     # endregion
-

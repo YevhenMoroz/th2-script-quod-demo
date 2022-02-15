@@ -15,7 +15,7 @@ from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base
 
-from test_framework.old_wrappers.ret_wrappers import verify_order_value, decorator_try_except
+from test_framework.old_wrappers.ret_wrappers import verify_order_value, try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,7 +30,7 @@ def extract_error_message_order_ticket(base_request, order_ticket_service):
     return result
 
 
-@decorator_try_except(test_id=os.path.basename(__file__))
+@try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = os.path.basename(__file__)
 

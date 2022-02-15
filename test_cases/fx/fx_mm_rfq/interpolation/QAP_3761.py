@@ -42,7 +42,7 @@ class QAP_3761(TestCase):
             "SecurityType": security_type_fwd
         }
 
-        quote_request = FixMessageQuoteRequestFX().set_rfq_params_fwd()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_rfq_params_fwd()
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
                                                       Currency=currency, Instrument=instrument,
                                                       SettlDate=settle_date_wk3, SettlType=settle_type_wk3)

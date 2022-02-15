@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.trades_blotter_wrappers import ModifyTradesDetails
@@ -81,4 +82,18 @@ class BaseTradesBook(BaseWindow):
         if trades_filter_list is not None:
             self.cancel_manual_execution_details.set_filter(trades_filter_list)
         call(self.cancel_manual_execution_call, self.cancel_manual_execution_details.build())
+    # endregion
+    # region Check
+
+    def check_trade_fields_list(self, expected_fields: dict, event_name="Check Trade Book",
+                                verification_method: VerificationMethod = VerificationMethod.EQUALS):
+
+        actual_list = self.extract_fields(expected_fields)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
+        self.verifier.verify()
     # endregion
