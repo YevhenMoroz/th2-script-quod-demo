@@ -59,6 +59,7 @@ class QAP_6500(CommonTestCase):
         main_page.click_on_new_workspace_button()
         time.sleep(2)
         main_page.click_on_order_book_button()
+        time.sleep(2)
         order_book = OrderBookPage(self.web_driver_container)
         order_book.click_on_maximize_button()
         main_page.click_on_buy_button()
@@ -75,9 +76,11 @@ class QAP_6500(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            order_book = OrderBookPage(self.web_driver_container)
-            print(order_book.get_order_qty())
-            self.verify("Does the order created successfully? ", self.quantity, order_book.get_order_qty())
+            try:
+                order_book = OrderBookPage(self.web_driver_container)
+                self.verify("Does the order created successfully? ", self.quantity, order_book.get_order_qty())
+            except Exception as e:
+                print(e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

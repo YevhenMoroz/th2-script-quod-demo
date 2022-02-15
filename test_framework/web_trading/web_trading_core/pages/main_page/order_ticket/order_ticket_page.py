@@ -17,7 +17,6 @@ class OrderTicketPage(CommonPage):
         time.sleep(2)
         self.set_text_by_xpath(OrderTicketConstants.SEARCH_SYMBOL_FIELD_XPATH, symbol)
         time.sleep(4)
-        print(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol))
         self.find_by_xpath(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol)).click()
         # self.select_value_from_dropdown_list()
 
