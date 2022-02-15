@@ -47,17 +47,16 @@ class BasePanicWindow(BaseWindow):
     # endregion
 
     # region Modification
-    def press_buttons(self, *args: PanicValues):
+    def press_buttons(self, executable: bool = False, pricing: bool = False, hedge_orders: bool = False):
         """
         Press on buttons im MM section in Pricing window
         -----Example of usage-----
-        pricing = PanicValues.pricing
         """
-        if PanicValues.executable in args:
+        if executable:
             self.modification_request.press_executable()
-        if PanicValues.pricing in args:
+        if pricing:
             self.modification_request.press_pricing()
-        if PanicValues.hedge_orders in args:
+        if hedge_orders:
             self.modification_request.press_hedge_orders()
         call(self.modification_call, self.modification_request.build())
         self.clear_details([self.modification_request])
