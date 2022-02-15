@@ -83,8 +83,8 @@ class Instrument(Enum):
         SecurityType='CS'
     )
     RF = dict(
-        Symbol='FR0000121121_EUR',
-        SecurityID='FR0000121121',
+        Symbol='FR0000062788_EUR',
+        SecurityID='FR0000062788',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
@@ -122,6 +122,9 @@ class Connectivity(Enum):
     Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
+    Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
+    Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
+    Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
 class GatewaySide(Enum):
