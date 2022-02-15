@@ -8,24 +8,15 @@ class FixMessageOrderCancelRejectReportOMS(FixMessageOrderCancelRejectReport):
         self.parameters = parameters
         self.change_parameters(parameters)
 
-    def set_default_cancel_replace_request(self, new_order_single: FixMessageNewOrderSingle):
+    def set_default(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
-            "OrderID": new_order_single.get_parameter("ClOrdID"),
+            "Account": new_order_single.get_parameter("Account"),
+            "OrdStatus": '0',
+            "Text": "*",
+            "OrderID": "*",
+            "TransactTime": "*",
             "ClOrdID": new_order_single.get_parameter("ClOrdID"),
-            "OrigClOrdID": new_order_single.get_parameter("ClOrdID"),
-            "OrderStatus": '0',
-            "CxlRejResponseTo": '2'
-        }
-        self.change_parameters(change_parameters)
-        return self
-
-    def set_default__cancel_request(self, new_order_single: FixMessageNewOrderSingle):
-        change_parameters = {
-            "OrderID": new_order_single.get_parameter("ClOrdID"),
-            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
-            "OrigClOrdID": new_order_single.get_parameter("ClOrdID"),
-            "OrderStatus": '0',
-            "CxlRejResponseTo": '1'
+            "OrigClOrdID": new_order_single.get_parameter("ClOrdID")
         }
         self.change_parameters(change_parameters)
         return self

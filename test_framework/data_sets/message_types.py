@@ -16,7 +16,7 @@ class FIXMessageType(Enum):
     QuoteRequest = "QuoteRequest"
     NewOrderMultiLeg = "NewOrderMultileg"
     Quote = "Quote"
-    OrderCancelRejectReport = "OrderCancelRejectReport"
+    OrderCancelReject = "OrderCancelReject"
 
 
 class ORSMessageType(Enum):

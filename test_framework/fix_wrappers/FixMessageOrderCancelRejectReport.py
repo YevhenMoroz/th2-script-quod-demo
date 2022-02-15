@@ -5,7 +5,7 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessage, Fix
 class FixMessageOrderCancelRejectReport(FixMessage):
 
     def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None):
-        super().__init__(message_type=FIXMessageType.OrderCancelRejectReport.value)
+        super().__init__(message_type=FIXMessageType.OrderCancelReject.value)
         if new_order_single is not None:
             self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)
