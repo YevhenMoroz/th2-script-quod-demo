@@ -14,13 +14,21 @@ class QAP_2451(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.disabled_massage = "User adm_desk Disabled"
+        self.users = ["adm02", "adm03"]
+        self.passwords = ["adm02", "adm03"]
+        self.disabled_massage = f"User {self.users[0]} Unlocked"
 
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.set_login("adm02")
         login_page.set_password("adm02")
+        for i in range(52):
+           login_page.click_login_button()
+           time.sleep(1)
+        login_page.check_is_login_successful()
+        login_page.set_login("adm03")
+        login_page.set_password("adm03")
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -32,12 +40,12 @@ class QAP_2451(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id("adm_desk")
+            users_page.set_user_id("adm02")
             time.sleep(2)
-            users_page.click_on_enable_disable_button()
-            self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())
-            time.sleep(1)
-            users_page.click_on_enable_disable_button()
+            users_page.click_on_lock_unlock_button()
+            time.sleep(2)
+            self.verify("After click on unlock", "unlock", users_page.get_lock_unlock_status())
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

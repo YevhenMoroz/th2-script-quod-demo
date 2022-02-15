@@ -22,6 +22,11 @@ class UsersPage(CommonPage):
         time.sleep(2)
         self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click()
 
+    def click_on_lock_unlock_button(self):
+        self.find_by_xpath(UsersConstants.LOCK_UNLOCK_BUTTON_XPATH).click()
+        time.sleep(2)
+        self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click()
+
     def click_on_more_actions(self):
         self.find_by_xpath(UsersConstants.MORE_ACTIONS_XPATH).click()
 
@@ -169,4 +174,7 @@ class UsersPage(CommonPage):
 
     def get_connected(self):
         return self.find_by_xpath(UsersConstants.CONNECTED_AT_MAIN_PAGE).text
+
+    def get_lock_unlock_status(self):
+        return self.find_by_xpath(UsersConstants.LOCK_UNLOCK_BUTTON_XPATH).get_attribute("data-name")
 

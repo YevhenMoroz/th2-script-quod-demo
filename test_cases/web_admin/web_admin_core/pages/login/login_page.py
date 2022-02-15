@@ -40,6 +40,9 @@ class LoginPage(CommonPage):
         else:
             return 'Page is not preloaded'
 
+    def get_unsuccessful_login_message(self):
+        return self.find_by_xpath(LoginConstants.LOGIN_ERROR_MESSAGE_XPATH).text
+
     def login_to_web_admin(self, login, password):
         self.set_login(login)
         self.set_password(password)

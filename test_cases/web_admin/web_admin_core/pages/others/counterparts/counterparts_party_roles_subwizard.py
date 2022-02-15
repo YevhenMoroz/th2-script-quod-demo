@@ -38,6 +38,12 @@ class CounterpartsPartyRolesSubWizard(CommonPage):
     def set_ext_id_client_filter_at_party_roles_tab(self, value):
         self.set_text_by_xpath(CounterpartsConstants.EXT_ID_CLIENT_FILTER_AT_PARTY_ROLES_TAB_XPATH, value)
 
+    def set_required_fields_in_party_role_tab(self, party_id_source, venue_counterpart_id, party_role, ext_id_client):
+        self.set_party_id_source_at_party_roles_tab(party_id_source)
+        self.set_venue_counterpart_id_at_party_roles_tab(venue_counterpart_id)
+        self.set_party_role_at_party_roles_tab(party_role)
+        self.set_ext_id_client_at_party_roles_tab(ext_id_client)
+
     def set_party_role_qualifier_filter_at_party_roles_tab(self, value):
         self.set_text_by_xpath(CounterpartsConstants.PARTY_ROLE_QUALIFIER_FILTER_AT_PARTY_ROLES_TAB_XPATH, value)
 
@@ -62,3 +68,6 @@ class CounterpartsPartyRolesSubWizard(CommonPage):
 
     def get_venue_value_at_party_roles_tab(self):
         return self.find_by_xpath(CounterpartsConstants.VENUE_VALUE_AT_PARTY_ROLES_TAB_XPATH).text
+
+    def get_number_of_items_at_party_roles_tab(self):
+        return self.find_elements_by_xpath(CounterpartsConstants.ITEMS_INTO_PARTY_ROLES_TAB_XPATH)

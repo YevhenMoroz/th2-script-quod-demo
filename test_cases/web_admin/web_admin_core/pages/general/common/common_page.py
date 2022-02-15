@@ -5,6 +5,7 @@ from test_cases.web_admin.web_admin_core.pages.general.common.common_constants i
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 import pyperclip
 
+
 class CommonPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
@@ -60,6 +61,12 @@ class CommonPage(CommonPage):
         return "Send Feedback to Quod Financial" == self.find_by_xpath(
             CommonConstants.SEND_FEEDBACK_BUTTON_XPATH).get_attribute("nbtooltip")
 
+    def is_send_button_at_feedback_area_disabled_enabled(self):
+        return self.find_by_xpath(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH).is_enabled()
+
+    def is_header_displayed(self):
+        return self.is_element_displayed(CommonConstants.HEADER_XPATH)
+
     def is_user_icon_displayed(self):
         return "control-item icon-btn context-menu-host" == self.find_by_xpath(
             CommonConstants.USER_ICON_AT_RIGHT_CORNER).get_attribute("class")
@@ -92,9 +99,16 @@ class CommonPage(CommonPage):
     def click_on_arrow_back_button_at_send_feedback(self):
         self.find_by_xpath(CommonConstants.ARROW_BACK_BUTTON_XPATH).click()
 
+    def get_user_id_at_send_feedback(self):
+        return self.find_by_xpath(CommonConstants.USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION).text
 
+    def is_send_feedback_field_displayed(self):
+        return self.is_element_displayed(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH)
 
+    def is_link_of_help_icon_correct(self, link):
+        window_after = self.web_driver_container.get_driver().window_handles[1]
+        self.web_driver_container.get_driver().switch_to.window(window_after)
+        inst = self.web_driver_container.get_driver().current_url
 
-
-
-
+        print(inst)
+        return link == inst

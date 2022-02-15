@@ -20,3 +20,5 @@ class CommonConstants:
     ADMIN_VERSION_XPATH = '//*[@id="admVersionInput"]'
     APPLICATION_INFORMATION_AT_SEND_FEEDBACK_XPATH = '//*[text()="application information"]'
     ARROW_BACK_BUTTON_XPATH = '//*[@data-name="arrow-back"]'
+    HEADER_XPATH = '//*[@class="fixed"]'
+    USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION = '//*[@id="userFeedback"]//*[text()="User ID"]/following-sibling::td'

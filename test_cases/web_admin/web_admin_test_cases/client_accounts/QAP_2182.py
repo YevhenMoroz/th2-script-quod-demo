@@ -21,8 +21,9 @@ class QAP_2182(CommonTestCase):
         self.password = "adm03"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.route = "DB RFQ"
-        self.client = "CLIENT1"
-        self.clearing_type = "Institutional"
+        self.client = "test"
+        self.clear_client = "Not found"
+        self.clearing_type = ["Institutional", "Retail", "Firm"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -35,7 +36,7 @@ class QAP_2182(CommonTestCase):
         time.sleep(1)
         accounts_main_page.click_edit_entity_button()
         accounts_wizard = AccountsWizard(self.web_driver_container)
-        accounts_wizard.set_client(self.client)
+        accounts_wizard.set_client(self.clear_client)
         time.sleep(1)
 
 
@@ -45,10 +46,16 @@ class QAP_2182(CommonTestCase):
         try:
             self.precondition()
             try:
+                for i in self.clearing_type:
+                    accounts_wizard.set_clearing_account_type(i)
+                    time.sleep(1)
+                self.verify(f"\"Clearing Account Type\" drop-down contains {self.clearing_type}", True, True)
+
+                accounts_wizard.set_client(self.client)
                 accounts_wizard.click_save_button()
                 self.verify("Account edit correctly", True, True)
                 time.sleep(2)
-                expected_saved_data = [self.client, self.clearing_type]
+                expected_saved_data = [self.client, self.clearing_type[-1]]
                 actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
                 self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
             except Exception as e:

@@ -26,7 +26,7 @@ class QAP_2181(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
-        self.clearing_account_type = 'Retail'
+        self.clearing_account_type = ['Institutional', 'Firm', 'Retail']
         self.desk = "Quod Desk"
 
     def precondition(self):
@@ -58,18 +58,24 @@ class QAP_2181(CommonTestCase):
         time.sleep(2)
         main_page.click_on_edit()
         time.sleep(2)
-        values_sub_wizard.set_clearing_account_type(self.clearing_account_type)
-        time.sleep(1)
-        wizard.click_on_save_changes()
 
     def test_context(self):
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        main_page = ClientsPage(self.web_driver_container)
+        wizard = ClientsWizard(self.web_driver_container)
         try:
             self.precondition()
-            main_page = ClientsPage(self.web_driver_container)
+
+            for i in self.clearing_account_type:
+                values_sub_wizard.set_clearing_account_type(i)
+                time.sleep(1)
+            self.verify(f"Drop-down list contains {self.clearing_account_type}", True, True)
+
+            wizard.click_on_save_changes()
             time.sleep(2)
             main_page.set_name(self.name)
             time.sleep(2)
-            self.verify("Is entity saved correctly", self.clearing_account_type, main_page.get_clearing_account_type())
+            self.verify("Is entity saved correctly", self.clearing_account_type[-1], main_page.get_clearing_account_type())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

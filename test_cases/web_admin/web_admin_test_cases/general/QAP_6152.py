@@ -33,11 +33,18 @@ class QAP_6152(CommonTestCase):
             try:
                 main_page.click_on_application_information_at_send_feedback()
                 time.sleep(2)
+                self.verify("Addition information opened and contains correct data",
+                            self.login, main_page.get_user_id_at_send_feedback())
+            except Exception as e:
+                self.verify("Addition information not opened or incorrect", True, e.__class__.__name__)
+
+            try:
                 main_page.click_on_arrow_back_button_at_send_feedback()
                 time.sleep(2)
-                self.verify("application information button and arrow back button work correctly", True, True)
+                self.verify("[←] Back button work correctly", True,
+                            main_page.is_send_feedback_field_displayed())
             except Exception as e:
-                self.verify("Send button does not work", True, e.__class__.__name__)
+                self.verify("[←] Back button does not work", True, e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

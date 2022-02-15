@@ -1,3 +1,5 @@
+import time
+
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.users.users.users_constants import UsersConstants
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -44,7 +46,21 @@ class UsersClientSubWizard(CommonPage):
     def is_such_record_already_exist(self):
         return self.find_by_xpath(UsersConstants.RECORD_EXIST_EXCEPTION).text == "Such a record already exists"
 
+    # Корректно ли название?
+    def get_error_message(self):
+        return self.find_by_xpath(UsersConstants.ERROR_MESSAGE_IN_FOOTER).text
 
+    def add_new_client(self, client, type):
+        self.set_client(client)
+        self.set_type(type)
+        time.sleep(1)
+        self.click_on_checkmark_button()
+
+    def add_non_existing_client(self, client, type):
+        self.set_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, client)
+        self.set_text_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, type)
+        time.sleep(1)
+        self.click_on_checkmark_button()
 
 
 

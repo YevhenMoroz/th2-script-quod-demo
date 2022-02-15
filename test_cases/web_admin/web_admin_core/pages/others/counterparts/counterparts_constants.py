@@ -53,12 +53,12 @@ class CounterpartsConstants:
     PARTY_ROLE_QUALIFIER_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Party Role Qualifier"]'
     VENUE_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Venue"]'
     # --FILTERS--
-    PARTY_ID_SOURCE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"partyIDSource")]//*[@placeholder="Filter"]'
-    VENUE_COUNTERPART_ID_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"venueCounterpartID")]//*[@placeholder="Filter"]'
-    PARTY_ROLE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"partyRole ")]//*[@placeholder="Filter"]'
-    EXT_ID_CLIENT_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"clientCounterpartID")]//*[@placeholder="Filter"]'
-    PARTY_ROLE_QUALIFIER_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"partyRoleQualifier")]//*[@placeholder="Filter"]'
-    VENUE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '//*[contains(@class,"venue ")]//*[@placeholder="Filter"]'
+    PARTY_ID_SOURCE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
+    VENUE_COUNTERPART_ID_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
+    PARTY_ROLE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[3]'
+    EXT_ID_CLIENT_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[4]'
+    PARTY_ROLE_QUALIFIER_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[5]'
+    VENUE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[6]'
     # --Values--
     PARTY_ID_SOURCE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[2]//span[@class="ng-star-inserted"]'
     VENUE_COUNTERPART_ID_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[3]//span[@class="ng-star-inserted"]'
@@ -66,3 +66,4 @@ class CounterpartsConstants:
     EXT_ID_CLIENT_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[5]//span[@class="ng-star-inserted"]'
     PARTY_ROLE_QUALIFIER_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[6]//span[@class="ng-star-inserted"]'
     VENUE_VALUE_AT_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//td[7]//*[@class="ng-star-inserted"]'
+    ITEMS_INTO_PARTY_ROLES_TAB_XPATH = '//*[text()=" Party roles "]/parent::*[@class="expanded"]//*[@class="ui-table-tbody"]//tr'

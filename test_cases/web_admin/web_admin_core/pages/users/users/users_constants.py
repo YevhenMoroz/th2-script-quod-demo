@@ -15,6 +15,7 @@ class UsersConstants:
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
     OK_BUTTON_XPATH = "//*[text()='Ok']"
+    LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -58,6 +59,7 @@ class UsersConstants:
     # Wizard
     SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON = "//*[text()='First Login']"
+    ERROR_MESSAGE_IN_FOOTER = "//*[@outline='danger']"
 
     # Login sub wizard
 
@@ -123,11 +125,13 @@ class UsersConstants:
     VENUE_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue *"]'
     VENUE_TRADER_NAME_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue Trader Name *"]'
     TRADER_GROUP_AT_VENUE_TRADER_SUB_WIZARD = "//*[@placeholder='Trader Group']"
-    VENUE_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[@class= "ng2-smart-th venue ng-star-inserted"]//*[@placeholder="Filter"]'
-    VENUE_TRADER_NAME_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[@class= "ng2-smart-th venueTraderName ng-star-inserted"]//*[@placeholder="Filter"]'
-    TRADER_GROUP_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Trader Group"]'
-    TRADER_GROUP_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[@class= "ng2-smart-th traderGroup ng-star-inserted"]//*[@placeholder="Filter"]'
+    VENUE_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()=" Venue Trader "]/following-sibling::nb-accordion-item-body//th[@class="add-button-cell"]/following-sibling::th[1]'
+    VENUE_TRADER_NAME_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()=" Venue Trader "]/following-sibling::nb-accordion-item-body//th[@class="add-button-cell"]/following-sibling::th[2]'
+    TRADER_GROUP_FILTER_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()=" Venue Trader "]/following-sibling::nb-accordion-item-body//th[@class="add-button-cell"]/following-sibling::th[3]'
     MANAGE_TRADER_GROUPS_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]'
+    CREATED_VENUE_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[2]//span"
+    CREATED_VENUE_TRADE_NAME_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[3]//span"
+    CREATED_TRADER_GROUP_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[4]//span"
 
     # Manage Trader Groups
     PLUS_BUTTON_AT_TRADER_GROUPS_SUB_WIZARD = '//*[@class="nb-plus"]'

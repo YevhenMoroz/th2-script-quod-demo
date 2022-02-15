@@ -28,6 +28,13 @@ class CommonPage:
         return self.web_driver_wait.until(
             expected_conditions.visibility_of_element_located((location_strategy, locator)))
 
+    def find_elements_by_xpath(self, xpath: str):
+        return self.find_elements_by(By.XPATH, xpath)
+
+    def find_elements_by(self, location_strategy: By, locator: str):
+        return self.web_driver_wait.until(
+            expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
+
     def get_text_by_xpath(self, xpath: str):
         element = self.find_by_xpath(xpath)
 
@@ -44,7 +51,6 @@ class CommonPage:
     def set_text_by_xpath(self, xpath: str, value: str, is_clear_before: bool = True):
         text_field = self.find_by_xpath(xpath)
 
-        # .clear() does not work
         if is_clear_before:
             text_field.send_keys(Keys.CONTROL, "A")
             text_field.send_keys(Keys.DELETE)
@@ -139,3 +145,9 @@ class CommonPage:
         '''
         search_button = self.web_driver_container.get_driver().execute_script(css_path)
         search_button.click()
+
+    def is_element_displayed(self, xpath):
+        if self.find_by_xpath(xpath).is_displayed():
+            return True
+        else:
+            return False

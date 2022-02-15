@@ -23,7 +23,6 @@ class QAP_1740(CommonTestCase):
         self.password = "adm03"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.client = "CLIENT1"
         self.client_id_source = "BIC"
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.route = "Direct"
@@ -32,45 +31,52 @@ class QAP_1740(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_accounts_page()
-        accounts_main_page = AccountsPage(self.web_driver_container)
         time.sleep(2)
+        accounts_main_page = AccountsPage(self.web_driver_container)
         accounts_main_page.click_new_button()
         time.sleep(2)
         values_tab = AccountsWizard(self.web_driver_container)
         values_tab.set_id(self.id)
-        time.sleep(1)
         values_tab.set_ext_id_client(self.ext_id_client)
-        time.sleep(1)
-        values_tab.set_client(self.client)
-        time.sleep(1)
         values_tab.set_client_id_source(self.client_id_source)
-        time.sleep(2)
+
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.click_save_button()
         time.sleep(2)
-        accounts_main_page.set_id(self.id)
-        time.sleep(2)
-        accounts_main_page.click_more_actions_button()
+
+        try:
+            accounts_main_page.set_id(self.id)
+            time.sleep(1)
+            accounts_main_page.click_more_actions_button()
+        except:
+            accounts_main_page.load_account_from_global_filter(self.id)
+            time.sleep(1)
+            accounts_main_page.click_more_actions_button()
+
         time.sleep(1)
         accounts_main_page.click_edit_entity_button()
-        routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
-        routes_tab.open_routes_subwizard()
-        routes_tab.set_route_account_name(self.route_account_name)
-        time.sleep(1)
-        routes_tab.set_route(self.route)
-        time.sleep(1)
-        routes_tab.click_create_entity_button()
-        time.sleep(2)
 
     def test_context(self):
         accounts_wizard = AccountsWizard(self.web_driver_container)
+        accounts_main_page = AccountsPage(self.web_driver_container)
+        routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
+
         try:
             self.precondition()
             try:
+                routes_tab.open_routes_subwizard()
+                routes_tab.set_route_account_name(self.route_account_name)
+                time.sleep(1)
+                routes_tab.set_route(self.route)
+                time.sleep(1)
+                routes_tab.click_create_entity_button()
+                time.sleep(2)
                 accounts_wizard.click_save_button()
+
                 self.verify("Account edit correctly", True, True)
+                time.sleep(1)
+                self.verify("Pop-up text is present", "Account changes saved", accounts_main_page.get_popup_text())
             except Exception as e:
                 self.verify("Problem in Save Changes button", True, e.__class__.__name__)
 

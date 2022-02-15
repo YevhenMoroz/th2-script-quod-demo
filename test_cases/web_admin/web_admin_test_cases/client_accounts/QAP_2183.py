@@ -3,7 +3,6 @@ import string
 import sys
 import time
 import traceback
-from uuid import uuid1
 
 from custom import basic_custom_actions
 from test_cases.web_admin.web_admin_core.pages.client_accounts.accounts.accounts_page import AccountsPage
@@ -20,11 +19,11 @@ class QAP_2183(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm03"
         self.password = "adm03"
-        self.id = f"QAP-2183_{str(uuid1())}"
+        self.id = f"QAP-2183_{''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))}"
         self.client = "CLIENT1"
         self.client_id_source = "BIC"
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.clearing_type = "Firm"
+        self.clearing_type = ["Institutional", "Retail", "Firm"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -42,7 +41,7 @@ class QAP_2183(CommonTestCase):
         time.sleep(2)
         accounts_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
-        accounts_wizard.set_clearing_account_type(self.clearing_type)
+        accounts_wizard.set_clearing_account_type(self.clearing_type[-1])
         time.sleep(2)
         accounts_wizard.set_client(self.client)
         time.sleep(2)
@@ -53,6 +52,10 @@ class QAP_2183(CommonTestCase):
         try:
             self.precondition()
             try:
+                for i in self.clearing_type:
+                    accounts_wizard.set_clearing_account_type(i)
+                    time.sleep(1)
+                self.verify(f"\"Clearing Account Type\" drop-down contains {self.clearing_type}", True, True)
                 accounts_wizard.click_save_button()
                 self.verify("Account saved correctly", True, True)
                 time.sleep(2)
