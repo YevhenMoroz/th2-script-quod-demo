@@ -89,6 +89,13 @@ class Instrument(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    SOCM = dict(
+        Symbol='FR0000037210_EUR',
+        SecurityID='FR0000037210',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class Connectivity(Enum):
