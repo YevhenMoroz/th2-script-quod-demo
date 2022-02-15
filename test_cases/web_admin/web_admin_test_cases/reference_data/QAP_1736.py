@@ -67,7 +67,7 @@ class QAP_1736(CommonTestCase):
             self.precondition()
             page = ListingsPage(self.web_driver_container)
             try:
-                page.click_on_load()
+                page.click_on_load_button()
                 time.sleep(2)
                 page.click_on_more_actions()
                 time.sleep(2)

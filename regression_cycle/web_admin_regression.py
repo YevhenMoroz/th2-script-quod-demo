@@ -35,14 +35,14 @@ def test_run(parent_id=None):
         # logger.info(f"Root event was created (id = {report_id.id})")
 
         # content
-        web_driver_container = WebDriverContainer()
+        web_driver_container = WebDriverContainer("Chrome", 'saturn_url')
         RunGeneral(web_driver_container, parent_id).execute()
         # RunSite(web_driver_container, parent_id).execute()
         # RunUsers(web_driver_container, parent_id).execute()
         # ReferenceData(web_driver_container, parent_id).execute()
         # RunClientsAccounts(web_driver_container, parent_id).execute()
-        # RunOrderManagement(web_driver_container, parent_id).execute()
-        # RunMiddleOffice(web_driver_container, parent_id).execute()
+        RunOrderManagement(web_driver_container, parent_id).execute()
+        RunMiddleOffice(web_driver_container, parent_id).execute()
         # RunMarketMaking(web_driver_container, parent_id).execute()
         # RunRiskLimits(web_driver_container, parent_id).execute()
         # RunPositions(web_driver_container, parent_id).execute()

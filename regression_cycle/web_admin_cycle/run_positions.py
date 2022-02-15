@@ -20,6 +20,7 @@ class RunPositions:
     def execute(self):
         try:
             start_time = time.monotonic()
+# Пройти мануально
             QAP_2165(self.web_driver_container, self.second_lvl_id).run()
             QAP_2166(self.web_driver_container, self.second_lvl_id).run()
             QAP_2167(self.web_driver_container, self.second_lvl_id).run()

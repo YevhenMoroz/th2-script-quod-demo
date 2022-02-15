@@ -14,7 +14,7 @@ class QAP_2454(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -28,6 +28,8 @@ class QAP_2454(CommonTestCase):
             main_page = CommonPage(self.web_driver_container)
             try:
                 main_page.click_on_help_icon()
+                time.sleep(2)
+                main_page.is_link_of_help_icon_correct("https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates")
                 self.verify("Help icon works", True, True)
             except Exception as e:
                 self.verify("Help icon not works", True, e.__class__.__name__)

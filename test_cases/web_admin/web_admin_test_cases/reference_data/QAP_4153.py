@@ -4,8 +4,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_description_sub_wizard import \
-    VenuesDescriptionSubWizard
+from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_values_sub_wizard import \
+    VenuesValuesSubWizard
 from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_market_data_sub_wizard import \
     VenuesMarketDataSubWizard
 from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_page import VenuesPage
@@ -33,7 +33,7 @@ class QAP_4153(CommonTestCase):
         page = VenuesPage(self.web_driver_container)
         page.click_on_new()
         time.sleep(1)
-        values_sub_wizard = VenuesDescriptionSubWizard(self.web_driver_container)
+        values_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         values_sub_wizard.set_short_name(self.short_name)
         time.sleep(3)
 
@@ -41,7 +41,7 @@ class QAP_4153(CommonTestCase):
 
         try:
             self.precondition()
-            values_sub_wizard = VenuesDescriptionSubWizard(self.web_driver_container)
+            values_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
             self.verify("Is short Name contains only 10 characters", "aaaaaaaaaa", values_sub_wizard.get_short_name())
             time.sleep(2)
             values_sub_wizard.set_very_short_name(self.very_short_name)

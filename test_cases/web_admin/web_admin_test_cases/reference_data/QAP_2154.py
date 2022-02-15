@@ -28,7 +28,7 @@ class QAP_2154(CommonTestCase):
         listing_page = ListingsPage(self.web_driver_container)
         listing_page.set_listing_in_global_filter(self.listing)
         time.sleep(2)
-        listing_page.click_on_load()
+        listing_page.click_on_load_button()
         time.sleep(2)
 
     def test_context(self):

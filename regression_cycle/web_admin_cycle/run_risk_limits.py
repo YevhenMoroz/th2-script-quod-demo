@@ -25,6 +25,7 @@ class RunRiskLimits:
             start_time = time.monotonic()
             QAP_780(self.web_driver_container, self.second_lvl_id).run()
             QAP_783(self.web_driver_container, self.second_lvl_id).run()
+# Пройти мануально:
             QAP_2455(self.web_driver_container, self.second_lvl_id).run()
             QAP_4851(self.web_driver_container, self.second_lvl_id).run()
             QAP_5599(self.web_driver_container, self.second_lvl_id).run()

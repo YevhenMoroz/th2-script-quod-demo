@@ -17,9 +17,11 @@ class QAP_919(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.client = "CLIENT1"
         self.type = "Holder"
+        self.empty_data_error_message = "Incorrect or missing values"
+        self.duplicate_error_message = "Such a record already exists"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -33,29 +35,40 @@ class QAP_919(CommonTestCase):
         time.sleep(2)
         users_page.click_on_edit_at_more_actions()
         time.sleep(2)
-        client_sub_wizard = UsersClientSubWizard(self.web_driver_container)
-        client_sub_wizard.click_on_plus_button()
-        time.sleep(2)
-        client_sub_wizard.set_client(self.client)
-        time.sleep(2)
-        client_sub_wizard.set_type(self.type)
-        client_sub_wizard.click_on_checkmark_button()
-        time.sleep(2)
-        client_sub_wizard.click_on_plus_button()
-        client_sub_wizard.set_client(self.client)
-        time.sleep(2)
-        client_sub_wizard.set_type(self.type)
-        time.sleep(2)
-
-        client_sub_wizard.click_on_checkmark_button()
-        time.sleep(2)
 
     def test_context(self):
+        client_sub_wizard = UsersClientSubWizard(self.web_driver_container)
         try:
             self.precondition()
-            account_groups_sub_wizard = UsersClientSubWizard(self.web_driver_container)
-            self.verify("Is 'Such record already exist' exception displayed", True,
-                        account_groups_sub_wizard.is_such_record_already_exist())
+            client_sub_wizard.click_on_plus_button()
+            time.sleep(2)
+            client_sub_wizard.click_on_checkmark_button()
+            time.sleep(2)
+            try:
+                self.verify("Client was not add with empty data. Error message displayed",
+                            self.empty_data_error_message, client_sub_wizard.get_error_message())
+            except Exception as e:
+                self.verify("Error message for empty data is not displayed", True, e.__class__.__name__)
+
+            client_sub_wizard.add_non_existing_client(self.type, self.client)
+            try:
+                self.verify("Non existing client is not add",
+                            self.empty_data_error_message, client_sub_wizard.get_error_message())
+            except Exception as e:
+                self.verify("Non existing client add", True, e.__class__.__name__)
+
+            time.sleep(2)
+            client_sub_wizard.add_new_client(self.client, self.type)
+            client_sub_wizard.click_on_plus_button()
+            time.sleep(2)
+            client_sub_wizard.add_new_client(self.client, self.type)
+            time.sleep(2)
+            try:
+                self.verify("Is 'Such record already exist' exception displayed",
+                            self.duplicate_error_message, client_sub_wizard.get_error_message())
+            except Exception as e:
+                self.verify("Error message for duplicate user is not displayed", True, e.__class__.__name__)
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

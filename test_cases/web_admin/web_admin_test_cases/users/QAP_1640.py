@@ -15,11 +15,14 @@ class QAP_1640(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.disabled_massage = "User adm_desk Disabled"
+        self.login = "adm02"
+        self.password = "adm02"
+        self.user_id = "adm_desk"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm02")
-        login_page.set_password("adm02")
+        login_page.set_login(self.login)
+        login_page.set_password(self.password)
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -31,7 +34,7 @@ class QAP_1640(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id("adm_desk")
+            users_page.set_user_id(self.user_id)
             time.sleep(3)
             users_page.click_on_enable_disable_button()
             self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())

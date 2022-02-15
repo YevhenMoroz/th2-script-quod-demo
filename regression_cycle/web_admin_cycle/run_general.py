@@ -17,7 +17,6 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_5840 import QAP_5840
 from test_cases.web_admin.web_admin_test_cases.general.QAP_5967 import QAP_5967
 from test_cases.web_admin.web_admin_test_cases.general.QAP_6152 import QAP_6152
 from test_cases.web_admin.web_admin_test_cases.general.QAP_6182 import QAP_6182
-from test_cases.web_admin.web_admin_test_cases.general.QAP_680 import QAP_680
 from test_cases.web_admin.web_admin_test_cases.general.QAP_796 import QAP_796
 
 from custom import basic_custom_actions as bca
@@ -35,20 +34,28 @@ class RunGeneral:
         try:
             start_time = time.monotonic()
 
-            QAP_680(self.web_driver_container, self.second_lvl_id).run()
             # QAP_796(self.web_driver_container, self.second_lvl_id).run()
             # QAP_797(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2450(self.web_driver_container, self.second_lvl_id).run()
+
+# Нет проверки, что открылась ссыка которая требуется // допиши проверку
             # QAP_2454(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_2509(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2516(self.web_driver_container, self.second_lvl_id).run()
+
+# Нет проверки, что открылась ссыка которая требуется. Зачем сетать логин? // убери сет логина
+#             QAP_2516(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_2544(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2616(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2624(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2631(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4104(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4865(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5840(self.web_driver_container, self.second_lvl_id).run()
+
+# Нет проверки перехода и выхода с Фулскрина. Степов можно меньше сделать. Перебор со слипами) // добавь проверку при full screen
+            QAP_5840(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_5967(self.web_driver_container, self.second_lvl_id).run()
             # QAP_6152(self.web_driver_container, self.second_lvl_id).run()
             # QAP_6182(self.web_driver_container, self.second_lvl_id).run()

@@ -4,8 +4,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_description_sub_wizard import \
-    VenuesDescriptionSubWizard
+from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_values_sub_wizard import \
+    VenuesValuesSubWizard
 from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_page import VenuesPage
 from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_wizard import VenuesWizard
 from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
@@ -32,7 +32,7 @@ class QAP_4862(CommonTestCase):
         page = VenuesPage(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
-        description_sub_wizard = VenuesDescriptionSubWizard(self.web_driver_container)
+        description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
         description_sub_wizard.set_id(self.id)
         time.sleep(1)
@@ -48,7 +48,7 @@ class QAP_4862(CommonTestCase):
 
         try:
             self.precondition()
-            description_sub_wizard = VenuesDescriptionSubWizard(self.web_driver_container)
+            description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
             wizard = VenuesWizard(self.web_driver_container)
             self.verify("Is name field saved", self.name, description_sub_wizard.get_name())
             self.verify("Is id field saved", self.id, description_sub_wizard.get_id())
