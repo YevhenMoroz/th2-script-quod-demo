@@ -11,6 +11,8 @@ from test_cases.fx.fx_taker_rfq import QAP_568, QAP_569, QAP_574, QAP_2826, QAP_
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -24,6 +26,8 @@ def test_run(parent_id=None):
     report_id = bca.create_event('Acceptance list', parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    data_set = FxDataSet()
+    configuration = ComponentConfiguration("FX_Acceptance_list")
     try:
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
