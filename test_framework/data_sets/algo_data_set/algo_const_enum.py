@@ -40,9 +40,9 @@ class AlgoClients(Enum):
 
 
 class AlgoAccounts(Enum):
-    account_1 = ""
-    account_2 = ""
-    account_3 = ""
+    account_1 = "XPAR_CLIENT1"
+    account_2 = "XPAR_CLIENT2"
+    account_3 = "XPAR_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -59,3 +59,22 @@ class AlgoRecipients(Enum):
     recipient_user_1 = ""
     recipient_user_2 = ""
     recipient_user_3 = ""
+
+class AlgoMic(Enum):
+    mic_1 = "XPAR"
+    mic_2 = "TRQX"
+    mic_3 = "XLON"
+
+class AlgoListingId(Enum):
+    listing_1 = "1015"
+
+class AlgoCurrency(Enum):
+    currency_1 = "EUR"
+    currency_2 = "GBP"
+    currency_3 = "GBp"
+    currency_4 = "USD"
+    currency_5 = "UAH"
+
+class AlgoVerifierKeyParameters(Enum):
+    verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
+    verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']

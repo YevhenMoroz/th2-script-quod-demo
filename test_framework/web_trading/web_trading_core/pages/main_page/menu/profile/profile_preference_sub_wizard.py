@@ -31,3 +31,6 @@ class ProfilePreferenceSubWizard(CommonPage):
         self.find_by_xpath(ProfileConstants.DEFAULT_CLIENT_SELECT_MENU_XPATH).click()
         time.sleep(2)
         self.select_value_from_dropdown_list(ProfileConstants.LIST_OF_DEFAULT_CLIENTS_XPATH.format(default_client_name))
+
+    def is_default_client_selected(self, client_name):
+        return client_name == self.find_by_xpath("//*[text()='{}']".format(client_name))

@@ -14,7 +14,7 @@ class ProfilePage(CommonPage):
         self.find_by_xpath(ProfileConstants.PREFERENCE_BUTTON_XPATH).click()
 
     def click_on_security_button(self):
-        self.find_by_xpath(ProfileConstants.SECURITY_BUTTON_XPATH)
+        self.find_by_xpath(ProfileConstants.SECURITY_BUTTON_XPATH).click()
 
     def click_on_terms_and_condition_button(self):
         self.find_by_xpath(ProfileConstants.TERMS_AND_CONDITION_BUTTON_XPATH).click()
@@ -24,3 +24,8 @@ class ProfilePage(CommonPage):
 
     def click_on_save_button(self):
         self.find_by_xpath(ProfileConstants.SAVE_BUTTON_XPATH).click()
+
+    def click_on_close_button(self):
+        self.find_by_xpath(ProfileConstants.CLOSE_BUTTON_XPATH).click()
+
+

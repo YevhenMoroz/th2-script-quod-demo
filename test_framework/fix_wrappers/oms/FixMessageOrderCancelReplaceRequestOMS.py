@@ -1,27 +1,28 @@
 from datetime import datetime
-from test_framework.fix_wrappers.DataSet import Instrument
+
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 
 
 class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest):
-    def __init__(self, parameters: dict = None):
+    def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.parameters = parameters
         self.change_parameters(parameters)
 
-    base_parameters = {
-        "Account": "CLIENT1",
-        "Side": "1",
-        'OrderQtyData': {'OrderQty': '100'},
-        "OrdType": "2",
-        "HandlInst": "3",
-        "ClOrdID": "*",
-        "OrigClOrdID": "*",
-        "Instrument": Instrument.FR0010436584.value,
-        "TransactTime": datetime.utcnow().isoformat(),
-    }
+        self.base_parameters = {
+            "Account": data_set.get_client_by_name("client_1"),
+            "Side": "1",
+            'OrderQtyData': {'OrderQty': '100'},
+            "OrdType": "2",
+            "HandlInst": "3",
+            "ClOrdID": "*",
+            "OrigClOrdID": "*",
+            "Instrument": data_set.get_fix_instrument_by_name("instrument_1"),
+            "TransactTime": datetime.utcnow().isoformat(),
+        }
 
     def set_default(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
@@ -39,7 +40,7 @@ class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest
         self.change_parameters(change_parameters)
         return self
 
-    def set_default(self, new_order_list: FixMessageNewOrderList, ord_number: int = 0):
+    def set_default_ord_list(self, new_order_list: FixMessageNewOrderList, ord_number: int = 0):
         change_parameters = {
             "Account": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Account"],
             "OrderQtyData": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrderQtyData"],

@@ -4,8 +4,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
 
-
-class BaseMiddleOfficeBook(BaseWindow):
+class BaseMiddleOffice(BaseWindow):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
@@ -29,6 +28,10 @@ class BaseMiddleOfficeBook(BaseWindow):
         self.extract_allocation_details = None
         self.extract_allocations_table_data = None
         self.amend_ticket_book_extraction_details_call = None
+        self.mass_approve_details = None
+        self.mass_approve_call = None
+        self.mass_allocate_call = None
+        self.mass_unallocate_call = None
 
     # endregion
     # region Common func
@@ -36,6 +39,8 @@ class BaseMiddleOfficeBook(BaseWindow):
     def set_filter(self, filter_list: list):
         self.extract_middle_office_blotter_values_request.set_filter(filter_list)
 
+    def clear_filter(self):
+        self.extract_middle_office_blotter_values_request.clear_filter()
     # endregion
     # region Check
     def check_booking_toggle_manual(self):
@@ -52,6 +57,7 @@ class BaseMiddleOfficeBook(BaseWindow):
         return error
 
     # endregion
+
     # region Get
     def extract_block_field(self, column_name, filter_list: list = None, row_number: int = None):
         self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
@@ -64,6 +70,40 @@ class BaseMiddleOfficeBook(BaseWindow):
         response = call(self.extract_middle_office_blotter_values_call,
                         self.extract_middle_office_blotter_values_request.build())
         self.clear_details([self.extract_middle_office_blotter_values_request])
+        return response
+
+    def extract_list_of_block_fields(self, list_of_column: list, filter_list: list = None, row_number=1) -> dict:
+        self.extract_middle_office_blotter_values_request.set_extraction_id("MiddleOfficeExtractionId")
+        list_of_extraction = []
+        for column in list_of_column:
+            field = self.extraction_detail(column, column)
+            list_of_extraction.append(field)
+        if filter_list:
+            self.extract_middle_office_blotter_values_request.set_filter(filter_list)
+        self.extract_middle_office_blotter_values_request.add_extraction_details(list_of_extraction)
+        if row_number:
+            self.extract_middle_office_blotter_values_request.set_row_number(row_number)
+        response = call(self.extract_middle_office_blotter_values_call,
+                        self.extract_middle_office_blotter_values_request.build())
+        self.clear_details([self.extract_middle_office_blotter_values_request])
+        return response
+
+    def extract_list_of_allocate_fields(self, list_of_column: list, filter_dict_allocate: dict = None,
+                                        allocate_number=1, filter_dict_block: dict = None) -> dict:
+        list_of_extraction = []
+        for column in list_of_column:
+            field = self.extraction_detail(column, column)
+            list_of_extraction.append(field)
+        if filter_dict_allocate:
+            self.extract_allocation_details.set_allocations_filter(filter_dict_allocate)
+        if filter_dict_block:
+            self.extract_allocation_details.set_block_filter(filter_dict_block)
+        order_details = self.extract_allocation_details.add_order_details()
+        order_details.set_order_number(allocate_number)
+        order_details.add_extraction_details(list_of_extraction)
+        response = call(self.extract_allocations_table_data,
+                        self.extract_allocation_details.build())
+        self.clear_details([self.extract_allocation_details])
         return response
 
     def extract_allocate_value(self, column_name, account=None, order_number=1):
@@ -105,17 +145,23 @@ class BaseMiddleOfficeBook(BaseWindow):
     ]
     ********************************************************************************************
     '''
+
     # endregion
     # region Set
-    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price= None,
-                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None, comm_basis=None,
+    def set_modify_ticket_details(self, is_alloc_amend=False, client=None, trade_date=None, agreed_price=None,
+                                  net_gross_ind=None, give_up_broker=None, selected_row_count: int = None,
+                                  comm_basis=None,
                                   comm_rate=None, remove_comm=False, fee_type=None, fee_basis=None, fee_rate=None,
                                   fee_category=None, remove_fee=False, settl_type=None, settl_date=None,
-                                  settl_amount=None, bo_notes=None, settl_currency=None,exchange_rate=None,
-                                  exchange_rate_calc=None, toggle_recompute=False,misc_trade_date=None,
+                                  settl_amount=None, bo_notes=None, settl_currency=None, exchange_rate=None,
+                                  exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
-                                  alloc_account_filter=None, alloc_row_number: int = None):
-        """extract_data can be book or alloc"""
+                                  alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None):
+        """
+            1)extract_data can be book or alloc
+            2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
+           {"Security Account": "YM_client_SA2", "Alloc Qty": "200"}]
+        """
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
         if is_alloc_amend:
@@ -125,6 +171,10 @@ class BaseMiddleOfficeBook(BaseWindow):
             if alloc_row_number is not None:
                 amend_allocations_details.set_row_number(alloc_row_number)
         ticket_details = self.modify_ticket_details.add_ticket_details()
+        allocations_details = self.modify_ticket_details.add_allocations_details()
+        if arr_allocation_param is not None:
+            for i in arr_allocation_param:
+                allocations_details.add_allocation_param(i)
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -243,5 +293,23 @@ class BaseMiddleOfficeBook(BaseWindow):
     def approve_block(self):
         call(self.approve_block_call, self.view_order_extraction_details.build())
         self.clear_details([self.modify_ticket_details])
-    # endregion
 
+        '''
+        positions_of_block = [1,2,3,4], something like it
+        '''
+
+    def mass_approve(self, positions_of_block: list):
+        self.mass_approve_details.set_rows_number(positions_of_block)
+        call(self.mass_approve_call, self.mass_approve_details.build())
+        self.clear_details([self.mass_approve_details])
+
+    def mass_allocate(self, positions_of_block: list):
+        self.mass_approve_details.set_rows_number(positions_of_block)
+        call(self.mass_allocate_call, self.mass_approve_details.build())
+        self.clear_details([self.mass_approve_details])
+
+    def mass_unallocate(self, position_of_block: list):
+        self.mass_approve_details.set_rows_number(position_of_block)
+        call(self.mass_unallocate_call, self.mass_approve_details.build())
+        self.clear_details([self.mass_approve_details])
+    # endregion

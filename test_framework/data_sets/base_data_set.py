@@ -6,33 +6,42 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
-    instruments = None
+    fix_instruments = None
     venues = None
     clients = None
     accounts = None
     washbook_accounts = None
     recipients = None
-    db_listing = None
-    db_instrument = None
+    listing_id = None
+    instrument_id = None
     mic = None  # Market Identifier Code
     currency = None
     venue_client_names = None
+    symbols = None
+    security_types = None
+    settle_types = None
+    settle_dates = None
+    routes = None
+    lookups = None
+    commission_profiles = None
+    misc_fee_type = None
+    fee_exec_scope: Enum = None
+    fee = None
+    commission = None
     client_tiers = None
     client_tiers_id = None
     days_of_week = None
     tenors = None
-    symbols = FxSymbols
-    security_types = FxSecurityTypes
-    settle_types = FxSettleTypes
-    settle_dates = FxSettleDates
     auto_hedgers = None
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    venue_client_accounts = None
+    verifier_key_parameters = None
 
     def get_instruments(self):
-        if self.instruments:
-            return self.instruments.__members__
+        if self.fix_instruments:
+            return self.fix_instruments.__members__
 
     def get_venues(self):
         if self.venues:
@@ -54,10 +63,10 @@ class BaseDataSet:
         if self.recipients:
             return self.recipients.__members__
 
-    def get_instrument_by_name(self, name: str):
-        if hasattr(self.instruments, name):
-            return getattr(self.instruments, name).value
-        raise ValueError(f"{self.instruments} not found!")
+    def get_fix_instrument_by_name(self, name: str):
+        if hasattr(self.fix_instruments, name):
+            return getattr(self.fix_instruments, name).value
+        raise ValueError(f"{self.fix_instruments} not found!")
 
     def get_venue_by_name(self, name: str):
         if hasattr(self.venues, name):
@@ -84,15 +93,15 @@ class BaseDataSet:
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
 
-    def get_db_listing_by_name(self, name: str):
-        if hasattr(self.db_listing, name):
-            return getattr(self.db_listing, name).value
-        raise ValueError(f"{self.db_listing} not found!")
+    def get_listing_id_by_name(self, name: str):
+        if hasattr(self.listing_id, name):
+            return getattr(self.listing_id, name).value
+        raise ValueError(f"{self.listing_id} not found!")
 
-    def get_db_instrument_by_name(self, name: str):
-        if hasattr(self.db_instrument, name):
-            return getattr(self.db_instrument, name).value
-        raise ValueError(f"{self.db_instrument} not found!")
+    def get_instrument_id_by_name(self, name: str):
+        if hasattr(self.instrument_id, name):
+            return getattr(self.instrument_id, name).value
+        raise ValueError(f"{self.instrument_id} not found!")
 
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
@@ -145,6 +154,11 @@ class BaseDataSet:
         if hasattr(self.settle_dates, name):
             return getattr(self.settle_dates, name).value
         raise ValueError(f"{self.settle_dates} not found!")
+
+    def get_route(self, name: str):
+        if hasattr(self.routes, name):
+            return getattr(self.routes, name).value
+        raise ValueError(f"{self.routes} not found!")
 
     def get_client_tier_by_name(self, name: str):
         """
@@ -219,5 +233,50 @@ class BaseDataSet:
         raise ValueError(f"{self.algo_policies_id} not found!")
     # endregion
 
+    def get_lookup_by_name(self, name: str):
+        if hasattr(self.lookups, name):
+            return getattr(self.lookups, name).value
+        return ValueError(f"{self.lookups} not found!")
 
+    def get_verifier_key_parameters_by_name(self, name: str):
+        if hasattr(self.verifier_key_parameters, name):
+            return getattr(self.verifier_key_parameters, name).value
+        raise ValueError(f"{self.verifier_key_parameters} not found!")
+    def get_venue_client_account(self, name: str):
+        if hasattr(self.venue_client_accounts, name):
+            return getattr(self.venue_client_accounts, name).value
+        return ValueError(f"{self.lookups} not found!")
+
+    def get_comm_profile_by_name(self, name: str):
+        if hasattr(self.commission_profiles, name):
+            return getattr(self.commission_profiles, name).value
+        return ValueError(f"{self.commission_profiles} not found!")
+
+    def get_misc_fee_type_by_name(self, name: str):
+        if hasattr(self.misc_fee_type, name):
+            return getattr(self.misc_fee_type, name).value
+        return ValueError(f"{self.misc_fee_type} not found!")
+
+    def get_fee_exec_scope_by_name(self, name: str):
+        if hasattr(self.fee_exec_scope, name):
+            return getattr(self.fee_exec_scope, name).value
+        return ValueError(f"{self.fee_exec_scope} not found!")
+
+    def get_fee_by_name(self, name: str):
+        if hasattr(self.fee, name):
+            return getattr(self.fee, name)
+        return ValueError(f"{self.fee} not found!")
+
+    def get_fees(self):
+        if self.fee:
+            return self.fee
+
+    def get_commission_by_name(self, name: str):
+        if hasattr(self.commission, name):
+            return getattr(self.commission, name)
+        return ValueError(f"{self.commission} not found!")
+
+    def get_commissions(self):
+        if self.commission:
+            return self.commission
 

@@ -44,3 +44,6 @@ class MainPage(CommonPage):
 
     def click_on_menu_button(self):
         self.find_by_xpath(MainPageConstants.MENU_BUTTON_XPATH).click()
+
+    def get_username(self):
+        return self.find_by_xpath(MainPageConstants.USER_NAME_XPATH).text

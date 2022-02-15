@@ -1,58 +1,99 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, RatesColumnNames, \
-    PricingButtonColor
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, \
+    RatesColumnNames, PricingButtonColor
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.wrappers import set_base
 
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_1643(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = None
 
-    set_base(session_id, case_id)
+        self.pips_1 = "1"
+        self.pips_1_5 = "1.5"
 
-    instrument = "EUR/USD-Spot"
-    client_tier = "Silver"
-    pips = "2"
-    action = ClientPrisingTileAction
-    cn = RatesColumnNames
+        self.ask_base = RatesColumnNames.ask_base
+        self.bid_base = RatesColumnNames.bid_base
 
-    try:
-        # Step 1
-        rates_tile = ClientRatesTile(case_id, session_id)
-        rates_tile.modify_client_tile(instrument=instrument, client_tier=client_tier, pips=pips)
-        # Step 2-3
-        rates_tile.select_rows([1])
-        px_before = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
-        # Step 4
-        rates_tile.modify_spread(action.widen_spread)
-        px_after = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
+        self.ask_pips = PriceNaming.ask_pips
+        self.bid_pips = PriceNaming.bid_pips
+        self.spread = PriceNaming.spread
 
-        expected_px = str(int(px_before[str(cn.ask_px)]) + (int(pips) * 10))
-        rates_tile.compare_values(expected_value=expected_px, actual_value=px_after[str(cn.ask_px)],
-                                  event_name="Check PX", value_name="Px Column")
-        # Step 5
-        rates_tile.check_color_of_pricing_button(0, 90, expected_color=str(PricingButtonColor.yellow_button.value))
-        # Step 6
-        rates_tile.modify_spread(action.narrow_spread)
-        px_after_2 = rates_tile.extract_values_from_rates(cn.ask_px, cn.bid_px, row_number=1)
-        expected_px = str(int(px_after[str(cn.ask_px)]) - (int(pips) * 10))
-        rates_tile.compare_values(expected_value=expected_px, actual_value=px_after_2[str(cn.ask_px)],
-                                  event_name="Check PX", value_name="Px Column")
-        # Step 7
-        rates_tile.check_color_of_pricing_button(0, 90, expected_color=str(PricingButtonColor.green_button.value))
-        rates_tile.deselect_rows()
-        rates_tile.press_use_default()
+        self.widen_spread = ClientPrisingTileAction.widen_spread
+        self.narrow_spread = ClientPrisingTileAction.narrow_spread
+        self.increase_ask = ClientPrisingTileAction.increase_ask
+        self.decrease_bid = ClientPrisingTileAction.decrease_bid
+        self.skew_towards_bid = ClientPrisingTileAction.skew_towards_bid
+        self.skew_towards_ask = ClientPrisingTileAction.skew_towards_ask
 
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            rates_tile.close_tile()
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
 
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = self.symbol + "-Spot"
+        self.base_event = "base value validation"
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        # endregion
+
+        # region step 2
+        self.rates_tile.press_use_default()
+        # endregion
+
+        # region step 3-4
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base, row_number=2)
+        bid_base_before = row_values[str(self.bid_base)]
+        ask_base_before = row_values[str(self.ask_base)]
+        expected_bid_base = str(round(int(bid_base_before) + 1.5, 1))
+        expected_ask_base = str(round(int(ask_base_before) + 1.5, 1))
+        self.rates_tile.select_rows([2])
+        self.rates_tile.modify_client_tile(pips=self.pips_1_5)
+        self.rates_tile.modify_spread(self.widen_spread)
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base, row_number=2)
+        bid_base_after = row_values[str(self.bid_base)]
+        ask_base_after = row_values[str(self.ask_base)]
+        self.rates_tile.compare_values(expected_bid_base, bid_base_after,
+                                       event_name=self.base_event)
+        self.rates_tile.compare_values(expected_ask_base, ask_base_after,
+                                       event_name=self.base_event)
+        # endregion
+
+        # region step 5
+        self.rates_tile.press_pricing()
+        self.rates_tile.check_color_of_pricing_button(expected_color=str(PricingButtonColor.yellow_button.value))
+        # endregion
+
+        # region step 6
+        self.rates_tile.modify_client_tile(pips=self.pips_1)
+        self.rates_tile.modify_spread(self.narrow_spread)
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base, row_number=2)
+        expected_bid_base = str(round(int(bid_base_before) + 0.5, 1))
+        expected_ask_base = str(round(int(ask_base_before) + 0.5, 1))
+        bid_base_value = row_values[str(self.bid_base)]
+        ask_base_value = row_values[str(self.ask_base)]
+        self.rates_tile.compare_values(expected_bid_base, bid_base_value,
+                                       event_name=self.base_event)
+        self.rates_tile.compare_values(expected_ask_base, ask_base_value,
+                                       event_name=self.base_event)
+        # endregion
+
+        # region step 7
+        self.rates_tile.press_pricing()
+        self.rates_tile.check_color_of_pricing_button(expected_color=str(PricingButtonColor.green_button.value))
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region step 8
+        self.rates_tile.press_use_default()
+        # endregion
+        self.rates_tile.close_tile()

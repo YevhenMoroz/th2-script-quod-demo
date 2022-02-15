@@ -1,6 +1,7 @@
 import os
 
 import pyperclip
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -151,3 +152,29 @@ class CommonPage:
             return True
         else:
             return False
+
+    def scroll(self, source_xpath, target_xpath):
+        '''
+        Method was created for scroll
+        '''
+        action = ActionChains(self.web_driver_container)
+        action.drag_and_drop(source_xpath, target_xpath).perform()
+
+    def write_to_file(self, path_to_file, value):
+        try:
+            with open(path_to_file, "w") as file:
+                file.write(value)
+        except FileNotFoundError as e:
+            print("File with password not found", e.__class__.__name__)
+        finally:
+            file.close()
+
+    def parse_from_file(self, path_to_file):
+        try:
+            with open(path_to_file, "r") as file:
+                search_value = file.readline()
+                return search_value
+        except Exception as e:
+            print("File with password not found", e.__class__.__name__)
+        finally:
+            file.close()
