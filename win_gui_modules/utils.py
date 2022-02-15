@@ -13,6 +13,11 @@ def set_session_id():
             RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
     return Stubs.session_id
 
+def set_session_id_2(target_server_win: str):
+    if Stubs.session_id is None:
+        Stubs.session_id = Stubs.win_act.register(
+            RhTargetServer(target=target_server_win)).sessionID
+    return Stubs.session_id
 
 def call(method, args):
     logging.debug("Executing RPC %s", method)
