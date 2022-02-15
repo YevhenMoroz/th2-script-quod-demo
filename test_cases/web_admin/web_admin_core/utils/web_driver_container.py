@@ -1,14 +1,13 @@
 import os
 from os import path
-from os.path import abspath, realpath
+
 
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import xml.etree.ElementTree as ET
-import pkg_resources
+
 
 from stubs import ROOT_DIR
 

@@ -10,6 +10,11 @@ class OrderBookPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
+    # region Headers filters
+    def click_on_arrow_down_button(self):
+        pass
+    #endregion
+
     # region Filter values in main page
     def get_symbol(self):
         return self.find_by_xpath(OrderBookConstants.ORDER_SYMBOL_XPATH).text
@@ -27,7 +32,7 @@ class OrderBookPage(CommonPage):
         return self.find_by_xpath(OrderBookConstants.ORDER_SIDE_XPATH).text
 
     def get_order_qty(self):
-        return self.find_by_xpath(OrderBookConstants.ORDER_ORDER_QTY_XPATH).text
+        return self.find_by_css_selector(OrderBookConstants.ORDER_ORDER_QTY_XPATH).text
 
     def get_price(self):
         return self.find_by_xpath(OrderBookConstants.ORDER_PRICE_XPATH).text

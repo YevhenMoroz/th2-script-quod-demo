@@ -1,3 +1,4 @@
+import random
 import sys
 import time
 import traceback
@@ -12,17 +13,26 @@ from test_framework.web_trading.web_trading_core.pages.main_page.menu.menu_page 
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_page import ProfilePage
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_preference_sub_wizard import \
     ProfilePreferenceSubWizard
-from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_confirmation.order_confirmation_page import OrderConfirmationPage
+from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_confirmation.order_confirmation_page import \
+    OrderConfirmationPage
 from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_ticket_page import OrderTicketPage
-from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order_book.order_book_page import OrderBookPage
+from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order_book.order_book_page import \
+    OrderBookPage
 
 
 class QAP_6500(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA5"
-        self.password = "QA5"
+        self.login = "web_trading_test3"
+        self.password = "Web3_trading_test"
+        self.default_client = "POOJA"
+        # Order info
+        self.instrument = 'VALECHAENG-RL'
+        self.account = 'POOJA'
+        self.quantity = random.randint(0, 300)
+        self.price = random.randint(0, 200)
+        self.order_type = 'Limit'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -31,38 +41,43 @@ class QAP_6500(CommonTestCase):
         login_page.click_login_button()
         time.sleep(2)
         main_page = MainPage(self.web_driver_container)
+        # region set default client
         main_page.click_on_menu_button()
         menu_page = MenuPage(self.web_driver_container)
         menu_page.click_on_profile_button()
         profile_page = ProfilePage(self.web_driver_container)
         profile_page.click_on_preference_button()
+        time.sleep(2)
         preference_page = ProfilePreferenceSubWizard(self.web_driver_container)
-        preference_page.set_default_client_from_dropdown_list("POOJA GANESHAN")
+        preference_page.set_default_client_from_dropdown_list(self.default_client)
+        time.sleep(2)
         profile_page.click_on_save_button()
         profile_page.click_on_close_button()
+        time.sleep(2)
+        # endregion
+        # region set new order
         main_page.click_on_new_workspace_button()
+        time.sleep(2)
         main_page.click_on_order_book_button()
         order_book = OrderBookPage(self.web_driver_container)
         order_book.click_on_maximize_button()
         main_page.click_on_buy_button()
         time.sleep(2)
         order_ticket = OrderTicketPage(self.web_driver_container)
-        order_ticket.create_order("FIFMPS4FQP-MF ", " POOJA GANESHAN ", "11", "22", " Limit ")
+        order_ticket.create_order(self.instrument, self.account, self.quantity, self.price, self.order_type)
         time.sleep(2)
         order_ticket.click_on_buy_button()
+        time.sleep(2)
         confirmation_page = OrderConfirmationPage(self.web_driver_container)
         confirmation_page.click_on_place_button()
-        self.order_id = order_book.get_order_id()
-        order_book.click_on_filter_order_id_button()
-        order_book.set_search_field(self.order_id)
-        order_book.click_on_apply_button()
-        self.status_order = order_book.get_order_status()
+        time.sleep(4)
 
     def test_context(self):
         try:
             self.precondition()
-
-            self.verify("Does the order created successfully? ", self.status_order, "Open")
+            order_book = OrderBookPage(self.web_driver_container)
+            print(order_book.get_order_qty())
+            self.verify("Does the order created successfully? ", self.quantity, order_book.get_order_qty())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

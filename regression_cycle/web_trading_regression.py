@@ -8,6 +8,7 @@ from regression_cycle.web_trading_cycle.run_order_book import RunOrderBook
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from stubs import Stubs
 
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logging.getLogger().setLevel(logging.WARN)
 timeouts = False
@@ -15,7 +16,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    report_id = bca.create_event('Web Trading regression_cycle', parent_id)
     try:
         start_time = time.monotonic()
         # Generation ID and time for test run
@@ -26,8 +27,8 @@ def test_run(parent_id=None):
         # content
         web_driver_container = WebDriverContainer(browser="Chrome", url="web_trading_url")
 
-        RunLogin(web_driver_container, parent_id).execute()
-        # RunOrderBook(web_driver_container, parent_id).execute()
+        # RunLogin(web_driver_container, parent_id).execute()
+        RunOrderBook(web_driver_container, parent_id).execute()
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

@@ -27,3 +27,5 @@ class ProfilePage(CommonPage):
 
     def click_on_close_button(self):
         self.find_by_xpath(ProfileConstants.CLOSE_BUTTON_XPATH).click()
+
+
