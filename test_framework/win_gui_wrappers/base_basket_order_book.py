@@ -114,39 +114,11 @@ class BaseBasketOrderBook(BaseWindow):
                             symbol_source=None, has_header=False, header_row=None, data_row=None, delimiter=None,
                             spreadsheet_tab=None, templ: dict = None):
         if templ is not None:
-            fields_details = [
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.SYMBOL,
-                                                         templ.get('Symbol')[0],
-                                                         templ.get('Symbol')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.QUANTITY,
-                                                         templ.get('Quantity')[0],
-                                                         templ.get('Quantity')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.PRICE, templ.get('Price')[0],
-                                                         templ.get('Price')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.SIDE, templ.get('Side')[0],
-                                                         templ.get('Side')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.ORD_TYPE,
-                                                         templ.get('OrdType')[0],
-                                                         templ.get('OrdType')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.STOP_PRICE,
-                                                         templ.get('StopPrice')[0],
-                                                         templ.get('StopPrice')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.ACCOUNT,
-                                                         templ.get('Account')[0],
-                                                         templ.get('Account')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CAPACITY,
-                                                         templ.get('Capacity')[0],
-                                                         templ.get('Capacity')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.VENUE,
-                                                         templ.get('Venue')[0],
-                                                         templ.get('Venue')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CURRENCY,
-                                                         templ.get('Currency')[0],
-                                                         templ.get('Currency')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CD_ORD_FREE_NOTES,
-                                                         templ.get('CDOrdFreeNotes')[0],
-                                                         templ.get('CDOrdFreeNotes')[1]).build(),
-            ]
+            fields_details = []
+            for key in templ:
+                fields_details.append(self.imported_file_mapping_field_details(
+                    self.imported_file_mapping_field.__dict__[key].value, templ.get(key)[0],
+                    templ.get(key)[1]).build())
             details = self.imported_file_mapping_details(has_header, fields_details, header_row, data_row,
                                                          delimiter, spreadsheet_tab).build()
             self.templates_details.set_imported_file_mapping_details(details)
@@ -164,7 +136,6 @@ class BaseBasketOrderBook(BaseWindow):
         if tif is not None:
             self.templates_details.set_time_in_force(tif)
         call(self.manage_templates_call, self.templates_details.build())
-        self.clear_details([self.imported_file_mapping_field_details,self.imported_file_mapping_details])
 
     def remove_basket_template(self, name):
         self.simple_request(self.base_request, {'Name': name})

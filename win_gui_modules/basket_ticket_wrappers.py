@@ -1,5 +1,5 @@
 from th2_grpc_act_gui_quod import basket_ticket_pb2
-from th2_grpc_act_gui_quod.basket_ticket_pb2 import FileDetails
+from th2_grpc_act_gui_quod.basket_ticket_pb2 import FileDetails, ImportedFileMappingField
 from utils.enum import Enum
 
 
@@ -200,3 +200,17 @@ class ExtractTemplateDetails:
 class FileType(Enum):
     EXCEL = basket_ticket_pb2.FileType.EXCEL
     CSV = basket_ticket_pb2.FileType.CSV
+
+
+class FieldNumber(Enum):
+    Symbol = ImportedFileMappingField.SYMBOL
+    Quantity = ImportedFileMappingField.QUANTITY
+    Price = ImportedFileMappingField.PRICE
+    Side = ImportedFileMappingField.SIDE
+    OrdType = ImportedFileMappingField.ORD_TYPE
+    StopPrice = ImportedFileMappingField.STOP_PRICE
+    Account = ImportedFileMappingField.ACCOUNT
+    Capacity = ImportedFileMappingField.CAPACITY
+    Venue = ImportedFileMappingField.VENUE
+    Currency = ImportedFileMappingField.CURRENCY
+    CDOrdFreeNotes = ImportedFileMappingField.CD_ORD_FREE_NOTES
