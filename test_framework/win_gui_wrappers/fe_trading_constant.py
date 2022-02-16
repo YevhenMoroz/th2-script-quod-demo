@@ -64,6 +64,15 @@ class OrderBookColumns(Enum):
     # endregion
 
 
+class PositionBookColumns(Enum):
+    symbol = "Symbol"
+    account = "Account"
+    position = "Position"
+    quote_position = "Quote Position"
+    position_usd = "Position (USD)"
+    quote_position_usd = "Quote Position (USD)"
+
+
 class TimeInForce(Enum):
     FOK = 'FillOrKill'
     IOC = 'ImmediateOrCancel'
