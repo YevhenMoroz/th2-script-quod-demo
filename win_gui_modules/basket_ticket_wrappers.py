@@ -36,12 +36,21 @@ class TemplatesDetails:
 
 
 class ImportedFileMappingDetails:
-    def __init__(self, has_header: bool = None, fields_details: list = None):
+    def __init__(self, has_header: bool = False, fields_details: list = None, header_row=None, data_row=None,
+                 delimiter=None, spreadsheet_tab=None):
         self._request = basket_ticket_pb2.ImportedFileMappingDetails()
         self._request.hasHeader = has_header
         if fields_details is not None:
             for detail in fields_details:
                 self._request.fieldDetails.append(detail)
+        if header_row is not None:
+            self._request.headerRow = header_row
+        if data_row is not None:
+            self._request.dataRow = data_row
+        if delimiter is not None:
+            self._request.delimiter = delimiter
+        if spreadsheet_tab is not None:
+            self._request.spreadsheetTab = spreadsheet_tab
 
     def set_has_header(self, has_header: bool):
         self._request.hasReader = has_header

@@ -40,6 +40,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.basket_wave_row_details = None
         self.wave_basket_details = None
         self.wave_basket_call = None
+        self.imported_file_mapping_details = None
 
     # endregion
     # region Common func
@@ -110,7 +111,8 @@ class BaseBasketOrderBook(BaseWindow):
 
     # region Actions
     def add_basket_template(self, templ_name=None, descrip=None, client=None, tif=None, exec_policy=None,
-                            symbol_source=None, has_header=True, templ: dict = None):
+                            symbol_source=None, has_header=False, header_row=None, data_row=None, delimiter=None,
+                            spreadsheet_tab=None, templ: dict = None):
         if templ is not None:
             fields_details = [
                 self.imported_file_mapping_field_details(self.imported_file_mapping_field.SYMBOL,
@@ -134,9 +136,19 @@ class BaseBasketOrderBook(BaseWindow):
                                                          templ.get('Account')[1]).build(),
                 self.imported_file_mapping_field_details(self.imported_file_mapping_field.CAPACITY,
                                                          templ.get('Capacity')[0],
-                                                         templ.get('Capacity')[1]).build()
+                                                         templ.get('Capacity')[1]).build(),
+                self.imported_file_mapping_field_details(self.imported_file_mapping_field.VENUE,
+                                                         templ.get('Venue')[0],
+                                                         templ.get('Venue')[1]).build(),
+                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CURRENCY,
+                                                         templ.get('Currency')[0],
+                                                         templ.get('Currency')[1]).build(),
+                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CD_ORD_FREE_NOTES,
+                                                         templ.get('CDOrdFreeNotes')[0],
+                                                         templ.get('CDOrdFreeNotes')[1]).build(),
             ]
-            details = self.imported_file_mapping_field_details(has_header, fields_details).build()
+            details = self.imported_file_mapping_details(has_header, fields_details, header_row, data_row,
+                                                         delimiter, spreadsheet_tab).build()
             self.templates_details.set_imported_file_mapping_details(details)
         self.templates_details.set_default_params(self.base_request)
         if templ_name is not None:
@@ -152,7 +164,7 @@ class BaseBasketOrderBook(BaseWindow):
         if tif is not None:
             self.templates_details.set_time_in_force(tif)
         call(self.manage_templates_call, self.templates_details.build())
-        self.clear_details([self.templates_details, self.imported_file_mapping_field_details])
+        self.clear_details([self.imported_file_mapping_field_details,self.imported_file_mapping_details])
 
     def remove_basket_template(self, name):
         self.simple_request(self.base_request, {'Name': name})
