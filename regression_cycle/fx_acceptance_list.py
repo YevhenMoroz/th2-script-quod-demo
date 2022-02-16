@@ -3,6 +3,7 @@ from test_cases.fx.fx_mm_esp import QAP_1418, QAP_2069, QAP_1536, QAP_2796, QAP_
     QAP_2797, QAP_2078, QAP_2075, QAP_2082
 from test_cases.fx.fx_mm_positions import QAP_1898, import_position_layout, QAP_1897, QAP_1895, QAP_1896
 from test_cases.fx.fx_mm_rfq import QAP_1746, QAP_2062, QAP_1552, QAP_3005, QAP_3003
+from test_cases.fx.fx_mm_rfq.QAP_3250 import QAP_3250
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3805, QAP_3766
 from test_cases.fx.fx_mm_synthetic import QAP_2646
 from test_cases.fx.fx_taker_esp import QAP_3140
@@ -73,6 +74,7 @@ def test_run(parent_id=None):
             QAP_2062.execute(report_id, report_id)
             QAP_3003.execute(report_id)
             QAP_3005.execute(report_id, report_id)
+            QAP_3250(report_id, session_id, configuration.data_set, configuration.environment).execute()
             QAP_3734.execute(report_id, report_id)
             QAP_3766.execute(report_id)
             QAP_3805.execute(report_id)
