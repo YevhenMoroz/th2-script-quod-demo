@@ -370,7 +370,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "OrderCapacity": "A",
             "Price": "30",
             "Currency": "EUR",
-            "ExDestination": "XPAR",
             'Instrument': Instrument.RF.value,
             'TargetStrategy': '1008',
             'NoStrategyParameters': [
