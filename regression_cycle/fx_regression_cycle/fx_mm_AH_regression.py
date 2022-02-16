@@ -76,7 +76,7 @@ def test_run(parent_id=None):
         QAP_6008.execute(report_id, session_id)
         QAP_6010.execute(report_id, session_id)
         QAP_6116.execute(report_id, session_id)
-        QAP_6598(report_id, data_set=data_set)
+        QAP_6598(report_id, data_set=configuration.data_set)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
