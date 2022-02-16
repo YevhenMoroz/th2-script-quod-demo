@@ -134,6 +134,7 @@ class TradeBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
+    exec_type = 'ExecType'
 
 
 class QuoteRequestBookColumns(Enum):
@@ -263,6 +264,8 @@ class MiddleOfficeColumns(Enum):
     block_id = 'Block ID'
     conf_service = "Conf Service"
     side = 'Side'
+    pset = 'PSET'
+    pset_bic = 'PSET BIC'
 
 
 class AllocationsColumns(Enum):
@@ -280,6 +283,7 @@ class AllocationsColumns(Enum):
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
+    executions = 'Executions'
 
 
 class RFQPanelValues(Enum):
