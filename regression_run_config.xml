@@ -1,54 +1,302 @@
 <regression>
     <name>Not regression run</name>
-    <algo run="True">
-        <components>
-            <component name="twap" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="wwap" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="participation" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="iceberg" run="True">
-            <!--component name="iceberg" run="True"-->
-                <data_set>OmsDataSet</data_set>
-                <!--data_set>AlgoDataSet</data_set-->
-                <!--environment>quod316_ganymede_redburn</environment-->
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="multilisted" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="peg" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="stop" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="lit_dark" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="block" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="gating_rules" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-            <component name="web_admin" run="True">
-                <data_set>AlgoDataSet</data_set>
-                <environment>quod316_ganymede_standard</environment>
-            </component>
-        </components>
-    </algo>
+    <product_lines>
+        <product_line name="algo" run="True">
+            <components>
+                <component name="twap" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="wwap" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="participation" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="iceberg" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="multilisted" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="peg" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="stop" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="lit_dark" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="block" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="gating_rules" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="web_admin" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="fx" run="True">
+            <components>
+                <component name="ESP_MM" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="ESP_Taker" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="RFQ_MM" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="RFQ_Taker" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="Position" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="AutoHedger" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="Synthetic" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="FX_Acceptance_list" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="FX_Smoke_list" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <rest_environment>quod314_luna_rest</rest_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="eq" run="True">
+            <components>
+                <component name="" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment></fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="retail" run="True">
+            <components>
+                <component name="" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment></fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="web_admin" run="True">
+            <components>
+                <component name="" run="True">
+                    <data_set></data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment></fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="web_trading" run="True">
+            <components>
+                <component name="" run="True">
+                    <data_set></data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment></fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+        <product_line name="mobile_android" run="True">
+            <components>
+                <component name="" run="True">
+                    <data_set></data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment></fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+    </product_lines>
 </regression>

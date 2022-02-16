@@ -1,7 +1,6 @@
-from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_605, QAP_609, QAP_610, QAP_611, \
-    QAP_612, QAP_636, QAP_643, QAP_645, QAP_646, QAP_648, QAP_683, QAP_687, QAP_702, QAP_708, QAP_709, QAP_710, \
-    QAP_714, QAP_718, QAP_741, QAP_751, QAP_842, QAP_847, QAP_849, QAP_850, QAP_982, QAP_992, QAP_1585, QAP_1713,\
-    QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, QAP_2835, QAP_2847, QAP_3589, QAP_2836, \
+from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_605, QAP_612, QAP_636, QAP_683, QAP_687, QAP_708, \
+    QAP_718, QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, \
+    QAP_2835, QAP_2847, QAP_3589, QAP_2836, \
     import_rfq_taker_layout, QAP_3048
 from stubs import Stubs
 import logging
@@ -40,7 +39,26 @@ from test_cases.fx.fx_taker_rfq.QAP_601 import QAP_601
 from test_cases.fx.fx_taker_rfq.QAP_602 import QAP_602
 from test_cases.fx.fx_taker_rfq.QAP_604 import QAP_604
 from test_cases.fx.fx_taker_rfq.QAP_606 import QAP_606
+from test_cases.fx.fx_taker_rfq.QAP_609 import QAP_609
+from test_cases.fx.fx_taker_rfq.QAP_610 import QAP_610
+from test_cases.fx.fx_taker_rfq.QAP_611 import QAP_611
+from test_cases.fx.fx_taker_rfq.QAP_643 import QAP_643
+from test_cases.fx.fx_taker_rfq.QAP_645 import QAP_645
+from test_cases.fx.fx_taker_rfq.QAP_646 import QAP_646
+from test_cases.fx.fx_taker_rfq.QAP_648 import QAP_648
+from test_cases.fx.fx_taker_rfq.QAP_702 import QAP_702
+from test_cases.fx.fx_taker_rfq.QAP_709 import QAP_709
+from test_cases.fx.fx_taker_rfq.QAP_710 import QAP_710
+from test_cases.fx.fx_taker_rfq.QAP_714 import QAP_714
+from test_cases.fx.fx_taker_rfq.QAP_741 import QAP_741
+from test_cases.fx.fx_taker_rfq.QAP_751 import QAP_751
+from test_cases.fx.fx_taker_rfq.QAP_842 import QAP_842
+from test_cases.fx.fx_taker_rfq.QAP_847 import QAP_847
 from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
+from test_cases.fx.fx_taker_rfq.QAP_849 import QAP_849
+from test_cases.fx.fx_taker_rfq.QAP_850 import QAP_850
+from test_cases.fx.fx_taker_rfq.QAP_982 import QAP_982
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.import_layouts.layout_loader import LayoutLoader
 
@@ -51,13 +69,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
-data_set = FxDataSet()
+
 
 
 def test_run(parent_id=None):
     report_id = bca.create_event('RFQ Taker regression', parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    data_set = FxDataSet()
+    configuration = ComponentConfiguration("RFQ_Taker")
     try:
 
         if not Stubs.frontend_is_open:
@@ -105,31 +125,31 @@ def test_run(parent_id=None):
         QAP_604(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_605.execute(report_id, session_id)
         QAP_606(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_609.execute(report_id, session_id)
-        QAP_610.execute(report_id, session_id)
-        QAP_611.execute(report_id, session_id)
+        QAP_609(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_610(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_611(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_612.execute(report_id, session_id)
         QAP_636.execute(report_id, session_id)
-        QAP_643.execute(report_id, session_id)
-        QAP_645.execute(report_id, session_id)
-        QAP_646.execute(report_id, session_id)
-        QAP_648.execute(report_id, session_id)
+        QAP_643(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_645(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_646(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_648(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_683.execute(report_id, session_id)
         QAP_687.execute(report_id, session_id)
-        QAP_702.execute(report_id, session_id)
-
-        QAP_709.execute(report_id, session_id)
-        QAP_710.execute(report_id, session_id)
-        QAP_714.execute(report_id, session_id)
+        QAP_702(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_708.execute(report_id, session_id)
+        QAP_709(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_710(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_714(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_718.execute(report_id, session_id)
-        QAP_741.execute(report_id, session_id)
-        QAP_751.execute(report_id, session_id)
-        QAP_842.execute(report_id, session_id)
-        QAP_847.execute(report_id, session_id)
+        QAP_741(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_751(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_842(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_847(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_848(report_id=report_id, session_id=session_id, data_set=data_set).execute()
-        QAP_849.execute(report_id, session_id)
-        QAP_850.execute(report_id, session_id)
-        QAP_982.execute(report_id, session_id)
+        QAP_849(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_850(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_982(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_992.execute(report_id, session_id)
         QAP_1585.execute(report_id, session_id)
         QAP_1713.execute(report_id, session_id)

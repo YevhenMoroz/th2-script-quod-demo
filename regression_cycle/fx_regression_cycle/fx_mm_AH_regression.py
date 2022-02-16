@@ -10,6 +10,7 @@ from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe, prepare_fe
@@ -29,6 +30,7 @@ def test_run(parent_id=None):
     fe_user = Stubs.custom_config['qf_trading_fe_user']
     fe_password = Stubs.custom_config['qf_trading_fe_password']
     data_set = FxDataSet()
+    configuration = ComponentConfiguration("AutoHedger")
     try:
         # prepare_position()
         Stubs.frontend_is_open = True
@@ -74,7 +76,7 @@ def test_run(parent_id=None):
         QAP_6008.execute(report_id, session_id)
         QAP_6010.execute(report_id, session_id)
         QAP_6116.execute(report_id, session_id)
-        QAP_6598(report_id, data_set=data_set)
+        QAP_6598(report_id, data_set=configuration.data_set)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

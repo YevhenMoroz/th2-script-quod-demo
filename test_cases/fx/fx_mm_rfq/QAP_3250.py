@@ -1,165 +1,119 @@
-import logging
 import time
-from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1
-from custom.verifier import Verifier
 from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
-    RFQExtractionDetailsRequest, ModificationRequest
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets import constants
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.position_calculation_manager import PositionCalculationManager
+from test_framework.win_gui_wrappers.fe_trading_constant import PositionBookColumns, QuoteRequestBookColumns, Status
+from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
+from test_framework.win_gui_wrappers.forex.fx_positions import FXPositions
 
 
-def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty, "CreationTime", creation_time])
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
-    qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
-    qr_c_id = ExtractionDetail("dealerInterventionClQuote", "ClQuoteReqID")
-    qrb.add_extraction_details([qrb_status, qrb_auto_quoting, qr_id, qr_c_id])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
+class QAP_3250(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
+        self.dealing_poss = FXPositions(self.test_id, self.session_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.poss_manager = PositionCalculationManager
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        # region Test data
+        self.client = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.instrument_fwd = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_fwd
+        }
+        self.qty = random_qty(1, 2, 7)
+        self.qty_to_dealer = random_qty(3, 5, 8)
+        self.status = constants.Status.Fill
+        self.symbol_col = PositionBookColumns.symbol.value
+        self.account_col = PositionBookColumns.account.value
+        self.position_col = PositionBookColumns.position.value
+        self.qty_column = QuoteRequestBookColumns.qty.value
+        self.sts_column = QuoteRequestBookColumns.status.value
+        self.cur_column = QuoteRequestBookColumns.currency.value
+        self.sts_new = Status.new.value
+        # endregion
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Status", status, response[qrb_status.name])
-    verifier.compare_values("AutomaticQuoting", auto_q, response[qrb_auto_quoting.name])
-    verifier.verify()
-    quote_id = response[qr_id.name]
-    client_quote_id=response[qr_c_id.name]
-    return [quote_id, client_quote_id]
-
-
-def check_dealer_intervention(base_request, service, case_id, quote_id):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Id": quote_id})
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_id = bca.client_orderid(8)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
-    response = call(service.getUnassignedRFQDetails, extraction_request.build())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check quote request in DI")
-    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
-    verifier.verify()
-    return response["dealerInterventionClQuote"]
-
-
-def assign_firs_request(base_request, service):
-    base_data = BaseTableDataRequest(base=base_request)
-    call(service.assignToMe, base_data.build())
-
-
-def estimate_first_request(base_request, service):
-    base_data = BaseTableDataRequest(base=base_request)
-    call(service.estimate, base_data.build())
-
-
-def extract_bid_part(base_request, service):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.extract_bid_price_pips("rfqDetails.PricePips")
-    extraction_request.extract_bid_price_large("rfqDetails.PriceLarge")
-    response = call(service.getRFQDetails, extraction_request.build())
-    bid_large = response["rfqDetails.PriceLarge"]
-    bid_small = response["rfqDetails.PricePips"]
-    bid_spot_rate = bid_large + bid_small
-    return bid_spot_rate
-
-
-def extract_ask_part(base_request, service):
-    extraction_request = RFQExtractionDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-    extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-    response = call(service.getRFQDetails, extraction_request.build())
-    print(response)
-    ask_large = response["rfqDetails.askPriceLarge"]
-    ask_small = response["rfqDetails.askPricePips"]
-    ask_spot_rate = ask_large + ask_small
-    return ask_spot_rate
-
-
-def send_quote_from_dealer(base_request, service):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.send()
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-
-def close_dmi_window(base_request, dealer_interventions_service):
-    call(dealer_interventions_service.closeWindow, base_request)
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    ar_service = Stubs.win_act_aggregated_rates_service
-    dealer_service = Stubs.win_act_dealer_intervention_service
-
-    connectivityRFQ = 'fix-ss-rfq-314-luna-standard'
-    case_base_request = get_base_request(session_id, case_id)
-    verifier = Stubs.verifier
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    qty = random_qty(2, 3, 8)
-    symbol = "EUR/GBP"
-    security_type_fwd = "FXFWD"
-    settle_date = wk1()
-    currency = "EUR"
-    settle_currency="GBP"
-    settle_type = "W1"
-    today = date.today()
-    today = today.today().strftime('%m/%d/%Y')
-
-    try:
-        # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol, side="1",
-                                   securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
-                                   currency=currency, settlcurrency=settle_currency, securityid=symbol,
-                                   account=account)
-
-        rfq = FixClientSellRfq(params)
-
-        rfq.send_request_for_quote_no_reply()
-        # Step 2
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty, today)
-        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id[0])
-        assign_firs_request(case_base_request, dealer_service)
-        estimate_first_request(case_base_request, dealer_service)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Creation position to compare
+        self.quote_request.set_rfq_params_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                                                Account=self.client,
+                                                                                Currency=self.currency,
+                                                                                Instrument=self.instrument_fwd,
+                                                                                OrderQty=self.qty, Side="2")
+        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        quote = FixMessageQuoteFX().set_params_for_quote_fwd(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single,
+                                                               self.status)
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        position_before = self.dealing_poss.set_filter(
+            [self.account_col, self.client, self.symbol_col, self.symbol]).extract_field(self.position_col)
+        # endregion
+        # region Step 1
+        self.quote_request.set_rfq_params_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                                                Account=self.client,
+                                                                                Currency=self.currency,
+                                                                                Instrument=self.instrument_fwd,
+                                                                                OrderQty=self.qty_to_dealer)
+        response = self.fix_manager.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_dealer(self.quote_request)
+        # endregion
+        # region Step 2
+        self.dealer_intervention.set_list_filter(
+            [self.qty_column, self.qty_to_dealer, self.cur_column, self.currency]).check_unassigned_fields(
+            {self.sts_column: self.sts_new})
+        self.dealer_intervention.assign_quote()
+        self.dealer_intervention.estimate_quote()
+        # endregion
+        # region Step 3
         time.sleep(5)
-        # Step 3
-        bid_values = extract_bid_part(case_base_request, dealer_service)
-        ask_values = extract_ask_part(case_base_request, dealer_service)
-        print(ask_values)
-        #
-        print("PRESS SEND")
-        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint_response1.checkpoint
-        send_quote_from_dealer(case_base_request, dealer_service)
-        time.sleep(10)
-        rfq.verify_quote_pending(checkpoint_id_=checkpoint_id1)
+        self.dealer_intervention.send_quote()
+        time.sleep(2)
+        self.dealer_intervention.close_window()
+        quote_response = next(response)
+        quote_from_di = self.fix_manager.parse_response(quote_response)[0]
+        self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
+        # endregion
+        # region Step 4
+        self.new_order_single.set_default_for_dealer(self.quote_request, quote_from_di)
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single,
+                                                               self.status)
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
+        # region Step 5
+        position_after = self.dealing_poss.set_filter(
+            [self.account_col, self.client, self.symbol_col, self.symbol]).extract_field(self.position_col)
 
-        # TODO Need to receive QuoteID for sending NewOrderSingle
+        expected_pos = self.poss_manager.calculate_position_buy(position_before, self.qty_to_dealer)
+        self.dealer_intervention.compare_values(expected_pos, position_after.replace(",", ""),
+                                                event_name="Check position after buy order")
 
-        rfq.send_new_order_single("1.1818")
-        rfq.verify_order_pending().verify_order_filled_fwd()
-        close_dmi_window(case_base_request, dealer_service)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # end region

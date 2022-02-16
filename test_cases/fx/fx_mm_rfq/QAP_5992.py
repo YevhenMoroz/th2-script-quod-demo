@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessag
 
 
 class QAP_5992(TestCase):
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
@@ -28,7 +28,6 @@ class QAP_5992(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        gateway_side_sell = DataSet.GatewaySide.Sell
         status = DataSet.Status.Fill
         account = self.data_set.get_client_by_name("client_mm_2")
         symbol = self.data_set.get_symbol_by_name("symbol_2")
@@ -43,7 +42,7 @@ class QAP_5992(TestCase):
             "Symbol": symbol,
             "SecurityType": security_type_swap
         }
-        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
         quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_fwd, settle_type=settle_type_today,
                                       settle_date=settle_date_tod)
         quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_spot, leg_sec_type=security_type_spot,
@@ -56,6 +55,5 @@ class QAP_5992(TestCase):
         new_order_single = FixMessageNewOrderMultiLegFX().set_default_prev_quoted_swap(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_swap(new_order_single,
-                                                                                                  gateway_side_sell,
                                                                                                   status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)

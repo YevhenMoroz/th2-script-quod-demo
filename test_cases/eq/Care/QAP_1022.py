@@ -7,6 +7,7 @@ from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -57,32 +58,32 @@ class QAP_1022(TestCase):
         # endregion
         # region Create CO
         order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=desk, partial_desk=False)
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=desk, partial_desk=False)
         order_ticket.create_order(lookup=lookup)
-        order_id = order_book.extract_field('Order ID')
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region Check values in OrderBook
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Sent"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: "Sent"})
         # endregion
         # region Accept CO
         base_window.switch_user()
         client_inbox.accept_order(lookup, qty, price)
         # endregion
         # region Check values in OrderBook after Accept
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Open"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
         # region Switch to user2
         # endregion
         # region Amend order
         base_window2.switch_user()
         order_ticket2.set_order_details(limit=price2, qty=qty2)
-        order_ticket2.amend_order(['Order ID', order_id])
+        order_ticket2.amend_order([OrderBookColumns.order_id.value, order_id])
         base_window.switch_user()
         client_inbox.accept_modify_plus_child(lookup, qty2, price2)
         order_book.check_order_fields_list(
-            {"Qty": qty2, "Limit": price2})
+            {OrderBookColumns.qty.value: qty2, OrderBookColumns.limit_price.value: price2})
         # endregion
         # region Cancelling order
         base_window2.switch_user()
@@ -91,7 +92,7 @@ class QAP_1022(TestCase):
         # region Check values after Cancel
         base_window.switch_user()
         client_inbox.accept_and_cancel_children(lookup, qty2, price2)
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Cancelled"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.cancelled.value})
         # endregion
         close_fe(self.test_id, session_id2)

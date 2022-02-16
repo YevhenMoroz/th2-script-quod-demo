@@ -5,6 +5,8 @@ from custom import basic_custom_actions as bca
 from test_cases.fx.fx_mm_positions import QAP_2505, QAP_2378, QAP_2491, QAP_2492, QAP_2494, QAP_2496, QAP_2497, \
     QAP_1897, QAP_1898, QAP_2506, QAP_2508, QAP_2500, QAP_2779, QAP_3484, import_position_layout, preconditions_for_pos, \
     QAP_1895, QAP_1896
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe, close_fe, prepare_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -23,6 +25,8 @@ def test_run(parent_id=None):
     fe_password = Stubs.custom_config['qf_trading_fe_password']
 
     try:
+        data_set = FxDataSet()
+        configuration = ComponentConfiguration("Position")
         prepare_position()
         Stubs.frontend_is_open = False
         if not Stubs.frontend_is_open:

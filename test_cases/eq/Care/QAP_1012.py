@@ -6,7 +6,7 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, TimeInForce
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -33,7 +33,7 @@ class QAP_1012(TestCase):
         order_book = OMSOrderBook(self.case_id, self.session_id)
         client = self.data_set.get_client_by_name('client_pt_1')
         lookup = self.data_set.get_lookup_by_name('lookup_1')
-        order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
+        order_ticket.set_order_details(client=client, limit=price, qty=qty, tif=TimeInForce.DAY.value, recipient=user,
                                        partial_desk=True
                                        )
         order_ticket.create_order(lookup)
@@ -47,7 +47,7 @@ class QAP_1012(TestCase):
         # region verify Sts of order
         order_book.set_filter([OrderBookColumns.order_id.value, order_id])
         sts = order_book.extract_field(OrderBookColumns.sts.value)
-        order_book.compare_values({OrderBookColumns.sts.value: 'Open'}, {OrderBookColumns.sts.value: sts},
+        order_book.compare_values({OrderBookColumns.sts.value: ExecSts.open.value}, {OrderBookColumns.sts.value: sts},
                                   'Verifier data')
         # endregion
 

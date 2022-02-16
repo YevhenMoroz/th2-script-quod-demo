@@ -58,7 +58,7 @@ class QAP_2472(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        quote_request = FixMessageQuoteRequestFX().set_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_rfq_params()
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency=self.currency, Instrument=self.instrument_spot,
                                                       OrderQty=self.qty)
@@ -80,7 +80,6 @@ class QAP_2472(TestCase):
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_prev_quoted(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    self.gateway_side_sell,
                                                                                                     self.status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
         self.quote_request_book.set_filter(

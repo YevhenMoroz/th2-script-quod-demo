@@ -33,6 +33,8 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6299 import QAP_6299
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6298 import QAP_6298
 
 
 class ReferenceData:
@@ -74,6 +76,9 @@ class ReferenceData:
             # QAP_4861(self.web_driver_container, self.second_lvl_id).run()
             # QAP_4862(self.web_driver_container, self.second_lvl_id).run()
             # QAP_5815(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6299(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6298(self.web_driver_container, self.second_lvl_id).run()
+
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

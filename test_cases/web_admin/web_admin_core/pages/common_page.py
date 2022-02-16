@@ -1,6 +1,7 @@
 import os
 
 import pyperclip
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -139,3 +140,16 @@ class CommonPage:
         '''
         search_button = self.web_driver_container.get_driver().execute_script(css_path)
         search_button.click()
+
+    def scroll(self, source_xpath, target_xpath):
+        '''
+        Method was created for scroll
+        '''
+        action = ActionChains(self.web_driver_container)
+        action.drag_and_drop(source_xpath, target_xpath).perform()
+
+    def is_button_enabled(self, xpath):
+        if self.find_by_xpath(xpath).is_enabled():
+            return True
+        else:
+            return False

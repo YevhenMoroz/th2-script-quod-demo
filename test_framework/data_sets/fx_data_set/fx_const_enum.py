@@ -191,6 +191,7 @@ class FxCurrencies(Enum):
     currency_gbp = "GBP"
     currency_php = "PHP"
     currency_cad = "CAD"
+    currency_aud = "AUD"
 
 
 class FxRecipients(Enum):
