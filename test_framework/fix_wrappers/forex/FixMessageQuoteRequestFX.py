@@ -1,4 +1,5 @@
 from custom.tenor_settlement_date import spo, wk1
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.DataSet import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from custom import basic_custom_actions as bca
@@ -6,23 +7,23 @@ from custom import basic_custom_actions as bca
 
 class FixMessageQuoteRequestFX(FixMessage):
 
-    def __init__(self, parameters: dict = None):
-        super().__init__(message_type=MessageType.QuoteRequest.value)
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
+        super().__init__(message_type=MessageType.QuoteRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
     def set_rfq_params(self):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "CLIENT1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "Instrument": {
-                    "Symbol": "EUR/USD",
-                    "SecurityType": "FXSPOT"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                 },
-                "SettlDate": spo(),
-                "SettlType": "0",
-                "Currency": "EUR",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "QuoteType": "1",
                 "OrderQty": "1000000",
                 "OrdType": "D"
@@ -36,15 +37,15 @@ class FixMessageQuoteRequestFX(FixMessage):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "Iridium1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "Instrument": {
-                    "Symbol": "GBP/USD",
-                    "SecurityType": "FXFWD"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
                 },
-                "SettlDate": wk1(),
-                "SettlType": "W1",
-                "Currency": "GBP",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlType": self.get_data_set().get_settle_type_by_name("wk1"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "QuoteType": "1",
                 "OrderQty": "1000000",
                 "OrdType": "D"
@@ -58,33 +59,33 @@ class FixMessageQuoteRequestFX(FixMessage):
         quote_request_swap_params = {
             "QuoteReqID": bca.client_orderid(9),
             "NoRelatedSymbols": [{
-                "Account": "Iridium1",
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "OrderQty": "1000000",
-                "Currency": "EUR",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "Instrument": {
-                    "Symbol": "EUR/USD",
-                    "SecurityType": "FXSWAP"
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_swap")
                 },
                 "NoLegs": [
                     {
                         "InstrumentLeg": {
-                            "LegSymbol": "EUR/USD",
-                            "LegSecurityType": "FXSPOT"
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                         },
                         "LegSide": "2",
-                        "LegSettlType": "0",
-                        "LegSettlDate": spo(),
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("spot"),
                         "LegOrderQty": "1000000"
                     },
                     {
                         "InstrumentLeg": {
-                            "LegSymbol": "EUR/USD",
-                            "LegSecurityType": "FXFWD"
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
                         },
                         "LegSide": "1",
-                        "LegSettlType": "W1",
-                        "LegSettlDate": wk1(),
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("wk1"),
                         "LegOrderQty": "1000000"
                     }
                 ]

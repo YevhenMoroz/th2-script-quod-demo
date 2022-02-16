@@ -1,3 +1,4 @@
+import os
 from os.path import abspath, dirname, join
 import grpc
 from th2_common.schema.factory.common_factory import CommonFactory
@@ -27,17 +28,20 @@ from th2_grpc_act_java_api_quod.act_service import ActService
 from th2_grpc_sim_fix_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_fix_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 from th2_grpc_sim_fix_quod.template_simulator_service_equity_service import TemplateSimulatorServiceEquityService
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 
 
 class Stubs:
     configs_dir = join(dirname(abspath(__file__)), 'configs')
     factory = CommonFactory(
-            grpc_router_config_filepath=join(configs_dir, "grpc.json"),
-            rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
-            mq_router_config_filepath=join(configs_dir, "mq.json"),
-            custom_config_filepath=join(configs_dir, "script-params.json"),
-            prometheus_config_filepath=join(configs_dir, "prometheus.json")
-            )
+        grpc_router_config_filepath=join(configs_dir, "grpc.json"),
+        rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
+        mq_router_config_filepath=join(configs_dir, "mq.json"),
+        custom_config_filepath=join(configs_dir, "script-params.json"),
+        prometheus_config_filepath=join(configs_dir, "prometheus.json")
+    )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)

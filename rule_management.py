@@ -23,7 +23,8 @@ from th2_grpc_sim import sim_pb2_grpc as core_test
 
 
 class Simulators(Enum):
-    default = {"core": Stubs.core, "sim": Stubs.simulator, "default_rules": [1, 3, 5, 6, 7, 8, 9, 10, 11]}
+    default = {"core": Stubs.core, "sim": Stubs.simulator,
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
 
 
@@ -399,5 +400,8 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager(Simulators.equity)
+    rule_manager = RuleManager()
+    rule_manager_eq = RuleManager(Simulators.equity)
     rule_manager.print_active_rules()
+    print("_________________________")
+    rule_manager_eq.print_active_rules()

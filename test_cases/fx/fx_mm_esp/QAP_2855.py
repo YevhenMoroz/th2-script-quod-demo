@@ -1,73 +1,68 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileTableValuesRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+
+class QAP_2855(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = None
+
+        self.ask_band = RatesColumnNames.ask_band
+        self.bid_band = RatesColumnNames.bid_band
+
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+
+        self.client = self.data_set.get_client_tier_by_name("client_tier_4")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.instrument = self.symbol + "-Spot"
+        self.band_200k = "200K"
+        self.band_6m200k = "6.2M"
+        self.band_1b200m = "1.2B"
+        self.band_event = "band value validation"
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
 
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_band, self.ask_band, row_number=1)
+        actual_bid_band = row_values[str(self.bid_band)]
+        actual_ask_band = row_values[str(self.ask_band)]
+        expected_bid_band = self.band_200k
+        expected_ask_band = self.band_200k
+        self.rates_tile.compare_values(expected_bid_band, actual_bid_band,
+                                       event_name=self.band_event)
+        self.rates_tile.compare_values(expected_ask_band, actual_ask_band,
+                                       event_name=self.band_event)
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_band, self.ask_band, row_number=2)
+        actual_bid_band = row_values[str(self.bid_band)]
+        actual_ask_band = row_values[str(self.ask_band)]
+        expected_bid_band = self.band_6m200k
+        expected_ask_band = self.band_6m200k
+        self.rates_tile.compare_values(expected_bid_band, actual_bid_band,
+                                       event_name=self.band_event)
+        self.rates_tile.compare_values(expected_ask_band, actual_ask_band,
+                                       event_name=self.band_event)
 
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_band, self.ask_band, row_number=3)
+        actual_bid_band = row_values[str(self.bid_band)]
+        actual_ask_band = row_values[str(self.ask_band)]
+        expected_bid_band = self.band_1b200m
+        expected_ask_band = self.band_1b200m
+        self.rates_tile.compare_values(expected_bid_band, actual_bid_band,
+                                       event_name=self.band_event)
+        self.rates_tile.compare_values(expected_ask_band, actual_ask_band,
+                                       event_name=self.band_event)
+        # endregion
 
-def check_band_column(base_request, service, case_id, row, value):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(row)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBand", "Band"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBand", "Band"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check rounding values")
-    verifier.compare_values("Ask band", value, response["rateTile.askBand"])
-    verifier.compare_values("Bid band", value, response["rateTile.bidBand"])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-    instrument = "GBP/USD-SPOT"
-    client_tier = "Palladium1"
-    value_200k = "1M"
-    value_6m = "3M"
-    value_1_2b = "5M"
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        check_band_column(base_details, cp_service, case_id, 1, value_200k)
-        check_band_column(base_details, cp_service, case_id, 2, value_6m)
-        check_band_column(base_details, cp_service, case_id, 3, value_1_2b)
-
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()

@@ -61,3 +61,64 @@ class RemoveChildOrderFromBasketDetails:
 
     def build(self):
         return self._request
+
+
+class BasketWaveRowDetails:
+    def __init__(self):
+        self._request = basket_book_pb2.BasketWaveRowDetails()
+
+    def set_filtration_value(self, filtration_value: str):
+        self._request.filtrationValue = filtration_value
+
+    def set_remove_row(self, remove_row: bool):
+        self._request.removeRow = remove_row
+
+    def build(self):
+        return self._request
+
+
+class WaveBasketDetails:
+    def __init__(self, base_request=None, filter: dict = None, percentage_profile: str = None,
+                 qty_percentage: str = None, route: str = None, row_details: list = None):
+
+        if base_request is not None:
+            self._request = basket_book_pb2.WaveBasketDetails(base=base_request)
+        else:
+            self._request = basket_book_pb2.WaveBasketDetails()
+
+        if filter is not None:
+            self._request.filter.update(filter)
+
+        if percentage_profile is not None:
+            self._request.percentageProfile = percentage_profile
+
+        if qty_percentage is not None:
+            self._request.qtyPercentage = (qty_percentage)
+
+        if route is not None:
+            self._request.route = route
+
+        if row_details is not None:
+            self._request.rowsDetails.append(row_details)
+
+    def set_base_details(self, base_details):
+        self._request.base.CopyFrom(base_details)
+
+    def set_filter(self, filter: dict):
+        self._request.filter.update(filter)
+
+    def set_percentage_profile(self, percentage_profile: str):
+        self._request.percentageProfile = percentage_profile
+
+    def set_qty_percentage(self, qty_percentage: str):
+        self._request.qtyPercentage = qty_percentage
+
+    def set_route(self, route: str):
+        self._request.route = route
+
+    def set_row_details(self, row_details: list):
+        for row_detail in row_details:
+            self._request.rowsDetails.append(row_detail)
+
+    def build(self):
+        return self._request

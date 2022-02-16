@@ -1,18 +1,23 @@
 import os
 from os import path
+from os.path import abspath, realpath
+
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import xml.etree.ElementTree as ET
+import pkg_resources
+
+from stubs import ROOT_DIR
 
 
 class WebDriverContainer:
     TIMEOUT_DELAY = 15
 
     DOWNLOAD_DIRECTORY_NAME = "downloads"
-    CONFIG_FILE_PATH = "..\\test_framework\web_trading\web_trading_core\pages\config.xml"
+    CONFIG_FILE_PATH = f'{ROOT_DIR}\\test_framework\\web_trading\\web_trading_core\\pages\\config.xml'
 
     def __init__(self, browser, url):
         current_dir = os.getcwd()
@@ -49,7 +54,7 @@ class WebDriverContainer:
                 options_firefox = webdriver.FirefoxOptions()
                 options_firefox.set_preference('browser.download.dir', self.download_dir)
                 self.web_driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
-                                                    options=options_firefox,service_log_path=os.devnull)
+                                                    options=options_firefox, service_log_path=os.devnull)
                 self.wait_driver = WebDriverWait(self.web_driver, self.TIMEOUT_DELAY)
                 self.web_driver.maximize_window()
                 site_url = self.parse_data_from_config_file(self.initial_url)

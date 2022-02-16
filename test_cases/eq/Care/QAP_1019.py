@@ -8,6 +8,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -57,13 +58,13 @@ class QAP_1019(TestCase):
         # endregion
         # region Create CO
         order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=username2)
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
         order_ticket.create_order(lookup=lookup)
-        order_id = order_book.extract_field('Order ID')
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region Check values in OrderBook
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Sent"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: "Sent"})
         # endregion
         # region switch to user2
         base_window2.switch_user()
@@ -72,8 +73,8 @@ class QAP_1019(TestCase):
         client_inbox.reject_order(lookup, qty, price)
         # endregion
         # region Check values in OrderBook after Accept
-        order_book.set_filter(['Order ID', order_id]).check_order_fields_list(
-            {"Sts": "Reject"})
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.rejected.value})
         # endregion
 
         close_fe(self.test_id, session_id2)

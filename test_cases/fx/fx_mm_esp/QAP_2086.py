@@ -1,70 +1,63 @@
 from pathlib import Path
 
-from custom.tenor_settlement_date import spo
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
 from custom import basic_custom_actions as bca
-import logging
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium1'
-side = '1'
-orderqty = 1000000
-ordtype = '2'
-timeinforce = '4'
-currency= 'EUR'
-settlcurrency = 'USD'
-settltype=0
-symbol='EUR/USD'
-securitytype='FXSPOT'
-securityidsource='8'
-securityid='EUR/USD'
-bands=[2000000,6000000,12000000]
-ord_status='Rejected'
-settldate = spo()
-md=None
-defaultmdsymbol_spo='EUR/USD:SPO:REG:HSBC'
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
+class QAP_2086(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.dealer_intervention = None
+        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX()
+        self.new_order_single = FixMessageNewOrderSingleFX()
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.account = self.data_set.get_client_by_name("client_mm_4")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.status_reject = Status.Reject
+        self.price = "1.11999"
 
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        #Precondition
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate, symbol=symbol, securitytype=securitytype)).\
-            send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)).send_market_data_spot()
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
 
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype, timeinforce=timeinforce,
-                                   currency=currency, settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
-                                   securitytype=securitytype, securityidsource=securityidsource, securityid=securityid)
-        params.prepare_md_for_verification(bands)
-        md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-        price= md.extract_filed('Price')
-        new_price = round(float(price)-0.1,5)
-        text='order price ({0}) lower than offer ({1})'.format(new_price, price)
-        md.send_new_order_single(new_price).\
-            verify_order_pending(new_price).\
-            verify_order_rejected(text,new_price)
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            md.send_md_unsubscribe()
-        except:
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # region step 2
+        self.new_order_single.set_default().change_parameters(
+            {"Account": self.account, "Price": self.price})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        # endregion
 
+        # region step 3-4
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
 
-
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)

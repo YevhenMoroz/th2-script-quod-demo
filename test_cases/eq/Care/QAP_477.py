@@ -13,6 +13,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -51,7 +52,7 @@ class QAP_477(TestCase):
         # endregion
         # region Create CO order
         fix_manager.send_message_fix_standard(fix_message)
-        order_id_first = order_book.extract_field('Order ID')
+        order_id_first = order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region Accept CO order
         order_inbox = OMSClientInbox(self.test_id, self.session_id)
@@ -71,9 +72,9 @@ class QAP_477(TestCase):
             rule_manager.remove_rule(nos_rule)
         # endregion
         # region extraction_value
-        result = order_book.extract_2lvl_fields('Child Orders', ['Sts', 'Qty'], rows=[1],
-                                                filter_dict={'Order ID': order_id_first})
-        base_window.compare_values({'Sts': 'Open', 'Qty': qty}, result[0], 'Equals value')
+        result = order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.sts.value, OrderBookColumns.qty.value], rows=[1],
+                                                filter_dict={OrderBookColumns.order_id.value: order_id_first})
+        base_window.compare_values({OrderBookColumns.sts.value: ExecSts.open.value, OrderBookColumns.qty.value: qty}, result[0], 'Equals value')
         # endregion
 
 

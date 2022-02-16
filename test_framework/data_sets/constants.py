@@ -21,6 +21,24 @@ class Connectivity(Enum):
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
 
+class FrontEnd(Enum):
+    # 317 site
+    USER_317 = ""
+    USER_317_1 = ""
+    USER_317_2 = ""
+    PASSWORD_317 = ""
+    PASSWORD_317_1 = ""
+    PASSWORD_317_2 = ""
+    FOLDER_317 = ""
+    DESK_317 = ""
+    MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
+    LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
+    # common values
+    EXE_NAME = "QuodFrontEnd.exe"
+    # target_server values
+    TARGET_SERVER_WEB = "web"
+    TARGET_SERVER_WIN_YEHOR_SAMOILENKO = "quod_02q"
+
 
 class DirectionEnum(Enum):
     FromQuod = "FIRST"
@@ -47,6 +65,7 @@ class MessageType(Enum):
     Quote = "Quote"
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
+    QuoteCancel = "QuoteCancel"
 
 
 class Status(Enum):

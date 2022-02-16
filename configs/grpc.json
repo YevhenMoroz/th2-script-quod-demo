@@ -10,7 +10,9 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["act_fix"]
+        "endpoints": [
+          "act_fix"
+        ]
       }
     },
     "Check1": {
@@ -23,20 +25,24 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["check1"]
+        "endpoints": [
+          "check1"
+        ]
       }
     },
     "Simulator": {
       "service-class": "TemplateSimulatorServiceService",
       "endpoints": {
         "simulator": {
-          "host": "10.0.22.22",
-          "port": 32313
+          "host": "10.0.22.24",
+          "port": 32315
         }
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator"]
+        "endpoints": [
+          "simulator"
+        ]
       }
     },
     "SimulatorEquity": {
@@ -49,20 +55,24 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["sim_equity"]
+        "endpoints": [
+          "sim_equity"
+        ]
       }
     },
     "Simulator2": {
       "service-class": "SimService",
       "endpoints": {
         "simulator": {
-          "host": "10.0.22.22",
-          "port": 32313
+          "host": "10.0.22.24",
+          "port": 32315
         }
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator"]
+        "endpoints": [
+          "simulator"
+        ]
       }
     },
     "SimulatorTest": {
@@ -75,10 +85,11 @@
       },
       "strategy": {
         "name": "robin",
-        "endpoints": ["simulator_test"]
+        "endpoints": [
+          "simulator_test"
+        ]
       }
     },
-
     "Win_Act": {
       "service-class": "ActUIWinService",
       "endpoints": {
@@ -139,7 +150,7 @@
         ]
       }
     },
-	"Win_Act_Order_Book": {
+    "Win_Act_Order_Book": {
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
@@ -154,7 +165,7 @@
         ]
       }
     },
-	"Win_Act_Order_Book_FX": {
+    "Win_Act_Order_Book_FX": {
       "service-class": "OrderBookFXServiceService",
       "endpoints": {
         "act_order_book_fx": {
@@ -245,35 +256,35 @@
       }
     },
     "Win_Act_Trades_Service": {
- "service-class": "TradesServiceService",
- "endpoints": {
- "win_wct_trades_service": {
+      "service-class": "TradesServiceService",
+      "endpoints": {
+        "win_wct_trades_service": {
           "host": "10.0.22.24",
           "port": 32223
- }
- },
- "strategy": {
- "name": "robin",
- "endpoints": [
- "win_wct_trades_service"
- ]
- }
-},
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "win_wct_trades_service"
+        ]
+      }
+    },
     "Win_Act_Care_Order": {
- "service-class": "CareOrdersServiceService",
- "endpoints": {
- "act_care_order": {
-     "host": "10.0.22.24",
-     "port": 32223
- }
- },
- "strategy": {
- "name": "robin",
- "endpoints": [
- "act_care_order"
- ]
- }
-},
+      "service-class": "CareOrdersServiceService",
+      "endpoints": {
+        "act_care_order": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_care_order"
+        ]
+      }
+    },
     "SimulatorHttp": {
       "service-class": "SimTemplateService",
       "endpoints": {
@@ -319,7 +330,7 @@
         ]
       }
     },
-     "Win_Act_Basket_Order_Book": {
+    "Win_Act_Basket_Order_Book": {
       "service-class": "BasketBookServiceService",
       "endpoints": {
         "act_basket_order_book": {
@@ -331,6 +342,21 @@
         "name": "robin",
         "endpoints": [
           "act_basket_order_book"
+        ]
+      }
+    },
+    "Win_Act_Order_Bag_Book": {
+      "service-class": "BagManagementServiceService",
+      "endpoints": {
+        "act_order_bag_book": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_bag_book"
         ]
       }
     },

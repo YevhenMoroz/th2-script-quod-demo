@@ -9,6 +9,7 @@ from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOr
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 
@@ -35,6 +36,20 @@ class FixManager:
                 basic_custom_actions.message_to_grpc(fix_message.get_message_type(), fix_message.get_parameters(),
                                                      self.__session_alias)
             ))
+
+    def send_quote_to_dealer_and_receive_response(self, fix_message: FixMessage, case_id=None):
+        if case_id is not None:
+            case_id = self.__case_id
+        response = self.act.sendQuoteViaWindow(
+            request=basic_custom_actions.convert_to_request(
+                "Send QuoteRequest to Dealer Intervention",
+                self.__session_alias,
+                case_id,
+                basic_custom_actions.message_to_grpc(FIXMessageType.QuoteRequest.value, fix_message.get_parameters(),
+                                                     self.__session_alias)
+            ))
+        return response
+
 
     def send_message_and_receive_response(self, fix_message: FixMessage, case_id=None) -> list:
         if case_id == None:
@@ -160,6 +175,8 @@ class FixManager:
                 response_fix_message = FixMessageQuoteFX()
             elif message_type == FIXMessageType.NewOrderMultiLeg.value:
                 response_fix_message = FixMessageNewOrderMultiLegFX()
+            elif message_type == FIXMessageType.MarketDataRequestReject.value:
+                response_fix_message = FixMessageMarketDataRequestRejectFX()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)

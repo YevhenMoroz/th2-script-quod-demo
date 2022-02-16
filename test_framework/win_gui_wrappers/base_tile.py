@@ -26,6 +26,8 @@ class BaseTile:
                 detail.__init__(self.base_details)
             elif str(signature(detail.__init__)).find("base_tile_data") != -1:
                 detail.__init__(self.base_data)
+            elif str(signature(detail.__init__)).find("data") != -1:
+                detail.__init__(self.base_data)
             else:
                 detail.__init__()
 
