@@ -108,7 +108,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="equity" run="True">
+        <product_line name="oms" run="True">
             <components>
                 <component name="DMA" run="True">
                     <data_set>OmsDataSet</data_set>
