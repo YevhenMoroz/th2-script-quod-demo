@@ -285,7 +285,6 @@ class BaseDataSet:
 
     def get_pset(self, name: str):
         """
-        Hi, this method return pset(I don`t know what is it)
         @param name: name_of_pset
         @return: value_of_pset
         """
