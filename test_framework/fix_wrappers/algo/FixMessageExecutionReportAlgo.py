@@ -20,7 +20,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_fill_buy(new_order_single)
             elif status is Status.PartialFill:
                 self.__set_partial_fill_buy(new_order_single)
-            elif status is Status.CancelRequest:
+            elif status is Status.CancelReplace:
                 self.__set_cancel_replace_buy(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_buy(new_order_single)
@@ -47,7 +47,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def set_params_from_order_cancel_replace(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest, side: GatewaySide, status: Status):
         if side is GatewaySide.Sell:
-            if status is Status.CancelRequest:
+            if status is Status.CancelReplace:
                 self.__set_cancel_replace_sell(order_cancel_replace)
             elif status is Status.Cancel:
                 self.__set_cancel_rep_sell(order_cancel_replace)
