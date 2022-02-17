@@ -114,6 +114,7 @@ class QAP_3636(TestCase):
             {self.stp_px_col: self.stop_price4, self.sts_coll: self.term_sts})
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Restore MD
         self.md_snapshot.set_market_data()
