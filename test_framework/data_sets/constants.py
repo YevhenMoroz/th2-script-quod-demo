@@ -59,7 +59,7 @@ class Status(Enum):
     Fill = "Fill"
     PartialFill = "PartialFill"
     Reject = "Reject"
-    CancelRequest = "CancelReplace"
+    CancelReplace = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
 
