@@ -1,6 +1,6 @@
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
-from test_framework.fix_wrappers.DataSet import GatewaySide, Status
+from test_framework.data_sets.constants import GatewaySide, Status
 
 
 class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
@@ -48,6 +48,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -82,6 +84,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -168,6 +172,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -208,6 +214,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -370,6 +378,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx=0,
