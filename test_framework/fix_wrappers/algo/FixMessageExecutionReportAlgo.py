@@ -388,7 +388,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if order_cancel_replace.get_parameter('OrdType') == '2':
             temp.update(Price = order_cancel_replace.get_parameter("Price"))
-        if order_cancel_replace.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
@@ -466,7 +466,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if order_cancel_replace.get_parameter('OrdType') == '2':
             temp.update(Price = order_cancel_replace.get_parameter("Price"))
-        if order_cancel_replace.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
