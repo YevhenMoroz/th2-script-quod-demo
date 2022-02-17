@@ -1,5 +1,6 @@
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 from test_framework.data_sets.constants import GatewaySide, Status
 
 
@@ -44,6 +45,14 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 raise Exception(f'Incorrect Status')
         return self
 
+    def set_params_from_order_cancel_replace(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest, side: GatewaySide, status: Status):
+        if side is GatewaySide.Sell:
+            if status is Status.CancelRequest:
+                self.__set_cancel_replace_sell(order_cancel_replace)
+            else:
+                raise Exception(f'Incorrect Status')
+        return self
+
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
@@ -51,10 +60,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         if new_order_single.get_parameter('DisplayInstruction'):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
+            Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
             HandlInst=new_order_single.get_parameter("HandlInst"),
-            Instrument=new_order_single.get_parameter("Instrument"),
             OrderQty=new_order_single.get_parameter("OrderQty"),
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
@@ -73,9 +82,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderID='*',
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
-            NoParty='*',
             NoStrategyParameters='*',
-            SecAltIDGrp='*'
+            Instrument='*'
+            #Instrument=new_order_single.get_parameter("Instrument"),
         )
         super().change_parameters(temp)
         return self
@@ -91,7 +100,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
             HandlInst=new_order_single.get_parameter("HandlInst"),
-            Instrument=new_order_single.get_parameter("Instrument"),
             OrderQty=new_order_single.get_parameter("OrderQty"),
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
@@ -111,9 +119,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             ExecRestatementReason=4,
-            NoParty='*',
             NoStrategyParameters='*',
-            SecAltIDGrp='*'
+            Instrument='*',
+            #Instrument=new_order_single.get_parameter("Instrument"),
         )
         super().change_parameters(temp)
         return self
@@ -370,6 +378,45 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TransactTime='*',
             ExecType=4,
             LeavesQty=0
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_replace_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if order_cancel_replace.get_parameter('OrdType') == '2':
+            temp.update(Price = order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
+        temp.update(
+            Account=order_cancel_replace.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            CumQty='*',
+            Currency=order_cancel_replace.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=order_cancel_replace.get_parameter('HandlInst'),
+            LastPx='*',
+            LastQty='*',
+            OrderID='*',
+            OrderQty=order_cancel_replace.get_parameter('OrderQty'),
+            OrdStatus=0,
+            OrdType=2,
+            OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            Price=order_cancel_replace.get_parameter('Price'),
+            Side=order_cancel_replace.get_parameter('Side'),
+            TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
+            TransactTime='*',
+            ExecType=5,
+            LeavesQty='*',
+            OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
+            TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
+            QtyType='*',
+            ExecRestatementReason='*',
+            NoStrategyParameters='*',
+            #NoStrategyParameters=order_cancel_replace.get_parameter('NoStrategyParameters'),
+            Instrument='*'
+            #Instrument=order_cancel_replace.get_parameter('Instrument')
         )
         super().change_parameters(temp)
         return self
