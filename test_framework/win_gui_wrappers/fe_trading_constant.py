@@ -81,6 +81,12 @@ class TimeInForce(Enum):
     DAY = 'Day'
 
 
+class TriggerType(Enum):
+    last_trade = "LastTrade"
+    market_best_bid_offer = "MarketBestBidOffer"
+    primary_best_bid_offer = "PrimaryBestBidOffer"
+
+
 class OrderType(Enum):
     limit = "Limit"
     market = "Market"
