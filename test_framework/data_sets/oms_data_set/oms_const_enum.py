@@ -243,3 +243,9 @@ class OMSCommission(Enum):
     commission1 = 1
     commission2 = 2
     commission3 = 3
+
+
+class OMSPset(Enum):
+    pset_1 = ('CREST', "CRSTGB22")
+    pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+

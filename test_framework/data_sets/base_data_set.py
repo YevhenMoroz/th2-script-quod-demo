@@ -36,6 +36,7 @@ class BaseDataSet:
     venue_client_accounts = None
     verifier_key_parameters = None
     fee_order_scope = None
+    pset = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -289,3 +290,12 @@ class BaseDataSet:
     def get_commissions(self):
         if self.commission:
             return self.commission
+
+    def get_pset(self, name: str):
+        """
+        @param name: name_of_pset
+        @return: value_of_pset
+        """
+        if hasattr(self.pset, name):
+            return getattr(self.pset, name).value
+        raise ValueError(f"{self.pset} not found")
