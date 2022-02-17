@@ -290,4 +290,4 @@ class BaseDataSet:
         """
         if hasattr(self.pset, name):
             return getattr(self.pset, name).value
-        return ValueError(f"{self.pset} not found")
+        raise ValueError(f"{self.pset} not found")
