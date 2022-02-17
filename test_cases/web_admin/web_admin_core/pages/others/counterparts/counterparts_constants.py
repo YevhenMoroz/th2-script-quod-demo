@@ -30,8 +30,8 @@ class CounterpartsConstants:
     # ----------SUB_COUNTERPARTS_TAB----------
     PLUS_AT_SUB_COUNTERPARTS_TAB_XPATH = '//nb-accordion//nb-accordion-item[2]//*[@data-name="plus"]'
     NAME_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Name *"]'
-    PARTY_ID_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Party ID"]'
-    EXT_ID_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Ext ID Client"]'
+    PARTY_ID_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Party ID *"]'
+    EXT_ID_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Ext ID Client *"]'
     PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Party Sub ID Type *"]'
     # --FILTERS--
     NAME_FILTER_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[contains(@class,"subCounterpartName")]//*[@placeholder="Filter"]'
