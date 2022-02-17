@@ -116,9 +116,12 @@ class WaveBasketDetails:
     def set_route(self, route: str):
         self._request.route = route
 
-    def set_row_details(self, row_details: list):
+    def set_row_details_list(self, row_details: list):
         for row_detail in row_details:
             self._request.rowsDetails.append(row_detail)
+
+    def set_row_details(self, row_details):
+            self._request.rowsDetails.append(row_details)
 
     def build(self):
         return self._request

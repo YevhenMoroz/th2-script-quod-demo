@@ -20,6 +20,9 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_child_order_data = None
         self.extract_child_details = None
         self.extract_order_data_details = None
+        self.remove_from_basket_details = None
+        self.basket_wave_row_details = None
+        self.wave_basket_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -33,14 +36,15 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_child_order_data_call = None
         self.extract_basket_data_details_call = None
         self.extract_basket_order_details_call = None
-        self.remove_from_basket_details = None
-
+        self.wave_basket_call = None
 
     # endregion
+
     # region Common func
     def set_filter(self, filter_dict: dict):
         self.extract_template_details(self.base_request, filter_dict)
         self.clear_details([self.extract_template_details])
+
     # endregion
 
     # region Get
@@ -69,6 +73,7 @@ class BaseBasketOrderBook(BaseWindow):
             row_count)  # argument #2 - row numbers
         result = call(self.extract_basket_order_details_call, extract_child_details.build())
         return result
+
     # endregion
 
     # region Set
@@ -185,9 +190,26 @@ class BaseBasketOrderBook(BaseWindow):
     def cancel_basket(self, filter_list=None):
         call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
         self.clear_details([self.simple_request])
-    # endregion
+
     def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
         remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
         call(self.remove_from_basket_call, remove_from_basket_details.build())
 
+    def wave_basket(self, removed_orders: list = None, qty_percentage=None, percentage_profile=None, route=None,
+                    basket_filter:dict=None):
+        if qty_percentage is not None:
+            self.wave_basket_details.set_qty_percentage(qty_percentage)
+        if percentage_profile is not None:
+            self.wave_basket_details.set_percentage_profile(percentage_profile)
+        if route is not None:
+            self.wave_basket_details.set_route(route)
+        if basket_filter is not None:
+            self.wave_basket_details.set_filter(basket_filter)
+        if removed_orders is not None:
+            for order in removed_orders:
+                row_details = self.basket_wave_row_details
+                row_details.set_filtration_value(order)
+                row_details.set_remove_row(True)
+                self.wave_basket_details.set_row_details(row_details.build())
+        call(self.wave_basket_call, self.wave_basket_details.build())
     # endregion
