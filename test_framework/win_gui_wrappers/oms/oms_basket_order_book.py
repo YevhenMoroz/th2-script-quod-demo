@@ -1,10 +1,10 @@
 from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
 
-from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrderBook
 from stubs import Stubs
+from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrderBook
 from win_gui_modules import basket_order_book_wrappers
 from win_gui_modules.basket_order_book_wrappers import ExtractOrderDataDetails, RemoveChildOrderFromBasketDetails, \
-    ExtractChildOrderDataDetails, BasketWaveRowDetails, WaveBasketDetails
+    BasketWaveRowDetails, WaveBasketDetails
 from win_gui_modules.basket_ticket_wrappers import TemplatesDetails, FileDetails, RowDetails, BasketTicketDetails, \
     ExtractTemplateDetails
 from win_gui_modules.common_wrappers import SimpleRequest
@@ -22,10 +22,9 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_order_data_details = ExtractOrderDataDetails
         self.remove_from_basket_details = RemoveChildOrderFromBasketDetails
         self.extract_basket_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
-        self.extract_basket_order_details = basket_order_book_wrappers.ExtractChildOrderDataDetails
+        self.extract_basket_order_details = basket_order_book_wrappers.ExtractSubLvlDataDetails
         self.basket_ticket_details = BasketTicketDetails()
         self.extract_template_details = ExtractTemplateDetails()
-        self.extract_child_details = ExtractChildOrderDataDetails
         self.basket_wave_row_details = BasketWaveRowDetails()
         self.wave_basket_details = WaveBasketDetails(self.base_request)
         self.manage_templates_call = Stubs.win_act_basket_ticket.manageTemplates

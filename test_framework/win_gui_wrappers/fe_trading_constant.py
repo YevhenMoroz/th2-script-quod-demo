@@ -259,6 +259,7 @@ class AllocationsColumns(Enum):
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
 
+
 class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
@@ -313,10 +314,18 @@ class RFQPanelHeaderValues(Enum):
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
 
+
 class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
 
+
 class DiscloseExec(Enum):
     manual = 'M'
     real_time = 'R'
+
+
+class PercentageProfile(Enum):
+    remaining_qty = "RemainingQty"
+    initial_qty = "InitialQty"
+    target_basket_qty = "TargetBasketQty"
