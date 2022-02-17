@@ -5,6 +5,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
+from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
 from test_cases.web_admin.web_admin_core.pages.middle_office.settlement_model.settlement_model_page import \
     SettlementModelPage
@@ -52,18 +53,28 @@ class QAP_3223(CommonTestCase):
             page = SettlementModelPage(self.web_driver_container)
             page.set_name(self.name)
             time.sleep(2)
-
+            page.click_on_more_actions()
+            time.sleep(2)
+            page.click_on_delete(True)
+            time.sleep(15)
+            common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_user_icon()
+            time.sleep(2)
+            common_page.click_on_logout()
+            time.sleep(2)
+            login_page = LoginPage(self.web_driver_container)
+            login_page.login_to_web_admin(self.login, self.password)
+            side_menu = SideMenu(self.web_driver_container)
+            time.sleep(2)
+            side_menu.open_settlement_model_page()
+            time.sleep(2)
             try:
+                page.set_name(self.name)
+                time.sleep(2)
                 page.click_on_more_actions()
-                time.sleep(2)
-                page.click_on_delete(True)
-                time.sleep(2)
-                self.verify("entity deleted correctly", True, True)
-
-            except Exception as e:
-                self.verify("entity not deleted", True, e.__class__.__name__)
-
-
+                self.verify("entity  is not deleted correctly", False, "entity is exist after deleting")
+            except Exception:
+                self.verify("entity deleted", True, True)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

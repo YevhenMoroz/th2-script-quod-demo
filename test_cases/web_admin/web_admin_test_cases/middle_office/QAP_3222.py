@@ -75,7 +75,6 @@ class QAP_3222(CommonTestCase):
         dimensions_sub_wizard.set_account(self.account)
         dimensions_sub_wizard.set_client(self.client)
         dimensions_sub_wizard.set_venue(self.venue)
-        # dimensions_sub_wizard.set_instrument(self.instrument)
         dimensions_sub_wizard.set_instrument_group(self.instrument_group)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -107,7 +106,6 @@ class QAP_3222(CommonTestCase):
         try:
             self.precondition()
             page = SettlementModelPage(self.web_driver_container)
-            wizard = SettlementModelWizard(self.web_driver_container)
             excepted_pdf_values = [self.new_name,
                                    self.new_description,
                                    self.new_settl_location,
@@ -119,7 +117,6 @@ class QAP_3222(CommonTestCase):
                                    self.new_client,
                                    self.new_venue,
                                    self.new_instrument_group
-
                                    ]
 
             self.verify("Is all data displayed correctly in PDF", True,

@@ -39,3 +39,9 @@ class FeesCommissionProfilePointsSubWizard(CommonPage):
 
     def get_upper_limit(self):
         return self.get_text_by_xpath(FeesConstants.COMMISSION_PROFILE_UPPER_LIMIT_XPATH)
+
+    def set_slope(self, value):
+        self.set_text_by_xpath(FeesConstants.COMMISSION_PROFILE_SLOPE_XPATH, value)
+
+    def get_slope(self):
+        return self.get_text_by_xpath(FeesConstants.COMMISSION_PROFILE_SLOPE_XPATH)
