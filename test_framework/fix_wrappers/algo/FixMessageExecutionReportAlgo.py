@@ -49,6 +49,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         if side is GatewaySide.Sell:
             if status is Status.CancelRequest:
                 self.__set_cancel_replace_sell(order_cancel_replace)
+            elif status is Status.Cancel:
+                self.__set_cancel_rep_sell(order_cancel_replace)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -456,6 +458,44 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             NoParty='*',
             NoStrategyParameters='*',
             SecAltIDGrp='*',
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rep_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if order_cancel_replace.get_parameter('OrdType') == '2':
+            temp.update(Price = order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.get_parameter('DisplayInstruction'):
+            temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
+        temp.update(
+            Account=order_cancel_replace.get_parameter('Account'),
+            AvgPx=0,
+            ClOrdID='*',
+            CumQty=0,
+            Currency=order_cancel_replace.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=order_cancel_replace.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=order_cancel_replace.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=order_cancel_replace.get_parameter('OrdType'),
+            OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            Side=order_cancel_replace.get_parameter('Side'),
+            TimeInForce=0,
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
+            TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
+            QtyType='*',
+            NoStrategyParameters='*',
+            CxlQty='*',
+            Instrument='*'
+            #Instrument=order_cancel_replace.get_parameter('Instrument'),
         )
         super().change_parameters(temp)
         return self
