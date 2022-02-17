@@ -26,6 +26,22 @@ class AlgoFixInstruments(Enum):
         SecurityDesc='DREAMNEX'
     )
 
+    instrument_4 = dict(
+        Symbol='PAR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_5 = dict(
+        Symbol='FR0000121121_EUR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -67,6 +83,8 @@ class AlgoMic(Enum):
 
 class AlgoListingId(Enum):
     listing_1 = "1015"
+    listing_2 = "734"
+    listing_3 = "3416"
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
