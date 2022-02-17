@@ -23,6 +23,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.imported_file_mapping_details = None
         self.basket_wave_row_details = None
         self.wave_basket_details = None
+        self.extract_child_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -37,6 +38,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_basket_data_details_call = None
         self.extract_basket_order_details_call = None
         self.wave_basket_call = None
+        self.amend_template_call = None
 
     # endregion
     # region Common func

@@ -1,5 +1,3 @@
-from th2_grpc_act_gui_quod.basket_ticket_pb2 import ImportedFileMappingField
-
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrderBook
 from win_gui_modules import basket_order_book_wrappers
@@ -8,6 +6,7 @@ from win_gui_modules.basket_order_book_wrappers import ExtractOrderDataDetails, 
 from win_gui_modules.basket_ticket_wrappers import TemplatesDetails, FileDetails, RowDetails, BasketTicketDetails, \
     ExtractTemplateDetails, ImportedFileMappingFieldDetails, ImportedFileMappingDetails, FieldNumber
 from win_gui_modules.common_wrappers import SimpleRequest
+from win_gui_modules.order_book_wrappers import ExtractChildOrderDataDetails
 
 
 class OMSBasketOrderBook(BaseBasketOrderBook):
@@ -44,4 +43,5 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_basket_order_details_call = Stubs.win_act_basket_order_book.extractChildOrderData
         self.wave_basket_call = Stubs.win_act_basket_order_book.waveBasket
         self.imported_file_mapping_details = ImportedFileMappingDetails
+        self.extract_child_details = ExtractChildOrderDataDetails
     # endregion
