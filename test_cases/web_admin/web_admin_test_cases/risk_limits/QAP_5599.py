@@ -44,7 +44,6 @@ class QAP_5599(CommonTestCase):
         side_menu.open_order_velocity_page()
         time.sleep(2)
         page = OrderVelocityLimitPage(self.web_driver_container)
-        wizard = OrderVelocityLimitWizard(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
         values_sub_wizard = OrderVelocityLimitValuesSubWizard(self.web_driver_container)
@@ -87,7 +86,7 @@ class QAP_5599(CommonTestCase):
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
             wizard.click_on_save_changes()
-            time.sleep(2)
+            time.sleep(3)
             page.set_name(self.order_velocity_limit_name)
             time.sleep(2)
             page.click_on_more_actions()
