@@ -151,6 +151,8 @@ class QAP_1810(TestCase):
         self.multilisting_order_replace_params.change_parameters(dict(DisplayInstruction=dict(DisplayQty=self.dec_qty)))
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order_replace_params, case_id_2)
 
+        time.sleep(1)
+
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
