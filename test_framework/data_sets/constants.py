@@ -20,6 +20,9 @@ class Connectivity(Enum):
     Luna_314_wa = "rest_wa314luna"
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
+    Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
+    Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
+    Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
 class DirectionEnum(Enum):
@@ -59,3 +62,15 @@ class Status(Enum):
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'
