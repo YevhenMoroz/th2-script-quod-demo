@@ -116,7 +116,7 @@ class QAP_1810(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
-        time.sleep(5)
+        time.sleep(3)
         # endregion
 
         # region Check Sell side
