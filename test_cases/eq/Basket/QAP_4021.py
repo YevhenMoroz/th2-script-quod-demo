@@ -7,7 +7,8 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import PercentageProfile
+from test_framework.win_gui_wrappers.fe_trading_constant import PercentageProfile, BasketBookColumns, SecondLevelTabs, \
+    OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -43,8 +44,38 @@ class QAP_4021(TestCase):
         self.cl_inbox.accept_order(lookup, qty1, price1)
         self.cl_inbox.accept_order(lookup, qty2, price2)
         # endregion
-
-        self.basket_book.wave_basket("50", PercentageProfile.remaining_qty,self.data_set.get_route("route_1"))
-        self.basket_book.extract
-
-
+        # region Wave
+        percent_to_release = "50"
+        self.basket_book.wave_basket(percent_to_release, PercentageProfile.initial_qty.value,
+                                     self.data_set.get_route("route_1"))
+        # endregion
+        # region Verify wave
+        percent_qty_to_release = self.basket_book.get_basket_sub_lvl_value(1,
+                                                                           BasketBookColumns.percent_qty_to_release.value,
+                                                                           "Waves")
+        percent_profile = self.basket_book.get_basket_sub_lvl_value(1, BasketBookColumns.percent_profile.value,
+                                                                    "Waves")
+        self.basket_book.compare_values({"1": PercentageProfile.initial_qty.value}, percent_profile,
+                                        "check percent_profile")
+        self.basket_book.compare_values({"1": percent_to_release}, percent_qty_to_release,
+                                        "check percent_qty_to_release")
+        # endregion
+        # region Verify child orders
+        basket_cl_ord1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["ClOrdID"]
+        basket_cl_ord2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["ClOrdID"]
+        act_child_qty_1 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
+                                                              [OrderBookColumns.Qty.value], [1],
+                                                              {OrderBookColumns.order_id.value: basket_cl_ord1})
+        act_child_qty_2 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
+                                                              [OrderBookColumns.Qty.value], [1],
+                                                              {OrderBookColumns.order_id.value: basket_cl_ord2})
+        expected_qty_1 = str(int(qty1)*int(percent_to_release)/100)
+        expected_qty_2 = str(int(qty2) * int(percent_to_release) / 100)
+        self.order_book.compare_values({"1":expected_qty_1},act_child_qty_1,"compare child qty1")
+        self.order_book.compare_values({"1": expected_qty_2}, act_child_qty_2, "compare child qty1")
+        # endregion
+        # region Wave
+        # percent_to_release = "50"
+        # self.basket_book.wave_basket(percent_to_release, PercentageProfile.initial_qty.value,
+        #                              self.data_set.get_route("route_1"))
+        # endregion

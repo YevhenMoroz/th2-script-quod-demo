@@ -172,6 +172,16 @@ class QuoteRequestBookColumns(Enum):
     # endregion
 
 
+class BasketBookColumns(Enum):
+    id = "Id"
+    exec_policy = "ExecPolicy"
+    status = "Status"
+    basket_name = "Basket Name"
+    """Waves Tab"""
+    percent_qty_to_release = "Percent Qty To Release"
+    percent_profile = "Percent Profile"
+
+
 class ExecSts(Enum):
     filled = 'Filled'
     eliminated = 'Eliminated'
