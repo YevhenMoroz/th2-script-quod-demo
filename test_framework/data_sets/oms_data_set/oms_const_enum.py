@@ -183,9 +183,14 @@ class OmsRoutes(Enum):
     route_1 = "Route via FIXBUYTH2 - component"
 
 
+class OmsRouteID(Enum):
+    route_1 = 24
+
+
 class OmsVenueClientAccounts(Enum):
     client_pt_1_acc_1_venue_client_account = 'MOCLIENT_SA1'
     client_pt_1_acc_2_venue_client_account = 'MOCLIENT_SA2'
+    client_pt_1_acc_3_venue_client_account = "11223344"
 
 
 class OMSCommissionProfiles(Enum):
@@ -223,6 +228,11 @@ class OMSExecScope(Enum):
     first_exec = "FST"
 
 
+class OMSFeeOrderScope(Enum):
+    done_for_day = "DFD"
+    order_acknowledgement = "ACK"
+
+
 class OMSFee(Enum):
     fee1 = 1
     fee2 = 2
@@ -237,3 +247,9 @@ class OMSCommission(Enum):
 class OmsQtyTypes(Enum):
     qty_type_1 = "UnmatchedQty"
     qty_type_2 = "OrderQty"
+
+
+class OMSPset(Enum):
+    pset_1 = ('CREST', "CRSTGB22")
+    pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+

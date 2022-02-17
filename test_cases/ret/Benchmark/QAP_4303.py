@@ -15,14 +15,14 @@ from win_gui_modules.wrappers import set_base
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from test_framework.old_wrappers.ret_wrappers import create_order, verify_order_value, check_order_benchmark_book, get_order_id, \
-    decorator_try_except
+    try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@decorator_try_except(test_id=os.path.basename(__file__))
+@try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = os.path.basename(__file__)
 

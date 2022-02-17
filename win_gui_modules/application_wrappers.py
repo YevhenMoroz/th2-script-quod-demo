@@ -1,5 +1,7 @@
+from enum import Enum
+
 from th2_grpc_act_gui_quod import act_ui_win_pb2
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest, BaseTileData
 
 
 class OpenApplicationRequest:
@@ -56,6 +58,7 @@ class LoginDetailsRequest:
     def build(self):
         return self.login_details
 
+
 class FEDetailsRequest:
     def __init__(self):
         self.fe_details = act_ui_win_pb2.FEDetails()
@@ -106,3 +109,58 @@ class LoadableInstrumentsRequest:
 
     def build(self):
         return self._request
+
+
+class PanicWindowValues(Enum):
+    EXECUTABLE_BUTTON = act_ui_win_pb2.ExtractPanicRequest.ExtractedType.EXECUTABLE_BUTTON_TEXT
+    PRICING_BUTTON = act_ui_win_pb2.ExtractPanicRequest.ExtractedType.EXECUTABLE_BUTTON_TEXT
+    HEDGE_ORDERS_BUTTON = act_ui_win_pb2.ExtractPanicRequest.ExtractedType.EXECUTABLE_BUTTON_TEXT
+
+
+class ExtractPanicValues:
+    def __init__(self):
+        self.request = act_ui_win_pb2.ExtractPanicRequest()
+
+    def set_extraction_id(self, extraction_id: str):
+        self.request.extractionId = extraction_id
+
+    def set_details(self, details: BaseTileData):
+        self.request.data.CopyFrom(details.build())
+
+    def extract_executable_button_text(self, name: str):
+        self.extract_value(PanicWindowValues.EXECUTABLE_BUTTON, name)
+
+    def extract_pricing_button_text(self, name: str):
+        self.extract_value(PanicWindowValues.PRICING_BUTTON, name)
+
+    def extract_hedge_orders_button_text(self, name: str):
+        self.extract_value(PanicWindowValues.HEDGE_ORDERS_BUTTON, name)
+
+    def extract_value(self, field: PanicWindowValues, name: str):
+        extracted_value = act_ui_win_pb2.ExtractPanicRequest.ExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.request.extractedValues.append(extracted_value)
+
+    def build(self):
+        return self.request
+
+
+class ModifyPanicWindow:
+    def __init__(self, details: BaseTileData = None):
+        if details is not None:
+            self.modify_request = act_ui_win_pb2.ModifyPanicRequest(data=details.build())
+        else:
+            self.modify_request = act_ui_win_pb2.ModifyPanicRequest()
+
+    def press_executable(self):
+        self.modify_request.pressExecutable = True
+
+    def press_pricing(self):
+        self.modify_request.pressPricing = True
+
+    def press_hedge_orders(self):
+        self.modify_request.pressHedgeOrders = True
+
+    def build(self):
+        return self.modify_request

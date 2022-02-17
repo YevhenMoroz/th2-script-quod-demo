@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction
 from win_gui_modules.trades_blotter_wrappers import ModifyTradesDetails
@@ -16,6 +17,7 @@ class BaseTradesBook(BaseWindow):
         self.manual_match_call = None
         self.cancel_manual_execution_call = None
         self.get_trade_book_details_call = None
+        self.un_match_call = None
 
     # endregion
     # region Common func
@@ -76,9 +78,33 @@ class BaseTradesBook(BaseWindow):
             modify_trades_details.set_filter(trades_filter_list)
         call(self.manual_match_call, modify_trades_details.build())
 
+    def un_match(self, qty_to_match=None,  trades_filter_list=None):
+        if qty_to_match is not None:
+            self.match_details.set_qty_to_match(qty_to_match)
+        self.match_details.click_match()
+        modify_trades_details = ModifyTradesDetails(self.match_details)
+        modify_trades_details.set_default_params(self.base_request)
+        if trades_filter_list is not None:
+            modify_trades_details.set_filter(trades_filter_list)
+        call(self.un_match_call, modify_trades_details.build())
+
     def cancel_execution(self, trades_filter_list=None):
         self.cancel_manual_execution_details.set_default_params(self.base_request)
         if trades_filter_list is not None:
             self.cancel_manual_execution_details.set_filter(trades_filter_list)
         call(self.cancel_manual_execution_call, self.cancel_manual_execution_details.build())
+    # endregion
+    # region Check
+
+    def check_trade_fields_list(self, expected_fields: dict, event_name="Check Trade Book",
+                                verification_method: VerificationMethod = VerificationMethod.EQUALS):
+
+        actual_list = self.extract_fields(expected_fields)
+        for items in expected_fields.items():
+            key = list(items)[0]
+            value = list(items)[1]
+            self.verifier.set_event_name(event_name)
+            self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
+                                         verification_method)
+        self.verifier.verify()
     # endregion

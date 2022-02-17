@@ -1,17 +1,19 @@
 from datetime import datetime
 
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageMarketDataRequest import FixMessageMarketDataRequest
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
+from custom import basic_custom_actions as bca
+
 
 class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
 
-    def __init__(self, parameters: dict = None):
-        super().__init__()
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
+        super().__init__(data_set=data_set)
         super().change_parameters(parameters)
 
     def set_md_req_parameters_maker(self) -> FixMessageMarketDataRequest:
         md_req_parameters = {
-            "SenderSubID": "CLIENT1",
+            "SenderSubID": self.get_data_set().get_client_by_name("client_mm_1"),
             "MDReqID": bca.client_orderid(10),
             "MarketDepth": "0",
             "MDUpdateType": "0",
@@ -23,11 +25,11 @@ class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
             "NoRelatedSymbols": [
                 {
                     "Instrument": {
-                        "Symbol": "EUR/USD",
-                        "SecurityType": "FXSPOT",
-                        "Product": "4",
+                        "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                        "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
+                        "Product": "4"
                     },
-                    "SettlType": "0",
+                    "SettlType": self.get_data_set().get_settle_type_by_name("spot")
                 }
             ]
         }
@@ -51,14 +53,13 @@ class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
             "NoRelatedSymbols": [
                 {
                     "Instrument": {
-                        "Symbol": "EUR/USD",
-                        "SecurityType": "FXSPOT",
+                        "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                        "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                         "Product": "4",
                     },
-                    "SettlType": "0",
+                    "SettlType": self.get_data_set().get_settle_type_by_name("spot")
                 }
             ]
         }
         super().change_parameters(md_req_parameters)
         return self
-
