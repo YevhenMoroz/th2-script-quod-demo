@@ -31,6 +31,9 @@ class TemplatesDetails:
     def set_imported_file_mapping_details(self, details):
         self._request.importedFileMappingDetails.CopyFrom(details)
 
+    def set_filter(self, filter):
+        self._request.filter.update(filter)
+
     def build(self):
         return self._request
 
