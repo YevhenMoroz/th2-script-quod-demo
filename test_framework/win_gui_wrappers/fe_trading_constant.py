@@ -338,3 +338,9 @@ class RFQPanelHeaderValues(Enum):
 
 class Capacity(Enum):
     agency = 'Agency'
+
+
+class OrderBagColumn(Enum):
+    unmatched_qty = 'UnmatchedQty'
+    order_bag_qty = 'OrderBagQty'
+    ord_bag_name = 'OrdBagName'
