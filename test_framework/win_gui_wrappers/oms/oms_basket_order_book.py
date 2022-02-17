@@ -26,6 +26,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_template_details = ExtractTemplateDetails()
         self.extract_child_details = ExtractChildOrderDataDetails
         self.manage_templates_call = Stubs.win_act_basket_ticket.manageTemplates
+        self.amend_template_call = Stubs.win_act_basket_ticket.amendTemplate
         self.extract_template_data_call = Stubs.win_act_basket_ticket.extractTemplateData
         self.remove_template_call = Stubs.win_act_basket_ticket.removeTemplate
         self.create_basket_via_import_call = Stubs.win_act_basket_ticket.createBasketViaImport
