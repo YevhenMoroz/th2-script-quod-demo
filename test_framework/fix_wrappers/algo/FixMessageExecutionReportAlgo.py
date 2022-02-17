@@ -59,7 +59,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -95,7 +95,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -182,7 +182,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -224,7 +224,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -427,7 +427,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('DisplayInstruction'):
+        if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
