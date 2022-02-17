@@ -244,6 +244,10 @@ class OMSCommission(Enum):
     commission2 = 2
     commission3 = 3
 
+class OmsQtyTypes(Enum):
+    qty_type_1 = "UnmatchedQty"
+    qty_type_2 = "OrderQty"
+
 
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")

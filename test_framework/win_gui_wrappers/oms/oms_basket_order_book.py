@@ -2,10 +2,11 @@ from stubs import Stubs
 from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrderBook
 from win_gui_modules import basket_order_book_wrappers
 from win_gui_modules.basket_order_book_wrappers import ExtractOrderDataDetails, RemoveChildOrderFromBasketDetails, \
-    ExtractChildOrderDataDetails, BasketWaveRowDetails, WaveBasketDetails
+     BasketWaveRowDetails, WaveBasketDetails
 from win_gui_modules.basket_ticket_wrappers import TemplatesDetails, FileDetails, RowDetails, BasketTicketDetails, \
     ExtractTemplateDetails, ImportedFileMappingFieldDetails, ImportedFileMappingDetails, FieldNumber
 from win_gui_modules.common_wrappers import SimpleRequest
+from win_gui_modules.order_book_wrappers import ExtractChildOrderDataDetails
 
 
 class OMSBasketOrderBook(BaseBasketOrderBook):
@@ -21,10 +22,11 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_order_data_details = ExtractOrderDataDetails
         self.remove_from_basket_details = RemoveChildOrderFromBasketDetails
         self.extract_basket_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
-        self.extract_basket_order_details = basket_order_book_wrappers.ExtractChildOrderDataDetails
+        self.extract_basket_order_details = basket_order_book_wrappers.ExtractSubLvlDataDetails
         self.basket_ticket_details = BasketTicketDetails()
         self.extract_template_details = ExtractTemplateDetails()
-        self.extract_child_details = ExtractChildOrderDataDetails
+        self.basket_wave_row_details = BasketWaveRowDetails()
+        self.wave_basket_details = WaveBasketDetails(self.base_request)
         self.manage_templates_call = Stubs.win_act_basket_ticket.manageTemplates
         self.amend_template_call = Stubs.win_act_basket_ticket.amendTemplate
         self.extract_template_data_call = Stubs.win_act_basket_ticket.extractTemplateData
@@ -39,8 +41,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_child_order_data_call = Stubs.win_act_basket_order_book.extractChildOrderData
         self.extract_basket_data_details_call = Stubs.win_act_basket_order_book.extractOrderData
         self.extract_basket_order_details_call = Stubs.win_act_basket_order_book.extractChildOrderData
-        self.basket_wave_row_details = BasketWaveRowDetails()
-        self.wave_basket_details = WaveBasketDetails(self.base_request)
         self.wave_basket_call = Stubs.win_act_basket_order_book.waveBasket
         self.imported_file_mapping_details = ImportedFileMappingDetails
+        self.extract_child_details = ExtractChildOrderDataDetails
     # endregion
