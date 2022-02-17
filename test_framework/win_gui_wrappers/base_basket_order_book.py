@@ -20,6 +20,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_child_order_data = None
         self.extract_order_data_details = None
         self.remove_from_basket_details = None
+        self.imported_file_mapping_details = None
         self.basket_wave_row_details = None
         self.wave_basket_details = None
         self.manage_templates_call = None
