@@ -47,7 +47,7 @@ class QAP_1757(CommonTestCase):
         values_sub_wizard.set_quote_update_format(self.quote_update_format)
         time.sleep(1)
         wizard.click_on_save_changes()
-        time.sleep(2)
+        time.sleep(15)
         page.click_on_user_icon()
         time.sleep(2)
         page.click_on_logout()

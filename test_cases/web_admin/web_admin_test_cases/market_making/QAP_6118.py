@@ -27,7 +27,6 @@ class QAP_6118(CommonTestCase):
     def test_context(self):
 
         try:
-
             self.precondition()
             main_page = AutoHedgerPage(self.web_driver_container)
             try:

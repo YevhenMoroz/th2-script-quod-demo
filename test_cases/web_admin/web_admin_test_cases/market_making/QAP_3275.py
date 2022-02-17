@@ -112,7 +112,7 @@ class QAP_3275(CommonTestCase):
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
+            time.sleep(12)
             client_tier_instrument_main_page.click_on_more_actions()
             time.sleep(2)
             client_tier_instrument_main_page.click_on_edit()

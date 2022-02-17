@@ -5,6 +5,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
+from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tiered_quantities_sub_wizard import \
     ClientTiersInstrumentTieredQuantitiesSubWizard
 from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
@@ -75,7 +76,19 @@ class QAP_1693(CommonTestCase):
             time.sleep(1)
             client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
             client_tiers_wizard.click_on_save_changes()
+            time.sleep(15)
+            # region restart web admin
+            common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_user_icon()
             time.sleep(2)
+            common_page.click_on_logout()
+            time.sleep(2)
+            login_page = LoginPage(self.web_driver_container)
+            login_page.login_to_web_admin(self.login, self.password)
+            side_menu = SideMenu(self.web_driver_container)
+            time.sleep(2)
+            side_menu.open_client_tier_page()
+            # endregion
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
@@ -89,7 +102,19 @@ class QAP_1693(CommonTestCase):
             client_tier_instrument_tiered_quantities_sub_wizard.click_on_delete()
             time.sleep(1)
             client_tiers_wizard.click_on_save_changes()
+            time.sleep(15)
+            # region restart web admin
+            common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_user_icon()
             time.sleep(2)
+            common_page.click_on_logout()
+            time.sleep(2)
+            login_page = LoginPage(self.web_driver_container)
+            login_page.login_to_web_admin(self.login, self.password)
+            side_menu = SideMenu(self.web_driver_container)
+            time.sleep(2)
+            side_menu.open_client_tier_page()
+            # endregion
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()

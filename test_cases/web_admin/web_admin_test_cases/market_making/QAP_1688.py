@@ -5,6 +5,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
+from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
 from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page import \
@@ -82,7 +83,26 @@ class QAP_1688(CommonTestCase):
                 time.sleep(2)
                 client_tier_instrument_main_page.click_on_ok_xpath()
                 time.sleep(3)
-                self.verify("Instrument disabled ", True, True)
+                # step with restart web admin
+                common_page = CommonPage(self.web_driver_container)
+                time.sleep(7)
+                common_page.click_on_user_icon()
+                time.sleep(2)
+                common_page.click_on_logout()
+                time.sleep(2)
+                login_page = LoginPage(self.web_driver_container)
+                login_page.login_to_web_admin(self.login, self.password)
+                side_menu = SideMenu(self.web_driver_container)
+                time.sleep(2)
+                side_menu.open_client_tier_page()
+                client_tiers_main_page.set_name(self.name)
+                time.sleep(2)
+                client_tiers_main_page.click_on_more_actions()
+                time.sleep(2)
+                client_tier_instrument_main_page.set_symbol(self.symbol)
+                time.sleep(2)
+                self.verify("Instrument disabled (false in this case mean that entity disabled) ", False,
+                            client_tier_instrument_main_page.is_client_tier_instrument_enabled())
             except Exception as e:
                 self.verify("Instrument not disabled !!!", True, e.__class__.__name__)
         except Exception:

@@ -55,7 +55,10 @@ class RunMarketMaking:
             # QAP_1647(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1686(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1688(self.web_driver_container, self.second_lvl_id).run()
+
+            #TODO:Error (bug)
             # QAP_1692(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_1693(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1695(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1756(self.web_driver_container, self.second_lvl_id).run()
@@ -66,18 +69,27 @@ class RunMarketMaking:
             # QAP_2022(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2030(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2040(self.web_driver_container, self.second_lvl_id).run()
+
+            #TODO: test is blocked by bug
             # QAP_2045(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_2056(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2158(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2247(self.web_driver_container, self.second_lvl_id).run()
+
+            #TODO: test is blocked by bug
             # QAP_2289(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_2324(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2379(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2442(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2557(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2626(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2628(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2649(self.web_driver_container, self.second_lvl_id).run()
+
+            #TODO: test is blocked by bug
+            # QAP_2649(self.web_driver_container, self.second_lvl_id).run()
+
             # QAP_2772(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3008(self.web_driver_container, self.second_lvl_id).run()
             # QAP_3009(self.web_driver_container, self.second_lvl_id).run()

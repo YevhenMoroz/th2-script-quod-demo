@@ -44,14 +44,14 @@ class QAP_4118(CommonTestCase):
 
         try:
             self.precondition()
-            internal_client_sub_wizard  = AutoHedgerInternalClientsSubWizard(self.web_driver_container)
+            internal_client_sub_wizard = AutoHedgerInternalClientsSubWizard(self.web_driver_container)
             internal_client_sub_wizard.click_on_plus()
             time.sleep(2)
             try:
                 internal_client_sub_wizard.set_client(self.position_book)
-                self.verify("Client set, it's issue",False,True)
+                self.verify("Client set, it's issue", False, True)
             except Exception:
-                self.verify("Client not set, because same is in position book",True,True)
+                self.verify("Client not set, because same is in position book", True, True)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

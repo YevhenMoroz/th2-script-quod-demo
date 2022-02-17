@@ -49,6 +49,15 @@ class ClientTierInstrumentsPage(CommonPage):
     def click_on_enable_disable(self):
         self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_DISABLED_BUTTON_XPATH).click()
 
+    def is_client_tier_instrument_enabled(self):
+        '''
+         Method was created for check is client tier instrument enable or disable, if enable (aria-checked return true)
+         if not , that's mean entity disabled
+        '''
+        return self.find_by_xpath(
+            ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLE_DISABLE_ARIA_CHECK_XPATH).get_attribute(
+            'aria-checked') == "true"
+
     def click_on_new(self):
         self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH).click()
 
@@ -62,4 +71,5 @@ class ClientTierInstrumentsPage(CommonPage):
         return self.is_pdf_contains_value(value)
 
     def get_core_spot_price_strategy(self):
-        return self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_XPATH).text
+        return self.find_by_xpath(
+            ClientTierConstants.MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_XPATH).text

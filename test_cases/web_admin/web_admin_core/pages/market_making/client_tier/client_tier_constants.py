@@ -72,6 +72,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[1]//select"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLED_DISABLED_BUTTON_XPATH = "//*[@class='ag-pinned-left-cols-container']//span"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_CORE_SPOT_PRICE_STRATEGY_XPATH = "//*[@class='ctis-grid']//*[@col-id='pricingMethod']//span//span[4]"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_ENABLE_DISABLE_ARIA_CHECK_XPATH = "//*[@class='ctis-grid']//*[@class='ag-pinned-left-cols-container']/div[1]//input[@role='switch']"
 
     # region wizard
     # values tab
