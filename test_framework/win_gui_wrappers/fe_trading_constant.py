@@ -50,6 +50,7 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    exec_fees = "Exec Fees"
     washbook = 'Wash Book'
     capacity = 'Capacity'
     near_tenor = 'NearTenor'
