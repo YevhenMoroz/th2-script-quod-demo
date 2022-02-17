@@ -29,14 +29,15 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'SettlDate': '*',
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
-            'NoParty': '*'
+            'NoParty': '*',
+            'Origin': '3'
         }
         super().change_parameters(base_parameters)
         return self
 
     def set_TWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -46,9 +47,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
             }
@@ -58,7 +59,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_VWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -68,9 +69,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1",
             'QuodFlatParameters': {
             }
@@ -80,7 +81,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -90,9 +91,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10'
@@ -103,7 +104,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -113,8 +114,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
             "Instrument": Instrument.BUI.value,
             "TargetStrategy": "1005",
             'QuodFlatParameters': {
@@ -127,7 +128,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_VWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -137,8 +138,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
             "Instrument": Instrument.BUI.value,
             "TargetStrategy": "1",
             'QuodFlatParameters': {
@@ -151,7 +152,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -161,9 +162,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10',
@@ -205,7 +206,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -215,9 +216,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1012",
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
@@ -229,7 +230,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOC_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -239,9 +240,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1015",
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
@@ -253,7 +254,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOE_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name("client_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -263,9 +264,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1014",
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
@@ -277,7 +278,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOO_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            "Account": self.get_data_set().get_account_by_name('client_1'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -287,9 +288,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            "ExDestination": self.get_data_set().get_mic_by_name('mic_1'),
+            "Instrument": self.get_data_set().get_instrument_id_by_name('instrument_1'),
             "TargetStrategy": "1012",
             'QuodFlatParameters': {
                 'MaxParticipation': '10',
@@ -304,7 +305,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOC_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            "Account": "CLIENT1",
+            "Account": self.get_data_set().get_account_by_name('client_1'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -314,9 +315,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            "Instrument": Instrument.PAR.value,
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            "ExDestination": self.get_data_set().get_mic_by_name('mic_1'),
+            "Instrument": self.get_data_set().get_instrument_id_by_name('instrument_1'),
             "TargetStrategy": "1015",
             'QuodFlatParameters': {
                 'MaxParticipation': '10',
@@ -331,7 +332,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name('client_1'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': '2',
             'Side': '1',
@@ -341,9 +342,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TransactTime': datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            "ExDestination": "XPAR",
-            'Instrument': Instrument.PAR.value,
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            "ExDestination": self.get_data_set().get_mic_by_name('mic_1'),
+            'Instrument': self.get_data_set().get_instrument_id_by_name('instrument_1'),
             'TargetStrategy': '2',
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10',
@@ -359,7 +360,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_Multilisting_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': "CLIENT1",
+            'Account': self.get_data_set().get_account_by_name('client_1'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': '2',
             'Side': '1',
@@ -369,8 +370,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TransactTime': datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "30",
-            "Currency": "EUR",
-            'Instrument': Instrument.RF.value,
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_instrument_id_by_name('instrument_1'),
             'TargetStrategy': '1008',
             'NoStrategyParameters': [
                 {
