@@ -2,10 +2,10 @@ from xml.etree import ElementTree
 
 # region import data_sets
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.data_sets.algo_data_set.algo_data_set import  AlgoDataSet
-from test_framework.data_sets.oms_data_set.oms_data_set import  OmsDataSet
-from test_framework.data_sets.ret_data_set.ret_data_set import  RetDataSet
-from test_framework.data_sets.fx_data_set.fx_data_set import  FxDataSet
+from test_framework.data_sets.algo_data_set.algo_data_set import AlgoDataSet
+from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
+from test_framework.data_sets.ret_data_set.ret_data_set import RetDataSet
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 # endregion
 
 from stubs import ROOT_DIR

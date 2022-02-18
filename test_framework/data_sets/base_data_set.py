@@ -38,6 +38,7 @@ class BaseDataSet:
     algo_policies_id = None
     venue_client_accounts = None
     verifier_key_parameters = None
+    pset = None
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -231,6 +232,7 @@ class BaseDataSet:
         if hasattr(self.algo_policies_id, name):
             return getattr(self.algo_policies_id, name).value
         raise ValueError(f"{self.algo_policies_id} not found!")
+
     # endregion
 
     def get_lookup_by_name(self, name: str):
@@ -242,6 +244,7 @@ class BaseDataSet:
         if hasattr(self.verifier_key_parameters, name):
             return getattr(self.verifier_key_parameters, name).value
         raise ValueError(f"{self.verifier_key_parameters} not found!")
+
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
@@ -280,3 +283,11 @@ class BaseDataSet:
         if self.commission:
             return self.commission
 
+    def get_pset(self, name: str):
+        """
+        @param name: name_of_pset
+        @return: value_of_pset
+        """
+        if hasattr(self.pset, name):
+            return getattr(self.pset, name).value
+        return ValueError(f"{self.pset} not found")

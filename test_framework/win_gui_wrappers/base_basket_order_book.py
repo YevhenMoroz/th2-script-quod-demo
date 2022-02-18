@@ -1,4 +1,7 @@
+from typing import List
+
 from test_framework.win_gui_wrappers.base_window import BaseWindow
+from win_gui_modules.basket_order_book_wrappers import BasketWaveRowDetails
 from win_gui_modules.basket_ticket_wrappers import BasketTicketDetails
 from win_gui_modules.utils import call
 
@@ -34,13 +37,16 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_basket_data_details_call = None
         self.extract_basket_order_details_call = None
         self.remove_from_basket_details = None
-
+        self.basket_wave_row_details = None
+        self.wave_basket_details = None
+        self.wave_basket_call = None
 
     # endregion
     # region Common func
     def set_filter(self, filter_dict: dict):
         self.extract_template_details(self.base_request, filter_dict)
         self.clear_details([self.extract_template_details])
+
     # endregion
 
     # region Get
@@ -69,6 +75,7 @@ class BaseBasketOrderBook(BaseWindow):
             row_count)  # argument #2 - row numbers
         result = call(self.extract_basket_order_details_call, extract_child_details.build())
         return result
+
     # endregion
 
     # region Set
@@ -185,9 +192,29 @@ class BaseBasketOrderBook(BaseWindow):
     def cancel_basket(self, filter_list=None):
         call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
         self.clear_details([self.simple_request])
-    # endregion
+
     def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
         remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
         call(self.remove_from_basket_call, remove_from_basket_details.build())
+
+    def set_wave_basket_row(self, remove_row: bool, wave_row_filter: str = None):
+        if wave_row_filter is not None:
+            self.basket_wave_row_details.set_filtration_value(wave_row_filter)
+        self.basket_wave_row_details.set_remove_row(remove_row)
+        return self.basket_wave_row_details.buyld()
+
+    def wave_basket(self, percentage_profile: str = None, qty_percentage: str = None, route: str = None,
+                    filter: dict = None, row_details: List[BasketWaveRowDetails] = None):
+        if filter is not None:
+            self.wave_basket_details.set_filtration_value(filter)
+        if qty_percentage is not None:
+            self.wave_basket_details.set_qty_percentage(qty_percentage)
+        if percentage_profile is not None:
+            self.wave_basket_details.set_percentage_profile(percentage_profile)
+        if route is not None:
+            self.wave_basket_details.set_route(route)
+        if row_details is not None:
+            self.wave_basket_details.set_row_details(row_details)
+        call(self.wave_basket_call, self.wave_basket_details.build())
 
     # endregion

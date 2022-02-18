@@ -102,11 +102,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -116,11 +116,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -130,11 +130,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -144,11 +144,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -158,11 +158,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -172,11 +172,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -186,11 +186,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -200,11 +200,11 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -214,26 +214,32 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <rest_environments>
-                            <rest_environment>quod314_luna_rest</rest_environment>
-                        </rest_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
             </components>
         </product_line>
-        <product_line name="eq" run="True">
+        <product_line name="oms" run="True">
             <components>
-                <component name="" run="True">
+                <component name="DMA" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment></fix_environment>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod317_fe</fe_environment>
                         </fe_environments>
+                        <java_api_environment>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environment>
+                        <rest_environments>
+                            <rest_environment></rest_environment>
+                        </rest_environments>
                     </environments>
                 </component>
             </components>

@@ -4,7 +4,7 @@ from test_framework.win_gui_wrappers.base_basket_order_book import BaseBasketOrd
 from stubs import Stubs
 from win_gui_modules import basket_order_book_wrappers
 from win_gui_modules.basket_order_book_wrappers import ExtractOrderDataDetails, RemoveChildOrderFromBasketDetails, \
-    ExtractChildOrderDataDetails
+    ExtractChildOrderDataDetails, BasketWaveRowDetails, WaveBasketDetails
 from win_gui_modules.basket_ticket_wrappers import TemplatesDetails, FileDetails, RowDetails, BasketTicketDetails, \
     ExtractTemplateDetails
 from win_gui_modules.common_wrappers import SimpleRequest
@@ -39,5 +39,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.extract_child_order_data_call = Stubs.win_act_basket_order_book.extractChildOrderData
         self.extract_basket_data_details_call = Stubs.win_act_basket_order_book.extractOrderData
         self.extract_basket_order_details_call = Stubs.win_act_basket_order_book.extractChildOrderData
-
+        self.basket_wave_row_details = BasketWaveRowDetails()
+        self.wave_basket_details = WaveBasketDetails(self.base_request)
+        self.wave_basket_call = Stubs.win_act_basket_order_book.waveBasket
     # endregion
