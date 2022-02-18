@@ -368,3 +368,18 @@ class OrderBagColumn(Enum):
     unmatched_qty = 'UnmatchedQty'
     order_bag_qty = 'OrderBagQty'
     ord_bag_name = 'OrdBagName'
+
+
+class BasketBookColumns(Enum):
+    id = "Id"
+    exec_policy = "ExecPolicy"
+    status = "Status"
+    basket_name = "Basket Name"
+    """Waves Tab"""
+    percent_qty_to_release = "Percent Qty To Release"
+    percent_profile = "Percent Profile"
+    client_basket_id = 'Client Basket ID'
+
+
+class BasketSecondTabName(Enum):
+    orders = 'Orders'
