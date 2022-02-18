@@ -38,6 +38,22 @@ class FrontEnd(Enum):
     # target_server values
     TARGET_SERVER_WEB = "web"
     TARGET_SERVER_WIN_YEHOR_SAMOILENKO = "quod_02q"
+    # region quod314
+    USER_314 = ""
+    USER_314_1 = ""
+    USER_314_2 = ""
+    PASSWORD_314 = ""
+    PASSWORD_314_1 = ""
+    PASSWORD_314_2 = ""
+    FOLDER_314 = ""
+    DESK_314 = ""
+    MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
+    LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
+    # common values
+    # target_server values
+    TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
+    # endregion
+
 
 
 class DirectionEnum(Enum):

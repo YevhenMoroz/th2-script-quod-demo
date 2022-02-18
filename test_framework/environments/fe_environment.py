@@ -25,7 +25,7 @@ class FEEnvironment(BaseEnvironment):
                 FEEnvironment.environment_instances.update({EnvironmentType.quod316_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod316_fe.value]
 
-        if env.value == EnvironmentType.quod317_fe.value:
+        elif env.value == EnvironmentType.quod317_fe.value:
             if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod317_fe.value,
@@ -35,6 +35,16 @@ class FEEnvironment(BaseEnvironment):
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
+        elif env.value == EnvironmentType.quod314_luna_fe.value:
+            if EnvironmentType.quod314_luna_fe.value not in FEEnvironment.environment_instances.keys():
+                site_environment = FEEnvironment(
+                    environment_type=EnvironmentType.quod314_luna_fe.value,
+                    user=FrontEnd.USER_314.value,
+                    password=FrontEnd.PASSWORD_314.value,
+                    path=FrontEnd.FOLDER_314.value
+                )
+                FEEnvironment.environment_instances.update({EnvironmentType.quod314_luna_fe.value: site_environment})
+            return FEEnvironment.environment_instances[EnvironmentType.quod314_luna_fe.value]
 
         else:
             raise Exception('No such environment')

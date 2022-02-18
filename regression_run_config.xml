@@ -102,7 +102,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -116,7 +116,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -130,7 +130,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -144,7 +144,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -158,7 +158,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -172,7 +172,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -186,7 +186,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -200,7 +200,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -214,7 +214,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
