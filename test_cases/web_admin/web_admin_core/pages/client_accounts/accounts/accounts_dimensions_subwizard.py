@@ -82,3 +82,6 @@ class AccountsDimensionsSubWizard(CommonPage):
 
     def click_on_plus(self):
         self.find_by_xpath(AccountsConstants.DIMENSIONS_PLUS_BUTTON_XPATH).click()
+
+    def is_venue_account_present(self):
+        return self.is_element_present(AccountsConstants.DIMENSIONS_DELETE_BUTTON_XPATH)

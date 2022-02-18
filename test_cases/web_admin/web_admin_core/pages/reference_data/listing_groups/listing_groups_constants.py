@@ -28,7 +28,7 @@ class ListingGroupsConstants:
     MAIN_PAGE_MARKET_DATA_SOURCE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_MARKET_DATA_SOURCE_XPATH = '//*[@col-id="MDSource"]//span//span[4]'
     MAIN_PAGE_FEED_SOURCE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
-    MAIN_PAGE_FEED_SOURCE_XPATH = '//*[@col-id="feedSourceEnumTable.feedSourceName"]//span//span[4]'
+    MAIN_PAGE_FEED_SOURCE_XPATH = '//*[@id="feedSourceEnumTable"]'
     MAIN_PAGE_DEFAULT_SYMBOL_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_DEFAULT_SYMBOL_XPATH = '//*[@col-id="defaultMDSymbol"]//span//span[4]'
 

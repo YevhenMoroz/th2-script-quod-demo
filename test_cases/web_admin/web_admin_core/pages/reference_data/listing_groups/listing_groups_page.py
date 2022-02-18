@@ -73,4 +73,7 @@ class ListingGroupsPage(CommonPage):
         self.set_text_by_xpath(ListingGroupsConstants.MAIN_PAGE_FEED_SOURCE_FILTER_XPATH, value)
 
     def get_feed_source(self):
-        return self.find_by_xpath(ListingGroupsConstants.MAIN_PAGE_FEED_SOURCE_XPATH).text
+        return self.find_by_xpath(ListingGroupsConstants.MAIN_PAGE_FEED_SOURCE_XPATH).get_attribute("value")
+
+    def is_feed_source_field_editable(self):
+        return self.is_field_enabled(ListingGroupsConstants.MAIN_PAGE_FEED_SOURCE_XPATH)

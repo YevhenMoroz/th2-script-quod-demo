@@ -20,7 +20,7 @@ class QAP_2196(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client_id_source = "BIC"
@@ -87,11 +87,13 @@ class QAP_2196(CommonTestCase):
             time.sleep(1)
             main_page.click_edit_entity_button()
             time.sleep(2)
+            dimensions_sub_wizard.filter_dimensions(venue_account=self.venue_account)
+            time.sleep(1)
+
             try:
-                dimensions_sub_wizard.click_delete_button()
-                self.verify("Error Venue account not  deleted !", True, False)
-            except Exception:
-                self.verify("Venue account deleted correctly", True, True)
+                self.verify("Venue account deleted correctly", False, dimensions_sub_wizard.is_venue_account_present())
+            except Exception as e:
+                self.verify("Error Venue account not  deleted !", True, e.__class__.__name__)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

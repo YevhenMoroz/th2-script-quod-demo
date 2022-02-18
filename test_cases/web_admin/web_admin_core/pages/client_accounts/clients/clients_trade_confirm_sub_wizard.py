@@ -32,7 +32,7 @@ class ClientsTradeConfirmSubWizard(CommonPage):
         self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH, value)
 
     def get_trade_confirm_preference(self):
-        self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH)
+        return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH)
 
     def set_net_gross_ind_type(self, value):
         self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH, value)

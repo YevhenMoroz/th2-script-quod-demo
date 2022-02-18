@@ -3,7 +3,7 @@ class ClientsConstants:
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[contains(text(), 'Save Changes')]"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
@@ -37,7 +37,7 @@ class ClientsConstants:
     MAIN_PAGE_CLIENT_NAME = '//*[@col-id="accountGroupName"]//span[@class="ag-group-value"]'
 
     # values tab
-    VALUES_TAB_ID_XPATH = '//*[@formcontrolname="accountGroupID"]'
+    VALUES_TAB_ID_XPATH = '//*[@class="breadcrumbs entity-title"]'
     VALUES_NAME_XPATH = '//*[@formcontrolname="accountGroupName"]'
     VALUES_TAB_EXT_ID_CLIENT_XPATH = '//*[@formcontrolname="clientAccountGroupID"]'
     VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@id="clearingAccountType"]'
@@ -151,7 +151,7 @@ class ClientsConstants:
     VENUES_TAB_VENUE_XPATH = '//*[@placeholder="Venue *"]'
     VENUES_TAB_VENUE_FILTER_XPATH = '//*[@class="ng2-smart-th venue ng-star-inserted"]//input'
     VENUES_TAB_VENUE_CLIENT_NAME_XPATH = '//*[@placeholder="Venue Client Name *"]'
-    VENUES_TAB_VENUE_CLIENT_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th venueActGrpName ng-star-inserted"]//input'
+    VENUES_TAB_VENUE_CLIENT_NAME_FILTER_XPATH = '//nb-accordion-item//*[text()=" Venues "]/following-sibling::nb-accordion-item-body//thead//tr[2]//th[2]//input'
     VENUES_TAB_VENUE_CLIENT_ACCOUNT_GROUP_NAME_XPATH = '//*[@placeholder="Venue Client AccountGroup Name"]'
     VENUES_TAB_VENUE_CLIENT_ACCOUNT_GROUP_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th venueClientActGrpName ng-star-inserted"]//input'
     VENUES_TAB_DEFAULT_ROUTE_XPATH = '//*[@placeholder="Default Route"]'
@@ -167,6 +167,7 @@ class ClientsConstants:
     VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[10]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
     VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[11]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
     VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[12]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
+    VENUES_TAB_SAVED_VENUE_XPATH = "//nb-accordion-item//*[text()=' Venues ']/following-sibling::nb-accordion-item-body//tbody//td[2]"
 
     # Routes tab
     ROUTES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="plus"]'

@@ -59,23 +59,22 @@ class QAP_2461(CommonTestCase):
         time.sleep(2)
         main_page.set_id(self.id)
         time.sleep(2)
-        main_page.toggle_entity_toggle_button()
-        time.sleep(3)
-        main_page.toggle_entity_toggle_button()
+
 
     def test_context(self):
 
         try:
             self.precondition()
             main_page = AccountsPage(self.web_driver_container)
-            try:
-                main_page.click_more_actions_button()
-                time.sleep(2)
-                main_page.click_edit_entity_button()
-                self.verify("toogle button works correctly", True, True)
 
-            except Exception as e:
-                self.verify("Toogle button works not correctly!!!", True, e.__class__.__name__)
+            main_page.toggle_entity_toggle_button()
+            time.sleep(2)
+            self.verify("Toggle button is disabed", False, main_page.is_entity_toggle_button_enabled())
+
+            time.sleep(2)
+            main_page.toggle_entity_toggle_button()
+            time.sleep(2)
+            self.verify("Toggle button is enabled", True, main_page.is_entity_toggle_button_enabled())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

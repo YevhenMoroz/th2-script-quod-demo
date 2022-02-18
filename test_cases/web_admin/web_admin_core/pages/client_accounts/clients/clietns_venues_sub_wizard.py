@@ -1,3 +1,5 @@
+import time
+
 from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -99,6 +101,18 @@ class ClientsVenuesSubWizard(CommonPage):
 
     def click_per_transac_fee_exemption(self):
         self.find_by_xpath(ClientsConstants.VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH).click()
+
+    def is_venue_present(self):
+        return self.is_element_present(ClientsConstants.VENUES_TAB_DELETE_BUTTON_XPATH)
+
+    def create_new_venue(self, venue, venue_client_name, venue_client_account):
+        self.click_on_plus()
+        time.sleep(1)
+        self.set_venue(venue)
+        self.set_venue_client_name(venue_client_name)
+        self.set_venue_client_account(venue_client_account)
+        time.sleep(1)
+        self.click_on_checkmark()
         
 
 

@@ -11,7 +11,7 @@ from test_cases.web_admin.web_admin_core.utils.pdf_utils.pdf_reader import PdfRe
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_core.utils.web_driver_utils import delete_all_files_with_extension, \
     find_files_by_extension
-
+from selenium.common.exceptions import NoSuchElementException
 
 class CommonPage:
     def __init__(self, web_driver_container: WebDriverContainer):
@@ -147,11 +147,15 @@ class CommonPage:
         search_button = self.web_driver_container.get_driver().execute_script(css_path)
         search_button.click()
 
-    def is_element_displayed(self, xpath):
-        if self.find_by_xpath(xpath).is_displayed():
-            return True
-        else:
+    def is_element_present(self, xpath):
+        try:
+            self.web_driver_container.get_driver().find_element_by_xpath(xpath)
+        except NoSuchElementException:
             return False
+        return True
+
+    def use_keyboard_esc_button(self):
+        self.find_by_xpath("//body").send_keys(Keys.ESCAPE)
 
     def scroll(self, source_xpath, target_xpath):
         '''
@@ -178,3 +182,9 @@ class CommonPage:
             print("File with password not found", e.__class__.__name__)
         finally:
             file.close()
+
+    def is_field_required(self, field_xpath):
+        '''
+        Return True if field is required or False if not
+        '''
+        return self.find_by_xpath(field_xpath).get_attribute("required") == "true"

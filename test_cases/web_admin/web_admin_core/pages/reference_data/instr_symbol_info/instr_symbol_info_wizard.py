@@ -58,3 +58,6 @@ class InstrSymbolInfoWizard(CommonPage):
 
     def click_on_cross_through_eur_to_usd(self):
         self.find_by_xpath(InstrSymbolInfoConstants.WIZARD_CROSS_THROUGH_EUR_TO_USD_CHECKBOX_XPATH)
+
+    def is_instrsymbol_field_enabled(self):
+        return self.is_field_enabled(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH)

@@ -77,21 +77,24 @@ class QAP_4864(CommonTestCase):
         main_page.set_name(self.name)
         time.sleep(2)
         main_page.click_on_more_actions()
+        main_page.click_on_edit()
         time.sleep(2)
 
     def test_context(self):
+        trade_confirm_sub_wizard = ClientsTradeConfirmSubWizard(self.web_driver_container)
         try:
             self.precondition()
-            main_page = ClientsPage(self.web_driver_container)
-            expected_pdf_result = [self.disclose_exec,
-                                   self.email_address,
-                                   self.trade_confirm_generation,
-                                   self.trade_confirm_preference,
-                                   self.net_gross_ind_type,
-                                   self.recipient_types]
+            actual_result = [trade_confirm_sub_wizard.get_trade_confirm_generation(),
+                             trade_confirm_sub_wizard.get_trade_confirm_preference(),
+                             trade_confirm_sub_wizard.get_net_gross_ind_type()]
+            trade_confirm_sub_wizard.click_on_edit()
+            time.sleep(1)
+            actual_result.append(trade_confirm_sub_wizard.get_email_address())
+            actual_result.append(trade_confirm_sub_wizard.get_recipient_types())
+            expected_result = [self.trade_confirm_generation, self.trade_confirm_preference, self.net_gross_ind_type,
+                               self.email_address, self.recipient_types]
 
-            self.verify("Is pdf contains correctly values", True,
-                        main_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
+            self.verify("Edit entity saved correctly", expected_result, actual_result)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

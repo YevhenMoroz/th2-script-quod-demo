@@ -94,3 +94,6 @@ class InstrSymbolInfoPage(CommonPage):
             return True
         else:
             return False
+
+    def is_instr_symbol_present(self):
+        return self.is_element_present(InstrSymbolInfoConstants.MAIN_PAGE_INSTR_SYMBOL_XPATH)

@@ -1,10 +1,8 @@
 import time
 from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
 from test_cases.web_admin.web_admin_core.pages.general.common.common_constants import CommonConstants
-
 from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
 import pyperclip
-
 
 class CommonPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
@@ -65,7 +63,7 @@ class CommonPage(CommonPage):
         return self.find_by_xpath(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH).is_enabled()
 
     def is_header_displayed(self):
-        return self.is_element_displayed(CommonConstants.HEADER_XPATH)
+        return self.is_element_present(CommonConstants.HEADER_XPATH)
 
     def is_user_icon_displayed(self):
         return "control-item icon-btn context-menu-host" == self.find_by_xpath(
@@ -76,6 +74,9 @@ class CommonPage(CommonPage):
 
     def click_on_exit_full_screen_button(self):
         self.find_by_xpath(CommonConstants.EXIT_FULL_SCREEN_BUTTON_XPATH).click()
+
+    def click_on_esc_keyboard_button(self):
+        self.use_keyboard_esc_button()
 
     def click_on_copy_version_button(self):
         self.find_by_xpath(CommonConstants.COPY_VERSION_BUTTON).click()
@@ -103,12 +104,10 @@ class CommonPage(CommonPage):
         return self.find_by_xpath(CommonConstants.USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION).text
 
     def is_send_feedback_field_displayed(self):
-        return self.is_element_displayed(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH)
+        return self.is_element_present(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH)
 
     def is_link_of_help_icon_correct(self, link):
         window_after = self.web_driver_container.get_driver().window_handles[1]
         self.web_driver_container.get_driver().switch_to.window(window_after)
         inst = self.web_driver_container.get_driver().current_url
-
-        print(inst)
         return link == inst

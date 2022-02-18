@@ -11,7 +11,7 @@ class ClientsValuesSubWizard(CommonPage):
         self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ID_XPATH, value)
 
     def get_id(self):
-        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ID_XPATH)
+        return self.find_by_xpath(ClientsConstants.VALUES_TAB_ID_XPATH).text
 
     def set_name(self, value):
         self.set_text_by_xpath(ClientsConstants.VALUES_NAME_XPATH, value)

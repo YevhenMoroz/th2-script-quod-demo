@@ -46,68 +46,27 @@ class RunClientsAccounts:
             # QAP_2181(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2182(self.web_driver_container, self.second_lvl_id).run()
             # QAP_2183(self.web_driver_container, self.second_lvl_id).run()
-
-# Авто падает т.к. матчит некорректно итог из-за отстуствия сначала выбора нашего юзера.
-# Мануально ОК
-            QAP_2195(self.web_driver_container, self.second_lvl_id).run()
-
-# Авто тест падает, из-за симп даты. Мануально ОК
-# не совсем кореектная првоерка на отсутствие кнопки удаления, т.к. у нас может быть создано несоклько разделов.
-# Я бы подправил, что в табе нет даты, которую устанавливали при создании.
-# // Добавить степ в джире по поиску в фильтре, доработать АТ для этого степа.
-            QAP_2196(self.web_driver_container, self.second_lvl_id).run()
-
-            QAP_2197(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2202(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2203(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2224(self.web_driver_container, self.second_lvl_id).run()
-
-# Авто фейл, т.к. не может создать клиента, без создания проходит. Мануал - ОК.
-# Я бы еще добавил проверку, что Венью действительно создается у юзера, перед его удалением.
-# // Добавить проверку
-            QAP_2225(self.web_driver_container, self.second_lvl_id).run()
-
-# Нет проверки, что кнопка действительно была вкл/выкл. 72-74 строки не совсем актуальны для проверки.
-# // Добавить проверку кнопок.
-            QAP_2461(self.web_driver_container, self.second_lvl_id).run()
-#
-            QAP_2474(self.web_driver_container, self.second_lvl_id).run()
-
-# Из ТК нет выполнения степов: 5, 6, 7, 8. Зачем провека ПДФ файла в АТ?
-# Авто - фейл. Мануал ОК.
-# // Добавить в АТ выполнение степов
-            QAP_3007(self.web_driver_container, self.second_lvl_id).run()
-#
-            QAP_3104(self.web_driver_container, self.second_lvl_id).run()
-            QAP_3230(self.web_driver_container, self.second_lvl_id).run()
-
-# Нет еще проверки на корректно измененное поле.
-# // Добавить проверку на странице
-            QAP_3231(self.web_driver_container, self.second_lvl_id).run()
-
-# Авто -ОК, мануально - ФЕЙЛ
-# Нет првоерки поля после изменения
-# // Добавить проверку на странице
-            QAP_3232(self.web_driver_container, self.second_lvl_id).run()
-#
-            QAP_4381(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4382(self.web_driver_container, self.second_lvl_id).run()
-
-# Нет проверки заполненных полей. Для чего тут проверка ПДФ?
-# Проблемы с симпл датой. Мануально ОК. Авто - упал.
-# // Подправить
-            QAP_4864(self.web_driver_container, self.second_lvl_id).run()
-
-            QAP_5443(self.web_driver_container, self.second_lvl_id).run()
-
-# Авто и мануал фейл, клиенты не создаются.
-# Нет проверки на поля которые заполняли. Зачем првоерка ПДФ?
-# // Добавить проверку
-            QAP_5601(self.web_driver_container, self.second_lvl_id).run()
-
-            QAP_6278(self.web_driver_container, self.second_lvl_id).run()
-            QAP_6290(self.web_driver_container, self.second_lvl_id).run()
-
+            # QAP_2195(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2196(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2197(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2202(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2203(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2224(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2225(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2461(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_2474(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3007(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3104(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3230(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3231(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_3232(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4381(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4382(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_4864(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5443(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_5601(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6278(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6290(self.web_driver_container, self.second_lvl_id).run()
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

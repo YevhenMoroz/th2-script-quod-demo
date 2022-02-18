@@ -76,3 +76,6 @@ class InstitutionsPage(CommonPage):
 
     def is_enable_disable_toggle_enabled(self):
         return self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).is_enabled()
+
+    def set_global_filter(self):
+        self.find_by_xpath(InstitutionsConstants)

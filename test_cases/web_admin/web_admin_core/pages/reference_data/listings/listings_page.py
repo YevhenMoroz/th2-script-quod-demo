@@ -103,3 +103,6 @@ class ListingsPage(CommonPage):
         time.sleep(2)
         self.click_on_load_button()
         time.sleep(2)
+
+    def is_toggle_button_enabled_disabled(self):
+        return self.is_toggle_button_enabled(ListingsConstants.ENABLE_DISABLE_BUTTON_XPATH)

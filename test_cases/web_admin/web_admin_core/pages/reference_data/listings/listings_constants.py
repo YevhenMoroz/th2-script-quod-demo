@@ -18,6 +18,7 @@ class ListingsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
+    ERROR_MESSAGE_WIZARD_XPATH = "//*[@outline='danger']"
 
     # Main page
     MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH = '//*[text()="Listing"]/preceding-sibling::input'
