@@ -453,11 +453,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecRestatementReason='*',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
             TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
-            Instrument=new_order_single.get_parameter('Instrument'),
             QtyType='*',
-            NoParty='*',
             NoStrategyParameters='*',
-            SecAltIDGrp='*',
+            CxlQty=new_order_single.get_parameter('OrderQty'),
+            Instrument='*'
+            # Instrument=new_order_single.get_parameter('Instrument'),
         )
         super().change_parameters(temp)
         return self
@@ -493,7 +493,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
             QtyType='*',
             NoStrategyParameters='*',
-            CxlQty='*',
+            CxlQty=new_order_single.get_parameter('OrderQty'),
             Instrument='*'
             #Instrument=order_cancel_replace.get_parameter('Instrument'),
         )
