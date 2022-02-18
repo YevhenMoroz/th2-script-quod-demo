@@ -14,14 +14,14 @@ from win_gui_modules.utils import get_base_request, call
 from win_gui_modules.wrappers import set_base, accept_order_request
 from win_gui_modules.order_ticket import OrderTicketDetails
 from test_framework.old_wrappers.ret_wrappers import get_order_id, verifier, accept_order, extract_parent_order_details, \
-    get_wash_book_positions_details, split_limit_order, decorator_try_except
+    get_wash_book_positions_details, split_limit_order, try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@decorator_try_except(test_id=os.path.basename(__file__))
+@try_except(test_id=os.path.basename(__file__))
 def execute(session_id, report_id):
     case_name = "QAP_4287"
 
