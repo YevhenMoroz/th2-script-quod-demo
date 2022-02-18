@@ -318,6 +318,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TimeInForce=0,
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
+            ExDestination=new_order_single.get_parameter('ExDestination'),
             LeavesQty=0
         )
         super().change_parameters(temp)
