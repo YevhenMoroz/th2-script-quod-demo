@@ -54,6 +54,7 @@ class QAP_6862(TestCase):
         self.order_book.check_order_fields_list({qty: self.new_qty, unmatched_qty: "0", price: self.new_price})
         self.order_book.check_second_lvl_fields_list({qty: self.new_qty, unmatched_qty: "", price: self.new_price})
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         if self.nos_rule:
             self.rule_manager.remove_rule(self.nos_rule)
