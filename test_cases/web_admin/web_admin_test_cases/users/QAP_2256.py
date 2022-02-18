@@ -73,15 +73,13 @@ class QAP_2256(CommonTestCase):
             time.sleep(2)
             users_page.click_on_edit_at_more_actions()
             time.sleep(2)
-            venue_trader_wizard.set_venue_trader_name_filter(self.venue_trader_name)
-            time.sleep(2)
             actual_result = [venue_trader_wizard.get_venue(), venue_trader_wizard.get_venue_trader_name()]
 
             try:
                 self.verify("Venue is saved correctly", [self.venue, self.venue_trader_name], actual_result)
             except Exception as e:
                 self.verify("Venue saved incorrectly", True, e.__class__.__name__)
-
+            time.sleep(2)
             self.post_conditions()
 
         except Exception:

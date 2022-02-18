@@ -13,23 +13,23 @@ class QAP_2516(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-
-    def precondition(self):
-        login_page = LoginPage(self.web_driver_container)
-        login_page.set_login(self.login)
-        time.sleep(2)
+        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates"
 
     def test_context(self):
 
         try:
-            self.precondition()
             main_page = CommonPage(self.web_driver_container)
             try:
                 main_page.click_on_help_icon_at_login_page()
                 self.verify("Help icon works", True, True)
             except Exception as e:
                 self.verify("Help icon not works", True, e.__class__.__name__)
+
+            try:
+                time.sleep(2)
+                self.verify("New link is open", True, main_page.is_link_of_help_icon_correct(self.new_link))
+            except Exception as e:
+                self.verify("Wrong new link", True, e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

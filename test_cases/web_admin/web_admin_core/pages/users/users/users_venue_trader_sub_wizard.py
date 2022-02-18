@@ -31,19 +31,19 @@ class UsersVenueTraderSubWizard(CommonPage):
         self.set_combobox_value(UsersConstants.VENUE_AT_VENUE_TRADER_SUB_WIZARD, value)
 
     def get_venue(self):
-        return self.get_text_by_xpath(UsersConstants.VENUE_AT_VENUE_TRADER_SUB_WIZARD)
+        return self.find_by_xpath(UsersConstants.CREATED_VENUE_AT_VENUE_TRADER_TAB).text
 
     def set_venue_trader_name(self, value):
         self.set_text_by_xpath(UsersConstants.VENUE_TRADER_NAME_AT_VENUE_TRADER_SUB_WIZARD, value)
 
     def get_venue_trader_name(self):
-        return self.get_text_by_xpath(UsersConstants.VENUE_TRADER_NAME_AT_VENUE_TRADER_SUB_WIZARD)
+        return self.find_by_xpath(UsersConstants.CREATED_VENUE_TRADE_NAME_AT_VENUE_TRADER_TAB).text
 
     def set_trader_group(self, value):
         self.set_combobox_value(UsersConstants.TRADER_GROUP_AT_VENUE_TRADER_SUB_WIZARD, value)
 
     def get_trader_group(self):
-        self.get_text_by_xpath(UsersConstants.TRADER_GROUP_AT_VENUE_TRADER_SUB_WIZARD)
+        return self.find_by_xpath(UsersConstants.CREATED_TRADER_GROUP_AT_VENUE_TRADER_TAB).text
 
     # filters
     def set_venue_filter(self, value):
