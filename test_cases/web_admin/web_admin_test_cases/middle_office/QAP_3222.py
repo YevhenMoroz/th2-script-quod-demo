@@ -5,17 +5,17 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.middle_office.settlement_model.settlement_model_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_dimensions_sub_wizard import \
     SettlementModelDimensionsSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.settlement_model.settlement_model_page import \
+from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_page import \
     SettlementModelPage
-from test_cases.web_admin.web_admin_core.pages.middle_office.settlement_model.settlement_model_values_sub_wizard import \
+from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_values_sub_wizard import \
     SettlementModelValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.settlement_model.settlement_model_wizard import \
+from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_wizard import \
     SettlementModelWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

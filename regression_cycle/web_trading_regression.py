@@ -3,9 +3,8 @@ import time
 from datetime import timedelta
 
 from custom import basic_custom_actions as bca
-from regression_cycle.web_trading_cycle.run_login import RunLogin
 from regression_cycle.web_trading_cycle.run_order_book import RunOrderBook
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from stubs import Stubs
 
 

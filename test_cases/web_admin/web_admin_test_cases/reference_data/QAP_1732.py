@@ -4,13 +4,13 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_page import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_page import \
     InstrSymbolInfoPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_wizard import \
+from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_wizard import \
     InstrSymbolInfoWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

@@ -1,20 +1,18 @@
-import random
-import string
 import sys
 import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
     QuotingSessionsValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_wizard import \
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_wizard import \
     QuotingSessionsWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

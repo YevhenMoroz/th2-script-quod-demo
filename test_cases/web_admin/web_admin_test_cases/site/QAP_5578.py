@@ -3,16 +3,16 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.pages.site.institution.institution_assignments_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.pages.site.institution.institution_assignments_sub_wizard import \
     InstitutionAssignmentsSubWizard
-from test_cases.web_admin.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
-from test_cases.web_admin.web_admin_core.pages.site.locations.locations_assignments_sub_wizard import \
+from test_framework.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
+from test_framework.web_admin_core.pages.site.locations.locations_assignments_sub_wizard import \
     LocationsAssignmentsSubWizard
-from test_cases.web_admin.web_admin_core.pages.site.locations.locations_wizard import LocationsWizard
-from test_cases.web_admin.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.site.locations.locations_wizard import LocationsWizard
+from test_framework.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

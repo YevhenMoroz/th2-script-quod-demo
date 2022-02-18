@@ -3,18 +3,18 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
-from test_cases.web_admin.web_admin_core.pages.site.institution.institutions_wizard import InstitutionsWizard
-from test_cases.web_admin.web_admin_core.pages.site.zones.zones_wizard import ZonesWizard
-from test_cases.web_admin.web_admin_core.pages.site.locations.locations_wizard import LocationsWizard
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_wizard import DesksWizard
-from test_cases.web_admin.web_admin_core.pages.site.locations.locations_page import LocationsPage
-from test_cases.web_admin.web_admin_core.pages.site.zones.zones_page import ZonesPage
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_page import DesksPage
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
+from test_framework.web_admin_core.pages.site.institution.institutions_wizard import InstitutionsWizard
+from test_framework.web_admin_core.pages.site.zones.zones_wizard import ZonesWizard
+from test_framework.web_admin_core.pages.site.locations.locations_wizard import LocationsWizard
+from test_framework.web_admin_core.pages.site.desks.desks_wizard import DesksWizard
+from test_framework.web_admin_core.pages.site.locations.locations_page import LocationsPage
+from test_framework.web_admin_core.pages.site.zones.zones_page import ZonesPage
+from test_framework.web_admin_core.pages.site.desks.desks_page import DesksPage
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

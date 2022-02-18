@@ -5,7 +5,7 @@ import random
 import string
 from custom import basic_custom_actions
 from stubs import ROOT_DIR
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page import MainPage

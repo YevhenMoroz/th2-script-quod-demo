@@ -3,13 +3,13 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.general.mdentitlements.mdentitlements_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_dimensions_sub_wizard import \
     MDEntitlementsDimensionsSubWizard
-from test_cases.web_admin.web_admin_core.pages.general.mdentitlements.mdentitlements_page import MDEntitlementsPage
-from test_cases.web_admin.web_admin_core.pages.general.mdentitlements.mdentitlements_wizard import MDEntitlementsWizard
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_page import MDEntitlementsPage
+from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_wizard import MDEntitlementsWizard
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

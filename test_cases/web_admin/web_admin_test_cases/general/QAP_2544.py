@@ -2,14 +2,11 @@ import sys
 import time
 import traceback
 
-from selenium.common.exceptions import TimeoutException
-
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.general.common.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.pages.general.settings.settings_page import SettingsPage
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.general.settings.settings_page import SettingsPage
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

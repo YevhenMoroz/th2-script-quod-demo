@@ -2,7 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1010 import QAP_1010
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1411 import QAP_1411
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1412 import QAP_1412
@@ -11,7 +11,6 @@ from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1582 import 
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1592 import QAP_1592
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_1593 import QAP_1593
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_2430 import QAP_2430
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_2431 import QAP_2431
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_2799 import QAP_2799
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_2800 import QAP_2800
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_2858 import QAP_2858

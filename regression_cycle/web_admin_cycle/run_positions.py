@@ -2,7 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_2165
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2166 import QAP_2166

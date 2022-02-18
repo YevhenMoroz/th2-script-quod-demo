@@ -2,10 +2,9 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 from test_cases.web_trading.test_cases.pages.main_page.workspace.order_book.QAP_6500 import QAP_6500
-from test_cases.web_trading.test_cases.pages.main_page.workspace.order_book.QAP_6568 import QAP_6568
 
 
 class RunOrderBook:

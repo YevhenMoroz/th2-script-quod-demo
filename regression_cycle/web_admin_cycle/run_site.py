@@ -2,10 +2,8 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_2455 import QAP_2455
-from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_4851 import QAP_4851
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5364 import QAP_5364
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5578 import QAP_5578
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5579 import QAP_5579

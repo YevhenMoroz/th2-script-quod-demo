@@ -5,31 +5,25 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_external_clients_sub_wizard import \
-    ClientTiersInstrumentExternalClientsSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_forward_venues_sub_wizard import \
-    ClientTiersInstrumentForwardVenuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_internal_clients_sub_wizard import \
-    ClientTiersInstrumentInternalClientsSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_spot_venues_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_spot_venues_sub_wizard import \
     ClientTiersInstrumentSpotVenuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_sweepable_quantities_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_sweepable_quantities_sub_wizard import \
     ClientTiersInstrumentSweepableQuantitiesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tenors_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tenors_sub_wizard import \
     ClientTiersInstrumentTenorsSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instrument_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_wizard import \
     ClientTierInstrumentWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page import \
     ClientTierInstrumentsPage
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
