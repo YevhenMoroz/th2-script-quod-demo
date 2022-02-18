@@ -20,7 +20,7 @@ class FullEnvironment:
             for instance in environment:
                 if instance.tag == "fix_environment":
                     self.__list_fix_environment.append(FixEnvironment.get_instance(EnvironmentType[instance.text]))
-                if instance.tag == "rest_environment":
+                if instance.tag == "web_admin_environment":
                     self.__list_web_admin_environment.append(WebAdminEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "fe_environment":
                     self.__list_fe_environment.append(FEEnvironment.get_instance(EnvironmentType[instance.text]))
