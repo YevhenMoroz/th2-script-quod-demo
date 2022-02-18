@@ -14,17 +14,6 @@ class FEEnvironment(BaseEnvironment):
 
     @staticmethod
     def get_instance(env: EnvironmentType):
-        if env.value is EnvironmentType.quod316_fe.value:
-            if EnvironmentType.quod316_fe.value not in FEEnvironment.environment_instances.keys():
-                site_environment = FEEnvironment(
-                    environment_type=EnvironmentType.quod316_fe.value,
-                    user="",
-                    password="",
-                    path=""
-                )
-                FEEnvironment.environment_instances.update({EnvironmentType.quod316_fe.value: site_environment})
-            return FEEnvironment.environment_instances[EnvironmentType.quod316_fe.value]
-
         if env.value == EnvironmentType.quod317_fe.value:
             if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
