@@ -97,15 +97,130 @@
         </product_line>
         <product_line name="fx" run="True">
             <components>
-                <component name="" run="True">
+                <component name="ESP_MM" run="True">
                     <data_set>FxDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment></fix_environment>
+                            <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
                             <fe_environment></fe_environment>
                         </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="ESP_Taker" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="RFQ_MM" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="RFQ_Taker" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="Position" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="AutoHedger" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="Synthetic" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="FX_Acceptance_list" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="FX_Smoke_list" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment></fe_environment>
+                        </fe_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
+                        </web_admin_environments>
                     </environments>
                 </component>
             </components>

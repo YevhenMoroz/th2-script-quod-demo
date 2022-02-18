@@ -4,7 +4,7 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers import DataSet
+from test_framework.data_sets.constants import Status
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessag
 
 
 class QAP_5992(TestCase):
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
         self.fix_act = Stubs.fix_act
@@ -28,8 +28,7 @@ class QAP_5992(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        gateway_side_sell = DataSet.GatewaySide.Sell
-        status = DataSet.Status.Fill
+        status = Status.Fill
         account = self.data_set.get_client_by_name("client_mm_2")
         symbol = self.data_set.get_symbol_by_name("symbol_2")
         security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
@@ -56,6 +55,5 @@ class QAP_5992(TestCase):
         new_order_single = FixMessageNewOrderMultiLegFX().set_default_prev_quoted_swap(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_swap(new_order_single,
-                                                                                                  gateway_side_sell,
                                                                                                   status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)

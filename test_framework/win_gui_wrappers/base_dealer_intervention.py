@@ -1,3 +1,4 @@
+from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, ClientPrisingTileAction, RFQPanelValues, \
     RFQPanelPtsAndPx, RFQPanelQty, RFQPanelHeaderValues
@@ -30,6 +31,7 @@ class BaseDealerIntervention(BaseWindow):
         self.extraction_request.set_extraction_id(self.extraction_id)
         self.extraction_request = ExtractionDetailsRequest(self.base_data)
         self.modification_request = ModificationRequest(base=self.base_request)
+        self.verifier = Verifier(self.case_id)
 
     def set_list_filter(self, filter_list: list):
         """
