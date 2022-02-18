@@ -1,3 +1,4 @@
+import typing
 from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.data_sets.environment_type import EnvironmentType
 from test_framework.environments.fe_environment import FEEnvironment
@@ -26,10 +27,10 @@ class FullEnvironment:
                         JavaApiEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
-    def get_list_fix_environment(self):
+    def get_list_fix_environment(self) -> typing.List[FixEnvironment]:
         return self.__list_fix_environment
 
-    def get_list_fe_environment(self):
+    def get_list_fe_environment(self) -> typing.List[FEEnvironment]:
         return self.__list_fe_environment
 
     def get_list_web_admin_environment(self):
@@ -38,6 +39,6 @@ class FullEnvironment:
     def get_list_web_trading_environment(self):
         return self.__list_web_trading_environment
 
-    def get_list_java_api_environment(self):
+    def get_list_java_api_environment(self) -> typing.List[JavaApiEnvironment]:
         return self.__list_java_api_environment
     # endregion
