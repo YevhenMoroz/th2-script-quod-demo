@@ -19,7 +19,7 @@ class QAP_1732(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.instr_symbol = 'AUD/DKK'
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.cum_trading_limit_percentage_new = str(random.randint(0, 100))
@@ -41,25 +41,36 @@ class QAP_1732(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        page = InstrSymbolInfoPage(self.web_driver_container)
+        wizard = InstrSymbolInfoWizard(self.web_driver_container)
 
         try:
             self.precondition()
-            page = InstrSymbolInfoPage(self.web_driver_container)
-            wizard = InstrSymbolInfoWizard(self.web_driver_container)
+
             page.set_instr_symbol(self.instr_symbol)
-            time.sleep(3)
+            time.sleep(2)
             page.click_on_more_actions()
             time.sleep(2)
             page.click_on_edit()
+            time.sleep(2)
+            try:
+                self.verify("InstrSymbol field uneditable", False, wizard.is_instrsymbol_field_enabled())
+            except Exception as e:
+                self.verify("InstrSymbol field editable", True, e.__class__.__name__)
+
             time.sleep(2)
             wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage_new)
             wizard.click_on_save_changes()
             time.sleep(2)
             page.set_instr_symbol(self.instr_symbol)
-            time.sleep(3)
+            time.sleep(2)
             expected_values = [self.instr_symbol, self.cum_trading_limit_percentage_new]
             actual_values = [page.get_instr_symbol(), page.get_cum_trading_limit_percentage()]
-            self.verify("Is entity edited and saved correctly", expected_values, actual_values)
+            try:
+                self.verify("Is entity edited and saved correctly", expected_values, actual_values)
+            except Exception as e:
+                self.verify("Entity saved incorrect", True, e.__class__.__name__)
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

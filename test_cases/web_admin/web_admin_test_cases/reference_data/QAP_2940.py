@@ -29,7 +29,7 @@ class QAP_2940(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.venue_name = "BATS"
         self.feed_source = "ADX"
         self.sub_venue_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -89,14 +89,26 @@ class QAP_2940(CommonTestCase):
         time.sleep(2)
         listing_groups_page.set_name(self.listing_group_name)
         time.sleep(2)
+        listing_groups_page.click_on_more_actions()
+        time.sleep(1)
+        listing_groups_page.click_on_edit()
 
     def test_context(self):
-
+        listing_groups_page = ListingGroupsPage(self.web_driver_container)
         try:
             self.precondition()
-            listing_groups_page = ListingGroupsPage(self.web_driver_container)
-            self.verify("Is sub venue saved correctly in listing group", self.feed_source,
-                        listing_groups_page.get_feed_source())
+            time.sleep(2)
+            try:
+                self.verify("Feed Source contains value", self.feed_source,
+                            listing_groups_page.get_feed_source())
+            except Exception as e:
+                self.verify("Feed Source not contains value", True, e.__class__.__name__)
+            time.sleep(2)
+            try:
+                self.verify("Feed Source field is not editable", False,
+                            listing_groups_page.is_feed_source_field_editable())
+            except Exception as e:
+                self.verify("Feed Source field can be changed", True, e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

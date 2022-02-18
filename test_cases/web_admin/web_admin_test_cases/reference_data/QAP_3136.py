@@ -24,7 +24,7 @@ class QAP_3136(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = "15"
         self.type = "DarkPool"
@@ -49,14 +49,8 @@ class QAP_3136(CommonTestCase):
         time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
-        time.sleep(1)
         description_sub_wizard.set_id(self.id)
-        time.sleep(1)
         description_sub_wizard.set_type(self.type)
-        time.sleep(1)
-        description_sub_wizard.set_mic(self.mic)
-        time.sleep(1)
-        description_sub_wizard.set_country(self.country)
         wizard.click_on_save_changes()
         time.sleep(2)
         page.set_name_filter(self.name)
@@ -72,19 +66,17 @@ class QAP_3136(CommonTestCase):
         routing_param_groups.click_on_plus_button()
         time.sleep(2)
         routing_param_groups.set_name(self.name_at_routing_param_groups)
-        time.sleep(2)
         routing_param_groups.click_on_positive_rotes()
-        time.sleep(2)
+        time.sleep(1)
         routing_param_groups.set_positive_routes(self.positive_routes)
-        time.sleep(2)
+        time.sleep(1)
         routing_param_groups.click_on_negative_routes()
-        time.sleep(2)
+        time.sleep(1)
         routing_param_groups.set_negative_routes(self.negative_routes)
-        time.sleep(2)
+        time.sleep(1)
         routing_param_groups.click_on_plus_button_at_parameters()
         time.sleep(2)
         routing_param_groups.set_parameter(self.parameter)
-        time.sleep(2)
         routing_param_groups.set_value(self.value)
         time.sleep(1)
         routing_param_groups.click_on_checkmark_at_parameters()
@@ -94,16 +86,31 @@ class QAP_3136(CommonTestCase):
         wizard.click_on_go_back_button()
 
     def test_context(self):
+        profiles = VenuesProfilesSubWizard(self.web_driver_container)
+        routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
 
         try:
             self.precondition()
 
-            profiles = VenuesProfilesSubWizard(self.web_driver_container)
             try:
                 profiles.set_routing_param_group(self.name_at_routing_param_groups)
                 self.verify("Routing param group created and selected in list", True, True)
             except Exception as e:
                 self.verify("Routing param group NOT created !!", True, e.__class__.__name__)
+
+            profiles.click_on_routing_param_group()
+            routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
+            time.sleep(2)
+            actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
+                             routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
+                             routing_param_groups.get_value()]
+            expected_result = [self.name_at_routing_param_groups, self.positive_routes[0] + ", " + self.positive_routes[1],
+                               self.negative_routes[0] + ", " + self.negative_routes[1], self.parameter, self.value]
+
+            try:
+                self.verify("Data saved correctly", expected_result, actual_result)
+            except Exception as e:
+                self.verify("Data saved incorrect!", True, e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

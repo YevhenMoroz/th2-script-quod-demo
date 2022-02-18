@@ -26,7 +26,7 @@ class VenuesRoutingParamGroupsSubWizard(CommonPage):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NAME_XPATH, value)
 
     def get_name(self):
-        return self.get_text_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NAME_XPATH)
+        return self.find_by_xpath(VenuesConstants.CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH).text
 
     def set_name_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NAME_FILTER_XPATH, value)
@@ -45,12 +45,18 @@ class VenuesRoutingParamGroupsSubWizard(CommonPage):
     def click_on_positive_rotes(self):
         self.find_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH).click()
 
+    def get_positive_routes(self):
+        return self.find_by_xpath(VenuesConstants.CREATED_POSITIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH).text
+
     def set_negative_routes(self, value):
         result = tuple(
             self.set_checkbox_list(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH,
                                    value))
         for item in range(len(result)):
             self.find_by_xpath(result[item]).click()
+
+    def get_negative_routes(self):
+        return self.find_by_xpath(VenuesConstants.CREATED_NEGATIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH).text
 
     def click_on_negative_routes(self):
         self.find_by_xpath(VenuesConstants.ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH).click()
@@ -78,7 +84,7 @@ class VenuesRoutingParamGroupsSubWizard(CommonPage):
         self.set_combobox_value(VenuesConstants.ROUTING_PARAMETERS_TAB_PARAMETER_XPATH, value)
 
     def get_parameter(self):
-        return self.get_text_by_xpath(VenuesConstants.ROUTING_PARAMETERS_TAB_PARAMETER_XPATH)
+        return self.find_by_xpath(VenuesConstants.CREATED_PARAMETER_ROUTING_PARAMETERS_TAB_XPATH).text
 
     def set_parameter_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAMETERS_TAB_PARAMETER_FILTER_XPATH, value)
@@ -87,7 +93,7 @@ class VenuesRoutingParamGroupsSubWizard(CommonPage):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAMETERS_TAB_VALUE_XPATH, value)
 
     def get_value(self):
-        return self.get_text_by_xpath(VenuesConstants.ROUTING_PARAMETERS_TAB_VALUE_XPATH)
+        return self.find_by_xpath(VenuesConstants.CREATED_VALUE_ROUTING_PARAM_GROUPS_TAB_XPATH).text
 
     def set_value_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.ROUTING_PARAMETERS_TAB_VALUE_FILTER_XPATH, value)

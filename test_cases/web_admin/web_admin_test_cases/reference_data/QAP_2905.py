@@ -20,7 +20,7 @@ class QAP_2905(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMEX"
         self.feed_source = "Native Market"
@@ -51,12 +51,19 @@ class QAP_2905(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-
+        description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
         try:
             self.precondition()
-            description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-            self.verify("Feed Source is not editable ", self.feed_source, description_sub_wizard.get_feed_source())
-            time.sleep(5)
+            try:
+                self.verify("Feed Source contains value", self.feed_source, description_sub_wizard.get_feed_source())
+            except Exception as e:
+                self.verify("Feed Source not contains value", True, e.__class__.__name__)
+            time.sleep(2)
+            try:
+                self.verify("Feed Source field is not editable", False, description_sub_wizard.is_feed_source_editable())
+            except Exception as e:
+                self.verify("Feed Source field can be changed", True, e.__class__.__name__)
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

@@ -196,6 +196,9 @@ class VenuesConstants:
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *"]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '//*[@class="negativeRoute_ext ng2-smart-th ng-star-inserted"]//input'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH = "//*[@class='cdk-overlay-pane']//*[text()='{}']"
+    CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[2]'
+    CREATED_POSITIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[3]'
+    CREATED_NEGATIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[4]'
 
     # --Routing parameters tab--
     ROUTING_PARAMETERS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
@@ -208,6 +211,8 @@ class VenuesConstants:
     ROUTING_PARAMETERS_TAB_PARAMETER_FILTER_XPATH = '//*[@class="customParam ng2-smart-th ng-star-inserted"]//input'
     ROUTING_PARAMETERS_TAB_VALUE_XPATH = '//*[@placeholder="Value *"]'
     ROUTING_PARAMETERS_TAB_VALUE_FILTER_XPATH = '//*[@class="customParamValue ng2-smart-th ng-star-inserted"]//input'
+    CREATED_PARAMETER_ROUTING_PARAMETERS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[2]//td[2]'
+    CREATED_VALUE_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[2]//td[3]'
 
     # --Spport feed types tab--
     SUPPORT_FEED_TYPES_TAB_STATUS_CHECKBOX_XPATH = '//*[@formcontrolname="supportStatus"]//input'

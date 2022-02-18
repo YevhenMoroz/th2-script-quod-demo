@@ -31,7 +31,8 @@ class VenuesTradingPhaseProfileSubWizard(CommonPage):
     def set_trading_phase_profile_desc_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH,
                                value)
-
+    def is_field_trading_phase_profile_desc_required(self):
+        return self.is_field_required(VenuesConstants.TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_XPATH)
     # --------------------Trading phase profile sequences
 
     def click_on_plus_button_at_trading_phase_profile_sequences(self):
@@ -103,4 +104,7 @@ class VenuesTradingPhaseProfileSubWizard(CommonPage):
 
     def set_end_time_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.TRADING_PHASE_PROFILE_SEQUENCES_TAB_END_TIME_FILTER_XPATH, value)
+
+    def is_trading_phase_sequence_field_required(self):
+        return self.is_field_required(VenuesConstants.TRADING_PHASE_PROFILE_SEQUENCES_TAB_TRADING_PHASE_XPATH)
 

@@ -19,7 +19,7 @@ class QAP_1733(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.instr_symbol = 'AUD/DKK'
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.cum_trading_limit_percentage_new = str(random.randint(0, 100))
@@ -51,9 +51,18 @@ class QAP_1733(CommonTestCase):
                 page.click_on_more_actions()
                 time.sleep(2)
                 page.click_on_delete(True)
-                self.verify("Entity deleted correctly", True, True)
+                self.verify("Delete button working", True, True)
             except Exception as e:
-                self.verify("Entity NOT delted !!!Error!!!", True, e.__class__.__name__)
+                self.verify("Delete button does not works", True, e.__class__.__name__)
+
+            try:
+                time.sleep(2)
+                page.set_instr_symbol(self.instr_symbol)
+
+                time.sleep(2)
+                self.verify("Entity is not displayed after delete", False, page.is_instr_symbol_present())
+            except Exception as e:
+                self.verify("Entity stayed after delete", True, e.__class__.__name__)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

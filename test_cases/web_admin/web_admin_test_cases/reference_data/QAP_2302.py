@@ -36,7 +36,7 @@ class QAP_2302(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
         wizard.set_instr_symbol(self.instr_symbol)
-        wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
+        time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
 

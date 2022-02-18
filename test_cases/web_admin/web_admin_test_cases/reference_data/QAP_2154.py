@@ -15,7 +15,7 @@ class QAP_2154(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.listing = "a"
 
     def precondition(self):
@@ -38,12 +38,18 @@ class QAP_2154(CommonTestCase):
             listing_page = ListingsPage(self.web_driver_container)
             try:
                 listing_page.click_on_enable_disable_button()
+                time.sleep(2)
+                self.verify("Listing disable correctly", False, listing_page.is_toggle_button_enabled_disabled())
+            except Exception as e:
+                self.verify("Listing not disable", True, e.__class__.__name__)
+
+            try:
                 time.sleep(1)
                 listing_page.click_on_enable_disable_button()
                 time.sleep(2)
-                self.verify("Listing disable/enable correctly", True, True)
+                self.verify("Listing enable correctly", True, listing_page.is_toggle_button_enabled_disabled())
             except Exception:
-                self.verify("Listing not disable/enable incorrectly", True, False)
+                self.verify("Listing not enable", True, False)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

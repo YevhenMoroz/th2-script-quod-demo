@@ -24,12 +24,10 @@ class QAP_2971(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
         self.login = "adm02"
-        self.password = "adm02"
+        self.password = "Qwerty123!"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = "DarkPool"
-        self.mic = "ALXP"
-        self.country = "Albania"
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.trading_phase = "Auction"
 
@@ -50,34 +48,6 @@ class QAP_2971(CommonTestCase):
         description_sub_wizard.set_id(self.id)
         time.sleep(1)
         description_sub_wizard.set_type(self.type)
-        time.sleep(1)
-        description_sub_wizard.set_mic(self.mic)
-        time.sleep(1)
-        description_sub_wizard.set_country(self.country)
-        wizard.click_on_save_changes()
-        time.sleep(2)
-        page.set_name_filter(self.name)
-        time.sleep(2)
-        page.click_on_more_actions()
-        time.sleep(2)
-        page.click_on_edit()
-        time.sleep(2)
-        profiles = VenuesProfilesSubWizard(self.web_driver_container)
-        trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
-        profiles.click_on_trading_phase_profile_mange_button()
-        time.sleep(2)
-        trading_phase_profile_sub_wizard.click_on_plus_button()
-        trading_phase_profile_sub_wizard.set_trading_phase_profile_desc(self.trading_phase_profile_desc)
-        trading_phase_profile_sub_wizard.click_on_plus_button_at_trading_phase_profile_sequences()
-        time.sleep(1)
-        trading_phase_profile_sub_wizard.set_trading_phase(self.trading_phase)
-        trading_phase_profile_sub_wizard.click_on_checkmark_at_trading_phase_profile_sequences()
-        time.sleep(1)
-        trading_phase_profile_sub_wizard.click_on_checkmark()
-        time.sleep(1)
-        wizard.click_on_go_back_button()
-        time.sleep(2)
-        profiles.set_trading_phase_profile(self.trading_phase_profile_desc)
         wizard.click_on_save_changes()
         time.sleep(2)
         page.set_name_filter(self.name)
@@ -88,13 +58,55 @@ class QAP_2971(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-
+        wizard = VenuesWizard(self.web_driver_container)
+        page = VenuesPage(self.web_driver_container)
+        profiles = VenuesProfilesSubWizard(self.web_driver_container)
         try:
             self.precondition()
+
+            trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
+            profiles.click_on_trading_phase_profile_mange_button()
+            time.sleep(2)
+            trading_phase_profile_sub_wizard.click_on_plus_button()
+            try:
+                self.verify("TradingPhaseProfile Desc field is required", True,
+                            trading_phase_profile_sub_wizard.is_field_trading_phase_profile_desc_required())
+            except Exception as e:
+                self.verify("TradingPhaseProfile Desc field is not required", True, e.__class__.__name__)
+
+            trading_phase_profile_sub_wizard.set_trading_phase_profile_desc(self.trading_phase_profile_desc)
+            trading_phase_profile_sub_wizard.click_on_plus_button_at_trading_phase_profile_sequences()
+            time.sleep(1)
+            try:
+                self.verify("Trading Phase Sequences field is required", True,
+                            trading_phase_profile_sub_wizard.is_field_trading_phase_profile_desc_required())
+            except Exception as e:
+                self.verify("Trading Phase Sequences field is not required", True, e.__class__.__name__)
+
+            trading_phase_profile_sub_wizard.set_trading_phase(self.trading_phase)
+            trading_phase_profile_sub_wizard.click_on_checkmark_at_trading_phase_profile_sequences()
+            time.sleep(1)
+            trading_phase_profile_sub_wizard.click_on_checkmark()
+            time.sleep(1)
+            wizard.click_on_go_back_button()
+            time.sleep(2)
+            profiles.set_trading_phase_profile(self.trading_phase_profile_desc)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            page.set_name_filter(self.name)
+            time.sleep(2)
+            page.click_on_more_actions()
+            time.sleep(2)
+            page.click_on_edit()
+            time.sleep(2)
             profiles = VenuesProfilesSubWizard(self.web_driver_container)
 
-            self.verify("Is entity contains valid value after edited ", self.trading_phase_profile_desc,
-                        profiles.get_trading_phase_profile())
+            try:
+                self.verify("Is entity contains valid value after edited ", self.trading_phase_profile_desc,
+                            profiles.get_trading_phase_profile())
+            except Exception as e:
+                self.verify("Entity contains invalid value after edited", True, e.__class__.__name__)
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
