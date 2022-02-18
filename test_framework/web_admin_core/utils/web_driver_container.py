@@ -1,22 +1,15 @@
 import os
 from os import path
 
-
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-import xml.etree.ElementTree as ET
-
-
-from stubs import ROOT_DIR
 
 
 class WebDriverContainer:
     TIMEOUT_DELAY = 15
-
     DOWNLOAD_DIRECTORY_NAME = "downloads"
-    CONFIG_FILE_PATH = f'{ROOT_DIR}\\test_framework\\web_trading\\web_trading_core\\pages\\config.xml'
 
     def __init__(self, browser, url):
         current_dir = os.getcwd()
@@ -28,27 +21,18 @@ class WebDriverContainer:
         self.wait_driver = None
         self.browser = browser
 
-    def parse_data_from_config_file(self, value):
-
-        tree = ET.parse(open(self.CONFIG_FILE_PATH))
-        root = tree.getroot()
-
-        result_tag = root.find(value)
-        return str(result_tag.text)
-
     def start_driver(self):
         try:
-            if self.browser == 'Chrome':
+            if self.browser == 'chrome':
                 chrome_options = webdriver.ChromeOptions()
                 chrome_options.add_experimental_option('prefs', {'plugins.always_open_pdf_externally': True,
                                                                  'download.default_directory': self.download_dir})
                 self.web_driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
                 self.wait_driver = WebDriverWait(self.web_driver, self.TIMEOUT_DELAY)
                 self.web_driver.maximize_window()
-                site_url = self.parse_data_from_config_file(self.initial_url)
-                self.web_driver.get(site_url)
+                self.web_driver.get(self.initial_url)
 
-            elif self.browser == 'Firefox':
+            elif self.browser == 'firefox':
 
                 options_firefox = webdriver.FirefoxOptions()
                 options_firefox.set_preference('browser.download.dir', self.download_dir)
@@ -56,8 +40,7 @@ class WebDriverContainer:
                                                     options=options_firefox, service_log_path=os.devnull)
                 self.wait_driver = WebDriverWait(self.web_driver, self.TIMEOUT_DELAY)
                 self.web_driver.maximize_window()
-                site_url = self.parse_data_from_config_file(self.initial_url)
-                self.web_driver.get(site_url)
+                self.web_driver.get(self.initial_url)
         except Exception as e:
             print("Web Browser NOT found!\n" + e.__class__.__name__)
 
