@@ -1,21 +1,57 @@
 import time
 import traceback
 from datetime import timedelta
+
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1647 import QAP_1647
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1693 import QAP_1693
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1695 import QAP_1695
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1756 import QAP_1756
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1757 import QAP_1757
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_1758 import QAP_1758
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2004 import QAP_2004
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2011 import QAP_2011
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2022 import QAP_2022
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2030 import QAP_2030
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2040 import QAP_2040
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2056 import QAP_2056
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2158 import QAP_2158
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2247 import QAP_2247
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2324 import QAP_2324
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2379 import QAP_2379
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2442 import QAP_2442
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2557 import QAP_2557
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2626 import QAP_2626
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2628 import QAP_2628
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_2772 import QAP_2772
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3008 import QAP_3008
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3009 import QAP_3009
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3010 import QAP_3010
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3053 import QAP_3053
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3274 import QAP_3274
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_3275 import QAP_3275
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4118 import QAP_4118
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_4439 import QAP_4439
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_5707 import QAP_5707
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_6118 import QAP_6118
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
 
 class RunMarketMaking:
-    def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
-        self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
-        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
-        self.web_driver_container = web_driver_container
+    def __init__(self, root_report_id):
+        self.second_lvl_id = bca.create_event("WA_Market_Making", root_report_id)
+        self.web_driver_container = None
 
     def execute(self):
         try:
+            configuration = ComponentConfiguration("WA_Market_Making")
+            self.web_driver_container = WebDriverContainer(
+                configuration.environment.get_list_web_admin_environment()[0].web_browser,
+                configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
-            # QAP_1647(self.web_driver_container, self.second_lvl_id).run()
+            QAP_1647(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                    environment=configuration.environment).run()
             # QAP_1686(self.web_driver_container, self.second_lvl_id).run()
             # QAP_1688(self.web_driver_container, self.second_lvl_id).run()
 

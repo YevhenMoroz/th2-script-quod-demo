@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_2165
@@ -11,17 +12,20 @@ from test_cases.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_216
 
 
 class RunPositions:
-    def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
-        self.folder_name = 'WebAdmin'
-        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
-        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
-        self.web_driver_container = web_driver_container
+    def __init__(self,root_report_id):
+        self.second_lvl_id = bca.create_event("WA_Positions", root_report_id)
+        self.web_driver_container = None
 
     def execute(self):
         try:
+            configuration = ComponentConfiguration("WA_Positions")  # look at xml (component name="web_admin_general")
+            self.web_driver_container = WebDriverContainer(
+                configuration.environment.get_list_web_admin_environment()[0].web_browser,
+                configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
 # Пройти мануально
-            QAP_2165(self.web_driver_container, self.second_lvl_id).run()
+            QAP_2165(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                    environment=configuration.environment).run()
             QAP_2166(self.web_driver_container, self.second_lvl_id).run()
             QAP_2167(self.web_driver_container, self.second_lvl_id).run()
             QAP_2168(self.web_driver_container, self.second_lvl_id).run()

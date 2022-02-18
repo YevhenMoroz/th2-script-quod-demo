@@ -1,15 +1,23 @@
 import logging
 import time
 from datetime import timedelta
+from xml.etree import ElementTree
 
 from custom import basic_custom_actions as bca
-from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
+from regression_cycle.web_admin_cycle.run_client_accounts import RunClientsAccounts
+from regression_cycle.web_admin_cycle.run_general import RunGeneral
+from regression_cycle.web_admin_cycle.run_market_making import RunMarketMaking
+from regression_cycle.web_admin_cycle.run_middle_office import RunMiddleOffice
+from regression_cycle.web_admin_cycle.run_order_management import RunOrderManagement
+from regression_cycle.web_admin_cycle.run_positions import RunPositions
+from regression_cycle.web_admin_cycle.run_reference_data import ReferenceData
+from regression_cycle.web_admin_cycle.run_risk_limits import RunRiskLimits
+from regression_cycle.web_admin_cycle.run_site import RunSite
+from regression_cycle.web_admin_cycle.run_users import RunUsers
 from regression_cycle.web_admin_cycle.run_other import RunOthers
-from stubs import Stubs
+from stubs import Stubs, ROOT_DIR
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
 logging.getLogger().setLevel(logging.WARN)
 timeouts = False
 channels = dict()
@@ -17,28 +25,32 @@ channels = dict()
 
 def test_run(parent_id=None):
     report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
     try:
         start_time = time.monotonic()
-        # Generation ID and time for test run
-        # report_id = bca.create_event(f'{Stubs.custom_config["web_admin_login"]} tests '
-        #                              + datetime.now().strftime('%Y%m%d-%H:%M:%S'),parent_id)
-        # logger.info(f"Root event was created (id = {report_id.id})")
-
-        # content
-        web_driver_container = WebDriverContainer("Chrome", 'web_admin_306_saturn')
-        # RunGeneral(web_driver_container, parent_id).execute()
-        # RunSite(web_driver_container, parent_id).execute()
-        # RunUsers(web_driver_container, parent_id).execute()
-        # ReferenceData(web_driver_container, parent_id).execute()
-        # RunClientsAccounts(web_driver_container, parent_id).execute()
-        # RunOrderManagement(web_driver_container, parent_id).execute()
-        # RunMiddleOffice(web_driver_container, parent_id).execute()
-        # RunMarketMaking(web_driver_container, parent_id).execute()
-        # RunRiskLimits(web_driver_container, parent_id).execute()
-        # RunPositions(web_driver_container, parent_id).execute()
-        RunOthers(web_driver_container, parent_id).execute()
-
-
+        if eval(root.find(".//component[@name='WA_General']").attrib["run"]):
+            RunGeneral(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Site']").attrib["run"]):
+            RunSite(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Users']").attrib["run"]):
+            RunUsers(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Reference_Data']").attrib["run"]):
+            ReferenceData(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Client_Accounts']").attrib["run"]):
+            RunClientsAccounts(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Order_Management']").attrib["run"]):
+            RunOrderManagement(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Middle_Office']").attrib["run"]):
+            RunMiddleOffice(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Market_Making']").attrib["run"]):
+            RunMarketMaking(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Risk_Limits']").attrib["run"]):
+            RunRiskLimits(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Positions']").attrib["run"]):
+            RunPositions(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Others']").attrib["run"]):
+            RunOthers(report_id).execute()
         end_time = time.monotonic()
         print("Test cases completed\n" +
               "~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))
