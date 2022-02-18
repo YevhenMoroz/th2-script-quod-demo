@@ -68,6 +68,15 @@ class OrderBookColumns(Enum):
     # endregion
 
 
+class PositionBookColumns(Enum):
+    symbol = "Symbol"
+    account = "Account"
+    position = "Position"
+    quote_position = "Quote Position"
+    position_usd = "Position (USD)"
+    quote_position_usd = "Quote Position (USD)"
+
+
 class TimeInForce(Enum):
     FOK = 'FillOrKill'
     IOC = 'ImmediateOrCancel'
@@ -75,6 +84,12 @@ class TimeInForce(Enum):
     GTD = 'GoodTillDate'
     DAY = 'Day'
     ATC = "AtTheClose"
+
+
+class TriggerType(Enum):
+    last_trade = "LastTrade"
+    market_best_bid_offer = "MarketBestBidOffer"
+    primary_best_bid_offer = "PrimaryBestBidOffer"
 
 
 class OrderType(Enum):
@@ -177,9 +192,10 @@ class BasketBookColumns(Enum):
     exec_policy = "ExecPolicy"
     status = "Status"
     basket_name = "Basket Name"
+    cl_basket_id = "Client Basket ID"
     """Waves Tab"""
     percent_qty_to_release = "Percent Qty To Release"
-    percent_profile = "Percent Profile"
+    percent_profile = "Percentage Profile"
 
 
 class ExecSts(Enum):
@@ -348,6 +364,12 @@ class RFQPanelHeaderValues(Enum):
     fill_side_value_label_control = "fill_side_value_label_control"
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
+
+
+class PanicValues(Enum):
+    executable = "executable"
+    pricing = "pricing"
+    hedge_orders = "hedge_orders"
 
 
 class DiscloseExec(Enum):
