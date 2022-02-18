@@ -1,5 +1,6 @@
 <regression>
     <name>Not regression run</name>
+    <target_server_win></target_server_win>
     <product_lines>
         <product_line name="algo" run="True">
             <components>
