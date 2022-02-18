@@ -58,6 +58,7 @@ from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
 from test_cases.fx.fx_taker_rfq.QAP_849 import QAP_849
 from test_cases.fx.fx_taker_rfq.QAP_850 import QAP_850
 from test_cases.fx.fx_taker_rfq.QAP_982 import QAP_982
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.import_layouts.layout_loader import LayoutLoader
 
@@ -68,13 +69,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
-data_set = FxDataSet()
+
 
 
 def test_run(parent_id=None):
     report_id = bca.create_event('RFQ Taker regression', parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    data_set = FxDataSet()
+    configuration = ComponentConfiguration("RFQ_Taker")
     try:
 
         if not Stubs.frontend_is_open:

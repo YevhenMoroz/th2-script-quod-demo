@@ -13,6 +13,7 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_taker_esp import QAP_3140, QAP_3141
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -29,6 +30,7 @@ def test_run(parent_id=None):
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     data_set = FxDataSet()
+    configuration = ComponentConfiguration("ESP_MM")
 
     try:
         if not Stubs.frontend_is_open:
