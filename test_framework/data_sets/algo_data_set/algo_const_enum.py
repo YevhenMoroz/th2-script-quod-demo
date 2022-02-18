@@ -95,4 +95,4 @@ class AlgoCurrency(Enum):
 
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-    verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+    verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
