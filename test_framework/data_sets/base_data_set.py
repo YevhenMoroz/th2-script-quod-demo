@@ -39,6 +39,11 @@ class BaseDataSet:
     venue_client_accounts = None
     verifier_key_parameters = None
     pset = None
+    # region fields added by Web Admin team
+    user = None
+    password = None
+
+    # endregion
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -291,3 +296,16 @@ class BaseDataSet:
         if hasattr(self.pset, name):
             return getattr(self.pset, name).value
         return ValueError(f"{self.pset} not found")
+
+    # region WebAdmin getters
+
+    def get_user(self, name: str):
+        if hasattr(self.user, name):
+            return getattr(self.user, name).value
+        return ValueError(f"{self.user} not found!")
+
+    def get_password(self, name: str):
+        if hasattr(self.password, name):
+            return getattr(self.password, name).value
+        return ValueError(f"{self.password} not found!")
+    # endregion

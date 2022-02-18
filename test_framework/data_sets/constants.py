@@ -21,6 +21,7 @@ class Connectivity(Enum):
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
 
+
 class FrontEnd(Enum):
     # 317 site
     USER_317 = ""
@@ -77,3 +78,12 @@ class Status(Enum):
     CancelRequest = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+
+
+class WebAdminURL(Enum):
+    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+
+
+class WebBrowser(Enum):
+    chrome = "chrome"
+    firefox = "firefox"

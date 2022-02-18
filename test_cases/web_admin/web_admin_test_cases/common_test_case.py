@@ -2,17 +2,18 @@ import abc
 
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-
 class CommonTestCase:
-    def __init__(self, web_driver_container: WebDriverContainer, test_case_id, root_id):
+    def __init__(self, web_driver_container: WebDriverContainer, test_case_id, root_id, data_set: BaseDataSet = None,
+                 environment: FullEnvironment = None):
         self.web_driver_container = web_driver_container
-        # self.report_id = bca.create_event(
-        #     f'{Stubs.custom_config["web_admin_login"]} tests_ ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
         self.test_case_id = bca.create_event(test_case_id, root_id)
-
+        self.data_set = data_set
+        self.environment = environment
 
     def run(self):
         self.__start_driver()

@@ -8,5 +8,8 @@ class EnvironmentType(Enum):
     quod317_ganymede_standard = "quod317_ganymede_standard"
     quod317_fe = "quod317_fe"
     quod317_java_api = "quod317_java_api"
-
+    #region web admin
+    quod306_web_admin_saturn_chrome = "quod306_web_admin_saturn_chrome"
+    quod306_web_admin_saturn_firefox = "quod306_web_admin_saturn_firefox"
+    #endregion
 
