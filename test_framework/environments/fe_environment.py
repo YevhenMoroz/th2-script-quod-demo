@@ -6,11 +6,11 @@ from test_framework.data_sets.environment_type import EnvironmentType
 class FEEnvironment(BaseEnvironment):
     environment_instances = {}
 
-    def __init__(self, environment_type: str = None, user: str = None, password: str = None, path: str = None):
+    def __init__(self, environment_type: str = None, user: str = None, password: str = None, folder: str = None):
         self.environment_type = environment_type
         self.user = user
         self.password = password
-        self.path = path
+        self.folder = folder
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -20,7 +20,7 @@ class FEEnvironment(BaseEnvironment):
                     environment_type=EnvironmentType.quod317_fe.value,
                     user=FrontEnd.USER_317.value,
                     password=FrontEnd.PASSWORD_317.value,
-                    path=FrontEnd.FOLDER_317.value
+                    folder=FrontEnd.FOLDER_317.value
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
