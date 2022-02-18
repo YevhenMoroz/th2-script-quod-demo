@@ -37,7 +37,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_TWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -59,7 +59,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_VWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -81,7 +81,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -104,7 +104,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -128,7 +128,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_VWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -152,7 +152,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -178,7 +178,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
     def set_TWAP_Navigator_Guard_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             # 'Account': "CLIENT1",
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
@@ -206,7 +206,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -230,7 +230,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOC_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -254,7 +254,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_MOE_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name("client_1"),
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
