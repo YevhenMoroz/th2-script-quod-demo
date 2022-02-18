@@ -9,7 +9,7 @@ from test_framework.configurations.component_configuration import ComponentConfi
 from test_framework.data_sets.constants import FrontEnd
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from win_gui_modules.utils import set_session_id_2
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def test_run():
     # initializing dataset
     data_set = OmsDataSet()
     # initializing FE session
-    session_id = set_session_id_2(pc_name)
+    session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # creation environment object
     configuration = ComponentConfiguration("YOUR_COMPONENT") #  <--- provide your component from XML
