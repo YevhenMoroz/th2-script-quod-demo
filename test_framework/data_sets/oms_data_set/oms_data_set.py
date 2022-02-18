@@ -5,7 +5,6 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes
 
 
-
 class OmsDataSet(BaseDataSet):
     """
     Product line dataset class that overrides attributes from BaseDataSet parent class.
@@ -30,9 +29,7 @@ class OmsDataSet(BaseDataSet):
     fee_exec_scope = OMSExecScope
     fee = OMSFee
     commission = OMSCommission
+    fee_order_scope = OMSFeeOrderScope
     counterparts= OmsCounterparts
     qty_types = OmsQtyTypes
-
-
-    fee_order_scope = OMSFeeOrderScope
     pset = OMSPset

@@ -350,11 +350,6 @@ class RFQPanelHeaderValues(Enum):
     creation_value_label_control = "creation_value_label_control"
 
 
-class PostTradeStatuses(Enum):
-    ready_to_book = "ReadyToBook"
-    booked = "Booked"
-
-
 class DiscloseExec(Enum):
     manual = 'M'
     real_time = 'R'
