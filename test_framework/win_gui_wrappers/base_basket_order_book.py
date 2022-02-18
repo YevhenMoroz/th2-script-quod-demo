@@ -224,4 +224,5 @@ class BaseBasketOrderBook(BaseWindow):
                 row_details.set_remove_row(True)
                 self.wave_basket_details.set_row_details(row_details.build())
         call(self.wave_basket_call, self.wave_basket_details.build())
+        self.clear_details([self.wave_basket_details])
     # endregion

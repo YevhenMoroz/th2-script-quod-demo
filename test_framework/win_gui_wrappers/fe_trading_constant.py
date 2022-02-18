@@ -177,9 +177,10 @@ class BasketBookColumns(Enum):
     exec_policy = "ExecPolicy"
     status = "Status"
     basket_name = "Basket Name"
+    cl_basket_id = "Client Basket ID"
     """Waves Tab"""
     percent_qty_to_release = "Percent Qty To Release"
-    percent_profile = "Percent Profile"
+    percent_profile = "Percentage Profile"
 
 
 class ExecSts(Enum):
