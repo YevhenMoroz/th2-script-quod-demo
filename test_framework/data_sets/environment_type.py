@@ -8,5 +8,6 @@ class EnvironmentType(Enum):
     quod317_ganymede_standard = "quod317_ganymede_standard"
     quod317_fe = "quod317_fe"
     quod317_java_api = "quod317_java_api"
+    quod317_read_log = 'quod317_read_log'
 
 

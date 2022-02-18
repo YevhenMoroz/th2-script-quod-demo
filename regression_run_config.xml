@@ -119,12 +119,15 @@
                         <fe_environments>
                             <fe_environment>quod317_fe</fe_environment>
                         </fe_environments>
-                        <java_api_environment>
+                        <java_api_environments>
                             <java_api_environment>quod317_java_api</java_api_environment>
-                        </java_api_environment>
+                        </java_api_environments>
                         <rest_environments>
                             <rest_environment></rest_environment>
                         </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
             </components>
