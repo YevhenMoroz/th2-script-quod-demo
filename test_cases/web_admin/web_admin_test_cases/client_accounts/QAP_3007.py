@@ -52,20 +52,8 @@ class QAP_3007(CommonTestCase):
         time.sleep(1)
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         assignments_sub_wizard.set_desk(self.desk)
-        time.sleep(1)
-        wizard.click_on_save_changes()
         time.sleep(2)
-        main_page.set_name(self.name)
-        time.sleep(2)
-        main_page.click_on_more_actions()
-        time.sleep(2)
-        main_page.click_on_edit()
-        time.sleep(2)
-        venues_sub_wizard.click_on_plus()
-        venues_sub_wizard.set_venue(self.venue)
-        venues_sub_wizard.set_venue_client_name(self.venue_client_name)
-        venues_sub_wizard.set_venue_client_account(self.venue_client_account_group_name)
-        venues_sub_wizard.click_on_checkmark()
+        venues_sub_wizard.create_new_venue(self.venue, self.venue_client_name, self.venue_client_account_group_name)
         wizard.click_on_save_changes()
         time.sleep(2)
         main_page.set_name(self.name)
@@ -75,17 +63,43 @@ class QAP_3007(CommonTestCase):
         main_page.click_on_edit()
         time.sleep(2)
         venues_sub_wizard.click_on_delete()
+        time.sleep(2)
+        wizard.click_on_save_changes()
 
     def test_context(self):
+        wizard = ClientsWizard(self.web_driver_container)
+        main_page = ClientsPage(self.web_driver_container)
+        venues_sub_wizard = ClientsVenuesSubWizard(self.web_driver_container)
         try:
             self.precondition()
-            wizard = ClientsWizard(self.web_driver_container)
-            self.verify("PDF file don't contains venue", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue))
-            self.verify("PDF file don't contains venue client", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_name))
-            self.verify("Is PDF  don't contains venue client account group name", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_account_group_name))
+
+            main_page.set_name(self.name)
+            time.sleep(2)
+            main_page.click_on_more_actions()
+            time.sleep(2)
+            main_page.click_on_edit()
+            venues_sub_wizard.set_venue_client_name_filter(self.venue_client_name)
+            time.sleep(2)
+            self.verify("Venue is delete", False, venues_sub_wizard.is_venue_present())
+            time.sleep(2)
+            venues_sub_wizard.set_venue_client_name_filter("")
+            time.sleep(1)
+            venues_sub_wizard.create_new_venue(self.venue, self.venue_client_name, self.venue_client_account_group_name)
+            time.sleep(2)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            main_page.set_name(self.name)
+            time.sleep(2)
+            main_page.click_on_more_actions()
+            time.sleep(2)
+            main_page.click_on_edit()
+            time.sleep(2)
+            venues_sub_wizard.click_on_edit()
+            time.sleep(2)
+            actual_result = [venues_sub_wizard.get_venue(), venues_sub_wizard.get_venue_client_name(), venues_sub_wizard.get_venue_client_account()]
+            expected_result = [self.venue, self.venue_client_name, self.venue_client_account_group_name]
+
+            self.verify("Venue entity saved correctly", expected_result, actual_result)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
