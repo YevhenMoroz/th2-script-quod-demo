@@ -36,8 +36,7 @@ class FrontEnd(Enum):
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WEB = "web"
-    TARGET_SERVER_WIN_YEHOR_SAMOILENKO = "quod_02q"
+    TARGET_SERVER_WIN = None # by default we can set up here value of Jenkins machine
 
 
 class DirectionEnum(Enum):

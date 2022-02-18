@@ -1,3 +1,4 @@
+from custom.verifier import VerificationMethod
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_dealer_intervention import BaseDealerIntervention
 from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
@@ -20,3 +21,9 @@ class FXDealerIntervention(BaseDealerIntervention):
         self.getUnAssignedDetails_call = self.service.getUnassignedRFQDetails
         self.getRFQDetail_call = self.service.getRFQDetails
         self.set_default_params()
+
+    def compare_values(self, expected_value: str, actual_value: str, event_name: str = "Compare values",
+                       ver_method: VerificationMethod = VerificationMethod.EQUALS, value_name: str = "Value"):
+        self.verifier.set_event_name(event_name)
+        self.verifier.compare_values(value_name, expected_value, actual_value, ver_method)
+        self.verifier.verify()
