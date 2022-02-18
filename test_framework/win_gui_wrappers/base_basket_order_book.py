@@ -1,7 +1,4 @@
-from typing import List
-
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.basket_order_book_wrappers import BasketWaveRowDetails
 from win_gui_modules.basket_ticket_wrappers import BasketTicketDetails
 from win_gui_modules.utils import call
 
@@ -21,8 +18,12 @@ class BaseBasketOrderBook(BaseWindow):
         self.imported_file_mapping_field = None
         self.extract_template_details = None
         self.extract_child_order_data = None
-        self.extract_child_details = None
         self.extract_order_data_details = None
+        self.remove_from_basket_details = None
+        self.imported_file_mapping_details = None
+        self.basket_wave_row_details = None
+        self.wave_basket_details = None
+        self.extract_child_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -36,17 +37,14 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_child_order_data_call = None
         self.extract_basket_data_details_call = None
         self.extract_basket_order_details_call = None
-        self.remove_from_basket_details = None
-        self.basket_wave_row_details = None
-        self.wave_basket_details = None
         self.wave_basket_call = None
+        self.amend_template_call = None
 
     # endregion
     # region Common func
     def set_filter(self, filter_dict: dict):
         self.extract_template_details(self.base_request, filter_dict)
         self.clear_details([self.extract_template_details])
-
     # endregion
 
     # region Get
@@ -64,16 +62,17 @@ class BaseBasketOrderBook(BaseWindow):
         result = call(self.extract_basket_data_details_call, self.extract_basket_data_details.build())
         return result[column_name]
 
-    def get_basket_orders_value(self, row_count: int, extract_value, basket_book_filter: dict = None):
+    def get_basket_sub_lvl_value(self, row_count: int, extract_value, tab_name, basket_book_filter: dict = None):
         self.extract_basket_data_details.set_default_params(self.base_request)
         if basket_book_filter is not None:
             self.extract_basket_data_details.set_filter(basket_book_filter)  # Set filter for parent order
         self.extract_basket_data_details.set_column_names(
             [extract_value])  # Set column for child orders which data be extracted
-        extract_child_details = self.extract_basket_order_details(
+        extract_basket_order_details = self.extract_basket_order_details(
             self.extract_basket_data_details.build(),
-            row_count)  # argument #2 - row numbers
-        result = call(self.extract_basket_order_details_call, extract_child_details.build())
+            row_count, tab_name)  # argument #2 - row numbers
+        result = call(self.extract_basket_order_details_call, extract_basket_order_details.build())
+        self.clear_details([self.extract_basket_data_details])
         return result
 
     # endregion
@@ -110,33 +109,16 @@ class BaseBasketOrderBook(BaseWindow):
 
     # region Actions
     def add_basket_template(self, templ_name=None, descrip=None, client=None, tif=None, exec_policy=None,
-                            symbol_source=None, has_header=True, templ: dict = None):
+                            symbol_source=None, has_header=False, header_row=None, data_row=None, delimiter=None,
+                            spreadsheet_tab=None, templ: dict = None):
         if templ is not None:
-            fields_details = [
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.SYMBOL,
-                                                         templ.get('Symbol')[0],
-                                                         templ.get('Symbol')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.QUANTITY,
-                                                         templ.get('Quantity')[0],
-                                                         templ.get('Quantity')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.PRICE, templ.get('Price')[0],
-                                                         templ.get('Price')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.SIDE, templ.get('Side')[0],
-                                                         templ.get('Side')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.ORD_TYPE,
-                                                         templ.get('OrdType')[0],
-                                                         templ.get('OrdType')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.STOP_PRICE,
-                                                         templ.get('StopPrice')[0],
-                                                         templ.get('StopPrice')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.ACCOUNT,
-                                                         templ.get('Account')[0],
-                                                         templ.get('Account')[1]).build(),
-                self.imported_file_mapping_field_details(self.imported_file_mapping_field.CAPACITY,
-                                                         templ.get('Capacity')[0],
-                                                         templ.get('Capacity')[1]).build()
-            ]
-            details = self.imported_file_mapping_field_details(has_header, fields_details).build()
+            fields_details = []
+            for key in templ:
+                fields_details.append(self.imported_file_mapping_field_details(
+                    self.imported_file_mapping_field.__dict__[key].value, templ.get(key)[0],
+                    templ.get(key)[1]).build())
+            details = self.imported_file_mapping_details(has_header, fields_details, header_row, data_row,
+                                                         delimiter, spreadsheet_tab).build()
             self.templates_details.set_imported_file_mapping_details(details)
         self.templates_details.set_default_params(self.base_request)
         if templ_name is not None:
@@ -152,7 +134,35 @@ class BaseBasketOrderBook(BaseWindow):
         if tif is not None:
             self.templates_details.set_time_in_force(tif)
         call(self.manage_templates_call, self.templates_details.build())
-        self.clear_details([self.templates_details, self.imported_file_mapping_field_details])
+
+    def amend_basket_template(self, templ_name=None, descrip=None, client=None, tif=None, exec_policy=None,
+                              symbol_source=None, has_header=False, header_row=None, data_row=None, delimiter=None,
+                              spreadsheet_tab=None, templ: dict = None, templ_filter: dict = None):
+        if templ is not None:
+            fields_details = []
+            for key in templ:
+                fields_details.append(self.imported_file_mapping_field_details(
+                    self.imported_file_mapping_field.__dict__[key].value, templ.get(key)[0],
+                    templ.get(key)[1]).build())
+            details = self.imported_file_mapping_details(has_header, fields_details, header_row, data_row,
+                                                         delimiter, spreadsheet_tab).build()
+            self.templates_details.set_imported_file_mapping_details(details)
+        self.templates_details.set_default_params(self.base_request)
+        if templ_name is not None:
+            self.templates_details.set_name_value(templ_name)
+        if exec_policy is not None:
+            self.templates_details.set_exec_policy(exec_policy)
+        if client is not None:
+            self.templates_details.set_default_client(client)
+        if descrip is not None:
+            self.templates_details.set_description(descrip)
+        if symbol_source is not None:
+            self.templates_details.set_symbol_source(symbol_source)
+        if tif is not None:
+            self.templates_details.set_time_in_force(tif)
+        if templ_filter is not None:
+            self.templates_details.set_filter(templ_filter)
+        call(self.amend_template_call, self.templates_details.build())
 
     def remove_basket_template(self, name):
         self.simple_request(self.base_request, {'Name': name})
@@ -197,24 +207,21 @@ class BaseBasketOrderBook(BaseWindow):
         remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
         call(self.remove_from_basket_call, remove_from_basket_details.build())
 
-    def set_wave_basket_row(self, remove_row: bool, wave_row_filter: str = None):
-        if wave_row_filter is not None:
-            self.basket_wave_row_details.set_filtration_value(wave_row_filter)
-        self.basket_wave_row_details.set_remove_row(remove_row)
-        return self.basket_wave_row_details.buyld()
-
-    def wave_basket(self, percentage_profile: str = None, qty_percentage: str = None, route: str = None,
-                    filter: dict = None, row_details: List[BasketWaveRowDetails] = None):
-        if filter is not None:
-            self.wave_basket_details.set_filtration_value(filter)
+    def wave_basket(self, qty_percentage=None, percentage_profile=None, route=None, removed_orders: list = None,
+                    basket_filter: dict = None):
         if qty_percentage is not None:
             self.wave_basket_details.set_qty_percentage(qty_percentage)
         if percentage_profile is not None:
             self.wave_basket_details.set_percentage_profile(percentage_profile)
         if route is not None:
             self.wave_basket_details.set_route(route)
-        if row_details is not None:
-            self.wave_basket_details.set_row_details(row_details)
+        if basket_filter is not None:
+            self.wave_basket_details.set_filter(basket_filter)
+        if removed_orders is not None:
+            for order in removed_orders:
+                row_details = self.basket_wave_row_details
+                row_details.set_filtration_value(order)
+                row_details.set_remove_row(True)
+                self.wave_basket_details.set_row_details(row_details.build())
         call(self.wave_basket_call, self.wave_basket_details.build())
-
     # endregion

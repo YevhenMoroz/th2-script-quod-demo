@@ -1,85 +1,56 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import verification, verify_ent
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.DataSet import Connectivity
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-1364"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "PROL"
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, qty, 0)
-    # endregion
-    # region AcceptOrder
-    eq_wrappers.accept_order(lookup, qty, "")
-    # endregion
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_1364(TestCase):
 
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    request = call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Order Qty", order_qty.name, qty),
-                                                  ]))
-    # endregion
-    # region Split Limit
-    eq_wrappers.split_limit_order(base_request, qty, "Limit", price)
-    # endregion
-    # region check sub Order status
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_id = ExtractionDetail("order_id", "Order ID")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "Limit Price")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_id,
-                                                                                            order_qty,
-                                                                                            order_price
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getChildOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking Child order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent('Qty', order_qty.name, qty),
-                                                  verify_ent('Price', order_price.name, price)
-                                                  ]))
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.lookup = "VETO"
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept CO order
+        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        # endregion
+        # region check order open status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+        # region split order
+        self.order_ticket.set_order_details(qty=self.qty, limit=self.price)
+        self.order_ticket.split_limit_order()
+        # endregion
+        # region order is splited
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list({OrderBookColumns.qty.value: self.qty, OrderBookColumns.limit_price.value: self.price})
+        # endregion
