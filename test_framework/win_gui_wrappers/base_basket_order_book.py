@@ -72,6 +72,7 @@ class BaseBasketOrderBook(BaseWindow):
             self.extract_basket_data_details.build(),
             row_count, tab_name)  # argument #2 - row numbers
         result = call(self.extract_basket_order_details_call, extract_basket_order_details.build())
+        self.clear_details([self.extract_basket_data_details])
         return result
 
     # endregion
