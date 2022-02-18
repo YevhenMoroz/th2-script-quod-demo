@@ -493,7 +493,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
             QtyType='*',
             NoStrategyParameters='*',
-            CxlQty=new_order_single.get_parameter('OrderQty'),
+            CxlQty=order_cancel_replace.get_parameter('OrderQty'),
             Instrument='*'
             #Instrument=order_cancel_replace.get_parameter('Instrument'),
         )
