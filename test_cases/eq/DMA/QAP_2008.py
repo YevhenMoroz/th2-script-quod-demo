@@ -1,179 +1,152 @@
 import logging
 import time
-from datetime import datetime, date, timedelta
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from test_cases.wrapper import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from stubs import Stubs
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
+from datetime import datetime, timedelta
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from test_framework.core.test_case import TestCase
+from rule_management import RuleManager, Simulators
+from test_framework.data_sets.constants import Connectivity
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
+    FixMessageOrderCancelReplaceRequestOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
 
 
-def execute(report_id, session_id):
-    global fix_message, nos_rule
-    case_name = "QAP-2008"
-    rule_manager = RuleManager()
-    seconds, nanos = timestamps()  # Store case start time
+class QAP_2008(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        # region Declarations
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
+        self.qty = '500'
+        self.qty_amend = '700'
+        self.price = '20'
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.venue = self.data_set.get_mic_by_name('mic_1')
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.fix_message_amend = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        self.fix_message_cancel = FixMessageOrderCancelRequestOMS()
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.exec_sts = None
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        # endregion
 
-    # region Declarations
-    qty = "800"
-    qty2 = "1500"
-    client = "CLIENT1"
-    price = 3
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Create DMA order via FIX
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.venue,
+                                                                                                  float(self.price))
+            self.fix_message.set_default_dma_limit()
+            self.fix_message.change_parameters({'Side': '2', 'TimeInForce': '6'})
+            self.fix_message.add_tag({'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d")})
+            self.fix_message.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty})
+            response = self.fix_manager.send_message_and_receive_response(self.fix_message)
+            # get Order ID
+            order_id = response[0].get_parameters()['OrderID']
 
-    # region Create order via FIX
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
+        # endregion
 
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, "XPAR", price)
+        # region Set-up parameters for ExecutionReports
+        self.exec_report.set_default_new(self.fix_message)
+        self.exec_report.change_parameters(
+            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'ExpireDate': '*'})
+        # endregion
 
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 2, qty, 6, price)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-    # endregion
-    response = fix_message.pop('response')
-    # region Check
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'A',
-        'OrdStatus': 'A',
-        'Side': '2',
-        'Account':'*',
-        'Price': price,
-        'TimeInForce': '6',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        # 'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        ''
-        'header': '*',
-        'ExpireDate': '*',
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus', 'Price'], direction='SECOND')
-    # endregion
-    # endregion
+        # region Check ExecutionReports
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        # endregion
 
-    # region Amend order
-    try:
-        nos_rule = rule_manager.add_OrderCancelReplaceRequest(test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client,
-                                                              'XPAR', True)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.amend_order_via_fix(case_id, fix_message, {'OrderQty': qty2})
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-    # endregion
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        # endregion
 
-    # region Check values after Amending
-    params = {
-        'OrderQty': qty2,
-        'ExecType': '5',
-        'Account': '*',
-        'OrdStatus': '0',
-        'TradeDate': '*',
-        'Side': '2',
-        'Price': price,
-        'TimeInForce': '6',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        # 'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'LastCapacity': '*',
-        'ExpireDate': '*',
-    }
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ExecType'],direction='SECOND')
-    # endregion
+        # region Check values in OrderBook
+        sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.open.value},
+                                       {OrderBookColumns.sts.value: sts}, 'Checking order status in the order book')
+        # endregion
 
-    # region Cancelling order
-    try:
-        nos_rule = rule_manager.add_OrderCancelRequest(test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(), 'XPAR_' + client, 'XPAR',
-                                                       True)
-        cl_ord_id = response.response_messages_list[0].fields['ClOrdID'].simple_value
-        test_framework.old_wrappers.eq_fix_wrappers.cancel_order_via_fix(cl_ord_id, cl_ord_id, client, case_id, 2)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-    # endregion
+        # region Amend order
+        try:
+            nos_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
+                                                                                   self.venue_client_names,
+                                                                                   self.venue, True)
+            # FIX
+            # self.fix_message_amend.set_default(self.fix_message)
+            # self.fix_message_amend.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty_amend})
+            # response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_amend)
+            # self.fix_manager.send_message_fix_standard(self.fix_message_amend)
+            # Front
+            self.order_ticket.set_order_details(qty=self.qty_amend)
+            self.order_ticket.amend_order([OrderBookColumns.order_id.value, order_id])
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
+        # endregion
 
-    # region Check values after Cancel
-    params = {
-        'OrderQty': qty,
-        'ExecType': '4',
-        'OrdStatus': '4',
-        'Side': '2',
-        'Price': price,
-        'TimeInForce': '6',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlDate': '*',
-        # 'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*',
-        'ExpireDate': '*',
-    }
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ExecType'])
-    # endregion
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        # endregion
 
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        # region Check values in OrderBook after Amend
+        qty_after_amend = self.order_book.extract_field(OrderBookColumns.qty.value)
+        self.order_book.compare_values({OrderBookColumns.qty.value: self.qty_amend},
+                                       {OrderBookColumns.qty.value: qty_after_amend},
+                                       'Checking the Qty after amending in the order book')
+        # endregion
+
+        # region Cancelling order
+        try:
+            nos_rule = self.rule_manager.add_OrderCancelRequest_FIXStandard(self.bs_connectivity,
+                                                                            self.venue_client_names,
+                                                                            self.venue, True)
+            self.fix_message_cancel.set_default(self.fix_message)
+            self.fix_manager.send_message_fix_standard(self.fix_message_cancel)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
+        # endregion
+
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        # endregion
+
+        # region Check values in OrderBook after Cancel
+        sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.cancelled.value},
+                                       {OrderBookColumns.sts.value: sts},
+                                       'Checking order status after cancelling in the order book')
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

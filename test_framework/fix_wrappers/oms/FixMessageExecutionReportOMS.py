@@ -187,6 +187,26 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         self.change_parameters(change_parameters)
         return self
 
+    def set_default_rejected(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            "ExecType": "8",
+            "OrdStatus": "8",
+            "Account": new_order_single.get_parameter("Account"),
+            "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
+            'OrigClOrdID': new_order_single.get_parameter("ClOrdID"),
+            "Side": new_order_single.get_parameter("Side"),
+            "HandlInst": new_order_single.get_parameter("HandlInst"),
+            "OrdType": new_order_single.get_parameter("OrdType"),
+            "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
+        }
+        if new_order_single.get_parameter("OrdType") == "2":
+            change_parameters.update({"Price": new_order_single.get_parameter("Price")})
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
     def set_default_canceled_list(self, new_order_list: FixMessageNewOrderList, ord_number: int = 0):
         change_parameters = {
             "ExecType": "4",

@@ -61,6 +61,17 @@ class FixEnvironment(BaseEnvironment):
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod314_luna_standard.value: site_environment})
             return FixEnvironment.environment_instances[EnvironmentType.quod314_luna_standard.value]
+        elif env.value == EnvironmentType.quod317_ganymede_standard_test.value:
+            if EnvironmentType.quod317_ganymede_standard_test.value not in FixEnvironment.environment_instances.keys():
+                site_environment = FixEnvironment(
+                    environment_type=EnvironmentType.quod317_ganymede_standard_test.value,
+                    sell_side=Connectivity.Ganymede_317_ss.value,
+                    buy_side=Connectivity.Ganymede_317_bs.value,
+                    drop_copy=Connectivity.Ganymede_317_dc.value
+                )
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod317_ganymede_standard_test.value: site_environment})
+                return FixEnvironment.environment_instances[EnvironmentType.quod317_ganymede_standard_test.value]
         else:
             raise Exception('No such environment')
 

@@ -50,6 +50,8 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    washbook = 'Wash Book'
+    capacity = 'Capacity'
     near_tenor = 'NearTenor'
     near_qty = 'NearQty'
     near_fwd_pts = 'NearFwdPts'
@@ -275,6 +277,7 @@ class MiddleOfficeColumns(Enum):
     order_id = 'Order ID'
     block_id = 'Block ID'
     conf_service = "Conf Service"
+    side = 'Side'
 
 
 class AllocationsColumns(Enum):
@@ -348,3 +351,7 @@ class PanicValues(Enum):
     executable = "executable"
     pricing = "pricing"
     hedge_orders = "hedge_orders"
+
+
+class Capacity(Enum):
+    agency = 'Agency'
