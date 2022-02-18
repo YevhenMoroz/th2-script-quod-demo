@@ -48,3 +48,6 @@ class SubVenuesDescriptionSubWizard(CommonPage):
 
     def get_feed_source(self):
         return self.find_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_FEED_SOURCE_XPATH).get_attribute("value")
+
+    def is_feed_source_editable(self):
+        return self.is_field_enabled(SubVenuesConstants.DESCRIPTION_TAB_FEED_SOURCE_XPATH)
