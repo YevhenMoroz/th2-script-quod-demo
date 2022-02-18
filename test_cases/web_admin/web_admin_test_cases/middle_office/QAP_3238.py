@@ -33,6 +33,7 @@ class QAP_3238(CommonTestCase):
         self.comm_xunit = "Amount"
         self.comm_type = "Percentage"
         self.comm_algorithm = "Flat"
+        self.base_value = "144"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -64,7 +65,7 @@ class QAP_3238(CommonTestCase):
         commission_profile_points = CommissionsCommissionProfilePointsSubWizard(self.web_driver_container)
         commission_profile_points.click_on_plus()
         time.sleep(1)
-        commission_profile_points.set_base_value("144")
+        commission_profile_points.set_base_value(self.base_value)
         time.sleep(2)
         commission_profile_points.click_on_checkmark()
         time.sleep(1)
@@ -80,7 +81,6 @@ class QAP_3238(CommonTestCase):
 
         try:
             self.precondition()
-            commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
             wizard = CommissionsWizard(self.web_driver_container)
             self.verify("Is PDF contains valid data", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(self.commission_profile_name))

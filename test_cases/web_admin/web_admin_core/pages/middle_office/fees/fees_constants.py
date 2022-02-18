@@ -70,6 +70,7 @@ class FeesConstants:
     COMMISSION_PROFILE_BASE_VALUE_XPATH = '//*[@placeholder = "Base Value *"]'
     COMMISSION_PROFILE_MIN_COMMISSION_XPATH = '//*[@placeholder = "Min Commission"]'
     COMMISSION_PROFILE_UPPER_LIMIT_XPATH = '//*[@placeholder = "Upper Limit"]'
+    COMMISSION_PROFILE_SLOPE_XPATH = '//*[@placeholder = "Slope"]'
 
     # Exec fee profile
     EXEC_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"

@@ -66,7 +66,7 @@ class QAP_2158(CommonTestCase):
         instruments_sub_wizard.click_on_checkmark_button()
         time.sleep(2)
         wizard.click_on_save_changes()
-        time.sleep(2)
+        time.sleep(12)
         main_page.click_on_user_icon()
         time.sleep(2)
         main_page.click_on_logout()

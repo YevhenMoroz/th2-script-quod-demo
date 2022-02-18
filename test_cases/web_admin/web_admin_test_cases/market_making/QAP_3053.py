@@ -73,7 +73,7 @@ class QAP_3053(CommonTestCase):
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
+            time.sleep(12)
             client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_main_page.click_on_more_actions()
             time.sleep(2)
@@ -105,7 +105,7 @@ class QAP_3053(CommonTestCase):
             client_tiers_main_page.set_name(self.name)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
+            time.sleep(12)
             client_tier_instrument_main_page.click_on_more_actions()
             time.sleep(2)
 

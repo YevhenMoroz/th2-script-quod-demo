@@ -72,11 +72,13 @@ class QAP_3219(CommonTestCase):
             time.sleep(2)
             page.set_name(self.name)
             time.sleep(2)
+            page.click_on_more_actions()
+            time.sleep(2)
             try:
-                self.verify("entity created correctly", self.name, page.get_name())
-
+                self.verify("Is PDF contains correct values", True, page.click_download_pdf_entity_button_and_check_pdf(
+                    excepted_values_after_click_on_clone_button))
             except Exception as e:
-                self.verify("entity not created", True, e.__class__.__name__)
+                self.verify("PDF result is incorrect", True, e.__class__.__name__)
 
 
 

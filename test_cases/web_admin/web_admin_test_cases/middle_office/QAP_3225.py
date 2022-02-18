@@ -40,6 +40,7 @@ class QAP_3225(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
+
             exception_message = "Incorrect or missing values"
             values_sub_wizard = SettlementModelValuesSubWizard(self.web_driver_container)
             wizard = SettlementModelWizard(self.web_driver_container)
@@ -63,6 +64,13 @@ class QAP_3225(CommonTestCase):
             time.sleep(2)
             self.verify("Is Name and description fields required", exception_message,
                         wizard.get_incorrect_or_missing_values_exception())
+            self.verify("Is name field mandatory (using check in DOM)", True,
+                        values_sub_wizard.is_name_field_required())
+            self.verify("Is description field mandatory (using check in DOM)", True,
+                        values_sub_wizard.is_description_field_required())
+            self.verify("Is settl_location field mandatory (using check in DOM)", True,
+                        values_sub_wizard.is_settl_location_field_required())
+
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

@@ -18,7 +18,6 @@ class CommonPage:
         self.web_driver_container = web_driver_container
         self.web_driver_wait = web_driver_container.get_wait_driver()
 
-
     def find_by_css_selector(self, css_selector: str):
         return self.find_by(By.CSS_SELECTOR, css_selector)
 
@@ -185,6 +184,6 @@ class CommonPage:
 
     def is_field_required(self, field_xpath):
         '''
-        Return True if field is required or False if not
+        return true if field is required or false if not
         '''
         return self.find_by_xpath(field_xpath).get_attribute("required") == "true"
