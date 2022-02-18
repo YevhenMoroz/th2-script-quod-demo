@@ -96,8 +96,6 @@ class FXOrderTicket(BaseOrderTicket):
             self.order_details.add_multilisting_strategy(add_multilisting_strategy)
         if add_twap_strategy is not None:
             self.order_details.add_twap_strategy(add_twap_strategy)
-        if add_synth_ord_type_str is not None:
-            self.order_details.add_synthetic_strategy()
         return self
 
     def add_synth_ord_type_str(self, trigger_type: TriggerType):
