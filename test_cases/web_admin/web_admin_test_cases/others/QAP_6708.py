@@ -17,12 +17,14 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 
 class QAP_6708(CommonTestCase):
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.party_id_source = ["BIC", "Proprietary"]
-        self.venue_counterpart_id = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
+        self.venue_counterpart_id = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in
+                                     range(2)]
         self.party_role = ["DeskID", "Exchange"]
         self.ext_id_client = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
 

@@ -16,10 +16,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 
 class QAP_679(CommonTestCase):
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.symbol = "EUR/PHP"
         self.user = "adm02"
         self.venue = "AMEX"
@@ -48,7 +49,8 @@ class QAP_679(CommonTestCase):
             wizard = MarketDataSourceWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(1)
-            self.verify("Incorrect or missing values message displayed", True, wizard.is_incorrect_or_missing_value_message_displayed())
+            self.verify("Incorrect or missing values message displayed", True,
+                        wizard.is_incorrect_or_missing_value_message_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
