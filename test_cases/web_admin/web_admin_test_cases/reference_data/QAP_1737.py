@@ -21,10 +21,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_1737(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -35,8 +36,8 @@ class QAP_1737(CommonTestCase):
         self.currency = "AED"
         self.security_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = "Bond"
-        self.sub_venue ="Forward"
-        self.listing_group ="test"
+        self.sub_venue = "Forward"
+        self.listing_group = "test"
         self.settl_type = "BrokenDate"
 
     def precondition(self):

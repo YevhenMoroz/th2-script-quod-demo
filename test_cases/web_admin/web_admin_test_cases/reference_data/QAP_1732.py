@@ -16,8 +16,9 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_1732(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.login = "adm02"
         self.password = "Qwerty123!"
         self.instr_symbol = 'AUD/DKK'

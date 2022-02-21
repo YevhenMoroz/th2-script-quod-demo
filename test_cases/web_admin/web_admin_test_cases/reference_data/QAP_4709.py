@@ -17,70 +17,73 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_4709(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.login = "adm02"
         self.password = "Qwerty123!"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = ["FXNDF", "FXForward", "DepositLoanLeg", "Future", "Forward", "Option"]
 
-    def precondition(self):
-        login_page = LoginPage(self.web_driver_container)
-        login_page.login_to_web_admin(self.login, self.password)
-        side_menu = SideMenu(self.web_driver_container)
+
+def precondition(self):
+    login_page = LoginPage(self.web_driver_container)
+    login_page.login_to_web_admin(self.login, self.password)
+    side_menu = SideMenu(self.web_driver_container)
+    time.sleep(2)
+    side_menu.open_listings_page()
+    time.sleep(2)
+    listing_page = ListingsPage(self.web_driver_container)
+    listing_page.click_on_new()
+
+
+def test_context(self):
+    listing_wizard = ListingsWizard(self.web_driver_container)
+    listing_values_sub_wizard = ListingsValuesSubWizard(self.web_driver_container)
+
+    try:
+        self.precondition()
         time.sleep(2)
-        side_menu.open_listings_page()
-        time.sleep(2)
-        listing_page = ListingsPage(self.web_driver_container)
-        listing_page.click_on_new()
+        listing_wizard.click_on_save_changes()
 
-    def test_context(self):
-        listing_wizard = ListingsWizard(self.web_driver_container)
-        listing_values_sub_wizard = ListingsValuesSubWizard(self.web_driver_container)
+        self.verify("Error after click on [SAVE CHANGES] button", "Incorrect or missing values",
+                    listing_wizard.get_error_message_inside_listing_wizard())
 
-        try:
-            self.precondition()
-            time.sleep(2)
-            listing_wizard.click_on_save_changes()
+        listing_values_sub_wizard.set_instr_type(self.instr_type[0])
+        time.sleep(1)
+        self.verify(f"Is tenor required for {self.instr_type[0]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
 
-            self.verify("Error after click on [SAVE CHANGES] button", "Incorrect or missing values",
-                        listing_wizard.get_error_message_inside_listing_wizard())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[1])
+        self.verify(f"Is tenor required for {self.instr_type[1]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[2])
+        self.verify(f"Is tenor required for {self.instr_type[2]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[3])
+        self.verify(f"Is maturity month year required for {self.instr_type[3]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[4])
+        self.verify(f"Is maturity month year required for {self.instr_type[4]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[5])
+        self.verify(f"Is strike price required required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_strike_price_field_required())
+        time.sleep(1)
+        self.verify(f"Is call put  required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_call_put_field_required())
+        time.sleep(1)
+        self.verify(f"Is maturity month year required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())
 
-            listing_values_sub_wizard.set_instr_type(self.instr_type[0])
-            time.sleep(1)
-            self.verify(f"Is tenor required for {self.instr_type[0]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
-
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[1])
-            self.verify(f"Is tenor required for {self.instr_type[1]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[2])
-            self.verify(f"Is tenor required for {self.instr_type[2]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[3])
-            self.verify(f"Is maturity month year required for {self.instr_type[3]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[4])
-            self.verify(f"Is maturity month year required for {self.instr_type[4]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[5])
-            self.verify(f"Is strike price required required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_strike_price_field_required())
-            time.sleep(1)
-            self.verify(f"Is call put  required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_call_put_field_required())
-            time.sleep(1)
-            self.verify(f"Is maturity month year required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+    except Exception:
+        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                          status='FAILED')
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+        print(" Search in ->  " + self.__class__.__name__)
