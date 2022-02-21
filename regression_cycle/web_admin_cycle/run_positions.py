@@ -12,7 +12,7 @@ from test_cases.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_216
 
 
 class RunPositions:
-    def __init__(self,root_report_id):
+    def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Positions", root_report_id)
         self.web_driver_container = None
 
@@ -23,12 +23,15 @@ class RunPositions:
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
-# Пройти мануально
+            # Пройти мануально
             QAP_2165(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                    environment=configuration.environment).run()
-            QAP_2166(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2167(self.web_driver_container, self.second_lvl_id).run()
-            QAP_2168(self.web_driver_container, self.second_lvl_id).run()
+                     environment=configuration.environment).run()
+            QAP_2166(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2167(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2168(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Positions ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
