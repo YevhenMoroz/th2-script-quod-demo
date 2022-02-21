@@ -80,7 +80,6 @@ class QAP_2472(TestCase):
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_prev_quoted(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    self.gateway_side_sell,
                                                                                                     self.status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
         self.quote_request_book.set_filter(

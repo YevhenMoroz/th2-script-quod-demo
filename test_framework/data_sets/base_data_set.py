@@ -1,7 +1,3 @@
-from enum import Enum
-from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
-
-
 class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
@@ -309,4 +305,4 @@ class BaseDataSet:
     def get_qty_type(self, name: str):
         if hasattr(self.qty_types, name):
             return getattr(self.qty_types, name).value
-        return ValueError(f"{self.qty_types} not found!")
+        raise ValueError(f"{self.qty_types} not found!")
