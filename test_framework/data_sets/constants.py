@@ -24,12 +24,8 @@ class Connectivity(Enum):
 
 class FrontEnd(Enum):
     # 317 site
-    USER_317 = ""
-    USER_317_1 = ""
-    USER_317_2 = ""
-    PASSWORD_317 = ""
-    PASSWORD_317_1 = ""
-    PASSWORD_317_2 = ""
+    USERS_317 = []
+    PASSWORDS_317 = []
     FOLDER_317 = ""
     DESKS_317 = ('Desk of Order Book', 'Desk of Middle Office')
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
