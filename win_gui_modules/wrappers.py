@@ -195,8 +195,9 @@ def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percen
     return request
 
 
-def client_inbox_filter(base_request, filter):
+def client_inbox_filter(base_request, filter=None):
     request = act_ui_win_pb2.GridFilter()
-    request.filter.update(filter)
+    if filter is not None:
+        request.filter.update(filter)
     request.base.CopyFrom(base_request)
     return request

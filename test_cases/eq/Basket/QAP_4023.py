@@ -26,7 +26,7 @@ class QAP_4023(TestCase):
         self.order_book = OMSOrderBook(self.case_id, self.session_id)
         self.basket_book = OMSBasketOrderBook(self.case_id, self.session_id)
         self.cl_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_env = environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -37,13 +37,12 @@ class QAP_4023(TestCase):
         nol_id = nol.get_parameter("ListID")
         # endregion
         # region Accept
-        lookup = self.data_set.get_lookup_by_name("lookup_1")
         qty1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["OrderQtyData"]["OrderQty"]
-        qty2 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["OrderQtyData"]["OrderQty"]
-        price1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["Price"]
-        price2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["Price"]
-        self.cl_inbox.accept_order(lookup, qty1, price1)
-        self.cl_inbox.accept_order(lookup, qty2, price2)
+        qty2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["OrderQtyData"]["OrderQty"]
+        cl_ord_id1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["ClOrdID"]
+        cl_ord_id2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["ClOrdID"]
+        self.cl_inbox.accept_order(filter={"ClOrdId": cl_ord_id1})
+        self.cl_inbox.accept_order(filter={"ClOrdId": cl_ord_id2})
         # endregion
         # region Wave
         percent_to_release = "70"

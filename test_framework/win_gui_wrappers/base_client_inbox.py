@@ -25,17 +25,17 @@ class BaseClientInbox(BaseWindow):
     # endregion
 
     # region Actions
-    def accept_order(self, *args, filter:dict):
-        call(self.accept_order_call, self.accept_order_request(filter))
+    def accept_order(self, *args, filter:dict=None):
+        call(self.accept_order_call, self.accept_order_request(self.base_request, filter))
 
-    def accept_modify_plus_child(self, *args, filter:dict):
-        call(self.accept_modify_plus_child_call, self.accept_order_request(filter))
+    def accept_modify_plus_child(self, *args, filter:dict=None):
+        call(self.accept_modify_plus_child_call, self.accept_order_request(self.base_request, filter))
 
-    def accept_and_cancel_children(self, *args, filter:dict):
-        call(self.accept_and_cancel_children_call, self.accept_order_request(filter))
+    def accept_and_cancel_children(self, *args, filter:dict=None):
+        call(self.accept_and_cancel_children_call, self.accept_order_request(self.base_request, filter))
 
-    def reject_order(self, *args, filter:dict):
-        call(self.reject_order_call, self.accept_order_request(filter))
+    def reject_order(self, *args, filter:dict=None):
+        call(self.reject_order_call, self.accept_order_request(self.base_request, filter))
 
     def direct_order(self, instr: str, qty: str, limit: str, qty_percentage: str):
         call(self.client_inbox_direct_call, self.direct_order_request(instr, qty, limit, qty_percentage))
