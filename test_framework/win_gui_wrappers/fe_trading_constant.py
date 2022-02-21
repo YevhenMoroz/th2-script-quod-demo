@@ -405,3 +405,8 @@ class BasketSecondTabName(Enum):
 
 class MatchWindowsColumns(Enum):
     order_id = 'OrderId'
+
+
+class OrderBookColumnName(Enum):
+    id = 'Id'
+    order_bag_id = 'OrderBagID'

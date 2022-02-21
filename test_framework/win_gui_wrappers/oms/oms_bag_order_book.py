@@ -15,6 +15,7 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.bag_order_details = GetOrderBagBookDetails()
         self.extraction_bag_fields_details = ExtractionBagFieldsDetails
         self.bag_order_info = BagOrderInfo
+        self.extraction_bag_order_action_static = ExtractionBagOrderAction
         self.extraction_bag_order_action = ExtractionBagOrderAction()
         self.get_order_bag_book_details_request = GetOrderBagBookDetails
         self.wave_bag_creation_call = Stubs.win_act_bag_management_service.waveBagCreation

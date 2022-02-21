@@ -9,7 +9,6 @@ from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_requ
     direct_moc_request, direct_order_request
 
 
-
 class BaseOrderBook(BaseWindow):
     # region Base constructor
     def __init__(self, case_id, session_id):
@@ -84,8 +83,6 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_details = None
         self.internal_transfer_action = None
         self.group_modify_details = None
-
-
 
     # endregion
 
@@ -252,7 +249,7 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
-    def transfer_order(self,  desk: str, partial_desk: bool = False, filter_list: list = None):
+    def transfer_order(self, desk: str, partial_desk: bool = False, filter_list: list = None):
         self.transfer_order_details.set_default_params(self.base_request)
         if filter_list is not None:
             self.transfer_order_details.set_filter(filter_list)
@@ -456,7 +453,7 @@ class BaseOrderBook(BaseWindow):
                                        comm_amount=None, comm_currency=None, remove_comm=False, fee_type=None,
                                        fee_basis=None, fee_rate=None, fee_amount=None, fee_currency=None,
                                        fee_category=None, remove_fees=False, bo_notes=None, bo_fields=None,
-                                       trade_type=None):
+                                       trade_type=None, toggle_recompute=False):
         """
         trade_date/settlement_date format: '10/19/2021'
         bo_fields format: [field1, field2, field3, field4, field5] [field1, None, field3, None, field5] etc.
@@ -464,7 +461,7 @@ class BaseOrderBook(BaseWindow):
         ticket_details = self.__set_ticket_details(split_qty, client, trade_date, give_up_broker, net_gross_ind,
                                                    agreed_price)
         settlement_details = self.__set_settlement_details(exchange_rate, exchange_rate_calc, pset, settlement_currency,
-                                                           settlement_date, settlement_type)
+                                                           settlement_date, settlement_type, toggle_recompute)
         commissions_details = self.__set_commission_details(comm_amount, comm_basis, comm_currency, comm_rate,
                                                             remove_comm)
         fees_details = self.__set_fees_details(fee_amount, fee_basis, fee_category, fee_currency, fee_rate, fee_type,
@@ -519,8 +516,8 @@ class BaseOrderBook(BaseWindow):
             return None
 
     def __set_settlement_details(self, exchange_rate, exchange_rate_calc, pset, settlement_currency, settlement_date,
-                                 settlement_type):
-        if exchange_rate or exchange_rate_calc or pset or settlement_currency or settlement_date or settlement_type:
+                                 settlement_type, toggle_recompute: bool = False):
+        if exchange_rate or exchange_rate_calc or pset or settlement_currency or settlement_date or settlement_type or toggle_recompute:
             settlement_details = self.settlement_details
             if settlement_currency:
                 settlement_details.set_settlement_type(settlement_type)
@@ -534,6 +531,8 @@ class BaseOrderBook(BaseWindow):
                 settlement_details.set_settlement_date(settlement_date)
             if pset:
                 settlement_details.set_pset(pset)
+            if toggle_recompute:
+                settlement_details.toggle_recompute()
             return settlement_details.build()
         else:
             return None
@@ -594,5 +593,3 @@ class BaseOrderBook(BaseWindow):
         self.mass_book_details.set_rows_numbers(positions_of_orders)
         call(self.mass_book_call, self.mass_book_details.build())
         self.clear_details([self.mass_book_details])
-
-

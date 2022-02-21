@@ -54,13 +54,16 @@ class QAP_1084(TestCase):
         for i in range(3):
             self.fix_manager.send_message_fix_standard(self.fix_message)
             self.client_inbox.accept_order(self.lookup, self.qty, self.price)
-            # endregion
+        #     # endregion
 
         # region create Bag
         self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag='Bag_1')
         self.bag_order_book.create_bag()
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.order_bag_qty.value,
-                                                                          OrderBagColumn.ord_bag_name.value],
-                                                                    sub_extraction_fields=['Venue', 'Order ID'])
-        print(fields)
+                                                                          OrderBagColumn.ord_bag_name.value],['Order ID', 'Venue'])
+
+        self.bag_order_book.compare_values({'order_bag.'+OrderBagColumn.order_bag_qty.value: '1,400',
+                                            'order_bag.'+OrderBagColumn.ord_bag_name.value: 'BagName'},
+                                           fields, 'Compare values from block')
+
         # endregion
