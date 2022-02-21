@@ -2,24 +2,30 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_trading.test_cases.pages.main_page.workspace.order_book.QAP_6568 import QAP_6568
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 from test_cases.web_trading.test_cases.pages.main_page.workspace.order_book.QAP_6500 import QAP_6500
 
 
 class RunOrderBook:
-    def __init__(self, web_driver_container: WebDriverContainer, root_report_id):
-        self.folder_name = 'WebTrading'
-        self.first_lvl_id = bca.create_event(self.__class__.__name__, root_report_id)
-        self.second_lvl_id = bca.create_event(self.folder_name, self.first_lvl_id)
-        self.web_driver_container = web_driver_container
+    def __init__(self, root_report_id):
+        self.second_lvl_id = bca.create_event("WebTradingOrderBook", root_report_id)
+        self.web_driver_container = None
 
     def execute(self):
         try:
             start_time = time.monotonic()
+            configuration = ComponentConfiguration("WebTradingOrderBook")
+            self.web_driver_container = WebDriverContainer(
+                configuration.environment.get_list_web_trading_environment()[0].web_browser,
+                configuration.environment.get_list_web_trading_environment()[0].site_url)
 
-            QAP_6500(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_6568(self.web_driver_container, self.second_lvl_id).run()
+            QAP_6500(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6568(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

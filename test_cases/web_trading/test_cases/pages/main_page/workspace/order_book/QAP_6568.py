@@ -14,10 +14,11 @@ from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.or
 
 class QAP_6568(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA3"
-        self.password = "QA3"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.quantity = '11'
         self.price = "22"
         self.symbol = "AADIIND-Z  "

@@ -14,4 +14,7 @@ class EnvironmentType(Enum):
     quod306_web_admin_saturn_chrome = "quod306_web_admin_saturn_chrome"
     quod306_web_admin_saturn_firefox = "quod306_web_admin_saturn_firefox"
     #endregion
+    #region web trading
+    quod315_web_trading_luna_chrome = "quod315_web_trading_luna_chrome"
+    #endregion
 

@@ -22,10 +22,11 @@ from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order
 
 class QAP_6500(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "web_trading_test3"
-        self.password = "Web3_trading_test"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.default_client = "POOJA"
         # Order info
         self.instrument = 'VALECHAENG-RL'
