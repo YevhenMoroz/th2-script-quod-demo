@@ -6,11 +6,11 @@ from test_framework.data_sets.environment_type import EnvironmentType
 class FEEnvironment(BaseEnvironment):
     environment_instances = {}
 
-    def __init__(self, environment_type: str = None, user: str = None, password: str = None, folder: str = None,
+    def __init__(self, environment_type: str = None, users: list = None, passwords: list = None, folder: str = None,
                  desks: list = None):
         self.environment_type = environment_type
-        self.user = user
-        self.password = password
+        self.users = users
+        self.passwords = passwords
         self.folder = folder
         self.desks = desks
 
@@ -20,8 +20,8 @@ class FEEnvironment(BaseEnvironment):
             if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod317_fe.value,
-                    user=FrontEnd.USER_317.value,
-                    password=FrontEnd.PASSWORD_317.value,
+                    users=FrontEnd.USERS_317.value,
+                    passwords=FrontEnd.PASSWORDS_317.value,
                     folder=FrontEnd.FOLDER_317.value,
                     desks=FrontEnd.DESKS_317.value
                 )
