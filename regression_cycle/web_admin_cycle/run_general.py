@@ -37,22 +37,36 @@ class RunGeneral:
             start_time = time.monotonic()
             QAP_796(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                     environment=configuration.environment).run()
-            #TODO:refactoring
-            # QAP_797(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2450(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2454(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2509(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2516(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2544(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2616(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2624(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_2631(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4104(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4865(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5840(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5967(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_6152(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_6182(self.web_driver_container, self.second_lvl_id).run()
+            QAP_797(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                    environment=configuration.environment).run()
+            QAP_2450(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2454(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2509(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2516(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2544(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2616(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2624(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2631(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_4104(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_4865(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5840(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5967(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6152(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6182(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

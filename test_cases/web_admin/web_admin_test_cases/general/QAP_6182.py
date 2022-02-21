@@ -11,10 +11,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_6182(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -23,7 +24,6 @@ class QAP_6182(CommonTestCase):
         main_page = CommonPage(self.web_driver_container)
         main_page.click_on_send_feedback_button()
         time.sleep(2)
-
 
     def test_context(self):
 
