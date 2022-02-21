@@ -4,6 +4,7 @@ from test_framework.data_sets.environment_type import EnvironmentType
 from test_framework.environments.web_admin_enviroment import WebAdminEnvironment
 from test_framework.environments.fe_environment import FEEnvironment
 from test_framework.environments.java_api_environment import JavaApiEnvironment
+from test_framework.environments.read_log_envirenment import ReadLogEnvironment
 
 
 class FullEnvironment:
@@ -14,6 +15,7 @@ class FullEnvironment:
         self.__list_web_admin_environment = list()
         self.__list_web_trading_environment = list()
         self.__list_java_api_environment = list()
+        self.__list_read_log_environment = list()
 
         for session_environment in component_environment:
             environment = session_environment.getchildren()
@@ -28,6 +30,9 @@ class FullEnvironment:
                 if instance.tag == "java_api_environment":
                     self.__list_java_api_environment.append(
                         JavaApiEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "read_log_environment":
+                    self.__list_read_log_environment.append(
+                        ReadLogEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
     def get_list_fix_environment(self) -> typing.List[FixEnvironment]:
@@ -44,4 +49,7 @@ class FullEnvironment:
 
     def get_list_java_api_environment(self) -> typing.List[JavaApiEnvironment]:
         return self.__list_java_api_environment
+
+    def get_list_read_log_environment(self):
+        return self.__list_read_log_environment
     # endregion
