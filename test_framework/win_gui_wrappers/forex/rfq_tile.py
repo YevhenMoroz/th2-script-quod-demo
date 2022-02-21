@@ -163,6 +163,24 @@ class RFQTile(AggregatesRatesTile):
         self.clear_details([self.extraction_request])
         self.set_default_params()
 
+    def check_maturity_date(self, near_date: str = None, far_date: str = None):
+        self.verifier.set_event_name("Check maturity date")
+        if near_date is not None:
+            self.extraction_request.extract_near_maturity_date(near_date)
+            response = call(self.extract_call, self.extraction_request.build())
+            extract_date = response[near_date]
+            extract_date = str(timestring.Date(extract_date))
+            self.verifier.compare_values("Near maturity date", near_date, extract_date)
+        if far_date is not None:
+            self.extraction_request.extract_far_maturity_date(far_date)
+            response = call(self.extract_call, self.extraction_request.build())
+            extract_date = response[far_date]
+            extract_date = str(timestring.Date(extract_date))
+            self.verifier.compare_values("Far maturity date", far_date, extract_date)
+        self.verifier.verify()
+        self.clear_details([self.extraction_request])
+        self.set_default_params()
+
     def check_diff(self, near_date: str = None, far_date: str = None):
         self.verifier.set_event_name("Check diff")
         if near_date and far_date is not None:
