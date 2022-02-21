@@ -25,6 +25,8 @@ class Connectivity(Enum):
 class FrontEnd(Enum):
     # 317 site
     USER_317 = ""
+    USER_317_1 = ""
+    USER_317_2 = ""
     PASSWORD_317 = ""
     PASSWORD_317_1 = ""
     PASSWORD_317_2 = ""
