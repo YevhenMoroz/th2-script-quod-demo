@@ -13,7 +13,7 @@ from test_cases.web_admin.web_admin_test_cases.site.QAP_5583 import QAP_5583
 
 
 class RunSite:
-    def __init__(self,root_report_id):
+    def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Site", root_report_id)
         self.web_driver_container = None
 
@@ -25,12 +25,15 @@ class RunSite:
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
             QAP_5364(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                    environment=configuration.environment).run()
-            #TODO:refactoring
-            # QAP_5578(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5579(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5580(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5583(self.web_driver_container, self.second_lvl_id).run()
+                     environment=configuration.environment).run()
+            QAP_5578(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5579(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5580(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5583(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Site ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
