@@ -114,7 +114,7 @@ class QAP_3877(TestCase):
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_third])
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=1)
         # region wave basket first time
-        self.oms_basket_book.wave_basket('70', route='Chix direct access', removed_orders_filter=[order_id],
+        self.oms_basket_book.wave_basket('70', route=self.data_set.get_route('route_2'), removed_orders_filter=[order_id],
                                          basket_filter={BasketBookColumns.client_basket_id.value: client_basket_id})
         # endregion
 
@@ -138,7 +138,7 @@ class QAP_3877(TestCase):
         # endregion
 
         # region wave basket second time
-        self.oms_basket_book.wave_basket('100', route='Chix direct access', removed_orders_filter=[order_id],
+        self.oms_basket_book.wave_basket('100', route=self.data_set.get_route('route_1'), removed_orders_filter=[order_id],
                                          basket_filter={BasketBookColumns.client_basket_id.value: client_basket_id})
         # endregion
 

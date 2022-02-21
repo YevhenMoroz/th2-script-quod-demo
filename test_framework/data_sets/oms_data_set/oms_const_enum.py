@@ -136,7 +136,7 @@ class OmsAccounts(Enum):
 
 
 class OmsWashbookAccounts(Enum):
-    washbook_account_1 = ""
+    washbook_account_1 = "CareWB"
     washbook_account_2 = ""
     washbook_account_3 = ""
 
@@ -181,6 +181,7 @@ class OmsCurrency(Enum):
 
 class OmsRoutes(Enum):
     route_1 = "Route via FIXBUYTH2 - component"
+    route_2 = "Chix direct access"
 
 
 class OmsRouteID(Enum):
