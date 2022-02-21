@@ -13,7 +13,7 @@ class ReadLogEnvironment(BaseEnvironment):
     @staticmethod
     def get_instance(env: EnvironmentType):
         if env.value == EnvironmentType.quod317_read_log.value:
-            if EnvironmentType.quod_317_read_log.value not in ReadLogEnvironment.environment_instances.keys():
+            if EnvironmentType.quod317_read_log.value not in ReadLogEnvironment.environment_instances.keys():
                 site_environment = ReadLogEnvironment(
                     environment_type=EnvironmentType.quod317_read_log.value,
                     read_log_conn=Connectivity.Ganymede_317_als_email_report.value
