@@ -167,6 +167,8 @@ class FxSymbols(Enum):
     symbol_11 = "GBP/SEK"
     symbol_12 = "USD/CAD"
     symbol_13 = "EUR/CAD"
+    symbol_14 = "NOK/SEK"
+    symbol_15 = "USD/NOK"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

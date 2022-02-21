@@ -7,6 +7,8 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -27,6 +29,8 @@ def run_full_amount(report_id, session_id):
 def test_run(parent_id=None):
     report_id = bca.create_event('ESP Taker regression', parent_id)
     session_id = set_session_id()
+    data_set = FxDataSet()
+    configuration = ComponentConfiguration("ESP_Taker")
 
     try:
         if not Stubs.frontend_is_open:

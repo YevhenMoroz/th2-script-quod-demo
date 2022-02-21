@@ -32,11 +32,15 @@ class OrderBookColumns(Enum):
     orig = 'Orig'
     expire_date = "ExpireDate"
     owner = "Owner"
-    client_id = "Client ID"
+    suspend = 'Suspended'
+    client_id = 'Client ID'
     client_name = "Client Name"
     free_notes = 'FreeNotes'
     instrument_type = 'InstrType'
     currency = 'Currency'
+    venue_client_account = "Venue Client Account"
+    account_id = 'Account ID'
+    done_for_day = 'DoneForDay'
     tenor = "Tenor"
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
@@ -46,6 +50,8 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    washbook = 'Wash Book'
+    capacity = 'Capacity'
     near_tenor = 'NearTenor'
     near_qty = 'NearQty'
     near_fwd_pts = 'NearFwdPts'
@@ -60,12 +66,27 @@ class OrderBookColumns(Enum):
     # endregion
 
 
+class PositionBookColumns(Enum):
+    symbol = "Symbol"
+    account = "Account"
+    position = "Position"
+    quote_position = "Quote Position"
+    position_usd = "Position (USD)"
+    quote_position_usd = "Quote Position (USD)"
+
+
 class TimeInForce(Enum):
     FOK = 'FillOrKill'
     IOC = 'ImmediateOrCancel'
     GTC = 'GoodTillCancel'
     GTD = 'GoodTillDate'
     DAY = 'Day'
+
+
+class TriggerType(Enum):
+    last_trade = "LastTrade"
+    market_best_bid_offer = "MarketBestBidOffer"
+    primary_best_bid_offer = "PrimaryBestBidOffer"
 
 
 class OrderType(Enum):
@@ -255,7 +276,8 @@ class MiddleOfficeColumns(Enum):
     summary_status = 'Summary Status'
     order_id = 'Order ID'
     block_id = 'Block ID'
-    conf_service = ""
+    conf_service = "Conf Service"
+    side = 'Side'
 
 
 class AllocationsColumns(Enum):
@@ -323,3 +345,13 @@ class RFQPanelHeaderValues(Enum):
     fill_side_value_label_control = "fill_side_value_label_control"
     request_side_value_label_control = "request_side_value_label_control"
     creation_value_label_control = "creation_value_label_control"
+
+
+class PanicValues(Enum):
+    executable = "executable"
+    pricing = "pricing"
+    hedge_orders = "hedge_orders"
+
+
+class Capacity(Enum):
+    agency = 'Agency'

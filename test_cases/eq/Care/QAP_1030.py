@@ -10,6 +10,7 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
 from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -45,9 +46,7 @@ class QAP_1030(TestCase):
         base_window = BaseMainWindow(self.test_id, self.session_id)
         base_window2 = BaseMainWindow(self.test_id, session_id2)
         order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        order_ticket2 = OMSOrderTicket(self.test_id, session_id2)
         order_book = OMSOrderBook(self.test_id, self.session_id)
-        client_inbox = OMSClientInbox(self.test_id, self.session_id)
         client_inbox2 = OMSClientInbox(self.test_id, session_id2)
         order_book2 = OMSOrderBook(self.test_id, session_id2)
         # endregion
@@ -59,11 +58,13 @@ class QAP_1030(TestCase):
         # region Create CO
         base_window.switch_user()
         order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif='Day', is_sell_side=False, instrument=lookup, recipient=username2)
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
         order_ticket.create_order(lookup=lookup)
-        # order_id = order_book.extract_field('Order ID')
+        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
         base_window2.switch_user()
         client_inbox2.accept_order(lookup, qty, price)
+        order_book2.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
         # region transfer order
         order_book2.transfer_order(username)
@@ -71,7 +72,7 @@ class QAP_1030(TestCase):
         # endregion
         # region reject transfer
         order_book.internal_transfer(transfer_accept=False)
-        # # endregion
-        # eq_wrappers.base_verifier(case_id, 'Recpt', username, eq_wrappers.get_order_value(base_request, 'Recpt'),
-        #                           VerificationMethod.CONTAINS)
+        # endregion
+        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
         close_fe(self.test_id, session_id2)

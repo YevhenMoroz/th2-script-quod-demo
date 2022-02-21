@@ -17,6 +17,7 @@ class BaseTradesBook(BaseWindow):
         self.manual_match_call = None
         self.cancel_manual_execution_call = None
         self.get_trade_book_details_call = None
+        self.un_match_call = None
 
     # endregion
     # region Common func
@@ -76,6 +77,16 @@ class BaseTradesBook(BaseWindow):
         if trades_filter_list is not None:
             modify_trades_details.set_filter(trades_filter_list)
         call(self.manual_match_call, modify_trades_details.build())
+
+    def un_match(self, qty_to_match=None,  trades_filter_list=None):
+        if qty_to_match is not None:
+            self.match_details.set_qty_to_match(qty_to_match)
+        self.match_details.click_match()
+        modify_trades_details = ModifyTradesDetails(self.match_details)
+        modify_trades_details.set_default_params(self.base_request)
+        if trades_filter_list is not None:
+            modify_trades_details.set_filter(trades_filter_list)
+        call(self.un_match_call, modify_trades_details.build())
 
     def cancel_execution(self, trades_filter_list=None):
         self.cancel_manual_execution_details.set_default_params(self.base_request)

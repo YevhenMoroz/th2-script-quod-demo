@@ -61,6 +61,5 @@ class QAP_6192(TestCase):
         new_order_single = FixMessageNewOrderMultiLegFX().set_default_prev_quoted_swap(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_swap(new_order_single,
-                                                                                                  gateway_side_sell,
                                                                                                   status)
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)

@@ -1,7 +1,5 @@
-import time
 from pathlib import Path
 
-from custom.tenor_settlement_date import wk1
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
@@ -14,9 +12,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.forex.RestApiModifyMarketMakingStatusMessages import \
-    RestApiModifyMarketMakingStatusMessages
 
 
 class QAP_2085(TestCase):

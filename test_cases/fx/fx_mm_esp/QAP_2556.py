@@ -68,7 +68,9 @@ class QAP_2556(TestCase):
             [obc.qty.value, self.qty1]).check_order_fields_list(
             {obc.qty.value: self.qty1, obc.client_id.value: self.client1, obc.limit_price.value: ask_price,
              obc.sts.value: self.status})
+        # endregion
 
+        # region step 3
         self.rates_tile.open_order_ticket_by_row(row=1, side=self.side)
         self.order_ticket.set_order_details(place=True, client=self.client1, qty=self.qty2)
         self.order_ticket.create_order(is_mm=True)
@@ -77,38 +79,8 @@ class QAP_2556(TestCase):
             [obc.qty.value, self.qty2]).check_order_fields_list(
             {obc.qty.value: self.qty2, obc.client_id.value: self.client1, obc.limit_price.value: bid_price,
              obc.sts.value: self.status})
-
-        # self.rates_tile_w1.crete_tile()
-        # self.rates_tile_w1.modify_client_tile(instrument=self.instr_w1, client_tier=self.client)
         # endregion
 
-        # # region step 2
-        # spot_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips, self.bid_large,
-        #                                                             self.ask_large)
-        # spot_ask_pips = spot_values[self.ask_pips.value]
-        # spot_ask_large = spot_values[self.ask_large.value]
-        # spot_price = spot_ask_large + spot_ask_pips
-        # print("spot tile tob has extracted")
-        #
-        # w1_values = self.rates_tile_w1.extract_values_from_rates(self.bid_spot, self.ask_spot, self.bid_pts,
-        #                                                          self.ask_pts)
-        # w1_tile_spot_price = w1_values[str(self.ask_spot)]
-        # print("w1 tile rows has extracted")
-        #
-        # self.rates_tile.compare_values(spot_price, w1_tile_spot_price,
-        #                                     event_name=self.spot_event)
-        #
-        # w1_tob_values = self.rates_tile_w1.extract_prices_from_tile(self.bid_pips, self.ask_pips, self.bid_large,
-        #                                                             self.ask_large)
-        # w1_ask_pips = w1_tob_values[self.ask_pips.value]
-        # w1_ask_large = w1_tob_values[self.ask_large.value]
-        # w1_price = w1_ask_large + w1_ask_pips
-        # expected_pts = str(round((float(w1_price) - float(spot_price)) * 10000, 1))
-        # actual_pts = str(float(w1_values[str(self.ask_pts)]))
-        # print("w1 tile tob has extracted")
-        # self.rates_tile.compare_values(expected_pts, actual_pts,
-        #                                     event_name=self.pts_event)
-        # # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

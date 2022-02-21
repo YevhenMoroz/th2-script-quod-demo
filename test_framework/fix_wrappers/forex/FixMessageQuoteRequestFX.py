@@ -1,4 +1,5 @@
 from custom.tenor_settlement_date import spo, wk1
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.DataSet import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from custom import basic_custom_actions as bca
@@ -6,7 +7,7 @@ from custom import basic_custom_actions as bca
 
 class FixMessageQuoteRequestFX(FixMessage):
 
-    def __init__(self, parameters: dict = None, data_set= None):
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
         super().__init__(message_type=MessageType.QuoteRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
@@ -69,22 +70,22 @@ class FixMessageQuoteRequestFX(FixMessage):
                 "NoLegs": [
                     {
                         "InstrumentLeg": {
-                            "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                            "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
                         },
                         "LegSide": "2",
-                        "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
-                        "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("spot"),
                         "LegOrderQty": "1000000"
                     },
                     {
                         "InstrumentLeg": {
-                            "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                            "SecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
                         },
                         "LegSide": "1",
-                        "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
-                        "SettlType": self.get_data_set().get_settle_type_by_name("wk1"),
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("wk1"),
                         "LegOrderQty": "1000000"
                     }
                 ]
