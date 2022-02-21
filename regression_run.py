@@ -20,7 +20,7 @@ def regression_run():
             algo_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='fx']").attrib["run"]):
             fx_regression.test_run(report_id)
-        if eval(root.find(".//product_line[@name='eq']").attrib["run"]):
+        if eval(root.find(".//product_line[@name='oms']").attrib["run"]):
             eq_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='retail']").attrib["run"]):
             retail_regression.test_run(report_id)
