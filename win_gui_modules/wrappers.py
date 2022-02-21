@@ -141,23 +141,24 @@ def direct_moc_request(qty_type: str, qty_percentage: str, route: str,
     request.qtyPercentage = qty_percentage
     request.route = route
     request.directsValues.CopyFrom(direct_values)
-
     return request
 
 
-def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str):
+def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
     request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
     request.route = route
+    request.filter.CopyFrom(client_inbox_filter(filter=filter))
     return request
 
 
-def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str):
+def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
     request = act_ui_win_pb2.DirectMocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
     request.route = route
+    request.filter.CopyFrom(client_inbox_filter(filter=filter))
     return request
 
 
@@ -177,27 +178,30 @@ def reject_order_request(instr: str, qty: str, limit: str):
     return request
 
 
-def direct_order_request(qty_type: str, qty_percentage: str, route: str):
+def direct_order_request(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
     request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
     request.route = route
+    request.filter.CopyFrom(client_inbox_filter(filter=filter))
     return request
 
 
-def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percentage, route):
+def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percentage, route, filter: dict=None):
     request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
     request.route = route
     request.percentage = percentage
     request.reference_price = reference_price
+    request.filter.CopyFrom(client_inbox_filter(filter=filter))
     return request
 
 
-def client_inbox_filter(base_request, filter=None):
+def client_inbox_filter(base_request=None, filter=None):
     request = act_ui_win_pb2.GridFilter()
     if filter is not None:
         request.filter.update(filter)
-    request.base.CopyFrom(base_request)
+    if base_request is not None:
+        request.base.CopyFrom(base_request)
     return request
