@@ -17,10 +17,12 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_3231(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+
         self.venue_act_group_name_bic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -47,7 +49,7 @@ class QAP_3231(CommonTestCase):
         try:
             self.precondition()
             page = ClientsPage(self.web_driver_container)
-            self.verify("Is bic venue act group name changed correctly",True,
+            self.verify("Is bic venue act group name changed correctly", True,
                         page.click_download_pdf_entity_button_and_check_pdf(self.venue_act_group_name_bic))
 
         except Exception:

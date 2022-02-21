@@ -17,8 +17,9 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 # Draft
 class QAP_2197(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.account = f"QAP-2197_{str(uuid1())}"
         self.client = "CLIENT1"
         self.client_id_source = "Other"

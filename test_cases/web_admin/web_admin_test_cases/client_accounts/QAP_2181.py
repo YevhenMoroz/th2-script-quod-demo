@@ -19,10 +19,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_2181(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
@@ -75,7 +76,8 @@ class QAP_2181(CommonTestCase):
             time.sleep(2)
             main_page.set_name(self.name)
             time.sleep(2)
-            self.verify("Is entity saved correctly", self.clearing_account_type[-1], main_page.get_clearing_account_type())
+            self.verify("Is entity saved correctly", self.clearing_account_type[-1],
+                        main_page.get_clearing_account_type())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

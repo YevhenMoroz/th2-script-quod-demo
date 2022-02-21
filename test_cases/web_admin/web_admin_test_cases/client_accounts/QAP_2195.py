@@ -17,10 +17,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_2195(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = "AMEX"
         self.account_id_source = "BIC"
@@ -53,7 +54,8 @@ class QAP_2195(CommonTestCase):
             expected_pdf_content = [self.venue_account,
                                     self.venue,
                                     self.account_id_source]
-            self.verify("Is PDF contains correctly values", True, wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            self.verify("Is PDF contains correctly values", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
             ext_id_client = wizard.get_ext_id_client()
             wizard.click_save_button()
             time.sleep(2)
