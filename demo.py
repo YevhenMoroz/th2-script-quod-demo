@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 
 from stubs import Stubs
 from test_cases.fx.fx_mm_esp import QAP_2750, QAP_6148
@@ -78,7 +78,7 @@ def test_run():
 
     logger.info(f"Root event was created (id = {report_id.id})")
     logging.getLogger().setLevel(logging.WARN)
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 309"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     session_id = set_session_id()
     start_time = datetime.now()
     print(f"Start time :{start_time}")
@@ -90,7 +90,7 @@ def test_run():
             prepare_fe_2(report_id, session_id)
         else:
             get_opened_fe(report_id, session_id)
-        # rm= RuleManager()
+        # rm= RuleManager(Simulators.default)
         # rm.remove_rule_by_id(15)
         # rm.add_fx_md_to("fix-fh-314-luna")
         # rm.print_active_rules()
