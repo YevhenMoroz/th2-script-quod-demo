@@ -59,6 +59,9 @@ class AlgoAccounts(Enum):
     account_1 = "XPAR_CLIENT1"
     account_2 = "XPAR_CLIENT2"
     account_3 = "XPAR_CLIENT3"
+    account_4 = "TRQX_CLIENT1"
+    account_5 = "TRQX_CLIENT2"
+    account_6 = "TRQX_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
