@@ -65,6 +65,7 @@ class OrderBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'FarSettlDate'
     last_spot_rate = 'LastSpotRate'
+    settle_date = 'Settle Date'
     # endregion
 
 
