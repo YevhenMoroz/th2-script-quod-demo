@@ -72,6 +72,17 @@ class FixEnvironment(BaseEnvironment):
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod317_ganymede_standard_test.value: site_environment})
                 return FixEnvironment.environment_instances[EnvironmentType.quod317_ganymede_standard_test.value]
+        elif env.value == EnvironmentType.quod310_columbia_standard.value:
+            if EnvironmentType.quod310_columbia_standard.value not in FixEnvironment.environment_instances.keys():
+                site_environment = FixEnvironment(
+                    environment_type=EnvironmentType.quod310_columbia_standard.value,
+                    sell_side=Connectivity.Columbia_310_Sell_Side.value,
+                    buy_side=Connectivity.Columbia_310_Buy_Side.value,
+                    feed_handler=Connectivity.Columbia_310_Feed_Handler.value
+                )
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod310_columbia_standard.value: site_environment})
+                return FixEnvironment.environment_instances[EnvironmentType.quod310_columbia_standard.value]
         else:
             raise Exception('No such environment')
 

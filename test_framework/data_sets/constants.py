@@ -20,6 +20,9 @@ class Connectivity(Enum):
     Luna_314_wa = "rest_wa314luna"
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
+    Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
+    Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
+    Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
 class FrontEnd(Enum):
@@ -75,10 +78,32 @@ class Status(Enum):
     Fill = "Fill"
     PartialFill = "PartialFill"
     Reject = "Reject"
-    CancelRequest = "CancelReplace"
+    CancelReplace = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
 
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'
+
+class TimeInForce(Enum):
+    Day = 0
+    GoodTillCancel = 1
+    AtTheOpening = 2
+    ImmediateOrCancel = 3
+    FillOrKill = 4
+    GoodTillCrossing = 5
+    GoodTillDate = 6
+    AtTheClose = 7
+    ValidForAuction = 100
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
