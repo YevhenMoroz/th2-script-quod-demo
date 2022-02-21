@@ -63,6 +63,7 @@ class OrderBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'FarSettlDate'
     last_spot_rate = 'LastSpotRate'
+    settle_date = 'Settle Date'
     # endregion
 
 
@@ -262,7 +263,6 @@ class MiddleOfficeColumns(Enum):
     order_id = 'Order ID'
     block_id = 'Block ID'
     conf_service = "Conf Service"
-    side = 'Side'
 
 
 class AllocationsColumns(Enum):
