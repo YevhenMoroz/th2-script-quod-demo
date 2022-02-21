@@ -10,7 +10,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.ors_messages.UnMatchRequest import UnMatchRequest
 from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns, TradeBookColumns, \
-    TimeInForce
+    TimeInForce, OrderType, MatchWindowsColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -63,8 +63,8 @@ class QAP_3911(TestCase):
                                                                                        float(self.price),
                                                                                        int(self.qty),
                                                                                        delay=0)
-            self.order_ticket.set_order_details(client='MOClient', limit=self.price, qty=self.qty,
-                                                order_type='Limit', tif=TimeInForce.DAY.value)
+            self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_pt_1'), limit=self.price, qty=self.qty,
+                                                order_type=OrderType.limit.value, tif=TimeInForce.DAY.value)
             self.order_ticket.create_order('DNX')
             dma_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
 
@@ -87,12 +87,12 @@ class QAP_3911(TestCase):
         # region extract execution from DMA order
         exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
                                                       [TradeBookColumns.exec_id.value],
-                                                      [1], {OrderBookColumns.order_id.value: dma_order_id})[0]['ExecID']
+                                                      [1], {OrderBookColumns.order_id.value: dma_order_id})[0][OrderBookColumns.exec_id.value]
         # endregion
 
         # region match
         time.sleep(10)
-        self.trade_book.manual_match(self.qty, ['OrderId', care_order_id],
+        self.trade_book.manual_match(self.qty, [MatchWindowsColumns.order_id.value, care_order_id],
                                      [TradeBookColumns.exec_id.value, exec_id])
         # endregion
 
@@ -119,10 +119,10 @@ class QAP_3911(TestCase):
             'UnMatchRequestBlock': {
                 'UnMatchingList': {'UnMatchingBlock': [
                     {'VirtualExecID': exec_id_co_order, 'UnMatchingQty': str(int(self.qty) / 2),
-                     'SourceAccountID': "CareWB",
+                     'SourceAccountID': self.data_set.get_washbook_account_by_name('washbook_account_1'),
                      'PositionType': "N"}
                 ]},
-                'DestinationAccountID': 'PROP'
+                'DestinationAccountID': self.data_set.get_account_by_name('client_pos_3_acc_3')
             }
         })
         self.java_api_manager.send_message(order_un_match_params_first)
@@ -146,10 +146,10 @@ class QAP_3911(TestCase):
             'UnMatchRequestBlock': {
                 'UnMatchingList': {'UnMatchingBlock': [
                     {'VirtualExecID': exec_id_co_order, 'UnMatchingQty': str(int(self.qty) / 2),
-                     'SourceAccountID': "CareWB",
+                     'SourceAccountID': self.data_set.get_washbook_account_by_name('washbook_account_1'),
                      'PositionType': "N"}
                 ]},
-                'DestinationAccountID': 'PROP'
+                'DestinationAccountID': self.data_set.get_account_by_name('client_pos_3_acc_3')
             }
         })
         self.java_api_manager.send_message(order_un_match_params_second)
