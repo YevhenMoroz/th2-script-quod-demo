@@ -28,7 +28,7 @@ from custom import basic_custom_actions as bca
 
 
 class RunMiddleOffice:
-    def __init__(self,root_report_id):
+    def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Middle_Office", root_report_id)
         self.web_driver_container = None
 
@@ -40,27 +40,45 @@ class RunMiddleOffice:
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
             QAP_2564(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                    environment=configuration.environment).run()
-            #TODO:Refactoring
-            # QAP_3148(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3152(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3219(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3222(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3223(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3225(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3235(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3236(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3237(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3238(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3240(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3603(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3604(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_3605(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4152(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4858(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5448(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5665(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_5666(self.web_driver_container, self.second_lvl_id).run()
+                     environment=configuration.environment).run()
+            QAP_3148(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3152(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3219(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3222(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3223(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3225(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3235(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3236(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3237(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3238(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3240(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3603(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3604(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_3605(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_4152(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_4858(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5448(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5665(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5666(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run Middle Office ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
