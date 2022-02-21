@@ -20,7 +20,7 @@ from test_framework.rest_api_wrappers.forex.RestApiModifyMarketMakingStatusMessa
     RestApiModifyMarketMakingStatusMessages
 
 
-class QAP_2872(TestCase):
+class QAP_2087(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
@@ -35,38 +35,35 @@ class QAP_2872(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
-        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
-        self.client = self.data_set.get_client_by_name("client_mm_5")
-        self.gbp_nok = self.data_set.get_symbol_by_name("symbol_10")
-        self.instrument = self.gbp_nok + "-1W"
-        self.currency = self.data_set.get_currency_by_name("currency_gbp")
-        self.security_type = self.data_set.get_security_type_by_name('fx_fwd')
-        self.settltype = self.data_set.get_settle_type_by_name("wk1")
+        self.client = self.data_set.get_client_by_name("client_mm_1")
+        self.wrong_client = "Oxygen"
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = self.eur_usd + "-Spot"
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settltype = self.data_set.get_settle_type_by_name("spot")
         self.no_related_symbols = [{
             'Instrument': {
-                'Symbol': self.gbp_nok,
+                'Symbol': self.eur_usd,
                 'SecurityType': self.security_type,
                 'Product': '4'},
             'SettlType': self.settltype}]
         self.instrument = {
-            'Symbol': self.gbp_nok,
+            'Symbol': self.eur_usd,
             'SecurityType': self.security_type,
             'Product': '4'}
         self.status_reject = Status.Reject
-        self.bands = ["1000000", '2000000']
+        self.bands = ["1000000", '5000000', '10000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1
+        # region step 1-3
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.client}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        # endregion
-
-        # region step 2-3
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, priced=False)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -74,7 +71,7 @@ class QAP_2872(TestCase):
 
         # region step 4
         self.new_order_single.set_default().change_parameters(
-            {"Account": self.client, "Instrument": self.instrument, "Currency": self.currency,
+            {"Account": self.wrong_client, "Instrument": self.instrument, "Currency": self.currency,
              "SettlType": self.settltype})
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
