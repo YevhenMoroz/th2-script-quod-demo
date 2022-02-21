@@ -12,20 +12,20 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_2451(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.users = ["adm02", "adm03"]
         self.passwords = ["adm02", "adm03"]
         self.disabled_massage = f"User {self.users[0]} Unlocked"
-
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.set_login("adm02")
         login_page.set_password("adm02")
         for i in range(52):
-           login_page.click_login_button()
-           time.sleep(1)
+            login_page.click_login_button()
+            time.sleep(1)
         login_page.check_is_login_successful()
         login_page.set_login("adm03")
         login_page.set_password("adm03")
