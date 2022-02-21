@@ -2,10 +2,12 @@ import logging
 import os
 import time
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from custom import basic_custom_actions as bca, basic_custom_actions
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -96,13 +98,12 @@ class QAP_3877(TestCase):
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         qty = self.fix_message.get_parameters()['ListOrdGrp']['NoOrders'][2]['OrderQtyData']['OrderQty']
         rule_manager = RuleManager(Simulators.equity)
         rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env.buy_side, self.client_for_rule,
                                                                   self.exec_destination, price=1000)
-        response = self.fix_manager.send_message_fix_standard(self.fix_message)
         time.sleep(10)
         for i in range(3):
             self.client_inbox.accept_order(self.lookup, qty, self.price)
@@ -112,7 +113,6 @@ class QAP_3877(TestCase):
         client_basket_id = self.fix_message.get_parameters()['ListID']
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_third])
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=1)
-        unmatched_qty_of_third_care_order = self.fix_message.get_parameters()['ListOrdGrp']['NoOrders'][2]['Price']
         # region wave basket first time
         self.oms_basket_book.wave_basket('70', route='Chix direct access', removed_orders_filter=[order_id],
                                          basket_filter={BasketBookColumns.client_basket_id.value: client_basket_id})
