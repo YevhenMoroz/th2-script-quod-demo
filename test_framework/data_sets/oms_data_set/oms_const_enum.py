@@ -136,9 +136,9 @@ class OmsAccounts(Enum):
 
 
 class OmsWashbookAccounts(Enum):
-    washbook_account_1 = ""
-    washbook_account_2 = ""
-    washbook_account_3 = ""
+    washbook_account_1 = "DMA Washbook"
+    washbook_account_2 = "CareWB"
+    washbook_account_3 = "DefaultWashBook"
 
 
 class OmsRecipients(Enum):
