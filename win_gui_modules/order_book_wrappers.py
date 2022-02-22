@@ -193,7 +193,6 @@ class TransferOrderDetails:
         self.transfer_order_details.multipleRowSelection = True
         self.transfer_order_details.selectedRowCount = selected_row_count
 
-
     def set_transfer_order_user(self, desk: str, partial_desk: bool = False):
         self.transfer_order_details.desk = desk
         self.transfer_order_details.partialDesk = partial_desk
@@ -1108,6 +1107,9 @@ class SplitBookingDetails:
         for param in split_booking_params:
             self._request.splitBookingParams.append(param)
 
+    def set_error_expected(self, error_expected: bool):
+        self._request.errorExpected = error_expected
+
     def build(self):
         return self._request
 
@@ -1128,15 +1130,14 @@ class MassManualExecutionDetails:
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
-    def set_price(self, price:str):
+    def set_price(self, price: str):
         self._request.price = price
 
-    def set_count_of_selected_rows(self, rows:int):
+    def set_count_of_selected_rows(self, rows: int):
         self._request.countOfSelectedRows = rows
 
     def build(self):
         return self._request
-
 
 # class QuoteRequestDetails:
 #     def __init__(self):
