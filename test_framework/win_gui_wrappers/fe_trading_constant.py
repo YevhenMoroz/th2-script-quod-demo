@@ -397,6 +397,8 @@ class OrderBagColumn(Enum):
     unmatched_qty = 'UnmatchedQty'
     order_bag_qty = 'OrderBagQty'
     ord_bag_name = 'OrdBagName'
+    id = 'Id'
+    leaves_qty = 'LeavesQty'
 
 
 class BasketSecondTabName(Enum):

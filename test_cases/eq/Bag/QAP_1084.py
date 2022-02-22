@@ -7,13 +7,10 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_bag_order_book import OMSBagOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,37 +26,38 @@ class QAP_1084(TestCase):
         self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
-        self.qty = '100'
-        self.price = '10'
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', self.price)
-        self.exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', self.exec_destination)
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.fix_message.change_parameter("HandlInst", '3')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Declaration
+        qty = '100'
+        price = '10'
+        self.fix_message.set_default_dma_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
+        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
+        self.fix_message.change_parameter('Price', price)
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('ExDestination', exec_destination)
+        lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.fix_message.change_parameter("HandlInst", '3')
+        qty_of_bag_order = str(int(qty) * 3)
+        # endregion
         # region create 3 CO order
         self.fix_message.change_parameter("HandlInst", '3')
         for i in range(3):
             self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order(self.lookup, self.qty, self.price)
-        #     # endregion
-
+            self.client_inbox.accept_order(lookup, qty, price)
+        # endregion
+        #
         # region create Bag and extract values from it
         self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag='Bag_1')
         self.bag_order_book.create_bag()
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.order_bag_qty.value,
-                                                                          OrderBagColumn.ord_bag_name.value],
-                                                                    [OrderBookColumns.order_id.value,
-                                                                     OrderBookColumns.venue.value])
+                                                                          OrderBagColumn.ord_bag_name.value])
 
-        self.bag_order_book.compare_values({'order_bag.' + OrderBagColumn.order_bag_qty.value: '1,400',
+        self.bag_order_book.compare_values({'order_bag.' + OrderBagColumn.order_bag_qty.value: qty_of_bag_order,
                                             'order_bag.' + OrderBagColumn.ord_bag_name.value: 'Bag_1'},
                                            fields, 'Compare values from block')
 
