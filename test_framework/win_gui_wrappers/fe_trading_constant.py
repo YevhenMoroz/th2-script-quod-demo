@@ -45,6 +45,8 @@ class OrderBookColumns(Enum):
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
     beneficiary = 'Beneficiary'
+    net_amount = 'NetAmount'
+    net_price = 'NetPrice'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
