@@ -92,8 +92,7 @@ class QAP_4023(TestCase):
                                                               [OrderBookColumns.qty.value], [1],
                                                               {OrderBookColumns.cl_ord_id.value: basket_cl_ord2})
         expected_qty1_2 = str(int((int(qty1)*int(percent_to_release)/100) - (int(qty1)-(int(qty1)-int(expected_qty1)))))
-        expected_qty2_2 = str(int((int(qty2)*int(percent_to_release)/100
-                                   ) - (int(qty2)-(int(qty2)-int(expected_qty2)))))
+        expected_qty2_2 = str(int((int(qty2)*int(percent_to_release)/100) - (int(qty2)-(int(qty2)-int(expected_qty2)))))
         self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty1_2},  act_child_qty_1[0], "compare ord 1 child 2")
         self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty2_2}, act_child_qty_2[0], "compare ord 2 child 2")
         # endregion
