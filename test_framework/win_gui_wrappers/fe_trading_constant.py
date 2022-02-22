@@ -21,6 +21,8 @@ class OrderBookColumns(Enum):
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
     cd_sts = "CDSts"
+    near_leg_qty = "NearLegQty"
+    far_leg_qty = "FarLegQty"
     qty = "Qty"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
