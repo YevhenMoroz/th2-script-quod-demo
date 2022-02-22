@@ -205,7 +205,7 @@ class RFQTile(AggregatesRatesTile):
             self.extraction_request.extract_beneficiary(beneficiary)
             response = call(self.extract_call, self.extraction_request.build())
             extracted_beneficiary = response[beneficiary]
-            self.verifier.compare_values("Client", beneficiary, extracted_beneficiary)
+            self.verifier.compare_values("Beneficiary", beneficiary, extracted_beneficiary)
         self.verifier.verify()
         self.clear_details([self.extraction_request])
         self.set_default_params()
