@@ -355,13 +355,15 @@ class BaseOrderBook(BaseWindow):
         call(self.disclose_flag_call, self.disclose_flag_details.build())
         self.clear_details([self.disclose_flag_details])
 
-    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
+    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None, error_expected=False):
         if basket_name is not None:
             self.add_to_basket_details.set_basket_name(basket_name)
         if list_row_numbers is not None:
             self.add_to_basket_details.set_row_numbers(list_row_numbers)
-        call(self.add_to_basket_call, self.add_to_basket_details.build())
+        self.add_to_basket_details.set_error_expected(error_expected)
+        result = call(self.add_to_basket_call, self.add_to_basket_details.build())
         self.clear_details([self.add_to_basket_details])
+        return result
 
     def create_basket(self, orders_rows: [] = None, basket_name=None):
         """

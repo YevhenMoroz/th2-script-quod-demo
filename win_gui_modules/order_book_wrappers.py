@@ -887,6 +887,9 @@ class AddToBasketDetails:
         for number in row_numbers:
             self._request.rowNumbers.append(number)
 
+    def set_error_expected(self, error_expected: bool):
+        self._request.errorExpected = error_expected
+
     def set_basket_name(self, basket_name: str):
         self._request.basketName = basket_name
 
