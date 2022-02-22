@@ -42,6 +42,10 @@ class BaseDataSet:
     # region fields added by Web Admin team
     user = None
     password = None
+    component_id = None
+    admin_command = None
+    desk = None
+    location = None
 
     # endregion
 
@@ -308,4 +312,25 @@ class BaseDataSet:
         if hasattr(self.password, name):
             return getattr(self.password, name).value
         return ValueError(f"{self.password} not found!")
+
+    def get_component_id(self, name: str):
+        if hasattr(self.component_id, name):
+            return getattr(self.component_id, name).value
+        return ValueError(f"{self.component_id} not found!")
+
+    def get_admin_command(self, name: str):
+        if hasattr(self.admin_command, name):
+            return getattr(self.admin_command, name).value
+        return ValueError(f"{self.admin_command} not found!")
+
+    def get_desk(self, name: str):
+        if hasattr(self.desk, name):
+            return getattr(self.desk, name).value
+        return ValueError(f"{self.desk} not found!")
+
+    def get_location(self, name: str):
+        if hasattr(self.location, name):
+            return getattr(self.location, name).value
+        return ValueError(f"{self.location} not found!")
+
     # endregion

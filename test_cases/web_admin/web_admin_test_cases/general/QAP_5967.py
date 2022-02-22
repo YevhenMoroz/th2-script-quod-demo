@@ -21,9 +21,9 @@ class QAP_5967(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.user = 'adm_loca'
-        self.desk = 'DESK A'
-        self.location = 'EAST-LOCATION-B'
+        self.user = self.data_set.get_user("user_2")
+        self.desk = self.data_set.get_desk("desk_1")
+        self.location = self.data_set.get_location("location_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

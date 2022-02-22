@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import WebAdminUsers, \
-    WebAdminPasswords
+    WebAdminPasswords, WebAdminComponentId, WebAdminAdminCommands, WebAdminDesks, WebAdminLocation
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -9,3 +9,7 @@ class WebAdminDataSet(BaseDataSet):
     """
     user = WebAdminUsers
     password = WebAdminPasswords
+    component_id = WebAdminComponentId
+    admin_command = WebAdminAdminCommands
+    desk = WebAdminDesks
+    location = WebAdminLocation
