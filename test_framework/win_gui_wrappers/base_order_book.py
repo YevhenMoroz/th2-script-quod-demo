@@ -556,12 +556,15 @@ class BaseOrderBook(BaseWindow):
                 ticket_details.set_agreed_price(agreed_price)
             return ticket_details.build()
 
-    def split_book(self, split_booking_params: list, row_numbers: list = None):
+    def split_book(self, split_booking_params: list = None, row_numbers: list = None, error_expected=False):
         if row_numbers:
             self.split_booking_details.set_rows_numbers(row_numbers)
-        self.split_booking_details.set_split_booking_parameter(split_booking_params)
-        call(self.split_booking_call, self.split_booking_details.build())
+        if split_booking_params:
+            self.split_booking_details.set_split_booking_parameter(split_booking_params)
+        self.split_booking_details.set_error_expected(error_expected)
+        result = call(self.split_booking_call, self.split_booking_details.build())
         self.clear_details([self.split_booking_details])
+        return result
 
     def direct_moc_extract_error_message(self, qty, route):
         self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
