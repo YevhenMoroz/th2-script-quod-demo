@@ -1,109 +1,54 @@
-import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ExtractRFQTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_2514(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.qty = '10000000'
+        self.qty1 = '1000000'
+        self.qty2 = '2000000'
+        self.qty3 = '3000000'
+        self.qty4 = '4000000'
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        eur_currency = self.data_set.get_currency_by_name('currency_eur')
+        usd_currency = self.data_set.get_currency_by_name('currency_usd')
+        near_tenor = self.data_set.get_tenor_by_name('tenor_spot')
+        far_tenor = self.data_set.get_tenor_by_name('tenor_1w')
+        client = self.data_set.get_client_by_name("client_1")
 
-def send_rfq(base_request, service):
-    call(service.sendRFQOrder, base_request.build())
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency, near_tenor=near_tenor,
+                                                   far_tenor=far_tenor, client=client)
+        self.rfq_tile.check_qty(near_qty=self.qty, far_qty=self.qty)
+        # endregion
+        # region Step 2
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty2)
+        self.rfq_tile.check_qty(near_qty=self.qty2, far_qty=self.qty2)
+        # endregion
+        # region Step 3
+        self.rfq_tile.modify_rfq_tile(far_qty=self.qty3)
+        self.rfq_tile.check_qty(near_qty=self.qty2, far_qty=self.qty3)
+        # endregion
+        # region Step 4
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty4)
+        self.rfq_tile.check_qty(near_qty=self.qty4, far_qty=self.qty3)
+        # endregion
+        # region Step 5
+        self.rfq_tile.send_rfq()
+        self.rfq_tile.cancel_rfq()
+        self.rfq_tile.modify_rfq_tile(near_qty=self.qty1)
+        self.rfq_tile.check_qty(near_qty=self.qty1, far_qty=self.qty1)
+        # endregion
 
-
-def cancel_rfq(base_request, service):
-    call(service.cancelRFQ, base_request.build())
-
-
-def modify_rfq_tile(base_request, service, cur1, cur2, near_tenor, far_tenor, client):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(near_tenor)
-    modify_request.set_far_leg_tenor(far_tenor)
-    modify_request.set_client(client)
-    call(service.modifyRFQTile, modify_request.build())
-
-
-def check_qty(exec_id, base_request, service, case_id, near_qty, far_qty):
-    extract_value = ExtractRFQTileValues(details=base_request)
-    extract_value.set_extraction_id(exec_id)
-    extract_value.extract_quantity("aggrRfqTile.nearqty")
-    extract_value.extract_far_leg_qty("aggrRfqTile.farqty")
-    response = call(service.extractRFQTileValues, extract_value.build())
-    extract_near_qty = response["aggrRfqTile.nearqty"].replace(',', '')
-    extract_far_qty = response["aggrRfqTile.farqty"].replace(',', '')
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Verify Qty in RFQ tile")
-    verifier.compare_values('Near leg qty', str(near_qty), extract_near_qty[:-3])
-    verifier.compare_values('Near far qty', str(far_qty), extract_far_qty[:-3])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_name = Path(__file__).name[:-3]
-    case_client = "ASPECT_CITI"
-    case_from_currency = "EUR"
-    case_to_currency = "USD"
-    case_near_tenor = "Spot"
-    case_far_tenor = "1W"
-    case_qty1 = 2000000
-    case_qty2 = 3000000
-    case_qty3 = 4000000
-    case_qty4 = 1000000
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-    modify_request = ModifyRFQTileRequest(details=base_rfq_details)
-
-    try:
-        # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, case_from_currency, case_to_currency,
-                        case_near_tenor, case_far_tenor, case_client)
-
-        # Step 2
-        modify_request.set_quantity(case_qty1)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty("RFQ", base_rfq_details, ar_service, case_id, case_qty1, case_qty1)
-
-        # Step 3
-        modify_request.set_far_leg_qty(case_qty2)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty("RFQ", base_rfq_details, ar_service, case_id, case_qty1, case_qty2)
-
-        # Step 4
-        modify_request.set_quantity(case_qty3)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty("RFQ", base_rfq_details, ar_service, case_id, case_qty3, case_qty2)
-
-        # Step 5
-        send_rfq(base_rfq_details, ar_service)
-        cancel_rfq(base_rfq_details, ar_service)
-
-        modify_request.set_quantity(case_qty4)
-        call(ar_service.modifyRFQTile, modify_request.build())
-        check_qty("RFQ", base_rfq_details, ar_service, case_id, case_qty4, case_qty4)
-
-        # Close tile
-        call(ar_service.closeRFQTile, base_rfq_details.build())
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()
