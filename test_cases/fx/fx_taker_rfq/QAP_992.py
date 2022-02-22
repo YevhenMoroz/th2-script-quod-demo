@@ -44,4 +44,3 @@ class QAP_992(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rfq_tile.close_tile()
-
