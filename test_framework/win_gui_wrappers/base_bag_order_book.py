@@ -85,9 +85,9 @@ class BaseBagOrderBook(BaseWindow):
 
     # endregion
 
-    def extract_from_order_bag_book_and_wave_tab(self, extraction_id, extraction_fields: list,
-                                                 sub_extraction_fields: list, sub_filter: list = None,
-                                                 filter: list = None, tab_name : str = None):
+    def extract_from_order_bag_book_and_other_tab(self, extraction_id, extraction_fields: list,
+                                                  sub_extraction_fields: list, sub_filter: list = None,
+                                                  filter: list = None, tab_name: str = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
         if filter is not None:
