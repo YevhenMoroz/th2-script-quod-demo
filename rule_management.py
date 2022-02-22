@@ -97,11 +97,12 @@ class RuleManager:
     # Example:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
+    @staticmethod
+    def remove_rule(rule):
+        Stubs.core.removeRule(rule)
 
-    def remove_rule(self, rule):
-        self.core.removeRule(rule)
-
-    def remove_rules(self, list_rules):
+    @staticmethod
+    def remove_rules(list_rules: list):
         rule_manager = RuleManager()
         for rule in list_rules:
             rule_manager.remove_rule(rule)
@@ -402,6 +403,7 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    rule_manager.remove_all_rules()
     rule_manager_eq = RuleManager(Simulators.equity)
     rule_manager.print_active_rules()
     print("_________________________")

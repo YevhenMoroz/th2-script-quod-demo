@@ -1,5 +1,5 @@
-from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.common_page import CommonPage
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_constants import ProfileConstants
 
 
@@ -27,3 +27,5 @@ class ProfilePage(CommonPage):
 
     def click_on_close_button(self):
         self.find_by_xpath(ProfileConstants.CLOSE_BUTTON_XPATH).click()
+
+

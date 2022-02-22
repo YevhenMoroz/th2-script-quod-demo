@@ -1,3 +1,4 @@
+import os
 import logging
 from datetime import datetime
 from posixpath import expanduser
@@ -19,10 +20,10 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'Account': "REDBURN",
-            'ClOrdID': 'VWAP-BA_01 ' + bca.client_orderid(9),
+            'ClOrdID': (os.path.basename(__file__)[:-3]) + '_' + bca.client_orderid(9),
             'HandlInst': 2,
             'Side': 1,
-            'OrderQty': 10000000,
+            'OrderQty': 5000000,
             'TimeInForce': 0,
             'OrdType': 1,
             'TransactTime': datetime.utcnow().isoformat(),

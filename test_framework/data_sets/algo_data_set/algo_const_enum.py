@@ -26,6 +26,22 @@ class AlgoFixInstruments(Enum):
         SecurityDesc='DREAMNEX'
     )
 
+    instrument_4 = dict(
+        Symbol='PAR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_5 = dict(
+        Symbol='FR0000121121_EUR',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -43,6 +59,9 @@ class AlgoAccounts(Enum):
     account_1 = "XPAR_CLIENT1"
     account_2 = "XPAR_CLIENT2"
     account_3 = "XPAR_CLIENT3"
+    account_4 = "TRQX_CLIENT1"
+    account_5 = "TRQX_CLIENT2"
+    account_6 = "TRQX_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -67,6 +86,8 @@ class AlgoMic(Enum):
 
 class AlgoListingId(Enum):
     listing_1 = "1015"
+    listing_2 = "734"
+    listing_3 = "3416"
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -77,4 +98,4 @@ class AlgoCurrency(Enum):
 
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-    verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+    verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']

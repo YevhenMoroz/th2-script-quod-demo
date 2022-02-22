@@ -1,7 +1,7 @@
 import time
 
-from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.common_page import CommonPage
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.profile_constants import ProfileConstants
 
 
@@ -31,3 +31,6 @@ class ProfilePreferenceSubWizard(CommonPage):
         self.find_by_xpath(ProfileConstants.DEFAULT_CLIENT_SELECT_MENU_XPATH).click()
         time.sleep(2)
         self.select_value_from_dropdown_list(ProfileConstants.LIST_OF_DEFAULT_CLIENTS_XPATH.format(default_client_name))
+
+    def is_default_client_selected(self, client_name):
+        return client_name == self.find_by_xpath("//*[text()='{}']".format(client_name))
