@@ -39,6 +39,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.extract_basket_order_details_call = None
         self.wave_basket_call = None
         self.amend_template_call = None
+        self.clone_template_call = None
 
     # endregion
     # region Common func
@@ -163,6 +164,35 @@ class BaseBasketOrderBook(BaseWindow):
         if templ_filter is not None:
             self.templates_details.set_filter(templ_filter)
         call(self.amend_template_call, self.templates_details.build())
+
+    def clone_basket_template(self, templ_name=None, descrip=None, client=None, tif=None, exec_policy=None,
+                              symbol_source=None, has_header=False, header_row=None, data_row=None, delimiter=None,
+                              spreadsheet_tab=None, templ: dict = None, templ_filter: dict = None):
+        if templ is not None:
+            fields_details = []
+            for key in templ:
+                fields_details.append(self.imported_file_mapping_field_details(
+                    self.imported_file_mapping_field.__dict__[key].value, templ.get(key)[0],
+                    templ.get(key)[1]).build())
+            details = self.imported_file_mapping_details(has_header, fields_details, header_row, data_row,
+                                                         delimiter, spreadsheet_tab).build()
+            self.templates_details.set_imported_file_mapping_details(details)
+        self.templates_details.set_default_params(self.base_request)
+        if templ_name is not None:
+            self.templates_details.set_name_value(templ_name)
+        if exec_policy is not None:
+            self.templates_details.set_exec_policy(exec_policy)
+        if client is not None:
+            self.templates_details.set_default_client(client)
+        if descrip is not None:
+            self.templates_details.set_description(descrip)
+        if symbol_source is not None:
+            self.templates_details.set_symbol_source(symbol_source)
+        if tif is not None:
+            self.templates_details.set_time_in_force(tif)
+        if templ_filter is not None:
+            self.templates_details.set_filter(templ_filter)
+        call(self.clone_template_call, self.templates_details.build())
 
     def remove_basket_template(self, name):
         self.simple_request(self.base_request, {'Name': name})

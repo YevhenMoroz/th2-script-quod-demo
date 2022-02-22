@@ -44,4 +44,5 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.wave_basket_call = Stubs.win_act_basket_order_book.waveBasket
         self.imported_file_mapping_details = ImportedFileMappingDetails
         self.extract_child_details = ExtractChildOrderDataDetails
+        self.clone_template_call = Stubs.win_act_basket_ticket.cloneTemplate
     # endregion
