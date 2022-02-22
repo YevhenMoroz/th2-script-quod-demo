@@ -3,6 +3,7 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
+from test_framework.win_gui_wrappers.fe_trading_constant import TriggerType
 from win_gui_modules.order_book_wrappers import ReleaseFXOrderDetails, ModifyFXOrderDetails
 from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
 from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
@@ -97,7 +98,18 @@ class FXOrderTicket(BaseOrderTicket):
             self.order_details.add_twap_strategy(add_twap_strategy)
         return self
 
+    def add_synth_ord_type_str(self, trigger_type: TriggerType):
+        synthetic = self.order_details.add_synthetic_strategy()
+        if trigger_type is TriggerType.last_trade:
+            synthetic.set_trigger_type(trigger_type.value)
+        if trigger_type is TriggerType.market_best_bid_offer:
+            synthetic.set_trigger_type(trigger_type.value)
+        if trigger_type is TriggerType.primary_best_bid_offer:
+            synthetic.set_trigger_type(trigger_type.value)
+        return self
+
     def create_order(self, lookup=None, is_mm: bool = False):
+        self.order_details.set_place()
         self.new_order_details = NewFxOrderDetails(self.base_request, self.order_details, isMM=is_mm)
         call(self.place_order_call, self.new_order_details.build())
         self.clear_details([self.order_details])

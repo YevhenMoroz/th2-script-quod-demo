@@ -25,6 +25,25 @@ class Connectivity(Enum):
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
+class FrontEnd(Enum):
+    # 317 site
+    USER_317 = ""
+    USER_317_1 = ""
+    USER_317_2 = ""
+    PASSWORD_317 = ""
+    PASSWORD_317_1 = ""
+    PASSWORD_317_2 = ""
+    FOLDER_317 = ""
+    DESK_317 = ""
+    MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
+    LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
+    # common values
+    EXE_NAME = "QuodFrontEnd.exe"
+    # target_server values
+    TARGET_SERVER_WEB = "web"
+    TARGET_SERVER_WIN_YEHOR_SAMOILENKO = "quod_02q"
+
+
 class DirectionEnum(Enum):
     FromQuod = "FIRST"
     ToQuod = "SECOND"
@@ -85,3 +104,11 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+
+class WebAdminURL(Enum):
+    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+
+
+class WebBrowser(Enum):
+    chrome = "chrome"
+    firefox = "firefox"

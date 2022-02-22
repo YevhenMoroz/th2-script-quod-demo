@@ -5,34 +5,36 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
     CommissionsCommissionProfilesSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
     CommissionsCommissionProfilePointsSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
     CommissionsDimensionsSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_values_sub_wizard import \
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_values_sub_wizard import \
     CommissionsValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_3238(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.commission_amount_type = "Broker"
         self.commission_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.commission_profile_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.comm_xunit = "Amount"
         self.comm_type = "Percentage"
         self.comm_algorithm = "Flat"
+        self.base_value = "144"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -64,7 +66,7 @@ class QAP_3238(CommonTestCase):
         commission_profile_points = CommissionsCommissionProfilePointsSubWizard(self.web_driver_container)
         commission_profile_points.click_on_plus()
         time.sleep(1)
-        commission_profile_points.set_base_value("144")
+        commission_profile_points.set_base_value(self.base_value)
         time.sleep(2)
         commission_profile_points.click_on_checkmark()
         time.sleep(1)
@@ -80,7 +82,6 @@ class QAP_3238(CommonTestCase):
 
         try:
             self.precondition()
-            commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
             wizard = CommissionsWizard(self.web_driver_container)
             self.verify("Is PDF contains valid data", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(self.commission_profile_name))

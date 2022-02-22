@@ -23,7 +23,7 @@ price = "20"
 
 class QAP_1016(TestCase):
 
-    def __init__(self, report_id, session_id=None, data_set=None):
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
