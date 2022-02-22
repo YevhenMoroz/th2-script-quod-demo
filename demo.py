@@ -32,8 +32,8 @@ def test_run():
     configuration = ComponentConfiguration("YOUR_COMPONENT") #  <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
-    fe_user = fe_env.users[0]
-    fe_pass = fe_env.passwords[0]
+    fe_user = fe_env.user_1
+    fe_pass = fe_env.password_1
     # endregion
 
     try:
