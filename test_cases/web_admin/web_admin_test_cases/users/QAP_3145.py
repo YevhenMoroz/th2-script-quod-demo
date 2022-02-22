@@ -19,13 +19,13 @@ class QAP_3145(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.user_id = self.data_set.get_user("user_1")
-        self.perm_role = "Permissions for FIX Clients"
-        self.email = "test"
+        self.perm_role = self.data_set.get_perm_role("perm_role_1")
+        self.email = self.data_set.get_email("email_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm02")
-        login_page.set_password("adm02")
+        login_page.set_login(self.data_set.get_user("user_5"))
+        login_page.set_password(self.data_set.get_password("password_2"))
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)

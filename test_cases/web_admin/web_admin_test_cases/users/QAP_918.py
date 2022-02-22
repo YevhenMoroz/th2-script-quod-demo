@@ -20,7 +20,7 @@ class QAP_918(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.desks = ["DESK A", "Quod Desk"]
+        self.desks = [self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_3")]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

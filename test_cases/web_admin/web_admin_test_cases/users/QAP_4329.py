@@ -21,8 +21,8 @@ class QAP_4329(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = "gbarrett"
-        self.first_name = "George"
+        self.user_id = self.data_set.get_user("user_7")
+        self.first_name = self.data_set.get_first_user_name("first_user_name_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,8 +43,6 @@ class QAP_4329(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            side_menu = SideMenu(self.web_driver_container)
-            user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
             self.verify("Is user {}".format(self.user_id) + " pinned ", self.first_name,
                         users_page.get_first_name())
             users_page.click_on_more_actions()

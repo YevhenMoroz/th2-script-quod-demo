@@ -48,6 +48,10 @@ class BaseDataSet:
     location = None
     institution = None
     zone = None
+    client_type = None
+    email = None
+    perm_role = None
+    first_user_name = None
 
     # endregion
 
@@ -345,4 +349,28 @@ class BaseDataSet:
             return getattr(self.zone, name).value
         return ValueError(f"{self.zone} not found!")
 
+    def get_client(self, name: str):
+        if hasattr(self.clients, name):
+            return getattr(self.clients, name).value
+        return ValueError(f"{self.clients} not found!")
+
+    def get_client_type(self, name: str):
+        if hasattr(self.client_type, name):
+            return getattr(self.client_type, name).value
+        return ValueError(f"{self.client_type} not found!")
+
+    def get_email(self, name: str):
+        if hasattr(self.email, name):
+            return getattr(self.email, name).value
+        return ValueError(f"{self.email} not found!")
+
+    def get_perm_role(self, name: str):
+        if hasattr(self.perm_role, name):
+            return getattr(self.perm_role, name).value
+        return ValueError(f"{self.perm_role} not found!")
+
+    def get_first_user_name(self, name: str):
+        if hasattr(self.first_user_name, name):
+            return getattr(self.first_user_name, name).value
+        return ValueError(f"{self.first_user_name} not found!")
     # endregion

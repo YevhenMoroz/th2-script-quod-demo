@@ -18,9 +18,9 @@ class QAP_2578(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.user_id = "adm01"
+        self.user_id = self.data_set.get_user("user_4")
         self.password_expiration = "8/8/2026"
-        self.email = "test"
+        self.email = self.data_set.get_email("email_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
