@@ -46,6 +46,8 @@ class BaseDataSet:
     admin_command = None
     desk = None
     location = None
+    institution = None
+    zone = None
 
     # endregion
 
@@ -332,5 +334,15 @@ class BaseDataSet:
         if hasattr(self.location, name):
             return getattr(self.location, name).value
         return ValueError(f"{self.location} not found!")
+
+    def get_institution(self, name: str):
+        if hasattr(self.institution, name):
+            return getattr(self.institution, name).value
+        return ValueError(f"{self.institution} not found!")
+
+    def get_zone(self, name: str):
+        if hasattr(self.zone, name):
+            return getattr(self.zone, name).value
+        return ValueError(f"{self.zone} not found!")
 
     # endregion

@@ -30,8 +30,8 @@ class QAP_5580(CommonTestCase):
         self.location1 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.location2 = self.location1
         self.zone1 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.zone2 = "EAST-ZONE"
-        self.institution = "LOAD"
+        self.zone2 = self.data_set.get_zone("zone_2")
+        self.institution = self.data_set.get_institution("institution_2")
 
 
 def precondition(self):

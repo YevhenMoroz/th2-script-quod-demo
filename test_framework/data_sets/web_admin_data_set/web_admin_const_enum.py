@@ -17,12 +17,25 @@ class WebAdminComponentId(Enum):
 
 class WebAdminAdminCommands(Enum):
     admin_command_1 = "ChangeLogLevel"
+# endregion
 
+# region WaSite
+class WebAdminInstitutions(Enum):
+    institution_1 = "QUOD FINANCIAL"
+    institution_2 = "LOAD"
 
 class WebAdminDesks(Enum):
     desk_1 = "DESK A"
+    desk_2 = "DESK-C"
 
 
-class WebAdminLocation(Enum):
+class WebAdminLocations(Enum):
     location_1 = "EAST-LOCATION-B"
-# endregion
+    location_2 = "WEST-LOCATION-B"
+    location_3 = "EAST-LOCATION-A"
+
+class WebAdminZones(Enum):
+    zone_1 = "WEST-ZONE"
+    zone_2 = "EAST-ZONE"
+
+#endregion
