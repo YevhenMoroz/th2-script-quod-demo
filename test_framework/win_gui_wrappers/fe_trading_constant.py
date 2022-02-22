@@ -410,3 +410,10 @@ class MatchWindowsColumns(Enum):
 class OrderBookColumnName(Enum):
     id = 'Id'
     order_bag_id = 'OrderBagID'
+
+
+class MenuItemFromOrderBook(Enum):
+    split_bag_by_qty_priority = 'Split Bag By Qty Priority'
+    split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
+    bag_by_avg_px_priority = 'Bag By Avg Px Priority'
+    group_into_a_bag_for_grouping = 'Group into a bag for grouping'

@@ -87,7 +87,7 @@ class BaseBagOrderBook(BaseWindow):
 
     def extract_from_order_bag_book_and_wave_tab(self, extraction_id, extraction_fields: list,
                                                  sub_extraction_fields: list, sub_filter: list = None,
-                                                 filter: list = None):
+                                                 filter: list = None, tab_name : str = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
         if filter is not None:
@@ -102,7 +102,11 @@ class BaseBagOrderBook(BaseWindow):
         lvl_1 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=fields)
         bag_order_info_second_level = self.bag_order_info()
         bag_order_info_second_level.add_single_extraction_action(lvl_2)
+        if tab_name:
+            bag_order_info_second_level.set_sub_orders_details(tab_name)
         order_bag_book_details = GetOrderBagBookDetails.create(info=bag_order_info_second_level)
+        if sub_filter:
+            order_bag_book_details.set_filter(sub_filter)
         bag_order_ingo_main = BagOrderInfo.create(action=lvl_1, sub_orders=order_bag_book_details)
         self.bag_order_details.add_single_bag_order_info(bag_order_ingo_main)
         response = call(self.order_bag_extraction_call, self.bag_order_details.build())
