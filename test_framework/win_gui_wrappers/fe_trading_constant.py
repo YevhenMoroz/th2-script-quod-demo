@@ -12,6 +12,7 @@ class OrderBookColumns(Enum):
     security_id = "Security Id"
     symbol = "Symbol"
     side = "Side"
+    ccy_side = "CCY1 Side"
     lookup = "Lookup"
     stop_price = "Stop Price"
     inst_type = "InstType"
