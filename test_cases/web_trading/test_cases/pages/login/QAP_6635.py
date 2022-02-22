@@ -4,11 +4,11 @@ import traceback
 
 from custom import basic_custom_actions
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
 
-#DONE
+
 class QAP_6635(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
@@ -27,8 +27,8 @@ class QAP_6635(CommonTestCase):
         try:
             login_page = LoginPage(self.web_driver_container)
             self.precondition()
-            login_button = login_page.check_is_login_button_disabled()
-            self.verify("Is button disabled? ", login_button, False)
+            login_button = login_page.check_is_login_button_enabled()
+            self.verify("Is button enable? ", login_button, False)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

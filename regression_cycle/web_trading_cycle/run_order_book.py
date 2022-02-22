@@ -2,9 +2,9 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from test_cases.web_trading.test_cases.pages.order_book.QAP_6568 import QAP_6568
+from test_cases.web_trading.test_cases.pages.main_page.workspace.order_book.QAP_6500 import QAP_6500
 
 
 class RunOrderBook:
@@ -18,7 +18,8 @@ class RunOrderBook:
         try:
             start_time = time.monotonic()
 
-            QAP_6568(self.web_driver_container, self.second_lvl_id).run()
+            QAP_6500(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_6568(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

@@ -9,10 +9,15 @@ class FEEnvironment(BaseEnvironment):
     def __init__(self, environment_type: str = None, users: list = None, passwords: list = None, folder: str = None,
                  desks: list = None):
         self.environment_type = environment_type
-        self.users = users
-        self.passwords = passwords
+        self.user_1 = users[0]
+        self.user_2 = users[1]
+        self.user_3 = users[2]
+        self.password_1 = passwords[0]
+        self.password_2 = passwords[1]
+        self.password_3 = passwords[2]
         self.folder = folder
-        self.desks = desks
+        self.desk_1 = desks[0]
+        self.desk_2 = desks[1]
 
     @staticmethod
     def get_instance(env: EnvironmentType):
