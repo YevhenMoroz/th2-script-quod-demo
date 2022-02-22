@@ -355,7 +355,55 @@
         </product_line>
         <product_line name="web_trading" run="True">
             <components>
-                <component name="WebTradingOrderBook" run="True">
+                <component name="RunLoginAndLogout" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingOrderTicketAndBook" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingOther" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingPositions" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingTrades" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                 <component name="WebTradingUserProfile" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                 <component name="WebTradingWatchList" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>

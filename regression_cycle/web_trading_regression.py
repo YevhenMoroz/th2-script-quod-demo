@@ -4,7 +4,13 @@ from datetime import timedelta
 from xml.etree import ElementTree
 
 from custom import basic_custom_actions as bca
-from regression_cycle.web_trading_cycle.run_order_book import RunOrderBook
+from regression_cycle.web_trading_cycle.run_login_and_logout import RunLoginAndLogout
+from regression_cycle.web_trading_cycle.run_order_ticket_and_book import RunOrderTicketAndBook
+from regression_cycle.web_trading_cycle.run_other import RunOther
+from regression_cycle.web_trading_cycle.run_positions import RunPositions
+from regression_cycle.web_trading_cycle.run_trades import RunTrades
+from regression_cycle.web_trading_cycle.run_user_profile import RunUserProfile
+from regression_cycle.web_trading_cycle.run_watch_list import RunWatchList
 from stubs import Stubs, ROOT_DIR
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -19,8 +25,21 @@ def test_run(parent_id=None):
     root = tree.getroot()
     try:
         start_time = time.monotonic()
-        if eval(root.find(".//component[@name='WebTradingOrderBook']").attrib["run"]):
-            RunOrderBook(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingLoginAndLogout']").attrib["run"]):
+            RunLoginAndLogout(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingOrderTicketAndBook']").attrib["run"]):
+            RunOrderTicketAndBook(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingOther']").attrib["run"]):
+            RunOther(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingPositions']").attrib["run"]):
+            RunPositions(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingTrades']").attrib["run"]):
+            RunTrades(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingUserProfile']").attrib["run"]):
+            RunUserProfile(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingWatchList']").attrib["run"]):
+            RunWatchList(report_id).execute()
+
         end_time = time.monotonic()
         print("Test cases completed\n" +
               "~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))
