@@ -367,7 +367,6 @@ class RuleManager:
                                                   price=price
                                                   ))
 
-    @staticmethod
     def add_MarketNewOrdSingle_FOK_FIXStandard(self, session: str, account: str, venue: str, price: float, trade: bool):
         return self.sim.createMarketNewOrdSingleFOKFIXStandard(
             request=TemplateMarketNewOrdSingleFOKFIXStandard(connection_id=ConnectionID(session_alias=session),
