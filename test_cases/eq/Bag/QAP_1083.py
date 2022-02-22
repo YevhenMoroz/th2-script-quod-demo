@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_1082(TestCase):
+class QAP_1083(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -32,7 +32,7 @@ class QAP_1082(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Declaration region
-        qty = '888'
+        qty = '999'
         price = '10'
         self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
         self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
@@ -47,8 +47,10 @@ class QAP_1082(TestCase):
         # region create 3 CO order
         for i in range(3):
             if i >= 2:
-                self.fix_message.change_parameter('Instrument',
-                                                  self.data_set.get_fix_instrument_by_name('instrument_2'))
+                print(i)
+                self.fix_message.change_parameter('Side', '2')
+                self.fix_manager.send_message_fix_standard(self.fix_message)
+                self.client_inbox.accept_order(lookup, qty, price)
             else:
                 self.fix_manager.send_message_fix_standard(self.fix_message)
                 self.client_inbox.accept_order(lookup, qty, price)
