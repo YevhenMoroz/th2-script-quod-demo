@@ -10,14 +10,14 @@ class FEEnvironment(BaseEnvironment):
                  desks: list = None):
         self.environment_type = environment_type
         self.user_1 = users[0]
-        self.user_2 = users[1]
-        self.user_3 = users[2]
+        self.user_2 = users[1] if len(users) > 1 else None
+        self.user_3 = users[2] if len(users) > 2 else None
         self.password_1 = passwords[0]
-        self.password_2 = passwords[1]
-        self.password_3 = passwords[2]
+        self.password_2 = passwords[1] if len(passwords) > 1 else None
+        self.password_3 = passwords[2] if len(passwords) > 2 else None
         self.folder = folder
         self.desk_1 = desks[0]
-        self.desk_2 = desks[1]
+        self.desk_2 = desks[1] if len(desks) > 1 else None
 
     @staticmethod
     def get_instance(env: EnvironmentType):
