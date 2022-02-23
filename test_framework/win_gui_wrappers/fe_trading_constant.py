@@ -65,6 +65,7 @@ class OrderBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'FarSettlDate'
     last_spot_rate = 'LastSpotRate'
+    settle_date = 'Settle Date'
     # endregion
 
 
@@ -152,6 +153,7 @@ class TradeBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
+    exec_type = 'ExecType'
 
 
 class QuoteRequestBookColumns(Enum):
@@ -196,6 +198,7 @@ class BasketBookColumns(Enum):
     """Waves Tab"""
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
+    client_basket_id = 'Client Basket ID'
 
 
 class ExecSts(Enum):
@@ -292,6 +295,8 @@ class MiddleOfficeColumns(Enum):
     block_id = 'Block ID'
     conf_service = "Conf Service"
     side = 'Side'
+    pset = 'PSET'
+    pset_bic = 'PSET BIC'
 
 
 class AllocationsColumns(Enum):
@@ -309,6 +314,7 @@ class AllocationsColumns(Enum):
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
+    executions = 'Executions'
 
 
 class PostTradeStatuses(Enum):
@@ -385,3 +391,17 @@ class PercentageProfile(Enum):
 
 class Capacity(Enum):
     agency = 'Agency'
+
+
+class OrderBagColumn(Enum):
+    unmatched_qty = 'UnmatchedQty'
+    order_bag_qty = 'OrderBagQty'
+    ord_bag_name = 'OrdBagName'
+
+
+class BasketSecondTabName(Enum):
+    orders = 'Orders'
+
+
+class MatchWindowsColumns(Enum):
+    order_id = 'OrderId'

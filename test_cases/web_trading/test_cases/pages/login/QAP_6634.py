@@ -4,7 +4,7 @@ import traceback
 
 from custom import basic_custom_actions
 
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page import MainPage
@@ -14,8 +14,8 @@ class QAP_6634(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA5"
-        self.password = "QA5"
+        self.login = "QA1"
+        self.password = "QA1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

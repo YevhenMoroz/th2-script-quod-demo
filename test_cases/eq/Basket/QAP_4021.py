@@ -76,8 +76,8 @@ class QAP_4021(TestCase):
                                                               [OrderBookColumns.qty.value], [1],
                                                               {OrderBookColumns.cl_ord_id.value: basket_cl_ord2})
         expected_qty = str(int(int(qty1) * int(percent_to_release) / 100))
-        self.order_book.compare_values({"1": expected_qty}, {"1": act_child_qty_1}, "compare ord 1 child 1")
-        self.order_book.compare_values({"1": expected_qty}, {"1": act_child_qty_2}, "compare ord 2 child 1")
+        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty}, act_child_qty_1[0], "compare ord 1 child 1")
+        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty},  act_child_qty_2[0], "compare ord 2 child 1")
         # endregion
         # region Wave
         percent_to_release = "50"
@@ -87,11 +87,11 @@ class QAP_4021(TestCase):
         # endregion
         # region Verify child orders
         act_child_qty_1 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [2],
+                                                              [OrderBookColumns.qty.value], [1],
                                                               {OrderBookColumns.cl_ord_id.value: basket_cl_ord1})
         act_child_qty_2 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [2],
+                                                              [OrderBookColumns.qty.value], [1],
                                                               {OrderBookColumns.cl_ord_id.value: basket_cl_ord2})
-        self.order_book.compare_values({"1": expected_qty}, {"1": act_child_qty_1}, "compare ord 2 child 1")
-        self.order_book.compare_values({"1": expected_qty}, {"1": act_child_qty_2}, "compare ord 2 child 2")
+        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty}, act_child_qty_1[0], "compare ord 1 child 2")
+        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty}, act_child_qty_2[0], "compare ord 2 child 2")
         # endregion

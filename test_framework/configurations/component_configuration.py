@@ -1,6 +1,7 @@
 from xml.etree import ElementTree
 
 # region import data_sets
+from test_framework.data_sets.web_admin_data_set.web_admin_data_set import WebAdminDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.data_sets.algo_data_set.algo_data_set import AlgoDataSet
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet

@@ -2,7 +2,7 @@ from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.utils import call
 
 
-class BaseBasketOrderBook(BaseWindow):
+class BaseBagOrderBook(BaseWindow):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
@@ -18,11 +18,15 @@ class BaseBasketOrderBook(BaseWindow):
         self.wave_bag_creation_call = None
         self.modify_wave_bag_call = None
         self.order_bag_wave_extraction_call = None
+        self.order_bag_creation_details = None
+        self.order_bag_creation_call = None
+        self.order_bag_extraction_call = None
 
     # endregion
 
     # region Set details
-    def set_order_bag_wave_details(self, price=None, qty=None, display_qty=None, price_type=None, price_offset=None,
+    def set_order_bag_wave_details(self, price=None, qty=None, display_qty=None, price_type=None,
+                                   price_offset=None,
                                    offset_type=None,
                                    scope=None, sub_lvl_number: int = None, sub_lvl_filter: list = None,
                                    wave_filter: list = None):
@@ -57,29 +61,23 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Get details
-    def extract_order_bag_book_details(self, extraction_id, extraction_fields: list, filter: list,
-                                       sub_extraction_fields: list, sub_filter: list):
+    def extract_order_bag_book_details(self, extraction_id, extraction_fields: list,
+                                       sub_extraction_fields: list, sub_filter: list = None, filter: list = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
-        self.bag_order_details.set_filter(filter)
+        if filter is not None:
+            self.bag_order_details.set_filter(filter)
         fields = []
         for field in extraction_fields:
-            fields.append(self.extraction_bag_fields_details("orderbagwave." + field, field))
+            fields.append(self.extraction_bag_fields_details("order_bag_wave." + field, field))
 
-        lvl1_info = self.bag_order_info.create(
-            action=self.extraction_bag_order_action.create_extraction_action(
-                extraction_details=fields))
+        self.bag_order_info = self.bag_order_info()
+        self.bag_order_info.set_number(1)
+        self.extraction_bag_order_action.add_details(fields)
+        self.bag_order_info.add_single_extraction_action(self.extraction_bag_order_action)
+        self.bag_order_details.add_single_bag_order_info(self.bag_order_info)
 
-        lvl1_details = self.get_order_bag_book_details_request.create(info=lvl1_info)
-        lvl1_details.set_filter(sub_filter)
-
-        self.bag_order_details.add_single_bag_order_info(
-            self.bag_order_info.create(
-                action=self.extraction_bag_order_action.create_extraction_action(
-                    extraction_details=sub_extraction_fields),
-                sub_orders=lvl1_details))
-
-        response = call(self.order_bag_wave_extraction_call, self.bag_order_details.build())
+        response = call(self.order_bag_extraction_call, self.bag_order_details.build())
         return response
 
     # endregion
@@ -90,4 +88,13 @@ class BaseBasketOrderBook(BaseWindow):
 
     def modify_wave_bag(self):
         call(self.modify_wave_bag_call, self.bag_wave_creation.build())
+
     # endregion
+    def create_bag_details(self, rows_list: list, name_of_bag: str):
+        self.order_bag_creation_details.set_rows(rows_list)
+        self.order_bag_creation_details.set_order_bag_ticket_details(name_of_bag)
+        return self.order_bag_creation_details
+
+    def create_bag(self):
+        call(self.order_bag_creation_call, self.order_bag_creation_details.build())
+        self.clear_details([self.order_bag_creation_details, self.bag_book_details])

@@ -6,11 +6,18 @@ from test_framework.data_sets.environment_type import EnvironmentType
 class FEEnvironment(BaseEnvironment):
     environment_instances = {}
 
-    def __init__(self, environment_type: str = None, user: str = None, password: str = None, folder: str = None):
+    def __init__(self, environment_type: str = None, users: list = None, passwords: list = None, folder: str = None,
+                 desks: list = None):
         self.environment_type = environment_type
-        self.user = user
-        self.password = password
+        self.user_1 = users[0]
+        self.user_2 = users[1] if len(users) > 1 else None
+        self.user_3 = users[2] if len(users) > 2 else None
+        self.password_1 = passwords[0]
+        self.password_2 = passwords[1] if len(passwords) > 1 else None
+        self.password_3 = passwords[2] if len(passwords) > 2 else None
         self.folder = folder
+        self.desk_1 = desks[0]
+        self.desk_2 = desks[1] if len(desks) > 1 else None
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -18,9 +25,10 @@ class FEEnvironment(BaseEnvironment):
             if EnvironmentType.quod317_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod317_fe.value,
-                    user=FrontEnd.USER_317.value,
-                    password=FrontEnd.PASSWORD_317.value,
-                    folder=FrontEnd.FOLDER_317.value
+                    users=FrontEnd.USERS_317.value,
+                    passwords=FrontEnd.PASSWORDS_317.value,
+                    folder=FrontEnd.FOLDER_317.value,
+                    desks=FrontEnd.DESKS_317.value
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
