@@ -19,7 +19,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_1085(TestCase):
+class QAP_1086(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -35,7 +35,7 @@ class QAP_1085(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '300'
+        qty = '200'
         price = '10'
         self.fix_message.set_default_dma_limit()
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
@@ -47,15 +47,17 @@ class QAP_1085(TestCase):
         lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.fix_message.change_parameter("HandlInst", '3')
         qty_of_bag = str(int(qty) * 3)
-        qty_of_bag_after_modification = str(int(qty) * 2)
+        qty_of_bag_after_modification = str(int(qty) * 4)
         orders_id = []
-        name_of_bag = 'Bag_B'
+        name_of_bag = 'Bag_I'
         # endregion
+
         # region create 3 CO order
-        self.fix_message.change_parameter("HandlInst", '3')
-        for i in range(3):
+        for i in range(4):
             self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order(lookup, qty, price,)
+            self.client_inbox.accept_order(lookup, qty, price,
+                                           filter={'ClientName': self.data_set.get_client_by_name('client_pt_1')})
+            self.order_book.set_filter([OrderBookColumns.qty.value, qty])
             orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
         # endregion
 
@@ -76,14 +78,14 @@ class QAP_1085(TestCase):
                                  }
         self.bag_order_book.compare_values(expected_values_first,
                                            fields, 'Compare values from bag_book before modification')
-
+        #
         # endregion
 
         # region modify bag_order and verifying bag_order after modify
         java_api_message = ModifyBagOrderRequest()
         java_api_message.set_default(order_bag_id, '10', name_of_bag)
         java_api_message.add_components_into_repeating_group('OrderBagOrderList', 'OrderBagOrderBlock', 'OrdID',
-                                                             orders_id[:-1])
+                                                             orders_id)
         self.java_api_manager.send_message(java_api_message)
         # endregion
 
