@@ -4,15 +4,12 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, \
-    RatesColumnNames, OrderBookColumns as obc
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as obc
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderType
 from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce as tif
 from test_framework.win_gui_wrappers.fe_trading_constant import ExecSts
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from test_framework.win_gui_wrappers.forex.fx_order_ticket import FXOrderTicket
-from win_gui_modules.client_pricing_wrappers import RatesTileTableOrdSide
 
 
 class QAP_2077(TestCase):
@@ -21,18 +18,7 @@ class QAP_2077(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rates_tile = None
 
-        self.ask_spot = RatesColumnNames.ask_spot
-        self.bid_spot = RatesColumnNames.bid_spot
-        self.ask_pts = RatesColumnNames.ask_pts
-        self.bid_pts = RatesColumnNames.bid_pts
-
-        self.ask_pips = PriceNaming.ask_pips
-        self.bid_pips = PriceNaming.bid_pips
-        self.ask_large = PriceNaming.ask_large
-        self.bid_large = PriceNaming.bid_large
-
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
-        self.order_ticket = FXOrderTicket(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)
 
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
@@ -42,10 +28,8 @@ class QAP_2077(TestCase):
         self.order_type = OrderType.market
         self.tif = tif.IOC
         self.exec_sts = ExecSts.partially_filled.value
-        # self.side = RatesTileTableOrdSide.SELL
-
         self.qty = random_qty(1, 2, 9)
-        self.status = "Eliminated"
+        self.status = ExecSts.eliminated.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
