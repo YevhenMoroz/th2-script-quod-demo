@@ -29,16 +29,16 @@ class QAP_1737(CommonTestCase):
         self.symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = "EUR/USD" + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_symbol = "EUR/USD"
-        self.venue = "BRU"
-        self.preferred_venue = "AMEX"
-        self.new_preferred_venue = "ADX"
-        self.currency = "AED"
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_2")
+        self.venue = self.data_set.get_venue_by_name("venue_3")
+        self.preferred_venue = self.data_set.get_preferred_venue("preferred_venue_1")
+        self.new_preferred_venue = self.data_set.get_preferred_venue("preferred_venue_2")
+        self.currency = self.data_set.get_currency_by_name("currency_1")
         self.security_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = "Bond"
-        self.sub_venue = "Forward"
-        self.listing_group = "test"
-        self.settl_type = "BrokenDate"
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
+        self.sub_venue = self.data_set.get_sub_venue("sub_venue_1")
+        self.listing_group = self.data_set.get_listing_group("listing_group_1")
+        self.settle_type = self.data_set.get_settle_type_by_name("settle_type_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -55,7 +55,7 @@ class QAP_1737(CommonTestCase):
         values_sub_wizard.set_lookup_symbol(self.lookup_symbol)
         values_sub_wizard.set_instr_symbol(self.instr_symbol)
         values_sub_wizard.set_instr_type(self.instr_type)
-        values_sub_wizard.set_settl_type(self.settl_type)
+        values_sub_wizard.set_settl_type(self.settle_type)
         attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_sub_wizard.set_venue(self.venue)
         attachment_sub_wizard.set_preferred_venue(self.preferred_venue)

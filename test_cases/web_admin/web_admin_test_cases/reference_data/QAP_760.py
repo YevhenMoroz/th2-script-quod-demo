@@ -23,9 +23,9 @@ class QAP_760(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMEX"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_venue = "ASE"
+        self.new_venue = self.data_set.get_venue_by_name("venue_2")
 
 
 def precondition(self):

@@ -30,13 +30,13 @@ class QAP_761(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.sub_venue = 'Forward'
+        self.sub_venue = self.data_set.get_sub_venue("sub_venue_1")
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.trading_status = "Suspended"
-        self.trading_phase = "201"
-        self.price_limit_profile = "test"
-        self.tick_size_profile = "0.000000010"
-        self.trading_phase_profile = "JSE"
+        self.trading_status = self.data_set.get_trading_status("trading_status_1")
+        self.trading_phase = self.data_set.get_trading_phase("trading_phase_1")
+        self.price_limit_profile = self.data_set.get_price_limit_profile("price_limit_profile_1")
+        self.tick_size_profile = self.data_set.get_tick_size_profile("tick_size_profile_1")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile_1")
 
 
 def precondition(self):
@@ -49,9 +49,9 @@ def precondition(self):
     page.click_on_new()
     time.sleep(2)
     description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-    description_sub_wizard.set_name("Forward")
+    description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
     time.sleep(2)
-    description_sub_wizard.set_venue("ASE")
+    description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
     time.sleep(2)
     wizard = SubVenuesWizard(self.web_driver_container)
     wizard.click_on_save_changes()

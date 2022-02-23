@@ -24,7 +24,7 @@ class QAP_5815(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.venue = "ASE"
+        self.venue = self.data_set.get_venue_by_name("venue_2")
         self.exchange_code_mic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
 

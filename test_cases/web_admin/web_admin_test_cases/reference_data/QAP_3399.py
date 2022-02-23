@@ -23,10 +23,10 @@ class QAP_3399(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
-        self.type = "DarkPool"
-        self.country = "Albania"
-        self.new_country = "Angola"
+        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.type = self.data_set.get_venue_type("venue_type_1")
+        self.country = self.data_set.get_country("country_1")
+        self.new_country = self.data_set.get_country("country_2")
 
 
 def precondition(self):

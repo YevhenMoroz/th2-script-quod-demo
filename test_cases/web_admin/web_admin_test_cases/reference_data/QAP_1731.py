@@ -21,7 +21,7 @@ class QAP_1731(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.instr_symbol = 'AUD/DKK'
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_1")
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
 
 

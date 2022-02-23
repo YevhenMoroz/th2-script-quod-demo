@@ -28,12 +28,12 @@ class QAP_1736(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.symbol = "EUR/USD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_symbol = "EUR/USD"
-        self.venue = "BRU"
-        self.currency = "AFN"
-        self.instr_type = "Bond"
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_2")
+        self.venue = self.data_set.get_venue_by_name("venue_3")
+        self.currency = self.data_set.get_currency_by_name("currency_1")
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.preferred_security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 

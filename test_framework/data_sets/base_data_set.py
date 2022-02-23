@@ -48,10 +48,30 @@ class BaseDataSet:
     location = None
     institution = None
     zone = None
+    client = None
     client_type = None
     email = None
     perm_role = None
     first_user_name = None
+    venue_id = None
+    venue_type = None
+    country = None
+    sub_venue = None
+    trading_status = None
+    trading_phase = None
+    price_limit_profile = None
+    tick_size_profile = None
+    trading_phase_profile = None
+    tick_size_xaxis_type = None
+    instr_symbol = None
+    symbol = None
+    instr_type = None
+    preferred_venue = None
+    listing_group = None
+    settle_type = None
+    feed_source = None
+    negative_route = None
+    positive_route = None
 
     # endregion
 
@@ -373,4 +393,89 @@ class BaseDataSet:
         if hasattr(self.first_user_name, name):
             return getattr(self.first_user_name, name).value
         return ValueError(f"{self.first_user_name} not found!")
+
+    def get_venue_id(self, name: str):
+        if hasattr(self.venue_id, name):
+            return getattr(self.venue_id, name).value
+        return ValueError(f"{self.venue_id} not found!")
+
+    def get_venue_type(self, name: str):
+        if hasattr(self.venue_type, name):
+            return getattr(self.venue_type, name).value
+        return ValueError(f"{self.venue_type} not found!")
+
+    def get_country(self, name: str):
+        if hasattr(self.country, name):
+            return getattr(self.country, name).value
+        return ValueError(f"{self.country} not found!")
+
+    def get_sub_venue(self, name: str):
+        if hasattr(self.sub_venue, name):
+            return getattr(self.sub_venue, name).value
+        return ValueError(f"{self.sub_venue} not found!")
+
+    def get_trading_status(self, name: str):
+        if hasattr(self.trading_status, name):
+            return getattr(self.trading_status, name).value
+        return ValueError(f"{self.trading_status} not found!")
+
+    def get_trading_phase(self, name: str):
+        if hasattr(self.trading_phase, name):
+            return getattr(self.trading_phase, name).value
+        return ValueError(f"{self.trading_phase} not found!")
+
+    def get_price_limit_profile(self, name: str):
+        if hasattr(self.price_limit_profile, name):
+            return getattr(self.price_limit_profile, name).value
+        return ValueError(f"{self.price_limit_profile} not found!")
+
+    def get_tick_size_profile(self, name: str):
+        if hasattr(self.tick_size_profile, name):
+            return getattr(self.tick_size_profile, name).value
+        return ValueError(f"{self.tick_size_profile} not found!")
+
+    def get_trading_phase_profile(self, name: str):
+        if hasattr(self.trading_phase_profile, name):
+            return getattr(self.trading_phase_profile, name).value
+        return ValueError(f"{self.trading_phase_profile} not found!")
+
+    def get_tick_size_xaxis_type(self, name: str):
+        if hasattr(self.tick_size_xaxis_type, name):
+            return getattr(self.tick_size_xaxis_type, name).value
+        return ValueError(f"{self.tick_size_xaxis_type} not found!")
+
+    def get_instr_symbol(self, name: str):
+        if hasattr(self.instr_symbol, name):
+            return getattr(self.instr_symbol, name).value
+        return ValueError(f"{self.instr_symbol} not found!")
+
+    def get_instr_type(self, name: str):
+        if hasattr(self.instr_type, name):
+            return getattr(self.instr_type, name).value
+        return ValueError(f"{self.instr_type} not found!")
+
+    def get_preferred_venue(self, name: str):
+        if hasattr(self.preferred_venue, name):
+            return getattr(self.preferred_venue, name).value
+        return ValueError(f"{self.preferred_venue} not found!")
+
+    def get_listing_group(self, name: str):
+        if hasattr(self.listing_group, name):
+            return getattr(self.listing_group, name).value
+        return ValueError(f"{self.listing_group} not found!")
+
+    def get_feed_source(self, name: str):
+        if hasattr(self.feed_source, name):
+            return getattr(self.feed_source, name).value
+        return ValueError(f"{self.feed_source} not found!")
+
+    def get_negative_route(self, name: str):
+        if hasattr(self.negative_route, name):
+            return getattr(self.negative_route, name).value
+        return ValueError(f"{self.negative_route} not found!")
+
+    def get_positive_route(self, name: str):
+        if hasattr(self.positive_route, name):
+            return getattr(self.positive_route, name).value
+        return ValueError(f"{self.positive_route} not found!")
     # endregion

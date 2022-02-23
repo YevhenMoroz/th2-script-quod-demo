@@ -26,16 +26,16 @@ class QAP_2504(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.symbol = "EUR/USD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_symbol = "EUR/USD"
-        self.venue = "AMSTERDAM"
-        self.preferred_venue = "BATS"
-        self.new_preferred_venue = "ADX"
-        self.currency = "AED"
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_2")
+        self.venue = self.data_set.get_venue_by_name("venue_4")
+        self.preferred_venue = self.data_set.get_preferred_venue("preferred_venue_3")
+        self.new_preferred_venue = self.data_set.get_preferred_venue("preferred_venue_2")
+        self.currency = self.data_set.get_currency_by_name("currency_2")
         self.preferred_security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = "Bond"
+        self.instr_type = self.data_set.get_instr_type("Bond")
 
 
 def precondition(self):

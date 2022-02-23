@@ -28,7 +28,7 @@ class QAP_6299(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.venue = "ASE"
+        self.venue = self.data_set.get_venue_by_name("venue_2")
         self.symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = self.symbol + "1LS"
         self.inst_symbol = self.symbol + "2IS"

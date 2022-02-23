@@ -19,8 +19,15 @@ class QAP_2904(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.feed_source = ["ActivFinancial", "FeedOS", "InteraciveData", "MarketPrizm", "Native Market",
-                            "Quod simulator", "RMDS"]
+        self.feed_source = [
+            self.data_set.get_feed_source("feed_source_1"),
+            self.data_set.get_feed_source("feed_source_2"),
+            self.data_set.get_feed_source("feed_source_3"),
+            self.data_set.get_feed_source("feed_source_4"),
+            self.data_set.get_feed_source("feed_source_5"),
+            self.data_set.get_feed_source("feed_source_6"),
+            self.data_set.get_feed_source("feed_source_7")
+        ]
 
 
 def precondition(self):

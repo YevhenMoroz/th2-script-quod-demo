@@ -26,7 +26,7 @@ class QAP_6298(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.type = "DarkPool"
+        self.type = self.data_set.get_venue_type("venue_type_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = self.name + "1ID"
 

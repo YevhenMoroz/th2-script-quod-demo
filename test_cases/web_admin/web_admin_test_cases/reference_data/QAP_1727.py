@@ -25,7 +25,7 @@ class QAP_1727(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.trading_phase = "Regular"
+        self.trading_phase = self.data_set.get_trading_phase("trading_phase_2")
 
 
 def precondition(self):

@@ -25,7 +25,7 @@ class QAP_1729(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.external_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.tick_size_xaxis_type = "Price"
+        self.tick_size_xaxis_type = self.data_set.get_tick_size_xaxis_type("tick_size_xaxis_type_1")
         self.tick = "12"
 
 
