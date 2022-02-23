@@ -128,5 +128,8 @@ class WaveBasketDetails:
     def set_row_details(self, row_details):
         self._request.rowsDetails.append(row_details)
 
+    def set_sub_lvl_rows(self, sub_lvl_rows: list):
+        self._request.subLvlRows.extend(sub_lvl_rows)
+
     def build(self):
         return self._request
