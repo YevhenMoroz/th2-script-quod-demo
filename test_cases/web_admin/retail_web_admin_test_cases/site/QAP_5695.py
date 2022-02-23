@@ -2,13 +2,13 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_page import DesksPage
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_values_sub_wizard import DesksValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.site.desks.desks_wizard import DesksWizard
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
+from test_framework.web_admin_core.pages.site.desks.desks_page import DesksPage
+from test_framework.web_admin_core.pages.site.desks.desks_values_sub_wizard import DesksValuesSubWizard
+from test_framework.web_admin_core.pages.site.desks.desks_wizard import DesksWizard
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 

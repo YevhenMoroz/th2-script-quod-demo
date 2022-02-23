@@ -39,6 +39,11 @@ class BaseDataSet:
     verifier_key_parameters = None
     fee_order_scope = None
     pset = None
+    # region fields added by Web Admin team
+    user = None
+    password = None
+
+    # endregion
 
     def get_instruments(self):
         if self.fix_instruments:
@@ -306,3 +311,16 @@ class BaseDataSet:
         if hasattr(self.qty_types, name):
             return getattr(self.qty_types, name).value
         raise ValueError(f"{self.qty_types} not found!")
+
+    # region WebAdmin getters
+
+    def get_user(self, name: str):
+        if hasattr(self.user, name):
+            return getattr(self.user, name).value
+        return ValueError(f"{self.user} not found!")
+
+    def get_password(self, name: str):
+        if hasattr(self.password, name):
+            return getattr(self.password, name).value
+        return ValueError(f"{self.password} not found!")
+    # endregion

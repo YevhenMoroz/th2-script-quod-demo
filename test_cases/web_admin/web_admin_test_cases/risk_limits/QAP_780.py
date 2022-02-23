@@ -5,25 +5,26 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_wizard import \
     CumTradingLimitsWizard
-from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_dimensions_sub_wizard import \
     TradingLimitsDimensionsSubWizardPage
-from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_page import TradingLimitsPage
-from test_cases.web_admin.web_admin_core.pages.risk_limits.trading_limits.trading_limits_values_sub_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_page import TradingLimitsPage
+from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_values_sub_wizard import \
     TradingLimitsValuesSubWizardPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_780(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.external_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.currency = "EUR"

@@ -1,10 +1,10 @@
 import typing
 from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.data_sets.environment_type import EnvironmentType
-from test_framework.environments.web_admin_enviroment import WebAdminEnvironment
 from test_framework.environments.fe_environment import FEEnvironment
 from test_framework.environments.java_api_environment import JavaApiEnvironment
 from test_framework.environments.read_log_envirenment import ReadLogEnvironment
+from test_framework.environments.web_admin_environment import WebAdminEnvironment
 
 
 class FullEnvironment:
@@ -23,10 +23,13 @@ class FullEnvironment:
                 if instance.tag == "fix_environment":
                     self.__list_fix_environment.append(FixEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "web_admin_environment":
-                    self.__list_web_admin_environment.append(WebAdminEnvironment.get_instance(EnvironmentType[instance.text]))
+                    self.__list_web_admin_environment.append(
+                        WebAdminEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "fe_environment":
                     self.__list_fe_environment.append(FEEnvironment.get_instance(EnvironmentType[instance.text]))
-
+                if instance.tag == "web_admin_environment":
+                    self.__list_web_admin_environment.append(
+                        WebAdminEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "java_api_environment":
                     self.__list_java_api_environment.append(
                         JavaApiEnvironment.get_instance(EnvironmentType[instance.text]))
@@ -41,7 +44,7 @@ class FullEnvironment:
     def get_list_fe_environment(self) -> typing.List[FEEnvironment]:
         return self.__list_fe_environment
 
-    def get_list_web_admin_environment(self):
+    def get_list_web_admin_environment(self) -> typing.List[WebAdminEnvironment]:
         return self.__list_web_admin_environment
 
     def get_list_web_trading_environment(self):

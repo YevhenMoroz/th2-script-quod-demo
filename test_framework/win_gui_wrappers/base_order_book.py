@@ -352,13 +352,15 @@ class BaseOrderBook(BaseWindow):
         call(self.disclose_flag_call, self.disclose_flag_details.build())
         self.clear_details([self.disclose_flag_details])
 
-    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
+    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None, error_expected=False):
         if basket_name is not None:
             self.add_to_basket_details.set_basket_name(basket_name)
         if list_row_numbers is not None:
             self.add_to_basket_details.set_row_numbers(list_row_numbers)
-        call(self.add_to_basket_call, self.add_to_basket_details.build())
+        self.add_to_basket_details.set_error_expected(error_expected)
+        result = call(self.add_to_basket_call, self.add_to_basket_details.build())
         self.clear_details([self.add_to_basket_details])
+        return result
 
     def create_basket(self, orders_rows: [] = None, basket_name=None):
         """
@@ -553,12 +555,15 @@ class BaseOrderBook(BaseWindow):
                 ticket_details.set_agreed_price(agreed_price)
             return ticket_details.build()
 
-    def split_book(self, split_booking_params: list, row_numbers: list = None):
+    def split_book(self, split_booking_params: list = None, row_numbers: list = None, error_expected=False):
         if row_numbers:
             self.split_booking_details.set_rows_numbers(row_numbers)
-        self.split_booking_details.set_split_booking_parameter(split_booking_params)
-        call(self.split_booking_call, self.split_booking_details.build())
+        if split_booking_params:
+            self.split_booking_details.set_split_booking_parameter(split_booking_params)
+        self.split_booking_details.set_error_expected(error_expected)
+        result = call(self.split_booking_call, self.split_booking_details.build())
         self.clear_details([self.split_booking_details])
+        return result
 
     def direct_moc_extract_error_message(self, qty, route):
         self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
