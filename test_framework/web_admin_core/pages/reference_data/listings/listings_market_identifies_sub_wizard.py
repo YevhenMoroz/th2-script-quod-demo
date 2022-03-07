@@ -148,3 +148,9 @@ class ListingsMarketIdentifiersSubWizard(CommonPage):
     def get_gl_trade_id(self):
         return self.get_text_by_xpath(ListingsConstants.MARKET_IDENTIFIERS_TAB_GL_TRADE_ID_XPATH)
 
+    def set_product_complex(self, value):
+        self.set_combobox_value(ListingsConstants.MARKET_IDENTIFIERS_TAB_PRODUCT_COMPLEX, value)
+
+    def get_product_complex(self):
+        return self.get_text_by_xpath(ListingsConstants.MARKET_IDENTIFIERS_TAB_PRODUCT_COMPLEX)
+

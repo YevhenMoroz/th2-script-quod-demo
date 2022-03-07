@@ -24,6 +24,7 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QA
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_5815 import QAP_5815
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6298 import QAP_6298
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6299 import QAP_6299
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6934 import QAP_6934
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_755 import QAP_755
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_756
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_758 import QAP_758
@@ -53,7 +54,6 @@ class ReferenceData:
 
             QAP_755(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                     environment=configuration.environment).run()
-
             QAP_756(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                     environment=configuration.environment).run()
             QAP_758(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -118,6 +118,8 @@ class ReferenceData:
                      environment=configuration.environment).run()
             QAP_6298(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_6934(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
