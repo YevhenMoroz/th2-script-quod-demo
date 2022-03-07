@@ -50,6 +50,8 @@ class OrderBookColumns(Enum):
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
+    disclose_exec = "DiscloseExec"
+    exec_fees = "Exec Fees"
     washbook = 'Wash Book'
     capacity = 'Capacity'
     near_tenor = 'NearTenor'
@@ -63,6 +65,7 @@ class OrderBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'FarSettlDate'
     last_spot_rate = 'LastSpotRate'
+    settle_date = 'Settle Date'
     # endregion
 
 
@@ -81,6 +84,7 @@ class TimeInForce(Enum):
     GTC = 'GoodTillCancel'
     GTD = 'GoodTillDate'
     DAY = 'Day'
+    ATC = "AtTheClose"
 
 
 class TriggerType(Enum):
@@ -149,6 +153,7 @@ class TradeBookColumns(Enum):
     far_px = 'FarPx'
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
+    exec_type = 'ExecType'
 
 
 class QuoteRequestBookColumns(Enum):
@@ -182,6 +187,18 @@ class QuoteRequestBookColumns(Enum):
     offer_spot = 'Offer Spot'
     quote_type = 'QuoteType'
     # endregion
+
+
+class BasketBookColumns(Enum):
+    id = "Id"
+    exec_policy = "ExecPolicy"
+    status = "Status"
+    basket_name = "Basket Name"
+    cl_basket_id = "Client Basket ID"
+    """Waves Tab"""
+    percent_qty_to_release = "Percent Qty To Release"
+    percent_profile = "Percentage Profile"
+    client_basket_id = 'Client Basket ID'
 
 
 class ExecSts(Enum):
@@ -278,6 +295,8 @@ class MiddleOfficeColumns(Enum):
     block_id = 'Block ID'
     conf_service = "Conf Service"
     side = 'Side'
+    pset = 'PSET'
+    pset_bic = 'PSET BIC'
 
 
 class AllocationsColumns(Enum):
@@ -295,6 +314,12 @@ class AllocationsColumns(Enum):
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
+    executions = 'Executions'
+
+
+class PostTradeStatuses(Enum):
+    ready_to_book = "ReadyToBook"
+    booked = "Booked"
 
 
 class RFQPanelValues(Enum):
@@ -353,5 +378,30 @@ class PanicValues(Enum):
     hedge_orders = "hedge_orders"
 
 
+class DiscloseExec(Enum):
+    manual = 'M'
+    real_time = 'R'
+
+
+class PercentageProfile(Enum):
+    remaining_qty = "RemainingQty"
+    initial_qty = "InitialQty"
+    target_basket_qty = "TargetBasketQty"
+
+
 class Capacity(Enum):
     agency = 'Agency'
+
+
+class OrderBagColumn(Enum):
+    unmatched_qty = 'UnmatchedQty'
+    order_bag_qty = 'OrderBagQty'
+    ord_bag_name = 'OrdBagName'
+
+
+class BasketSecondTabName(Enum):
+    orders = 'Orders'
+
+
+class MatchWindowsColumns(Enum):
+    order_id = 'OrderId'

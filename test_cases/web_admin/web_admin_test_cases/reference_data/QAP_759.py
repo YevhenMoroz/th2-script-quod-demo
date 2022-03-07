@@ -25,45 +25,43 @@ class QAP_759(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_1")
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_subvenues_page()
-    time.sleep(2)
-    page = SubVenuesPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-    description_sub_wizard.set_name(self.name)
-    time.sleep(2)
-    description_sub_wizard.set_venue(self.venue)
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_subvenues_page()
+        time.sleep(2)
         page = SubVenuesPage(self.web_driver_container)
-        wizard = SubVenuesWizard(self.web_driver_container)
-        excepted_pdf_values = [self.name,
-                               "AMERICAN STOCK EXCHANGE"]
-        self.verify("Is pdf correctly", True,
-                    wizard.click_download_pdf_entity_button_and_check_pdf(excepted_pdf_values))
+        page.click_on_new()
         time.sleep(2)
-        wizard.click_on_save_changes()
+        description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+        description_sub_wizard.set_name(self.name)
         time.sleep(2)
-        page.set_name_filter(self.name)
+        description_sub_wizard.set_venue(self.venue)
         time.sleep(2)
-        actual_values_from_main_page = [page.get_name(), page.get_venue()]
-        excepted_values = [self.name,
-                           self.venue]
-        self.verify("Is entity edited correctly", excepted_values, actual_values_from_main_page)
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+
+    def test_context(self):
+        try:
+            self.precondition()
+            page = SubVenuesPage(self.web_driver_container)
+            wizard = SubVenuesWizard(self.web_driver_container)
+            excepted_pdf_values = [self.name,
+                                   "AMERICAN STOCK EXCHANGE"]
+            self.verify("Is pdf correctly", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(excepted_pdf_values))
+            time.sleep(2)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            page.set_name_filter(self.name)
+            time.sleep(2)
+            actual_values_from_main_page = [page.get_name(), page.get_venue()]
+            excepted_values = [self.name,
+                               self.venue]
+            self.verify("Is entity edited correctly", excepted_values, actual_values_from_main_page)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

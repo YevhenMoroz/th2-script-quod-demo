@@ -33,6 +33,9 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         else:
             self.find_by_xpath(OrderManagementRulesConstants.CANCEL_BUTTON_XPATH).click()
 
+    def is_condition_button_enable_disable(self):
+        return self.is_toggle_button_enabled(OrderManagementRulesConstants.CONDITIONS_TAB_ENABLE_DISABLE_BUTTON_XPATH)
+
     def set_name(self, value):
         self.set_text_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_NAME_XPATH, value)
 
@@ -82,9 +85,9 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         time.sleep(1)
 
     def set_right_side_list_at_conditional_logic(self, value):
-        self.find_by_xpath("//*[text()='Client *']/preceding-sibling::nb-select//button").click()
+        self.find_by_xpath("(//button[@class='select-button'])[1]").click()
         time.sleep(2)
-        path = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']".format(
+        path = "//*[@class='cdk-overlay-container']//nb-option[text()=' {} ']".format(
             value)
         self.select_value_from_dropdown_list(
             path)

@@ -4,6 +4,7 @@ import grpc
 from th2_common.schema.factory.common_factory import CommonFactory
 from th2_grpc_act_gui_quod.act_ui_win_service import ActUIWinService
 from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperationsService
+from th2_grpc_act_gui_quod.bag_mgt_service import BagManagementServiceService
 from th2_grpc_act_gui_quod.basket_book_service import BasketBookServiceService
 from th2_grpc_act_gui_quod.basket_ticket_service import BasketTicketServiceService
 from th2_grpc_act_gui_quod.care_orders_service import CareOrdersServiceService
@@ -67,6 +68,7 @@ class Stubs:
     care_orders_action = factory.grpc_router.get_service(CareOrdersServiceService)
     win_act_basket_order_book = factory.grpc_router.get_service(BasketBookServiceService)
     win_act_basket_ticket = factory.grpc_router.get_service(BasketTicketServiceService)
+    win_act_bag_management_service = factory.grpc_router.get_service(BagManagementServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 

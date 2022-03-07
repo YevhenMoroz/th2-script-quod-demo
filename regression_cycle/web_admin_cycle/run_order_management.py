@@ -43,6 +43,7 @@ from test_cases.web_admin.web_admin_test_cases.order_management.QAP_5207 import 
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_5819 import QAP_5819
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_5820 import QAP_5820
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_5923 import QAP_5923
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_6725 import QAP_6725
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_948 import QAP_948
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_950 import QAP_950
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_952 import QAP_952
@@ -214,6 +215,9 @@ class RunOrderManagement:
             # Не полный тест. Мы делаем только клик для перехода в Лит, но не чекаем что действительно он открылся.
             QAP_5923(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_6725(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+
             end_time = time.monotonic()
             print("Run Order Management ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

@@ -18,6 +18,7 @@ class FIXMessageType(Enum):
     NewOrderMultiLeg = "NewOrderMultileg"
     Quote = "Quote"
     MarketDataRequestReject = "MarketDataRequestReject"
+    OrderCancelReject = "OrderCancelReject"
 
 
 class ORSMessageType(Enum):

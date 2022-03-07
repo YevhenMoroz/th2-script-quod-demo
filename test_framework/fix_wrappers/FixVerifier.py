@@ -122,6 +122,20 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReject.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check OrderCancelReject",
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReject.value,
+                                                                     fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         elif fix_message.get_message_type() == FIXMessageType.Quote.value:
             if key_parameters is None:
                 key_parameters = ['QuoteReqID']
@@ -232,6 +246,21 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check Confirmation",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.Confirmation.value,
+                                                                     fix_message.get_parameters(), key_parameters),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReject.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID', 'OrdStatus']
+
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check OrderCancelReject",
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.OrderCancelReject.value,
                                                                      fix_message.get_parameters(), key_parameters),
                     self.__checkpoint,
                     self.__session_alias,

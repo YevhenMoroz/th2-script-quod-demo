@@ -30,51 +30,49 @@ class QAP_4851(CommonTestCase):
         self.instr_type = 'Bond'
         self.client_group = 'Kepler'
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_external_check_page()
-    time.sleep(2)
-    page = ExternalCheckPage(self.web_driver_container)
-    wizard = ExternalCheckWizard(self.web_driver_container)
-    values_sub_wizard = ExternalCheckValuesSubWizard(self.web_driver_container)
-    dimensions_sub_wizard = ExternalCheckDimensionsSubWizard(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    values_sub_wizard.set_name(self.name)
-    dimensions_sub_wizard.set_venue(self.venue)
-    dimensions_sub_wizard.set_client(self.client)
-    dimensions_sub_wizard.set_instr_type(self.instr_type)
-    dimensions_sub_wizard.set_client_group(self.client_group)
-    wizard.click_on_save_changes()
-    time.sleep(2)
-    page.set_name(self.name)
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_external_check_page()
+        time.sleep(2)
         page = ExternalCheckPage(self.web_driver_container)
-        expected_values = [self.name,
-                           self.venue,
-                           self.client,
-                           self.instr_type,
-                           self.client_group]
-        actual_values = [page.get_name(),
-                         page.get_venue(),
-                         page.get_client(),
-                         page.get_instr_type(),
-                         page.get_client_group()]
-        self.verify("Is entity saved correctly?",
-                    expected_values, actual_values)
+        wizard = ExternalCheckWizard(self.web_driver_container)
+        values_sub_wizard = ExternalCheckValuesSubWizard(self.web_driver_container)
+        dimensions_sub_wizard = ExternalCheckDimensionsSubWizard(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        values_sub_wizard.set_name(self.name)
+        dimensions_sub_wizard.set_venue(self.venue)
+        dimensions_sub_wizard.set_client(self.client)
+        dimensions_sub_wizard.set_instr_type(self.instr_type)
+        dimensions_sub_wizard.set_client_group(self.client_group)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name(self.name)
+        time.sleep(2)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            page = ExternalCheckPage(self.web_driver_container)
+            expected_values = [self.name,
+                               self.venue,
+                               self.client,
+                               self.instr_type,
+                               self.client_group]
+            actual_values = [page.get_name(),
+                             page.get_venue(),
+                             page.get_client(),
+                             page.get_instr_type(),
+                             page.get_client_group()]
+            self.verify("Is entity saved correctly?",
+                        expected_values, actual_values)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)
