@@ -104,7 +104,7 @@ class OrderBookPage(CommonPage):
 
     # endregion
 
-    # region Auxiliary menu on the symbol
+    # region Auxiliary user_profile on the symbol
 
     def click_on_buy_button(self):
         self.find_by_xpath(OrderBookConstants.BUY_HOVER_BUTTON_XPATH).click()

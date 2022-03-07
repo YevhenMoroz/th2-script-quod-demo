@@ -87,3 +87,6 @@ class WebAdminURL(Enum):
 class WebBrowser(Enum):
     chrome = "chrome"
     firefox = "firefox"
+
+class WebTradingURL(Enum):
+    luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"

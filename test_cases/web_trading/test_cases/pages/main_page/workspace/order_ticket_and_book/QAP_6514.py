@@ -6,7 +6,7 @@ from custom import basic_custom_actions
 
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
-from test_framework.web_trading.web_trading_core.pages.login.login_page import LoginPage
+from test_framework.web_trading.web_trading_core.pages.login_and_logout.login_and_logout_page import LoginPage
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page import MainPage
 from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_confirmation.order_confirmation_page import OrderConfirmationPage
 from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_ticket_page import OrderTicketPage
@@ -33,13 +33,13 @@ class QAP_6514(CommonTestCase):
         order_book.click_on_maximize_button()
         main_page.click_on_buy_button()
         order_ticket = OrderTicketPage(self.web_driver_container)
-        # order_ticket.set_symbol("FIFMPS4FQP-MF ")
-        # order_ticket.set_account(" POOJA GANESHAN ")
-        # order_ticket.click_on_buy_mode_button()
-        # order_ticket.set_quantity("11")
-        # order_ticket.set_price("22")
-        # order_ticket.set_order_type(" Limit ")
-        # order_ticket.set_time_in_force("Day ")
+        # order_ticket_and_book.set_symbol("FIFMPS4FQP-MF ")
+        # order_ticket_and_book.set_account(" POOJA GANESHAN ")
+        # order_ticket_and_book.click_on_buy_mode_button()
+        # order_ticket_and_book.set_quantity("11")
+        # order_ticket_and_book.set_price("22")
+        # order_ticket_and_book.set_order_type(" Limit ")
+        # order_ticket_and_book.set_time_in_force("Day ")
         self.order1 = order_ticket.create_order("FIFMPS4FQP-MF ", " POOJA GANESHAN ", "11", "22", " Limit ")
         time.sleep(10)
         order_ticket.click_on_buy_button()

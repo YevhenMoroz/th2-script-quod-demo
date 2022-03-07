@@ -3,7 +3,7 @@ import time
 from selenium.webdriver.common.keys import Keys
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
-from test_framework.web_trading.web_trading_core.pages.login.login_constants import LoginConstants
+from test_framework.web_trading.web_trading_core.pages.login_and_logout.login_and_logout_constants import LoginConstants
 
 
 class LoginPage(CommonPage):
