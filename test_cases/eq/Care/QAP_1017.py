@@ -16,14 +16,6 @@ from win_gui_modules.utils import close_fe
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-work_dir = Stubs.custom_config['qf_trading_fe_folder']
-username = Stubs.custom_config['qf_trading_fe_user']
-password = Stubs.custom_config['qf_trading_fe_password']
-username2 = Stubs.custom_config['qf_trading_fe_user_2']
-password2 = Stubs.custom_config['qf_trading_fe_password_2']
-qty = "900"
-price = "20"
-order_type = "Limit"
 
 
 class QAP_1017(TestCase):
@@ -31,44 +23,54 @@ class QAP_1017(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None):
         super().__init__(report_id, session_id, data_set)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.client = self.data_set.get_client_by_name('client_co_1')
+        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.work_dir = Stubs.custom_config['qf_trading_fe_folder']
+        self.username = Stubs.custom_config['qf_trading_fe_user']
+        self.password = Stubs.custom_config['qf_trading_fe_password']
+        self.username2 = Stubs.custom_config['qf_trading_fe_user_2']
+        self.password2 = Stubs.custom_config['qf_trading_fe_password_2']
+        self.qty = "900"
+        self.price = "20"
+        self.order_type = "Limit"
+        self.session_id2 = Stubs.win_act.register(
+            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+        self.base_window2 = BaseMainWindow(self.test_id, self.session_id2)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        seconds, nanos = timestamps()  # Store case start time
-        client = self.data_set.get_client_by_name('client_co_1')
-        lookup = self.data_set.get_lookup_by_name('lookup_1')
+
         # region Declarations
         # endregion
         # region Open FE
-        session_id2 = Stubs.win_act.register(
-            rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-        base_window2 = BaseMainWindow(self.test_id, session_id2)
-        order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        order_book = OMSOrderBook(self.test_id, self.session_id)
-        client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        # endregion
-        # region switch to user1
-        base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
+        self.base_window2.open_fe(self.report_id, self.work_dir, self.username2, self.password2, False)
         # endregion
         # region Create CO
-        order_ticket.set_order_details(client=client, limit=price, qty=qty, order_type=order_type,
-                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=lookup, recipient=username2)
-        order_ticket.create_order(lookup=lookup)
-        order_id = order_book.extract_field(OrderBookColumns.order_id.value)
+        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty, order_type=self.order_type,
+                                       tif=TimeInForce.DAY.value, is_sell_side=False, instrument=self.lookup, recipient=self.username2)
+        self.order_ticket.create_order(lookup=self.lookup)
         # endregion
         # region Check values in OrderBook
-        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: "Sent"})
         # endregion
         # region switch to user2
-        # base_window2.open_fe(self.report_id, work_dir, username2, password2, False)
-        base_window2.switch_user()
+        self.base_window2.switch_user()
         # endregion
         # region Accept CO
-        client_inbox.accept_order(lookup, qty, price)
+        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
         # endregion
         # region Check values in OrderBook after Accept
-        order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
-        close_fe(self.test_id, session_id2)
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        close_fe(self.test_id, self.session_id2)
+

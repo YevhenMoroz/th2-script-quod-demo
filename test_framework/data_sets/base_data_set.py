@@ -1,7 +1,3 @@
-from enum import Enum
-from test_framework.data_sets.fx_data_set.fx_const_enum import FxSymbols, FxSecurityTypes, FxSettleTypes, FxSettleDates
-
-
 class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
@@ -22,10 +18,11 @@ class BaseDataSet:
     settle_types = None
     settle_dates = None
     routes = None
+    route_id = None
     lookups = None
     commission_profiles = None
     misc_fee_type = None
-    fee_exec_scope: Enum = None
+    fee_exec_scope = None
     fee = None
     commission = None
     client_tiers = None
@@ -36,8 +33,11 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
+    counterparts = None
+    qty_types = None
     venue_client_accounts = None
     verifier_key_parameters = None
+    fee_order_scope = None
     pset = None
     # region fields added by Web Admin team
     user = None
@@ -166,6 +166,11 @@ class BaseDataSet:
             return getattr(self.routes, name).value
         raise ValueError(f"{self.routes} not found!")
 
+    def get_route_id_by_name(self, name: str):
+        if hasattr(self.route_id, name):
+            return getattr(self.route_id, name).value
+        raise ValueError(f"{self.route_id} not found!")
+
     def get_client_tier_by_name(self, name: str):
         """
         get client tier by name from FxClientTiers
@@ -243,7 +248,7 @@ class BaseDataSet:
     def get_lookup_by_name(self, name: str):
         if hasattr(self.lookups, name):
             return getattr(self.lookups, name).value
-        return ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.lookups} not found!")
 
     def get_verifier_key_parameters_by_name(self, name: str):
         if hasattr(self.verifier_key_parameters, name):
@@ -253,27 +258,32 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        return ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.lookups} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
             return getattr(self.commission_profiles, name).value
-        return ValueError(f"{self.commission_profiles} not found!")
+        raise ValueError(f"{self.commission_profiles} not found!")
 
     def get_misc_fee_type_by_name(self, name: str):
         if hasattr(self.misc_fee_type, name):
             return getattr(self.misc_fee_type, name).value
-        return ValueError(f"{self.misc_fee_type} not found!")
+        raise ValueError(f"{self.misc_fee_type} not found!")
 
     def get_fee_exec_scope_by_name(self, name: str):
         if hasattr(self.fee_exec_scope, name):
             return getattr(self.fee_exec_scope, name).value
-        return ValueError(f"{self.fee_exec_scope} not found!")
+        raise ValueError(f"{self.fee_exec_scope} not found!")
+
+    def get_fee_order_scope_by_name(self, name: str):
+        if hasattr(self.fee_order_scope, name):
+            return getattr(self.fee_order_scope, name).value
+        raise ValueError(f"{self.fee_order_scope} not found!")
 
     def get_fee_by_name(self, name: str):
         if hasattr(self.fee, name):
             return getattr(self.fee, name)
-        return ValueError(f"{self.fee} not found!")
+        raise ValueError(f"{self.fee} not found!")
 
     def get_fees(self):
         if self.fee:
@@ -282,7 +292,7 @@ class BaseDataSet:
     def get_commission_by_name(self, name: str):
         if hasattr(self.commission, name):
             return getattr(self.commission, name)
-        return ValueError(f"{self.commission} not found!")
+        raise ValueError(f"{self.commission} not found!")
 
     def get_commissions(self):
         if self.commission:
@@ -295,7 +305,12 @@ class BaseDataSet:
         """
         if hasattr(self.pset, name):
             return getattr(self.pset, name).value
-        return ValueError(f"{self.pset} not found")
+        raise ValueError(f"{self.pset} not found")
+
+    def get_qty_type(self, name: str):
+        if hasattr(self.qty_types, name):
+            return getattr(self.qty_types, name).value
+        raise ValueError(f"{self.qty_types} not found!")
 
     # region WebAdmin getters
 
