@@ -21,7 +21,7 @@ class QAP_2196(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.password = "Zxcvbn123!"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client_id_source = "BIC"

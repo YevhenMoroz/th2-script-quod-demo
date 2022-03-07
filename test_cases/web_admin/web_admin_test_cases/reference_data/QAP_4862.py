@@ -23,48 +23,46 @@ class QAP_4862(CommonTestCase):
         self.name = "test"
         self.id = "test"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_venues_page()
-    time.sleep(2)
-    page = VenuesPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-    description_sub_wizard.set_name(self.name)
-    description_sub_wizard.set_id(self.id)
-    time.sleep(1)
-    wizard = VenuesWizard(self.web_driver_container)
-    wizard.click_on_close()
-    time.sleep(2)
-    wizard.click_on_ok_button()
-    time.sleep(2)
-    page.click_on_new()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_venues_page()
+        time.sleep(2)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        description_sub_wizard.set_name(self.name)
+        description_sub_wizard.set_id(self.id)
+        time.sleep(1)
         wizard = VenuesWizard(self.web_driver_container)
-        self.verify("Is name field saved", self.name, description_sub_wizard.get_name())
-        self.verify("Is id field saved", self.id, description_sub_wizard.get_id())
-        time.sleep(2)
-        description_sub_wizard.set_name(" ")
-        description_sub_wizard.set_id(" ")
-        time.sleep(2)
         wizard.click_on_close()
         time.sleep(2)
         wizard.click_on_ok_button()
+        time.sleep(2)
+        page.click_on_new()
+        time.sleep(2)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+            wizard = VenuesWizard(self.web_driver_container)
+            self.verify("Is name field saved", self.name, description_sub_wizard.get_name())
+            self.verify("Is id field saved", self.id, description_sub_wizard.get_id())
+            time.sleep(2)
+            description_sub_wizard.set_name(" ")
+            description_sub_wizard.set_id(" ")
+            time.sleep(2)
+            wizard.click_on_close()
+            time.sleep(2)
+            wizard.click_on_ok_button()
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

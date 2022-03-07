@@ -21,35 +21,33 @@ class QAP_4439(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.strategy = "BasicMaker"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_auto_hedger_page()
-    time.sleep(2)
-    page = AutoHedgerPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
-        instruments_sub_wizard.click_on_plus_button()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
+        side_menu.open_auto_hedger_page()
+        time.sleep(2)
+        page = AutoHedgerPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+
+    def test_context(self):
         try:
-            instruments_sub_wizard.set_hedging_execution_strategy(self.strategy)
-            self.verify("Default strategy selected correctly", True, True)
+            self.precondition()
+            instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
+            instruments_sub_wizard.click_on_plus_button()
+            time.sleep(2)
+            try:
+                instruments_sub_wizard.set_hedging_execution_strategy(self.strategy)
+                self.verify("Default strategy selected correctly", True, True)
 
-        except Exception as e:
-            self.verify("Default strategy", True, e.__class__.__name__)
+            except Exception as e:
+                self.verify("Default strategy", True, e.__class__.__name__)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

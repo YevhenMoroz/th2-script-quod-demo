@@ -20,7 +20,7 @@ class QAP_1732(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.password = "Zxcvbn123!"
         self.instr_symbol = 'AUD/DKK'
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.cum_trading_limit_percentage_new = str(random.randint(0, 100))

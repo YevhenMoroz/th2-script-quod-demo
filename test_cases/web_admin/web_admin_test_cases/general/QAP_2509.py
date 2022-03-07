@@ -15,7 +15,7 @@ class QAP_2509(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
-        self.password = "Qwerty123!"
+        self.password = "Zxcvbn123!"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

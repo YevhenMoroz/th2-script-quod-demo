@@ -21,7 +21,7 @@ class QAP_2256(CommonTestCase):
         self.venue = "AMEX"
         self.venue_trader_name = "AW9RSTOWN03_03426"
         self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.password = "Zxcvbn123!"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

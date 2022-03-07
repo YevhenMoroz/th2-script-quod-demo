@@ -18,7 +18,7 @@ class QAP_919(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.password = "Zxcvbn123!"
         self.client = "CLIENT1"
         self.type = "Holder"
         self.empty_data_error_message = "Incorrect or missing values"
