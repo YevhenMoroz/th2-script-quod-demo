@@ -9,7 +9,8 @@ class WebAdminUsers(Enum):
     user_5 = "adm02"
     user_6 = "acameron"
     user_7 = "gbarett"
-
+    user_8 = "QA1"
+    user_9 = "adm08"
 
 class WebAdminPasswords(Enum):
     password_1 = "adm03"
@@ -55,6 +56,9 @@ class WebAdminZones(Enum):
 # region WaUsers
 class WebAdminClients(Enum):
     client_1 = "CLIENT1"
+    client_2 = "CLIENT2"
+    client_3 = "CLIENT3"
+    client_4 = "BrokerACA"
 
 
 class WebAdminClientType(Enum):
@@ -67,6 +71,13 @@ class WebAdminVenues(Enum):
     venue_3 = "BRU"
     venue_4 = "AMSTERDAM"
     venue_5 = "BATS"
+    venue_6 = "ADX"
+    venue_7 = "Equiduct"
+    venue_8 = "AMERICAN STOCK EXCHANGE"
+    venue_9 = "EURONEXT AMSTERDAM"
+    venue_10 = "BINANCE"
+    venue_11 = "Dubai Financial Exchange"
+
 
 
 class WebAdminEmail(Enum):
@@ -82,7 +93,6 @@ class WebAdminFirstUserName(Enum):
 
 
 # endregion
-
 
 # region WAReferenceData
 class WebAdminVenueId(Enum):
@@ -102,7 +112,6 @@ class WebAdminMic(Enum):
 class WebAdminCountry(Enum):
     country_1 = "Albania"
     country_2 = "Angola"
-
 
 
 class WebAdminSubVenue(Enum):
@@ -139,12 +148,15 @@ class WebAdminInstrSymbol(Enum):
     instr_symbol_1 = "AUD/DKK"
     instr_symbol_2 = "EUR/USD"
 
+
 class WebAdminSymbol(Enum):
     symbol_1 = "EUR/USD"
+
 
 class WebAdminCurrency(Enum):
     currency_1 = "AFN"
     currency_2 = "AED"
+
 
 class WebAdminInstrType(Enum):
     instr_type_1 = "Bond"
@@ -155,16 +167,20 @@ class WebAdminInstrType(Enum):
     instr_type_6 = "Forward"
     instr_type_7 = "Option"
 
+
 class WebAdminPreferredVenue(Enum):
     preferred_venue_1 = "AMEX"
     preferred_venue_2 = "ADX"
     preferred_venue_3 = "BAueTS"
 
+
 class WebAdminListingGroup(Enum):
     listing_group_1 = "test"
 
+
 class WebAdminSettleType(Enum):
     settle_type_1 = "BrokenDate"
+
 
 class WebAdminFeedSource(Enum):
     feed_source_1 = "ActivFinancial"
@@ -176,11 +192,98 @@ class WebAdminFeedSource(Enum):
     feed_source_7 = "RMDS"
     feed_source_8 = "ADX"
 
+
 class WebAdminNegativeRoutes(Enum):
     negative_route_1 = "Direct"
     negative_route_2 = "Fixed income Route"
 
+
 class WebAdminPositiveRoutes(Enum):
     positive_route_1 = "Credit Suisse"
     positive_route_2 = "JP Morgan"
+
+
+# endregion
+
+# region WAClientAccounts
+
+class WebAdminClientIdSource(Enum):
+    client_id_source_1 = "BIC"
+    client_id_source_2 = "Other"
+
+
+class WebAdminRouteAccountName(Enum):
+    route_account_name_1 = ""
+
+
+class WebAdminRoute(Enum):
+    route_1 = "Direct"
+    route_2 = "DB RFQ"
+
+
+class WebAdminClearingAccountType(Enum):
+    clearing_account_type_1 = "Institutional"
+    clearing_account_type_2 = "Firm"
+    clearing_account_type_3 = "Retail"
+
+
+class WebAdminDiscloseExec(Enum):
+    disclose_exec_1 = "Manual"
+
+
+class WebAdminAccountIdSource(Enum):
+    account_id_source_1 = "BIC"
+    account_id_source_2 = "Other"
+
+
+class WebAdminDefaultRoute(Enum):
+    default_route_1 = "Direct"
+
+
+class WebAdminDefaultExecutionStrategy(Enum):
+    default_execution_strategy_1 = "Default"
+
+
+class WebAdminTradConfirmGeneration(Enum):
+    trade_confirm_generation_1 = "Automatic"
+
+
+class WebAdminTradConfirmPreference(Enum):
+    trade_confirm_preference_1 = "Excel"
+
+
+class WebAdminNetGrossIndType(Enum):
+    net_gross_ind_type_1 = "Net"
+
+
+class WebAdminRecipientTypes(Enum):
+    recipient_type_1 = "CC"
+
+
+# endregion
+
+# region WaOrderManagement
+class WebAdminDefaultTif(Enum):
+    default_tif_1 = "Day"
+
+
+class WebAdminStrategyType(Enum):
+    strategy_type_1 = "Quod MultiListing"
+    strategy_type_2 = "External AMBUSH"
+    strategy_type_3 = "Quod LitDark"
+    strategy_type_4 = "External CUSTOM1"
+    strategy_type_5 = "Quod DarkPool"
+    strategy_type_6 = "Quod TWAP"
+    strategy_type_7 = "Custom one"
+    strategy_type_8 = "Quod Auction"
+    strategy_type_9 = "Quod Synthetic OrdType"
+
+
+class WebAdminExecPolicy(Enum):
+    exec_policy_1 = "Care"
+    exec_policy_2 = "DMA"
+    exec_policy_3 = "ExternalCare"
+    exec_policy_4 = "Algorithmic"
+    exec_policy_5 = "Sor"
+    exec_policy_6 = "ExternalAlgo"
 # endregion

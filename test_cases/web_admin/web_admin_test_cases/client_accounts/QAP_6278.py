@@ -25,8 +25,8 @@ class QAP_6278(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = self.id + "1"
         self.acc_route_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.client_id_source = "Other"
-        self.route = "Direct"
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
+        self.route = self.data_set.get_route("route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

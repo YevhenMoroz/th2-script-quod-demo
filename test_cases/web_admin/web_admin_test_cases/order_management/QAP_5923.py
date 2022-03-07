@@ -20,8 +20,8 @@ class QAP_5923(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = "TestSuperStrategy"
-        self.user = "QA1"
-        self.strategy_type = "Quod Synthetic OrdType"
+        self.user = self.data_set.get_user("user_8")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_9")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

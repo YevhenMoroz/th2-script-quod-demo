@@ -23,6 +23,7 @@ class QAP_1593(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.exec_policy = self.data_set.get_exec_policy("exec_policy_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,7 +42,7 @@ class QAP_1593(CommonTestCase):
 
             default_result_sub_wizard.click_on_plus()
             time.sleep(1)
-            default_result_sub_wizard.set_exec_policy("Care")
+            default_result_sub_wizard.set_exec_policy(self.exec_policy)
             time.sleep(1)
             default_result_sub_wizard.set_percentage("150")
             time.sleep(1)

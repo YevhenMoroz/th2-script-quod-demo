@@ -24,8 +24,8 @@ class QAP_2962(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.user = "QA1"
-        self.strategy_type = "Quod LitDark"
+        self.user = self.data_set.get_user("user_8")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
         self.parameter_at_dark_block = "Dark Broker Sequence"
         self.first_strategy = "TestSuperStrategy1"
         self.first_value = "1"

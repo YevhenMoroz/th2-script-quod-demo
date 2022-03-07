@@ -72,6 +72,21 @@ class BaseDataSet:
     feed_source = None
     negative_route = None
     positive_route = None
+    client_id_source = None
+    route_account_name = None
+    route = None
+    clearing_account_type = None
+    disclose_exec = None
+    account_id_source = None
+    default_route = None
+    default_execution_strategy = None
+    trade_confirm_generation = None
+    trade_confirm_preference = None
+    net_gross_ind_type = None
+    recipient_type = None
+    default_tif = None
+    strategy_type = None
+    exec_policy = None
 
     # endregion
 
@@ -478,4 +493,75 @@ class BaseDataSet:
         if hasattr(self.positive_route, name):
             return getattr(self.positive_route, name).value
         return ValueError(f"{self.positive_route} not found!")
+
+    def get_client_id_source(self, name: str):
+        if hasattr(self.client_id_source, name):
+            return getattr(self.client_id_source, name).value
+        return ValueError(f"{self.client_id_source} not found!")
+
+    def get_route_account_name(self, name: str):
+        if hasattr(self.route_account_name, name):
+            return getattr(self.route_account_name, name).value
+        return ValueError(f"{self.route_account_name} not found!")
+
+    def get_clearing_account_type(self, name: str):
+        if hasattr(self.clearing_account_type, name):
+            return getattr(self.clearing_account_type, name).value
+        return ValueError(f"{self.clearing_account_type} not found!")
+
+    def get_disclose_exec(self, name: str):
+        if hasattr(self.disclose_exec, name):
+            return getattr(self.disclose_exec, name).value
+        return ValueError(f"{self.disclose_exec} not found!")
+
+    def get_account_id_source(self, name: str):
+        if hasattr(self.account_id_source, name):
+            return getattr(self.account_id_source, name).value
+        return ValueError(f"{self.account_id_source} not found!")
+
+    def get_default_route(self, name: str):
+        if hasattr(self.default_route, name):
+            return getattr(self.default_route, name).value
+        return ValueError(f"{self.default_route} not found!")
+
+    def get_default_execution_strategy(self, name: str):
+        if hasattr(self.default_execution_strategy, name):
+            return getattr(self.default_execution_strategy, name).value
+        return ValueError(f"{self.default_execution_strategy} not found!")
+
+    def get_trade_confirm_generation(self, name: str):
+        if hasattr(self.trade_confirm_generation, name):
+            return getattr(self.trade_confirm_generation, name).value
+        return ValueError(f"{self.trade_confirm_generation} not found!")
+
+    def get_trade_confirm_preference(self, name: str):
+        if hasattr(self.trade_confirm_preference, name):
+            return getattr(self.trade_confirm_preference, name).value
+        return ValueError(f"{self.trade_confirm_preference} not found!")
+
+    def get_net_gross_ind_type(self, name: str):
+        if hasattr(self.net_gross_ind_type, name):
+            return getattr(self.net_gross_ind_type, name).value
+        return ValueError(f"{self.net_gross_ind_type} not found!")
+
+    def get_recipient_type(self, name: str):
+        if hasattr(self.recipient_type, name):
+            return getattr(self.recipient_type, name).value
+        return ValueError(f"{self.recipient_type} not found!")
+
+    def get_default_tif(self, name: str):
+        if hasattr(self.default_tif, name):
+            return getattr(self.default_tif, name).value
+        return ValueError(f"{self.default_tif} not found!")
+
+    def get_strategy_type(self, name: str):
+        if hasattr(self.strategy_type, name):
+            return getattr(self.strategy_type, name).value
+        return ValueError(f"{self.strategy_type} not found!")
+
+    def get_exec_policy(self, name: str):
+        if hasattr(self.exec_policy, name):
+            return getattr(self.exec_policy, name).value
+        return ValueError(f"{self.exec_policy,} not found!")
+
     # endregion

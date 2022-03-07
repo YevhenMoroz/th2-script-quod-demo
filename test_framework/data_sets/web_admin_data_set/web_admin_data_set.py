@@ -6,7 +6,11 @@ from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import Web
     WebAdminCountry, WebAdminSubVenue, WebAdminTradingStatus, WebAdminTradingPhase, WebAdminPriceLimitProfile, \
     WebAdminTickSizeProfile, WebAdminTradingPhaseProfile, WebAdminTickSizeXaxisType, WebAdminInstrSymbol, \
     WebAdminSymbol, WebAdminCurrency, WebAdminInstrType, WebAdminPreferredVenue, WebAdminListingGroup, \
-    WebAdminSettleType, WebAdminFeedSource, WebAdminNegativeRoutes, WebAdminPositiveRoutes
+    WebAdminSettleType, WebAdminFeedSource, WebAdminNegativeRoutes, WebAdminPositiveRoutes, WebAdminClientIdSource, \
+    WebAdminRouteAccountName, WebAdminRoute, WebAdminClearingAccountType, WebAdminDiscloseExec, WebAdminAccountIdSource, \
+    WebAdminDefaultRoute, WebAdminDefaultExecutionStrategy, WebAdminTradConfirmGeneration, \
+    WebAdminTradConfirmPreference, WebAdminNetGrossIndType, WebAdminRecipientTypes, WebAdminDefaultTif, \
+    WebAdminStrategyType, WebAdminExecPolicy
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -48,3 +52,18 @@ class WebAdminDataSet(BaseDataSet):
     feed_source = WebAdminFeedSource
     negative_route = WebAdminNegativeRoutes
     positive_route = WebAdminPositiveRoutes
+    client_id_source = WebAdminClientIdSource
+    route_account_name = WebAdminRouteAccountName
+    route = WebAdminRoute
+    clearing_account_type = WebAdminClearingAccountType
+    disclose_exec = WebAdminDiscloseExec
+    account_id_source = WebAdminAccountIdSource
+    default_route = WebAdminDefaultRoute
+    default_execution_strategy = WebAdminDefaultExecutionStrategy
+    trade_confirm_generation = WebAdminTradConfirmGeneration
+    trade_confirm_preference = WebAdminTradConfirmPreference
+    net_gross_ind_type = WebAdminNetGrossIndType
+    recipient_type = WebAdminRecipientTypes
+    default_tif = WebAdminDefaultTif
+    strategy_type = WebAdminStrategyType
+    exec_policy = WebAdminExecPolicy

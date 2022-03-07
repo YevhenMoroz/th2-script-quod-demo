@@ -26,8 +26,8 @@ class QAP_1582(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.user = "adm01"
-        self.strategy_type = "External AMBUSH"
+        self.user = self.data_set.get_user("user_4")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_4")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

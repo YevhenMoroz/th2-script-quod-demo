@@ -23,7 +23,7 @@ class QAP_960(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = "TestSuperStrategy"
         self.user = "QA1"
-        self.strategy_type = "External AMBUSH"
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

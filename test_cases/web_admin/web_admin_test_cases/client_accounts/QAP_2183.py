@@ -21,10 +21,13 @@ class QAP_2183(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.id = f"QAP-2183_{''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))}"
-        self.client = "CLIENT1"
-        self.client_id_source = "BIC"
+        self.client = self.data_set.get_client("client_1")
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.clearing_type = ["Institutional", "Retail", "Firm"]
+        self.clearing_type = [
+            self.data_set.get_clearing_account_type("clearing_account_type_1"),
+            self.data_set.get_clearing_account_type("clearing_account_type_2"),
+            self.data_set.get_clearing_account_type("clearing_account_type_3")]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
