@@ -27,8 +27,8 @@ class QAP_6725(CommonTestCase):
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.default_result_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.condition_logic_value = "Client"
-        self.client = "CLIENT2"
-        self.exec_policy = 'DMA'
+        self.client = self.data_set.get_client("client_2")
+        self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
         self.percentage = "100"
 
     def precondition(self):
