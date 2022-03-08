@@ -10,7 +10,9 @@ from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import Web
     WebAdminRouteAccountName, WebAdminRoute, WebAdminClearingAccountType, WebAdminDiscloseExec, WebAdminAccountIdSource, \
     WebAdminDefaultRoute, WebAdminDefaultExecutionStrategy, WebAdminTradConfirmGeneration, \
     WebAdminTradConfirmPreference, WebAdminNetGrossIndType, WebAdminRecipientTypes, WebAdminDefaultTif, \
-    WebAdminStrategyType, WebAdminExecPolicy
+    WebAdminStrategyType, WebAdminExecPolicy, WebAdminCommissionAmountType, WebAdminCommissionProfile, \
+    WebAdminSettlLocation, WebAdminCountryCode, WebAdminClientGroup, WebAdminInstrument, WebAdminInstrumentGroup, \
+    WebAdminCommAlgorithm, WebAdminCommType
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -67,3 +69,12 @@ class WebAdminDataSet(BaseDataSet):
     default_tif = WebAdminDefaultTif
     strategy_type = WebAdminStrategyType
     exec_policy = WebAdminExecPolicy
+    commission_amount_type = WebAdminCommissionAmountType
+    commission_profile = WebAdminCommissionProfile
+    settl_location = WebAdminSettlLocation
+    country_code = WebAdminCountryCode
+    client_group = WebAdminClientGroup
+    instrument = WebAdminInstrument
+    instrument_group = WebAdminInstrumentGroup
+    comm_algorithm = WebAdminCommAlgorithm
+    comm_type = WebAdminCommType

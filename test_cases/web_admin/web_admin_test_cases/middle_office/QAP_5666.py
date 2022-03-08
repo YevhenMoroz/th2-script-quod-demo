@@ -21,16 +21,16 @@ class QAP_5666(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = "description"
-        self.instr_type = 'Bond'
-        self.venue = 'EURONEXT AMSTERDAM'
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
+        self.venue = self.data_set.get_venue_by_name("venue_9")
         self.side = 'Buy'
-        self.execution_policy = 'Care'
+        self.execution_policy = self.data_set.get_exec_policy("exec_policy_1")
         self.virtual_account = "test"
-        self.client = 'CLIENT1'
-        self.client_group = "test"
-        self.commission_amount_type = 'Broker'
+        self.client = self.data_set.get_client("client_1")
+        self.client_group = self.data_set.get_client_group("client_group_3")
+        self.commission_amount_type = self.data_set.get_commission_amount_type("commission_amount_type_1")
         self.commission_profile = '1bps'
-        self.client_list = "test"
+        self.client_list = self.data_set.get_client_list("client_list_2")
         self.re_calculate_for_allocations = 'true'
 
     def precondition(self):

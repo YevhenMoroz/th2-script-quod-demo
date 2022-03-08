@@ -166,6 +166,7 @@ class WebAdminInstrType(Enum):
     instr_type_5 = "Future"
     instr_type_6 = "Forward"
     instr_type_7 = "Option"
+    instr_type_8 = "Certificate"
 
 
 class WebAdminPreferredVenue(Enum):
@@ -287,3 +288,47 @@ class WebAdminExecPolicy(Enum):
     exec_policy_5 = "Sor"
     exec_policy_6 = "ExternalAlgo"
 # endregion
+
+#region WaMiddleOffice
+
+class WebAdminCommissionAmountType(Enum):
+    commission_amount_type_1 = "Broker"
+
+
+
+class WebAdminCommissionProfile(Enum):
+    commission_profile_1 = "UK stamp"
+
+class WebAdminSettlLocation(Enum):
+    settl_location_1 = "CASH"
+    settl_location_2 = "CAMBIUM"
+
+class WebAdminCountryCode(Enum):
+    country_code_1 = "ABW"
+    country_code_2 = "AIA"
+
+class WebAdminClientGroup(Enum):
+    client_group_1 = "DEMO"
+    client_group_2 = "Kepler"
+    client_group_3 = "test"
+
+class WebAdminInstrument(Enum):
+    instrument_1 = "EUR"
+    instrument_2 = "INSURANCE"
+
+class WebAdminInstrumentGroup(Enum):
+    instrument_group_1 = "TC Danish"
+    instrument_group_2 = "TC Instr Grp"
+
+class WebAdminClientList(Enum):
+    client_list_1 = "WEILRG"
+    client_list_2 = "test"
+
+class WebAdminCommAlgorithm(Enum):
+    comm_algorithm_1 = "Flat"
+    comm_algorithm_2 = "SlidingScale"
+
+class WebAdminCommType(Enum):
+    comm_type_1 = "Percentage"
+    comm_type_2 = "AbsoluteAmount"
+#endregion

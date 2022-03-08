@@ -28,29 +28,29 @@ class QAP_3222(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.settl_location = 'CASH'
+        self.settl_location = self.data_set.get_settl_location("settl_location_1")
         self.settl_location_bic = "test"
-        self.instr_type = "Bond"
-        self.country_code = "ABW"
-        self.client_group = "DEMO"
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
+        self.country_code = self.data_set.get_country_code("country_code_1")
+        self.client_group = self.data_set.get_client_group("client_group_1")
         self.account = "DEMO_MO1"
-        self.client = "CLIENT1"
-        self.venue = "AMERICAN STOCK EXCHANGE"
-        self.instrument = "INSURANCE"
-        self.instrument_group = "TC Danish"
+        self.client = self.data_set.get_client("client_1")
+        self.venue = self.data_set.get_venue_by_name("venue_8")
+        self.instrument = self.data_set.get_instrument("instrument_2")
+        self.instrument_group = self.data_set.get_instrument_group("instrument_group_1")
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_settl_location = 'CAMBIUM'
+        self.new_settl_location = self.data_set.get_settl_location("settl_location_2")
         self.new_settl_location_bic = "test2"
-        self.new_instr_type = "Certificate"
-        self.new_country_code = "AIA"
-        self.new_client_group = "Kepler"
+        self.new_instr_type = self.data_set.get_instr_type("instr_type_8")
+        self.new_country_code = self.data_set.get_country_code("country_code_2")
+        self.new_client_group = self.data_set.get_client_group("client_group_2")
         self.new_account = "DEMO_MO2"
-        self.new_client = "CLIENT2"
-        self.new_venue = "BATS"
-        self.new_instrument = "EUR"
-        self.new_instrument_group = "TC Instr Grp"
+        self.new_client = self.data_set.get_client("client_2")
+        self.new_venue = self.data_set.get_venue_by_name("venue_5")
+        self.new_instrument = self.data_set.get_instrument("instrument_1")
+        self.new_instrument_group = self.data_set.get_instrument_group("instrument_group_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

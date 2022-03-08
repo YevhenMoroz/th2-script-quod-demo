@@ -87,6 +87,16 @@ class BaseDataSet:
     default_tif = None
     strategy_type = None
     exec_policy = None
+    commission_amount_type = None
+    commission_profile = None
+    settl_location = None
+    country_code = None
+    client_group = None
+    instrument = None
+    instrument_group = None
+    client_list = None
+    comm_algorithm = None
+    comm_type = None
 
     # endregion
 
@@ -578,5 +588,52 @@ class BaseDataSet:
         if hasattr(self.exec_policy, name):
             return getattr(self.exec_policy, name).value
         return ValueError(f"{self.exec_policy,} not found!")
+
+    def get_commission_amount_type(self, name: str):
+        if hasattr(self.commission_amount_type, name):
+            return getattr(self.commission_amount_type, name).value
+        return ValueError(f"{self.commission_amount_type,} not found!")
+
+    def get_settl_location(self, name: str):
+        if hasattr(self.settl_location, name):
+            return getattr(self.settl_location, name).value
+        return ValueError(f"{self.settl_location,} not found!")
+
+    def get_country_code(self, name: str):
+        if hasattr(self.country_code, name):
+            return getattr(self.country_code, name).value
+        return ValueError(f"{self.country_code,} not found!")
+
+    def get_client_group(self, name: str):
+        if hasattr(self.client_group, name):
+            return getattr(self.client_group, name).value
+        return ValueError(f"{self.client_group,} not found!")
+
+    def get_instrument(self, name: str):
+        if hasattr(self.instrument, name):
+            return getattr(self.instrument, name).value
+        return ValueError(f"{self.instrument,} not found!")
+
+    def get_instrument_group(self, name: str):
+        if hasattr(self.instrument_group, name):
+            return getattr(self.instrument_group, name).value
+        return ValueError(f"{self.instrument_group,} not found!")
+
+    def get_client_list(self, name: str):
+        if hasattr(self.client_list, name):
+            return getattr(self.client_list, name).value
+        return ValueError(f"{self.client_list,} not found!")
+
+    def get_comm_algorithm(self, name: str):
+        if hasattr(self.comm_algorithm, name):
+            return getattr(self.comm_algorithm, name).value
+        return ValueError(f"{self.comm_algorithm,} not found!")
+
+    def get_comm_type(self, name: str):
+        if hasattr(self.comm_type, name):
+            return getattr(self.comm_type, name).value
+        return ValueError(f"{self.comm_type,} not found!")
+
+
 
     # endregion

@@ -30,12 +30,12 @@ class QAP_3236(CommonTestCase):
         self.description = ''
 
         # Dimensions tab
-        self.instr_type = "Bond"
-        self.venue = "BINANCE"
+        self.instr_type = self.data_set.instr_type("instr_type_1")
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.side = "Buy"
-        self.execution_policy = "DMA"
-        self.client_list = "WEILRG"
-        self.commission_amount_type = "Broker"
+        self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")
+        self.client_list = self.data_set.get_client_list("client_list_1")
+        self.commission_amount_type = self.data_set.get_commission_amount_type("commission_amount_type_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
