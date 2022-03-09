@@ -37,12 +37,12 @@ class QAP_3275(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
-        self.symbol = "AUD/USD"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_5")
         self.rfq_response_stream_ttl = 120
-        self.venue_at_forward_venue_tab = "BATS"
-        self.client_at_external_clients_tab = "CLIENT1"
-        self.tenor = "1W"
+        self.venue_at_forward_venue_tab = self.data_set.get_venue_by_name("venue_5")
+        self.client_at_external_clients_tab = self.data_set.get_client("client_1")
+        self.tenor = self.data_set.get_tenor_by_name("tenor_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -29,11 +29,11 @@ class QAP_3053(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.position_book = "CLIENT1"
+        self.position_book = self.data_set.get_client("client_1")
         self.position_eur = "11"
         self.tenor = "2W"
-        self.symbol = "EUR/USD"
-        self.core_spot_price_strategy = "Direct"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

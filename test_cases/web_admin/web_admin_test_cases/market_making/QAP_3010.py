@@ -31,9 +31,9 @@ class QAP_3010(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
-        self.symbol = "AUD/BRL"
-        self.venue_at_spot_venues_tab = "BATS"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_4")
+        self.venue_at_spot_venues_tab = self.data_set.get_venue_by_name("venue_5")
         self.default_weight_at_spot_venues_tab = 55
 
     def precondition(self):

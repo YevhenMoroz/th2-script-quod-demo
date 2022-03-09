@@ -97,7 +97,7 @@ class BaseDataSet:
     client_list = None
     comm_algorithm = None
     comm_type = None
-
+    core_spot_price_strategy = None
     # endregion
 
     def get_instruments(self):
@@ -634,6 +634,9 @@ class BaseDataSet:
             return getattr(self.comm_type, name).value
         return ValueError(f"{self.comm_type,} not found!")
 
-
+    def get_core_spot_price_strategy(self, name: str):
+        if hasattr(self.core_spot_price_strategy, name):
+            return getattr(self.core_spot_price_strategy, name).value
+        return ValueError(f"{self.core_spot_price_strategy,} not found!")
 
     # endregion

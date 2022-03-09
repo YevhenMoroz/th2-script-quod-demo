@@ -147,10 +147,15 @@ class WebAdminTickSizeXaxisType(Enum):
 class WebAdminInstrSymbol(Enum):
     instr_symbol_1 = "AUD/DKK"
     instr_symbol_2 = "EUR/USD"
+    instr_symbol_3 = "AUD/CAD"
 
 
 class WebAdminSymbol(Enum):
     symbol_1 = "EUR/USD"
+    symbol_2 = "AUD/CAD"
+    symbol_3 = "AUD/TRY"
+    symbol_4 = "AUD/BRL"
+    symbol_5 = "AUD/USD"
 
 
 class WebAdminCurrency(Enum):
@@ -331,4 +336,13 @@ class WebAdminCommAlgorithm(Enum):
 class WebAdminCommType(Enum):
     comm_type_1 = "Percentage"
     comm_type_2 = "AbsoluteAmount"
+
+class WebAdminTenor(Enum):
+    tenor_1 = "Spot"
+    tenor_2 = "1W"
+
+class WebAdminCoreSpotPriceStrategy(Enum):
+    core_spot_price_strategy_1 = "VWAPPriceOptimized"
+    core_spot_price_strategy_2 = "VWAPSpeedOptimized"
+    core_spot_price_strategy_3 = "Direct"
 #endregion

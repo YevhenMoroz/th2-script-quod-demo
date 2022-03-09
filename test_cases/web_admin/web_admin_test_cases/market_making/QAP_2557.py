@@ -24,7 +24,7 @@ class QAP_2557(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = "Silver"
-        self.symbol = "EUR/USD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.tenor_filter = "Spot"
         self.position = "1"
         self.bid_margin = "2"

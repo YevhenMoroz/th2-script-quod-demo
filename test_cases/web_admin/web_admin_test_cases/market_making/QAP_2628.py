@@ -27,8 +27,8 @@ class QAP_2628(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
-        self.symbol = "EUR/USD"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.rfq_response_stream_ttl = "12"
 
     def precondition(self):
