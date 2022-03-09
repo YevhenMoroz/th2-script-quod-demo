@@ -20,13 +20,13 @@ class QAP_2167(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = "Bond"
-        self.execution_policy = "DMA"
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
+        self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")
         self.account = "TEST"
-        self.client = "CLIENT1"
-        self.user = "adm01"
-        self.desk = "DESK A"
-        self.institution = "QUOD FINANCIAL"
+        self.client = self.data_set.get_client("client_1")
+        self.user = self.data_set.get_user("user_4")
+        self.desk = self.data_set.get_desk("desk_1")
+        self.institution = self.data_set.get_institution("institution_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -175,6 +175,7 @@ class WebAdminInstrType(Enum):
     instr_type_6 = "Forward"
     instr_type_7 = "Option"
     instr_type_8 = "Certificate"
+    instr_type_9 = "Equity"
 
 
 class WebAdminPreferredVenue(Enum):
