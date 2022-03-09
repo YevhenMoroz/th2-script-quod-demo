@@ -1,12 +1,17 @@
 import logging
 import time
 from datetime import timedelta
+from xml.etree import ElementTree
 
 from custom import basic_custom_actions as bca
-from regression_cycle.web_trading_cycle.run_login import RunLogin
-from regression_cycle.web_trading_cycle.run_order_book import RunOrderBook
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
-from stubs import Stubs
+from regression_cycle.web_trading_cycle.run_login_and_logout import RunLoginAndLogout
+from regression_cycle.web_trading_cycle.run_order_ticket_and_book import RunOrderTicketAndBook
+from regression_cycle.web_trading_cycle.run_other import RunOther
+from regression_cycle.web_trading_cycle.run_positions import RunPositions
+from regression_cycle.web_trading_cycle.run_trades import RunTrades
+from regression_cycle.web_trading_cycle.run_user_profile import RunUserProfile
+from regression_cycle.web_trading_cycle.run_watch_list import RunWatchList
+from stubs import Stubs, ROOT_DIR
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logging.getLogger().setLevel(logging.WARN)
@@ -16,18 +21,24 @@ channels = dict()
 
 def test_run(parent_id=None):
     report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
     try:
         start_time = time.monotonic()
-        # Generation ID and time for test run
-        # report_id = bca.create_event(f'{Stubs.custom_config["web_admin_login"]} tests '
-        #                              + datetime.now().strftime('%Y%m%d-%H:%M:%S'),parent_id)
-        # logger.info(f"Root event was created (id = {report_id.id})")
-
-        # content
-        web_driver_container = WebDriverContainer(browser="Chrome", url="web_trading_url")
-
-        RunLogin(web_driver_container, parent_id).execute()
-        # RunOrderBook(web_driver_container, parent_id).execute()
+        if eval(root.find(".//component[@name='WebTradingLoginAndLogout']").attrib["run"]):
+            RunLoginAndLogout(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingOrderTicketAndBook']").attrib["run"]):
+            RunOrderTicketAndBook(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingOther']").attrib["run"]):
+            RunOther(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingPositions']").attrib["run"]):
+            RunPositions(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingTrades']").attrib["run"]):
+            RunTrades(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingUserProfile']").attrib["run"]):
+            RunUserProfile(report_id).execute()
+        if eval(root.find(".//component[@name='WebTradingWatchList']").attrib["run"]):
+            RunWatchList(report_id).execute()
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from test_cases.web_admin import QAP_758, login_logout_example

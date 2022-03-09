@@ -1,7 +1,7 @@
 from test_framework.win_gui_wrappers.base_client_inbox import BaseClientInbox
 from stubs import Stubs
 from win_gui_modules.wrappers import accept_order_request, reject_order_request, direct_order_request, \
-    direct_moc_request_correct, direct_loc_request_correct, direct_poc_request_correct
+    direct_moc_request_correct, direct_loc_request_correct, direct_poc_request_correct, client_inbox_filter
 
 
 class OMSClientInbox(BaseClientInbox):
@@ -9,8 +9,7 @@ class OMSClientInbox(BaseClientInbox):
     # region Base constructor
     def __init__(self, case_id, session_id):
         super().__init__(case_id, session_id)
-        self.accept_order_request = accept_order_request
-        self.reject_order_request = reject_order_request
+        self.accept_order_request = client_inbox_filter
         self.direct_order_request = direct_order_request
         self.direct_moc_request = direct_moc_request_correct
         self.direct_loc_request = direct_loc_request_correct

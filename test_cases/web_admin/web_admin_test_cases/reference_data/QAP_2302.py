@@ -4,23 +4,24 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_page import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_page import \
     InstrSymbolInfoPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_wizard import \
+from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_wizard import \
     InstrSymbolInfoWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_2302(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
-        self.instr_symbol = 'AUD/DKK'
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_1")
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.md_max_spread = str(random.randint(0, 100))
 
@@ -36,12 +37,11 @@ class QAP_2302(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
         wizard.set_instr_symbol(self.instr_symbol)
-        wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
+        time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
 
     def test_context(self):
-
         try:
             self.precondition()
             page = InstrSymbolInfoPage(self.web_driver_container)

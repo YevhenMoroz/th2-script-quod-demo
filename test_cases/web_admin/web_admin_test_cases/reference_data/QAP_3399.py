@@ -5,27 +5,28 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_description_sub_wizard import \
-    VenuesDescriptionSubWizard
-from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_page import VenuesPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.venues.venues_wizard import VenuesWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.reference_data.venues.venues_values_sub_wizard import \
+    VenuesValuesSubWizard
+from test_framework.web_admin_core.pages.reference_data.venues.venues_page import VenuesPage
+from test_framework.web_admin_core.pages.reference_data.venues.venues_wizard import VenuesWizard
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_3399(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
-        self.type = "DarkPool"
-        self.country = "Albania"
-        self.new_country = "Angola"
+        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.type = self.data_set.get_venue_type("venue_type_1")
+        self.country = self.data_set.get_country("country_1")
+        self.new_country = self.data_set.get_country("country_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,7 +39,7 @@ class QAP_3399(CommonTestCase):
         page = VenuesPage(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
-        description_sub_wizard = VenuesDescriptionSubWizard(self.web_driver_container)
+        description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
         time.sleep(1)
         description_sub_wizard.set_id(self.id)
@@ -58,7 +59,6 @@ class QAP_3399(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-
         try:
             self.precondition()
             page = VenuesPage(self.web_driver_container)

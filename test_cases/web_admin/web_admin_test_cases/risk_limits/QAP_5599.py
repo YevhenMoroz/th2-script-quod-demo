@@ -5,26 +5,27 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_dimensions_sub_wizard import \
     OrderVelocityLimitDimensionsSubWizard
-from test_cases.web_admin.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_page import \
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_page import \
     OrderVelocityLimitPage
-from test_cases.web_admin.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_values_sub_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_values_sub_wizard import \
     OrderVelocityLimitValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_wizard import \
     OrderVelocityLimitWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_5599(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.order_velocity_limit_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.moving_time_window = '12'
         self.max_amount = '100000'
@@ -44,7 +45,6 @@ class QAP_5599(CommonTestCase):
         side_menu.open_order_velocity_page()
         time.sleep(2)
         page = OrderVelocityLimitPage(self.web_driver_container)
-        wizard = OrderVelocityLimitWizard(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
         values_sub_wizard = OrderVelocityLimitValuesSubWizard(self.web_driver_container)
@@ -70,7 +70,6 @@ class QAP_5599(CommonTestCase):
         dimensions_sub_wizard.set_instr_symbol(self.instr_symbol)
 
     def test_context(self):
-
         try:
             self.precondition()
             page = OrderVelocityLimitPage(self.web_driver_container)
@@ -87,7 +86,7 @@ class QAP_5599(CommonTestCase):
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
             wizard.click_on_save_changes()
-            time.sleep(2)
+            time.sleep(3)
             page.set_name(self.order_velocity_limit_name)
             time.sleep(2)
             page.click_on_more_actions()
