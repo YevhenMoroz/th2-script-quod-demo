@@ -36,9 +36,10 @@ class FEEnvironment(BaseEnvironment):
             if EnvironmentType.quod314_luna_fe.value not in FEEnvironment.environment_instances.keys():
                 site_environment = FEEnvironment(
                     environment_type=EnvironmentType.quod314_luna_fe.value,
-                    user=FrontEnd.USER_314.value,
-                    password=FrontEnd.PASSWORD_314.value,
-                    path=FrontEnd.FOLDER_314.value
+                    users=FrontEnd.USERS_314.value,
+                    passwords=FrontEnd.PASSWORDS_314.value,
+                    folder=FrontEnd.FOLDER_314.value,
+                    desks=FrontEnd.DESKS_314.value
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod314_luna_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod314_luna_fe.value]
