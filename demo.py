@@ -30,7 +30,7 @@ channels = dict()
 def test_run():
     # Generation id and time for test run
 
-    report_id = bca.create_event("ostronov " + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event("amedents " + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     logger.info(f"Root event was created (id = {report_id.id})")
     logging.getLogger().setLevel(logging.WARN)
