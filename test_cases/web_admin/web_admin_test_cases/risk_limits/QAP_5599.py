@@ -33,9 +33,9 @@ class QAP_5599(CommonTestCase):
         self.max_order_actions = '100000'
 
         self.side = 'Buy'
-        self.client = 'CLIENT1'
-        self.instr_symbol = 'AUD/HUF'
-        self.new_client = 'CLIENT2'
+        self.client = self.data_set.get_client("client_1")
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_4")
+        self.new_client = self.data_set.get_client("client_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

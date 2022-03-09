@@ -11,6 +11,7 @@ class WebAdminUsers(Enum):
     user_7 = "gbarett"
     user_8 = "QA1"
     user_9 = "adm08"
+    user_10 = "adm07"
 
 class WebAdminPasswords(Enum):
     password_1 = "adm03"
@@ -148,6 +149,7 @@ class WebAdminInstrSymbol(Enum):
     instr_symbol_1 = "AUD/DKK"
     instr_symbol_2 = "EUR/USD"
     instr_symbol_3 = "AUD/CAD"
+    instr_symbol_4 = "AUD/HUF"
 
 
 class WebAdminSymbol(Enum):
@@ -161,6 +163,7 @@ class WebAdminSymbol(Enum):
 class WebAdminCurrency(Enum):
     currency_1 = "AFN"
     currency_2 = "AED"
+    currency_3 = "EUR"
 
 
 class WebAdminInstrType(Enum):
