@@ -1,29 +1,44 @@
 import logging
+from getpass import getuser as get_pc_name
 from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.eq.Care.QAP_1016 import QAP_1016
-from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from win_gui_modules.utils import set_session_id
+from test_cases.fx.fx_taker_rfq.QAP_568 import QAP_568
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event('test ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    pc_name = get_pc_name()  # getting PC name
+    report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
+    # initializing dataset
+    data_set = FxDataSet()  # <--- provide your dataset (OmsDataSet(), FxDataSet(), AlgoDataSet(), RetDataSet())
+    # initializing FE session
     session_id = set_session_id()
-    base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
-    data_set = OmsDataSet()
+    # region creation FE environment and initialize fe_ values
+    configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
+
+    # endregion
+    Stubs.frontend_is_open = True
 
     try:
-        base_main_window.open_fe(report_id=report_id)
-        QAP_1016(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id)
+
+        QAP_568(report_id, session_id, configuration.data_set).execute()
+
+
+
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
