@@ -7,9 +7,11 @@ class EnvironmentType(Enum):
     quod310_columbia_standard = "quod310_columbia_standard"
     quod314_luna_standard = "quod314_luna_standard"
     quod314_luna_web_admin = "quod314_luna_web_admin"
+    quod314_luna_fe = "quod314_luna_fe"
     quod317_ganymede_standard_test = "quod317_ganymede_standard_test"
     quod317_ganymede_standard = "quod317_ganymede_standard"
     quod317_fe = "quod317_fe"
+    quod316_fe = "quod316_fe"
     quod317_java_api = "quod317_java_api"
     quod317_read_log = 'quod317_read_log'
 

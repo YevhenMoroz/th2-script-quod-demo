@@ -46,6 +46,7 @@ class BaseBasketOrderBook(BaseWindow):
     def set_filter(self, filter_dict: dict):
         self.extract_template_details(self.base_request, filter_dict)
         self.clear_details([self.extract_template_details])
+
     # endregion
 
     # region Get
@@ -238,7 +239,7 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.remove_from_basket_call, remove_from_basket_details.build())
 
     def wave_basket(self, qty_percentage=None, percentage_profile=None, route=None, removed_orders: list = None,
-                    basket_filter: dict = None):
+                    sub_lvl_rows: list = None, basket_filter: dict = None):
         if qty_percentage is not None:
             self.wave_basket_details.set_qty_percentage(qty_percentage)
         if percentage_profile is not None:
@@ -253,6 +254,8 @@ class BaseBasketOrderBook(BaseWindow):
                 row_details.set_filtration_value(order)
                 row_details.set_remove_row(True)
                 self.wave_basket_details.set_row_details(row_details.build())
+        if sub_lvl_rows is not None:
+            self.wave_basket_details.set_sub_lvl_rows(sub_lvl_rows)
         call(self.wave_basket_call, self.wave_basket_details.build())
         self.clear_details([self.wave_basket_details])
     # endregion
