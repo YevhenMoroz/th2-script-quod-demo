@@ -211,11 +211,15 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             GrossTradeAmt='*',
             NoParty='*',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            SecAltIDGrp='*',
             QtyType=0,
-            SecondaryClOrdID='*',
-            Instrument=new_order_single.get_parameter('Instrument'),
-            SecondaryExecID='*'
+            Instrument='*',
+            SecondaryExecID='*',
+            ReplyReceivedTime='*',
+            NoStrategyParameters='*',
+            LastExecutionPolicy='*',
+            TradeReportingIndicator='*',
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
+            ExDestination=new_order_single.get_parameter('ExDestination')
         )
         super().change_parameters(temp)
         return self
