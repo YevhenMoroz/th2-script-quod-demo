@@ -20,28 +20,26 @@ class QAP_2772(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_auto_hedger_page()
+        main_page = AutoHedgerPage(self.web_driver_container)
+        main_page.click_on_new()
+        time.sleep(2)
 
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_auto_hedger_page()
-    main_page = AutoHedgerPage(self.web_driver_container)
-    main_page.click_on_new()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        wizard = AutoHedgerWizard(self.web_driver_container)
-        expected_pdf_content = ["External Clients", "Internal Clients", "Instruments"]
-        self.verify("Pdf contains correctly value", True,
-                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            wizard = AutoHedgerWizard(self.web_driver_container)
+            expected_pdf_content = ["External Clients", "Internal Clients", "Instruments"]
+            self.verify("Pdf contains correctly value", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

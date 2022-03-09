@@ -18,7 +18,7 @@ class QAP_1640(CommonTestCase):
         self.disabled_massage = "User adm_desk Disabled"
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = "adm_desk"
+        self.user_id = self.data_set.get_user("user_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

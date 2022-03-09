@@ -22,9 +22,9 @@ class QAP_2474(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMEX"
-        self.account_id_source = "BIC"
-        self.default_route = "Direct"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
+        self.default_route = self.data_set.get_default_route("default_route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -23,10 +23,10 @@ class QAP_5578(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.institution_name = "QUOD FINANCIAL"
-        self.zone = "WEST-ZONE"
-        self.location = "WEST-LOCATION-B"
-        self.desk = "DESK-C"
+        self.institution_name = self.data_set.get_institution("institution_1")
+        self.zone = self.data_set.get_zone("zone_1")
+        self.location = self.data_set.get_location("location_2")
+        self.desk = self.data_set.get_desk("desk_2")
 
 
 def precondition(self):

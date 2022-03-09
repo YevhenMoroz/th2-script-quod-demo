@@ -106,3 +106,16 @@ class ListingsPage(CommonPage):
 
     def is_toggle_button_enabled_disabled(self):
         return self.is_toggle_button_enabled(ListingsConstants.ENABLE_DISABLE_BUTTON_XPATH)
+
+    def search_listing_and_click_edit_btn(self, value="a"):
+        try:
+            self.set_listing_in_global_filter(value)
+            self.click_on_load_button()
+            time.sleep(2)
+            self.click_on_more_actions()
+            time.sleep(1)
+            self.click_on_edit()
+        except:
+            self.click_on_more_actions()
+            time.sleep(1)
+            self.click_on_edit()

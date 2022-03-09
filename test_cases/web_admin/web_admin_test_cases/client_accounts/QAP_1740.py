@@ -24,9 +24,9 @@ class QAP_1740(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.client_id_source = "BIC"
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = "Direct"
+        self.route = self.data_set.get_route("route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,7 +50,7 @@ class QAP_1740(CommonTestCase):
             accounts_main_page.set_id(self.id)
             time.sleep(1)
             accounts_main_page.click_more_actions_button()
-        except:
+        except Exception:
             accounts_main_page.load_account_from_global_filter(self.id)
             time.sleep(1)
             accounts_main_page.click_more_actions_button()

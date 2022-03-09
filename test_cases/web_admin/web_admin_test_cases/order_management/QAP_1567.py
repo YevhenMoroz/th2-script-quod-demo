@@ -27,13 +27,13 @@ class QAP_1567(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
-        self.strategy_type = "Quod LitDark"
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
         self.first_parameter = "Allowed Aggressive Venues"
-        self.first_venue = "EURONEXT AMSTERDAM"
+        self.first_venue = self.data_set.get_venue_by_name("venue_9")
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_user = "QA2"
-        self.new_strategy_type = "External CUSTOM1"
+        self.new_strategy_type = self.data_set.get_strategy_type("strategy_type_4")
         self.new_parameter = "Custom"
         self.new_value = "12"
 

@@ -24,12 +24,12 @@ class QAP_3331(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.user = "QA1"
-        self.strategy_type = "Quod DarkPool"
+        self.user = self.data_set.get_user("user_8")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_5")
         self.dark_parameter_1 = "LIS Phase"
         self.dark_parameter_2 = "LIS Resident Time"
         self.dark_parameter_3 = "LIS Pools"
-        self.venue = "ADX"
+        self.venue = self.data_set.get_venue_by_name("venue_6")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

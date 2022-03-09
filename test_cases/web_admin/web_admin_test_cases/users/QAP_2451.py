@@ -15,20 +15,17 @@ class QAP_2451(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.users = ["adm02", "adm03"]
-        self.passwords = ["adm02", "adm03"]
-        self.disabled_massage = f"User {self.users[0]} Unlocked"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm02")
-        login_page.set_password("adm02")
+        login_page.set_login(self.data_set.get_user("user_5"))
+        login_page.set_password(self.data_set.get_password("password_2"))
         for i in range(52):
             login_page.click_login_button()
             time.sleep(1)
         login_page.check_is_login_successful()
-        login_page.set_login("adm03")
-        login_page.set_password("adm03")
+        login_page.set_login(self.data_set.get_user("user_1"))
+        login_page.set_password(self.data_set.get_password("password_1"))
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
@@ -40,7 +37,7 @@ class QAP_2451(CommonTestCase):
         try:
             self.precondition()
             users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id("adm02")
+            users_page.set_user_id(self.data_set.get_user("user_5"))
             time.sleep(2)
             users_page.click_on_lock_unlock_button()
             time.sleep(2)

@@ -17,10 +17,10 @@ class QAP_919(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm02"
-        self.password = "Qwerty123!"
-        self.client = "CLIENT1"
-        self.type = "Holder"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.client = self.data_set.get_client("client_1")
+        self.type = self.data_set.get_client_type("client_type")
         self.empty_data_error_message = "Incorrect or missing values"
         self.duplicate_error_message = "Such a record already exists"
 

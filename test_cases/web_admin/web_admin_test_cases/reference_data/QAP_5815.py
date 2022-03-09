@@ -24,45 +24,43 @@ class QAP_5815(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.venue = "ASE"
+        self.venue = self.data_set.get_venue_by_name("venue_2")
         self.exchange_code_mic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_venues_page()
-    time.sleep(2)
-    page = VenuesPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-    description_sub_wizard.click_on_mic_manage_button()
-    exchange_codes_sub_wizard = VenuesExchangeCodesSubWizard(self.web_driver_container)
-    exchange_codes_sub_wizard.click_on_plus_button()
-    exchange_codes_sub_wizard.set_venue(self.venue)
-    exchange_codes_sub_wizard.set_exchange_code_mic(self.exchange_code_mic)
-    time.sleep(1)
-    exchange_codes_sub_wizard.click_on_checkmark()
-    time.sleep(2)
-    wizard = VenuesWizard(self.web_driver_container)
-    wizard.click_on_go_back_button()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_venues_page()
+        time.sleep(2)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-        description_sub_wizard.set_mic(self.exchange_code_mic)
+        description_sub_wizard.click_on_mic_manage_button()
+        exchange_codes_sub_wizard = VenuesExchangeCodesSubWizard(self.web_driver_container)
+        exchange_codes_sub_wizard.click_on_plus_button()
+        exchange_codes_sub_wizard.set_venue(self.venue)
+        exchange_codes_sub_wizard.set_exchange_code_mic(self.exchange_code_mic)
         time.sleep(1)
-        self.verify("Is MIC created correctly ", self.exchange_code_mic, description_sub_wizard.get_mic())
+        exchange_codes_sub_wizard.click_on_checkmark()
+        time.sleep(2)
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_go_back_button()
+        time.sleep(2)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+            description_sub_wizard.set_mic(self.exchange_code_mic)
+            time.sleep(1)
+            self.verify("Is MIC created correctly ", self.exchange_code_mic, description_sub_wizard.get_mic())
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

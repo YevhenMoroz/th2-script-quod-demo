@@ -28,12 +28,12 @@ class QAP_2224(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.disclose_exec = 'Manual'
-        self.venue = "AMEX"
-        self.new_venue = "ADX"
+        self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
+        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.new_venue = self.data_set.get_venue_by_name("venue_6")
         self.venue_client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_client_account_group_name = "48934"
-        self.desk = "Quod Desk"
+        self.desk = self.data_set.get_desk("desk_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

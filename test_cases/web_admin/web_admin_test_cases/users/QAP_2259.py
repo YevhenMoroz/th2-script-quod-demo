@@ -19,10 +19,11 @@ class QAP_2259(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
+        #TODO: Check user_id in sample data
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.user_id = "buyside03"
-        self.venue = "AMEX"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
         self.venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):

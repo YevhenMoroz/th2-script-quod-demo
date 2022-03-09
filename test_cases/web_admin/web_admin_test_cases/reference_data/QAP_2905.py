@@ -20,11 +20,11 @@ class QAP_2905(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = "AMEX"
-        self.feed_source = "Native Market"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.feed_source = self.data_set.get_feed_source("feed_source_5")
 
 
 def precondition(self):

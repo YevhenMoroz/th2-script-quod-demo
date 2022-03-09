@@ -15,7 +15,7 @@ class QAP_2509(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
-        self.password = "Qwerty123!"
+        self.password = self.data_set.get_user("user_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -29,11 +29,13 @@ class QAP_2509(CommonTestCase):
             try:
                 main_page.click_on_send_feedback_button()
                 time.sleep(2)
-                self.verify("[SEND] button is disable", False, main_page.is_send_button_at_feedback_area_disabled_enabled())
+                self.verify("[SEND] button is disable", False,
+                            main_page.is_send_button_at_feedback_area_disabled_enabled())
 
                 main_page.set_text_to_feedback_text_area("test")
                 time.sleep(1)
-                self.verify("[SEND]  button is enable after enter some text", True, main_page.is_send_button_at_feedback_area_disabled_enabled())
+                self.verify("[SEND]  button is enable after enter some text", True,
+                            main_page.is_send_button_at_feedback_area_disabled_enabled())
             except Exception as e:
                 self.verify("Send button does not work", True, e.__class__.__name__)
 

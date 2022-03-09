@@ -19,9 +19,9 @@ class QAP_4346(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.exec_policy = "ExternalCare"
+        self.exec_policy = self.data_set.get_exec_policy("exec_policy_3")
         self.percentage = "100"
-        self.route = "Direct"
+        self.route = self.data_set.get_route("route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

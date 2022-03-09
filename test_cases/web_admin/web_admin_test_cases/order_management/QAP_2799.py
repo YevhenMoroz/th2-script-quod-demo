@@ -30,7 +30,7 @@ class QAP_2799(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.conditional_logic = " NOT IN "
-        self.exec_policy = 'DMA'
+        self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
         self.client = " QUODAH "
         self.percentage = "100"
 

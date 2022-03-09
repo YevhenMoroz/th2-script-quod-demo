@@ -20,19 +20,21 @@ class QAP_2197(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.account = f"QAP-2197_{str(uuid1())}"
-        self.client = "CLIENT1"
-        self.client_id_source = "Other"
 
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.account = f"QAP-2197_{str(uuid1())}"
+        self.client = self.data_set.get_client("client_1")
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_2")
         self.venue_account = "TestVenueAccount"
-        self.venue = "AMEX"
-        self.account_id_source = "BIC"
-        self.default_route = "Direct"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
+        self.default_route = self.data_set.get_default_route("default_route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm03")
-        login_page.set_password("adm03")
+        login_page.set_login(self.login)
+        login_page.set_password(self.password)
         login_page.click_login_button()
         login_page.check_is_login_successful()
 

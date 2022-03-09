@@ -23,9 +23,9 @@ class QAP_952(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.expected_error = "Incorrect or missing values"
         self.strategy_type = "External AMBUSH"
-        self.user = "adm01"
-        self.client = "BrokerACA"
-        self.default_tif = "Day"
+        self.user = self.data_set.get_user("user_4")
+        self.client = self.data_set.get_client("client_4")
+        self.default_tif = self.data_set.get_default_tif("default_tif_1")
         self.aggressor_indicator = "True"
 
     def precondition(self):

@@ -31,70 +31,68 @@ class QAP_2628(CommonTestCase):
         self.symbol = "EUR/USD"
         self.rfq_response_stream_ttl = "12"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_client_tier_page()
-    client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-    client_tiers_main_page.click_on_new()
-    time.sleep(2)
-    client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
-    client_tiers_values_sub_wizard.set_name(self.name)
-    time.sleep(1)
-    client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
-    client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-    client_tiers_wizard.click_on_save_changes()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-        try:
-            client_tiers_main_page.set_name(self.name)
-            self.verify("Is client tier created correctly? ", True, True)
-        except Exception as e:
-            self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
+        client_tiers_main_page.click_on_new()
         time.sleep(2)
-        client_tiers_main_page.click_on_more_actions()
-        time.sleep(3)
-        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-        client_tier_instrument_main_page.click_on_new()
-        time.sleep(2)
-        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-        client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tiers_values_sub_wizard.set_name(self.name)
         time.sleep(1)
-        client_tier_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
-        time.sleep(1)
-        expected_pdf_content = [self.symbol,
-                                self.rfq_response_stream_ttl]
-
-        self.verify("PDF content before saving", True,
-                    client_tiers_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-
+        client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
-        client_tiers_main_page.set_name(self.name)
-        time.sleep(2)
-        client_tiers_main_page.click_on_more_actions()
-        time.sleep(3)
-        client_tier_instrument_main_page.set_symbol(self.symbol)
-        time.sleep(2)
-        client_tier_instrument_main_page.click_on_more_actions()
-        time.sleep(2)
-        self.verify("PDF content after saving", True,
-                    client_tier_instrument_main_page.click_download_pdf_entity_button_and_check_pdf(
-                        expected_pdf_content))
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+            try:
+                client_tiers_main_page.set_name(self.name)
+                self.verify("Is client tier created correctly? ", True, True)
+            except Exception as e:
+                self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
+            time.sleep(2)
+            client_tiers_main_page.click_on_more_actions()
+            time.sleep(3)
+            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+            client_tier_instrument_main_page.click_on_new()
+            time.sleep(2)
+            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+            time.sleep(1)
+            client_tier_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
+            time.sleep(1)
+            expected_pdf_content = [self.symbol,
+                                    self.rfq_response_stream_ttl]
+
+            self.verify("PDF content before saving", True,
+                        client_tiers_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+
+            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+            client_tiers_wizard.click_on_save_changes()
+            time.sleep(2)
+            client_tiers_main_page.set_name(self.name)
+            time.sleep(2)
+            client_tiers_main_page.click_on_more_actions()
+            time.sleep(3)
+            client_tier_instrument_main_page.set_symbol(self.symbol)
+            time.sleep(2)
+            client_tier_instrument_main_page.click_on_more_actions()
+            time.sleep(2)
+            self.verify("PDF content after saving", True,
+                        client_tier_instrument_main_page.click_download_pdf_entity_button_and_check_pdf(
+                            expected_pdf_content))
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

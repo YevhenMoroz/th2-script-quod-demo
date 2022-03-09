@@ -21,10 +21,13 @@ class QAP_2182(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = "DB RFQ"
+        self.route = self.data_set.get_route("route_2")
         self.client = "test"
         self.clear_client = "Not found"
-        self.clearing_type = ["Institutional", "Retail", "Firm"]
+        self.clearing_type = [
+            self.data_set.get_clearing_account_type("clearing_account_type_1"),
+            self.data_set.get_clearing_account_type("clearing_account_type_2"),
+            self.data_set.get_clearing_account_type("clearing_account_type_3")]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

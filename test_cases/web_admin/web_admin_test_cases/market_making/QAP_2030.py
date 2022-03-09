@@ -26,49 +26,47 @@ class QAP_2030(CommonTestCase):
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_client_tier_page()
-    client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-    client_tiers_main_page.click_on_new()
-    time.sleep(2)
-    client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
-    client_tiers_values_sub_wizard.set_name(self.name)
-    time.sleep(1)
-    client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
-    client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-    client_tiers_wizard.click_on_save_changes()
-    time.sleep(2)
-    client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-    client_tiers_main_page.set_name(self.name)
-    time.sleep(2)
-    client_tiers_main_page.click_on_more_actions()
-    time.sleep(2)
-    client_tiers_main_page.click_on_edit()
-    time.sleep(2)
-    client_tiers_values_sub_wizard.set_name(self.new_name)
-    time.sleep(2)
-    client_tiers_wizard.click_on_save_changes()
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-        client_tiers_main_page.set_name(self.new_name)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
+        side_menu.open_client_tier_page()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.click_on_new()
+        time.sleep(2)
+        client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tiers_values_sub_wizard.set_name(self.name)
+        time.sleep(1)
+        client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tiers_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tiers_main_page.click_on_edit()
+        time.sleep(2)
+        client_tiers_values_sub_wizard.set_name(self.new_name)
+        time.sleep(2)
+        client_tiers_wizard.click_on_save_changes()
+
+    def test_context(self):
         try:
-            client_tiers_main_page.click_on_more_actions()
-            self.verify("Tier renamed correctly", True, True)
-        except Exception as e:
-            self.verify("Tier NOT renamed, ERROR !!!", True, e.__class__.__name__)
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+            self.precondition()
+            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+            client_tiers_main_page.set_name(self.new_name)
+            time.sleep(2)
+            try:
+                client_tiers_main_page.click_on_more_actions()
+                self.verify("Tier renamed correctly", True, True)
+            except Exception as e:
+                self.verify("Tier NOT renamed, ERROR !!!", True, e.__class__.__name__)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)
