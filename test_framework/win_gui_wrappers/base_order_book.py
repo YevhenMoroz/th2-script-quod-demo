@@ -279,7 +279,7 @@ class BaseOrderBook(BaseWindow):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
-            self.modify_order_details.set_selected_row_count()
+            self.modify_order_details.set_selected_row_count(row_count)
         call(self.un_complete_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
