@@ -98,6 +98,8 @@ class BaseDataSet:
     comm_algorithm = None
     comm_type = None
     core_spot_price_strategy = None
+    party_role = None
+
     # endregion
 
     def get_instruments(self):
@@ -638,5 +640,10 @@ class BaseDataSet:
         if hasattr(self.core_spot_price_strategy, name):
             return getattr(self.core_spot_price_strategy, name).value
         return ValueError(f"{self.core_spot_price_strategy,} not found!")
+
+    def get_party_role(self, name: str):
+        if hasattr(self.party_role, name):
+            return getattr(self.party_role, name).value
+        return ValueError(f"{self.party_role,} not found!")
 
     # endregion

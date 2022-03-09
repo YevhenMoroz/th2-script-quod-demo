@@ -13,6 +13,7 @@ class WebAdminUsers(Enum):
     user_9 = "adm08"
     user_10 = "adm07"
 
+
 class WebAdminPasswords(Enum):
     password_1 = "adm03"
     password_2 = "adm02"
@@ -78,7 +79,6 @@ class WebAdminVenues(Enum):
     venue_9 = "EURONEXT AMSTERDAM"
     venue_10 = "BINANCE"
     venue_11 = "Dubai Financial Exchange"
-
 
 
 class WebAdminEmail(Enum):
@@ -158,6 +158,7 @@ class WebAdminSymbol(Enum):
     symbol_3 = "AUD/TRY"
     symbol_4 = "AUD/BRL"
     symbol_5 = "AUD/USD"
+    symbol_6 = "EUR/PHP"
 
 
 class WebAdminCurrency(Enum):
@@ -296,57 +297,74 @@ class WebAdminExecPolicy(Enum):
     exec_policy_4 = "Algorithmic"
     exec_policy_5 = "Sor"
     exec_policy_6 = "ExternalAlgo"
+
+
 # endregion
 
-#region WaMiddleOffice
+# region WaMiddleOffice
 
 class WebAdminCommissionAmountType(Enum):
     commission_amount_type_1 = "Broker"
 
 
-
 class WebAdminCommissionProfile(Enum):
     commission_profile_1 = "UK stamp"
+
 
 class WebAdminSettlLocation(Enum):
     settl_location_1 = "CASH"
     settl_location_2 = "CAMBIUM"
 
+
 class WebAdminCountryCode(Enum):
     country_code_1 = "ABW"
     country_code_2 = "AIA"
+
 
 class WebAdminClientGroup(Enum):
     client_group_1 = "DEMO"
     client_group_2 = "Kepler"
     client_group_3 = "test"
 
+
 class WebAdminInstrument(Enum):
     instrument_1 = "EUR"
     instrument_2 = "INSURANCE"
+
 
 class WebAdminInstrumentGroup(Enum):
     instrument_group_1 = "TC Danish"
     instrument_group_2 = "TC Instr Grp"
 
+
 class WebAdminClientList(Enum):
     client_list_1 = "WEILRG"
     client_list_2 = "test"
+
 
 class WebAdminCommAlgorithm(Enum):
     comm_algorithm_1 = "Flat"
     comm_algorithm_2 = "SlidingScale"
 
+
 class WebAdminCommType(Enum):
     comm_type_1 = "Percentage"
     comm_type_2 = "AbsoluteAmount"
+
 
 class WebAdminTenor(Enum):
     tenor_1 = "Spot"
     tenor_2 = "1W"
 
+
 class WebAdminCoreSpotPriceStrategy(Enum):
     core_spot_price_strategy_1 = "VWAPPriceOptimized"
     core_spot_price_strategy_2 = "VWAPSpeedOptimized"
     core_spot_price_strategy_3 = "Direct"
-#endregion
+
+
+class WebAdminPartyRole(Enum):
+    party_role_1 = "Exchange"
+    party_role_2 = "GiveupClearingFirm"
+
+# endregion

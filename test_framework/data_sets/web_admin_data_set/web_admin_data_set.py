@@ -12,7 +12,7 @@ from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import Web
     WebAdminTradConfirmPreference, WebAdminNetGrossIndType, WebAdminRecipientTypes, WebAdminDefaultTif, \
     WebAdminStrategyType, WebAdminExecPolicy, WebAdminCommissionAmountType, WebAdminCommissionProfile, \
     WebAdminSettlLocation, WebAdminCountryCode, WebAdminClientGroup, WebAdminInstrument, WebAdminInstrumentGroup, \
-    WebAdminCommAlgorithm, WebAdminCommType, WebAdminTenor, WebAdminCoreSpotPriceStrategy
+    WebAdminCommAlgorithm, WebAdminCommType, WebAdminTenor, WebAdminCoreSpotPriceStrategy, WebAdminPartyRole
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -80,3 +80,4 @@ class WebAdminDataSet(BaseDataSet):
     comm_type = WebAdminCommType
     tenors = WebAdminTenor
     core_spot_price_strategy = WebAdminCoreSpotPriceStrategy
+    party_role = WebAdminPartyRole
