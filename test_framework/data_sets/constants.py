@@ -39,10 +39,10 @@ class FrontEnd(Enum):
     # target_server values
     TARGET_SERVER_WIN = None  # by default we can set up here value of Jenkins machine
     # region quod314
-    USERS_314 = []
-    PASSWORDS_314 = []
+    USERS_314 = ["ostronov"]
+    PASSWORDS_314 = ["ostronov"]
     FOLDER_314 = ""
-    DESKS_314 = []
+    DESKS_314 = ["Aspect"]
     MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
     LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
     # common values
