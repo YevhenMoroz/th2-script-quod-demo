@@ -4,10 +4,11 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 
 from stubs import Stubs
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_4234, QAP_3851, QAP_3850, QAP_3807, QAP_3747
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3850, QAP_3807, QAP_3747
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
 from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
 from test_cases.fx.fx_taker_esp import QAP_5635, QAP_5537, QAP_5564, QAP_5589, QAP_5591, QAP_5598, QAP_5600
-from test_cases.fx.qs_fx_routine import SendMD, rfq, DepositAndLoan, esp, rfq_swap_1w_2w
+from test_cases.fx.qs_fx_routine import SendMD, DepositAndLoan, esp, rfq_swap_1w_2w
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -25,7 +26,7 @@ def test_run():
     report_id = bca.create_event('KKL    ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
 
     logger.info(f"Root event was created (id = {report_id.id})")
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 309"
 
     data_set = FxDataSet()
 
@@ -35,11 +36,15 @@ def test_run():
         #     prepare_fe_2(report_id, session_id)
         # else:
         #     get_opened_fe(report_id, session_id)
-        #
+
         # QAP_6571(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_2290.execute(report_id, session_id)
 
-        # QAP_3747.execute(report_id)
+
+        QAP_4234(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+
+
+
         # wrapper_test.execute(report_id,session_id)
 
 
@@ -96,7 +101,7 @@ def test_run():
 
         #____________________________RULES________________________________________________
         rm = RuleManager()
-        rm.add_fx_md_to('fix-fh-314-luna')
+        # rm.add_fx_md_to('fix-fh-314-luna')
         # rm.add_fx_md_to('fix-fh-q-314-luna')
         # rm.add_fx_md_to('fix-fh-309-kratos')
         # Rule to update Quod with MD which we store in map  QuodMDUpdateFXRule
@@ -112,15 +117,15 @@ def test_run():
         # rm.add_TRADE_ESP('fix-bs-esp-314-luna-standard')
         # rm.add_TRADE_ESP('fix-bs-esp-309-kratos-stand')
 
-
+        # rm.remove_rule_by_id(7)
+        # rm.add_fx_md_to("fix-fh-314-luna")
         # rm.print_active_rules()
-        rm.remove_rule_by_id(15)
 
 
 
         # rm.print_active_rules_sim_test()
         # rm.remove_rule_by_id_test_sim(2)
-        rm.print_active_rules()
+        # rm.print_active_rules()
 
 
 
