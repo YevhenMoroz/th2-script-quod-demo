@@ -46,6 +46,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx='*',
             ExecID='*',
             LastPx='*',
+            LastMkt='XQFX',
             OrderID='*',
             SettlDate='*',
             TradeDate=datetime.today().strftime('%Y%m%d'),
