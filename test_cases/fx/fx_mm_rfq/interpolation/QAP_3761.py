@@ -4,14 +4,13 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers import DataSet
+from test_framework.data_sets.constants import Status
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
@@ -29,8 +28,7 @@ class QAP_3761(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        gateway_side_sell = DataSet.GatewaySide.Sell
-        status = DataSet.Status.Fill
+        status = Status.Fill
         account = self.data_set.get_client_by_name("client_mm_2")
         currency = self.data_set.get_currency_by_name("currency_gbp")
         symbol = self.data_set.get_symbol_by_name("symbol_2")
@@ -54,7 +52,6 @@ class QAP_3761(TestCase):
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_prev_quoted(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    gateway_side_sell,
                                                                                                     status)
 
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
