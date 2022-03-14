@@ -1,12 +1,8 @@
 import logging
-import os
-import time
 from pathlib import Path
 from rule_management import RuleManager
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.constants import Connectivity
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.core.test_case import TestCase
@@ -25,9 +21,8 @@ class QAP_478(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.qty_per = "100"
@@ -54,7 +49,7 @@ class QAP_478(TestCase):
         # region DirectMoc order
         try:
             self.nos_rule = self.rule_manager.add_NewOrdSingle_Market_FIXStandard(
-                self.bs_connectivity,
+                self.fix_env.sell_side,
                 self.venue_client_names, self.venue,
                 False, int(self.qty), 0)
             self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).direct_moc_order(self.qty_per, self.route, self.qty_type)
