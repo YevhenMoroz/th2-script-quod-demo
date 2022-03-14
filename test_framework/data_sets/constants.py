@@ -1,6 +1,14 @@
 from enum import Enum
+from xml.etree import ElementTree
 
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from stubs import ROOT_DIR
+
+
+def find_target_server():
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
+    target_server = root.find(f".//target_server_win").text
+    return target_server
 
 
 class Connectivity(Enum):
@@ -27,6 +35,8 @@ class Connectivity(Enum):
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
+
+
 class FrontEnd(Enum):
     # 317 site
     USERS_317 = []
@@ -38,7 +48,7 @@ class FrontEnd(Enum):
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WIN = ComponentConfiguration.find_target_server()
+    TARGET_SERVER_WIN = find_target_server()
 
 
 class DirectionEnum(Enum):
