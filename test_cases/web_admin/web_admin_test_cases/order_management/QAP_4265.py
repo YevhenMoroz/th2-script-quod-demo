@@ -20,7 +20,7 @@ class QAP_4265(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = "Default"
-        self.user = "QA1"
+        self.user = self.data_set.get_user("user_8")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

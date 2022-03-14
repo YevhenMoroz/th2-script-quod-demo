@@ -18,7 +18,7 @@ class QAP_4382(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.default_execution_strategy = "Default"
+        self.default_execution_strategy = self.data_set.get_default_execution_strategy("default_execution_strategy_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

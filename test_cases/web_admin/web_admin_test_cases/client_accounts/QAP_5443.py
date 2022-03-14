@@ -21,7 +21,10 @@ class QAP_5443(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.clients = ["CLIENT1", "CLIENT2", "CLIENT3"]
+        self.clients = [
+            self.data_set.get_client("client_1"),
+            self.data_set.get_client("client_2"),
+            self.data_set.get_client("client_3")]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

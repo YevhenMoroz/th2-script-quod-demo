@@ -115,6 +115,7 @@ class ListingsConstants:
     MARKET_IDENTIFIERS_TAB_SICOVAM_ID_XPATH = '//*[@formcontrolname="sicovamSecurityAltID"]'
     MARKET_IDENTIFIERS_TAB_CLEARING_ID_XPATH = '//*[@formcontrolname="clearingSecurityAltID"]'
     MARKET_IDENTIFIERS_TAB_GL_TRADE_ID_XPATH = '//*[@formcontrolname="GLTradeSecurityAltID"]'
+    MARKET_IDENTIFIERS_TAB_PRODUCT_COMPLEX = '//*[text()="Product Complex"]/preceding-sibling::input'
 
     # Format tab
     FORMAT_TAB_PRICE_FORMAT_XPATH = '//*[@formcontrolname="priceFormat"]'

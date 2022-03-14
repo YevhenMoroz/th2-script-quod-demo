@@ -26,8 +26,8 @@ class QAP_5601(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.disclose_exec = 'Manual'
-        self.desk = "Quod Desk"
+        self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
+        self.desk = self.data_set.get_desk("desk_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

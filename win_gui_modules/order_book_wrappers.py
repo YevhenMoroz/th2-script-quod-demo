@@ -251,6 +251,7 @@ class OrdersDetails:
         self.base_params = None
         self.extraction_id = None
         self.orders_details = order_book_pb2.OrdersDetailsInfo()
+        self.clear_filter = False
 
     @staticmethod
     def create(order_info_list: list = None, info=None):
@@ -264,6 +265,9 @@ class OrdersDetails:
             order_details.add_single_order_info(info)
 
         return order_details
+
+    def clear_filter(self):
+        self.clear_filter = True
 
     def set_extraction_id(self, extraction_id: str):
         self.extraction_id = extraction_id
@@ -294,6 +298,7 @@ class OrdersDetails:
         request.base.CopyFrom(self.base_params)
         request.extractionId = self.extraction_id
         request.orderDetails.CopyFrom(self.orders_details)
+        request.clearOrderBookFilter = self.clear_filter
         return request
 
     def details(self):
@@ -588,9 +593,9 @@ class ExecutionsDetails:
 
 
 class MenuItemDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.MenuItemDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.MenuItemDetails(base=base_request)
         else:
             self._request = order_book_pb2.MenuItemDetails()
 

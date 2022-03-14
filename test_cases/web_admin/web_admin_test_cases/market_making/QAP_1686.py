@@ -24,47 +24,45 @@ class QAP_1686(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.symbol = "EUR/USD"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_client_tier_page()
-    client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-    client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_new()
-    time.sleep(2)
-    client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-    client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-    client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-    client_tiers_wizard.click_on_save_changes()
-    time.sleep(2)
-    client_tiers_main_page.click_on_more_actions()
-    time.sleep(2)
-    client_tier_instrument_main_page.set_symbol(self.symbol)
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_enable_disable()
-    client_tiers_wizard.click_on_ok_button()
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_new()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_client_tier_page()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_new()
+        time.sleep(2)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
         client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
-        self.verify("Same client tier created", True, True)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.set_symbol(self.symbol)
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_enable_disable()
+        client_tiers_wizard.click_on_ok_button()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_new()
+        time.sleep(2)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+            client_tiers_wizard.click_on_save_changes()
+            time.sleep(2)
+            self.verify("Same client tier created", True, True)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

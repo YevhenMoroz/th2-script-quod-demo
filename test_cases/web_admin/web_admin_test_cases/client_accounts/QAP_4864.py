@@ -28,13 +28,13 @@ class QAP_4864(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.disclose_exec = 'Manual'
-        self.email_address = "email"
-        self.trade_confirm_generation = "Automatic"
-        self.trade_confirm_preference = "Excel"
-        self.net_gross_ind_type = "Net"
-        self.recipient_types = "CC"
-        self.desk = "Quod Desk"
+        self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
+        self.email_address = self.data_set.get_email("email")
+        self.trade_confirm_generation = self.data_set.get_trade_confirm_generation("trade_confirm_generation_1")
+        self.trade_confirm_preference = self.data_set.get_trade_confirm_preference("trade_confirm_preference_1")
+        self.net_gross_ind_type = self.data_set.get_net_gross_ind_type("net_gross_ind_type_1")
+        self.recipient_types = self.data_set.get_recipient_type("recipient_type_1")
+        self.desk = self.data_set.get_desk("desk_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

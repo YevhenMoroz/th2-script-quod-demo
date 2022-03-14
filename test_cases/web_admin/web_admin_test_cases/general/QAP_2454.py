@@ -15,7 +15,7 @@ class QAP_2454(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
-        self.password = "Qwerty123!"
+        self.password = self.data_set.get_password("password_1")
         self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates"
 
     def precondition(self):

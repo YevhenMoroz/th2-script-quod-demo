@@ -22,8 +22,8 @@ class QAP_5583(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.location = "EAST-LOCATION-B"
-        self.user_name = "adm_loca"
+        self.location = self.data_set.get_location("location_1")
+        self.user_name = self.data_set.get_user("user_2")
 
 
 def precondition(self):

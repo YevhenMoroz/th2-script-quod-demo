@@ -21,50 +21,48 @@ class QAP_2302(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.instr_symbol = 'AUD/DKK'
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_1")
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.md_max_spread = str(random.randint(0, 100))
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_instr_symbol_info_page()
-    time.sleep(2)
-    page = InstrSymbolInfoPage(self.web_driver_container)
-    wizard = InstrSymbolInfoWizard(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    wizard.set_instr_symbol(self.instr_symbol)
-    time.sleep(1)
-    wizard.click_on_save_changes()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_instr_symbol_info_page()
+        time.sleep(2)
         page = InstrSymbolInfoPage(self.web_driver_container)
         wizard = InstrSymbolInfoWizard(self.web_driver_container)
-        page.set_instr_symbol(self.instr_symbol)
-        time.sleep(3)
-        page.click_on_more_actions()
+        page.click_on_new()
         time.sleep(2)
-        page.click_on_edit()
-        time.sleep(2)
-        wizard.set_md_max_spread(self.md_max_spread)
+        wizard.set_instr_symbol(self.instr_symbol)
+        time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
-        page.set_instr_symbol(self.instr_symbol)
-        time.sleep(3)
-        expected_values = [self.instr_symbol, self.md_max_spread]
-        actual_values = [page.get_instr_symbol(), page.get_md_max_spread()]
-        self.verify("Is entity edited and saved correctly", expected_values, actual_values)
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+
+    def test_context(self):
+        try:
+            self.precondition()
+            page = InstrSymbolInfoPage(self.web_driver_container)
+            wizard = InstrSymbolInfoWizard(self.web_driver_container)
+            page.set_instr_symbol(self.instr_symbol)
+            time.sleep(3)
+            page.click_on_more_actions()
+            time.sleep(2)
+            page.click_on_edit()
+            time.sleep(2)
+            wizard.set_md_max_spread(self.md_max_spread)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            page.set_instr_symbol(self.instr_symbol)
+            time.sleep(3)
+            expected_values = [self.instr_symbol, self.md_max_spread]
+            actual_values = [page.get_instr_symbol(), page.get_md_max_spread()]
+            self.verify("Is entity edited and saved correctly", expected_values, actual_values)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

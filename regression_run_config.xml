@@ -3,7 +3,7 @@
 <!--  set_name must be like that 5.1.149.162|Regression|-->
     <name>set_name</name>
     <product_lines>
-        <product_line name="algo" run="True">
+        <product_line name="algo" run="False">
             <components>
                 <component name="twap" run="True">
                     <data_set>AlgoDataSet</data_set>
@@ -96,7 +96,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="fx" run="True">
+        <product_line name="fx" run="False">
             <components>
                 <component name="ESP_MM" run="True">
                     <data_set>FxDataSet</data_set>
@@ -105,7 +105,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -119,7 +119,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -133,7 +133,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -147,7 +147,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -161,7 +161,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -175,7 +175,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -189,7 +189,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -203,7 +203,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -217,7 +217,7 @@
                             <fix_environment>quod314_luna_standard</fix_environment>
                         </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
                         <web_admin_environments>
                             <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
@@ -226,7 +226,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="oms" run="True">
+        <product_line name="oms" run="False">
             <components>
                 <component name="DMA" run="True">
                     <data_set>OmsDataSet</data_set>
@@ -250,7 +250,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="True">
+        <product_line name="retail" run="False">
             <components>
                 <component name="" run="True">
                     <data_set>RetDataSet</data_set>
@@ -265,7 +265,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="web_admin" run="True">
+        <product_line name="web_admin" run="False">
             <components>
                 <component name="WA_General" run="True">
                     <data_set>WebAdminDataSet</data_set>
@@ -359,20 +359,65 @@
         </product_line>
         <product_line name="web_trading" run="True">
             <components>
-                <component name="" run="True">
-                    <data_set></data_set>
+                <component name="RunLoginAndLogout" run="True">
+                    <data_set>WebTradingDataSet</data_set>
                     <environments>
-                        <fix_environments>
-                            <fix_environment></fix_environment>
-                        </fix_environments>
-                        <fe_environments>
-                            <fe_environment></fe_environment>
-                        </fe_environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingOrderTicketAndBook" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingOther" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingPositions" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTradingTrades" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                 <component name="WebTradingUserProfile" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                 <component name="WebTradingWatchList" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod315_web_trading_luna_chrome</web_trading_environment>
+                        </web_trading_environments>
                     </environments>
                 </component>
             </components>
         </product_line>
-        <product_line name="mobile_android" run="True">
+        <product_line name="mobile_android" run="False">
             <components>
                 <component name="" run="True">
                     <data_set></data_set>

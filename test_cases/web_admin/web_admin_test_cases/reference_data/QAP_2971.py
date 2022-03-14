@@ -24,13 +24,13 @@ class QAP_2971(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = "DarkPool"
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.trading_phase = "Auction"
+        self.trading_phase = self.data_set.get_trading_phase("trading_phase_3")
 
 
 def precondition(self):

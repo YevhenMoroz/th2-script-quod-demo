@@ -21,7 +21,7 @@ class QAP_2257(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.venue = "AMEX"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
         self.new_venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):

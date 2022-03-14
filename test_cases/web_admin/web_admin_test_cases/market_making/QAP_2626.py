@@ -28,47 +28,45 @@ class QAP_2626(CommonTestCase):
         self.concurrently_active_quotes = 100
         self.quote_update_interval = 300
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_quoting_sessions_page()
-    time.sleep(1)
-    page = QuotingSessionsPage(self.web_driver_container)
-    values_sub_wizard = QuotingSessionsValuesSubWizard(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    values_sub_wizard.set_name(self.name)
-    values_sub_wizard.set_concurrently_active_quotes_age(self.concurrently_active_quotes)
-    values_sub_wizard.set_quote_update_interval(self.quote_update_interval)
-    time.sleep(1)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        wizard = QuotingSessionsWizard(self.web_driver_container)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_quoting_sessions_page()
+        time.sleep(1)
         page = QuotingSessionsPage(self.web_driver_container)
-        expected_result_values = [self.name,
-                                  str(self.concurrently_active_quotes),
-                                  str(self.quote_update_interval),
-                                  ]
-        self.verify("Check entity in PDF ", True,
-                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
-        wizard.click_on_save_changes()
-        page.set_name_filter(self.name)
+        values_sub_wizard = QuotingSessionsValuesSubWizard(self.web_driver_container)
+        page.click_on_new()
         time.sleep(2)
-        page.click_on_more_actions()
-        time.sleep(2)
-        self.verify("Check entity values in PDF after saving", True,
-                    page.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
+        values_sub_wizard.set_name(self.name)
+        values_sub_wizard.set_concurrently_active_quotes_age(self.concurrently_active_quotes)
+        values_sub_wizard.set_quote_update_interval(self.quote_update_interval)
+        time.sleep(1)
+
+    def test_context(self):
+        try:
+            self.precondition()
+            wizard = QuotingSessionsWizard(self.web_driver_container)
+            page = QuotingSessionsPage(self.web_driver_container)
+            expected_result_values = [self.name,
+                                      str(self.concurrently_active_quotes),
+                                      str(self.quote_update_interval),
+                                      ]
+            self.verify("Check entity in PDF ", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
+            wizard.click_on_save_changes()
+            page.set_name_filter(self.name)
+            time.sleep(2)
+            page.click_on_more_actions()
+            time.sleep(2)
+            self.verify("Check entity values in PDF after saving", True,
+                        page.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
 
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

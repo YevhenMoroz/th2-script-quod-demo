@@ -21,7 +21,7 @@ class QAP_2858(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.strategy_type = "Quod LitDark"
+        self.strategy_type = self.data_set.get_strategy_type("Quod LitDark")
         self.parameter_at_passive_lit_block = "Post Mode"
 
     def precondition(self):

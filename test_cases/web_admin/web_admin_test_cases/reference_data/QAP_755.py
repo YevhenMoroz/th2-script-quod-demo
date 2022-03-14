@@ -23,8 +23,8 @@ class QAP_755(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
-        self.type = "DarkPool"
+        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.type = self.data_set.get_venue_type("venue_type_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
