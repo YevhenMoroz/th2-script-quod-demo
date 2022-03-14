@@ -14,8 +14,9 @@ from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.pr
 
 class QAP_6286(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.login = "web_trading_test1"
         self.password = "Web1_trading_test"
         self.client = "test_QAP_6286"

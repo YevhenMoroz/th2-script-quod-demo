@@ -38,6 +38,17 @@ class FEEnvironment(BaseEnvironment):
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
+        elif env.value == EnvironmentType.quod314_luna_fe.value:
+            if EnvironmentType.quod314_luna_fe.value not in FEEnvironment.environment_instances.keys():
+                site_environment = FEEnvironment(
+                    environment_type=EnvironmentType.quod314_luna_fe.value,
+                    users=FrontEnd.USERS_314.value,
+                    passwords=FrontEnd.PASSWORDS_314.value,
+                    folder=FrontEnd.FOLDER_314.value,
+                    desks=FrontEnd.DESKS_314.value
+                )
+                FEEnvironment.environment_instances.update({EnvironmentType.quod314_luna_fe.value: site_environment})
+            return FEEnvironment.environment_instances[EnvironmentType.quod314_luna_fe.value]
 
         else:
             raise Exception('No such environment')

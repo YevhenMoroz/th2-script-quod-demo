@@ -25,66 +25,64 @@ class QAP_1692(CommonTestCase):
         self.symbol = "EUR/USD"
         self.client = "CLIENT2"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_client_tier_page()
-    client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_more_actions()
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_edit()
-    time.sleep(2)
-    client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
-        self.web_driver_container)
-    client_tier_external_clients_sub_wizard.click_on_plus()
-    time.sleep(2)
-    client_tier_external_clients_sub_wizard.set_client(self.client)
-    time.sleep(1)
-    client_tier_external_clients_sub_wizard.click_on_checkmark()
-    time.sleep(2)
-    client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-    client_tiers_wizard.click_on_save_changes()
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_more_actions()
-    time.sleep(2)
-    client_tier_instrument_main_page.click_on_edit()
-    time.sleep(2)
-    # client_tier_external_clients_sub_wizard.set_client_filter(self.client)
-    # time.sleep(2)
-    client_tier_external_clients_sub_wizard.click_on_edit()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
-            self.web_driver_container)
-        self.verify("Client created correctly", self.client, client_tier_external_clients_sub_wizard.get_client())
-        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
-        client_tiers_wizard.click_on_save_changes()
-        time.sleep(2)
+        side_menu.open_client_tier_page()
         client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        time.sleep(2)
         client_tier_instrument_main_page.click_on_more_actions()
         time.sleep(2)
         client_tier_instrument_main_page.click_on_edit()
         time.sleep(2)
         client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
             self.web_driver_container)
+        client_tier_external_clients_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_external_clients_sub_wizard.set_client(self.client)
+        time.sleep(1)
+        client_tier_external_clients_sub_wizard.click_on_checkmark()
+        time.sleep(2)
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tiers_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_edit()
+        time.sleep(2)
         # client_tier_external_clients_sub_wizard.set_client_filter(self.client)
         # time.sleep(2)
-        client_tier_external_clients_sub_wizard.click_on_delete()
+        client_tier_external_clients_sub_wizard.click_on_edit()
         time.sleep(2)
-        client_tiers_wizard.click_on_save_changes()
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
+                self.web_driver_container)
+            self.verify("Client created correctly", self.client, client_tier_external_clients_sub_wizard.get_client())
+            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+            time.sleep(2)
+            client_tiers_wizard.click_on_save_changes()
+            time.sleep(2)
+            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+            client_tier_instrument_main_page.click_on_more_actions()
+            time.sleep(2)
+            client_tier_instrument_main_page.click_on_edit()
+            time.sleep(2)
+            client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
+                self.web_driver_container)
+            # client_tier_external_clients_sub_wizard.set_client_filter(self.client)
+            # time.sleep(2)
+            client_tier_external_clients_sub_wizard.click_on_delete()
+            time.sleep(2)
+            client_tiers_wizard.click_on_save_changes()
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

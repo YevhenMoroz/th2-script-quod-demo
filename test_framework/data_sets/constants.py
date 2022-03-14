@@ -49,6 +49,18 @@ class FrontEnd(Enum):
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
     TARGET_SERVER_WIN = find_target_server()
+    
+    # region quod314
+    USERS_314 = []
+    PASSWORDS_314 = []
+    FOLDER_314 = ""
+    DESKS_314 = []
+    MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
+    LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
+    # common values
+    # target_server values
+    TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
+    # endregion
 
 
 class DirectionEnum(Enum):
@@ -122,3 +134,6 @@ class WebAdminURL(Enum):
 class WebBrowser(Enum):
     chrome = "chrome"
     firefox = "firefox"
+
+class WebTradingURL(Enum):
+    luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"

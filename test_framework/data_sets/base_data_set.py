@@ -42,6 +42,51 @@ class BaseDataSet:
     # region fields added by Web Admin team
     user = None
     password = None
+    component_id = None
+    admin_command = None
+    desk = None
+    location = None
+    institution = None
+    zone = None
+    client = None
+    client_type = None
+    email = None
+    perm_role = None
+    first_user_name = None
+    venue_id = None
+    venue_type = None
+    country = None
+    sub_venue = None
+    trading_status = None
+    trading_phase = None
+    price_limit_profile = None
+    tick_size_profile = None
+    trading_phase_profile = None
+    tick_size_xaxis_type = None
+    instr_symbol = None
+    symbol = None
+    instr_type = None
+    preferred_venue = None
+    listing_group = None
+    settle_type = None
+    feed_source = None
+    negative_route = None
+    positive_route = None
+    client_id_source = None
+    route_account_name = None
+    route = None
+    clearing_account_type = None
+    disclose_exec = None
+    account_id_source = None
+    default_route = None
+    default_execution_strategy = None
+    trade_confirm_generation = None
+    trade_confirm_preference = None
+    net_gross_ind_type = None
+    recipient_type = None
+    default_tif = None
+    strategy_type = None
+    exec_policy = None
 
     # endregion
 
@@ -323,4 +368,215 @@ class BaseDataSet:
         if hasattr(self.password, name):
             return getattr(self.password, name).value
         return ValueError(f"{self.password} not found!")
+
+    def get_component_id(self, name: str):
+        if hasattr(self.component_id, name):
+            return getattr(self.component_id, name).value
+        return ValueError(f"{self.component_id} not found!")
+
+    def get_admin_command(self, name: str):
+        if hasattr(self.admin_command, name):
+            return getattr(self.admin_command, name).value
+        return ValueError(f"{self.admin_command} not found!")
+
+    def get_desk(self, name: str):
+        if hasattr(self.desk, name):
+            return getattr(self.desk, name).value
+        return ValueError(f"{self.desk} not found!")
+
+    def get_location(self, name: str):
+        if hasattr(self.location, name):
+            return getattr(self.location, name).value
+        return ValueError(f"{self.location} not found!")
+
+    def get_institution(self, name: str):
+        if hasattr(self.institution, name):
+            return getattr(self.institution, name).value
+        return ValueError(f"{self.institution} not found!")
+
+    def get_zone(self, name: str):
+        if hasattr(self.zone, name):
+            return getattr(self.zone, name).value
+        return ValueError(f"{self.zone} not found!")
+
+    def get_client(self, name: str):
+        if hasattr(self.clients, name):
+            return getattr(self.clients, name).value
+        return ValueError(f"{self.clients} not found!")
+
+    def get_client_type(self, name: str):
+        if hasattr(self.client_type, name):
+            return getattr(self.client_type, name).value
+        return ValueError(f"{self.client_type} not found!")
+
+    def get_email(self, name: str):
+        if hasattr(self.email, name):
+            return getattr(self.email, name).value
+        return ValueError(f"{self.email} not found!")
+
+    def get_perm_role(self, name: str):
+        if hasattr(self.perm_role, name):
+            return getattr(self.perm_role, name).value
+        return ValueError(f"{self.perm_role} not found!")
+
+    def get_first_user_name(self, name: str):
+        if hasattr(self.first_user_name, name):
+            return getattr(self.first_user_name, name).value
+        return ValueError(f"{self.first_user_name} not found!")
+
+    def get_venue_id(self, name: str):
+        if hasattr(self.venue_id, name):
+            return getattr(self.venue_id, name).value
+        return ValueError(f"{self.venue_id} not found!")
+
+    def get_venue_type(self, name: str):
+        if hasattr(self.venue_type, name):
+            return getattr(self.venue_type, name).value
+        return ValueError(f"{self.venue_type} not found!")
+
+    def get_country(self, name: str):
+        if hasattr(self.country, name):
+            return getattr(self.country, name).value
+        return ValueError(f"{self.country} not found!")
+
+    def get_sub_venue(self, name: str):
+        if hasattr(self.sub_venue, name):
+            return getattr(self.sub_venue, name).value
+        return ValueError(f"{self.sub_venue} not found!")
+
+    def get_trading_status(self, name: str):
+        if hasattr(self.trading_status, name):
+            return getattr(self.trading_status, name).value
+        return ValueError(f"{self.trading_status} not found!")
+
+    def get_trading_phase(self, name: str):
+        if hasattr(self.trading_phase, name):
+            return getattr(self.trading_phase, name).value
+        return ValueError(f"{self.trading_phase} not found!")
+
+    def get_price_limit_profile(self, name: str):
+        if hasattr(self.price_limit_profile, name):
+            return getattr(self.price_limit_profile, name).value
+        return ValueError(f"{self.price_limit_profile} not found!")
+
+    def get_tick_size_profile(self, name: str):
+        if hasattr(self.tick_size_profile, name):
+            return getattr(self.tick_size_profile, name).value
+        return ValueError(f"{self.tick_size_profile} not found!")
+
+    def get_trading_phase_profile(self, name: str):
+        if hasattr(self.trading_phase_profile, name):
+            return getattr(self.trading_phase_profile, name).value
+        return ValueError(f"{self.trading_phase_profile} not found!")
+
+    def get_tick_size_xaxis_type(self, name: str):
+        if hasattr(self.tick_size_xaxis_type, name):
+            return getattr(self.tick_size_xaxis_type, name).value
+        return ValueError(f"{self.tick_size_xaxis_type} not found!")
+
+    def get_instr_symbol(self, name: str):
+        if hasattr(self.instr_symbol, name):
+            return getattr(self.instr_symbol, name).value
+        return ValueError(f"{self.instr_symbol} not found!")
+
+    def get_instr_type(self, name: str):
+        if hasattr(self.instr_type, name):
+            return getattr(self.instr_type, name).value
+        return ValueError(f"{self.instr_type} not found!")
+
+    def get_preferred_venue(self, name: str):
+        if hasattr(self.preferred_venue, name):
+            return getattr(self.preferred_venue, name).value
+        return ValueError(f"{self.preferred_venue} not found!")
+
+    def get_listing_group(self, name: str):
+        if hasattr(self.listing_group, name):
+            return getattr(self.listing_group, name).value
+        return ValueError(f"{self.listing_group} not found!")
+
+    def get_feed_source(self, name: str):
+        if hasattr(self.feed_source, name):
+            return getattr(self.feed_source, name).value
+        return ValueError(f"{self.feed_source} not found!")
+
+    def get_negative_route(self, name: str):
+        if hasattr(self.negative_route, name):
+            return getattr(self.negative_route, name).value
+        return ValueError(f"{self.negative_route} not found!")
+
+    def get_positive_route(self, name: str):
+        if hasattr(self.positive_route, name):
+            return getattr(self.positive_route, name).value
+        return ValueError(f"{self.positive_route} not found!")
+
+    def get_client_id_source(self, name: str):
+        if hasattr(self.client_id_source, name):
+            return getattr(self.client_id_source, name).value
+        return ValueError(f"{self.client_id_source} not found!")
+
+    def get_route_account_name(self, name: str):
+        if hasattr(self.route_account_name, name):
+            return getattr(self.route_account_name, name).value
+        return ValueError(f"{self.route_account_name} not found!")
+
+    def get_clearing_account_type(self, name: str):
+        if hasattr(self.clearing_account_type, name):
+            return getattr(self.clearing_account_type, name).value
+        return ValueError(f"{self.clearing_account_type} not found!")
+
+    def get_disclose_exec(self, name: str):
+        if hasattr(self.disclose_exec, name):
+            return getattr(self.disclose_exec, name).value
+        return ValueError(f"{self.disclose_exec} not found!")
+
+    def get_account_id_source(self, name: str):
+        if hasattr(self.account_id_source, name):
+            return getattr(self.account_id_source, name).value
+        return ValueError(f"{self.account_id_source} not found!")
+
+    def get_default_route(self, name: str):
+        if hasattr(self.default_route, name):
+            return getattr(self.default_route, name).value
+        return ValueError(f"{self.default_route} not found!")
+
+    def get_default_execution_strategy(self, name: str):
+        if hasattr(self.default_execution_strategy, name):
+            return getattr(self.default_execution_strategy, name).value
+        return ValueError(f"{self.default_execution_strategy} not found!")
+
+    def get_trade_confirm_generation(self, name: str):
+        if hasattr(self.trade_confirm_generation, name):
+            return getattr(self.trade_confirm_generation, name).value
+        return ValueError(f"{self.trade_confirm_generation} not found!")
+
+    def get_trade_confirm_preference(self, name: str):
+        if hasattr(self.trade_confirm_preference, name):
+            return getattr(self.trade_confirm_preference, name).value
+        return ValueError(f"{self.trade_confirm_preference} not found!")
+
+    def get_net_gross_ind_type(self, name: str):
+        if hasattr(self.net_gross_ind_type, name):
+            return getattr(self.net_gross_ind_type, name).value
+        return ValueError(f"{self.net_gross_ind_type} not found!")
+
+    def get_recipient_type(self, name: str):
+        if hasattr(self.recipient_type, name):
+            return getattr(self.recipient_type, name).value
+        return ValueError(f"{self.recipient_type} not found!")
+
+    def get_default_tif(self, name: str):
+        if hasattr(self.default_tif, name):
+            return getattr(self.default_tif, name).value
+        return ValueError(f"{self.default_tif} not found!")
+
+    def get_strategy_type(self, name: str):
+        if hasattr(self.strategy_type, name):
+            return getattr(self.strategy_type, name).value
+        return ValueError(f"{self.strategy_type} not found!")
+
+    def get_exec_policy(self, name: str):
+        if hasattr(self.exec_policy, name):
+            return getattr(self.exec_policy, name).value
+        return ValueError(f"{self.exec_policy,} not found!")
+
     # endregion

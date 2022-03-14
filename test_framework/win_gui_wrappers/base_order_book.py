@@ -109,12 +109,11 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, row_number: int = None) -> str:
+    def extract_field(self, column_name: str, row_number: int = 1) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
-        if row_number is not None:
-            info.set_number(row_number)
+        info.set_number(row_number)
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
@@ -275,9 +274,9 @@ class BaseOrderBook(BaseWindow):
 
     def un_complete_order(self, row_count=None, filter_list=None):
         if filter_list is not None:
-            self.modify_order_details.set_filter()
+            self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
-            self.modify_order_details.set_selected_row_count()
+            self.modify_order_details.set_selected_row_count(row_count)
         call(self.un_complete_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 

@@ -21,6 +21,8 @@ class QAP_4158(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.venue = self.data_set.get_venue_by_name("venue_8")
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,9 +52,9 @@ class QAP_4158(CommonTestCase):
             self.precondition()
             try:
                 values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
-                values_sub_wizard.set_venue("AMERICAN STOCK EXCHANGE")
+                values_sub_wizard.set_venue(self.venue)
                 values_sub_wizard.set_listing_group("test")
-                values_sub_wizard.set_instr_type("Bond")
+                values_sub_wizard.set_instr_type(self.instr_type)
                 self.verify("Criteria changed correctly and displayed at wizard", True, True)
             except Exception as e:
                 self.verify("Criteria don't changed !!! Error!!!", True, e.__class__.__name__)

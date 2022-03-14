@@ -30,44 +30,26 @@ class QAP_3009(CommonTestCase):
         self.from_time = "00:00:00"
         self.to_time = "00:30:00"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_client_tier_page()
-    client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-    client_tiers_main_page.click_on_new()
-    time.sleep(2)
-    client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
-    client_tiers_values_sub_wizard.set_name(self.name)
-    time.sleep(1)
-    client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
-    client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
-    client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
-    client_tiers_schedules_sub_wizard.set_day(self.day)
-    client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
-    client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
-    client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
-    client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-    client_tiers_wizard.click_on_save_changes()
-    time.sleep(2)
-    client_tiers_main_page.set_name(self.name)
-    time.sleep(2)
-    client_tiers_main_page.click_on_more_actions()
-    time.sleep(2)
-    client_tiers_main_page.click_on_edit()
-    time.sleep(3)
-    client_tiers_schedules_sub_wizard.click_on_delete_button_at_schedules()
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-        client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.click_on_new()
+        time.sleep(2)
+        client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tiers_values_sub_wizard.set_name(self.name)
+        time.sleep(1)
+        client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
+        client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
+        client_tiers_schedules_sub_wizard.set_day(self.day)
+        client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
+        client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
+        client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
         client_tiers_main_page.set_name(self.name)
@@ -75,22 +57,38 @@ def test_context(self):
         client_tiers_main_page.click_on_more_actions()
         time.sleep(2)
         client_tiers_main_page.click_on_edit()
-        time.sleep(2)
+        time.sleep(3)
+        client_tiers_schedules_sub_wizard.click_on_delete_button_at_schedules()
 
+    def test_context(self):
         try:
-            client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
-            client_tiers_schedules_sub_wizard.set_day(self.day)
-            client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
-            client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
-            client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
+            self.precondition()
+            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+            client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
+            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
             client_tiers_wizard.click_on_save_changes()
-            self.verify("recreated entity saved correctly.", True, True)
-        except Exception as e:
-            self.verify("recreated entity doesn't saved correctly.ERROR !!!", True, e.__class__.__name__)
+            time.sleep(2)
+            client_tiers_main_page.set_name(self.name)
+            time.sleep(2)
+            client_tiers_main_page.click_on_more_actions()
+            time.sleep(2)
+            client_tiers_main_page.click_on_edit()
+            time.sleep(2)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+            try:
+                client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
+                client_tiers_schedules_sub_wizard.set_day(self.day)
+                client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
+                client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
+                client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
+                client_tiers_wizard.click_on_save_changes()
+                self.verify("recreated entity saved correctly.", True, True)
+            except Exception as e:
+                self.verify("recreated entity doesn't saved correctly.ERROR !!!", True, e.__class__.__name__)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

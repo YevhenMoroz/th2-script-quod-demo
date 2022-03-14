@@ -28,36 +28,34 @@ class QAP_4118(CommonTestCase):
         self.symbol = "AUD/TRY"
         self.hedging_strategy = "PositionLimits"
 
-
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_auto_hedger_page()
-    time.sleep(2)
-    page = AutoHedgerPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    values_sub_wizard = AutoHedgerValuesSubWizard(self.web_driver_container)
-    values_sub_wizard.set_position_book(self.position_book)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        internal_client_sub_wizard = AutoHedgerInternalClientsSubWizard(self.web_driver_container)
-        internal_client_sub_wizard.click_on_plus()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
-        try:
-            internal_client_sub_wizard.set_client(self.position_book)
-            self.verify("Client set, it's issue", False, True)
-        except Exception:
-            self.verify("Client not set, because same is in position book", True, True)
+        side_menu.open_auto_hedger_page()
+        time.sleep(2)
+        page = AutoHedgerPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        values_sub_wizard = AutoHedgerValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.set_position_book(self.position_book)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+    def test_context(self):
+        try:
+            self.precondition()
+            internal_client_sub_wizard = AutoHedgerInternalClientsSubWizard(self.web_driver_container)
+            internal_client_sub_wizard.click_on_plus()
+            time.sleep(2)
+            try:
+                internal_client_sub_wizard.set_client(self.position_book)
+                self.verify("Client set, it's issue", False, True)
+            except Exception:
+                self.verify("Client not set, because same is in position book", True, True)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

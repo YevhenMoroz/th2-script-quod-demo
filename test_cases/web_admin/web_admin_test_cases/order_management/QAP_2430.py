@@ -24,14 +24,14 @@ class QAP_2430(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = "TestSuperStrategy"
-        self.user = "QA1"
+        self.user = self.data_set.get_user("user_8")
         self.strategy_type = "Quod LitDark"
         self.first_parameter = "Allowed Aggressive Venues"
         self.second_parameter = "Allowed Passive Venues"
         self.third_parameter = "Initial Dark Allowed Venues"
-        self.first_venue = "AMERICAN STOCK EXCHANGE"
-        self.second_venue = "EURONEXT AMSTERDAM"
-        self.third_venue = "BATS"
+        self.first_venue = self.data_set.get_venue_by_name("venue_8")
+        self.second_venue = self.data_set.get_venue_by_name("venue_9")
+        self.third_venue = self.data_set.get_venue_by_name("venue_5")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

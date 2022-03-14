@@ -21,9 +21,10 @@ class QAP_5842(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
+        #TODO:change logic of path_to_file, it must be suitable
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = "adm01"
+        self.user_id = self.data_set.get_user("user_4")
         self.new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
         self.path_to_file = 'C:\Furmuzal\Web Admin Team (Study)\Python\quod_qa\web_admin\web_admin_core\\resourses\password_for_QAP_5842.txt'

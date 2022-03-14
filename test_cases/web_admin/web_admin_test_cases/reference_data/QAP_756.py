@@ -23,12 +23,12 @@ class QAP_756(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
-        self.type = "DarkPool"
-        self.mic = "ALTX"
-        self.country = "Albania"
-        self.new_mic = "ALXA"
-        self.new_country = "Angola"
+        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.type = self.data_set.get_venue_type("venue_type_1")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.country = self.data_set.get_country("country_1")
+        self.new_mic = self.data_set.get_mic_by_name("mic_2")
+        self.new_country = self.data_set.get_country("country_2")
 
 
 def precondition(self):
@@ -63,9 +63,7 @@ def precondition(self):
     description_sub_wizard.set_mic(self.new_mic)
     time.sleep(1)
     description_sub_wizard.set_country(self.new_country)
-    time.sleep(1
-
-               )
+    time.sleep(1)
 
 
 def test_context(self):

@@ -17,8 +17,8 @@ class QAP_2450(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.admin_command = "ChangeLogLevel"
-        self.component_id = "SATS"
+        self.admin_command = self.data_set.get_password("ChangeLogLevel")
+        self.component_id = self.data_set.get_component_id("component_id_1")
         self.name = "test"
         self.value = "test"
 

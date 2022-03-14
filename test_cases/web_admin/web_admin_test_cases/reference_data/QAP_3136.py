@@ -24,16 +24,18 @@ class QAP_3136(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = "15"
-        self.type = "DarkPool"
-        self.mic = "ALXP"
-        self.country = "Albania"
+        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.type = self.data_set.get_venue_type("venue_type_1")
+        self.mic = self.data_set.get_mic_by_name("mic_3")
+        self.country = self.data_set.get_country("country_3")
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.negative_routes = ("Direct", "Fixed income Route")
-        self.positive_routes = ("Credit Suisse", "JP Morgan")
+        self.negative_routes = (self.data_set.get_negative_route("negative_routes_1"),
+                                self.data_set.get_negative_route("negative_routes_2"))
+        self.positive_routes = (self.data_set.get_positive_route("positive_route_1"),
+                                self.data_set.get_positive_route("positive_route_2"))
         self.parameter = "All"
         self.value = "test"
 

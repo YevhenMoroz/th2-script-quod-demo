@@ -20,10 +20,17 @@ class QAP_4709(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm02"
-        self.password = "Qwerty123!"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = ["FXNDF", "FXForward", "DepositLoanLeg", "Future", "Forward", "Option"]
+        self.instr_type = [
+            self.data_set.get_instr_type("instr_type_2"),
+            self.data_set.get_instr_type("instr_type_3"),
+            self.data_set.get_instr_type("instr_type_4"),
+            self.data_set.get_instr_type("instr_type_5"),
+            self.data_set.get_instr_type("instr_type_6"),
+            self.data_set.get_instr_type("instr_type_7")
+        ]
 
 
 def precondition(self):

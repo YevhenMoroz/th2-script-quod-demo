@@ -26,12 +26,13 @@ class QAP_2405(CommonTestCase):
         self.user_id = ''.join("test " + str(random.randint(1, 1000)))
         self.password_at_login_wizard = ''.join("pass" + str(random.randint(1, 1000)))
         self.perm_role = "Permissions for administrator users"
-        self.desks = ("DESK A", "Quod Desk")
+        self.desks = (self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_3"))
         self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
         self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
         self.pin_code = "333"
         self.email = "test"
 
+        #TODO:Check step regarding to set pin code (this field is not exist)
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)

@@ -26,6 +26,9 @@ class QAP_2800(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client = self.data_set.get_client("client_1")
+        self.exec_policy = self.data_set.get_exec_policy("DMA")
+
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -52,9 +55,9 @@ class QAP_2800(CommonTestCase):
                 conditions_sub_wizard.set_qty_precision("100")
                 conditions_sub_wizard.click_on_add_condition()
                 time.sleep(2)
-                conditions_sub_wizard.set_right_side_at_conditional_logic("CLIENT1")
+                conditions_sub_wizard.set_right_side_at_conditional_logic(self.client)
                 conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
-                conditions_sub_wizard.set_exec_policy("DMA")
+                conditions_sub_wizard.set_exec_policy(self.exec_policy)
                 time.sleep(1)
                 conditions_sub_wizard.set_percentage("100")
                 conditions_sub_wizard.click_on_checkmark_at_results_sub_wizard()
