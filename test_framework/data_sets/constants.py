@@ -1,5 +1,7 @@
 from enum import Enum
 
+from test_framework.configurations.component_configuration import ComponentConfiguration
+
 
 class Connectivity(Enum):
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
@@ -25,7 +27,6 @@ class Connectivity(Enum):
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
 
 
-
 class FrontEnd(Enum):
     # 317 site
     USERS_317 = []
@@ -37,7 +38,7 @@ class FrontEnd(Enum):
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WIN = None  # by default we can set up here value of Jenkins machine
+    TARGET_SERVER_WIN = ComponentConfiguration.find_target_server()
 
 
 class DirectionEnum(Enum):
@@ -78,6 +79,7 @@ class Status(Enum):
     Cancel = "Cancel"
     Eliminate = "Eliminate"
 
+
 class Reference(Enum):
     LastTradePrice = 'LTP'
     Primary = 'PRM'
@@ -90,6 +92,7 @@ class Reference(Enum):
     Manual = 'MAN'
     Limit = 'LMT'
 
+
 class TimeInForce(Enum):
     Day = 0
     GoodTillCancel = 1
@@ -100,6 +103,7 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
