@@ -28,3 +28,10 @@ class ComponentConfiguration:
 
         component_environment = root.find(f".//component[@name='{self.name}']/environments").getchildren()
         self.environment = FullEnvironment(component_environment)
+
+    @staticmethod
+    def find_target_server():
+        tree = ElementTree.parse(ComponentConfiguration.xpath)
+        root = tree.getroot()
+        target_server = root.find(f".//target_server_win").text
+        return target_server
