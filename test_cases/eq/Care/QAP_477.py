@@ -4,11 +4,10 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.constants import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs, ExecSts
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -22,14 +21,13 @@ class QAP_477(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.base_window = BaseMainWindow(self.test_id, self.session_id)
         self.order_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.rule_manager = RuleManager()
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
         self.venue = self.data_set.get_mic_by_name("mic_1")
@@ -51,7 +49,7 @@ class QAP_477(TestCase):
         # endregion
         # region DirectLoc order
         try:
-            self.nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+            self.nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
                                                                                               self.venue_client_names,
                                                                                               self.venue,
                                                                                               float(self.price))
@@ -64,6 +62,7 @@ class QAP_477(TestCase):
         # region check child order
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list(
                 {OrderBookColumns.qty.value: self.qty})
+        # endregion
 
 
 
