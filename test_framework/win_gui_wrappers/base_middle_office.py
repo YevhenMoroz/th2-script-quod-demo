@@ -313,3 +313,8 @@ class BaseMiddleOffice(BaseWindow):
         call(self.mass_unallocate_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
     # endregion
+
+    def check_error_in_book(self):
+        self.modify_ticket_details.set_partial_error_message("error_in_book")
+        error = call(self.book_order_call, self.modify_ticket_details.build())
+        return error
