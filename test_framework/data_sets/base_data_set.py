@@ -99,9 +99,13 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
-
     # endregion
 
+    # region fields added by Web Trading team
+    order_type = None
+    time_in_force = None
+
+    # endregion
     def get_instruments(self):
         if self.fix_instruments:
             return self.fix_instruments.__members__
@@ -646,4 +650,16 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    # endregion
+
+    # region WebTrading getters
+    def get_order_type(self, name: str):
+        if hasattr(self.order_type, name):
+            return getattr(self.order_type, name).value
+        return ValueError(f"{self.order_type,} not found!")
+
+    def get_time_in_force(self, name: str):
+        if hasattr(self.time_in_force, name):
+            return getattr(self.time_in_force, name).value
+        return ValueError(f"{self.time_in_force,} not found!")
     # endregion
