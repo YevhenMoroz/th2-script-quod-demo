@@ -97,9 +97,8 @@ class RuleManager:
     # Example:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
-    @staticmethod
-    def remove_rule(rule):
-        Stubs.core.removeRule(rule)
+    def remove_rule(self, rule):
+        self.core.removeRule(rule)
 
     @staticmethod
     def remove_rules(list_rules: list):
@@ -407,3 +406,4 @@ if __name__ == '__main__':
     rule_manager.print_active_rules()
     print("_________________________")
     rule_manager_eq.print_active_rules()
+
