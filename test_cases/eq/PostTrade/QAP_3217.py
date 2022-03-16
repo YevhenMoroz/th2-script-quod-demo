@@ -111,7 +111,6 @@ class QAP_3217(TestCase):
 
         # region approve block and verifying values after that (step 2)
         self.middle_office.approve_block()
-        values_of_middle_office = self.middle_office.extract_list_of_block_fields
         extracted_list = [MiddleOfficeColumns.conf_service.value,
                           MiddleOfficeColumns.sts.value,
                           MiddleOfficeColumns.match_status.value,
