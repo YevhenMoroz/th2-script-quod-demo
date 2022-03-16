@@ -15,6 +15,9 @@ class EnvironmentType(Enum):
     quod317_ganymede_standard_test = "quod317_ganymede_standard_test"
     quod317_ganymede_standard = "quod317_ganymede_standard"
     quod317_fe = "quod317_fe"
+    quod316_fe = "quod316_fe"
+    quod317_java_api = "quod317_java_api"
+    quod317_read_log = 'quod317_read_log'
     quod320_fe = "quod320_fe"
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
     quod320_kuiper_web_trading = "quod320_kuiper_web_trading"

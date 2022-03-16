@@ -1,10 +1,13 @@
 import typing
-from test_framework.environments.fix_environment import FixEnvironment
+
 from test_framework.data_sets.environment_type import EnvironmentType
 from test_framework.environments.fe_environment import FEEnvironment
+from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.environments.java_api_environment import JavaApiEnvironment
+from test_framework.environments.read_log_envirenment import ReadLogEnvironment
 from test_framework.environments.web_admin_environment import WebAdminEnvironment
 from test_framework.environments.web_admin_rest_api_environment import WebAdminRestApiEnvironment
+from test_framework.environments.web_trading_environment import WebTradingEnvironment
 
 
 class FullEnvironment:
@@ -29,7 +32,17 @@ class FullEnvironment:
                 if instance.tag == "fe_environment":
                     self.__list_fe_environment.append(FEEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "web_admin_rest_api_environment":
-                    self.__list_web_admin_rest_api_environment.append(WebAdminRestApiEnvironment.get_instance(EnvironmentType[instance.text]))
+                    self.__list_web_admin_rest_api_environment.append(
+                        WebAdminRestApiEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "web_trading_environment":
+                    self.__list_web_trading_environment.append(
+                        WebTradingEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "java_api_environment":
+                    self.__list_java_api_environment.append(
+                        JavaApiEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "read_log_environment":
+                    self.__list_read_log_environment.append(
+                        ReadLogEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
     def get_list_fix_environment(self) -> typing.List[FixEnvironment]:
@@ -41,10 +54,10 @@ class FullEnvironment:
     def get_list_web_admin_environment(self) -> typing.List[WebAdminEnvironment]:
         return self.__list_web_admin_environment
 
-    def get_list_web_admin_rest_api_environment(self):
+    def get_list_web_admin_rest_api_environment(self) -> typing.List[WebAdminRestApiEnvironment]:
         return self.__list_web_admin_rest_api_environment
 
-    def get_list_web_trading_environment(self):
+    def get_list_web_trading_environment(self) -> typing.List[WebTradingEnvironment]:
         return self.__list_web_trading_environment
 
     def get_list_java_api_environment(self) -> typing.List[JavaApiEnvironment]:
