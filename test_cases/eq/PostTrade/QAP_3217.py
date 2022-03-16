@@ -35,7 +35,7 @@ class QAP_3217(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '200'
