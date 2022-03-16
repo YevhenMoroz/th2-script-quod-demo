@@ -5,16 +5,14 @@ from pathlib import Path
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.core.test_case import TestCase
 from test_framework.win_gui_wrappers.fe_trading_constant import MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.core.try_exept_decorator import try_except
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,7 +34,6 @@ class QAP_3310(TestCase):
         self.case_id = create_event(self.__class__.__name__, self.report_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
 
