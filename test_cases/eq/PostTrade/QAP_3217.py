@@ -140,8 +140,10 @@ class QAP_3217(TestCase):
                                           'Comparing allocation avg_px')
         # endregion
 
+    @staticmethod
     def __comparing_values(self, expected_result, actually_result, verifier_message: str, eval_str):
         eval(eval_str)(expected_result, actually_result, verifier_message)
 
+    @staticmethod
     def __extracted_values(self, fields, filter, method_for_eval):
         return eval(method_for_eval)(fields, filter)
