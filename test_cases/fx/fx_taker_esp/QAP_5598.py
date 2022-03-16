@@ -4,7 +4,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-from test_framework.data_sets.constants import GatewaySide, Statust
+from test_framework.data_sets.constants import GatewaySide, Status
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, ExecSts
