@@ -35,7 +35,7 @@ class QAP_3217(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
 
-    @try_except(test_id=Path(__file__).name[:-3])
+    # @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '200'
@@ -139,10 +139,10 @@ class QAP_3217(TestCase):
                                           'Comparing allocation avg_px')
         # endregion
 
-    @staticmethod
-    def __comparing_values(expected_result, actually_result, verifier_message: str, eval_str):
+
+    def __comparing_values(self,expected_result, actually_result, verifier_message: str, eval_str):
         eval(eval_str)(expected_result, actually_result, verifier_message)
 
-    @staticmethod
-    def __extracted_values(fields, filter, method_for_eval):
+
+    def __extracted_values(self, fields, filter, method_for_eval):
         return eval(method_for_eval)(fields, filter)
