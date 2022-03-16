@@ -137,5 +137,5 @@ class QAP_2849(TestCase):
         self.middle_office.compare_values({AllocationsColumns.alloc_qty.value: qty}, allocation_qty,
                                           'Comparing allocation qty')
         self.middle_office.compare_values({AllocationsColumns.avg_px.value: price}, allocation_avg_px,
-                                          'Comparing allocaetion avg_px')
+                                          'Comparing allocation avg_px')
         # endregion

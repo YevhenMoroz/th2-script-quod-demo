@@ -141,9 +141,9 @@ class QAP_3217(TestCase):
         # endregion
 
     @staticmethod
-    def __comparing_values(self, expected_result, actually_result, verifier_message: str, eval_str):
+    def __comparing_values(expected_result, actually_result, verifier_message: str, eval_str):
         eval(eval_str)(expected_result, actually_result, verifier_message)
 
     @staticmethod
-    def __extracted_values(self, fields, filter, method_for_eval):
+    def __extracted_values(fields, filter, method_for_eval):
         return eval(method_for_eval)(fields, filter)
