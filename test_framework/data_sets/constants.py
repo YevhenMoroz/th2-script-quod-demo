@@ -1,4 +1,14 @@
 from enum import Enum
+from xml.etree import ElementTree
+
+from stubs import ROOT_DIR
+
+
+def find_target_server():
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
+    target_server = root.find(f".//target_server_win").text
+    return target_server
 
 
 class Connectivity(Enum):
@@ -26,6 +36,7 @@ class Connectivity(Enum):
 
 
 
+
 class FrontEnd(Enum):
     # 317 site
     USERS_317 = [""]
@@ -37,7 +48,8 @@ class FrontEnd(Enum):
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WIN = None  # by default we can set up here value of Jenkins machine
+    TARGET_SERVER_WIN = find_target_server()
+    
     # region quod314
     USERS_314 = []
     PASSWORDS_314 = []
@@ -49,7 +61,6 @@ class FrontEnd(Enum):
     # target_server values
     TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
     # endregion
-
 
 
 class DirectionEnum(Enum):
@@ -90,6 +101,7 @@ class Status(Enum):
     Cancel = "Cancel"
     Eliminate = "Eliminate"
 
+
 class Reference(Enum):
     LastTradePrice = 'LTP'
     Primary = 'PRM'
@@ -102,6 +114,7 @@ class Reference(Enum):
     Manual = 'MAN'
     Limit = 'LMT'
 
+
 class TimeInForce(Enum):
     Day = 0
     GoodTillCancel = 1
@@ -112,6 +125,7 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"

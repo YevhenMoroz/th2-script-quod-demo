@@ -17,6 +17,8 @@ from getpass import getuser as get_pc_name
 #     return Stubs.session_id
 
 '''By default (if target_server_win is None) function automatically will find PC name of current machine'''
+
+
 def set_session_id(target_server_win: str = None):
     pc_name = get_pc_name() if target_server_win is None else target_server_win
     Stubs.session_id = Stubs.win_act.register(
@@ -36,14 +38,15 @@ def get_base_request(session_id: RhSessionID, event_id):
     return EmptyRequest(sessionID=session_id, parentEventId=event_id)
 
 
-def prepare_fe(main_event, session, working_dir: str, username: str, password: str):
+def prepare_fe(main_event, session, working_dir: str, username: str, password: str, main_window, login_window,
+               app_file):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
     app_details = ApplicationDetails(
         sessionID=session,
         parentEventId=init_event,
         workDir=working_dir,
-        applicationFile=Stubs.custom_config['qf_trading_fe_exec'])
+        applicationFile=app_file)
     logging.debug("RPC open_application:\n%s", stub.openApplication(app_details))
 
     login_details = LoginDetails(
@@ -51,8 +54,8 @@ def prepare_fe(main_event, session, working_dir: str, username: str, password: s
         parentEventId=init_event,
         username=username,
         password=password,
-        mainWindowName=Stubs.custom_config['qf_trading_fe_main_win_name'],
-        loginWindowName=Stubs.custom_config['qf_trading_fe_login_win_name'])
+        mainWindowName=main_window,
+        loginWindowName=login_window)
     logging.debug("RPC login:\n%s", stub.login(login_details))
     Stubs.frontend_is_open = False
 
@@ -114,14 +117,14 @@ def prepare_fe_2(main_event, session,
     stub.login(login_details_req.build())
 
 
-def get_opened_fe(main_event, session, fe_dir: str = 'qf_trading_fe_folder'):
+def get_opened_fe(main_event, session, main_window):
     stub = Stubs.win_act
     init_event = create_event("Initialization", parent_id=main_event)
 
     search_fe_req = FEDetailsRequest()
     search_fe_req.set_session_id(session)
     search_fe_req.set_parent_event_id(init_event)
-    search_fe_req.set_main_window_name(Stubs.custom_config['qf_trading_fe_main_win_name'])
+    search_fe_req.set_main_window_name(main_window)
     stub.findOpenedFE(search_fe_req.build())
 
 
