@@ -110,6 +110,11 @@ class InstrType(Enum):
     nds = 'NDS'
 
 
+class ExecType(Enum):
+    trade = "Trade"
+    calculated = "Calculated"
+
+
 class QuoteBookColumns(Enum):
     quote_id = 'Id'
     account_group = 'AccountGroup'
