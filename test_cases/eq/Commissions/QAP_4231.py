@@ -56,8 +56,9 @@ class QAP_4231(TestCase):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
-                self.bs_connectivity, self.client + '_EUREX', "XEUR", float(self.price), float(self.price),
-                int(self.qty), int(self.qty), 1)
+                self.bs_connectivity, self.data_set.get_venue_client_names_by_name("client_com_1_venue_2"),
+                self.data_set.get_mic_by_name("mic_2"), float(self.price), float(self.price), int(self.qty),
+                int(self.qty), 1)
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
                 "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,

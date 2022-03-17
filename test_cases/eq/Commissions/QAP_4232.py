@@ -46,7 +46,7 @@ class QAP_4232(TestCase):
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(recalculate=True).change_message_params(
-            {"venueID": "EUREX"}).send_post_request()
+            {"venueID": self.data_set.get_venue_by_name("venue_2")}).send_post_request()
         self.__send_fix_orders()
         self.cl_inbox.accept_order(filter={ClientInboxColumns.order_id.value: self.order_id})
         self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: self.order_id})
