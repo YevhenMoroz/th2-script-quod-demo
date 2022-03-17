@@ -9,9 +9,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
-    FixMessageAllocationInstructionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
@@ -46,17 +43,11 @@ class QAP_3000(TestCase):
         price = '10'
         over_qty = '1000'
         account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        no_allocs: dict = {'NoAllocs': [
-            {
-                'AllocAccount': self.data_set.get_account_by_name('client_pt_1_acc_1'),
-                'AllocQty': qty
-            }]}
         self.fix_message.set_default_dma_limit()
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
         self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
         self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
         self.fix_message.change_parameter('Price', price)
-        self.fix_message.change_parameter('PreAllocGrp', no_allocs)
         exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.fix_message.change_parameter('ExDestination', exec_destination)
         rule_manager = RuleManager(Simulators.equity)
@@ -107,7 +98,9 @@ class QAP_3000(TestCase):
 
         # region approve and allocate block (step 3)
         self.middle_office.approve_block()
-        self.middle_office.set_modify_ticket_details()
+        allocation_values = [{"Security Account": self.data_set.get_account_by_name('client_pt_1_acc_1'),
+                              "Alloc Qty": over_qty}]
+        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_values)
         self.middle_office.allocate_block()
         values_of_middle_office = self.middle_office.extract_list_of_block_fields([
             MiddleOfficeColumns.conf_service.value,
