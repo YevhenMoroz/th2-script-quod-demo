@@ -1,18 +1,18 @@
 import logging
 import os
 import time
+from pathlib import Path
 
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom.basic_custom_actions import create_event
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.DataSet import CommissionClients, CommissionAccounts
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import decorator_try_except
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -22,65 +22,65 @@ logger.setLevel(logging.INFO)
 
 class QAP_3380(TestCase):
 
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        session_alias = SessionAliasOMS()
-        self.ss_connectivity = session_alias.ss_connectivity
-        self.bs_connectivity = session_alias.bs_connectivity
-        self.wa_connectivity = session_alias.wa_connectivity
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.qty = "200"
         self.price = "10"
         self.client = CommissionClients.CLIENT_COMM_1.value
         self.account = CommissionAccounts.CLIENT_COMM_1_SA1
         self.case_id = create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.rule_manager = RuleManager(sim=Simulators.equity)
 
-    @decorator_try_except(test_id=os.path.basename(__file__)[:-3])
-    def execute(self):
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        RestCommissionsSender(self.wa_connectivity, self.case_id).clear_commissions()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_commissions()
         self.__send_fix_orders()
-        print("Sent")
-        split_param_1 = order_book.create_split_booking_parameter("100", comm_basis="Absolute", comm_rate="5",
-                                                                  fee_type="ExchFees", fee_basis="Absolute",
-                                                                  fee_rate="5")
-        split_param_2 = order_book.create_split_booking_parameter()
-        order_book.split_book([split_param_1, split_param_2])
-        self.__verify_commissions(middle_office)
+        split_param_1 = self.order_book.create_split_booking_parameter("100", comm_basis="Absolute", comm_rate="5",
+                                                                       fee_type="ExchFees", fee_basis="Absolute",
+                                                                       fee_rate="5")
+        split_param_2 = self.order_book.create_split_booking_parameter()
+        self.order_book.split_book([split_param_1, split_param_2])
+        self.__verify_commissions()
 
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account.value, 'AllocQty': self.qty}]}
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(
                 self.bs_connectivity, self.client + '_EUREX', "XEUR", float(self.price), float(self.price),
                 int(self.qty),
                 int(self.qty), 1)
-            fix_manager = FixManager(self.ss_connectivity, self.case_id)
-            new_order_single1 = FixMessageNewOrderSingleOMS().set_default_dma_limit_eurex().add_ClordId(
-                (os.path.basename(__file__)[:-3])).change_parameters(
+            new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
+                "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
-                 'PreAllocGrp': no_allocs})
-            self.response: list = fix_manager.send_message_and_receive_response_fix_standard(new_order_single1)
+                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
+            self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
         finally:
             time.sleep(2)
-            rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(nos_rule)
 
-    @staticmethod
-    def __verify_commissions(middle_office: OMSMiddleOffice):
-        commissions = middle_office.extracting_values_from_amend_ticket(
+    def __verify_commissions(self):
+        commissions = self.middle_office.extracting_values_from_amend_ticket(
             [
                 PanelForExtraction.COMMISSION,
                 PanelForExtraction.FEES
             ])
-        parsed_comm = middle_office.split_2lvl_values(commissions)
+        parsed_comm = self.middle_office.split_fees(commissions)
         fees_expected = {'FeeType': 'ExchFees', 'Basis': 'Absolute', 'Rate': '2.5', 'Amount': '2.5', 'Currency': 'EUR',
                          'Category': 'Other'}
         commissions_expected = {'Basis': 'Absolute', 'Rate': '2.5', 'Amount': '2.5', 'Currency': 'EUR'}
         for extract_dict in parsed_comm:
             if 'FeeType' in extract_dict:
                 fees_actual = extract_dict
-                middle_office.compare_values(fees_expected, fees_actual, "Fees verifying")
+                self.middle_office.compare_values(fees_expected, fees_actual, "Fees verifying")
             else:
                 commissions_actual = extract_dict
-                middle_office.compare_values(commissions_expected, commissions_actual, "Commissions verifying")
+                self.middle_office.compare_values(commissions_expected, commissions_actual, "Commissions verifying")
